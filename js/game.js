@@ -7,10 +7,18 @@ document.body.appendChild(canvas);
 
 // Game objects
 var hero = {
-	speed: 256 // movement in pixels per second
+	speed: 256, // movement in pixels per second
+	width: 40,
+	height: 40,
 };
-var monster = {};
-var monstersCaught = 0;
+var objects = [{
+	width: 20,
+	height: 20,
+	obstacle: true,
+	onCollide: () => {
+		console.log('collided', hero)
+	}
+}];
 
 // Handle keyboard controls
 var keysDown = {};
@@ -31,8 +39,8 @@ var reset = function () {
 	hero._y = hero.y
 
 	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
+	objects[0].x = Math.floor(32 + (Math.random() * (canvas.width - 64)));
+	objects[0].y = Math.floor(32 + (Math.random() * (canvas.height - 64)));
 };
 
 // Update game objects
@@ -53,13 +61,16 @@ var update = function (modifier) {
 	}
 
 	// Are they touching?
-	if (
-		hero._x < (monster.x + 40)
-		&& monster.x < (hero._x + 40)
-		&& hero._y < (monster.y + 40)
-		&& monster.y < (hero._y + 40)
-	) {
-		illegal = true
+	for(let i = 0; i < objects.length; i++){
+		if (
+			hero._x < (objects[i].x + objects[i].width)
+			&& objects[i].x < (hero._x + hero.width)
+			&& hero._y < (objects[i].y + objects[i].height)
+			&& objects[i].y < (hero._y + hero.height)
+		) {
+			if(objects[i].obstacle) illegal = true
+			if(objects[i].onCollide) objects[i].onCollide()
+		}
 	}
 
 	if(illegal) {
@@ -78,8 +89,11 @@ var render = function () {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = 'white';
-	ctx.fillRect(hero.x, hero.y, 40, 40);
-	ctx.fillRect(monster.x, monster.y, 40, 40);
+	ctx.fillRect(hero.x, hero.y, hero.width, hero.height);
+
+	for(let i = 0; i < objects.length; i++){
+		ctx.fillRect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+	}
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
