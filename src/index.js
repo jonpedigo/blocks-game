@@ -1,5 +1,8 @@
 import './styles/index.scss'
 import chat from './js/chat.js'
+import input from './js/input.js'
+import collisions from './js/collisions.js'
+import camera from './js/camera.js'
 
 // Create the canvas
 var canvas = document.createElement("canvas");
@@ -8,10 +11,10 @@ canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
 
-
 var game = {
   paused: false,
 }
+
 // Game objects
 var hero = {
 	speed: 256, // movement in pixels per second
@@ -19,6 +22,15 @@ var hero = {
 	height: 40,
   paused: false,
 };
+hero.x = canvas.width / 2;
+hero.y = canvas.height / 2;
+hero._x = hero.x
+hero._y = hero.y
+
+if(true){
+  hero = JSON.parse(localStorage.getItem('hero'));
+}
+
 var objects = [{
 	width: 20,
 	height: 20,
@@ -33,23 +45,9 @@ var flags = {
   showChat: false,
 }
 
-// Handle keyboard controls
-var keysDown = {};
-
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
-}, false);
-
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
-}, false);
-
 // Reset the game when the player catches a monster
 var start = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
-	hero._x = hero.x
-	hero._y = hero.y
+  input.start()
 
 	// Throw the monster somewhere on the screen randomly
 	objects[0].x = Math.floor(32 + (Math.random() * (canvas.width - 64)));
@@ -58,54 +56,22 @@ var start = function () {
 
 // Update game objects
 var update = function (modifier) {
-	let illegal = false
-
-	if (38 in keysDown) { // Player holding up
-		hero._y = hero.y - hero.speed * modifier;
-	}
-	if (40 in keysDown) { // Player holding down
-		hero._y = hero.y + hero.speed * modifier;
-	}
-	if (37 in keysDown) { // Player holding left
-		hero._x = hero.x - hero.speed * modifier;
-	}
-	if (39 in keysDown) { // Player holding right
-		hero._x = hero.x + hero.speed * modifier;
-	}
-
-	// Are they touching?
-	for(let i = 0; i < objects.length; i++){
-		if (
-			hero._x < (objects[i].x + objects[i].width)
-			&& objects[i].x < (hero._x + hero.width)
-			&& hero._y < (objects[i].y + objects[i].height)
-			&& objects[i].y < (hero._y + hero.height)
-		) {
-			if(objects[i].obstacle) illegal = true
-			if(objects[i].onCollide) objects[i].onCollide()
-		}
-	}
-
-	if(illegal) {
-		hero._x = hero.x
-		hero._y = hero.y
-	}
-
-	if(!illegal){
-		hero.x = hero._x
-		hero.y = hero._y
-	}
+  if(game.paused) return
+  input.update(hero, modifier)
+  collisions.check(hero, objects)
+  localStorage.setItem('hero', JSON.stringify(hero));
 };
 
 // Draw everything
 var render = function () {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = 'white';
-	ctx.fillRect(hero.x, hero.y, hero.width, hero.height);
 
+  camera.set(ctx, hero)
+	ctx.fillStyle = 'white';
+	camera.drawObject(ctx, hero);
 	for(let i = 0; i < objects.length; i++){
-		ctx.fillRect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+    camera.drawObject(ctx, objects[i])
 	}
 
   chat.render(ctx, flags);
