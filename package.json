@@ -16,7 +16,7 @@
   ],
   "author": "Tania Rascia <tania@taniarascia.com>",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
