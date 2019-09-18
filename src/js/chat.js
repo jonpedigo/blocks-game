@@ -6,19 +6,31 @@ function drawChat(ctx, text){
 	ctx.fillText(text, 200, ctx.canvas.height - 80);
 }
 
-function start() {
-
+const keysDown = {}
+function start(current, flags) {
+	window.addEventListener("keydown", function (e) {
+		if(e.keyCode == '32'){
+			current.chat.shift()
+			if(!current.chat.length) {
+				if(current.chat.onChatEnd) current.chat.onChatEnd()
+				flags.showChat = false
+				flags.heroPaused = false
+			}
+		}
+  }, false)
 }
 
-function update(){
-
+function update(currentChat){
+	// if(keysDown['32']){
+	// 	currentChat.shift()
+  // }
 }
 
-function render(ctx, flags){
+function render(ctx, flags, currentChat){
 
 	if(flags.showChat){
 		// Score
-		drawChat(ctx, 'you hit me')
+		drawChat(ctx, currentChat[0][0])
 	}
 }
 

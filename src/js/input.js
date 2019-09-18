@@ -11,8 +11,8 @@ function start(hero, modifier){
   }, false)
 }
 
-function update(hero, modifier) {
-  // if(hero.paused) return
+function update(flags, hero, modifier) {
+  if(flags.heroPaused) return
   /*
     left arrow	37
     up arrow	38
