@@ -11,9 +11,15 @@ const clickStart = {
 const scaleMultiplier = .3
 
 let objectFactory = []
-
+let editor = null
+let editorState = {
+  factory: objectFactory,
+  world: [],
+}
 const keysDown = {}
-function init(ctx, objects) {
+function init(ctx, objects, editor) {
+  editor.set({world: objects, factory: objectFactory});
+
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
   }, false)
@@ -40,7 +46,11 @@ function init(ctx, objects) {
         obstacle: true,
       }
       // objects.unshift(newObject)
+      editorState = editor.get()
+      editorState.factory.push(newObject)
+      editor.set(editorState)
       objectFactory.push(newObject)
+
       console.log('added', JSON.stringify(newObject))
       clickStart.x = null
       clickStart.y = null
@@ -53,8 +63,15 @@ function init(ctx, objects) {
   },false);
 
   window.document.getElementById('savebutton').addEventListener('click',function(e){
-    window.socket.emit('addObjects', objectFactory)
+    editorState = editor.get()
+    window.socket.emit('addObjects', editorState.factory)
+    editorState.factory = []
     objectFactory = []
+  })
+
+  window.socket.on('onAddObjects', (objectsAdded) => {
+    editorState.world = objectsAdded
+    editor.set(editorState)
   })
 }
 
@@ -99,9 +116,15 @@ function setCamera() {
   }
 }
 
+function onChangeEditorState (state) {
+  objectFactory = state.factory;
+  editorState.factory = state.factory
+}
+
 export default {
   init,
 	drawObject,
   update,
   render,
+  onChangeEditorState
 }

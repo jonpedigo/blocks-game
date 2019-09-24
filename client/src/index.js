@@ -1,4 +1,5 @@
 import './styles/index.scss'
+import './styles/jsoneditor.css'
 import chat from './js/chat.js'
 import input from './js/input.js'
 import collisions from './js/collisions.js'
@@ -7,15 +8,22 @@ import mapEditor from './js/mapeditor.js'
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
 import io from 'socket.io-client';
+import JSONEditor from 'jsoneditor'
 
 const socket = io('http://192.168.0.14:8081');
 window.socket = socket
 
 let objects = []
 window.socket.on('onAddObjects', (objectsAdded) => {
+	console.log(objectsAdded)
 	objects = objectsAdded
 })
+window.socket.on('onUpdateObjects', (updatedObjects) => {
+	objects = updatedObjects
+	console.log(updatedObjects)
+})
 window.socket.emit('askObjects')
+
 
 const useMapEditor = localStorage.getItem('useMapEditor')
 
@@ -26,23 +34,6 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.id = 'game'
 document.body.appendChild(canvas);
-
-if(useMapEditor === 'true'){
-	canvas.height = window.innerHeight - 50;
-
-  var button = document.createElement("button");
-  button.value = 'save new objects'
-  button.id = 'savebutton'
-  document.body.appendChild(button);
-
-  var nameinput = document.createElement("input");
-  nameinput.id = 'nameinput'
-  document.body.appendChild(nameinput);
-}
-
-var game = {
-  paused: false,
-}
 
 // Game objects
 var hero = {
@@ -55,7 +46,34 @@ var hero = {
 hero._x = hero.x
 hero._y = hero.y
 
-if(useMapEditor === 'false') 	hero = JSON.parse(localStorage.getItem('hero'))
+let editor = null
+if(useMapEditor === 'true'){
+  var button = document.getElementById("savebutton");
+  button.id = 'savebutton'
+  document.body.appendChild(button);
+
+  var nameinput = document.createElement("input");
+  nameinput.id = 'nameinput'
+  document.body.appendChild(nameinput);
+
+	var jsoneditor = document.createElement("div");
+	jsoneditor.id = 'jsoneditor'
+	document.body.appendChild(jsoneditor);
+  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
+		window.socket.emit('updateObjects', state.world)
+		mapEditor.onChangeEditorState(state)
+	}})
+	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
+		hero = heroUpdated
+	})
+} else {
+	hero = JSON.parse(localStorage.getItem('hero'))
+}
+
+var game = {
+  paused: false,
+}
+
 
 var flags = {
   showChat: false,
@@ -69,11 +87,7 @@ const current = {
 var start = function () {
   input.start()
   chat.start(current, flags)
-  if(useMapEditor === 'true') mapEditor.init(ctx, objects)
-
-	// // Throw the monster somewhere on the screen randomly
-	// objects[0].x = Math.floor(32 + (Math.random() * (canvas.width - 64)));
-	// objects[0].y = Math.floor(32 + (Math.random() * (canvas.height - 64)));
+  if(useMapEditor === 'true') mapEditor.init(ctx, objects, editor)
 };
 
 // Update game objects
@@ -124,6 +138,7 @@ var main = function () {
     mapEditor.render(ctx, hero, objects);
   }else {
 		update(delta / 1000);
+		window.socket.emit('updateHeroPos', hero)
     render();
   }
 

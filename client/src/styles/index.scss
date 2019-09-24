@@ -21,3 +21,18 @@ body {
   margin: 0px;
   overflow-y: hidden;
 }
+
+#jsoneditor {
+  background:white;
+  position: fixed;
+  right:80px;
+  top:0;
+  width:400px;
+  height: 100%;
+}
+
+#savebutton {
+  top:0;
+  right:0;
+  position: fixed;
+}
