@@ -8,7 +8,12 @@ const clickStart = {
   y: null,
 }
 
-const scaleMultiplier = .3
+const mousePos = {
+  x: null,
+  y: null,
+}
+
+let scaleMultiplier = .3
 
 let objectFactory = []
 let editor = null
@@ -22,11 +27,23 @@ function init(ctx, objects, editor) {
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
+    if(e.keyCode === 81) {
+      scaleMultiplier += .1
+    }
+    if(e.keyCode === 65) {
+      scaleMultiplier -= .1
+    }
+
   }, false)
 
   window.addEventListener("keyup", function (e) {
      delete keysDown[e.keyCode]
   }, false)
+
+  window.document.getElementById('game').addEventListener("mousemove", function(e) {
+    mousePos.x = ((e.offsetX + camera.x)/scaleMultiplier)
+    mousePos.y = ((e.offsetY + camera.y)/scaleMultiplier)
+  })
 
   window.document.getElementById('game').addEventListener('click',function(e){
     if(keysDown['32']){
@@ -57,6 +74,7 @@ function init(ctx, objects, editor) {
 
       nameinput.value = ""
     } else {
+      // first click
       clickStart.x = (e.offsetX + camera.x)
       clickStart.y = (e.offsetY + camera.y)
     }
@@ -95,6 +113,10 @@ function render(ctx, hero, objects) {
     ctx.fillStyle = 'white';
   }
   drawObject(ctx, hero);
+
+  if(clickStart.x) {
+    drawObject(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
+  }
 }
 
 function update(delta) {
@@ -114,6 +136,7 @@ function setCamera() {
   if (39 in keysDown) { // Player holding right
     camera.x += (1/scaleMultiplier)
   }
+
 }
 
 function onChangeEditorState (state) {
@@ -126,5 +149,6 @@ export default {
 	drawObject,
   update,
   render,
+  setCamera,
   onChangeEditorState
 }

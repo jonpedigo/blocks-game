@@ -15,12 +15,10 @@ window.socket = socket
 
 let objects = []
 window.socket.on('onAddObjects', (objectsAdded) => {
-	console.log(objectsAdded)
 	objects = objectsAdded
 })
 window.socket.on('onUpdateObjects', (updatedObjects) => {
 	objects = updatedObjects
-	console.log(updatedObjects)
 })
 window.socket.emit('askObjects')
 
@@ -66,8 +64,14 @@ if(useMapEditor === 'true'){
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
 		hero = heroUpdated
 	})
+
+	window.findHero = function() {
+		mapEditor.setCamera(hero)
+	}
 } else {
 	hero = JSON.parse(localStorage.getItem('hero'))
+	var button = document.getElementById("savebutton");
+	document.body.removeChild(button);
 }
 
 var game = {
