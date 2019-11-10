@@ -1,11 +1,58 @@
 const camera = {
   x: 0,
   y: 0,
+  limitX: null,
+  limitY: null,
+  centerX: null,
+  centerY: null,
+}
+
+function setLimit(limitX = null, limitY = null) {
+  camera.centerX = camera.x
+  camera.centerY = camera.y
+
+  camera.limitX = limitX
+  camera.limitY = limitY
+}
+
+function clearLimit() {
+  camera.limitX = null
+  camera.limitY = null
+}
+
+function setHeroX(ctx, hero) {
+  camera.x = (hero.x + hero.width/2) - ctx.canvas.width/2
+}
+function setHeroY(ctx, hero) {
+  camera.y = (hero.y + hero.height/2) - ctx.canvas.height/2
 }
 
 function set(ctx, hero) {
-  camera.x = (hero.x + hero.width/2) - ctx.canvas.width/2
-  camera.y = (hero.y + hero.height/2) - ctx.canvas.height/2
+  if (camera.limitX) {
+    const potentialX = (hero.x + hero.width/2) - ctx.canvas.width/2
+    if (potentialX > (camera.centerX + camera.limitX)) {
+      camera.x = camera.centerX + camera.limitX
+    } else if (potentialX < (camera.centerX - camera.limitX)) {
+      camera.x = camera.centerX - camera.limitX
+    } else {
+      setHeroX(ctx, hero)
+    }
+  } else {
+    setHeroX(ctx, hero)
+  }
+
+  if (camera.limitY) {
+    const potentialY = (hero.y + hero.height/2) - ctx.canvas.height/2
+    if (potentialY > (camera.centerY + camera.limitY)) {
+      camera.y = camera.centerY + camera.limitY
+    } else if (potentialY < (camera.centerY - camera.limitY)) {
+      camera.y = camera.centerY - camera.limitY
+    } else {
+      setHeroY(ctx, hero)
+    }
+  } else {
+    setHeroY(ctx, hero)
+  }
 }
 
 function drawName(ctx, object){
@@ -29,4 +76,5 @@ function drawObject(ctx, object, withNames = true) {
 export default {
   set,
 	drawObject,
+  setLimit,
 }

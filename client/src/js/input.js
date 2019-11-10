@@ -1,3 +1,4 @@
+import camera from './camera';
 
 const keysDown = {}
 
@@ -35,6 +36,12 @@ function update(flags, hero, modifier) {
   if (39 in keysDown) { // Player holding right
     hero._x = hero.x + hero.speed * modifier;
   }
+
+  if(13 in keysDown) {
+    camera.setLimit(100, 100)
+  }
+
+
 }
 
 export default {

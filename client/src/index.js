@@ -10,7 +10,7 @@ import battle from './js/battle.js'
 import io from 'socket.io-client';
 import JSONEditor from 'jsoneditor'
 
-const socket = io('http://192.168.0.14:8081');
+const socket = io('localhost:8081');
 window.socket = socket
 
 let objects = []
@@ -21,7 +21,6 @@ window.socket.on('onUpdateObjects', (updatedObjects) => {
 	objects = updatedObjects
 })
 window.socket.emit('askObjects')
-
 
 const useMapEditor = localStorage.getItem('useMapEditor')
 
