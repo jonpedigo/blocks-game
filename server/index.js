@@ -7,8 +7,10 @@ app.get('/', function(req, res){
 });
 
 let serverState = []
+let preferences = {}
 
 io.on('connection', function(socket){
+  //objects
   socket.on('updateObjects', (objects) => {
     serverState = objects
     io.emit('onUpdateObjects', serverState)
@@ -21,6 +23,16 @@ io.on('connection', function(socket){
     io.emit('onAddObjects', serverState)
   })
 
+  //preferences
+  socket.on('askPreferences', () => {
+    socket.emit('onUpdatePreferences', preferences)
+  })
+  socket.on('updatePreferences', (updatedPreferences) => {
+    Object.assign(preferences, updatedPreferences)
+    io.emit('onUpdatePreferences', updatedPreferences)
+  })
+
+  //hero
   socket.on('updateHeroPos', (hero) => {
     io.emit('onHeroPosUpdate', hero)
   })

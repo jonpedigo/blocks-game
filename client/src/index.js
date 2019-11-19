@@ -10,8 +10,9 @@ import battle from './js/battle.js'
 import io from 'socket.io-client';
 import JSONEditor from 'jsoneditor'
 
-const socket = io('localhost:8081');
+const socket = io('localhost:8081')
 window.socket = socket
+window.preferences = {}
 
 let objects = []
 window.socket.on('onAddObjects', (objectsAdded) => {
@@ -22,32 +23,45 @@ window.socket.on('onUpdateObjects', (updatedObjects) => {
 })
 window.socket.emit('askObjects')
 
-const useMapEditor = localStorage.getItem('useMapEditor')
+window.socket.emit('askPreferences')
+
+window.useMapEditor = localStorage.getItem('useMapEditor')
 
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 500;
+canvas.height = 300;
 canvas.id = 'game'
 document.body.appendChild(canvas);
 
 // Game objects
-var hero = {
+window.hero = {
 	speed: 256, // movement in pixels per second
 	width: 40,
 	height: 40,
   paused: false,
   x: 20 , y: 20
-};
+}
 hero._x = hero.x
 hero._y = hero.y
 
 let editor = null
-if(useMapEditor === 'true'){
+if(window.useMapEditor === 'true') {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	
   var button = document.getElementById("savebutton");
   button.id = 'savebutton'
   document.body.appendChild(button);
+
+	var clearcameralock = document.getElementById("clearcameralock");
+  clearcameralock.id = 'clearcameralock'
+  document.body.appendChild(clearcameralock);
+	clearcameralock.addEventListener('click', (e) => {
+		camera.clearLimit();
+		window.socket.emit('updatePreferences', { lockCamera: {} })
+	})
 
   var nameinput = document.createElement("input");
   nameinput.id = 'nameinput'
@@ -63,14 +77,33 @@ if(useMapEditor === 'true'){
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
 		hero = heroUpdated
 	})
+	window.socket.on('onUpdatePreferences', (updatedPreferences) => {
+		for(let key in updatedPreferences) {
+			const value = updatedPreferences[key]
+			window.preferences[key] = value
+		}
+	})
 
 	window.findHero = function() {
 		mapEditor.setCamera(hero)
 	}
 } else {
-	hero = JSON.parse(localStorage.getItem('hero'))
+	if(JSON.parse(localStorage.getItem('hero'))) window.hero = JSON.parse(localStorage.getItem('hero'))
 	var button = document.getElementById("savebutton");
 	document.body.removeChild(button);
+	var clearcameralock = document.getElementById("clearcameralock");
+	document.body.removeChild(clearcameralock);
+
+	window.socket.on('onUpdatePreferences', (updatedPreferences) => {
+		for(let key in updatedPreferences) {
+			const value = updatedPreferences[key]
+			window.preferences[key] = value
+
+			if(key === 'lockCamera') {
+				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+			}
+		}
+	})
 }
 
 var game = {

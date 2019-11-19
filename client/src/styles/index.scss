@@ -29,10 +29,17 @@ body {
   top:0;
   width:400px;
   height: 100%;
+  display: none;
 }
 
 #savebutton {
   top:0;
   right:0;
+  position: fixed;
+}
+
+#clearcameralock {
+  top: 20px;
+  right: 0;
   position: fixed;
 }

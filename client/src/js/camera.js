@@ -7,15 +7,20 @@ const camera = {
   centerY: null,
 }
 
-function setLimit(limitX = null, limitY = null) {
-  camera.centerX = camera.x
-  camera.centerY = camera.y
+function setLimit(limitX = null, limitY = null, centerX = camera.x, centerY = camera.y) {
+  camera.centerX = centerX
+  camera.centerY = centerY
 
   camera.limitX = limitX
   camera.limitY = limitY
+
+  console.log(camera)
 }
 
 function clearLimit() {
+  camera.centerX = null
+  camera.centerY = null
+
   camera.limitX = null
   camera.limitY = null
 }
@@ -28,11 +33,11 @@ function setHeroY(ctx, hero) {
 }
 
 function set(ctx, hero) {
-  if (camera.limitX) {
-    const potentialX = (hero.x + hero.width/2) - ctx.canvas.width/2
-    if (potentialX > (camera.centerX + camera.limitX)) {
-      camera.x = camera.centerX + camera.limitX
-    } else if (potentialX < (camera.centerX - camera.limitX)) {
+  if (camera.limitX && !window.useMapEditor) {
+    const potentialX = (hero.x + hero.width/2)
+    if(potentialX > (camera.centerX + camera.limitX - (ctx.canvas.width/2))) {
+      camera.x = (camera.centerX + camera.limitX - ctx.canvas.width)
+    } else if (potentialX < (camera.centerX - camera.limitX + (ctx.canvas.width/2))) {
       camera.x = camera.centerX - camera.limitX
     } else {
       setHeroX(ctx, hero)
@@ -41,11 +46,11 @@ function set(ctx, hero) {
     setHeroX(ctx, hero)
   }
 
-  if (camera.limitY) {
-    const potentialY = (hero.y + hero.height/2) - ctx.canvas.height/2
-    if (potentialY > (camera.centerY + camera.limitY)) {
-      camera.y = camera.centerY + camera.limitY
-    } else if (potentialY < (camera.centerY - camera.limitY)) {
+  if (camera.limitY && !window.useMapEditor) {
+    const potentialY = (hero.y + hero.height/2)
+    if (potentialY > (camera.centerY + camera.limitY - (ctx.canvas.height/2))) {
+      camera.y = camera.centerY + camera.limitY - ctx.canvas.height
+    } else if (potentialY < (camera.centerY - camera.limitY + (ctx.canvas.height/2))) {
       camera.y = camera.centerY - camera.limitY
     } else {
       setHeroY(ctx, hero)
@@ -76,5 +81,6 @@ function drawObject(ctx, object, withNames = true) {
 export default {
   set,
 	drawObject,
+  clearLimit,
   setLimit,
 }
