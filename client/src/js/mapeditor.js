@@ -131,8 +131,7 @@ function drawObject(ctx, object) {
   ctx.fillRect((object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y, (object.width * scaleMultiplier), (object.height * scaleMultiplier));
 }
 
-function drawBorder(ctx, object, thickness = 1) {
-  ctx.fillStyle='#FFF';
+function drawBorder(ctx, object, thickness = 2) {
   ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (thickness), ((object.y * scaleMultiplier) - camera.y) - (thickness), (object.width * scaleMultiplier) + (thickness * 2), (object.height * scaleMultiplier) + (thickness * 2));
   ctx.fillStyle='#000';
   drawObject(ctx, object)
@@ -144,7 +143,10 @@ function render(ctx, hero, objects) {
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   if(clickStart.x && currentTool === TOOLS.SET_CAMERA_LOCK) {
-    drawBorder(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
+    let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
+    if(possibleBox.width >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && possibleBox.height >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
+    else ctx.fillStyle = 'red'
+    drawBorder(ctx, possibleBox)
   }
 
 	ctx.fillStyle = 'white';

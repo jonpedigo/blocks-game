@@ -13,6 +13,10 @@ import JSONEditor from 'jsoneditor'
 const socket = io('localhost:8081')
 window.socket = socket
 window.preferences = {}
+window.CONSTANTS = {
+	PLAYER_CANVAS_WIDTH: 500,
+	PLAYER_CANVAS_HEIGHT: 300,
+}
 
 let objects = []
 window.socket.on('onAddObjects', (objectsAdded) => {
@@ -30,8 +34,8 @@ window.useMapEditor = localStorage.getItem('useMapEditor')
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
-canvas.width = 500;
-canvas.height = 300;
+canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
+canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
 canvas.id = 'game'
 document.body.appendChild(canvas);
 
@@ -50,7 +54,7 @@ let editor = null
 if(window.useMapEditor === 'true') {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
-	
+
   var button = document.getElementById("savebutton");
   button.id = 'savebutton'
   document.body.appendChild(button);
