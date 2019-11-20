@@ -1,3 +1,5 @@
+import JSONEditor from 'jsoneditor'
+
 const camera = {
   x: 0,
   y: 0,
@@ -16,11 +18,11 @@ const mousePos = {
 const keysDown = {}
 
 const TOOLS = {
-  SET_CAMERA_LOCK: 'setCameraLock',
+  CAMERA_LOCK: 'cameraLock',
   ADD_OBJECT: 'addObject',
 }
 
-let currentTool = TOOLS.SET_CAMERA_LOCK;
+let currentTool = TOOLS.CAMERA_LOCK;
 
 let scaleMultiplier = .3
 
@@ -32,7 +34,7 @@ let editorState = {
 }
 
 let tools = {
-  setCameraLock: {
+  cameraLock: {
     onSecondClick: (e) => {
       //translate
       const value = {
@@ -47,10 +49,8 @@ let tools = {
   },
   addObject : {
     onSecondClick: (e) => {
-      let nameinput = window.document.getElementById('nameinput')
-
       let newObject = {
-        name: nameinput.value,
+        name: 'object' + Date.now(),
         width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
         height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
         x: clickStart.x/scaleMultiplier,
@@ -65,14 +65,62 @@ let tools = {
       objectFactory.push(newObject)
 
       // console.log('added', JSON.stringify(newObject))
-      nameinput.value = ""
     }
   }
 }
 
-function init(ctx, objects, jsonEditor) {
-  editor = jsonEditor
+function init(ctx, objects) {
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+
+  //tool select functionality
+  let toolSelectEl = document.getElementById("tool-select")
+  for(var tool in TOOLS) {
+    let toolName = TOOLS[tool];
+    let toolEl = document.createElement('div')
+    toolEl.className = 'button';
+    toolEl.innerHTML = toolName
+    toolEl.onclick=function() {
+      console.log('current tool changed to ' + toolName)
+      currentTool = toolName
+      Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
+        e.className = "tool-feature invisible"
+      })
+      document.getElementById("tool-"+toolName).className='tool-feature visible'
+    }
+    toolSelectEl.appendChild(toolEl)
+  }
+
+  var saveObjects = document.getElementById("save-factory");
+  saveObjects.addEventListener('click', function(e){
+    editorState = editor.get()
+    window.socket.emit('addObstacle', editorState.factory)
+    editorState.factory = []
+    objectFactory = []
+  })
+
+  var clearcameralock = document.getElementById("clear-camera-lock");
+  clearcameralock.addEventListener('click', (e) => {
+    window.socket.emit('updatePreferences', { lockCamera: {} })
+  })
+
+	var jsoneditor = document.createElement("div");
+	jsoneditor.id = 'jsoneditor'
+	document.getElementById('tool-'+TOOLS.ADD_OBJECT).appendChild(jsoneditor);
+  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
+		window.socket.emit('updateObjects', state.world)
+    objectFactory = state.factory;
+    editorState.factory = state.factory
+	}})
   editor.set({world: objects, factory: objectFactory});
+
+	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
+		window.hero = heroUpdated
+	})
+
+	window.findHero = function() {
+		setCamera(hero)
+	}
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
@@ -106,19 +154,15 @@ function init(ctx, objects, jsonEditor) {
       if(tools[currentTool].onSecondClick) tools[currentTool].onSecondClick(e)
       clickStart.x = null
       clickStart.y = null
+      console.log('....')
     } else {
       // first click
       clickStart.x = (e.offsetX + camera.x)
       clickStart.y = (e.offsetY + camera.y)
+      console.log('...')
+
     }
   },false);
-
-  window.document.getElementById('savebutton').addEventListener('click',function(e){
-    editorState = editor.get()
-    window.socket.emit('addObjects', editorState.factory)
-    editorState.factory = []
-    objectFactory = []
-  })
 
   window.socket.on('onAddObjects', (objectsAdded) => {
     editorState.world = objectsAdded
@@ -150,7 +194,7 @@ function render(ctx, hero, objects) {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  if(clickStart.x && currentTool === TOOLS.SET_CAMERA_LOCK) {
+  if(clickStart.x && currentTool === TOOLS.CAMERA_LOCK) {
     let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
     else ctx.fillStyle = 'red'
@@ -207,16 +251,8 @@ function setCamera() {
 
 }
 
-function onChangeEditorState (state) {
-  objectFactory = state.factory;
-  editorState.factory = state.factory
-}
-
 export default {
   init,
-	drawObject,
   update,
   render,
-  setCamera,
-  onChangeEditorState
 }

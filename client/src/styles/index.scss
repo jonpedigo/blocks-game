@@ -32,14 +32,24 @@ body {
   display: none;
 }
 
-#savebutton {
+#play-editor {
   top:0;
   right:0;
   position: fixed;
+  width:100px;
 }
 
-#clearcameralock {
-  top: 20px;
-  right: 0;
-  position: fixed;
+.tool-feature.visible {
+  display: initial;
+}
+
+.tool-feature.invisible {
+  display:none;
+}
+
+.button {
+  border: 1px solid black;
+  background: white;
+  color: black;
+  padding:5px;
 }

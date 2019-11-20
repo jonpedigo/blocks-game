@@ -4,18 +4,17 @@ import chat from './js/chat.js'
 import input from './js/input.js'
 import collisions from './js/collisions.js'
 import camera from './js/camera.js'
-import mapEditor from './js/mapeditor.js'
+import playEditor from './js/playeditor.js'
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
 import io from 'socket.io-client';
-import JSONEditor from 'jsoneditor'
 
 const socket = io('localhost:8081')
 window.socket = socket
 window.preferences = {}
 window.CONSTANTS = {
-	PLAYER_CANVAS_WIDTH: 500,
-	PLAYER_CANVAS_HEIGHT: 300,
+	PLAYER_CANVAS_WIDTH: 800,
+	PLAYER_CANVAS_HEIGHT: 500,
 }
 
 let objects = []
@@ -29,7 +28,8 @@ window.socket.emit('askObjects')
 
 window.socket.emit('askPreferences')
 
-window.useMapEditor = localStorage.getItem('useMapEditor')
+window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+
 
 // Create the canvas
 var canvas = document.createElement("canvas");
@@ -50,70 +50,33 @@ window.hero = {
 hero._x = hero.x
 hero._y = hero.y
 
-let editor = null
-if(window.useMapEditor === 'true') {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+if(!window.usePlayEditor) {
+	var editor = document.getElementById("play-editor");
+	editor.style = 'display:none';
 
-  var button = document.getElementById("savebutton");
-  button.id = 'savebutton'
-  document.body.appendChild(button);
-
-	var clearcameralock = document.getElementById("clearcameralock");
-  clearcameralock.id = 'clearcameralock'
-  document.body.appendChild(clearcameralock);
-	clearcameralock.addEventListener('click', (e) => {
-		camera.clearLimit();
-		window.socket.emit('updatePreferences', { lockCamera: {} })
-	})
-
-  var nameinput = document.createElement("input");
-  nameinput.id = 'nameinput'
-  document.body.appendChild(nameinput);
-
-	var jsoneditor = document.createElement("div");
-	jsoneditor.id = 'jsoneditor'
-	document.body.appendChild(jsoneditor);
-  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
-		window.socket.emit('updateObjects', state.world)
-		mapEditor.onChangeEditorState(state)
-	}})
-	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-		hero = heroUpdated
-	})
-	window.socket.on('onUpdatePreferences', (updatedPreferences) => {
-		for(let key in updatedPreferences) {
-			const value = updatedPreferences[key]
-			window.preferences[key] = value
-		}
-	})
-
-	window.findHero = function() {
-		mapEditor.setCamera(hero)
-	}
-} else {
-	if(JSON.parse(localStorage.getItem('hero'))) window.hero = JSON.parse(localStorage.getItem('hero'))
-	var button = document.getElementById("savebutton");
-	document.body.removeChild(button);
-	var clearcameralock = document.getElementById("clearcameralock");
-	document.body.removeChild(clearcameralock);
-
-	window.socket.on('onUpdatePreferences', (updatedPreferences) => {
-		for(let key in updatedPreferences) {
-			const value = updatedPreferences[key]
-			window.preferences[key] = value
-
-			if(key === 'lockCamera') {
-				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-			}
-		}
-	})
+	let savedHero = JSON.parse(localStorage.getItem('hero'));
+	if(savedHero) window.hero = savedHero;
 }
+
+window.socket.on('onUpdatePreferences', (updatedPreferences) => {
+	for(let key in updatedPreferences) {
+		const value = updatedPreferences[key]
+		window.preferences[key] = value
+
+		if(key === 'lockCamera' && !window.usePlayEditor) {
+			if(value.limitX) {
+				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+			} else {
+				camera.clearLimit();
+			}
+
+		}
+	}
+})
 
 var game = {
   paused: false,
 }
-
 
 var flags = {
   showChat: false,
@@ -127,7 +90,7 @@ const current = {
 var start = function () {
   input.start()
   chat.start(current, flags)
-  if(useMapEditor === 'true') mapEditor.init(ctx, objects, editor)
+  if(usePlayEditor) playEditor.init(ctx, objects, camera)
 };
 
 // Update game objects
@@ -142,7 +105,7 @@ var update = function (modifier) {
   chat.update(current.chat)
   input.update(flags, hero, modifier)
   collisions.check(hero, objects)
-  localStorage.setItem('hero', JSON.stringify(hero));
+  localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
 // Draw everything
@@ -173,9 +136,9 @@ var main = function () {
 	var now = Date.now();
 	var delta = now - then;
 
-	if(useMapEditor === 'true') {
-		mapEditor.update(delta)
-    mapEditor.render(ctx, hero, objects);
+	if(usePlayEditor) {
+		playEditor.update(delta)
+    playEditor.render(ctx, hero, objects);
   }else {
 		update(delta / 1000);
 		window.socket.emit('updateHeroPos', hero)

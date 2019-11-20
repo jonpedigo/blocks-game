@@ -13,8 +13,6 @@ function setLimit(limitX = null, limitY = null, centerX = camera.x, centerY = ca
 
   camera.limitX = limitX
   camera.limitY = limitY
-
-  console.log(camera)
 }
 
 function clearLimit() {
@@ -33,7 +31,7 @@ function setHeroY(ctx, hero) {
 }
 
 function set(ctx, hero) {
-  if (camera.limitX && !window.useMapEditor) {
+  if (camera.limitX) {
     const potentialX = (hero.x + hero.width/2)
     if(potentialX > (camera.centerX + camera.limitX - (ctx.canvas.width/2))) {
       camera.x = (camera.centerX + camera.limitX - ctx.canvas.width)
@@ -46,7 +44,7 @@ function set(ctx, hero) {
     setHeroX(ctx, hero)
   }
 
-  if (camera.limitY && !window.useMapEditor) {
+  if (camera.limitY) {
     const potentialY = (hero.y + hero.height/2)
     if (potentialY > (camera.centerY + camera.limitY - (ctx.canvas.height/2))) {
       camera.y = camera.centerY + camera.limitY - ctx.canvas.height
