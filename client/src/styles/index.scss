@@ -29,7 +29,6 @@ body {
   top:0;
   width:400px;
   height: 100%;
-  display: none;
 }
 
 #play-editor {
@@ -37,6 +36,7 @@ body {
   right:0;
   position: fixed;
   width:100px;
+  color:white;
 }
 
 .tool-feature.visible {

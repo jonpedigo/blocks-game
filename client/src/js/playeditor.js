@@ -94,7 +94,7 @@ function init(ctx, objects) {
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
     editorState = editor.get()
-    window.socket.emit('addObstacle', editorState.factory)
+    window.socket.emit('addObjects', editorState.factory)
     editorState.factory = []
     objectFactory = []
   })
@@ -114,6 +114,18 @@ function init(ctx, objects) {
 	}})
   editor.set({world: objects, factory: objectFactory});
 
+  var gravityToggle = document.getElementById('gravity-toggle')
+  gravityToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { gravity: '200' })
+    } else {
+      window.socket.emit('updatePreferences', { gravity: '0' })
+    }
+  }
+  if(window.preferences.gravity) {
+    gravityToggle.checked = true;
+  }
+
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
 		window.hero = heroUpdated
 	})
@@ -124,13 +136,17 @@ function init(ctx, objects) {
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
+
+    // q and a zoom in and out
     if(e.keyCode === 81) {
       scaleMultiplier += .1
     }
     if(e.keyCode === 65) {
       scaleMultiplier -= .1
     }
-    if(e.keyCode === 13) {
+
+    //if you press escape, cancel a drag
+    if(e.keyCode === 27) {
       clickStart.x = null
       clickStart.y = null
     }
@@ -154,13 +170,10 @@ function init(ctx, objects) {
       if(tools[currentTool].onSecondClick) tools[currentTool].onSecondClick(e)
       clickStart.x = null
       clickStart.y = null
-      console.log('....')
     } else {
       // first click
       clickStart.x = (e.offsetX + camera.x)
       clickStart.y = (e.offsetY + camera.y)
-      console.log('...')
-
     }
   },false);
 

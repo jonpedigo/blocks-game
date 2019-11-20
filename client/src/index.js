@@ -1,6 +1,7 @@
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'
+import physics from './js/physics.js'
 import input from './js/input.js'
 import collisions from './js/collisions.js'
 import camera from './js/camera.js'
@@ -12,17 +13,17 @@ import io from 'socket.io-client';
 const socket = io('localhost:8081')
 window.socket = socket
 window.preferences = {}
+window.objects = []
 window.CONSTANTS = {
 	PLAYER_CANVAS_WIDTH: 800,
 	PLAYER_CANVAS_HEIGHT: 500,
 }
 
-let objects = []
 window.socket.on('onAddObjects', (objectsAdded) => {
-	objects = objectsAdded
+	window.objects = objectsAdded
 })
 window.socket.on('onUpdateObjects', (updatedObjects) => {
-	objects = updatedObjects
+	window.objects = updatedObjects
 })
 window.socket.emit('askObjects')
 
@@ -45,7 +46,7 @@ window.hero = {
 	width: 40,
 	height: 40,
   paused: false,
-  x: 20 , y: 20
+  x: 20 , y: 20,
 }
 hero._x = hero.x
 hero._y = hero.y
@@ -69,6 +70,9 @@ window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 			} else {
 				camera.clearLimit();
 			}
+		}
+
+		if(key === 'gravity' && !window.usePlayEditor) {
 
 		}
 	}
@@ -91,18 +95,19 @@ var start = function () {
   input.start()
   chat.start(current, flags)
   if(usePlayEditor) playEditor.init(ctx, objects, camera)
+	main();
 };
 
 // Update game objects
 var update = function (modifier) {
   if(game.mode === 'battle'){
     battle.update(ctx, modifier)
-
     return
   }
   if(game.paused) return
 
   chat.update(current.chat)
+	physics.update(hero, objects, modifier)
   input.update(flags, hero, modifier)
   collisions.check(hero, objects)
   localStorage.setItem('hero', JSON.stringify(window.hero));
@@ -157,5 +162,4 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 
 // Let's play this game!
 var then = Date.now();
-start();
-main();
+setTimeout(start, 1000);
