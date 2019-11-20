@@ -41,7 +41,7 @@ let tools = {
         x: clickStart.x/scaleMultiplier,
         y: clickStart.y/scaleMultiplier,
       }
-      const lockCamera = { centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: value.width/2, limitY: value.height/2 };
+      const lockCamera = { centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
       window.socket.emit('updatePreferences', { lockCamera })
     },
   },
@@ -132,7 +132,15 @@ function drawObject(ctx, object) {
 }
 
 function drawBorder(ctx, object, thickness = 2) {
-  ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (thickness), ((object.y * scaleMultiplier) - camera.y) - (thickness), (object.width * scaleMultiplier) + (thickness * 2), (object.height * scaleMultiplier) + (thickness * 2));
+  let xBorderThickness = thickness;
+  let yBorderThickness = thickness;
+  if(object.width < 0) {
+    xBorderThickness *= -1;
+  }
+  if(object.height < 0) {
+    yBorderThickness *= -1;
+  }
+  ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (xBorderThickness), ((object.y * scaleMultiplier) - camera.y) - (yBorderThickness), (object.width * scaleMultiplier) + (xBorderThickness * 2), (object.height * scaleMultiplier) + (yBorderThickness * 2));
   ctx.fillStyle='#000';
   drawObject(ctx, object)
 }
@@ -144,7 +152,7 @@ function render(ctx, hero, objects) {
 
   if(clickStart.x && currentTool === TOOLS.SET_CAMERA_LOCK) {
     let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
-    if(possibleBox.width >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && possibleBox.height >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
+    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
     else ctx.fillStyle = 'red'
     drawBorder(ctx, possibleBox)
   }
