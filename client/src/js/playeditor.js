@@ -20,6 +20,7 @@ const keysDown = {}
 const TOOLS = {
   CAMERA_LOCK: 'cameraLock',
   ADD_OBJECT: 'addObject',
+  EDITOR: 'editor',
 }
 
 let currentTool = TOOLS.CAMERA_LOCK;
@@ -34,7 +35,31 @@ let editorState = {
 }
 
 let tools = {
-  cameraLock: {
+  [TOOLS.EDITOR]: {
+    onFirstClick: (e) => {
+      console.log(editor.getSelection())
+
+      editor.get().world.forEach((object, i) => {
+        if(object.name === "object1574299068107") {
+          const path = { path: ["world", i] }
+          editor.setSelection(path)
+          const selectionScrollHeight = editor.multiselection.nodes[0].dom.value.scrollHeight
+
+          //get dom node from editor (DAMN YOU EDITOR!!)
+          const domNode = editor.multiselection.nodes[0].dom.value
+
+          //find offset
+          var bodyRect = document.body.getBoundingClientRect(),
+          elemRect = domNode.getBoundingClientRect(),
+          offset   = elemRect.top - bodyRect.top;
+
+          //scroll to offset
+          editor.scrollTo(offset)
+        }
+      })
+    }
+  },
+  [TOOLS.CAMERA_LOCK]: {
     onSecondClick: (e) => {
       //translate
       const value = {
@@ -47,7 +72,7 @@ let tools = {
       window.socket.emit('updatePreferences', { lockCamera })
     },
   },
-  addObject : {
+  [TOOLS.ADD_OBJECT] : {
     onSecondClick: (e) => {
       let newObject = {
         name: 'object' + Date.now(),
@@ -106,20 +131,19 @@ function init(ctx, objects) {
 
 	var jsoneditor = document.createElement("div");
 	jsoneditor.id = 'jsoneditor'
-	document.getElementById('tool-'+TOOLS.ADD_OBJECT).appendChild(jsoneditor);
+	document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
   editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
 		window.socket.emit('updateObjects', state.world)
     objectFactory = state.factory;
     editorState.factory = state.factory
 	}})
   editor.set({world: objects, factory: objectFactory});
-
   var gravityToggle = document.getElementById('gravity-toggle')
   gravityToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updatePreferences', { gravity: '200' })
+      window.socket.emit('updatePreferences', { gravity: 200 })
     } else {
-      window.socket.emit('updatePreferences', { gravity: '0' })
+      window.socket.emit('updatePreferences', { gravity: 0 })
     }
   }
   if(window.preferences.gravity) {
@@ -167,11 +191,13 @@ function init(ctx, objects) {
       return
     }
     if(clickStart.x && clickStart.y) {
+      //second click
       if(tools[currentTool].onSecondClick) tools[currentTool].onSecondClick(e)
       clickStart.x = null
       clickStart.y = null
     } else {
       // first click
+      if(tools[currentTool].onFirstClick) tools[currentTool].onFirstClick(e)
       clickStart.x = (e.offsetX + camera.x)
       clickStart.y = (e.offsetY + camera.y)
     }
@@ -183,9 +209,22 @@ function init(ctx, objects) {
   })
 }
 
-function drawObject(ctx, object) {
+function drawName(ctx, object){
+	ctx.fillStyle = "rgb(0, 0, 250)";
+	ctx.font = "12px Helvetica";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "top";
+	ctx.fillText(object.name ? object.name : '', (object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y);
+  ctx.fillStyle = "#FFF";
+}
+
+function drawObject(ctx, object, withNames = true) {
   if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y, (object.width * scaleMultiplier), (object.height * scaleMultiplier));
+
+  if(withNames) {
+    drawName(ctx, object)
+  }
 }
 
 function drawBorder(ctx, object, thickness = 2) {

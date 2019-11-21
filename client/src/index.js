@@ -72,9 +72,7 @@ window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 			}
 		}
 
-		if(key === 'gravity' && !window.usePlayEditor) {
-
-		}
+		if(key === 'gravity' && !window.usePlayEditor) {}
 	}
 })
 

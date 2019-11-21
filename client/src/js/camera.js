@@ -66,7 +66,7 @@ function drawName(ctx, object){
 	ctx.fillText(object.name ? object.name : '', object.x - camera.x, object.y - camera.y);
 }
 
-function drawObject(ctx, object, withNames = true) {
+function drawObject(ctx, object, withNames = false) {
   if(object.color) ctx.fillStyle = object.color
   ctx.fillRect(object.x - camera.x, object.y - camera.y, object.width, object.height);
   ctx.fillStyle = 'white';
