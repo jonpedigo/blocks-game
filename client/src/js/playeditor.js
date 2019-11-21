@@ -1,4 +1,5 @@
 import JSONEditor from 'jsoneditor'
+import collisions from './collisions'
 
 const camera = {
   x: 0,
@@ -37,10 +38,18 @@ let editorState = {
 let tools = {
   [TOOLS.EDITOR]: {
     onFirstClick: (e) => {
-      console.log(editor.getSelection())
+      const click = {
+        _x: (e.offsetX + camera.x)/scaleMultiplier,
+        _y: (e.offsetY + camera.y)/scaleMultiplier,
+        width: 1,
+        height: 1,
+      }
 
-      editor.get().world.forEach((object, i) => {
-        if(object.name === "object1574299068107") {
+      editor.get()
+      .world
+      // .sort((a, b) => 0.5 - Math.random())
+      .forEach((object, i) => {
+        collisions.checkObject(click, object, () => {
           const path = { path: ["world", i] }
           editor.setSelection(path)
           const selectionScrollHeight = editor.multiselection.nodes[0].dom.value.scrollHeight
@@ -49,13 +58,14 @@ let tools = {
           const domNode = editor.multiselection.nodes[0].dom.value
 
           //find offset
-          var bodyRect = document.body.getBoundingClientRect(),
-          elemRect = domNode.getBoundingClientRect(),
-          offset   = elemRect.top - bodyRect.top;
+          editor.scrollableContent.scrollTop = 0
+          const bodyRect = document.body.getBoundingClientRect()
+          const elemRect = domNode.getBoundingClientRect()
+          const offset = elemRect.top - bodyRect.top
 
           //scroll to offset
           editor.scrollTo(offset)
-        }
+        })
       })
     }
   },
@@ -198,8 +208,10 @@ function init(ctx, objects) {
     } else {
       // first click
       if(tools[currentTool].onFirstClick) tools[currentTool].onFirstClick(e)
-      clickStart.x = (e.offsetX + camera.x)
-      clickStart.y = (e.offsetY + camera.y)
+      else {
+        clickStart.x = (e.offsetX + camera.x)
+        clickStart.y = (e.offsetY + camera.y)
+      }
     }
   },false);
 

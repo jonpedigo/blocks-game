@@ -1,30 +1,37 @@
-function check(hero, objects){
+function check(agent, objects, hero = true){
   let illegal = false
 
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
-    if (
-      hero._x < (objects[i].x + objects[i].width)
-      && objects[i].x < (hero._x + hero.width)
-      && hero._y < (objects[i].y + objects[i].height)
-      && objects[i].y < (hero._y + hero.height)
-    ) {
+    checkObject(agent, objects[i], () => {
       if(objects[i].obstacle) illegal = true
       if(objects[i].onCollide) objects[i].onCollide()
-    }
+    })
   }
 
   if(illegal) {
-    hero._x = hero.x
-    hero._y = hero.y
+    agent._x = agent.x
+    agent._y = agent.y
   }
 
   if(!illegal){
-    hero.x = hero._x
-    hero.y = hero._y
+    agent.x = agent._x
+    agent.y = agent._y
+  }
+}
+
+function checkObject(agent, object, onCollide) {
+  if (
+    agent._x < (object.x + object.width)
+    && object.x < (agent._x + agent.width)
+    && agent._y < (object.y + object.height)
+    && object.y < (agent._y + agent.height)
+  ) {
+    onCollide()
   }
 }
 
 export default {
   check,
+  checkObject,
 }
