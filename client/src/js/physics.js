@@ -26,21 +26,21 @@ function update (hero, objects, modifier) {
   physicsObjects.hero.x = hero.x
   physicsObjects.hero.y = hero.y
 
-
-  let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
-  system.insert(raycast)
-  // update physics system
-  system.update()
-
-  const raycastPotentials = raycast.potentials()
-  for(const body of raycastPotentials) {
-    // console.log(raycastPotentials)
-    if(raycast.collides(body)) {
-      console.log('messed up')
-      // return
-    }
-  }
-  raycast.remove()
+  //
+  // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
+  // system.insert(raycast)
+  // // update physics system
+  // system.update()
+  //
+  // const raycastPotentials = raycast.potentials()
+  // for(const body of raycastPotentials) {
+  //   // console.log(raycastPotentials)
+  //   if(raycast.collides(body)) {
+  //     console.log('messed up')
+  //     // return
+  //   }
+  // }
+  // raycast.remove()
 
   // update physics system
   system.update()

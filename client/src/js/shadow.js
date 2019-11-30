@@ -1,3 +1,5 @@
+import camera from './camera.js'
+
 // Find intersection of RAY & SEGMENT
 function getIntersection(ray,segment){
 	// RAY in parametric: Point + Delta*T1
@@ -34,7 +36,7 @@ function getIntersection(ray,segment){
 		param: T1
 	};
 }
-function getSightPolygon(sightX,sightY){
+function getSightPolygon(sightX,sightY, segments){
 	// Get all unique points
 	var points = (function(segments){
 		var a = [];
@@ -101,88 +103,43 @@ function getSightPolygon(sightX,sightY){
 // DRAWING
 
 function draw(ctx, segments, hero){
-	// Clear canvas
-	// ctx.clearRect(0,0,canvas.width,canvas.height);
-	// Draw segments
-	ctx.strokeStyle = "#999";
-	for(var i=0;i<segments.length;i++){
-		var seg = segments[i];
-		ctx.beginPath();
-		ctx.moveTo(seg.a.x,seg.a.y);
-		ctx.lineTo(seg.b.x,seg.b.y);
-		ctx.stroke();
-	}
 	// Sight Polygons
-	var fuzzyRadius = 10;
-	var polygons = [getSightPolygon(hero.x + hero.width/2,hero.y + hero.height/2)];
+	var fuzzyRadius = 5;
+	var polygons = [getSightPolygon(hero.x + hero.width/2,hero.y + hero.height/2, segments)];
 	for(var angle=0;angle<Math.PI*2;angle+=(Math.PI*2)/10){
 		var dx = Math.cos(angle)*fuzzyRadius;
 		var dy = Math.sin(angle)*fuzzyRadius;
-		polygons.push(getSightPolygon((hero.x + hero.width/2)+dx,(hero.y + hero.height/2)+dy));
+		polygons.push(getSightPolygon((hero.x + hero.width/2)+dx,(hero.y + hero.height/2)+dy, segments));
 	};
 	// DRAW AS A GIANT POLYGON
-	for(var i=1;i<polygons.length;i++){
+	for(var i=0;i<polygons.length;i++){
 		drawPolygon(polygons[i],ctx,"rgba(255,255,255,0.2)");
 	}
-	drawPolygon(polygons[0],ctx,"#fff");
+	// drawPolygon(polygons[0],ctx,"#fff");
 	// Draw red dots
-	ctx.fillStyle = "#dd3838";
-	ctx.beginPath();
-    ctx.arc(hero.x + hero.width/2, hero.y + hero.height/2, 2, 0, 2*Math.PI, false);
-    ctx.fill();
-	for(var angle=0;angle<Math.PI*2;angle+=(Math.PI*2)/10){
-		var dx = Math.cos(angle)*fuzzyRadius;
-		var dy = Math.sin(angle)*fuzzyRadius;
-		ctx.beginPath();
-    	ctx.arc((hero.x + hero.width/2)+dx, (hero.y + hero.height/2)+dy, 2, 0, 2*Math.PI, false);
-    	ctx.fill();
-    }
+	// ctx.fillStyle = "#dd3838";
+	// ctx.beginPath();
+  //   ctx.arc(hero.x + hero.width/2, hero.y + hero.height/2, 2, 0, 2*Math.PI, false);
+  //   ctx.fill();
+	// for(var angle=0;angle<Math.PI*2;angle+=(Math.PI*2)/10){
+	// 	var dx = Math.cos(angle)*fuzzyRadius;
+	// 	var dy = Math.sin(angle)*fuzzyRadius;
+	// 	ctx.beginPath();
+  //   	ctx.arc((hero.x + hero.width/2)+dx, (hero.y + hero.height/2)+dy, 2, 0, 2*Math.PI, false);
+  //   	ctx.fill();
+  //   }
 }
 function drawPolygon(polygon,ctx,fillStyle){
+  let cameraVars = camera.get()
 	ctx.fillStyle = fillStyle;
 	ctx.beginPath();
-	ctx.moveTo(polygon[0].x,polygon[0].y);
+	ctx.moveTo(polygon[0].x - cameraVars.x,polygon[0].y - cameraVars.y);
 	for(var i=1;i<polygon.length;i++){
 		var intersect = polygon[i];
-		ctx.lineTo(intersect.x,intersect.y);
+		ctx.lineTo(intersect.x - cameraVars.x,intersect.y - cameraVars.y);
 	}
 	ctx.fill();
 }
-// LINE SEGMENTS
-var segments = [
-	// Border
-	{a:{x:0,y:0}, b:{x:640,y:0}},
-	{a:{x:640,y:0}, b:{x:640,y:360}},
-	{a:{x:640,y:360}, b:{x:0,y:360}},
-	{a:{x:0,y:360}, b:{x:0,y:0}},
-	// Polygon #1
-	{a:{x:100,y:150}, b:{x:120,y:50}},
-	{a:{x:120,y:50}, b:{x:200,y:80}},
-	{a:{x:200,y:80}, b:{x:140,y:210}},
-	{a:{x:140,y:210}, b:{x:100,y:150}},
-	// Polygon #2
-	{a:{x:100,y:200}, b:{x:120,y:250}},
-	{a:{x:120,y:250}, b:{x:60,y:300}},
-	{a:{x:60,y:300}, b:{x:100,y:200}},
-	// Polygon #3
-	{a:{x:200,y:260}, b:{x:220,y:150}},
-	{a:{x:220,y:150}, b:{x:300,y:200}},
-	{a:{x:300,y:200}, b:{x:350,y:320}},
-	{a:{x:350,y:320}, b:{x:200,y:260}},
-	// Polygon #4
-	{a:{x:340,y:60}, b:{x:360,y:40}},
-	{a:{x:360,y:40}, b:{x:370,y:70}},
-	{a:{x:370,y:70}, b:{x:340,y:60}},
-	// Polygon #5
-	{a:{x:450,y:190}, b:{x:560,y:170}},
-	{a:{x:560,y:170}, b:{x:540,y:270}},
-	{a:{x:540,y:270}, b:{x:430,y:290}},
-	{a:{x:430,y:290}, b:{x:450,y:190}},
-	// Polygon #6
-	{a:{x:400,y:95}, b:{x:580,y:50}},
-	{a:{x:580,y:50}, b:{x:480,y:150}},
-	{a:{x:480,y:150}, b:{x:400,y:95}}
-];
 
 export default {
   draw

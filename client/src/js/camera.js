@@ -30,6 +30,11 @@ function setHeroY(ctx, hero) {
   camera.y = (hero.y + hero.height/2) - ctx.canvas.height/2
 }
 
+
+function get(){
+  return camera
+}
+
 function set(ctx, hero) {
   if (camera.limitX) {
     const potentialX = (hero.x + hero.width/2)
@@ -67,18 +72,27 @@ function drawName(ctx, object){
 }
 
 function drawObject(ctx, object, withNames = false) {
-  if(object.color) ctx.fillStyle = object.color
+  // if(object.color) ctx.fillStyle = object.color
   ctx.fillRect(object.x - camera.x, object.y - camera.y, object.width, object.height);
-  ctx.fillStyle = 'white';
+  // ctx.fillStyle = 'white';
 
   if(withNames) {
     drawName(ctx, object)
   }
 }
 
+function drawVertice(ctx, vertice) {
+  ctx.beginPath();
+  ctx.moveTo(vertice.a.x - camera.x,vertice.a.y - camera.y);
+  ctx.lineTo(vertice.b.x - camera.x,vertice.b.y - camera.y);
+  ctx.stroke();
+}
+
 export default {
   set,
+  get,
 	drawObject,
+  drawVertice,
   clearLimit,
   setLimit,
 }

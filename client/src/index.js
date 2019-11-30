@@ -127,6 +127,13 @@ var update = function (modifier) {
 
 // Draw everything
 var render = function () {
+	let vertices = objects.reduce((prev, object) => {
+		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
+		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
+		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
+		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})
+		return prev
+	}, [])
 
   if(game.mode === 'battle'){
     battle.render(ctx)
@@ -138,10 +145,24 @@ var render = function () {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+	//set camera so we render everything in the right place
   camera.set(ctx, hero)
-	ctx.fillStyle = 'white';
-	for(let i = 0; i < objects.length; i++){
-    camera.drawObject(ctx, objects[i])
+
+	window.preferences.renderStyle = 'outlines'
+ 	if (window.preferences.renderStyle === 'outlines') {
+		ctx.strokeStyle = "#999";
+		for(var i=0;i<vertices.length;i++){
+			camera.drawVertice(ctx, vertices[i])
+		}
+	} else {
+		for(let i = 0; i < objects.length; i++){
+			camera.drawObject(ctx, objects[i])
+		}
+	}
+
+	window.preferences.shadowStyle = true
+	if(window.preferences.shadowStyle === true) {
+		shadow.draw(ctx, vertices, hero)
 	}
 
   camera.drawObject(ctx, hero);
