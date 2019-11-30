@@ -25,23 +25,21 @@ function update(flags, hero, modifier) {
     d 68
   */
   if (38 in keysDown) { // Player holding up
-    hero._y = hero._y - hero.speed * modifier;
+    hero.y = hero.y - hero.speed * modifier;
   }
   if (40 in keysDown) { // Player holding down
-    hero._y = hero._y + hero.speed * modifier;
+    hero.y = hero.y + hero.speed * modifier;
   }
   if (37 in keysDown) { // Player holding left
-    hero._x = hero._x - hero.speed * modifier;
+    hero.x = hero.x - hero.speed * modifier;
   }
   if (39 in keysDown) { // Player holding right
-    hero._x = hero._x + hero.speed * modifier;
+    hero.x = hero.x + hero.speed * modifier;
   }
 
   if(13 in keysDown) {
     camera.setLimit(100, 100)
   }
-
-
 }
 
 export default {

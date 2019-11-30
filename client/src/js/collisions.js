@@ -1,23 +1,15 @@
-function check(agent, objects, hero = true){
+function check(agent, objects) {
   let illegal = false
-
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
+    if(agent.name === objects[i].name) continue
     checkObject(agent, objects[i], () => {
       if(objects[i].obstacle) illegal = true
       if(objects[i].onCollide) objects[i].onCollide()
     })
   }
 
-  if(illegal) {
-    agent._x = agent.x
-    agent._y = agent.y
-  }
-
-  if(!illegal){
-    agent.x = agent._x
-    agent.y = agent._y
-  }
+  return illegal
 }
 
 function checkObject(agent, object, onCollide) {

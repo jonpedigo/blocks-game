@@ -6,6 +6,8 @@ import input from './js/input.js'
 import collisions from './js/collisions.js'
 import camera from './js/camera.js'
 import playEditor from './js/playeditor.js'
+import shadow from './js/shadow.js'
+
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
 import io from 'socket.io-client';
@@ -21,6 +23,9 @@ window.CONSTANTS = {
 
 window.socket.on('onAddObjects', (objectsAdded) => {
 	window.objects = objectsAdded
+	window.objects.forEach((object) => {
+		physics.addObject(object)
+	})
 })
 window.socket.on('onUpdateObjects', (updatedObjects) => {
 	window.objects = updatedObjects
@@ -31,7 +36,6 @@ window.socket.emit('askPreferences')
 
 window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
 
-
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
@@ -41,15 +45,16 @@ canvas.id = 'game'
 document.body.appendChild(canvas);
 
 // Game objects
-window.hero = {
+const defaultHero = {
 	speed: 256, // movement in pixels per second
 	width: 40,
 	height: 40,
   paused: false,
+	name: 'hero',
   x: 20 , y: 20,
+	_x: 20, _y: 20,
 }
-hero._x = hero.x
-hero._y = hero.y
+window.hero = {...defaultHero}
 
 if(!window.usePlayEditor) {
 	var editor = document.getElementById("play-editor");
@@ -58,6 +63,15 @@ if(!window.usePlayEditor) {
 	let savedHero = JSON.parse(localStorage.getItem('hero'));
 	if(savedHero) window.hero = savedHero;
 }
+
+window.resetHero = function() {
+	physics.removeObject(window.hero)
+	window.hero = { ...defaultHero }
+	localStorage.setItem('hero', JSON.stringify(defaultHero));
+	physics.addObject(window.hero)
+}
+
+physics.addObject(window.hero)
 
 window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 	for(let key in updatedPreferences) {
@@ -105,9 +119,9 @@ var update = function (modifier) {
   if(game.paused) return
 
   chat.update(current.chat)
-	physics.update(hero, objects, modifier)
   input.update(flags, hero, modifier)
-  collisions.check(hero, objects)
+  // collisions.check(hero, objects)
+	physics.update(hero, objects, modifier)
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
@@ -146,6 +160,7 @@ var main = function () {
 		update(delta / 1000);
 		window.socket.emit('updateHeroPos', hero)
     render();
+		// physics.drawSystem(ctx, hero)
   }
 
 	then = now;
