@@ -14,10 +14,10 @@ function check(agent, objects) {
 
 function checkObject(agent, object, onCollide) {
   if (
-    agent._x < (object.x + object.width)
-    && object.x < (agent._x + agent.width)
-    && agent._y < (object.y + object.height)
-    && object.y < (agent._y + agent.height)
+    agent.x < (object.x + object.width)
+    && object.x < (agent.x + agent.width)
+    && agent.y < (object.y + object.height)
+    && object.y < (agent.y + agent.height)
   ) {
     onCollide()
   }

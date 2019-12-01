@@ -25,16 +25,40 @@ function update(flags, hero, modifier) {
     d 68
   */
   if (38 in keysDown) { // Player holding up
-    hero.y = hero.y - hero.speed * modifier;
+    if(hero.inputControlProp === 'position') {
+      hero.y -= hero.speed * modifier;
+    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
+      hero.accY -= hero.speed * modifier;
+    } else if (hero.inputControlProp === 'velocity') {
+      hero.velocityY -= hero.speed * modifier;
+    }
   }
   if (40 in keysDown) { // Player holding down
-    hero.y = hero.y + hero.speed * modifier;
+    if(hero.inputControlProp === 'position') {
+      hero.y += hero.speed * modifier;
+    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
+      hero.accY += hero.speed * modifier;
+    } else if (hero.inputControlProp === 'velocity') {
+      hero.velocityY += hero.speed * modifier;
+    }
   }
   if (37 in keysDown) { // Player holding left
-    hero.x = hero.x - hero.speed * modifier;
+    if(hero.inputControlProp === 'position') {
+      hero.x -= hero.speed * modifier;
+    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
+      hero.accX -= hero.speed * modifier;
+    } else if (hero.inputControlProp === 'velocity') {
+      hero.velocityX -= hero.speed * modifier;
+    }
   }
   if (39 in keysDown) { // Player holding right
-    hero.x = hero.x + hero.speed * modifier;
+    if(hero.inputControlProp === 'position') {
+      hero.x += hero.speed * modifier;
+    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
+      hero.accX += hero.speed * modifier;
+    } else if (hero.inputControlProp === 'velocity') {
+      hero.velocityX += hero.speed * modifier;
+    }
   }
 
   if(32 in keysDown) {

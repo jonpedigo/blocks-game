@@ -46,17 +46,21 @@ document.body.appendChild(canvas);
 
 // Game objects
 const defaultHero = {
-	speed: 256, // movement in pixels per second
 	width: 40,
 	height: 40,
   paused: false,
 	name: 'hero',
-  x: 20 , y: 20,
+  x: 50 , y: 250,
 	velocityX: 0,
 	velocityY: 0,
-	velocityG: 0,
+	velocityMax: 250,
 	accY: 0,
 	accX: 0,
+	accDecayX: 0,
+	accDecayY: 0,
+	speed: 10,
+	inputControlProp: 'position',
+	gravity: 0,
 }
 
 window.hero = {...defaultHero}
@@ -140,7 +144,7 @@ var update = function (modifier) {
 
 // Draw everything
 var render = function () {
-	let vertices = objects.reduce((prev, object) => {
+	let vertices = [...objects, window.hero].reduce((prev, object) => {
 		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
 		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
 		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
@@ -173,7 +177,7 @@ var render = function () {
 		}
 	}
 
-	window.preferences.shadows = true
+	// window.preferences.shadows = true
 	if(window.preferences.shadows === true) {
 		shadow.draw(ctx, vertices, hero)
 	}
