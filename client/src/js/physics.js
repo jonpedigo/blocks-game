@@ -106,14 +106,20 @@ function update (hero, objects, modifier) {
     }
   }
 
+  hero.onGround = false
+  // hero.wallJumpLeft = false
+  // hero.wallJumpRight = false
   if(result.overlap_y === 1) {
     if(hero.velocityY > 0) hero.velocityY = 0
+    hero.onGround = true
   } else if(result.overlap_y === -1){
     if(hero.velocityY < 0) hero.velocityY = 0
   }
   if(result.overlap_x === 1) {
+    // if(hero.onGround === false) hero.wallJumpLeft = true
     if(hero.velocityX > 0) hero.velocityX = 0
   } else if(result.overlap_x === -1){
+    // if(hero.onGround === false) hero.wallJumpRight = true
     if(hero.velocityX < 0) hero.velocityX = 0
   }
 

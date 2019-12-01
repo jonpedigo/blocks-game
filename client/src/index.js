@@ -121,7 +121,7 @@ const current = {
 }
 
 var start = function () {
-  input.start()
+  input.start(hero)
   chat.start(current, flags)
   if(usePlayEditor) playEditor.init(ctx, objects, hero, camera)
 	main();
