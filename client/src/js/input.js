@@ -37,8 +37,12 @@ function update(flags, hero, modifier) {
     hero.x = hero.x + hero.speed * modifier;
   }
 
+  if(32 in keysDown) {
+
+  }
+
   if(13 in keysDown) {
-    camera.setLimit(100, 100)
+    // camera.setLimit(100, 100)
   }
 }
 

@@ -52,8 +52,13 @@ const defaultHero = {
   paused: false,
 	name: 'hero',
   x: 20 , y: 20,
-	_x: 20, _y: 20,
+	velocityX: 0,
+	velocityY: 0,
+	velocityG: 0,
+	accY: 0,
+	accX: 0,
 }
+
 window.hero = {...defaultHero}
 
 if(!window.usePlayEditor) {
@@ -64,12 +69,20 @@ if(!window.usePlayEditor) {
 	if(savedHero) window.hero = savedHero;
 }
 
-window.resetHero = function() {
+window.resetHero = function(heroIn) {
 	physics.removeObject(window.hero)
-	window.hero = { ...defaultHero }
-	localStorage.setItem('hero', JSON.stringify(defaultHero));
+	if(heroIn) {
+		window.hero = heroIn
+	} else {
+		window.hero = { ...defaultHero }
+	}
+	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
 }
+
+window.socket.on('onUpdateHero', (updatedHero) => {
+	window.resetHero(updatedHero)
+})
 
 physics.addObject(window.hero)
 
@@ -106,7 +119,7 @@ const current = {
 var start = function () {
   input.start()
   chat.start(current, flags)
-  if(usePlayEditor) playEditor.init(ctx, objects, camera)
+  if(usePlayEditor) playEditor.init(ctx, objects, hero, camera)
 	main();
 };
 
@@ -160,8 +173,8 @@ var render = function () {
 		}
 	}
 
-	window.preferences.shadowStyle = true
-	if(window.preferences.shadowStyle === true) {
+	window.preferences.shadows = true
+	if(window.preferences.shadows === true) {
 		shadow.draw(ctx, vertices, hero)
 	}
 
@@ -173,6 +186,7 @@ var render = function () {
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
+	if(delta > 23) delta = 23
 
 	if(usePlayEditor) {
 		playEditor.update(delta)

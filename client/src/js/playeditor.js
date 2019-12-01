@@ -33,14 +33,15 @@ let editor = null
 let editorState = {
   factory: objectFactory,
   world: [],
+  hero: {},
 }
 
 let tools = {
   [TOOLS.EDITOR]: {
     onFirstClick: (e) => {
       const click = {
-        _x: (e.offsetX + camera.x)/scaleMultiplier,
-        _y: (e.offsetY + camera.y)/scaleMultiplier,
+        x: (e.offsetX + camera.x)/scaleMultiplier,
+        y: (e.offsetY + camera.y)/scaleMultiplier,
         width: 1,
         height: 1,
       }
@@ -104,7 +105,7 @@ let tools = {
   }
 }
 
-function init(ctx, objects) {
+function init(ctx, objects, hero) {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
@@ -134,39 +135,60 @@ function init(ctx, objects) {
     objectFactory = []
   })
 
-  var clearcameralock = document.getElementById("clear-camera-lock");
+  var clearcameralock = document.getElementById("clear-camera-lock")
   clearcameralock.addEventListener('click', (e) => {
     window.socket.emit('updatePreferences', { lockCamera: {} })
   })
 
-	var jsoneditor = document.createElement("div");
+  function getHero() {
+    let editorState = editor.get()
+    editorState.hero = { ...window.hero }
+    editor.update(editorState)
+  }
+
+  function setHero() {
+    let editorState = editor.get()
+    window.socket.emit('updateHero', editorState.hero)
+  }
+
+  function findHero() {
+    setCamera(ctx, hero)
+  }
+
+  var getHeroButton = document.getElementById("get-hero")
+  getHeroButton.addEventListener('click', getHero)
+  var setHeroButton = document.getElementById("set-hero")
+  setHeroButton.addEventListener('click', setHero)
+  var findHeroButton = document.getElementById("find-hero");
+  findHeroButton.addEventListener('click', findHero)
+
+	var jsoneditor = document.createElement("div")
 	jsoneditor.id = 'jsoneditor'
 	document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
   editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
 		window.socket.emit('updateObjects', state.world)
-    objectFactory = state.factory;
+    objectFactory = state.factory
     editorState.factory = state.factory
-	}})
-  editor.set({world: objects, factory: objectFactory});
-  var gravityToggle = document.getElementById('gravity-toggle')
-  gravityToggle.onclick = (e) => {
+	}});
+  editor.set({world: objects, factory: objectFactory, hero});
+
+
+  var syncHeroToggle = document.getElementById('sync-hero')
+  syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updatePreferences', { gravity: 200 })
+      window.socket.emit('updatePreferences', { syncHero: 200 })
     } else {
-      window.socket.emit('updatePreferences', { gravity: 0 })
+      window.socket.emit('updatePreferences', { syncHero: 0 })
     }
   }
-  if(window.preferences.gravity) {
-    gravityToggle.checked = true;
+  if(window.preferences.syncHero) {
+    syncHeroToggle.checked = true;
   }
 
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
 		window.hero = heroUpdated
+    if(window.preferences.syncHero) getHero()
 	})
-
-	window.findHero = function() {
-		setCamera(hero)
-	}
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
@@ -296,10 +318,6 @@ function render(ctx, hero, objects) {
 }
 
 function update(delta) {
-  setCamera()
-}
-
-function setCamera() {
   if (38 in keysDown) { // Player holding up
     camera.y -= (1/scaleMultiplier)
   }
@@ -312,7 +330,17 @@ function setCamera() {
   if (39 in keysDown) { // Player holding right
     camera.x += (1/scaleMultiplier)
   }
+}
 
+function setCameraHeroX(ctx, hero) {
+  camera.x = (hero.x + hero.width/2) - ctx.canvas.width/2
+}
+function setCameraHeroY(ctx, hero) {
+  camera.y = (hero.y + hero.height/2) - ctx.canvas.height/2
+}
+function setCamera(ctx, hero) {
+  setCameraHeroX(ctx, hero)
+  setCameraHeroY(ctx, hero)
 }
 
 export default {

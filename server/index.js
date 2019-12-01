@@ -36,6 +36,9 @@ io.on('connection', function(socket){
   socket.on('updateHeroPos', (hero) => {
     io.emit('onHeroPosUpdate', hero)
   })
+  socket.on('updateHero', (hero) => {
+    io.emit('onUpdateHero', hero)
+  })
 });
 
 http.listen(8081, function(){
