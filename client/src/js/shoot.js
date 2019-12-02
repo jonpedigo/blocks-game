@@ -52,6 +52,7 @@ function init(hero){
         })
       }
 
+
       window.socket.emit('addObjects', [shooted])
     }
   }, false)

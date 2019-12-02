@@ -3,12 +3,11 @@ import './styles/jsoneditor.css'
 import chat from './js/chat.js'
 import physics from './js/physics.js'
 import input from './js/input.js'
-import collisions from './js/collisions.js'
 import camera from './js/camera.js'
 import playEditor from './js/playeditor.js'
 import shadow from './js/shadow.js'
 import shoot from './js/shoot.js'
-
+import intelligence from './js/intelligence.js'
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
 import io from 'socket.io-client';
@@ -22,20 +21,21 @@ window.CONSTANTS = {
 	PLAYER_CANVAS_HEIGHT: 500,
 }
 
-window.socket.on('onAddObjects', (objectsAdded) => {
-	window.objects.push(...objectsAdded)
-	objectsAdded.forEach((object) => {
-		physics.addObject(object)
+window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+
+if(!window.usePlayEditor) {
+	window.socket.emit('askObjects')
+	window.socket.on('onAddObjects', (objectsAdded) => {
+		window.objects.push(...objectsAdded)
+		objectsAdded.forEach((object) => {
+			physics.addObject(object)
+		})
 	})
-})
+}
+
 window.socket.on('onUpdateObjects', (updatedObjects) => {
 	Object.assign(window.objects, updatedObjects )
 })
-window.socket.emit('askObjects')
-
-window.socket.emit('askPreferences')
-
-window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
 
 // Create the canvas
 var canvas = document.createElement("canvas");
@@ -85,12 +85,19 @@ window.resetHero = function(heroIn) {
 	physics.addObject(window.hero)
 }
 
+window.resetObjects = function() {
+	window.objects = []
+	window.socket.emit('updateObjects', [])
+	window.location.reload()
+}
+
 window.socket.on('onUpdateHero', (updatedHero) => {
 	window.resetHero(updatedHero)
 })
 
 physics.addObject(window.hero)
 
+window.socket.emit('askPreferences')
 window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 	for(let key in updatedPreferences) {
 		const value = updatedPreferences[key]
@@ -135,9 +142,13 @@ var update = function (modifier) {
   }
   if(game.paused) return
 
-  chat.update(current.chat)
   input.update(flags, hero, modifier)
+
+	chat.update(current.chat)
+	intelligence.update(window.hero, objects)
+
 	physics.update(hero, objects, modifier)
+
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 

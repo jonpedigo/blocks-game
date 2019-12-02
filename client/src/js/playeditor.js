@@ -133,6 +133,7 @@ function init(ctx, objects, hero) {
     window.socket.emit('addObjects', editorState.factory)
     editorState.factory = []
     objectFactory = []
+    editor.update(editorState)
   })
 
   var clearcameralock = document.getElementById("clear-camera-lock")
@@ -176,13 +177,25 @@ function init(ctx, objects, hero) {
   var syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updatePreferences', { syncHero: 200 })
+      window.socket.emit('updatePreferences', { syncHero: true })
     } else {
-      window.socket.emit('updatePreferences', { syncHero: 0 })
+      window.socket.emit('updatePreferences', { syncHero: false })
     }
   }
   if(window.preferences.syncHero) {
     syncHeroToggle.checked = true;
+  }
+
+  var syncObjectsToggle = document.getElementById('sync-objects')
+  syncObjectsToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { syncObjects: true })
+    } else {
+      window.socket.emit('updatePreferences', { syncObjects: false })
+    }
+  }
+  if(window.preferences.syncObjects) {
+    syncObjectsToggle.checked = true;
   }
 
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
@@ -238,9 +251,19 @@ function init(ctx, objects, hero) {
   },false);
 
   window.socket.on('onAddObjects', (objectsAdded) => {
-    editorState.world = objectsAdded
+    window.objects.push(objectsAdded)
+    let editorState = editor.get()
+    editorState.world.push(...objectsAdded)
     editor.set(editorState)
   })
+  window.socket.on('onUpdateObjects', (objectsUpdated) => {
+    if(window.preferences.syncObjects) {
+      let editorState = editor.get()
+      Object.assign(editorState.world, objectsUpdated)
+      editor.update(editorState)
+    }
+  })
+  window.socket.emit('askObjects')
 }
 
 function drawName(ctx, object){
