@@ -1,8 +1,9 @@
 import camera from './camera';
 
 const keysDown = {}
+let direction = 'up'
 
-function start(hero){
+function init(hero){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
@@ -40,9 +41,12 @@ function update(flags, hero, modifier) {
     s 83
     d 68
   */
-  if (38 in keysDown && hero.gravity === 0) { // Player holding up
-    if(hero.inputControlProp === 'position') {
-      hero.y -= hero.speed * modifier;
+  if (38 in keysDown) { // Player holding up
+    direction = 'up'
+    if(hero.gravity !== 0) {
+
+    } if(hero.inputControlProp === 'position') {
+      hero.y -= Math.ceil(hero.speed * modifier);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
       hero.accY -= hero.speed * modifier;
     } else if (hero.inputControlProp === 'velocity') {
@@ -50,8 +54,9 @@ function update(flags, hero, modifier) {
     }
   }
   if (40 in keysDown) { // Player holding down
+    direction = 'down'
     if(hero.inputControlProp === 'position') {
-      hero.y += hero.speed * modifier;
+      hero.y += Math.ceil(hero.speed * modifier);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
       hero.accY += hero.speed * modifier;
     } else if (hero.inputControlProp === 'velocity') {
@@ -59,8 +64,9 @@ function update(flags, hero, modifier) {
     }
   }
   if (37 in keysDown) { // Player holding left
+    direction = 'left'
     if(hero.inputControlProp === 'position') {
-      hero.x -= hero.speed * modifier;
+      hero.x -= Math.ceil(hero.speed * modifier);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
       hero.accX -= hero.speed * modifier;
     } else if (hero.inputControlProp === 'velocity') {
@@ -68,8 +74,9 @@ function update(flags, hero, modifier) {
     }
   }
   if (39 in keysDown) { // Player holding right
+    direction = 'right'
     if(hero.inputControlProp === 'position') {
-      hero.x += hero.speed * modifier;
+      hero.x += Math.ceil(hero.speed * modifier);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
       hero.accX += hero.speed * modifier;
     } else if (hero.inputControlProp === 'velocity') {
@@ -82,7 +89,12 @@ function update(flags, hero, modifier) {
   }
 }
 
+function getDirection() {
+  return direction
+}
+
 export default {
-  start,
+  init,
   update,
+  getDirection,
 }

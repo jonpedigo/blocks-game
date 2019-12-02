@@ -7,7 +7,7 @@ function drawChat(ctx, text){
 }
 
 const keysDown = {}
-function start(current, flags) {
+function init(current, flags) {
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
 			current.chat.shift()
@@ -35,7 +35,7 @@ function render(ctx, flags, currentChat){
 }
 
 export default {
-	start,
+	init,
 	update,
 	render
 }

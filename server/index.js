@@ -20,7 +20,7 @@ io.on('connection', function(socket){
   })
   socket.on('addObjects', (objects) => {
     serverState.push(...objects)
-    io.emit('onAddObjects', serverState)
+    io.emit('onAddObjects', objects)
   })
 
   //preferences

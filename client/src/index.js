@@ -7,6 +7,7 @@ import collisions from './js/collisions.js'
 import camera from './js/camera.js'
 import playEditor from './js/playeditor.js'
 import shadow from './js/shadow.js'
+import shoot from './js/shoot.js'
 
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
@@ -22,13 +23,13 @@ window.CONSTANTS = {
 }
 
 window.socket.on('onAddObjects', (objectsAdded) => {
-	window.objects = objectsAdded
-	window.objects.forEach((object) => {
+	window.objects.push(...objectsAdded)
+	objectsAdded.forEach((object) => {
 		physics.addObject(object)
 	})
 })
 window.socket.on('onUpdateObjects', (updatedObjects) => {
-	window.objects = updatedObjects
+	Object.assign(window.objects, updatedObjects )
 })
 window.socket.emit('askObjects')
 
@@ -58,7 +59,7 @@ const defaultHero = {
 	accX: 0,
 	accDecayX: 0,
 	accDecayY: 0,
-	speed: 10,
+	speed: 250,
 	inputControlProp: 'position',
 	gravity: 0,
 }
@@ -102,8 +103,6 @@ window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 				camera.clearLimit();
 			}
 		}
-
-		if(key === 'gravity' && !window.usePlayEditor) {}
 	}
 })
 
@@ -121,8 +120,9 @@ const current = {
 }
 
 var start = function () {
-  input.start(hero)
-  chat.start(current, flags)
+  input.init(hero)
+  chat.init(current, flags)
+	shoot.init(hero)
   if(usePlayEditor) playEditor.init(ctx, objects, hero, camera)
 	main();
 };
@@ -137,7 +137,6 @@ var update = function (modifier) {
 
   chat.update(current.chat)
   input.update(flags, hero, modifier)
-  // collisions.check(hero, objects)
 	physics.update(hero, objects, modifier)
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
@@ -171,6 +170,8 @@ var render = function () {
 		for(var i=0;i<vertices.length;i++){
 			camera.drawVertice(ctx, vertices[i])
 		}
+	} else if(window.preferences.renderStyle === 'physics'){
+		physics.drawSystem(ctx, vertices)
 	} else {
 		for(let i = 0; i < objects.length; i++){
 			camera.drawObject(ctx, objects[i])

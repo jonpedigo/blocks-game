@@ -25,7 +25,7 @@ function updatePosition(object, modifier) {
     }
   }
   if(object.velocityX) {
-    object.x += ( object.velocityX * modifier)
+    object.x += Math.ceil( object.velocityX * modifier)
   }
 
   if(object.gravity) {
@@ -50,7 +50,7 @@ function updatePosition(object, modifier) {
     }
   }
   if(object.velocityY) {
-    object.y += ( object.velocityY * modifier )
+    object.y += Math.ceil( object.velocityY * modifier )
   }
 }
 
@@ -59,7 +59,7 @@ function update (hero, objects, modifier) {
   // set objects new position and widths
   [...objects, hero].forEach((object) => {
     updatePosition(object, modifier)
-
+    
     let physicsObject = physicsObjects[object.name]
     physicsObject.x = object.x
     physicsObject.y = object.y
@@ -68,11 +68,7 @@ function update (hero, objects, modifier) {
     }
   })
 
-  //raycast check
-  let prevX = physicsObjects.hero.x
-  let prevY = physicsObjects.hero.y
-  physicsObjects.hero.x = hero.x
-  physicsObjects.hero.y = hero.y
+  window.socket.emit('updateObjects', objects)
 
   //
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
@@ -98,11 +94,13 @@ function update (hero, objects, modifier) {
   const potentials = physicsObjects.hero.potentials()
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
+
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
       illegal = true
       correction.x -= result.overlap * result.overlap_x
       correction.y -= result.overlap * result.overlap_y
+      // break;
     }
   }
 
@@ -126,8 +124,8 @@ function update (hero, objects, modifier) {
   if(illegal) {
     hero.x = correction.x
     hero.y = correction.y
-    physicsObjects.hero.x = hero.x
-    physicsObjects.hero.y = hero.y
+    // physicsObjects.hero.x = hero.x
+    // physicsObjects.hero.y = hero.y
   }
 }
 
