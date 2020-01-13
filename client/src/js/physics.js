@@ -10,9 +10,7 @@ let result = system.createResult()
 function updatePosition(object, modifier) {
   if(object.accX) {
     object.velocityX += ( object.accX )
-    if(object.velocityX > object.velocityMax) object.velocityX = object.velocityMax
-    if(object.velocityX < object.velocityMax * -1) object.velocityX = object.velocityMax * -1
-    if(object.accX > 0) {
+      if(object.accX > 0) {
       object.accX -= ( object.accDecayX )
       if(object.accX < 0) {
         object.accX = 0
@@ -25,6 +23,8 @@ function updatePosition(object, modifier) {
     }
   }
   if(object.velocityX) {
+    if(object.velocityX > object.velocityMax) object.velocityX = object.velocityMax
+    if(object.velocityX < object.velocityMax * -1) object.velocityX = object.velocityMax * -1
     object.x += Math.ceil( object.velocityX * modifier)
   }
 
@@ -33,10 +33,6 @@ function updatePosition(object, modifier) {
   }
   if(object.accY) {
     object.velocityY += ( object.accY )
-    if(object.velocityY > object.velocityMax) object.velocityY = object.velocityMax
-    if(object.velocityY < object.velocityMax * -1) {
-      object.velocityY = object.velocityMax * -1
-    }
     if(object.accY > 0) {
       object.accY -= ( object.accDecayY )
       if(object.accY < 0) {
@@ -50,6 +46,10 @@ function updatePosition(object, modifier) {
     }
   }
   if(object.velocityY) {
+    if(object.velocityY > object.velocityMax) object.velocityY = object.velocityMax
+    if(object.velocityY < object.velocityMax * -1) {
+      object.velocityY = object.velocityMax * -1
+    }
     object.y += Math.ceil( object.velocityY * modifier )
   }
 }
@@ -59,10 +59,12 @@ function update (hero, objects, modifier) {
   // set objects new position and widths
   [...objects, hero].forEach((object) => {
     updatePosition(object, modifier)
-    
-    let physicsObject = physicsObjects[object.name]
+
+    let physicsObject = physicsObjects[object.id]
     physicsObject.x = object.x
     physicsObject.y = object.y
+    // physicsObject.id = object.
+    physicsObject.tags = object.tags
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
@@ -100,7 +102,7 @@ function update (hero, objects, modifier) {
       illegal = true
       correction.x -= result.overlap * result.overlap_x
       correction.y -= result.overlap * result.overlap_y
-      // break;
+      break;
     }
   }
 
@@ -127,11 +129,28 @@ function update (hero, objects, modifier) {
     // physicsObjects.hero.x = hero.x
     // physicsObjects.hero.y = hero.y
   }
+
+  for(let name in physicsObjects){
+    if(name === 'hero') continue
+    let po = physicsObjects[name]
+    let potentials = po.potentials()
+    for(const body of potentials) {
+      if(po.collides(body, result)) {
+        if(body.class === 'enemy' && po.class === 'bullet') {
+          window.deleteObject(body.id)
+        }
+      }
+    }
+
+  }
+
+
+
 }
 
 
 function drawObject(ctx, object) {
-  physicsObjects[object.name].draw(ctx)
+  physicsObjects[object.id].draw(ctx)
 }
 
 function drawSystem(ctx) {
@@ -153,12 +172,12 @@ function drawSystem(ctx) {
 function addObject(object, moving = false) {
   const physicsObject = new Polygon(object.x, object.y, [ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
   system.insert(physicsObject)
-  physicsObjects[object.name] = physicsObject
+  physicsObjects[object.id] = physicsObject
   return physicsObject
 }
 
 function removeObject(object) {
-  system.remove(physicsObjects[object.name])
+  system.remove(physicsObjects[object.id])
 }
 
 export default {

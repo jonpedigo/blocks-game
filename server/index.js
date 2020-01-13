@@ -15,6 +15,10 @@ io.on('connection', function(socket){
     serverState = objects
     io.emit('onUpdateObjects', serverState)
   })
+  socket.on('resetObjects', (objects) => {
+    serverState = []
+    io.emit('onResetObjects')
+  })
   socket.on('askObjects', () => {
     socket.emit('onAddObjects', serverState)
   })

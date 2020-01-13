@@ -1,3 +1,14 @@
+// collision issue
+// make it easier to edit objects
+// make it easier for admin to clear move objects
+// optimize shadow feature, not all vertices!
+// preset worlds
+// a grid world (allows for pathfinding)
+// Camera change world
+// Change 'spawn point'
+// an out of bounds selector for object garbage collection
+// CREATE A FULL GAME LOOP
+
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'
@@ -10,9 +21,10 @@ import shoot from './js/shoot.js'
 import intelligence from './js/intelligence.js'
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
-import io from 'socket.io-client';
+import feedback from './js/feedback.js'
+import io from 'socket.io-client'
 
-const socket = io('localhost:8081')
+const socket = io('192.168.0.14:8081')
 window.socket = socket
 window.preferences = {}
 window.objects = []
@@ -31,10 +43,17 @@ if(!window.usePlayEditor) {
 			physics.addObject(object)
 		})
 	})
+	window.socket.on('onResetObjects', (updatedObjects) => {
+		window.objects.forEach((object) => {
+			physics.removeObject(object)
+		})
+		window.objects.length = 0
+		window.location.reload()
+	})
 }
 
 window.socket.on('onUpdateObjects', (updatedObjects) => {
-	Object.assign(window.objects, updatedObjects )
+	Object.assign(window.objects, updatedObjects)
 })
 
 // Create the canvas
@@ -50,7 +69,7 @@ const defaultHero = {
 	width: 40,
 	height: 40,
   paused: false,
-	name: 'hero',
+	id: 'hero',
   x: 50 , y: 250,
 	velocityX: 0,
 	velocityY: 0,
@@ -62,6 +81,9 @@ const defaultHero = {
 	speed: 250,
 	inputControlProp: 'position',
 	gravity: 0,
+	jumpVelocity: -500,
+	spawnPointX: 0,
+	spawnPointY: 0,
 }
 
 window.hero = {...defaultHero}
@@ -71,22 +93,30 @@ if(!window.usePlayEditor) {
 	editor.style = 'display:none';
 
 	let savedHero = JSON.parse(localStorage.getItem('hero'));
-	if(savedHero) window.hero = savedHero;
+	if(savedHero) Object.assign(window.hero, savedHero);
+
+	window.socket.on('onUpdateHeroPos', (updatedHero) => {
+		window.resetHero(updatedHero)
+	})
+
+	window.deleteObject = function(objectName) {
+		physics.removeObject(object)
+	}
 }
 
-window.resetHero = function(heroIn) {
+window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
-	if(heroIn) {
-		window.hero = heroIn
+	if(updatedHero) {
+		Object.assign(window.hero, updatedHero)
 	} else {
-		window.hero = { ...defaultHero }
+		Object.assign(window.hero, defaultHero)
 	}
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
 }
 
 window.resetObjects = function() {
-	window.objects = []
+	window.objects.length = 0
 	window.socket.emit('updateObjects', [])
 	window.location.reload()
 }
@@ -130,7 +160,7 @@ var start = function () {
   input.init(hero)
   chat.init(current, flags)
 	shoot.init(hero)
-  if(usePlayEditor) playEditor.init(ctx, objects, hero, camera)
+  if(usePlayEditor) playEditor.init(ctx, window.objects, hero, camera)
 	main();
 };
 
@@ -145,16 +175,16 @@ var update = function (modifier) {
   input.update(flags, hero, modifier)
 
 	chat.update(current.chat)
-	intelligence.update(window.hero, objects)
+	intelligence.update(window.hero, window.objects)
 
-	physics.update(hero, objects, modifier)
+	physics.update(window.hero, window.objects, modifier)
 
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
 // Draw everything
 var render = function () {
-	let vertices = [...objects, window.hero].reduce((prev, object) => {
+	let vertices = [window.hero,...window.objects].reduce((prev, object) => {
 		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
 		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
 		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
@@ -184,18 +214,19 @@ var render = function () {
 	} else if(window.preferences.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {
-		for(let i = 0; i < objects.length; i++){
-			camera.drawObject(ctx, objects[i])
+		for(let i = 0; i < window.objects.length; i++){
+			camera.drawObject(ctx, window.objects[i])
 		}
 	}
 
-	// window.preferences.shadows = true
+	window.preferences.shadows = false
 	if(window.preferences.shadows === true) {
 		shadow.draw(ctx, vertices, hero)
 	}
 
   camera.drawObject(ctx, hero);
   chat.render(ctx, flags, current.chat);
+	feedback.draw(ctx);
 }
 
 // The main game loop
@@ -206,10 +237,10 @@ var main = function () {
 
 	if(usePlayEditor) {
 		playEditor.update(delta)
-    playEditor.render(ctx, hero, objects);
+    playEditor.render(ctx, window.hero, window.objects);
   }else {
 		update(delta / 1000);
-		window.socket.emit('updateHeroPos', hero)
+		window.socket.emit('updateHeroPos', window.hero)
     render();
 		// physics.drawSystem(ctx, hero)
   }

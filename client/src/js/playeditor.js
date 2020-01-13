@@ -36,6 +36,11 @@ let editorState = {
   hero: {},
 }
 
+let tags = {
+  obstacle: true,
+  monster: false,
+}
+
 let tools = {
   [TOOLS.EDITOR]: {
     onFirstClick: (e) => {
@@ -86,13 +91,19 @@ let tools = {
   [TOOLS.ADD_OBJECT] : {
     onSecondClick: (e) => {
       let newObject = {
-        name: 'object' + Date.now(),
+        id: 'object' + Date.now(),
         width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
         height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
         x: clickStart.x/scaleMultiplier,
         y: clickStart.y/scaleMultiplier,
         color: 'white',
-        obstacle: true,
+        tags: [],
+      }
+
+      for(let tag in tags) {
+        if(tags[tag].checked){
+          newObject.tags.push(tag)
+        }
       }
       // objects.unshift(newObject)
       editorState = editor.get()
@@ -127,6 +138,13 @@ function init(ctx, objects, hero) {
     toolSelectEl.appendChild(toolEl)
   }
 
+  let toolAddObjectEl = document.getElementById("tool-addObject")
+  for(var tag in tags) {
+    let element = document.getElementById("tag-"+tag)
+    element.checked = tags[tag]
+    tags[tag] = element
+  }
+
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
     editorState = editor.get()
@@ -147,9 +165,60 @@ function init(ctx, objects, hero) {
     editor.update(editorState)
   }
 
+  function setPresetMario() {
+    let editorState = editor.get()
+    editorState.hero.gravity = 20
+    editorState.hero.jumpVelocity = -500
+    editorState.hero.velocityMax = 500
+    editor.set(editorState)
+    setHero()
+  }
+
+  function setPresetZelda() {
+    let editorState = editor.get()
+    editorState.hero.gravity = 0
+    editor.set(editorState)
+    setHero()
+  }
+
+  function setPresetAsteroids() {
+    let editorState = editor.get()
+    editorState.hero.gravity = 0
+    editorState.hero.inputControlProp = 'velocity'
+    editorState.hero.velocityMax = 400
+
+    editor.set(editorState)
+    setHero()
+  }
+
   function setHero() {
     let editorState = editor.get()
-    window.socket.emit('updateHero', editorState.hero)
+    const heroCopy = Object.assign({}, editorState.hero)
+    delete heroCopy.x
+    delete heroCopy.y
+    window.socket.emit('updateHero', heroCopy)
+  }
+
+  function setHeroPos() {
+    let editorState = editor.get()
+    window.socket.emit('updateHero', { x: editorState.hero.x, y: editorState.hero.y })
+  }
+
+  function resetHeroPos() {
+    window.socket.emit('updateHero', { x: 0, y: 0})
+  }
+  window.socket.on('onResetObjects', () => {
+    let editorState = editor.get()
+    editorState.factory = []
+    editorState.world = []
+    objectFactory = []
+    window.objects = []
+    editor.set(editorState)
+  })
+
+
+  function resetObjects() {
+    window.socket.emit('resetObjects')
   }
 
   function findHero() {
@@ -160,8 +229,20 @@ function init(ctx, objects, hero) {
   getHeroButton.addEventListener('click', getHero)
   var setHeroButton = document.getElementById("set-hero")
   setHeroButton.addEventListener('click', setHero)
+  var setHeroPosButton = document.getElementById("set-hero-pos")
+  setHeroPosButton.addEventListener('click', setHeroPos)
   var findHeroButton = document.getElementById("find-hero");
   findHeroButton.addEventListener('click', findHero)
+  var resetHeroButton = document.getElementById("reset-hero-pos");
+  resetHeroButton.addEventListener('click', resetHeroPos)
+  var resetObjectsButton = document.getElementById("reset-objects");
+  resetObjectsButton.addEventListener('click', resetObjects)
+  var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
+  setPresetAsteroidsButton.addEventListener('click', setPresetAsteroids)
+  var setPresetZeldaButton = document.getElementById("set-preset-zelda");
+  setPresetZeldaButton.addEventListener('click', setPresetZelda)
+  var setPresetMarioButton = document.getElementById("set-preset-mario");
+  setPresetMarioButton.addEventListener('click', setPresetMario)
 
 	var jsoneditor = document.createElement("div")
 	jsoneditor.id = 'jsoneditor'
@@ -172,7 +253,6 @@ function init(ctx, objects, hero) {
     editorState.factory = state.factory
 	}});
   editor.set({world: objects, factory: objectFactory, hero});
-
 
   var syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
@@ -199,7 +279,7 @@ function init(ctx, objects, hero) {
   }
 
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-		window.hero = heroUpdated
+		Object.assign(window.hero, heroUpdated)
     if(window.preferences.syncHero) getHero()
 	})
 
@@ -271,7 +351,7 @@ function drawName(ctx, object){
 	ctx.font = "12px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText(object.name ? object.name : '', (object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y);
+	ctx.fillText(object.id ? object.id : '', (object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y);
   ctx.fillStyle = "#FFF";
 }
 
@@ -302,6 +382,7 @@ function render(ctx, hero, objects) {
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = 'blue'
 
   if(clickStart.x && currentTool === TOOLS.CAMERA_LOCK) {
     let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
@@ -338,6 +419,8 @@ function render(ctx, hero, objects) {
     ctx.globalAlpha = 1.0;
   }
 
+  drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400})
+  drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5})
 }
 
 function update(delta) {
@@ -356,10 +439,10 @@ function update(delta) {
 }
 
 function setCameraHeroX(ctx, hero) {
-  camera.x = (hero.x + hero.width/2) - ctx.canvas.width/2
+  camera.x = ((hero.x + hero.width/2) * scaleMultiplier) - ctx.canvas.width/2
 }
 function setCameraHeroY(ctx, hero) {
-  camera.y = (hero.y + hero.height/2) - ctx.canvas.height/2
+  camera.y = ((hero.y + hero.height/2) * scaleMultiplier) - ctx.canvas.height/2
 }
 function setCamera(ctx, hero) {
   setCameraHeroX(ctx, hero)

@@ -3,12 +3,14 @@ import camera from './camera';
 const keysDown = {}
 let direction = 'up'
 
+
+//BAD NOTE!!! FOR SOME REASON IT IS NOT PASS BY REFERENCE FOR MY HERO OBJECT IT IS PASS BY VALUE WTF
 function init(hero){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-    if(e.keyCode === 32 && hero.onGround) {
-      hero.velocityY = -500
+    if(e.keyCode === 32 && window.hero.onGround) {
+      hero.velocityY = hero.jumpVelocity
     }
     // console.log(keysDown, e.keyCode, hero.wallJumpLeft)
     // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpLeft) {
@@ -43,9 +45,9 @@ function update(flags, hero, modifier) {
   */
   if (38 in keysDown) { // Player holding up
     direction = 'up'
-    if(hero.gravity !== 0) {
+    if(hero.gravity > 0) {
 
-    } if(hero.inputControlProp === 'position') {
+    } else if(hero.inputControlProp === 'position') {
       hero.y -= Math.ceil(hero.speed * modifier);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
       hero.accY -= hero.speed * modifier;
