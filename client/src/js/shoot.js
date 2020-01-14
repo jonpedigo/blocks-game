@@ -11,9 +11,10 @@ function init(hero){
     if(e.keyCode === 90) {
       let direction = input.getDirection()
       let shooted = {
-        name: Date.now(),
+        id: 'bullet' + Date.now(),
         width: 4,
         height: 4,
+        tags: ['bullet'],
       }
 
       if(direction === 'up') {

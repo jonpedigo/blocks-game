@@ -19,6 +19,15 @@ io.on('connection', function(socket){
     serverState = []
     io.emit('onResetObjects')
   })
+  socket.on('removeObject', (id) => {
+    for(let i = 0; i < serverState.length; i++) {
+  		if(serverState[i].id === id){
+  			serverState.splice(i, 1)
+  			break;
+  		}
+  	}
+    io.emit('onRemoveObject', id)
+  })
   socket.on('askObjects', () => {
     socket.emit('onAddObjects', serverState)
   })

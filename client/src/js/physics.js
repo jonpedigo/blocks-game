@@ -57,13 +57,23 @@ function updatePosition(object, modifier) {
 function update (hero, objects, modifier) {
 
   // set objects new position and widths
-  [...objects, hero].forEach((object) => {
+  [...objects, hero].forEach((object, i) => {
     updatePosition(object, modifier)
+
+    if(!object.id) {
+      console.log('OBJECT', object, 'WITHOUT ID')
+      return
+    }
+
+    if(!physicsObjects[object.id]) {
+      console.log('physics object not found for id: ' + object.id)
+      return
+    }
 
     let physicsObject = physicsObjects[object.id]
     physicsObject.x = object.x
     physicsObject.y = object.y
-    // physicsObject.id = object.
+    physicsObject.id = object.id
     physicsObject.tags = object.tags
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
@@ -130,22 +140,25 @@ function update (hero, objects, modifier) {
     // physicsObjects.hero.y = hero.y
   }
 
+  let removeObjects = []
+  console.log(physicsObjects)
   for(let name in physicsObjects){
+    if(!physicsObjects[name]) continue
     if(name === 'hero') continue
     let po = physicsObjects[name]
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
-        if(body.class === 'enemy' && po.class === 'bullet') {
-          window.deleteObject(body.id)
+        if(body.tags.indexOf('monster') >= 0 && po.tags.indexOf('bullet') >= 0) {
+          removeObjects.push(body.id)
         }
       }
     }
-
   }
 
-
-
+  removeObjects.forEach((id) => {
+    window.removeObject(id)
+  })
 }
 
 
@@ -178,12 +191,20 @@ function addObject(object, moving = false) {
 
 function removeObject(object) {
   system.remove(physicsObjects[object.id])
+  physicsObjects[object.id] = null;
 }
+
+function removeObjectById(id) {
+  system.remove(physicsObjects[id])
+  physicsObjects[id] = null;
+}
+
 
 export default {
   addObject,
   drawObject,
   drawSystem,
   removeObject,
+  removeObjectById,
   update
 }

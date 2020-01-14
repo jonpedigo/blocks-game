@@ -50,11 +50,13 @@ if(!window.usePlayEditor) {
 		window.objects.length = 0
 		window.location.reload()
 	})
+} else {
+	window.socket.on('onUpdateObjects', (updatedObjects) => {
+		Object.assign(window.objects, updatedObjects)
+	})
 }
 
-window.socket.on('onUpdateObjects', (updatedObjects) => {
-	Object.assign(window.objects, updatedObjects)
-})
+
 
 // Create the canvas
 var canvas = document.createElement("canvas");
@@ -84,6 +86,7 @@ const defaultHero = {
 	jumpVelocity: -500,
 	spawnPointX: 0,
 	spawnPointY: 0,
+	tags: ['hero'],
 }
 
 window.hero = {...defaultHero}
@@ -99,8 +102,8 @@ if(!window.usePlayEditor) {
 		window.resetHero(updatedHero)
 	})
 
-	window.deleteObject = function(objectName) {
-		physics.removeObject(object)
+	window.deleteObject = function(objectId) {
+		physics.removeObjectById(objectId)
 	}
 }
 
@@ -118,7 +121,17 @@ window.resetHero = function(updatedHero) {
 window.resetObjects = function() {
 	window.objects.length = 0
 	window.socket.emit('updateObjects', [])
-	window.location.reload()
+}
+
+window.removeObject = function(id) {
+	for(let i = 0; i < window.objects.length; i++) {
+		if(window.objects[i].id === id){
+			window.objects.splice(i, 1)
+			break;
+		}
+	}
+	physics.removeObjectById(id)
+	window.socket.emit('removeObject', id)
 }
 
 window.socket.on('onUpdateHero', (updatedHero) => {
