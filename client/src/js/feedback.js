@@ -1,4 +1,4 @@
-let score = 0;
+window.score = 0;
 
 function draw(ctx) {
   ctx.font = "30px Arial";

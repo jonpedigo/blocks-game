@@ -109,6 +109,12 @@ function update (hero, objects, modifier) {
 
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
+      if(body.tags.indexOf('monster')) {
+        window.score--
+        window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
+        break;
+      }
+
       illegal = true
       correction.x -= result.overlap * result.overlap_x
       correction.y -= result.overlap * result.overlap_y
@@ -141,7 +147,6 @@ function update (hero, objects, modifier) {
   }
 
   let removeObjects = []
-  console.log(physicsObjects)
   for(let name in physicsObjects){
     if(!physicsObjects[name]) continue
     if(name === 'hero') continue
@@ -151,6 +156,7 @@ function update (hero, objects, modifier) {
       if(po.collides(body, result)) {
         if(body.tags.indexOf('monster') >= 0 && po.tags.indexOf('bullet') >= 0) {
           removeObjects.push(body.id)
+          window.score++
         }
       }
     }
