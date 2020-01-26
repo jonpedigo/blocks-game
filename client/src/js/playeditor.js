@@ -171,7 +171,7 @@ function init(ctx, objects, hero) {
     editorState.hero.inputControlProp = 'position'
     editorState.hero.gravity = true
     editorState.hero.jumpVelocity = -500
-    editorState.hero.velocityMax = editorState.hero.jumpVelocity
+    editorState.hero.velocityMax = 500
     editor.set(editorState)
     setHero()
   }
@@ -441,8 +441,15 @@ function render(ctx, hero, objects) {
     ctx.globalAlpha = 1.0;
   }
 
-  drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400})
-  drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5})
+  if(window.hero.reachablePlatformHeight) {
+    let y = (window.hero.y + window.hero.height) + window.hero.reachablePlatformHeight
+    let x = window.hero.x
+
+    drawObject(ctx, {x, y, width: window.hero.width, height: 5, color: 'green'})
+  }
+
+  drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
+  drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5, color: 'white'})
 }
 
 function update(delta) {

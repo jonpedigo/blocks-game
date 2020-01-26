@@ -23,8 +23,8 @@ function updatePosition(object, delta) {
   //   }
   // }
   if(object.velocityX) {
-    if(object.velocityX > object.velocityMax) object.velocityX = object.velocityMax
-    if(object.velocityX < object.velocityMax * -1) object.velocityX = object.velocityMax * -1
+    if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
+    else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
     object.x += Math.ceil( object.velocityX * delta)
   }
 
@@ -42,24 +42,26 @@ function updatePosition(object, delta) {
   //     }
   //   }
   // }
+
+  if(object.gravity) {
+    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
+    object.y += distance
+    console.log(object.velocityY)
+    object.velocityY += (1000 * delta)
+    console.log(object.velocityY)
+  }
+
   if(object.velocityY) {
-    if(object.velocityY > object.velocityMax) object.velocityY = object.velocityMax
-    if(object.velocityY < object.velocityMax * -1) {
+    if(object.velocityY >= object.velocityMax) {
+      object.velocityY = object.velocityMax
+    }
+    else if(object.velocityY <= object.velocityMax * -1) {
       object.velocityY = object.velocityMax * -1
     }
 
     if(!object.gravity) {
       object.y += object.velocityY * delta
     }
-  }
-
-  if(object.gravity) {
-    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
-    if(object.velocityY > 0) {
-      console.log(object.y)
-    }
-    object.y += distance
-    object.velocityY += (1000 * delta)
   }
 
 }

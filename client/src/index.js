@@ -7,6 +7,7 @@
 // Camera change world
 // Change 'spawn point'
 // an out of bounds selector for object garbage collection
+// shadow player
 // CREATE A FULL GAME LOOP
 
 import './styles/index.scss'
@@ -86,6 +87,7 @@ const defaultHero = {
 	jumpVelocity: -500,
 	spawnPointX: 0,
 	spawnPointY: 0,
+	gravity: 0,
 	tags: ['hero'],
 }
 
@@ -100,6 +102,9 @@ if(!window.usePlayEditor) {
 	if(savedHero) Object.assign(window.hero, savedHero);
 
 	window.socket.on('onUpdateHeroPos', (updatedHero) => {
+		if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
+			updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
+		}
 		window.resetHero(updatedHero)
 	})
 
@@ -107,6 +112,10 @@ if(!window.usePlayEditor) {
 		physics.removeObjectById(objectId)
 	}
 }
+
+window.socket.on('onUpdateHero', (updatedHero) => {
+	window.resetHero(updatedHero)
+})
 
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
@@ -141,19 +150,10 @@ function resetReachablePlatformHeight() {
 	let velocity = window.hero.jumpVelocity
 	let gravity = 1000
 	let delta = (0 - velocity)/gravity
-	console.log(delta)
 	height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	console.log('height is', height)
 	return height
 }
-
-resetReachablePlatformHeight()
-window.socket.on('onUpdateHero', (updatedHero) => {
-	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
-		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
-	}
-
-	window.resetHero(updatedHero)
-})
 
 physics.addObject(window.hero)
 

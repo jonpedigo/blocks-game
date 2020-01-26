@@ -11,6 +11,7 @@ function init(hero){
 
     if(e.keyCode === 32 && window.hero.onGround) {
       hero.velocityY = hero.jumpVelocity
+      console.log('.?')
     }
 
     if(window.hero.inputControlProp === 'grid') {
