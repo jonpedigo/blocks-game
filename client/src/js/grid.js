@@ -59,7 +59,12 @@ window.snapAllObjectsToGrid = function() {
   window.hero.height = grid.gridNodeSize
 }
 
+function update(hero, objects) {
+  
+}
+
 export default {
   init,
   forEach,
+  update,
 }

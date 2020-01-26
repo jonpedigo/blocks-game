@@ -16,17 +16,11 @@ function init(hero){
     if(window.hero.inputControlProp === 'grid') {
       if (38 in keysDown) { // Player holding up
         window.hero.y -= window.grid.gridNodeSize
-      }
-
-      if (40 in keysDown) { // Player holding down
+      } else if (40 in keysDown) { // Player holding down
         window.hero.y += window.grid.gridNodeSize
-      }
-
-      if (37 in keysDown) { // Player holding left
+      } else if (37 in keysDown) { // Player holding left
         window.hero.x -= window.grid.gridNodeSize
-      }
-
-      if (39 in keysDown) { // Player holding right
+      } else if (39 in keysDown) { // Player holding right
         window.hero.x += window.grid.gridNodeSize
       }
     }
@@ -51,7 +45,7 @@ function init(hero){
 
 }
 
-function update(flags, hero, modifier) {
+function update(flags, hero, delta) {
   if(flags.heroPaused) return
   /*
     left arrow	37
@@ -68,41 +62,41 @@ function update(flags, hero, modifier) {
     if(hero.gravity > 0) {
 
     } else if(hero.inputControlProp === 'position') {
-      hero.y -= Math.ceil(hero.speed * modifier);
+      hero.y -= Math.ceil(hero.speed * delta);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accY -= hero.speed * modifier;
+      hero.accY -= hero.speed * delta;
     } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityY -= hero.speed * modifier;
+      hero.velocityY -= hero.speed * delta;
     }
   }
   if (40 in keysDown) { // Player holding down
     direction = 'down'
     if(hero.inputControlProp === 'position') {
-      hero.y += Math.ceil(hero.speed * modifier);
+      hero.y += Math.ceil(hero.speed * delta);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accY += hero.speed * modifier;
+      hero.accY += hero.speed * delta;
     } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityY += hero.speed * modifier;
+      hero.velocityY += hero.speed * delta;
     }
   }
   if (37 in keysDown) { // Player holding left
     direction = 'left'
     if(hero.inputControlProp === 'position') {
-      hero.x -= Math.ceil(hero.speed * modifier);
+      hero.x -= Math.ceil(hero.speed * delta);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accX -= hero.speed * modifier;
+      hero.accX -= hero.speed * delta;
     } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityX -= hero.speed * modifier;
+      hero.velocityX -= hero.speed * delta;
     }
   }
   if (39 in keysDown) { // Player holding right
     direction = 'right'
     if(hero.inputControlProp === 'position') {
-      hero.x += Math.ceil(hero.speed * modifier);
+      hero.x += Math.ceil(hero.speed * delta);
     } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accX += hero.speed * modifier;
+      hero.accX += hero.speed * delta;
     } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityX += hero.speed * modifier;
+      hero.velocityX += hero.speed * delta;
     }
   }
 

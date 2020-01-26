@@ -169,28 +169,34 @@ function init(ctx, objects, hero) {
   function setPresetMario() {
     let editorState = editor.get()
     editorState.hero.inputControlProp = 'position'
-    editorState.hero.gravity = 20
+    editorState.hero.gravity = true
     editorState.hero.jumpVelocity = -500
-    editorState.hero.velocityMax = 500
+    editorState.hero.velocityMax = editorState.hero.jumpVelocity
     editor.set(editorState)
     setHero()
   }
 
   function setPresetZelda() {
     let editorState = editor.get()
-    editorState.hero.gravity = 0
+    editorState.hero.gravity = false
     editor.set(editorState)
     setHero()
   }
 
   function setPresetAsteroids() {
     let editorState = editor.get()
-    editorState.hero.gravity = 0
+    editorState.hero.gravity = false
     editorState.hero.inputControlProp = 'velocity'
     editorState.hero.velocityMax = 400
 
     editor.set(editorState)
     setHero()
+  }
+
+  function setPresetPokemon() {
+    editorState.hero.inputControlProp = 'grid'
+    editorState.hero.gravity = false
+    window.socket.emit('snapAllObjectsToGrid')
   }
 
   function setHero() {

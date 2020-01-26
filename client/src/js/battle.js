@@ -22,7 +22,7 @@ function start(game, hitSize, speed) {
   currentBattle.speed = speed;
 }
 
-function update(ctx, modifier) {
+function update(ctx, delta) {
   if(keysDown['32']){
     if (
       movingLineX < ((ctx.canvas.width/2) - (currentBattle.hitSize/2) + currentBattle.hitSize)
@@ -33,12 +33,12 @@ function update(ctx, modifier) {
     }
   }
   if(direction == 'right') {
-    movingLineX = movingLineX + (currentBattle.speed * modifier)
+    movingLineX = movingLineX + (currentBattle.speed * delta)
     if(movingLineX > ctx.canvas.width - xPadding) {
       direction = 'left'
     }
   } else {
-    movingLineX = movingLineX - (currentBattle.speed * modifier)
+    movingLineX = movingLineX - (currentBattle.speed * delta)
     if(movingLineX < xPadding) {
       direction = 'right'
     }

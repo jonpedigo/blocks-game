@@ -7,58 +7,68 @@ const system = new Collisions()
 // Create a Result object for collecting information about the collisions
 let result = system.createResult()
 
-function updatePosition(object, modifier) {
-  if(object.accX) {
-    object.velocityX += ( object.accX )
-      if(object.accX > 0) {
-      object.accX -= ( object.accDecayX )
-      if(object.accX < 0) {
-        object.accX = 0
-      }
-    } else if (object.accX < 0) {
-      object.accX += ( object.accDecayX )
-      if(object.accX > 0) {
-        object.accX = 0
-      }
-    }
-  }
+function updatePosition(object, delta) {
+  // if(object.accX) {
+  //   object.velocityX += ( object.accX )
+  //     if(object.accX > 0) {
+  //     object.accX -= ( object.accDecayX )
+  //     if(object.accX < 0) {
+  //       object.accX = 0
+  //     }
+  //   } else if (object.accX < 0) {
+  //     object.accX += ( object.accDecayX )
+  //     if(object.accX > 0) {
+  //       object.accX = 0
+  //     }
+  //   }
+  // }
   if(object.velocityX) {
     if(object.velocityX > object.velocityMax) object.velocityX = object.velocityMax
     if(object.velocityX < object.velocityMax * -1) object.velocityX = object.velocityMax * -1
-    object.x += Math.ceil( object.velocityX * modifier)
+    object.x += Math.ceil( object.velocityX * delta)
   }
 
-  if(object.gravity) {
-    object.velocityY += object.gravity
-  }
-  if(object.accY) {
-    object.velocityY += ( object.accY )
-    if(object.accY > 0) {
-      object.accY -= ( object.accDecayY )
-      if(object.accY < 0) {
-        object.accY = 0
-      }
-    } else if (object.accY < 0) {
-      object.accY += ( object.accDecayY )
-      if(object.accY > 0) {
-        object.accY = 0
-      }
-    }
-  }
+  // if(object.accY) {
+  //   object.velocityY += ( object.accY )
+  //   if(object.accY > 0) {
+  //     object.accY -= ( object.accDecayY )
+  //     if(object.accY < 0) {
+  //       object.accY = 0
+  //     }
+  //   } else if (object.accY < 0) {
+  //     object.accY += ( object.accDecayY )
+  //     if(object.accY > 0) {
+  //       object.accY = 0
+  //     }
+  //   }
+  // }
   if(object.velocityY) {
     if(object.velocityY > object.velocityMax) object.velocityY = object.velocityMax
     if(object.velocityY < object.velocityMax * -1) {
       object.velocityY = object.velocityMax * -1
     }
-    object.y += Math.ceil( object.velocityY * modifier )
+
+    if(!object.gravity) {
+      object.y += object.velocityY * delta
+    }
   }
+
+  if(object.gravity) {
+    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
+    if(object.velocityY > 0) {
+      console.log(object.y)
+    }
+    object.y += distance
+    object.velocityY += (1000 * delta)
+  }
+
 }
 
-function update (hero, objects, modifier) {
+function update (hero, objects, delta) {
 
   // set objects new position and widths
   [...objects, hero].forEach((object, i) => {
-    updatePosition(object, modifier)
+    updatePosition(object, delta)
 
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
@@ -79,8 +89,6 @@ function update (hero, objects, modifier) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
   })
-
-  window.socket.emit('updateObjects', objects)
 
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)

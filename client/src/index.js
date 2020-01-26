@@ -83,7 +83,6 @@ const defaultHero = {
 	accDecayY: 0,
 	speed: 250,
 	inputControlProp: 'grid',
-	gravity: 0,
 	jumpVelocity: -500,
 	spawnPointX: 0,
 	spawnPointY: 0,
@@ -91,6 +90,7 @@ const defaultHero = {
 }
 
 window.hero = {...defaultHero}
+window.hero.reachablePlatformHeight = resetReachablePlatformHeight()
 
 if(!window.usePlayEditor) {
 	var editor = document.getElementById("play-editor");
@@ -135,7 +135,23 @@ window.removeObject = function(id) {
 	window.socket.emit('removeObject', id)
 }
 
+
+function resetReachablePlatformHeight() {
+	let height = 0
+	let velocity = window.hero.jumpVelocity
+	let gravity = 1000
+	let delta = (0 - velocity)/gravity
+	console.log(delta)
+	height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	return height
+}
+
+resetReachablePlatformHeight()
 window.socket.on('onUpdateHero', (updatedHero) => {
+	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
+		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
+	}
+
 	window.resetHero(updatedHero)
 })
 
@@ -180,23 +196,25 @@ var start = function () {
 };
 
 // Update game objects
-var update = function (modifier) {
+var update = function (delta) {
   if(game.mode === 'battle'){
-    battle.update(ctx, modifier)
+    battle.update(ctx, delta)
     return
   }
   if(game.paused) return
 
-  input.update(flags, hero, modifier)
+  input.update(flags, hero, delta)
 
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
-	if(!window.hero.inputControlProp !== 'grid') {
-		physics.update(window.hero, window.objects, modifier)
+	if(window.hero.inputControlProp !== 'grid') {
+		physics.update(window.hero, window.objects, delta)
 	} else {
 		grid.update(window.hero, window.objects)
 	}
+
+	window.socket.emit('updateObjects', objects)
 
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
