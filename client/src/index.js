@@ -1,6 +1,6 @@
 // collision issue
 // make it easier to edit objects
-// make it easier for admin to clear move objects
+// make it easier for admin to clear move specific objects
 // optimize shadow feature, not all vertices!
 // preset worlds
 // a grid world (allows for pathfinding)
@@ -19,6 +19,7 @@ import playEditor from './js/playeditor.js'
 import shadow from './js/shadow.js'
 import shoot from './js/shoot.js'
 import intelligence from './js/intelligence.js'
+import grid from './js/grid.js'
 // import objects from './js/objects.js'
 import battle from './js/battle.js'
 import feedback from './js/feedback.js'
@@ -81,7 +82,7 @@ const defaultHero = {
 	accDecayX: 0,
 	accDecayY: 0,
 	speed: 250,
-	inputControlProp: 'position',
+	inputControlProp: 'grid',
 	gravity: 0,
 	jumpVelocity: -500,
 	spawnPointX: 0,
@@ -171,10 +172,11 @@ const current = {
 
 var start = function () {
   input.init(hero)
+	grid.init()
   chat.init(current, flags)
 	shoot.init(hero)
   if(usePlayEditor) playEditor.init(ctx, window.objects, hero, camera)
-	main();
+	main()
 };
 
 // Update game objects
@@ -190,7 +192,11 @@ var update = function (modifier) {
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
-	physics.update(window.hero, window.objects, modifier)
+	if(!window.hero.inputControlProp !== 'grid') {
+		physics.update(window.hero, window.objects, modifier)
+	} else {
+		grid.update(window.hero, window.objects)
+	}
 
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };

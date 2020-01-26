@@ -82,7 +82,6 @@ function update (hero, objects, modifier) {
 
   window.socket.emit('updateObjects', objects)
 
-  //
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
   // // update physics system
@@ -109,7 +108,7 @@ function update (hero, objects, modifier) {
 
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
-      if(body.tags.indexOf('monster')) {
+      if(body.tags.indexOf('monster') > -1) {
         window.score--
         window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
         break;
@@ -154,7 +153,7 @@ function update (hero, objects, modifier) {
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
-        if(body.tags.indexOf('monster') >= 0 && po.tags.indexOf('bullet') >= 0) {
+        if(body.tags && po.tags && body.tags.indexOf('monster') >= 0 && po.tags.indexOf('bullet') >= 0) {
           removeObjects.push(body.id)
           window.score++
         }

@@ -1,5 +1,6 @@
 import JSONEditor from 'jsoneditor'
 import collisions from './collisions'
+import grid from './grid.js'
 
 const camera = {
   x: 0,
@@ -167,6 +168,7 @@ function init(ctx, objects, hero) {
 
   function setPresetMario() {
     let editorState = editor.get()
+    editorState.hero.inputControlProp = 'position'
     editorState.hero.gravity = 20
     editorState.hero.jumpVelocity = -500
     editorState.hero.velocityMax = 500
@@ -364,6 +366,15 @@ function drawObject(ctx, object, withNames = true) {
   }
 }
 
+function drawGrid(ctx, object) {
+  let thickness = .2
+  if(object.x % (window.grid.gridNodeSize * 10) === 0 && object.y % (window.grid.gridNodeSize * 10) === 0) {
+    thickness = 2
+  }
+
+  drawBorder(ctx, object, thickness)
+}
+
 function drawBorder(ctx, object, thickness = 2) {
   let xBorderThickness = thickness;
   let yBorderThickness = thickness;
@@ -382,8 +393,13 @@ function render(ctx, hero, objects) {
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.fillStyle = 'blue'
+  if(window.grid) {
+    grid.forEach((grid) => {
+      drawGrid(ctx, grid)
+    })
+  }
 
+  ctx.fillStyle = 'blue'
   if(clickStart.x && currentTool === TOOLS.CAMERA_LOCK) {
     let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'

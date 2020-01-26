@@ -12,6 +12,26 @@ function init(hero){
     if(e.keyCode === 32 && window.hero.onGround) {
       hero.velocityY = hero.jumpVelocity
     }
+
+    if(window.hero.inputControlProp === 'grid') {
+      if (38 in keysDown) { // Player holding up
+        window.hero.y -= window.grid.gridNodeSize
+      }
+
+      if (40 in keysDown) { // Player holding down
+        window.hero.y += window.grid.gridNodeSize
+      }
+
+      if (37 in keysDown) { // Player holding left
+        window.hero.x -= window.grid.gridNodeSize
+      }
+
+      if (39 in keysDown) { // Player holding right
+        window.hero.x += window.grid.gridNodeSize
+      }
+    }
+
+
     // console.log(keysDown, e.keyCode, hero.wallJumpLeft)
     // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpLeft) {
     //   console.log('wall jump left')
