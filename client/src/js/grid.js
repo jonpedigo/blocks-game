@@ -1,3 +1,5 @@
+import collisions from './collisions'
+
 window.grid = []
 window.grid.gridSize = 50
 window.grid.gridNodeSize = 60
@@ -63,9 +65,25 @@ function update(hero, objects) {
 
 }
 
+function createGridNodeAt(x, y) {
+  let diffX = x % grid.gridNodeSize
+  x -= diffX
+
+  let diffY = y % grid.gridNodeSize
+  y -= diffY
+
+  return {
+    x, y, width: grid.gridNodeSize, height: grid.gridNodeSize,
+  }
+
+}
+
+
+
 export default {
   init,
   forEach,
   update,
   snapObjectToGrid,
+  createGridNodeAt,
 }

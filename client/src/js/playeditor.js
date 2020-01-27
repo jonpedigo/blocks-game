@@ -90,6 +90,24 @@ let tools = {
     },
   },
   [TOOLS.ADD_OBJECT] : {
+    onFirstClick: (e) => {
+      if(instantGridAddToggle.checked) {
+        const click = {
+          x: (e.offsetX + camera.x)/scaleMultiplier,
+          y: (e.offsetY + camera.y)/scaleMultiplier,
+        }
+        let object = grid.createGridNodeAt(click.x, click.y)
+        object.tags = []
+        for(let tag in tags) {
+          if(tags[tag].checked){
+            object.tags.push(tag)
+          }
+        }
+        window.socket.emit('addObjects', [object])
+      } else {
+        defaultFirstClick(e)
+      }
+    },
     onSecondClick: (e) => {
       let newObject = {
         id: 'object' + Date.now(),
@@ -113,10 +131,15 @@ let tools = {
       objectFactory.push(newObject)
 
       // console.log('added', JSON.stringify(newObject))
-    }
+    },
   }
 }
 
+let instantGridAddToggle;
+function defaultFirstClick(e) {
+  clickStart.x = (e.offsetX + camera.x)
+  clickStart.y = (e.offsetY + camera.y)
+}
 function init(ctx, objects, hero) {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
@@ -154,6 +177,8 @@ function init(ctx, objects, hero) {
     objectFactory = []
     editor.update(editorState)
   })
+
+  instantGridAddToggle = document.getElementById("instant-grid-add")
 
   var clearcameralock = document.getElementById("clear-camera-lock")
   clearcameralock.addEventListener('click', (e) => {
@@ -334,8 +359,7 @@ function init(ctx, objects, hero) {
       // first click
       if(tools[currentTool].onFirstClick) tools[currentTool].onFirstClick(e)
       else {
-        clickStart.x = (e.offsetX + camera.x)
-        clickStart.y = (e.offsetY + camera.y)
+        defaultFirstClick(e)
       }
     }
   },false);
