@@ -60,11 +60,12 @@ window.snapAllObjectsToGrid = function() {
 }
 
 function update(hero, objects) {
-  
+
 }
 
 export default {
   init,
   forEach,
   update,
+  snapObjectToGrid,
 }

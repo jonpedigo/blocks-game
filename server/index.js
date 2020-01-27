@@ -52,6 +52,13 @@ io.on('connection', function(socket){
   socket.on('updateHero', (hero) => {
     io.emit('onUpdateHero', hero)
   })
+
+
+  //onSnapAllObjectsToGrid
+  socket.on('snapAllObjectsToGrid', (hero) => {
+    io.emit('onSnapAllObjectsToGrid', hero)
+  })
+
 });
 
 http.listen(8081, function(){

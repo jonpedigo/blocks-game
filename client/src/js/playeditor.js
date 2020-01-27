@@ -251,6 +251,8 @@ function init(ctx, objects, hero) {
   setPresetZeldaButton.addEventListener('click', setPresetZelda)
   var setPresetMarioButton = document.getElementById("set-preset-mario");
   setPresetMarioButton.addEventListener('click', setPresetMario)
+  var setPresetPokemonButton = document.getElementById("set-preset-pokemon");
+  setPresetPokemonButton.addEventListener('click', setPresetPokemon)
 
 	var jsoneditor = document.createElement("div")
 	jsoneditor.id = 'jsoneditor'
@@ -441,7 +443,7 @@ function render(ctx, hero, objects) {
     ctx.globalAlpha = 1.0;
   }
 
-  if(window.hero.reachablePlatformHeight) {
+  if(window.hero.reachablePlatformHeight && window.hero.gravity) {
     let y = (window.hero.y + window.hero.height) + window.hero.reachablePlatformHeight
     let x = window.hero.x
 

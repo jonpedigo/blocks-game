@@ -46,9 +46,7 @@ function updatePosition(object, delta) {
   if(object.gravity) {
     let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
     object.y += distance
-    console.log(object.velocityY)
     object.velocityY += (1000 * delta)
-    console.log(object.velocityY)
   }
 
   if(object.velocityY) {

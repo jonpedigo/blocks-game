@@ -1,13 +1,14 @@
 // collision issue
 // make it easier to edit objects
-// make it easier for admin to clear move specific objects
+// make it easier for admin to clear/move specific objects
 // optimize shadow feature, not all vertices!
 // preset worlds
 // a grid world (allows for pathfinding)
 // Camera change world
 // Change 'spawn point'
 // an out of bounds selector for object garbage collection
-// shadow player
+// shadow player ( that editor can play with in their own simulation )
+// basic physics or properties within the grid system
 // CREATE A FULL GAME LOOP
 
 import './styles/index.scss'
@@ -37,9 +38,18 @@ window.CONSTANTS = {
 
 window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
 
-if(!window.usePlayEditor) {
+if(window.usePlayEditor) {
+	 window.socket.on('onUpdateObjects', (updatedObjects) => {
+		 Object.assign(window.objects, updatedObjects)
+	 })
+} else {
 	window.socket.emit('askObjects')
 	window.socket.on('onAddObjects', (objectsAdded) => {
+		if(window.hero.inputControlProp === 'grid') {
+			objectsAdded.forEach((object) => {
+				grid.snapObjectToGrid(object)
+			})
+		}
 		window.objects.push(...objectsAdded)
 		objectsAdded.forEach((object) => {
 			physics.addObject(object)
@@ -51,10 +61,6 @@ if(!window.usePlayEditor) {
 		})
 		window.objects.length = 0
 		window.location.reload()
-	})
-} else {
-	window.socket.on('onUpdateObjects', (updatedObjects) => {
-		Object.assign(window.objects, updatedObjects)
 	})
 }
 
@@ -83,7 +89,7 @@ const defaultHero = {
 	accDecayX: 0,
 	accDecayY: 0,
 	speed: 250,
-	inputControlProp: 'grid',
+	inputControlProp: 'position',
 	jumpVelocity: -500,
 	spawnPointX: 0,
 	spawnPointY: 0,
@@ -111,6 +117,10 @@ if(!window.usePlayEditor) {
 	window.deleteObject = function(objectId) {
 		physics.removeObjectById(objectId)
 	}
+
+	window.socket.on('onSnapAllObjectsToGrid', () => {
+		window.snapAllObjectsToGrid()
+	})
 }
 
 window.socket.on('onUpdateHero', (updatedHero) => {
@@ -151,7 +161,6 @@ function resetReachablePlatformHeight() {
 	let gravity = 1000
 	let delta = (0 - velocity)/gravity
 	height = (velocity * delta) +  ((gravity * (delta * delta))/2)
-	console.log('height is', height)
 	return height
 }
 
