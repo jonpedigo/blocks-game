@@ -3,15 +3,17 @@ import camera from './camera';
 const keysDown = {}
 let direction = 'up'
 
+let lastJump = 0
 
 //BAD NOTE!!! FOR SOME REASON IT IS NOT PASS BY REFERENCE FOR MY HERO OBJECT IT IS PASS BY VALUE WTF
 function init(hero){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-    if(e.keyCode === 32 && window.hero.onGround) {
+    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor) {
       hero.velocityY = hero.jumpVelocity
-      console.log('.?')
+
+      lastJump = Date.now();
     }
 
     if(window.hero.inputControlProp === 'grid') {
@@ -103,6 +105,19 @@ function update(flags, hero, delta) {
 
   if(13 in keysDown) {
     // camera.setLimit(100, 100)
+  }
+
+
+  if(hero.inputControlProp === 'skating') {
+    if(direction === 'up') {
+      hero.y -= Math.ceil(hero.speed * delta);
+    } else if(direction === 'down') {
+      hero.y += Math.ceil(hero.speed * delta);
+    } else if(direction === 'left') {
+      hero.x -= Math.ceil(hero.speed * delta);
+    } else if(direction === 'right') {
+      hero.x += Math.ceil(hero.speed * delta);
+    }
   }
 }
 

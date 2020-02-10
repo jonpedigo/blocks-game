@@ -52,7 +52,9 @@ io.on('connection', function(socket){
   socket.on('updateHero', (hero) => {
     io.emit('onUpdateHero', hero)
   })
-
+  socket.on('resetHero', (hero) => {
+    io.emit('onResetHero', hero)
+  })
 
   //onSnapAllObjectsToGrid
   socket.on('snapAllObjectsToGrid', (hero) => {

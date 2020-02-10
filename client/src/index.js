@@ -1,16 +1,25 @@
-// collision issue
+// onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding
+// make size of player size, yours is a white pixel.
+// test physics collisions to breaking point and find BVH bug
 // make it easier to edit objects
 // make it easier for admin to clear/move specific objects
-// optimize shadow feature, not all vertices!
+// set game boundaries for both performance and hero position reset
+// grid world pathfinding
 // preset worlds
-// a grid world (allows for pathfinding)
-// Camera change world
 // Change 'spawn point'
-// an out of bounds selector for object garbage collection
 // shadow player ( that editor can play with in their own simulation )
-// basic physics or properties within the grid system
-// CREATE A FULL GAME LOOP
+// instead of just instant grid just have an instant option
+// treasure chest delayed queued updates
+// toggle for score
 
+// procedural
+
+// an out of bounds selector for object garbage collection
+// basic physics or properties within the grid system
+// MORE PRESETS. On ice is basically just switching between position and velocity input prop...
+// a preset for the camera to be exact specifications based on spawn point.
+// optimize shadow feature, not all vertices!
+// CREATE A FULL GAME LOOP
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'
@@ -27,13 +36,14 @@ import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 
+window.divideScreenSizeBy = 3
 const socket = io('192.168.0.14:8081')
 window.socket = socket
 window.preferences = {}
 window.objects = []
 window.CONSTANTS = {
-	PLAYER_CANVAS_WIDTH: 800,
-	PLAYER_CANVAS_HEIGHT: 500,
+	PLAYER_CANVAS_WIDTH: 1920/window.divideScreenSizeBy,
+	PLAYER_CANVAS_HEIGHT: 1080/window.divideScreenSizeBy,
 }
 
 window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
@@ -76,8 +86,8 @@ document.body.appendChild(canvas);
 
 // Game objects
 const defaultHero = {
-	width: 40,
-	height: 40,
+	width: 100/window.divideScreenSizeBy,
+	height: 100/window.divideScreenSizeBy,
   paused: false,
 	id: 'hero',
   x: 50 , y: 250,
@@ -90,7 +100,7 @@ const defaultHero = {
 	accDecayY: 0,
 	speed: 250,
 	inputControlProp: 'position',
-	jumpVelocity: -500,
+	jumpVelocity: -1500/window.divideScreenSizeBy,
 	spawnPointX: 0,
 	spawnPointY: 0,
 	gravity: 0,
@@ -99,6 +109,7 @@ const defaultHero = {
 
 window.hero = {...defaultHero}
 window.hero.reachablePlatformHeight = resetReachablePlatformHeight()
+window.hero.reachablePlatformWidth = resetReachablePlatformWidth()
 
 if(!window.usePlayEditor) {
 	var editor = document.getElementById("play-editor");
@@ -111,6 +122,9 @@ if(!window.usePlayEditor) {
 		if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
 			updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
 		}
+		if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
+			updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
+		}
 		window.resetHero(updatedHero)
 	})
 
@@ -122,6 +136,10 @@ if(!window.usePlayEditor) {
 		window.snapAllObjectsToGrid()
 	})
 }
+
+window.socket.on('onResetHero', () => {
+	window.resetHero()
+})
 
 window.socket.on('onUpdateHero', (updatedHero) => {
 	window.resetHero(updatedHero)
@@ -156,12 +174,19 @@ window.removeObject = function(id) {
 
 
 function resetReachablePlatformHeight() {
-	let height = 0
 	let velocity = window.hero.jumpVelocity
 	let gravity = 1000
 	let delta = (0 - velocity)/gravity
-	height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
 	return height
+}
+
+function resetReachablePlatformWidth() {
+	let velocity = window.hero.speed
+	let gravity = 1000
+	let deltaInAir = (0 - window.hero.jumpVelocity)/gravity
+	let width = (velocity * deltaInAir)
+	return width * 2
 }
 
 physics.addObject(window.hero)
@@ -230,7 +255,7 @@ var update = function (delta) {
 
 // Draw everything
 var render = function () {
-	let vertices = [window.hero,...window.objects].reduce((prev, object) => {
+	let vertices = [...window.objects].reduce((prev, object) => {
 		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
 		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
 		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
@@ -257,6 +282,8 @@ var render = function () {
 		for(var i=0;i<vertices.length;i++){
 			camera.drawVertice(ctx, vertices[i])
 		}
+		ctx.fillStyle = 'white';
+		camera.drawObject(ctx, window.hero)
 	} else if(window.preferences.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {

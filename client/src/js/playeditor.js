@@ -98,6 +98,7 @@ let tools = {
         }
         let object = grid.createGridNodeAt(click.x, click.y)
         object.tags = []
+        object.id = 'object' + Date.now()
         for(let tag in tags) {
           if(tags[tag].checked){
             object.tags.push(tag)
@@ -124,18 +125,23 @@ let tools = {
           newObject.tags.push(tag)
         }
       }
-      // objects.unshift(newObject)
-      editorState = editor.get()
-      editorState.factory.push(newObject)
-      editor.set(editorState)
-      objectFactory.push(newObject)
 
+      if(instantAddToggle.checked) {
+        window.socket.emit('addObjects', [newObject])
+      } else {
+        // objects.unshift(newObject)
+        editorState = editor.get()
+        editorState.factory.push(newObject)
+        editor.set(editorState)
+        objectFactory.push(newObject)
+      }
       // console.log('added', JSON.stringify(newObject))
     },
   }
 }
 
 let instantGridAddToggle;
+let instantAddToggle;
 function defaultFirstClick(e) {
   clickStart.x = (e.offsetX + camera.x)
   clickStart.y = (e.offsetY + camera.y)
@@ -179,6 +185,7 @@ function init(ctx, objects, hero) {
   })
 
   instantGridAddToggle = document.getElementById("instant-grid-add")
+  instantAddToggle = document.getElementById("instant-add")
 
   var clearcameralock = document.getElementById("clear-camera-lock")
   clearcameralock.addEventListener('click', (e) => {
@@ -195,14 +202,15 @@ function init(ctx, objects, hero) {
     let editorState = editor.get()
     editorState.hero.inputControlProp = 'position'
     editorState.hero.gravity = true
-    editorState.hero.jumpVelocity = -500
-    editorState.hero.velocityMax = 500
+    editorState.hero.jumpVelocity = -1500/window.divideScreenSizeBy
+    editorState.hero.velocityMax = 1500/window.divideScreenSizeBy
     editor.set(editorState)
     setHero()
   }
 
   function setPresetZelda() {
     let editorState = editor.get()
+    editorState.hero.inputControlProp = 'position'
     editorState.hero.gravity = false
     editor.set(editorState)
     setHero()
@@ -212,7 +220,7 @@ function init(ctx, objects, hero) {
     let editorState = editor.get()
     editorState.hero.gravity = false
     editorState.hero.inputControlProp = 'velocity'
-    editorState.hero.velocityMax = 400
+    editorState.hero.velocityMax = -1500/window.divideScreenSizeBy
 
     editor.set(editorState)
     setHero()
@@ -221,7 +229,18 @@ function init(ctx, objects, hero) {
   function setPresetPokemon() {
     editorState.hero.inputControlProp = 'grid'
     editorState.hero.gravity = false
+
+    editor.set(editorState)
+    setHero()
     window.socket.emit('snapAllObjectsToGrid')
+  }
+
+  function setPresetSnake() {
+    editorState.hero.inputControlProp = 'skating'
+    editorState.hero.gravity = false
+
+    editor.set(editorState)
+    setHero()
   }
 
   function setHero() {
@@ -239,6 +258,9 @@ function init(ctx, objects, hero) {
 
   function resetHeroPos() {
     window.socket.emit('updateHero', { x: 0, y: 0})
+  }
+  function resetHeroOther() {
+    window.socket.emit('resetHero')
   }
   window.socket.on('onResetObjects', () => {
     let editorState = editor.get()
@@ -268,6 +290,8 @@ function init(ctx, objects, hero) {
   findHeroButton.addEventListener('click', findHero)
   var resetHeroButton = document.getElementById("reset-hero-pos");
   resetHeroButton.addEventListener('click', resetHeroPos)
+  var resetHeroOtherButton = document.getElementById("reset-hero-other");
+  resetHeroOtherButton.addEventListener('click', resetHeroOther)
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', resetObjects)
   var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
@@ -278,6 +302,8 @@ function init(ctx, objects, hero) {
   setPresetMarioButton.addEventListener('click', setPresetMario)
   var setPresetPokemonButton = document.getElementById("set-preset-pokemon");
   setPresetPokemonButton.addEventListener('click', setPresetPokemon)
+  var setPresetSnakeButton = document.getElementById("set-preset-snake");
+  setPresetSnakeButton.addEventListener('click', setPresetSnake)
 
 	var jsoneditor = document.createElement("div")
 	jsoneditor.id = 'jsoneditor'
@@ -425,11 +451,14 @@ function render(ctx, hero, objects) {
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
   if(window.grid) {
     grid.forEach((grid) => {
       drawGrid(ctx, grid)
     })
   }
+
+  drawBorder(ctx, {x: window.hero.x - window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 + window.hero.width/2, y: window.hero.y - window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2 + window.hero.height/2, width: window.CONSTANTS.PLAYER_CANVAS_WIDTH, height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT})
 
   ctx.fillStyle = 'blue'
   if(clickStart.x && currentTool === TOOLS.CAMERA_LOCK) {
@@ -448,6 +477,7 @@ function render(ctx, hero, objects) {
     drawObject(ctx, objectFactory[i])
     ctx.fillStyle = 'white';
   }
+
   drawObject(ctx, hero);
 
   if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
@@ -468,14 +498,18 @@ function render(ctx, hero, objects) {
   }
 
   if(window.hero.reachablePlatformHeight && window.hero.gravity) {
-    let y = (window.hero.y + window.hero.height) + window.hero.reachablePlatformHeight
-    let x = window.hero.x
+    let y = (window.hero.y + window.hero.height)
+    let x = window.hero.x - window.hero.reachablePlatformWidth
+    let width = (window.hero.reachablePlatformWidth * 2) + (window.hero.width)
+    let height = window.hero.reachablePlatformHeight
+    let color = 'rgba(50, 255, 50, 0.5)'
 
-    drawObject(ctx, {x, y, width: window.hero.width, height: 5, color: 'green'})
+    drawObject(ctx, {x, y, width, height, color})
   }
 
   drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
   drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5, color: 'white'})
+
 }
 
 function update(delta) {

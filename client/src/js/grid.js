@@ -1,14 +1,14 @@
 import collisions from './collisions'
 
-window.grid = []
-window.grid.gridSize = 50
-window.grid.gridNodeSize = 60
-
 function init() {
-  for(var i = 0; i < grid.gridSize; i++) {
-    grid.push([])
-    for(var j = 0; j < grid.gridSize; j++) {
-      grid[i].push({x: i * grid.gridNodeSize, y: j * grid.gridNodeSize, width: grid.gridNodeSize, height: grid.gridNodeSize})
+  window.grid = []
+  window.grid.gridSize = 50
+  window.grid.gridNodeSize = 100/window.divideScreenSizeBy
+
+  for(var i = 0; i < window.grid.gridSize; i++) {
+    window.grid.push([])
+    for(var j = 0; j < window.grid.gridSize; j++) {
+      window.grid[i].push({x: i * window.grid.gridNodeSize, y: j * window.grid.gridNodeSize, width: window.grid.gridNodeSize, height: window.grid.gridNodeSize})
     }
   }
 }
