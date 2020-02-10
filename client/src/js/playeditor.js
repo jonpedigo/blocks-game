@@ -20,12 +20,12 @@ const mousePos = {
 const keysDown = {}
 
 const TOOLS = {
-  CAMERA_LOCK: 'cameraLock',
   ADD_OBJECT: 'addObject',
+  AREA_SELECTOR: 'areaSelector',
   EDITOR: 'editor',
 }
 
-let currentTool = TOOLS.CAMERA_LOCK;
+let currentTool = TOOLS.ADD_OBJECT;
 
 let scaleMultiplier = .3
 
@@ -40,6 +40,7 @@ let editorState = {
 let tags = {
   obstacle: true,
   monster: false,
+  coin: false,
 }
 
 let tools = {
@@ -76,7 +77,19 @@ let tools = {
       })
     }
   },
-  [TOOLS.CAMERA_LOCK]: {
+  [TOOLS.AREA_SELECTOR]: {
+    onFirstClick: (e) => {
+      if(selectorSpawnToggle.checked) {
+        const click = {
+          x: (e.offsetX + camera.x)/scaleMultiplier,
+          y: (e.offsetY + camera.y)/scaleMultiplier,
+        }
+
+        window.socket.emit('updateHero', {spawnPointX: click.x, spawnPointY: click.y})
+      } else {
+        defaultFirstClick(e)
+      }
+    },
     onSecondClick: (e) => {
       //translate
       const value = {
@@ -85,8 +98,15 @@ let tools = {
         x: clickStart.x/scaleMultiplier,
         y: clickStart.y/scaleMultiplier,
       }
-      const lockCamera = { centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-      window.socket.emit('updatePreferences', { lockCamera })
+
+      const {x, y, width, height} = value;
+      if(selectorCameraToggle.checked) {
+        const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        window.socket.emit('updatePreferences', { lockCamera })
+      } else if(selectorGameToggle.checked) {
+        const gameBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        window.socket.emit('updatePreferences', { gameBoundaries })
+      }
     },
   },
   [TOOLS.ADD_OBJECT] : {
@@ -142,6 +162,9 @@ let tools = {
 
 let instantGridAddToggle;
 let instantAddToggle;
+let selectorGameToggle;
+let selectorSpawnToggle;
+let selectorCameraToggle;
 function defaultFirstClick(e) {
   clickStart.x = (e.offsetX + camera.x)
   clickStart.y = (e.offsetY + camera.y)
@@ -190,6 +213,20 @@ function init(ctx, objects, hero) {
   var clearcameralock = document.getElementById("clear-camera-lock")
   clearcameralock.addEventListener('click', (e) => {
     window.socket.emit('updatePreferences', { lockCamera: {} })
+  })
+
+  var cleargameboundaries = document.getElementById("clear-game-boundaries")
+  cleargameboundaries.addEventListener('click', (e) => {
+    window.socket.emit('updatePreferences', { gameBoundaries: {} })
+  })
+
+  var setGameToCamera = document.getElementById("match-game-and-camera")
+  setGameToCamera.addEventListener('click', (e) => {
+    if(window.preferences.lockCamera){
+      window.socket.emit('updatePreferences', { gameBoundaries: window.preferences.lockCamera })
+    } else if(window.preferences.gameBoundaries) {
+      window.socket.emit('updatePreferences', { lockCamera: window.preferences.gameBoundaries })
+    }
   })
 
   function getHero() {
@@ -256,8 +293,8 @@ function init(ctx, objects, hero) {
     window.socket.emit('updateHero', { x: editorState.hero.x, y: editorState.hero.y })
   }
 
-  function resetHeroPos() {
-    window.socket.emit('updateHero', { x: 0, y: 0})
+  function respawnHero() {
+    window.socket.emit('respawnHero')
   }
   function resetHeroOther() {
     window.socket.emit('resetHero')
@@ -288,8 +325,8 @@ function init(ctx, objects, hero) {
   setHeroPosButton.addEventListener('click', setHeroPos)
   var findHeroButton = document.getElementById("find-hero");
   findHeroButton.addEventListener('click', findHero)
-  var resetHeroButton = document.getElementById("reset-hero-pos");
-  resetHeroButton.addEventListener('click', resetHeroPos)
+  var respawnHeroButton = document.getElementById("respawn-hero");
+  respawnHeroButton.addEventListener('click', respawnHero)
   var resetHeroOtherButton = document.getElementById("reset-hero-other");
   resetHeroOtherButton.addEventListener('click', resetHeroOther)
   var resetObjectsButton = document.getElementById("reset-objects");
@@ -309,7 +346,9 @@ function init(ctx, objects, hero) {
 	jsoneditor.id = 'jsoneditor'
 	document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
   editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
-		window.socket.emit('updateObjects', state.world)
+    if(!syncObjectsToggle.checked) {
+      window.socket.emit('editObjects', state.world)
+    }
     objectFactory = state.factory
     editorState.factory = state.factory
 	}});
@@ -338,6 +377,10 @@ function init(ctx, objects, hero) {
   if(window.preferences.syncObjects) {
     syncObjectsToggle.checked = true;
   }
+
+  selectorGameToggle = document.getElementById('set-game')
+  selectorCameraToggle = document.getElementById('set-camera')
+  selectorSpawnToggle = document.getElementById('set-spawn')
 
 	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
 		Object.assign(window.hero, heroUpdated)
@@ -461,7 +504,7 @@ function render(ctx, hero, objects) {
   drawBorder(ctx, {x: window.hero.x - window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 + window.hero.width/2, y: window.hero.y - window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2 + window.hero.height/2, width: window.CONSTANTS.PLAYER_CANVAS_WIDTH, height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT})
 
   ctx.fillStyle = 'blue'
-  if(clickStart.x && currentTool === TOOLS.CAMERA_LOCK) {
+  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
     let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
     else ctx.fillStyle = 'red'
@@ -497,6 +540,20 @@ function render(ctx, hero, objects) {
     ctx.globalAlpha = 1.0;
   }
 
+  if(window.preferences.gameBoundaries) {
+    let { centerX, centerY, limitX, limitY } = window.preferences.gameBoundaries;
+    const area = {
+      x: centerX - limitX,
+      y: centerY - limitY,
+      width: limitX * 2,
+      height: limitY * 2,
+    }
+    ctx.fillStyle='green';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, area);
+    ctx.globalAlpha = 1.0;
+  }
+
   if(window.hero.reachablePlatformHeight && window.hero.gravity) {
     let y = (window.hero.y + window.hero.height)
     let x = window.hero.x - window.hero.reachablePlatformWidth
@@ -514,16 +571,16 @@ function render(ctx, hero, objects) {
 
 function update(delta) {
   if (38 in keysDown) { // Player holding up
-    camera.y -= (1/scaleMultiplier)
+    camera.y -= (5)
   }
   if (40 in keysDown) { // Player holding down
-    camera.y += (1/scaleMultiplier)
+    camera.y += (5)
   }
   if (37 in keysDown) { // Player holding left
-    camera.x -= (1/scaleMultiplier)
+    camera.x -= (5)
   }
   if (39 in keysDown) { // Player holding right
-    camera.x += (1/scaleMultiplier)
+    camera.x += (5)
   }
 }
 

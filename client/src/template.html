@@ -21,9 +21,17 @@
       <hr>
       <div><input type='checkbox' id='tag-obstacle'>obstacle</input></div>
       <div><input type='checkbox' id='tag-monster'>monster</input></div>
+      <div><input type='checkbox' id='tag-coin'>coin</input></div>
     </div>
-    <div id='tool-cameraLock' class="tool-feature invisible">
-      <button id='clear-camera-lock'>clear</button>
+    <div id='tool-areaSelector' class="tool-feature invisible">
+      <div><input type='radio' name='selector' checked id='set-camera'>camera</input></div>
+      <div><input type='radio' name='selector' id='set-game'>game</input></div>
+      <div><input type='radio' name='selector' id='set-spawn'>spawn</input></div>
+      <hr/>
+      <button id='clear-camera-lock'>clear camera boundaries</button>
+      <button id='clear-game-boundaries'>clear game boundaries</button>
+      <hr/>
+      <button id='match-game-and-camera'>set game to camera</button>
     </div>
     <div id='tool-editor' class="tool-feature invisible">
       <button id='get-hero'>Get Hero</button>
@@ -33,9 +41,9 @@
       <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
     </div>
 
-
+    <hr/>
     <button id='find-hero'>Find Hero</button>
-    <button id='reset-hero-pos'>Reset Hero Pos</button>
+    <button id='respawn-hero'>Respawn Hero</button>
     <button id='reset-hero-other'>Reset Hero Other</button>
     <button id='reset-objects'>Reset Objects</button>
     <hr/>

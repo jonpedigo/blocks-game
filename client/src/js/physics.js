@@ -65,6 +65,22 @@ function updatePosition(object, delta) {
 }
 
 function update (hero, objects, delta) {
+  let gameBoundaries = window.preferences.gameBoundaries
+  if(gameBoundaries) {
+    if(hero.x < gameBoundaries.x - hero.width) {
+      hero.x = gameBoundaries.x + gameBoundaries.width
+      console.log('1')
+    } else if (hero.x > gameBoundaries.x + gameBoundaries.width) {
+      hero.x = gameBoundaries.x - hero.width
+      console.log('2')
+    } else if(hero.y < gameBoundaries.y - hero.height) {
+      hero.y = gameBoundaries.y + gameBoundaries.height
+      console.log('3')
+    } else if (hero.y > gameBoundaries.y + gameBoundaries.height) {
+      hero.y = gameBoundaries.y - hero.height
+      console.log('4')
+    }
+  }
 
   // set objects new position and widths
   [...objects, hero].forEach((object, i) => {
@@ -116,9 +132,13 @@ function update (hero, objects, delta) {
 
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
-      if(body.tags.indexOf('monster') > -1) {
+      if(body.tags && body.tags.indexOf('monster') > -1) {
         window.score--
         window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
+        break;
+      }
+      if(body.tags && body.tags.indexOf('coin') > -1) {
+        window.score++
         break;
       }
 

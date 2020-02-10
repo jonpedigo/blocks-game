@@ -1,16 +1,16 @@
-// onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding
-// make size of player size, yours is a white pixel.
+// objects are getting multiplied
+// change drawborder to actually just draw lines....
+// DYNAMIC onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding, new feature unlocked
+// change player size
 // test physics collisions to breaking point and find BVH bug
-// make it easier to edit objects
-// make it easier for admin to clear/move specific objects
-// set game boundaries for both performance and hero position reset
+// make it easier for admin to move objects
+// set game boundaries to delete objects
 // grid world pathfinding
 // preset worlds
-// Change 'spawn point'
 // shadow player ( that editor can play with in their own simulation )
-// instead of just instant grid just have an instant option
 // treasure chest delayed queued updates
 // toggle for score
+// toggle for show grid, show names, show camera area... stc
 
 // procedural
 
@@ -20,6 +20,7 @@
 // a preset for the camera to be exact specifications based on spawn point.
 // optimize shadow feature, not all vertices!
 // CREATE A FULL GAME LOOP
+
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'
@@ -72,6 +73,10 @@ if(window.usePlayEditor) {
 		window.objects.length = 0
 		window.location.reload()
 	})
+	window.socket.on('onEditObjects', (editedObjects) => {
+		console.log('editing')
+		Object.assign(window.objects, editedObjects)
+	})
 }
 
 
@@ -90,7 +95,6 @@ const defaultHero = {
 	height: 100/window.divideScreenSizeBy,
   paused: false,
 	id: 'hero',
-  x: 50 , y: 250,
 	velocityX: 0,
 	velocityY: 0,
 	velocityMax: 250,
@@ -101,8 +105,10 @@ const defaultHero = {
 	speed: 250,
 	inputControlProp: 'position',
 	jumpVelocity: -1500/window.divideScreenSizeBy,
-	spawnPointX: 0,
-	spawnPointY: 0,
+	spawnPointX: (100/window.divideScreenSizeBy) * 20,
+	spawnPointY: (100/window.divideScreenSizeBy) * 20,
+	// spawnPointX: 0,
+	// spawnPointY: 0,
 	gravity: 0,
 	tags: ['hero'],
 }
@@ -110,6 +116,8 @@ const defaultHero = {
 window.hero = {...defaultHero}
 window.hero.reachablePlatformHeight = resetReachablePlatformHeight()
 window.hero.reachablePlatformWidth = resetReachablePlatformWidth()
+window.hero.x = window.hero.spawnPointX
+window.hero.y = window.hero.spawnPointY
 
 if(!window.usePlayEditor) {
 	var editor = document.getElementById("play-editor");
@@ -119,12 +127,6 @@ if(!window.usePlayEditor) {
 	if(savedHero) Object.assign(window.hero, savedHero);
 
 	window.socket.on('onUpdateHeroPos', (updatedHero) => {
-		if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
-			updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
-		}
-		if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
-			updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
-		}
 		window.resetHero(updatedHero)
 	})
 
@@ -141,7 +143,17 @@ window.socket.on('onResetHero', () => {
 	window.resetHero()
 })
 
+window.socket.on('onRespawnHero', () => {
+	window.respawnHero()
+})
+
 window.socket.on('onUpdateHero', (updatedHero) => {
+	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
+		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
+	}
+	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
+		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
+	}
 	window.resetHero(updatedHero)
 })
 
@@ -154,6 +166,11 @@ window.resetHero = function(updatedHero) {
 	}
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
+}
+
+window.respawnHero = function() {
+	window.hero.x = window.hero.spawnPointX;
+	window.hero.y = window.hero.spawnPointY;
 }
 
 window.resetObjects = function() {

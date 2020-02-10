@@ -15,6 +15,10 @@ io.on('connection', function(socket){
     serverState = objects
     io.emit('onUpdateObjects', serverState)
   })
+  socket.on('editObjects', (objects) => {
+    serverState = objects
+    io.emit('onEditObjects', serverState)
+  })
   socket.on('resetObjects', (objects) => {
     serverState = []
     io.emit('onResetObjects')
@@ -54,6 +58,10 @@ io.on('connection', function(socket){
   })
   socket.on('resetHero', (hero) => {
     io.emit('onResetHero', hero)
+  })
+
+  socket.on('respawnHero', (hero) => {
+    io.emit('onRespawnHero', hero)
   })
 
   //onSnapAllObjectsToGrid
