@@ -167,7 +167,7 @@ function createArena() {
   let wallLeft = {
     id: 'wall-l' + Date.now(),
     width: 5,
-    height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+    height: boundaries.height,
     x: boundaries.x,
     y: boundaries.y,
     color: 'white',
@@ -176,7 +176,7 @@ function createArena() {
 
   let wallTop = {
     id: 'wall-t' + Date.now(),
-    width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+    width: boundaries.width,
     height: 5,
     x: boundaries.x,
     y: boundaries.y,
@@ -187,8 +187,8 @@ function createArena() {
   let wallRight = {
     id: 'wall-r' + Date.now(),
     width: 5,
-    height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
-    x: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier) - 5,
+    height: boundaries.height,
+    x: boundaries.x + (boundaries.width) - 5,
     y: boundaries.y,
     color: 'white',
     tags: ['obstacle'],
@@ -196,13 +196,16 @@ function createArena() {
 
   let wallBottom = {
     id: 'wall-b' + Date.now(),
-    width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+    width: boundaries.width,
     height: 5,
     x: boundaries.x,
-    y: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier) - 5,
+    y: boundaries.y + (boundaries.height) - 5,
     color: 'white',
     tags: ['obstacle'],
   }
+
+  console.log(wallBottom.y)
+  console.log(wallRight.x)
 
   window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
 }
@@ -401,17 +404,17 @@ function init(ctx, objects, hero) {
 
   function setPresetWorldArenaBoundary() {
     const value = {
-      width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
-      height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
-      x: clickStart.x/scaleMultiplier,
-      y: clickStart.y/scaleMultiplier,
+      width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+      height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+      centerX: window.hero.x + window.hero.width/2,
+      centerY: window.hero.y + window.hero.height/2,
     }
 
-    const {x, y, width, height} = value;
-    const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+    const {centerY, centerX, width, height} = value;
+    const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
 
     createArena()
-    window.socket.emit('updatePreferences', { lockCamera: lockCamera })
+    window.socket.emit('updatePreferences', { lockCamera: lockCamera , gameBoundaries: {} })
   }
 
   function setPresetWorldArenaCyclical() {
@@ -428,7 +431,7 @@ function init(ctx, objects, hero) {
   }
 
   function setPresetWorldAdventureZoomed() {
-    window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {} })
+    window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })
   }
 
 	var jsoneditor = document.createElement("div")
