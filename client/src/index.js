@@ -1,7 +1,29 @@
+// deleting all objects + adding game boundaries for cyclical maps.
+// Deleting all game objects while zooming in ( and clearing maps )
+// Arena around the player and zoom out a little maybe.
+
+// set camera and game boundary to player location
+// increase/decrease player size
+// zooming in/out and keeping objects
+
+// DYNAMIC onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding, new feature unlocked
+// Negatives
+//
+// Go back to respawn
+// Lose score
+// Lose Items
+// Lose Power up
+//
+// Positives
+//
+// Level Up ( Get experience, +1, advancement , makes game easier)
+// Get tool ( style change, changes game )
+// Add Life ( get a second chance to play game )
+
+//--------
+
 // objects are getting multiplied
 // change drawborder to actually just draw lines....
-// DYNAMIC onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding, new feature unlocked
-// change player size
 // test physics collisions to breaking point and find BVH bug
 // make it easier for admin to move objects
 // set game boundaries to delete objects
@@ -11,6 +33,13 @@
 // treasure chest delayed queued updates
 // toggle for score
 // toggle for show grid, show names, show camera area... stc
+
+// controlling X or Y scroll
+// TRUE zelda camera work
+
+
+
+// leveling up
 
 // procedural
 
@@ -37,7 +66,7 @@ import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 
-window.divideScreenSizeBy = 3
+window.divideScreenSizeBy = 2
 const socket = io('192.168.0.14:8081')
 window.socket = socket
 window.preferences = {}
@@ -89,6 +118,14 @@ canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
 canvas.id = 'game'
 document.body.appendChild(canvas);
 
+const defaultPreferences = {
+	zoomMultiplier: 1,
+	lockCamera: {},
+	gameBoundaries: {},
+}
+
+window.preferences = defaultPreferences;
+
 // Game objects
 const defaultHero = {
 	width: 100/window.divideScreenSizeBy,
@@ -104,7 +141,7 @@ const defaultHero = {
 	accDecayY: 0,
 	speed: 250,
 	inputControlProp: 'position',
-	jumpVelocity: -1500/window.divideScreenSizeBy,
+	jumpVelocity: -1200/window.divideScreenSizeBy,
 	spawnPointX: (100/window.divideScreenSizeBy) * 20,
 	spawnPointY: (100/window.divideScreenSizeBy) * 20,
 	// spawnPointX: 0,
@@ -210,6 +247,7 @@ physics.addObject(window.hero)
 
 window.socket.emit('askPreferences')
 window.socket.on('onUpdatePreferences', (updatedPreferences) => {
+	console.log(updatedPreferences)
 	for(let key in updatedPreferences) {
 		const value = updatedPreferences[key]
 		window.preferences[key] = value

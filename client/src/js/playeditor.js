@@ -23,6 +23,7 @@ const TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
   EDITOR: 'editor',
+  GAME_FEEL: 'gameFeel',
 }
 
 let currentTool = TOOLS.ADD_OBJECT;
@@ -160,6 +161,52 @@ let tools = {
   }
 }
 
+function createArena() {
+  let boundaries = {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
+
+  let wallLeft = {
+    id: 'wall-l' + Date.now(),
+    width: 5,
+    height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+    x: boundaries.x,
+    y: boundaries.y,
+    color: 'white',
+    tags: ['obstacle'],
+  }
+
+  let wallTop = {
+    id: 'wall-t' + Date.now(),
+    width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+    height: 5,
+    x: boundaries.x,
+    y: boundaries.y,
+    color: 'white',
+    tags: ['obstacle'],
+  }
+
+  let wallRight = {
+    id: 'wall-r' + Date.now(),
+    width: 5,
+    height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+    x: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier) - 5,
+    y: boundaries.y,
+    color: 'white',
+    tags: ['obstacle'],
+  }
+
+  let wallBottom = {
+    id: 'wall-b' + Date.now(),
+    width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+    height: 5,
+    x: boundaries.x,
+    y: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier) - 5,
+    color: 'white',
+    tags: ['obstacle'],
+  }
+
+  window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
+}
+
 let instantGridAddToggle;
 let instantAddToggle;
 let selectorGameToggle;
@@ -239,8 +286,8 @@ function init(ctx, objects, hero) {
     let editorState = editor.get()
     editorState.hero.inputControlProp = 'position'
     editorState.hero.gravity = true
-    editorState.hero.jumpVelocity = -1500/window.divideScreenSizeBy
-    editorState.hero.velocityMax = 1500/window.divideScreenSizeBy
+    editorState.hero.jumpVelocity = -1200/window.divideScreenSizeBy
+    editorState.hero.velocityMax = 1200/window.divideScreenSizeBy
     editor.set(editorState)
     setHero()
   }
@@ -341,6 +388,48 @@ function init(ctx, objects, hero) {
   setPresetPokemonButton.addEventListener('click', setPresetPokemon)
   var setPresetSnakeButton = document.getElementById("set-preset-snake");
   setPresetSnakeButton.addEventListener('click', setPresetSnake)
+  var setPresetWorldArenaBoundaryButton = document.getElementById("set-preset-world-arenaboundary");
+  setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
+  var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
+  setPresetWorldArenaCyclicalButton.addEventListener('click', setPresetWorldArenaCyclical)
+  var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
+  setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
+  var zoomOutButton = document.getElementById("hero-zoomOut");
+  zoomOutButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/.9 }))
+  var zoomInButton = document.getElementById("hero-zoomIn");
+  zoomInButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/1.1 }))
+
+  function setPresetWorldArenaBoundary() {
+    const value = {
+      width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
+      height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
+      x: clickStart.x/scaleMultiplier,
+      y: clickStart.y/scaleMultiplier,
+    }
+
+    const {x, y, width, height} = value;
+    const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+
+    createArena()
+    window.socket.emit('updatePreferences', { lockCamera: lockCamera })
+  }
+
+  function setPresetWorldArenaCyclical() {
+    const value = {
+      width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
+      height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+      centerX: window.hero.x + window.hero.width/2,
+      centerY: window.hero.y + window.hero.height/2,
+    }
+
+    const {centerY, centerX, width, height} = value;
+    const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+    window.socket.emit('updatePreferences', { lockCamera: lockCamera, gameBoundaries: lockCamera })
+  }
+
+  function setPresetWorldAdventureZoomed() {
+    window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {} })
+  }
 
 	var jsoneditor = document.createElement("div")
 	jsoneditor.id = 'jsoneditor'
@@ -501,7 +590,7 @@ function render(ctx, hero, objects) {
     })
   }
 
-  drawBorder(ctx, {x: window.hero.x - window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 + window.hero.width/2, y: window.hero.y - window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2 + window.hero.height/2, width: window.CONSTANTS.PLAYER_CANVAS_WIDTH, height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT})
+  drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
 
   ctx.fillStyle = 'blue'
   if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
@@ -566,7 +655,6 @@ function render(ctx, hero, objects) {
 
   drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
   drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5, color: 'white'})
-
 }
 
 function update(delta) {

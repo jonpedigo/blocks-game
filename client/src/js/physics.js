@@ -61,7 +61,6 @@ function updatePosition(object, delta) {
       object.y += object.velocityY * delta
     }
   }
-
 }
 
 function update (hero, objects, delta) {
@@ -69,16 +68,12 @@ function update (hero, objects, delta) {
   if(gameBoundaries) {
     if(hero.x < gameBoundaries.x - hero.width) {
       hero.x = gameBoundaries.x + gameBoundaries.width
-      console.log('1')
     } else if (hero.x > gameBoundaries.x + gameBoundaries.width) {
       hero.x = gameBoundaries.x - hero.width
-      console.log('2')
     } else if(hero.y < gameBoundaries.y - hero.height) {
       hero.y = gameBoundaries.y + gameBoundaries.height
-      console.log('3')
     } else if (hero.y > gameBoundaries.y + gameBoundaries.height) {
       hero.y = gameBoundaries.y - hero.height
-      console.log('4')
     }
   }
 
