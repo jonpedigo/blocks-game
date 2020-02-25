@@ -23,6 +23,7 @@ const TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
   EDITOR: 'editor',
+  SIMPLE_EDITOR: 'simpleEditor',
   GAME_FEEL: 'gameFeel',
 }
 
@@ -38,13 +39,42 @@ let editorState = {
   hero: {},
 }
 
+let simpleeditor = null
+
 let tags = {
   obstacle: true,
   monster: false,
   coin: false,
 }
+window.tags = tags
 
+let editingObject = {
+  i: null,
+  id: null,
+}
 let tools = {
+  [TOOLS.SIMPLE_EDITOR]: {
+    onFirstClick: (e) => {
+      const click = {
+        x: (e.offsetX + camera.x)/scaleMultiplier,
+        y: (e.offsetY + camera.y)/scaleMultiplier,
+        width: 1,
+        height: 1,
+      }
+
+      window.objects
+      .forEach((object, i) => {
+        collisions.checkObject(click, object, () => {
+          simpleeditor.set(Object.assign({}, object))
+          simpleeditor.expandAll()
+          editingObject = {
+            i,
+            id: object.id,
+          }
+        })
+      })
+    }
+  },
   [TOOLS.EDITOR]: {
     onFirstClick: (e) => {
       const click = {
@@ -118,11 +148,13 @@ let tools = {
           y: (e.offsetY + camera.y)/scaleMultiplier,
         }
         let object = grid.createGridNodeAt(click.x, click.y)
-        object.tags = []
+        object.tags = {}
         object.id = 'object' + Date.now()
         for(let tag in tags) {
           if(tags[tag].checked){
-            object.tags.push(tag)
+            object.tags[tag] = true
+          } else {
+            object.tags[tag] = false
           }
         }
         window.socket.emit('addObjects', [object])
@@ -138,12 +170,14 @@ let tools = {
         x: clickStart.x/scaleMultiplier,
         y: clickStart.y/scaleMultiplier,
         color: 'white',
-        tags: [],
+        tags: {},
       }
 
       for(let tag in tags) {
         if(tags[tag].checked){
-          newObject.tags.push(tag)
+          newObject.tags[tag] = true
+        } else {
+          newObject.tags[tag] = false
         }
       }
 
@@ -159,55 +193,6 @@ let tools = {
       // console.log('added', JSON.stringify(newObject))
     },
   }
-}
-
-function createArena() {
-  let boundaries = {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
-
-  let wallLeft = {
-    id: 'wall-l' + Date.now(),
-    width: 5,
-    height: boundaries.height,
-    x: boundaries.x,
-    y: boundaries.y,
-    color: 'white',
-    tags: ['obstacle'],
-  }
-
-  let wallTop = {
-    id: 'wall-t' + Date.now(),
-    width: boundaries.width,
-    height: 5,
-    x: boundaries.x,
-    y: boundaries.y,
-    color: 'white',
-    tags: ['obstacle'],
-  }
-
-  let wallRight = {
-    id: 'wall-r' + Date.now(),
-    width: 5,
-    height: boundaries.height,
-    x: boundaries.x + (boundaries.width) - 5,
-    y: boundaries.y,
-    color: 'white',
-    tags: ['obstacle'],
-  }
-
-  let wallBottom = {
-    id: 'wall-b' + Date.now(),
-    width: boundaries.width,
-    height: 5,
-    x: boundaries.x,
-    y: boundaries.y + (boundaries.height) - 5,
-    color: 'white',
-    tags: ['obstacle'],
-  }
-
-  console.log(wallBottom.y)
-  console.log(wallRight.x)
-
-  window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
 }
 
 let instantGridAddToggle;
@@ -246,6 +231,88 @@ function init(ctx, objects, hero) {
     let element = document.getElementById("tag-"+tag)
     element.checked = tags[tag]
     tags[tag] = element
+  }
+
+  var jsoneditor = document.createElement("div")
+  jsoneditor.id = 'jsoneditor'
+  document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
+  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
+    if(!syncObjectsToggle.checked) {
+      window.socket.emit('editObjects', state.world)
+    }
+    objectFactory = state.factory
+    editorState.factory = state.factory
+  }});
+  editor.set({world: objects, factory: objectFactory, hero});
+
+  var simplejsoneditor = document.createElement("div")
+  simplejsoneditor.id = 'simplejsoneditor'
+  document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
+  simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
+    window.objects[editingObject.i].tags = object.tags
+    window.socket.emit('editObjects', window.objects)
+  }});
+
+  var getHeroButton = document.getElementById("get-hero")
+  getHeroButton.addEventListener('click', getHero)
+  var setHeroButton = document.getElementById("set-hero")
+  setHeroButton.addEventListener('click', setHero)
+  var setHeroPosButton = document.getElementById("set-hero-pos")
+  setHeroPosButton.addEventListener('click', setHeroPos)
+  var findHeroButton = document.getElementById("find-hero");
+  findHeroButton.addEventListener('click', findHero)
+  var respawnHeroButton = document.getElementById("respawn-hero");
+  respawnHeroButton.addEventListener('click', respawnHero)
+  var resetHeroOtherButton = document.getElementById("reset-hero-other");
+  resetHeroOtherButton.addEventListener('click', resetHeroOther)
+  var resetObjectsButton = document.getElementById("reset-objects");
+  resetObjectsButton.addEventListener('click', resetObjects)
+  var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
+  setPresetAsteroidsButton.addEventListener('click', setPresetAsteroids)
+  var setPresetZeldaButton = document.getElementById("set-preset-zelda");
+  setPresetZeldaButton.addEventListener('click', setPresetZelda)
+  var setPresetMarioButton = document.getElementById("set-preset-mario");
+  setPresetMarioButton.addEventListener('click', setPresetMario)
+  var setPresetPokemonButton = document.getElementById("set-preset-pokemon");
+  setPresetPokemonButton.addEventListener('click', setPresetPokemon)
+  var setPresetSnakeButton = document.getElementById("set-preset-snake");
+  setPresetSnakeButton.addEventListener('click', setPresetSnake)
+  var setPresetWorldArenaBoundaryButton = document.getElementById("set-preset-world-arenaboundary");
+  setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
+  var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
+  setPresetWorldArenaCyclicalButton.addEventListener('click', setPresetWorldArenaCyclical)
+  var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
+  setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
+  var zoomOutButton = document.getElementById("hero-zoomOut");
+  zoomOutButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/.9 }))
+  var zoomInButton = document.getElementById("hero-zoomIn");
+  zoomInButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/1.1 }))
+  selectorGameToggle = document.getElementById('set-game')
+  selectorCameraToggle = document.getElementById('set-camera')
+  selectorSpawnToggle = document.getElementById('set-spawn')
+
+  var syncHeroToggle = document.getElementById('sync-hero')
+  syncHeroToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { syncHero: true })
+    } else {
+      window.socket.emit('updatePreferences', { syncHero: false })
+    }
+  }
+  if(window.preferences.syncHero) {
+    syncHeroToggle.checked = true;
+  }
+
+  var syncObjectsToggle = document.getElementById('sync-objects')
+  syncObjectsToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { syncObjects: true })
+    } else {
+      window.socket.emit('updatePreferences', { syncObjects: false })
+    }
+  }
+  if(window.preferences.syncObjects) {
+    syncObjectsToggle.checked = true;
   }
 
   var saveObjects = document.getElementById("save-factory");
@@ -349,15 +416,6 @@ function init(ctx, objects, hero) {
   function resetHeroOther() {
     window.socket.emit('resetHero')
   }
-  window.socket.on('onResetObjects', () => {
-    let editorState = editor.get()
-    editorState.factory = []
-    editorState.world = []
-    objectFactory = []
-    window.objects = []
-    editor.set(editorState)
-  })
-
 
   function resetObjects() {
     window.socket.emit('resetObjects')
@@ -366,41 +424,6 @@ function init(ctx, objects, hero) {
   function findHero() {
     setCamera(ctx, hero)
   }
-
-  var getHeroButton = document.getElementById("get-hero")
-  getHeroButton.addEventListener('click', getHero)
-  var setHeroButton = document.getElementById("set-hero")
-  setHeroButton.addEventListener('click', setHero)
-  var setHeroPosButton = document.getElementById("set-hero-pos")
-  setHeroPosButton.addEventListener('click', setHeroPos)
-  var findHeroButton = document.getElementById("find-hero");
-  findHeroButton.addEventListener('click', findHero)
-  var respawnHeroButton = document.getElementById("respawn-hero");
-  respawnHeroButton.addEventListener('click', respawnHero)
-  var resetHeroOtherButton = document.getElementById("reset-hero-other");
-  resetHeroOtherButton.addEventListener('click', resetHeroOther)
-  var resetObjectsButton = document.getElementById("reset-objects");
-  resetObjectsButton.addEventListener('click', resetObjects)
-  var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
-  setPresetAsteroidsButton.addEventListener('click', setPresetAsteroids)
-  var setPresetZeldaButton = document.getElementById("set-preset-zelda");
-  setPresetZeldaButton.addEventListener('click', setPresetZelda)
-  var setPresetMarioButton = document.getElementById("set-preset-mario");
-  setPresetMarioButton.addEventListener('click', setPresetMario)
-  var setPresetPokemonButton = document.getElementById("set-preset-pokemon");
-  setPresetPokemonButton.addEventListener('click', setPresetPokemon)
-  var setPresetSnakeButton = document.getElementById("set-preset-snake");
-  setPresetSnakeButton.addEventListener('click', setPresetSnake)
-  var setPresetWorldArenaBoundaryButton = document.getElementById("set-preset-world-arenaboundary");
-  setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
-  var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
-  setPresetWorldArenaCyclicalButton.addEventListener('click', setPresetWorldArenaCyclical)
-  var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
-  setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
-  var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/.9 }))
-  var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/1.1 }))
 
   function setPresetWorldArenaBoundary() {
     const value = {
@@ -434,50 +457,6 @@ function init(ctx, objects, hero) {
     window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })
   }
 
-	var jsoneditor = document.createElement("div")
-	jsoneditor.id = 'jsoneditor'
-	document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
-  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
-    if(!syncObjectsToggle.checked) {
-      window.socket.emit('editObjects', state.world)
-    }
-    objectFactory = state.factory
-    editorState.factory = state.factory
-	}});
-  editor.set({world: objects, factory: objectFactory, hero});
-
-  var syncHeroToggle = document.getElementById('sync-hero')
-  syncHeroToggle.onclick = (e) => {
-    if(e.srcElement.checked) {
-      window.socket.emit('updatePreferences', { syncHero: true })
-    } else {
-      window.socket.emit('updatePreferences', { syncHero: false })
-    }
-  }
-  if(window.preferences.syncHero) {
-    syncHeroToggle.checked = true;
-  }
-
-  var syncObjectsToggle = document.getElementById('sync-objects')
-  syncObjectsToggle.onclick = (e) => {
-    if(e.srcElement.checked) {
-      window.socket.emit('updatePreferences', { syncObjects: true })
-    } else {
-      window.socket.emit('updatePreferences', { syncObjects: false })
-    }
-  }
-  if(window.preferences.syncObjects) {
-    syncObjectsToggle.checked = true;
-  }
-
-  selectorGameToggle = document.getElementById('set-game')
-  selectorCameraToggle = document.getElementById('set-camera')
-  selectorSpawnToggle = document.getElementById('set-spawn')
-
-	window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-		Object.assign(window.hero, heroUpdated)
-    if(window.preferences.syncHero) getHero()
-	})
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
@@ -526,7 +505,7 @@ function init(ctx, objects, hero) {
   },false);
 
   window.socket.on('onAddObjects', (objectsAdded) => {
-    window.objects.push(objectsAdded)
+    window.objects.push(...objectsAdded)
     let editorState = editor.get()
     editorState.world.push(...objectsAdded)
     editor.set(editorState)
@@ -537,9 +516,70 @@ function init(ctx, objects, hero) {
       Object.assign(editorState.world, objectsUpdated)
       editor.update(editorState)
     }
+    Object.assign(window.objects, objectsUpdated)
+  })
+  window.socket.on('onHeroPosUpdate', (heroUpdated) => {
+    Object.assign(window.hero, heroUpdated)
+    if(window.preferences.syncHero) getHero()
+  })
+  window.socket.on('onResetObjects', () => {
+    let editorState = editor.get()
+    editorState.factory = []
+    editorState.world = []
+    objectFactory = []
+    window.objects = []
+    editor.set(editorState)
+    window.location.reload()
   })
   window.socket.emit('askObjects')
 }
+
+function createArena() {
+  let boundaries = {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
+
+  let wallLeft = {
+    id: 'wall-l' + Date.now(),
+    width: 5,
+    height: boundaries.height,
+    x: boundaries.x,
+    y: boundaries.y,
+    color: 'white',
+    tags: {'obstacle':true},
+  }
+
+  let wallTop = {
+    id: 'wall-t' + Date.now(),
+    width: boundaries.width,
+    height: 5,
+    x: boundaries.x,
+    y: boundaries.y,
+    color: 'white',
+    tags: {'obstacle':true},
+  }
+
+  let wallRight = {
+    id: 'wall-r' + Date.now(),
+    width: 5,
+    height: boundaries.height,
+    x: boundaries.x + (boundaries.width) - 5,
+    y: boundaries.y,
+    color: 'white',
+    tags: {'obstacle':true},
+  }
+
+  let wallBottom = {
+    id: 'wall-b' + Date.now(),
+    width: boundaries.width,
+    height: 5,
+    x: boundaries.x,
+    y: boundaries.y + (boundaries.height) - 5,
+    color: 'white',
+    tags: {'obstacle':true},
+  }
+
+  window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
+}
+
 
 function drawName(ctx, object){
 	ctx.fillStyle = "rgb(0, 0, 250)";
@@ -593,7 +633,9 @@ function render(ctx, hero, objects) {
     })
   }
 
-  drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+  if(window.preferences.lockCamera && !window.preferences.lockCamera.limitX) {
+    drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+  }
 
   ctx.fillStyle = 'blue'
   if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {

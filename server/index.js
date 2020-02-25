@@ -17,6 +17,7 @@ io.on('connection', function(socket){
   })
   socket.on('editObjects', (objects) => {
     serverState = objects
+    console.log(serverState)
     io.emit('onEditObjects', serverState)
   })
   socket.on('resetObjects', (objects) => {

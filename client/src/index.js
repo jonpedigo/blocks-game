@@ -1,12 +1,6 @@
-// deleting all objects + adding game boundaries for cyclical maps.
-// Deleting all game objects while zooming in ( and clearing maps )
-// Arena around the player and zoom out a little maybe.
+// function for adding objects ( I need to make sure to add all tags to an object from the start )
+// revise this bs idea of the more advanced editor..
 
-// set camera and game boundary to player location
-// increase/decrease player size
-// zooming in/out and keeping objects
-
-// DYNAMIC onCollisionOptions - collides, - 1score, +1 score, you respawn, bad dude respawns, trigger pathfinding, new feature unlocked
 // Negatives
 //
 // Go back to respawn
@@ -19,6 +13,7 @@
 // Level Up ( Get experience, +1, advancement , makes game easier)
 // Get tool ( style change, changes game )
 // Add Life ( get a second chance to play game )
+// + score, destroy bad guy
 
 //--------
 
@@ -66,6 +61,7 @@ import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 
+// SCREEN
 window.divideScreenSizeBy = 2
 const socket = io('192.168.0.14:8081')
 window.socket = socket
@@ -76,13 +72,60 @@ window.CONSTANTS = {
 	PLAYER_CANVAS_HEIGHT: 1080/window.divideScreenSizeBy,
 }
 
-window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+// Create the canvas
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
+canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
+canvas.id = 'game'
+document.body.appendChild(canvas);
 
-if(window.usePlayEditor) {
-	 window.socket.on('onUpdateObjects', (updatedObjects) => {
-		 Object.assign(window.objects, updatedObjects)
-	 })
-} else {
+//SOCKETS
+const defaultPreferences = {
+	zoomMultiplier: 1,
+	lockCamera: {},
+	gameBoundaries: {},
+}
+window.preferences = defaultPreferences;
+window.socket.emit('askPreferences')
+window.socket.on('onUpdatePreferences', (updatedPreferences) => {
+	for(let key in updatedPreferences) {
+		const value = updatedPreferences[key]
+		window.preferences[key] = value
+
+		if(key === 'lockCamera' && !window.usePlayEditor) {
+			if(value.limitX) {
+				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+			} else {
+				camera.clearLimit();
+			}
+		}
+	}
+})
+
+window.socket.on('onResetHero', () => {
+	window.resetHero()
+})
+
+window.socket.on('onRespawnHero', () => {
+	window.respawnHero()
+})
+
+window.socket.on('onUpdateHero', (updatedHero) => {
+	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
+		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
+	}
+	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
+		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
+	}
+	window.resetHero(updatedHero)
+})
+
+window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+if(!window.usePlayEditor) {
+	var editor = document.getElementById("play-editor");
+	editor.style = 'display:none';
+
 	window.socket.emit('askObjects')
 	window.socket.on('onAddObjects', (objectsAdded) => {
 		if(window.hero.inputControlProp === 'grid') {
@@ -103,30 +146,25 @@ if(window.usePlayEditor) {
 		window.location.reload()
 	})
 	window.socket.on('onEditObjects', (editedObjects) => {
-		console.log('editing')
+		console.log('editing', editedObjects)
 		Object.assign(window.objects, editedObjects)
+	})
+
+	window.socket.on('onUpdateHeroPos', (updatedHero) => {
+		window.resetHero(updatedHero)
+	})
+
+	window.deleteObject = function(objectId) {
+		physics.removeObjectById(objectId)
+	}
+
+	window.socket.on('onSnapAllObjectsToGrid', () => {
+		window.snapAllObjectsToGrid()
 	})
 }
 
 
-
-// Create the canvas
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
-canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
-canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
-canvas.id = 'game'
-document.body.appendChild(canvas);
-
-const defaultPreferences = {
-	zoomMultiplier: 1,
-	lockCamera: {},
-	gameBoundaries: {},
-}
-
-window.preferences = defaultPreferences;
-
-// Game objects
+// HERO
 const defaultHero = {
 	width: 100/window.divideScreenSizeBy,
 	height: 100/window.divideScreenSizeBy,
@@ -147,7 +185,7 @@ const defaultHero = {
 	// spawnPointX: 0,
 	// spawnPointY: 0,
 	gravity: 0,
-	tags: ['hero'],
+	tags: {'hero': true},
 }
 
 window.hero = {...defaultHero}
@@ -156,43 +194,28 @@ window.hero.reachablePlatformWidth = resetReachablePlatformWidth()
 window.hero.x = window.hero.spawnPointX
 window.hero.y = window.hero.spawnPointY
 
-if(!window.usePlayEditor) {
-	var editor = document.getElementById("play-editor");
-	editor.style = 'display:none';
+let savedHero = JSON.parse(localStorage.getItem('hero'));
+if(savedHero) Object.assign(window.hero, savedHero);
 
-	let savedHero = JSON.parse(localStorage.getItem('hero'));
-	if(savedHero) Object.assign(window.hero, savedHero);
-
-	window.socket.on('onUpdateHeroPos', (updatedHero) => {
-		window.resetHero(updatedHero)
-	})
-
-	window.deleteObject = function(objectId) {
-		physics.removeObjectById(objectId)
-	}
-
-	window.socket.on('onSnapAllObjectsToGrid', () => {
-		window.snapAllObjectsToGrid()
-	})
+function resetReachablePlatformHeight() {
+	let velocity = window.hero.jumpVelocity
+	let gravity = 1000
+	let delta = (0 - velocity)/gravity
+	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	return height
 }
 
-window.socket.on('onResetHero', () => {
-	window.resetHero()
-})
+function resetReachablePlatformWidth() {
+	let velocity = window.hero.speed
+	let gravity = 1000
+	let deltaInAir = (0 - window.hero.jumpVelocity)/gravity
+	let width = (velocity * deltaInAir)
+	return width * 2
+}
 
-window.socket.on('onRespawnHero', () => {
-	window.respawnHero()
-})
+physics.addObject(window.hero)
 
-window.socket.on('onUpdateHero', (updatedHero) => {
-	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
-		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
-	}
-	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
-		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
-	}
-	window.resetHero(updatedHero)
-})
+
 
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
@@ -225,42 +248,6 @@ window.removeObject = function(id) {
 	physics.removeObjectById(id)
 	window.socket.emit('removeObject', id)
 }
-
-
-function resetReachablePlatformHeight() {
-	let velocity = window.hero.jumpVelocity
-	let gravity = 1000
-	let delta = (0 - velocity)/gravity
-	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
-	return height
-}
-
-function resetReachablePlatformWidth() {
-	let velocity = window.hero.speed
-	let gravity = 1000
-	let deltaInAir = (0 - window.hero.jumpVelocity)/gravity
-	let width = (velocity * deltaInAir)
-	return width * 2
-}
-
-physics.addObject(window.hero)
-
-window.socket.emit('askPreferences')
-window.socket.on('onUpdatePreferences', (updatedPreferences) => {
-	console.log(updatedPreferences)
-	for(let key in updatedPreferences) {
-		const value = updatedPreferences[key]
-		window.preferences[key] = value
-
-		if(key === 'lockCamera' && !window.usePlayEditor) {
-			if(value.limitX) {
-				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-			} else {
-				camera.clearLimit();
-			}
-		}
-	}
-})
 
 var game = {
   paused: false,

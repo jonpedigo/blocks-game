@@ -127,20 +127,20 @@ function update (hero, objects, delta) {
 
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
-      if(body.tags && body.tags.indexOf('monster') > -1) {
+      if(body.tags && body.tags['monster']) {
         window.score--
         window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
-        break;
       }
-      if(body.tags && body.tags.indexOf('coin') > -1) {
+      if(body.tags && body.tags['coin']) {
         window.score++
-        break;
       }
 
-      illegal = true
-      correction.x -= result.overlap * result.overlap_x
-      correction.y -= result.overlap * result.overlap_y
-      break;
+      if(body.tags && body.tags['obstacle']) {
+        illegal = true
+        correction.x -= result.overlap * result.overlap_x
+        correction.y -= result.overlap * result.overlap_y
+        break;
+      }
     }
   }
 
@@ -176,7 +176,7 @@ function update (hero, objects, delta) {
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
-        if(body.tags && po.tags && body.tags.indexOf('monster') >= 0 && po.tags.indexOf('bullet') >= 0) {
+        if(body.tags && po.tags && body.tags['monster'] && po.tags['bullet']) {
           removeObjects.push(body.id)
           window.score++
         }
