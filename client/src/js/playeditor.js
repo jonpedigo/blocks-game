@@ -1,6 +1,7 @@
 import JSONEditor from 'jsoneditor'
 import collisions from './collisions'
 import grid from './grid.js'
+import procedural from './procedural.js'
 
 const camera = {
   x: 0,
@@ -25,6 +26,7 @@ const TOOLS = {
   EDITOR: 'editor',
   SIMPLE_EDITOR: 'simpleEditor',
   GAME_FEEL: 'gameFeel',
+  PROCEDURAL: 'procedural',
 }
 
 let currentTool = TOOLS.ADD_OBJECT;
@@ -53,6 +55,11 @@ let editingObject = {
   id: null,
 }
 let tools = {
+  [TOOLS.PROCEDURAL]: {
+    onFirstClick: (e) => {
+
+    }
+  },
   [TOOLS.SIMPLE_EDITOR]: {
     onFirstClick: (e) => {
       const click = {
@@ -137,6 +144,9 @@ let tools = {
       } else if(selectorGameToggle.checked) {
         const gameBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { gameBoundaries })
+      } else if(selectorProceduralToggle.checked) {
+        const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        window.socket.emit('updatePreferences', { proceduralBoundaries })
       }
     },
   },
@@ -198,6 +208,7 @@ let tools = {
 let instantGridAddToggle;
 let instantAddToggle;
 let selectorGameToggle;
+let selectorProceduralToggle;
 let selectorSpawnToggle;
 let selectorCameraToggle;
 function defaultFirstClick(e) {
@@ -290,6 +301,11 @@ function init(ctx, objects, hero) {
   selectorGameToggle = document.getElementById('set-game')
   selectorCameraToggle = document.getElementById('set-camera')
   selectorSpawnToggle = document.getElementById('set-spawn')
+  selectorProceduralToggle = document.getElementById('set-procedural')
+  var createMazeButton = document.getElementById("create-maze");
+  createMazeButton.onclick = (e) => {
+    createMaze()
+  }
 
   var syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
@@ -345,6 +361,16 @@ function init(ctx, objects, hero) {
       window.socket.emit('updatePreferences', { lockCamera: window.preferences.gameBoundaries })
     }
   })
+
+  function createMaze() {
+    const { x, y, width, height } = window.preferences.proceduralBoundaries
+
+    let w = Math.floor(width / (window.grid.gridNodeSize * window.mazeWidthMultiplier))/2
+    let h = Math.floor(height / (window.grid.gridNodeSize * window.mazeWidthMultiplier))/2
+
+    let maze = procedural.genMaze(w, h, x, y)
+    window.socket.emit('addObjects', maze)
+  }
 
   function getHero() {
     let editorState = editor.get()
@@ -662,29 +688,22 @@ function render(ctx, hero, objects) {
   }
 
   if(window.preferences.lockCamera) {
-    let { centerX, centerY, limitX, limitY } = window.preferences.lockCamera;
-    const area = {
-      x: centerX - limitX,
-      y: centerY - limitY,
-      width: limitX * 2,
-      height: limitY * 2,
-    }
     ctx.globalAlpha = 0.2;
-    drawObject(ctx, area);
+    drawObject(ctx, window.preferences.lockCamera);
     ctx.globalAlpha = 1.0;
   }
 
   if(window.preferences.gameBoundaries) {
-    let { centerX, centerY, limitX, limitY } = window.preferences.gameBoundaries;
-    const area = {
-      x: centerX - limitX,
-      y: centerY - limitY,
-      width: limitX * 2,
-      height: limitY * 2,
-    }
     ctx.fillStyle='green';
     ctx.globalAlpha = 0.2;
-    drawObject(ctx, area);
+    drawObject(ctx, window.preferences.gameBoundaries);
+    ctx.globalAlpha = 1.0;
+  }
+
+  if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
+    ctx.fillStyle='yellow';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, window.preferences.proceduralBoundaries);
     ctx.globalAlpha = 1.0;
   }
 

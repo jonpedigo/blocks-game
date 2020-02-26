@@ -1,3 +1,10 @@
+// fix asteroids mode
+// attack button ( like papa bear spears!! )
+// procedural
+// pathfinding
+// respawning enemies area.
+// planet gravity! Would be cool to have..
+
 // function for adding objects ( I need to make sure to add all tags to an object from the start )
 // revise this bs idea of the more advanced editor..
 
@@ -17,7 +24,8 @@
 
 //--------
 
-// objects are getting multiplied
+// mode where I add just small filled in square! We need a way to let them know its a 'treasure'
+// switching to pacman mode, reset objects without page refresh
 // change drawborder to actually just draw lines....
 // test physics collisions to breaking point and find BVH bug
 // make it easier for admin to move objects
@@ -32,7 +40,12 @@
 // controlling X or Y scroll
 // TRUE zelda camera work
 
-
+// AHA MOMENTS
+// I WAS MOVING AROUND
+// ADDING GRAVITY
+// HAVING THE WORLD BEGIN POPULATING BEFORE YOU
+// SWITCHING PHYSICS BACK AND FORTH
+// FIELD OF VISION
 
 // leveling up
 
@@ -60,6 +73,7 @@ import grid from './js/grid.js'
 import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
+import procedural from './js/procedural.js'
 
 // SCREEN
 window.divideScreenSizeBy = 2
@@ -267,7 +281,9 @@ var start = function () {
 	grid.init()
   chat.init(current, flags)
 	shoot.init(hero)
-  if(usePlayEditor) playEditor.init(ctx, window.objects, hero, camera)
+  if(usePlayEditor) {
+		playEditor.init(ctx, window.objects, hero, camera)
+	}
 	main()
 };
 

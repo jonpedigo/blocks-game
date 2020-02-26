@@ -5,7 +5,7 @@ function init(hero, objects){
 
 function update(hero, objects, modifier) {
   objects.forEach((object) => {
-    if(object.tags['monster']) {
+    if(object.tags && object.tags['monster']) {
       object.target = window.hero
 
       if(object.target.x > object.x) {
@@ -21,7 +21,7 @@ function update(hero, objects, modifier) {
       }
     }
 
-    if(object.tags['obstacle']) {
+    if(object.tags && object.tags['obstacle']) {
       object.velocityY = 0
       object.velocityX = 0
       object.accY = 0
