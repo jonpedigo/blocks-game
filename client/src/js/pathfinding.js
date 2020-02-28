@@ -4,7 +4,15 @@
 // If I create a grid using the procedural system it very much means I want to use an alternate physics system
 // If we decide to use this physics system that means we need to update it constantly.
 // we have a couple choices for a physics grid..
- 
+// only visual
+// pathfinding around static objects
+// pathfinding around static and moving objects
+  // I think that the editor just tells the client the size of the grid, etc
+  // but then the client when pathfinding is enabled, it starts running on a tick
+  // on that tick it updates the pathfinding on the grid and sets new goal points for all objects
+  // this is outside of the physics updating.. Does it perhaps just tell physics which way its going?
+  // does it just give it velocity in the right direction? OK! why not?
+  // ok so pathfinding just sets velocity and 
 
 
 const PF = require('pathfinding');

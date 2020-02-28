@@ -133,7 +133,7 @@ let tools = {
       }
 
       const {x, y, width, height} = value;
-      if(currentTool = TOOLS.PROCEDURAL) {
+      if(currentTool === TOOLS.PROCEDURAL) {
         const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { proceduralBoundaries })
       } else if(selectorCameraToggle.checked) {
@@ -288,6 +288,8 @@ function init(ctx, objects, hero) {
   setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
   var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
   setPresetWorldArenaCyclicalButton.addEventListener('click', setPresetWorldArenaCyclical)
+  var setPresetWorldArenaCyclicalButton2 = document.getElementById("set-preset-world-arenacyclical-2");
+  setPresetWorldArenaCyclicalButton2.addEventListener('click', setPresetWorldArenaCyclical)
   var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
   setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
   var zoomOutButton = document.getElementById("hero-zoomOut");
@@ -365,8 +367,8 @@ function init(ctx, objects, hero) {
   function createMaze() {
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
-    let w = Math.floor(width / (window.gridNodeSize * window.mazeWidthMultiplier))/2
-    let h = Math.floor(height / (window.gridNodeSize * window.mazeWidthMultiplier))/2
+    let w = Math.floor(width / (window.gridNodeSize * window.mazeWidthMultiplier)/2)
+    let h = Math.floor(height / (window.gridNodeSize * window.mazeWidthMultiplier)/2)
 
     let maze = procedural.genMaze(w, h, x, y)
     window.socket.emit('addObjects', maze)
@@ -473,7 +475,6 @@ function init(ctx, objects, hero) {
     const {centerY, centerX, width, height} = value;
     const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
 
-    createArena()
     window.socket.emit('updatePreferences', { lockCamera: lockCamera , gameBoundaries: {} })
   }
 
@@ -500,10 +501,10 @@ function init(ctx, objects, hero) {
 
     // q and a zoom in and out
     if(e.keyCode === 81) {
-      scaleMultiplier += .1
+      scaleMultiplier = scaleMultiplier * 1.1
     }
     if(e.keyCode === 65) {
-      scaleMultiplier -= .1
+      scaleMultiplier = scaleMultiplier * .9
     }
 
     //if you press escape, cancel a drag
@@ -624,10 +625,9 @@ function drawName(ctx, object){
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText(object.id ? object.id : '', (object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y);
-  ctx.fillStyle = "#FFF";
 }
 
-function drawObject(ctx, object, withNames = true) {
+function drawObject(ctx, object, withNames = false) {
   if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y, (object.width * scaleMultiplier), (object.height * scaleMultiplier));
 
@@ -637,25 +637,30 @@ function drawObject(ctx, object, withNames = true) {
 }
 
 function drawGrid(ctx, object) {
-  let thickness = .2
+  let thickness = .3
   if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
-    thickness = 2
+    thickness = .8
   }
+  ctx.strokeStyle = "#999";
   drawBorder(ctx, object, thickness)
 }
 
 function drawBorder(ctx, object, thickness = 2) {
-  let xBorderThickness = thickness;
-  let yBorderThickness = thickness;
-  if(object.width < 0) {
-    xBorderThickness *= -1;
-  }
-  if(object.height < 0) {
-    yBorderThickness *= -1;
-  }
-  ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (xBorderThickness), ((object.y * scaleMultiplier) - camera.y) - (yBorderThickness), (object.width * scaleMultiplier) + (xBorderThickness * 2), (object.height * scaleMultiplier) + (yBorderThickness * 2));
-  ctx.fillStyle='#000';
-  drawObject(ctx, object)
+  ctx.lineWidth = thickness;
+  // ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (xBorderThickness), ((object.y * scaleMultiplier) - camera.y) - (yBorderThickness), (object.width * scaleMultiplier) + (xBorderThickness * 2), (object.height * scaleMultiplier) + (yBorderThickness * 2));
+  [({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}}),
+  ({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}}),
+  ({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}}),
+  ({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})].forEach((vertice) => {
+    drawVertice(ctx, vertice)
+  })
+}
+
+function drawVertice(ctx, vertice) {
+  ctx.beginPath();
+  ctx.moveTo( (vertice.a.x * scaleMultiplier - camera.x), (vertice.a.y * scaleMultiplier - camera.y));
+  ctx.lineTo( (vertice.b.x * scaleMultiplier - camera.x), (vertice.b.y * scaleMultiplier - camera.y));
+  ctx.stroke();
 }
 
 function render(ctx, hero, objects) {
@@ -669,26 +674,12 @@ function render(ctx, hero, objects) {
     })
   }
 
-  if(window.preferences.lockCamera && !window.preferences.lockCamera.limitX) {
-    drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
-  }
-
-  ctx.fillStyle = 'blue'
-  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
-    let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
-    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.fillStyle = '#FFF'
-    else ctx.fillStyle = 'red'
-    drawBorder(ctx, possibleBox)
-  }
-
 	ctx.fillStyle = 'white';
 	for(let i = 0; i < objects.length; i++){
     drawObject(ctx, objects[i])
-    ctx.fillStyle = 'white';
 	}
   for(let i = 0; i < objectFactory.length; i++){
     drawObject(ctx, objectFactory[i])
-    ctx.fillStyle = 'white';
   }
 
   drawObject(ctx, hero);
@@ -697,14 +688,28 @@ function render(ctx, hero, objects) {
     drawObject(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
   }
 
+  if(window.preferences.lockCamera && !window.preferences.lockCamera.limitX) {
+    ctx.strokeStyle='#0A0';
+    drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+  }
+
+  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
+    ctx.strokeStyle = '#FFF'
+    let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
+    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
+    else ctx.strokeStyle = 'red'
+    drawBorder(ctx, possibleBox)
+  }
+
   if(window.preferences.lockCamera) {
+    ctx.fillStyle='#0A0';
     ctx.globalAlpha = 0.2;
     drawObject(ctx, window.preferences.lockCamera);
     ctx.globalAlpha = 1.0;
   }
 
   if(window.preferences.gameBoundaries) {
-    ctx.fillStyle='green';
+    ctx.fillStyle='white';
     ctx.globalAlpha = 0.2;
     drawObject(ctx, window.preferences.gameBoundaries);
     ctx.globalAlpha = 1.0;
@@ -733,16 +738,16 @@ function render(ctx, hero, objects) {
 
 function update(delta) {
   if (38 in keysDown) { // Player holding up
-    camera.y -= (5)
+    camera.y -= (40 * scaleMultiplier)
   }
   if (40 in keysDown) { // Player holding down
-    camera.y += (5)
+    camera.y += (40 * scaleMultiplier)
   }
   if (37 in keysDown) { // Player holding left
-    camera.x -= (5)
+    camera.x -= (40 * scaleMultiplier)
   }
   if (39 in keysDown) { // Player holding right
-    camera.x += (5)
+    camera.x += (40 * scaleMultiplier)
   }
 }
 
