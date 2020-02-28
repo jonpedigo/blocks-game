@@ -1,10 +1,10 @@
 import collisions from './collisions'
 
 function init() {
-  const gridSize = {x: 100, y: 50}
-  const gridNodeSize = 100/window.divideScreenSizeBy
-  window.socket.emit('updateGrid', createGrid(gridSize, gridNodeSize), gridNodeSize, gridSize)
+  // const gridSize = {x: 100, y: 50}
+  window.gridNodeSize = 100/window.divideScreenSizeBy
 
+  window.socket.emit('askGrid');
   window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
     window.grid = grid
     window.gridSize = gridSize
@@ -18,7 +18,7 @@ function createGrid(gridSize, gridNodeSize = 100/window.divideScreenSizeBy, star
   for(var i = 0; i < gridSize.x; i++) {
     grid.push([])
     for(var j = 0; j < gridSize.y; j++) {
-      grid[i].push({x: start.x + (i * gridNodeSize), y: start.x + (j * gridNodeSize), width: gridNodeSize, height: gridNodeSize})
+      grid[i].push({x: start.x + (i * gridNodeSize), y: start.y + (j * gridNodeSize), width: gridNodeSize, height: gridNodeSize})
     }
   }
 
@@ -31,6 +31,23 @@ function forEach(fx) {
       fx(grid[i][j])
     }
   }
+}
+
+function snapXYToGrid(x, y) {
+  let diffX = x % window.gridNodeSize;
+  if(diffX > window.gridNodeSize/2) {
+    x += (window.gridNodeSize - diffX)
+  } else {
+    x -= diffX
+  }
+
+  let diffY = y % window.gridNodeSize;
+  if(diffY > window.gridNodeSize/2) {
+    y += (window.gridNodeSize - diffY)
+  } else {
+    y -= diffY
+  }
+  return { x, y }
 }
 
 function snapObjectToGrid(object) {
@@ -90,6 +107,10 @@ function createGridNodeAt(x, y) {
 
 }
 
+function generatePathfindingGrid() {
+
+}
+
 export default {
   init,
   forEach,
@@ -97,4 +118,6 @@ export default {
   snapObjectToGrid,
   createGridNodeAt,
   createGrid,
+  generatePathfindingGrid,
+  snapXYToGrid,
 }

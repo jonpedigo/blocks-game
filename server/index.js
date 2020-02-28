@@ -9,6 +9,7 @@ app.get('/', function(req, res){
 let serverState = []
 let grid = []
 let gridNodeSize = 0
+let gridSize = 0
 let preferences = {}
 
 io.on('connection', function(socket){
@@ -72,10 +73,17 @@ io.on('connection', function(socket){
     io.emit('onSnapAllObjectsToGrid', hero)
   })
 
-  socket.on('updateGrid', (grid, gridNodeSize, gridSize) => {
-    grid = grid
-    gridNodeSize = gridNodeSize
+  socket.on('updateGrid', (gridIn, gridNodeSizeIn, gridSizeIn) => {
+    grid = gridIn
+    gridNodeSize = gridNodeSizeIn
+    gridSize = gridSizeIn
     io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+  })
+
+  socket.on('askGrid', () => {
+    if(grid.length) {
+      io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+    }
   })
 });
 

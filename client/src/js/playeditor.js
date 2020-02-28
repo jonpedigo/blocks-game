@@ -55,11 +55,6 @@ let editingObject = {
   id: null,
 }
 let tools = {
-  [TOOLS.PROCEDURAL]: {
-    onFirstClick: (e) => {
-
-    }
-  },
   [TOOLS.SIMPLE_EDITOR]: {
     onFirstClick: (e) => {
       const click = {
@@ -138,15 +133,15 @@ let tools = {
       }
 
       const {x, y, width, height} = value;
-      if(selectorCameraToggle.checked) {
+      if(currentTool = TOOLS.PROCEDURAL) {
+        const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        window.socket.emit('updatePreferences', { proceduralBoundaries })
+      } else if(selectorCameraToggle.checked) {
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { lockCamera })
       } else if(selectorGameToggle.checked) {
         const gameBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { gameBoundaries })
-      } else if(selectorProceduralToggle.checked) {
-        const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-        window.socket.emit('updatePreferences', { proceduralBoundaries })
       }
     },
   },
@@ -204,6 +199,7 @@ let tools = {
     },
   }
 }
+tools[TOOLS.PROCEDURAL] = tools[TOOLS.AREA_SELECTOR]
 
 let instantGridAddToggle;
 let instantAddToggle;
@@ -367,8 +363,8 @@ function init(ctx, objects, hero) {
   })
 
   function createMaze() {
-    const { x, y, width, height } = window.preferences.proceduralBoundaries
-
+    const { width, height } = window.preferences.proceduralBoundaries
+    const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
     let w = Math.floor(width / (window.gridNodeSize * window.mazeWidthMultiplier))/2
     let h = Math.floor(height / (window.gridNodeSize * window.mazeWidthMultiplier))/2
 
@@ -377,13 +373,14 @@ function init(ctx, objects, hero) {
   }
 
   function createGrid() {
-    const { x, y, width, height } = window.preferences.gridBoundaries
+    const { width, height } = window.preferences.proceduralBoundaries
+    const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
+    let w = Math.floor(width / (window.gridNodeSize))
+    let h = Math.floor(height / (window.gridNodeSize))
 
-    let w = Math.floor(width / (window.gridNodeSize))/2
-    let h = Math.floor(height / (window.gridNodeSize))/2
-
-    let grid = gridTool.createGrid({ w, h }, window.gridNodeSize, { x, y })
-    window.socket.emit('updateGrid', grid, window.gridNodeSize)
+    let gridSize = { x: w, y: h };
+    let grid = gridTool.createGrid(gridSize, window.gridNodeSize, { x, y })
+    window.socket.emit('updateGrid', grid, window.gridNodeSize, gridSize)
   }
 
   function getHero() {
