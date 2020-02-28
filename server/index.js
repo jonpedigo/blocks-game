@@ -7,6 +7,8 @@ app.get('/', function(req, res){
 });
 
 let serverState = []
+let grid = []
+let gridNodeSize = 0
 let preferences = {}
 
 io.on('connection', function(socket){
@@ -70,6 +72,11 @@ io.on('connection', function(socket){
     io.emit('onSnapAllObjectsToGrid', hero)
   })
 
+  socket.on('updateGrid', (grid, gridNodeSize, gridSize) => {
+    grid = grid
+    gridNodeSize = gridNodeSize
+    io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+  })
 });
 
 http.listen(8081, function(){

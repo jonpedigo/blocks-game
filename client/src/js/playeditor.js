@@ -1,6 +1,6 @@
 import JSONEditor from 'jsoneditor'
 import collisions from './collisions'
-import grid from './grid.js'
+import gridTool from './grid.js'
 import procedural from './procedural.js'
 
 const camera = {
@@ -157,7 +157,7 @@ let tools = {
           x: (e.offsetX + camera.x)/scaleMultiplier,
           y: (e.offsetY + camera.y)/scaleMultiplier,
         }
-        let object = grid.createGridNodeAt(click.x, click.y)
+        let object = gridTool.createGridNodeAt(click.x, click.y)
         object.tags = {}
         object.id = 'object' + Date.now()
         for(let tag in tags) {
@@ -306,6 +306,10 @@ function init(ctx, objects, hero) {
   createMazeButton.onclick = (e) => {
     createMaze()
   }
+  var createGridButton = document.getElementById("create-grid");
+  createGridButton.onclick = (e) => {
+    createGrid()
+  }
 
   var syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
@@ -365,11 +369,21 @@ function init(ctx, objects, hero) {
   function createMaze() {
     const { x, y, width, height } = window.preferences.proceduralBoundaries
 
-    let w = Math.floor(width / (window.grid.gridNodeSize * window.mazeWidthMultiplier))/2
-    let h = Math.floor(height / (window.grid.gridNodeSize * window.mazeWidthMultiplier))/2
+    let w = Math.floor(width / (window.gridNodeSize * window.mazeWidthMultiplier))/2
+    let h = Math.floor(height / (window.gridNodeSize * window.mazeWidthMultiplier))/2
 
     let maze = procedural.genMaze(w, h, x, y)
     window.socket.emit('addObjects', maze)
+  }
+
+  function createGrid() {
+    const { x, y, width, height } = window.preferences.gridBoundaries
+
+    let w = Math.floor(width / (window.gridNodeSize))/2
+    let h = Math.floor(height / (window.gridNodeSize))/2
+
+    let grid = gridTool.createGrid({ w, h }, window.gridNodeSize, { x, y })
+    window.socket.emit('updateGrid', grid, window.gridNodeSize)
   }
 
   function getHero() {
@@ -627,10 +641,9 @@ function drawObject(ctx, object, withNames = true) {
 
 function drawGrid(ctx, object) {
   let thickness = .2
-  if(object.x % (window.grid.gridNodeSize * 10) === 0 && object.y % (window.grid.gridNodeSize * 10) === 0) {
+  if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
     thickness = 2
   }
-
   drawBorder(ctx, object, thickness)
 }
 
@@ -654,7 +667,7 @@ function render(ctx, hero, objects) {
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   if(window.grid) {
-    grid.forEach((grid) => {
+    gridTool.forEach((grid) => {
       drawGrid(ctx, grid)
     })
   }

@@ -1,51 +1,63 @@
 import collisions from './collisions'
 
 function init() {
-  window.grid = []
-  window.grid.gridSize = 50
-  window.grid.gridNodeSize = 100/window.divideScreenSizeBy
+  const gridSize = {x: 100, y: 50}
+  const gridNodeSize = 100/window.divideScreenSizeBy
+  window.socket.emit('updateGrid', createGrid(gridSize, gridNodeSize), gridNodeSize, gridSize)
 
-  for(var i = 0; i < window.grid.gridSize; i++) {
-    window.grid.push([])
-    for(var j = 0; j < window.grid.gridSize; j++) {
-      window.grid[i].push({x: i * window.grid.gridNodeSize, y: j * window.grid.gridNodeSize, width: window.grid.gridNodeSize, height: window.grid.gridNodeSize})
+  window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
+    window.grid = grid
+    window.gridSize = gridSize
+    window.gridNodeSize = gridNodeSize
+  })
+}
+
+function createGrid(gridSize, gridNodeSize = 100/window.divideScreenSizeBy, start = { x: 0, y: 0 }) {
+  const grid = []
+
+  for(var i = 0; i < gridSize.x; i++) {
+    grid.push([])
+    for(var j = 0; j < gridSize.y; j++) {
+      grid[i].push({x: start.x + (i * gridNodeSize), y: start.x + (j * gridNodeSize), width: gridNodeSize, height: gridNodeSize})
     }
   }
+
+  return grid
 }
 
 function forEach(fx) {
-  for(var i = 0; i < grid.gridSize; i++) {
-    for(var j = 0; j < grid.gridSize; j++) {
+  for(var i = 0; i < window.gridSize.x; i++) {
+    for(var j = 0; j < window.gridSize.y; j++) {
       fx(grid[i][j])
     }
   }
 }
 
 function snapObjectToGrid(object) {
-  let diffX = object.x % grid.gridNodeSize;
-  if(diffX > grid.gridNodeSize/2) {
-    object.x += (grid.gridNodeSize - diffX)
+  let diffX = object.x % window.gridNodeSize;
+  if(diffX > window.gridNodeSize/2) {
+    object.x += (window.gridNodeSize - diffX)
   } else {
     object.x -= diffX
   }
 
-  let diffY = object.y % grid.gridNodeSize;
-  if(diffY > grid.gridNodeSize/2) {
-    object.y += (grid.gridNodeSize - diffY)
+  let diffY = object.y % window.gridNodeSize;
+  if(diffY > window.gridNodeSize/2) {
+    object.y += (window.gridNodeSize - diffY)
   } else {
     object.y -= diffY
   }
 
-  let diffWidth = object.width % grid.gridNodeSize;
-  if(diffWidth > grid.gridNodeSize/2) {
-    object.width += (grid.gridNodeSize - diffWidth)
+  let diffWidth = object.width % window.gridNodeSize;
+  if(diffWidth > window.gridNodeSize/2) {
+    object.width += (window.gridNodeSize - diffWidth)
   } else {
     object.width -= diffWidth
   }
 
-  let diffHeight = object.height % grid.gridNodeSize;
-  if(diffHeight > grid.gridNodeSize/2) {
-    object.height += (grid.gridNodeSize - diffHeight)
+  let diffHeight = object.height % window.gridNodeSize;
+  if(diffHeight > window.gridNodeSize/2) {
+    object.height += (window.gridNodeSize - diffHeight)
   } else {
     object.height -= diffHeight
   }
@@ -57,8 +69,8 @@ window.snapAllObjectsToGrid = function() {
 	})
 
   snapObjectToGrid(window.hero)
-  window.hero.width = grid.gridNodeSize
-  window.hero.height = grid.gridNodeSize
+  window.hero.width = window.gridNodeSize
+  window.hero.height = window.gridNodeSize
 }
 
 function update(hero, objects) {
@@ -66,19 +78,17 @@ function update(hero, objects) {
 }
 
 function createGridNodeAt(x, y) {
-  let diffX = x % grid.gridNodeSize
+  let diffX = x % window.gridNodeSize
   x -= diffX
 
-  let diffY = y % grid.gridNodeSize
+  let diffY = y % window.gridNodeSize
   y -= diffY
 
   return {
-    x, y, width: grid.gridNodeSize, height: grid.gridNodeSize,
+    x, y, width: window.gridNodeSize, height: window.gridNodeSize,
   }
 
 }
-
-
 
 export default {
   init,
@@ -86,4 +96,5 @@ export default {
   update,
   snapObjectToGrid,
   createGridNodeAt,
+  createGrid,
 }
