@@ -1,9 +1,9 @@
-// fix asteroids mode
 // attack button ( like papa bear spears!! )
 // procedural
 // pathfinding
 // respawning enemies area.
 // planet gravity! Would be cool to have..
+// can we create gravity points in space yeah ^^
 
 // function for adding objects ( I need to make sure to add all tags to an object from the start )
 // revise this bs idea of the more advanced editor..
@@ -66,7 +66,7 @@ import input from './js/input.js'
 import camera from './js/camera.js'
 import playEditor from './js/playeditor.js'
 import shadow from './js/shadow.js'
-import shoot from './js/shoot.js'
+import action from './js/action.js'
 import intelligence from './js/intelligence.js'
 import grid from './js/grid.js'
 // import objects from './js/objects.js'
@@ -76,7 +76,7 @@ import io from 'socket.io-client'
 import procedural from './js/procedural.js'
 
 // SCREEN
-window.divideScreenSizeBy = 2
+window.divideScreenSizeBy = 1
 const socket = io('192.168.0.14:8081')
 window.socket = socket
 window.preferences = {}
@@ -142,7 +142,7 @@ if(!window.usePlayEditor) {
 
 	window.socket.emit('askObjects')
 	window.socket.on('onAddObjects', (objectsAdded) => {
-		if(window.hero.inputControlProp === 'grid') {
+		if(window.hero.arrowKeysBehavior === 'grid') {
 			objectsAdded.forEach((object) => {
 				grid.snapObjectToGrid(object)
 			})
@@ -192,7 +192,7 @@ const defaultHero = {
 	accDecayX: 0,
 	accDecayY: 0,
 	speed: 250,
-	inputControlProp: 'position',
+	arrowKeysBehavior: 'position',
 	jumpVelocity: -1200/window.divideScreenSizeBy,
 	spawnPointX: (100/window.divideScreenSizeBy) * 20,
 	spawnPointY: (100/window.divideScreenSizeBy) * 20,
@@ -280,7 +280,7 @@ var start = function () {
   input.init(hero)
 	grid.init()
   chat.init(current, flags)
-	shoot.init(hero)
+	action.init(hero)
   if(usePlayEditor) {
 		playEditor.init(ctx, window.objects, hero, camera)
 	}
@@ -300,7 +300,7 @@ var update = function (delta) {
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
-	if(window.hero.inputControlProp !== 'grid') {
+	if(window.hero.arrowKeysBehavior !== 'grid') {
 		physics.update(window.hero, window.objects, delta)
 	} else {
 		grid.update(window.hero, window.objects)

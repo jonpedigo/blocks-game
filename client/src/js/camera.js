@@ -86,6 +86,7 @@ function drawObject(ctx, object, withNames = false) {
 
 function drawVertice(ctx, vertice) {
   ctx.beginPath();
+  // ctx.lineWidth = '4';
   ctx.moveTo( (vertice.a.x/window.preferences.zoomMultiplier - camera.x), (vertice.a.y/window.preferences.zoomMultiplier - camera.y));
   ctx.lineTo( (vertice.b.x/window.preferences.zoomMultiplier - camera.x), (vertice.b.y/window.preferences.zoomMultiplier - camera.y));
   ctx.stroke();

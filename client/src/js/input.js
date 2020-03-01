@@ -16,7 +16,7 @@ function init(hero){
       lastJump = Date.now();
     }
 
-    if(window.hero.inputControlProp === 'grid') {
+    if(window.hero.arrowKeysBehavior === 'grid') {
       if (38 in keysDown) { // Player holding up
         window.hero.y -= window.grid.gridNodeSize
       } else if (40 in keysDown) { // Player holding down
@@ -64,42 +64,42 @@ function update(flags, hero, delta) {
     direction = 'up'
     if(hero.gravity > 0) {
 
-    } else if(hero.inputControlProp === 'position') {
+    } else if(hero.arrowKeysBehavior === 'position') {
       hero.y -= Math.ceil(hero.speed * delta);
-    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accY -= hero.speed * delta;
-    } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityY -= hero.speed * delta;
+    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accY -= (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityY -= (hero.speed) * delta;
     }
   }
   if (40 in keysDown) { // Player holding down
     direction = 'down'
-    if(hero.inputControlProp === 'position') {
+    if(hero.arrowKeysBehavior === 'position') {
       hero.y += Math.ceil(hero.speed * delta);
-    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accY += hero.speed * delta;
-    } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityY += hero.speed * delta;
+    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accY += (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityY += (hero.speed) * delta;
     }
   }
   if (37 in keysDown) { // Player holding left
     direction = 'left'
-    if(hero.inputControlProp === 'position') {
+    if(hero.arrowKeysBehavior === 'position') {
       hero.x -= Math.ceil(hero.speed * delta);
-    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accX -= hero.speed * delta;
-    } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityX -= hero.speed * delta;
+    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accX -= (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityX -= (hero.speed) * delta;
     }
   }
   if (39 in keysDown) { // Player holding right
     direction = 'right'
-    if(hero.inputControlProp === 'position') {
+    if(hero.arrowKeysBehavior === 'position') {
       hero.x += Math.ceil(hero.speed * delta);
-    } else if(hero.inputControlProp === 'acc' || hero.inputControlProp === 'acceleration') {
-      hero.accX += hero.speed * delta;
-    } else if (hero.inputControlProp === 'velocity') {
-      hero.velocityX += hero.speed * delta;
+    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accX += (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityX += (hero.speed) * delta;
     }
   }
 
@@ -107,8 +107,7 @@ function update(flags, hero, delta) {
     // camera.setLimit(100, 100)
   }
 
-
-  if(hero.inputControlProp === 'skating') {
+  if(hero.arrowKeysBehavior === 'skating') {
     if(direction === 'up') {
       hero.y -= Math.ceil(hero.speed * delta);
     } else if(direction === 'down') {

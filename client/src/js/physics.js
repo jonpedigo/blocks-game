@@ -125,7 +125,6 @@ function update (hero, objects, delta) {
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
 
-  console.log(physicsObjects)
   for(const body of potentials) {
     if(physicsObjects.hero.collides(body, result)) {
       if(body.tags && body.tags['monster']) {

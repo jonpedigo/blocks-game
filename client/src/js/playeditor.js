@@ -392,35 +392,45 @@ function init(ctx, objects, hero) {
   }
 
   function setPresetMario() {
+    getHero()
     let editorState = editor.get()
-    editorState.hero.inputControlProp = 'position'
+    editorState.hero.arrowKeysBehavior = 'position'
     editorState.hero.gravity = true
     editorState.hero.jumpVelocity = -1200/window.divideScreenSizeBy
     editorState.hero.velocityMax = 1200/window.divideScreenSizeBy
+    editorState.hero.velocityX = 0
+
     editor.set(editorState)
     setHero()
   }
 
   function setPresetZelda() {
+    getHero()
     let editorState = editor.get()
-    editorState.hero.inputControlProp = 'position'
+    editorState.hero.arrowKeysBehavior = 'position'
     editorState.hero.gravity = false
+    editorState.hero.velocityY = 0
+    editorState.hero.velocityX = 0
+
     editor.set(editorState)
     setHero()
+    window.socket.emit('updateHero', heroCopy)
   }
 
   function setPresetAsteroids() {
+    getHero()
     let editorState = editor.get()
     editorState.hero.gravity = false
-    editorState.hero.inputControlProp = 'velocity'
-    editorState.hero.velocityMax = -1500/window.divideScreenSizeBy
+    editorState.hero.arrowKeysBehavior = 'velocity'
+    editorState.hero.velocityMax = 1500/window.divideScreenSizeBy
 
     editor.set(editorState)
     setHero()
   }
 
   function setPresetPokemon() {
-    editorState.hero.inputControlProp = 'grid'
+    getHero()
+    editorState.hero.arrowKeysBehavior = 'grid'
     editorState.hero.gravity = false
 
     editor.set(editorState)
@@ -429,7 +439,7 @@ function init(ctx, objects, hero) {
   }
 
   function setPresetSnake() {
-    editorState.hero.inputControlProp = 'skating'
+    editorState.hero.arrowKeysBehavior = 'skating'
     editorState.hero.gravity = false
 
     editor.set(editorState)
@@ -472,9 +482,9 @@ function init(ctx, objects, hero) {
       centerY: window.hero.y + window.hero.height/2,
     }
 
+    createArena()
     const {centerY, centerX, width, height} = value;
     const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-
     window.socket.emit('updatePreferences', { lockCamera: lockCamera , gameBoundaries: {} })
   }
 
@@ -688,7 +698,7 @@ function render(ctx, hero, objects) {
     drawObject(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
   }
 
-  if(window.preferences.lockCamera && !window.preferences.lockCamera.limitX) {
+  if(window.preferences.lockCamera) {
     ctx.strokeStyle='#0A0';
     drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
   }
