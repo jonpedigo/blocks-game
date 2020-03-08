@@ -3,8 +3,11 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/client/public/index.html');
+  res.sendFile(__dirname + '/client/public/index.html')
 });
+
+// Set static file location for production
+app.use(express.static(require('path').resolve('./client/public')))
 
 let serverState = []
 let grid = []
