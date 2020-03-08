@@ -4,6 +4,7 @@
 // respawning enemies area.
 // planet gravity! Would be cool to have..
 // can we create gravity points in space yeah ^^
+// reset hero 'other'..is dumb
 
 // function for adding objects ( I need to make sure to add all tags to an object from the start )
 // revise this bs idea of the more advanced editor..
@@ -76,7 +77,7 @@ import io from 'socket.io-client'
 import procedural from './js/procedural.js'
 
 // SCREEN
-window.divideScreenSizeBy = 1
+window.divideScreenSizeBy = 3
 const socket = io('192.168.0.14:8081')
 window.socket = socket
 window.preferences = {}

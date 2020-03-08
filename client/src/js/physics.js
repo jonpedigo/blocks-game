@@ -96,6 +96,7 @@ function update (hero, objects, delta) {
     physicsObject.y = object.y
     physicsObject.id = object.id
     physicsObject.tags = object.tags
+    physicsObject.heroUpdate = object.heroUpdate
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
@@ -133,6 +134,10 @@ function update (hero, objects, delta) {
       }
       if(body.tags && body.tags['coin']) {
         window.score++
+      }
+
+      if(body.tags && body.tags['powerup']) {
+        window.resetHero(body.heroUpdate)
       }
 
       if(body.tags && body.tags['obstacle']) {

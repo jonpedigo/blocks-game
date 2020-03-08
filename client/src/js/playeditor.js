@@ -47,6 +47,7 @@ let tags = {
   obstacle: true,
   monster: false,
   coin: false,
+  powerup: false,
 }
 window.tags = tags
 
@@ -155,6 +156,7 @@ let tools = {
         let object = gridTool.createGridNodeAt(click.x, click.y)
         object.tags = {}
         object.id = 'object' + Date.now()
+        object.heroUpdate = {}
         for(let tag in tags) {
           if(tags[tag].checked){
             object.tags[tag] = true
@@ -176,6 +178,7 @@ let tools = {
         y: clickStart.y/scaleMultiplier,
         color: 'white',
         tags: {},
+        heroUpdate: {},
       }
 
       for(let tag in tags) {
@@ -256,7 +259,9 @@ function init(ctx, objects, hero) {
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
   simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
-    window.objects[editingObject.i].tags = object.tags
+    delete window.objects[editingObject.i].x
+    delete window.objects[editingObject.i].y
+    window.objects[editingObject.i] = object
     window.socket.emit('editObjects', window.objects)
   }});
 
