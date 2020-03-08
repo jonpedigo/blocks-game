@@ -90,6 +90,6 @@ io.on('connection', function(socket){
   })
 });
 
-http.listen(process.env.PORT, function(){
-  console.log('listening on *:' + process.env.PORT);
+http.listen(process.env.PORT || 4000, function(){
+  console.log('listening on *:' + (process.env.PORT || 4000));
 });

@@ -78,7 +78,11 @@ import procedural from './js/procedural.js'
 
 // SCREEN
 window.divideScreenSizeBy = 3
-const socket = io('192.168.0.14:8081')
+if (window.location.origin.indexOf('localhost') > 0) {
+  window.socket = io.connect('http://localhost:4000');
+} else {
+  window.socket = io.connect();
+}
 window.socket = socket
 window.preferences = {}
 window.objects = []
