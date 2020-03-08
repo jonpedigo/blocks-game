@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express')
+var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
@@ -7,7 +8,7 @@ app.get('/', function(req, res){
 })
 
 // Set static file location for production
-app.use(requires('express').static(require('path').resolve('./client/public')))
+app.use(express.static(require('path').resolve('./client/public')))
 
 let serverState = []
 let grid = []
