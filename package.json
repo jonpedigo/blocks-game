@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start-dev": "cross-env NODE_ENV=production webpack-dev-server --host 0.0.0.0 --config client/config/webpack.dev.js",
-    "start": "node server",
+    "start": "node server.js",
     "build": "cross-env NODE_ENV=production webpack --config client/config/webpack.prod.js"
   },
   "keywords": [
