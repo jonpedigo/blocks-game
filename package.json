@@ -4,7 +4,7 @@
   "description": "Webpack 4 Boilerplate",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production webpack-dev-server --host 0.0.0.0 --config client/config/webpack.dev.js",
+    "start": "node/server && cross-env NODE_ENV=production webpack-dev-server --host 0.0.0.0 --config client/config/webpack.dev.js",
     "build": "cross-env NODE_ENV=production webpack --config client/config/webpack.prod.js"
   },
   "keywords": [
@@ -14,7 +14,7 @@
     "boilerplate",
     "hmr"
   ],
-  "author": "Tania Rascia <tania@taniarascia.com>",
+  "author": "Jon Pedigo <pedigojon@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.5.5",
