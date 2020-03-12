@@ -125,23 +125,38 @@ window.socket.on('onUpdatePreferences', (updatedPreferences) => {
 	}
 })
 
-window.socket.on('onResetHero', () => {
-	window.resetHero()
-})
-
-window.socket.on('onRespawnHero', () => {
-	window.respawnHero()
-})
-
 window.socket.on('onUpdateHero', (updatedHero) => {
-	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity) {
-		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight()
+	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
+	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
+		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight(window.heros[updatedHero.id])
 	}
-	if(updatedHero.jumpVelocity !== window.hero.jumpVelocity || updatedHero.speed !== window.hero.speed) {
-		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth()
+	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
+		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth(window.heros[updatedHero.id])
 	}
-	window.resetHero(updatedHero)
+	if(window.hero && updatedHero.id === window.hero.id){
+		window.resetHero(updatedHero)
+	}
+	else {
+		Object.assign(window.heros[updatedHero.id], updatedHero)
+	}
 })
+
+window.respawnHero = function() {
+	window.hero.x = window.hero.spawnPointX;
+	window.hero.y = window.hero.spawnPointY;
+}
+
+window.resetHero = function(updatedHero) {
+	physics.removeObject(window.hero)
+	if(updatedHero) {
+		Object.assign(window.hero, updatedHero)
+	} else {
+		Object.assign(window.hero, defaultHero)
+	}
+	localStorage.setItem('hero', JSON.stringify(window.hero));
+	physics.addObject(window.hero)
+}
+
 
 window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
 if(!window.usePlayEditor) {
@@ -211,52 +226,45 @@ const defaultHero = {
 }
 
 //hero
-let savedHero = JSON.parse(localStorage.getItem('hero'));
-if(savedHero){
-	window.hero = {}
-	Object.assign(window.hero, savedHero);
-}
-if(!window.hero) {
-	window.hero = {...defaultHero}
-	window.respawnHero()
-}
-window.hero.reachablePlatformHeight = resetReachablePlatformHeight()
-window.hero.reachablePlatformWidth = resetReachablePlatformWidth()
+if(!window.usePlayEditor) {
+	let savedHero = JSON.parse(localStorage.getItem('hero'));
+	if(savedHero){
+		window.hero = {}
+		Object.assign(window.hero, savedHero);
+	}
+	if(!window.hero) {
+		window.hero = {...defaultHero}
+		window.respawnHero()
+	}
+	window.hero.reachablePlatformHeight = resetReachablePlatformHeight(window.hero)
+	window.hero.reachablePlatformWidth = resetReachablePlatformWidth(window.hero)
 
-window.socket.emit('saveSocket', hero.id)
+	window.socket.emit('saveSocket', hero)
 
-function resetReachablePlatformHeight() {
-	let velocity = window.hero.jumpVelocity
+	// fuckin window.heros...
+	window.heros = {
+		[window.hero.id]:window.hero,
+	}
+
+	physics.addObject(window.hero)
+}
+
+window.socket.emit('askHeros');
+
+function resetReachablePlatformHeight(heroIn) {
+	let velocity = heroIn.jumpVelocity
 	let gravity = 1000
 	let delta = (0 - velocity)/gravity
 	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
 	return height
 }
 
-function resetReachablePlatformWidth() {
-	let velocity = window.hero.speed
+function resetReachablePlatformWidth(heroIn) {
+	let velocity = heroIn.speed
 	let gravity = 1000
-	let deltaInAir = (0 - window.hero.jumpVelocity)/gravity
+	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
 	let width = (velocity * deltaInAir)
 	return width * 2
-}
-
-physics.addObject(window.hero)
-
-window.resetHero = function(updatedHero) {
-	physics.removeObject(window.hero)
-	if(updatedHero) {
-		Object.assign(window.hero, updatedHero)
-	} else {
-		Object.assign(window.hero, defaultHero)
-	}
-	localStorage.setItem('hero', JSON.stringify(window.hero));
-	physics.addObject(window.hero)
-}
-
-window.respawnHero = function() {
-	window.hero.x = window.hero.spawnPointX;
-	window.hero.y = window.hero.spawnPointY;
 }
 
 window.resetObjects = function() {
@@ -289,12 +297,14 @@ const current = {
 }
 
 var start = function () {
-  input.init(hero)
 	grid.init()
-  chat.init(current, flags)
-	action.init(hero)
+
   if(usePlayEditor) {
-		playEditor.init(ctx, window.objects, hero, camera)
+		playEditor.init(ctx, window.objects, camera)
+	} else {
+		input.init(hero)
+		chat.init(current, flags)
+		action.init(hero)
 	}
 	main()
 };

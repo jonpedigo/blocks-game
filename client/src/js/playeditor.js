@@ -35,8 +35,7 @@ let scaleMultiplier = .3
 
 let objectFactory = []
 let simpleeditor = null
-let heroeditor = null
-
+var heroeditor = null
 
 let tags = {
   obstacle: true,
@@ -50,7 +49,13 @@ let editingObject = {
   i: null,
   id: null,
 }
-let tools = {
+
+window.heros = {}
+let editingHero = {
+  id: null,
+}
+
+const tools = {
   [TOOLS.SIMPLE_EDITOR]: {
     onFirstClick: (e) => {
       const click = {
@@ -107,14 +112,14 @@ let tools = {
     }
   },
   [TOOLS.AREA_SELECTOR]: {
-    onFirstClick: (e) => {
+    onFirstClick: function(e){
       if(selectorSpawnToggle.checked) {
         const click = {
           x: (e.offsetX + camera.x)/scaleMultiplier,
           y: (e.offsetY + camera.y)/scaleMultiplier,
         }
 
-        window.socket.emit('updateHero', {spawnPointX: click.x, spawnPointY: click.y})
+        window.updateHero({id: editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
       } else {
         defaultFirstClick(e)
       }
@@ -204,7 +209,7 @@ function defaultFirstClick(e) {
   clickStart.x = (e.offsetX + camera.x)
   clickStart.y = (e.offsetY + camera.y)
 }
-function init(ctx, objects, hero) {
+function init(ctx, objects) {
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
@@ -372,8 +377,16 @@ function init(ctx, objects, hero) {
     window.socket.emit('updateGrid', grid, window.gridNodeSize, gridSize)
   }
 
+  function setEditingHero(hero) {
+    editingHero = hero
+    getHero()
+  }
+  for(var heroId in window.heros) {
+    setEditingHero(window.heros[heroId])
+  }
   function getHero() {
-    heroeditor.update(window.hero)
+    heroeditor.update({})
+    heroeditor.update(window.heros[editingHero.id])
   }
 
   function setPresetMario() {
@@ -441,14 +454,23 @@ function init(ctx, objects, hero) {
 
   function setHeroPos() {
     let hero = heroeditor.get()
-    window.socket.emit('updateHero', { x: hero.x, y: hero.y })
+    window.socket.emit('updateHero', { id: hero.id, x: hero.x, y: hero.y })
   }
 
   function respawnHero() {
-    window.socket.emit('respawnHero')
+    let hero = heroeditor.get()
+    window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
   function resetHeroOther() {
-    window.socket.emit('resetHero')
+    window.socket.emit('resetHero', hero.id)
+  }
+
+  window.updateHero = function(hero) {
+    Object.assign(heros[hero.id], hero)
+    if(hero.id == editingHero.id) {
+      getHero()
+      setHero()
+    }
   }
 
   function resetObjects() {
@@ -456,15 +478,15 @@ function init(ctx, objects, hero) {
   }
 
   function findHero() {
-    setCamera(ctx, hero)
+    setCamera(ctx, window.heros[editingHero.id])
   }
 
   function setPresetWorldArenaBoundary() {
     const value = {
       width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
       height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
-      centerX: window.hero.x + window.hero.width/2,
-      centerY: window.hero.y + window.hero.height/2,
+      centerX: editingHero.x + editingHero.width/2,
+      centerY: editingHero.y + editingHero.height/2,
     }
 
     createArena()
@@ -477,8 +499,8 @@ function init(ctx, objects, hero) {
     const value = {
       width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
       height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
-      centerX: window.hero.x + window.hero.width/2,
-      centerY: window.hero.y + window.hero.height/2,
+      centerX: editingHero.x + editingHero.width/2,
+      centerY: editingHero.y + editingHero.height/2,
     }
 
     const {centerY, centerX, width, height} = value;
@@ -544,8 +566,11 @@ function init(ctx, objects, hero) {
     Object.assign(window.objects, objectsUpdated)
   })
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-    Object.assign(window.hero, heroUpdated)
-    if(window.preferences.syncHero) getHero()
+    if(!window.heros[heroUpdated.id]){
+      window.heros[heroUpdated.id] = {}
+    }
+    Object.assign(window.heros[heroUpdated.id], heroUpdated)
+    if(window.preferences.syncHero && editingHero.id === heroUpdated.id) getHero()
   })
   window.socket.on('onResetObjects', () => {
     window.objects = []
@@ -555,7 +580,7 @@ function init(ctx, objects, hero) {
 }
 
 function createArena() {
-  let boundaries = {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
+  let boundaries = {x: editingHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + editingHero.width/2, y: editingHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + editingHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
 
   let wallLeft = {
     id: 'wall-l' + Date.now(),
@@ -664,58 +689,63 @@ function render(ctx, hero, objects) {
     drawObject(ctx, objectFactory[i])
   }
 
-  drawObject(ctx, hero);
+  for(var heroId in window.heros) {
+    drawObject(ctx, window.heros[heroId]);
+  }
 
   if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
     drawObject(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
   }
 
-  if(window.preferences.lockCamera) {
-    ctx.strokeStyle='#0A0';
-    drawBorder(ctx, {x: window.hero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.hero.width/2, y: window.hero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.hero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+  for(var heroId in window.heros) {
+    let currentHero = window.heros[heroId];
+
+    if(window.preferences.lockCamera) {
+      ctx.strokeStyle='#0A0';
+      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+    }
+
+    if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
+      ctx.strokeStyle = '#FFF'
+      let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
+      if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
+      else ctx.strokeStyle = 'red'
+      drawBorder(ctx, possibleBox)
+    }
+
+    if(window.preferences.lockCamera) {
+      ctx.fillStyle='#0A0';
+      ctx.globalAlpha = 0.2;
+      drawObject(ctx, window.preferences.lockCamera);
+      ctx.globalAlpha = 1.0;
+    }
+
+    if(window.preferences.gameBoundaries) {
+      ctx.fillStyle='white';
+      ctx.globalAlpha = 0.2;
+      drawObject(ctx, window.preferences.gameBoundaries);
+      ctx.globalAlpha = 1.0;
+    }
+
+    if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
+      ctx.fillStyle='yellow';
+      ctx.globalAlpha = 0.2;
+      drawObject(ctx, window.preferences.proceduralBoundaries);
+      ctx.globalAlpha = 1.0;
+    }
+
+    if(currentHero.reachablePlatformHeight && currentHero.gravity) {
+      let y = (currentHero.y + currentHero.height)
+      let x = currentHero.x - currentHero.reachablePlatformWidth
+      let width = (currentHero.reachablePlatformWidth * 2) + (currentHero.width)
+      let height = currentHero.reachablePlatformHeight
+      let color = 'rgba(50, 255, 50, 0.5)'
+      drawObject(ctx, {x, y, width, height, color})
+    }
+
+    drawObject(ctx, {x: currentHero.spawnPointX, y: currentHero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
+    drawObject(ctx, {x: currentHero.spawnPointX - 205, y: currentHero.spawnPointY, width: 400, height: 5, color: 'white'})
   }
-
-  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
-    ctx.strokeStyle = '#FFF'
-    let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
-    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
-    else ctx.strokeStyle = 'red'
-    drawBorder(ctx, possibleBox)
-  }
-
-  if(window.preferences.lockCamera) {
-    ctx.fillStyle='#0A0';
-    ctx.globalAlpha = 0.2;
-    drawObject(ctx, window.preferences.lockCamera);
-    ctx.globalAlpha = 1.0;
-  }
-
-  if(window.preferences.gameBoundaries) {
-    ctx.fillStyle='white';
-    ctx.globalAlpha = 0.2;
-    drawObject(ctx, window.preferences.gameBoundaries);
-    ctx.globalAlpha = 1.0;
-  }
-
-  if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
-    ctx.fillStyle='yellow';
-    ctx.globalAlpha = 0.2;
-    drawObject(ctx, window.preferences.proceduralBoundaries);
-    ctx.globalAlpha = 1.0;
-  }
-
-  if(window.hero.reachablePlatformHeight && window.hero.gravity) {
-    let y = (window.hero.y + window.hero.height)
-    let x = window.hero.x - window.hero.reachablePlatformWidth
-    let width = (window.hero.reachablePlatformWidth * 2) + (window.hero.width)
-    let height = window.hero.reachablePlatformHeight
-    let color = 'rgba(50, 255, 50, 0.5)'
-
-    drawObject(ctx, {x, y, width, height, color})
-  }
-
-  drawObject(ctx, {x: window.hero.spawnPointX, y: window.hero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
-  drawObject(ctx, {x: window.hero.spawnPointX - 205, y: window.hero.spawnPointY, width: 400, height: 5, color: 'white'})
 }
 
 function update(delta) {

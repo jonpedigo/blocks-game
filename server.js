@@ -13,6 +13,9 @@ app.use(express.static(require('path').resolve('./client/dist')))
 let heros = {
 
 }
+let herosockets = {
+
+}
 let serverState = []
 let grid = []
 let gridNodeSize = 0
@@ -22,10 +25,9 @@ let preferences = {}
 io.on('connection', function(socket){
   //objects
 
-  socket.on('saveSocket', (id) => {
-    heros[id] = socket
-
-    console.log(heros)
+  socket.on('saveSocket', (hero) => {
+    herosockets[hero.id] = socket
+    heros[hero.id] = hero
   })
 
   socket.on('updateObjects', (objects) => {
@@ -76,9 +78,13 @@ io.on('connection', function(socket){
   socket.on('resetHero', (hero) => {
     io.emit('onResetHero', hero)
   })
-
   socket.on('respawnHero', (hero) => {
     io.emit('onRespawnHero', hero)
+  })
+  socket.on('askHeros', () => {
+    for(let heroId in heros) {
+      socket.emit('onUpdateHero', heros[heroId])
+    }
   })
 
   //onSnapAllObjectsToGrid
