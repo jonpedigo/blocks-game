@@ -137,7 +137,9 @@ function update (hero, objects, delta) {
       }
 
       if(body.tags && body.tags['powerup']) {
-        window.resetHero(body.heroUpdate)
+        if(body.id !== window.hero.lastPowerUpId) {
+          window.resetHero({...body.heroUpdate, lastPowerUpId: body.id})
+        }
       }
 
       if(body.tags && body.tags['obstacle']) {

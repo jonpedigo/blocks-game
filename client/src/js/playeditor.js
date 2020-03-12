@@ -35,13 +35,6 @@ let currentTool = TOOLS.ADD_OBJECT;
 let scaleMultiplier = .3
 
 let objectFactory = []
-let editor = null
-let editorState = {
-  factory: objectFactory,
-  world: [],
-  hero: {},
-}
-
 let simpleeditor = null
 let heroeditor = null
 
@@ -195,13 +188,8 @@ let tools = {
       if(instantAddToggle.checked) {
         window.socket.emit('addObjects', [newObject])
       } else {
-        // objects.unshift(newObject)
-        editorState = editor.get()
-        editorState.factory.push(newObject)
-        editor.set(editorState)
         objectFactory.push(newObject)
       }
-      // console.log('added', JSON.stringify(newObject))
     },
   }
 }
@@ -245,18 +233,6 @@ function init(ctx, objects, hero) {
     element.checked = tags[tag]
     tags[tag] = element
   }
-
-  var jsoneditor = document.createElement("div")
-  jsoneditor.id = 'jsoneditor'
-  document.getElementById('tool-'+TOOLS.EDITOR).appendChild(jsoneditor);
-  editor = new JSONEditor(jsoneditor, { onChangeJSON: (state) => {
-    if(!syncObjectsToggle.checked) {
-      window.socket.emit('editObjects', state.world)
-    }
-    objectFactory = state.factory
-    editorState.factory = state.factory
-  }});
-  editor.set({world: objects, factory: objectFactory, hero});
 
   var simplejsoneditor = document.createElement("div")
   simplejsoneditor.id = 'simplejsoneditor'
@@ -350,11 +326,8 @@ function init(ctx, objects, hero) {
 
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
-    editorState = editor.get()
-    window.socket.emit('addObjects', editorState.factory)
-    editorState.factory = []
+    window.socket.emit('addObjects', objectFactory)
     objectFactory = []
-    editor.update(editorState)
   })
 
   instantGridAddToggle = document.getElementById("instant-grid-add")
@@ -567,16 +540,8 @@ function init(ctx, objects, hero) {
 
   window.socket.on('onAddObjects', (objectsAdded) => {
     window.objects.push(...objectsAdded)
-    let editorState = editor.get()
-    editorState.world.push(...objectsAdded)
-    editor.set(editorState)
   })
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    if(window.preferences.syncObjects) {
-      let editorState = editor.get()
-      Object.assign(editorState.world, objectsUpdated)
-      editor.update(editorState)
-    }
     Object.assign(window.objects, objectsUpdated)
   })
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
@@ -584,12 +549,7 @@ function init(ctx, objects, hero) {
     if(window.preferences.syncHero) getHero()
   })
   window.socket.on('onResetObjects', () => {
-    let editorState = editor.get()
-    editorState.factory = []
-    editorState.world = []
-    objectFactory = []
     window.objects = []
-    editor.set(editorState)
     window.location.reload()
   })
   window.socket.emit('askObjects')

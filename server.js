@@ -10,6 +10,9 @@ app.get('/', function(req, res){
 // Set static file location for production
 app.use(express.static(require('path').resolve('./client/dist')))
 
+let heros = {
+
+}
 let serverState = []
 let grid = []
 let gridNodeSize = 0
