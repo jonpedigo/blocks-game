@@ -25,6 +25,7 @@ const TOOLS = {
   AREA_SELECTOR: 'areaSelector',
   EDITOR: 'editor',
   SIMPLE_EDITOR: 'simpleEditor',
+  HERO_EDITOR: 'heroEditor',
   GAME_FEEL: 'gameFeel',
   PROCEDURAL: 'procedural',
 }
@@ -42,6 +43,8 @@ let editorState = {
 }
 
 let simpleeditor = null
+let heroeditor = null
+
 
 let tags = {
   obstacle: true,
@@ -265,6 +268,13 @@ function init(ctx, objects, hero) {
     window.socket.emit('editObjects', window.objects)
   }});
 
+  var heroeditor = document.createElement("div")
+  heroeditor.id = 'herojsoneditor'
+  document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(heroeditor);
+  heroeditor = new JSONEditor(heroeditor, { onChangeJSON: (object) => {
+    setHero()
+  }});
+
   var getHeroButton = document.getElementById("get-hero")
   getHeroButton.addEventListener('click', getHero)
   var setHeroButton = document.getElementById("set-hero")
@@ -391,21 +401,19 @@ function init(ctx, objects, hero) {
   }
 
   function getHero() {
-    let editorState = editor.get()
-    editorState.hero = { ...window.hero }
-    editor.update(editorState)
+    heroeditor.update(window.hero)
   }
 
   function setPresetMario() {
     getHero()
-    let editorState = editor.get()
-    editorState.hero.arrowKeysBehavior = 'position'
-    editorState.hero.gravity = true
-    editorState.hero.jumpVelocity = -1200/window.divideScreenSizeBy
-    editorState.hero.velocityMax = 1200/window.divideScreenSizeBy
-    editorState.hero.velocityX = 0
+    let hero = heroeditor.get()
+    hero.arrowKeysBehavior = 'position'
+    hero.gravity = true
+    hero.jumpVelocity = -1200/window.divideScreenSizeBy
+    hero.velocityMax = 1200/window.divideScreenSizeBy
+    hero.velocityX = 0
 
-    editor.set(editorState)
+    heroeditor.set(hero)
     setHero()
   }
 
@@ -452,16 +460,16 @@ function init(ctx, objects, hero) {
   }
 
   function setHero() {
-    let editorState = editor.get()
-    const heroCopy = Object.assign({}, editorState.hero)
+    let hero = heroeditor.get()
+    const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
     delete heroCopy.y
     window.socket.emit('updateHero', heroCopy)
   }
 
   function setHeroPos() {
-    let editorState = editor.get()
-    window.socket.emit('updateHero', { x: editorState.hero.x, y: editorState.hero.y })
+    let hero = heroeditor.get()
+    window.socket.emit('updateHero', { x: hero.x, y: hero.y })
   }
 
   function respawnHero() {

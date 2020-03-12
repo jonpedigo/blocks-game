@@ -1,3 +1,6 @@
+// zooming in and out to different worlds, to pacman world and then to zelda world.
+// youll probably need to 'switch heros....'
+
 // attack button ( like papa bear spears!! )
 // procedural
 // pathfinding

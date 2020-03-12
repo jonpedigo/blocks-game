@@ -28,7 +28,6 @@ function init(hero){
       }
     }
 
-
     // console.log(keysDown, e.keyCode, hero.wallJumpLeft)
     // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpLeft) {
     //   console.log('wall jump left')
