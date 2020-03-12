@@ -265,8 +265,8 @@ function init(ctx, objects) {
   findHeroButton.addEventListener('click', findHero)
   var respawnHeroButton = document.getElementById("respawn-hero");
   respawnHeroButton.addEventListener('click', respawnHero)
-  var resetHeroOtherButton = document.getElementById("reset-hero-other");
-  resetHeroOtherButton.addEventListener('click', resetHeroOther)
+  var resetHeroButton = document.getElementById("reset-hero-other");
+  resetHeroButton.addEventListener('click', resetHero)
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', resetObjects)
   var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
@@ -461,8 +461,8 @@ function init(ctx, objects) {
     let hero = heroeditor.get()
     window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
-  function resetHeroOther() {
-    window.socket.emit('resetHero', hero.id)
+  function resetHero() {
+    window.socket.emit('resetHero', hero)
   }
 
   window.updateHero = function(hero) {

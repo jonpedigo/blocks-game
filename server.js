@@ -20,7 +20,9 @@ let serverState = []
 let grid = []
 let gridNodeSize = 0
 let gridSize = 0
-let preferences = {}
+let preferences = {
+
+}
 
 io.on('connection', function(socket){
   //objects

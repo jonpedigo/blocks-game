@@ -140,6 +140,8 @@ function update (hero, objects, delta) {
         if(body.id !== window.hero.lastPowerUpId) {
           window.resetHero({...body.heroUpdate, lastPowerUpId: body.id})
         }
+      } else {
+        window.hero.lastPowerUpId = null
       }
 
       if(body.tags && body.tags['obstacle']) {

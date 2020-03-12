@@ -146,6 +146,12 @@ window.respawnHero = function() {
 	window.hero.y = window.hero.spawnPointY;
 }
 
+window.socket.on('onResetHero', (hero) => {
+	if(hero.id === window.hero.id) {
+		window.resetHero()
+	}
+})
+
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
 	if(updatedHero) {
