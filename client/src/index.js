@@ -191,7 +191,7 @@ const defaultHero = {
 	width: 100/window.divideScreenSizeBy,
 	height: 100/window.divideScreenSizeBy,
   paused: false,
-	id: 'hero',
+	id: 'hero-'+Date.now(),
 	velocityX: 0,
 	velocityY: 0,
 	velocityMax: 250,
@@ -210,14 +210,20 @@ const defaultHero = {
 	tags: {'hero': true},
 }
 
-window.hero = {...defaultHero}
+//hero
+let savedHero = JSON.parse(localStorage.getItem('hero'));
+if(savedHero){
+	window.hero = {}
+	Object.assign(window.hero, savedHero);
+}
+if(!window.hero) {
+	window.hero = {...defaultHero}
+	window.respawnHero()
+}
 window.hero.reachablePlatformHeight = resetReachablePlatformHeight()
 window.hero.reachablePlatformWidth = resetReachablePlatformWidth()
-window.hero.x = window.hero.spawnPointX
-window.hero.y = window.hero.spawnPointY
 
-let savedHero = JSON.parse(localStorage.getItem('hero'));
-if(savedHero) Object.assign(window.hero, savedHero);
+window.socket.emit('saveSocket', hero.id)
 
 function resetReachablePlatformHeight() {
 	let velocity = window.hero.jumpVelocity
@@ -236,8 +242,6 @@ function resetReachablePlatformWidth() {
 }
 
 physics.addObject(window.hero)
-
-
 
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)

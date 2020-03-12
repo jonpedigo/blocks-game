@@ -121,13 +121,13 @@ function update (hero, objects, delta) {
   system.update()
 
   // check for basic collisions
-  const result = physicsObjects.hero.createResult()
-  const potentials = physicsObjects.hero.potentials()
+  const result = physicsObjects[window.hero.id].createResult()
+  const potentials = physicsObjects[window.hero.id].potentials()
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
 
   for(const body of potentials) {
-    if(physicsObjects.hero.collides(body, result)) {
+    if(physicsObjects[window.hero.id].collides(body, result)) {
       if(body.tags && body.tags['monster']) {
         window.score--
         window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
@@ -171,8 +171,8 @@ function update (hero, objects, delta) {
   if(illegal) {
     hero.x = correction.x
     hero.y = correction.y
-    // physicsObjects.hero.x = hero.x
-    // physicsObjects.hero.y = hero.y
+    // physicsObjects[window.hero.id].x = hero.x
+    // physicsObjects[window.hero.id].y = hero.y
   }
 
   let removeObjects = []

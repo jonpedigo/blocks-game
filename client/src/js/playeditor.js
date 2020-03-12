@@ -23,7 +23,6 @@ const keysDown = {}
 const TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
-  EDITOR: 'editor',
   SIMPLE_EDITOR: 'simpleEditor',
   HERO_EDITOR: 'heroEditor',
   GAME_FEEL: 'gameFeel',

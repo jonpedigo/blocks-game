@@ -21,6 +21,13 @@ let preferences = {}
 
 io.on('connection', function(socket){
   //objects
+
+  socket.on('saveSocket', (id) => {
+    heros[id] = socket
+
+    console.log(heros)
+  })
+
   socket.on('updateObjects', (objects) => {
     serverState = objects
     io.emit('onUpdateObjects', serverState)
