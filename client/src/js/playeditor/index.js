@@ -37,8 +37,8 @@ window.currentTool = TOOLS.ADD_OBJECT;
 window.scaleMultiplier = .3
 
 window.objectFactory = []
-let simpleeditor = null
-var heroeditor = null
+window.simpleeditor = null
+window.heroeditor = null
 
 let tags = {
   obstacle: true,
@@ -61,6 +61,25 @@ window.editingHero = {
 }
 
 const tools = {
+  [TOOLS.HERO_EDITOR]: {
+    onFirstClick: (e) => {
+      const click = {
+        x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
+        y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
+        width: 1,
+        height: 1,
+      }
+
+      Object.keys(window.heros).map((key) => window.heros[key])
+      .forEach((hero, i) => {
+        collisions.checkObject(click, hero, () => {
+          window.editingHero = hero
+          heroeditor.update(window.heros[window.editingHero.id])
+          heroeditor.expandAll()
+        })
+      })
+    }
+  },
   [TOOLS.SIMPLE_EDITOR]: {
     onFirstClick: (e) => {
       const click = {
@@ -197,7 +216,7 @@ const tools = {
       if(instantAddToggle.checked) {
         window.socket.emit('addObjects', [newObject])
       } else {
-        objectFactory.push(newObject)
+        window.objectFactory.push(newObject)
       }
     },
   }
@@ -254,6 +273,22 @@ function init(ctx, objects) {
     modSelectEl.appendChild(modEl)
   }
 
+  //mod select functionality
+  let heroModSelectEl = document.getElementById("hero-modifier-select")
+  for(let modifierName in modifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = 'apply mod - ' + modifierName
+    modEl.onclick=function() {
+      let editorState = heroeditor.get()
+      Object.assign(editorState, modifiers[modifierName])
+      heroeditor.set(editorState)
+      heroeditor.expandAll()
+      setHero(editorState)
+    }
+    heroModSelectEl.appendChild(modEl)
+  }
+
   let toolAddObjectEl = document.getElementById("tool-addObject")
 
   let tagSelectEl = document.getElementById("tag-select")
@@ -273,14 +308,14 @@ function init(ctx, objects) {
   var simplejsoneditor = document.createElement("div")
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
-  simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
+  window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
     emitEditedObject(object)
   }});
 
-  var heroeditor = document.createElement("div")
-  heroeditor.id = 'herojsoneditor'
-  document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(heroeditor);
-  heroeditor = new JSONEditor(heroeditor, { onChangeJSON: (object) => {
+  var herojsoneditor = document.createElement("div")
+  herojsoneditor.id = 'herojsoneditor'
+  document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
+  window.heroeditor = new JSONEditor(herojsoneditor, { onChangeJSON: (object) => {
     setHero()
   }});
 
@@ -351,7 +386,7 @@ function init(ctx, objects) {
 
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
-    window.socket.emit('addObjects', objectFactory)
+    window.socket.emit('addObjects', window.objectFactory)
     window.objectFactory = []
   })
 
@@ -398,14 +433,14 @@ function init(ctx, objects) {
     window.socket.emit('updateGrid', grid, window.gridNodeSize, gridSize)
   }
 
-  function setEditingHero(hero) {
-    window.editingHero = hero
-    getHero()
-  }
-  for(var heroId in window.heros) {
-    setEditingHero(window.heros[heroId])
-  }
   function getHero() {
+    if(Object.keys(window.heros).length === 1) {
+      for(var heroId in window.heros) {
+        window.editingHero = window.heros[heroId]
+        heroeditor.update(window.heros[window.editingHero.id])
+      }
+    }
+
     heroeditor.update({})
     heroeditor.update(window.heros[window.editingHero.id])
   }
