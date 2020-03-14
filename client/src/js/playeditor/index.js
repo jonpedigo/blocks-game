@@ -6,23 +6,22 @@ import modifiers from './modifiers.js'
 import camera from './camera.js'
 import input from './input.js'
 
+/////////////////////
+//GLOBALS
+/////////////////////
+/////////////////////
 window.camera = {
   x: 0,
   y: 0,
 }
-
 window.clickStart = {
   x: null,
   y: null,
 }
-
 window.mousePos = {
   x: null,
   y: null,
 }
-
-const keysDown = {}
-
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
@@ -31,16 +30,12 @@ window.TOOLS = {
   GAME_FEEL: 'gameFeel',
   PROCEDURAL: 'procedural',
 }
-
 window.currentTool = TOOLS.ADD_OBJECT;
-
 window.scaleMultiplier = .3
-
 window.objectFactory = []
 window.simpleeditor = null
 window.heroeditor = null
-
-let tags = {
+window.tags = {
   obstacle: true,
   monster: false,
   coin: false,
@@ -48,18 +43,23 @@ let tags = {
   once: false,
   deleteAfterPowerup: false,
 }
-window.tags = tags
-
 window.editingObject = {
   i: null,
   id: null,
 }
-
 window.heros = {}
 window.editingHero = {
   id: null,
 }
 
+/////////////////////
+//TOOL CLICKING
+/////////////////////
+/////////////////////
+function defaultFirstClick(e) {
+  window.clickStart.x = (e.offsetX + window.camera.x)
+  window.clickStart.y = (e.offsetY + window.camera.y)
+}
 const tools = {
   [TOOLS.HERO_EDITOR]: {
     onFirstClick: (e) => {
@@ -223,21 +223,81 @@ const tools = {
 }
 tools[TOOLS.PROCEDURAL] = tools[TOOLS.AREA_SELECTOR]
 
+
+/////////////////////
+//DOM
+/////////////////////
+/////////////////////
 let instantGridAddToggle;
 let instantAddToggle;
 let selectorGameToggle;
 let selectorProceduralToggle;
 let selectorSpawnToggle;
 let selectorCameraToggle;
-function defaultFirstClick(e) {
-  window.clickStart.x = (e.offsetX + window.camera.x)
-  window.clickStart.y = (e.offsetY + window.camera.y)
-}
 function init(ctx, objects) {
   input.init()
 
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
+
+  /////////////////////
+  // Click start, MousePos events
+  /////////////////////
+  /////////////////////
+  window.document.getElementById('game').addEventListener("mousemove", function(e) {
+    window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
+    window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
+  })
+
+  window.document.getElementById('game').addEventListener('click',function(e){
+    if(window.clickStart.x && window.clickStart.y) {
+      //second click
+      if(tools[window.currentTool].onSecondClick) tools[window.currentTool].onSecondClick(e)
+      window.clickStart.x = null
+      window.clickStart.y = null
+    } else {
+      // first click
+      if(tools[window.currentTool].onFirstClick) tools[window.currentTool].onFirstClick(e)
+      else {
+        defaultFirstClick(e)
+      }
+    }
+  },false);
+
+  /////////////////////
+  //CREATE DOM LISTS
+  /////////////////////
+  /////////////////////
+  let heroModSelectEl = document.getElementById("hero-modifier-select")
+  for(let modifierName in modifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = 'apply mod - ' + modifierName
+    modEl.onclick=function() {
+      let editorState = heroeditor.get()
+      Object.assign(editorState, modifiers[modifierName])
+      heroeditor.set(editorState)
+      heroeditor.expandAll()
+      setHero(editorState)
+    }
+    heroModSelectEl.appendChild(modEl)
+  }
+
+  let toolAddObjectEl = document.getElementById("tool-addObject")
+
+  let tagSelectEl = document.getElementById("tag-select")
+  for(var tag in tags) {
+    let tagEl = document.createElement('input')
+    tagEl.type ='checkbox'
+    tagEl.checked = tags[tag]
+    tagEl.id = 'tag-'+tag
+    tags[tag] = tagEl
+    let tagContainerEl = document.createElement('div')
+    tagContainerEl.innerHTML = tag
+    tagContainerEl.appendChild(tagEl)
+
+    tagSelectEl.appendChild(tagContainerEl)
+  }
 
   //tool select functionality
   let toolSelectEl = document.getElementById("tool-select")
@@ -273,38 +333,10 @@ function init(ctx, objects) {
     modSelectEl.appendChild(modEl)
   }
 
-  //mod select functionality
-  let heroModSelectEl = document.getElementById("hero-modifier-select")
-  for(let modifierName in modifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
-    modEl.innerHTML = 'apply mod - ' + modifierName
-    modEl.onclick=function() {
-      let editorState = heroeditor.get()
-      Object.assign(editorState, modifiers[modifierName])
-      heroeditor.set(editorState)
-      heroeditor.expandAll()
-      setHero(editorState)
-    }
-    heroModSelectEl.appendChild(modEl)
-  }
-
-  let toolAddObjectEl = document.getElementById("tool-addObject")
-
-  let tagSelectEl = document.getElementById("tag-select")
-  for(var tag in tags) {
-    let tagEl = document.createElement('input')
-    tagEl.type ='checkbox'
-    tagEl.checked = tags[tag]
-    tagEl.id = 'tag-'+tag
-    tags[tag] = tagEl
-    let tagContainerEl = document.createElement('div')
-    tagContainerEl.innerHTML = tag
-    tagContainerEl.appendChild(tagEl)
-
-    tagSelectEl.appendChild(tagContainerEl)
-  }
-
+  /////////////////////
+  //EDITORs
+  /////////////////////
+  /////////////////////
   var simplejsoneditor = document.createElement("div")
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
@@ -319,8 +351,13 @@ function init(ctx, objects) {
     setHero()
   }});
 
+
+  /////////////////////
+  //ALL THE OTHA BUTTONS
+  /////////////////////
+  /////////////////////
   var getHeroButton = document.getElementById("get-hero")
-  getHeroButton.addEventListener('click', getHero)
+  getHeroButton.addEventListener('click', window.getHero)
   var setHeroButton = document.getElementById("set-hero")
   setHeroButton.addEventListener('click', setHero)
   var setHeroPosButton = document.getElementById("set-hero-pos")
@@ -412,6 +449,15 @@ function init(ctx, objects) {
     }
   })
 
+
+
+  /////////////////////
+  /////////////////////
+  // BUTTON PRESS FUNCTIONS
+  /////////////////////
+  /////////////////////
+  /////////////////////
+  /////////////////////
   function createMaze() {
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
@@ -431,18 +477,6 @@ function init(ctx, objects) {
     let gridSize = { x: w, y: h };
     let grid = gridTool.createGrid(gridSize, window.gridNodeSize, { x, y })
     window.socket.emit('updateGrid', grid, window.gridNodeSize, gridSize)
-  }
-
-  function getHero() {
-    if(Object.keys(window.heros).length === 1) {
-      for(var heroId in window.heros) {
-        window.editingHero = window.heros[heroId]
-        heroeditor.update(window.heros[window.editingHero.id])
-      }
-    }
-
-    heroeditor.update({})
-    heroeditor.update(window.heros[window.editingHero.id])
   }
 
   function setHero() {
@@ -473,20 +507,32 @@ function init(ctx, objects) {
     window.socket.emit('resetHero', hero)
   }
 
-  window.updateHero = function(hero) {
-    Object.assign(heros[hero.id], hero)
-    if(hero.id == window.editingHero.id) {
-      getHero()
-      setHero()
-    }
-  }
-
   function resetObjects() {
     window.socket.emit('resetObjects')
   }
 
   function findHero() {
     camera.setCamera(ctx, window.heros[window.editingHero.id])
+  }
+
+  window.updateHero = function(hero) {
+    Object.assign(heros[hero.id], hero)
+    if(hero.id == window.editingHero.id) {
+      window.getHero()
+      setHero()
+    }
+  }
+
+  window.getHero = function() {
+    if(Object.keys(window.heros).length === 1) {
+      for(var heroId in window.heros) {
+        window.editingHero = window.heros[heroId]
+        heroeditor.update(window.heros[window.editingHero.id])
+      }
+    }
+
+    heroeditor.update({})
+    heroeditor.update(window.heros[window.editingHero.id])
   }
 
   function setPresetWorldArenaBoundary() {
@@ -519,30 +565,6 @@ function init(ctx, objects) {
   function setPresetWorldAdventureZoomed() {
     window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })
   }
-
-  window.document.getElementById('game').addEventListener("mousemove", function(e) {
-    mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
-    mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
-  })
-
-  window.document.getElementById('game').addEventListener('click',function(e){
-    if(keysDown['32']){
-      console.log('x: ' + e.offsetX/window.scaleMultiplier, ', y: ' + e.offsetY/window.scaleMultiplier)
-      return
-    }
-    if(window.clickStart.x && window.clickStart.y) {
-      //second click
-      if(tools[window.currentTool].onSecondClick) tools[window.currentTool].onSecondClick(e)
-      window.clickStart.x = null
-      window.clickStart.y = null
-    } else {
-      // first click
-      if(tools[window.currentTool].onFirstClick) tools[window.currentTool].onFirstClick(e)
-      else {
-        defaultFirstClick(e)
-      }
-    }
-  },false);
 }
 
 function createArena() {

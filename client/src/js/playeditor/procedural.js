@@ -3,7 +3,6 @@ const parameters = {
 
 }
 
-
 window.mazeWidthMultiplier = 2;
 function genMaze (width = 10, height = 10, xOff, yOff) {
   let maze = generateMaze([height, width])

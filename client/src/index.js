@@ -78,21 +78,19 @@ import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 import sockets from './js/sockets.js'
 
-// SCREEN
+// SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
   window.socket = io.connect('http://localhost:4000');
 } else {
   window.socket = io.connect();
 }
 window.socket = socket
-window.preferences = {}
-window.objects = []
+
+// DOM
 window.CONSTANTS = {
 	PLAYER_CANVAS_WIDTH: 1920/window.divideScreenSizeBy,
 	PLAYER_CANVAS_HEIGHT: 1080/window.divideScreenSizeBy,
 }
-
-// Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
@@ -100,14 +98,24 @@ canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
 canvas.id = 'game'
 document.body.appendChild(canvas);
 
-//SOCKETS
-const defaultPreferences = {
-	zoomMultiplier: 1,
-	lockCamera: {},
-	gameBoundaries: {},
+window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+if(!window.usePlayEditor) {
+  var editor = document.getElementById("play-editor");
+  editor.style = 'display:none';
 }
-window.preferences = defaultPreferences;
 
+/// GLOBAL
+window.objects = []
+window.game ={}
+window.current = {
+  chat: ''
+}
+var game = {
+  paused: false,
+}
+var flags = {
+
+}
 window.respawnHero = function () {
 	window.hero.x = window.hero.spawnPointX;
 	window.hero.y = window.hero.spawnPointY;
@@ -124,14 +132,49 @@ window.resetHero = function(updatedHero) {
 	physics.addObject(window.hero)
 }
 
-
-window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-if(!window.usePlayEditor) {
-  var editor = document.getElementById("play-editor");
-  editor.style = 'display:none';
+window.resetReachablePlatformHeight = function(heroIn) {
+	let velocity = heroIn.jumpVelocity
+	let gravity = 1000
+	let delta = (0 - velocity)/gravity
+	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	return height
 }
 
+window.resetReachablePlatformWidth = function(heroIn) {
+	let velocity = heroIn.speed
+	let gravity = 1000
+	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
+	let width = (velocity * deltaInAir)
+	return width * 2
+}
+
+window.resetObjects = function() {
+	window.objects.length = 0
+	window.socket.emit('updateObjects', [])
+}
+
+window.removeObject = function(id) {
+  window.objects = window.objects.filter((obj) => obj.id !== id)
+  if(!window.usePlayEditor) {
+    physics.removeObjectById(id)
+  }
+}
+
+/////////////
+//PREFERENCES
+/////////////
+/////////////
+const defaultPreferences = {
+	zoomMultiplier: 1,
+	lockCamera: {},
+	gameBoundaries: {},
+}
+window.preferences = defaultPreferences;
+
+/////////////
 // HERO
+/////////////
+/////////////
 const defaultHero = {
 	width: 100/window.divideScreenSizeBy,
 	height: 100/window.divideScreenSizeBy,
@@ -156,7 +199,6 @@ const defaultHero = {
 	zoomMultiplier: 1,
 }
 
-//hero
 if(!window.usePlayEditor) {
 	let savedHero = JSON.parse(localStorage.getItem('hero'));
 	if(savedHero){
@@ -167,8 +209,8 @@ if(!window.usePlayEditor) {
 		window.hero = {...defaultHero}
 		window.respawnHero()
 	}
-	window.hero.reachablePlatformHeight = resetReachablePlatformHeight(window.hero)
-	window.hero.reachablePlatformWidth = resetReachablePlatformWidth(window.hero)
+	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
+	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
 
 	window.socket.emit('saveSocket', hero)
 
@@ -180,49 +222,10 @@ if(!window.usePlayEditor) {
 	physics.addObject(window.hero)
 }
 
-window.socket.emit('askHeros');
-
-function resetReachablePlatformHeight(heroIn) {
-	let velocity = heroIn.jumpVelocity
-	let gravity = 1000
-	let delta = (0 - velocity)/gravity
-	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
-	return height
-}
-
-function resetReachablePlatformWidth(heroIn) {
-	let velocity = heroIn.speed
-	let gravity = 1000
-	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
-	let width = (velocity * deltaInAir)
-	return width * 2
-}
-
-window.resetObjects = function() {
-	window.objects.length = 0
-	window.socket.emit('updateObjects', [])
-}
-
-window.removeObject = function(id) {
-  window.objects = window.objects.filter((obj) => obj.id !== id)
-  if(!window.usePlayEditor) {
-    physics.removeObjectById(id)
-  }
-}
-
-var game = {
-  paused: false,
-}
-
-var flags = {
-  showChat: false,
-  heroPaused: false,
-}
-
-const current = {
-  chat: []
-}
-
+/////////////
+//GAME LOOP
+/////////////
+/////////////
 var start = function () {
 	grid.init()
   sockets.init()
@@ -239,14 +242,7 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  if(game.mode === 'battle'){
-    battle.update(ctx, delta)
-    return
-  }
-  if(game.paused) return
-
   input.update(flags, hero, delta)
-
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
@@ -257,7 +253,6 @@ var update = function (delta) {
 	}
 
 	window.socket.emit('updateObjects', objects)
-
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
@@ -271,18 +266,12 @@ var render = function () {
 		return prev
 	}, [])
 
-  if(game.mode === 'battle'){
-    battle.render(ctx)
-
-    return
-  }
-
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	//set camera so we render everything in the right place
-  camera.set(ctx, hero)
+  camera.set(ctx, window.hero)
 
 	window.preferences.renderStyle = 'outlines'
  	if (window.preferences.renderStyle === 'outlines') {
@@ -305,7 +294,11 @@ var render = function () {
 		shadow.draw(ctx, vertices, hero)
 	}
 
-  camera.drawObject(ctx, hero);
+  for(var heroId in window.heros) {
+    let currentHero = window.heros[heroId];
+    camera.drawObject(ctx, currentHero);
+  }
+
   chat.render(ctx, flags, current.chat);
 	feedback.draw(ctx);
 }

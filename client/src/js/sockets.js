@@ -8,7 +8,6 @@ function init() {
   //just for clients
   ///////////////////////////////
   if(!window.usePlayEditor) {
-  	window.socket.emit('askObjects')
   	window.socket.on('onAddObjects', (objectsAdded) => {
   		if(window.hero.arrowKeysBehavior === 'grid') {
   			objectsAdded.forEach((object) => {
@@ -39,6 +38,8 @@ function init() {
   		window.snapAllObjectsToGrid()
   	})
 
+    window.socket.emit('askObjects')
+
   ///////////////////////////////
   ///////////////////////////////
   /// only events for play editor
@@ -50,7 +51,7 @@ function init() {
         window.heros[heroUpdated.id] = {}
       }
       Object.assign(window.heros[heroUpdated.id], heroUpdated)
-      if(window.preferences.syncHero && window.editingHero.id === heroUpdated.id) getHero()
+      if(window.preferences.syncHero && window.editingHero.id === heroUpdated.id) window.getHero()
     })
     window.socket.on('onResetObjects', () => {
       window.objects = []
@@ -65,7 +66,6 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
-  window.socket.emit('askPreferences')
   window.socket.on('onUpdatePreferences', (updatedPreferences) => {
   	for(let key in updatedPreferences) {
   		const value = updatedPreferences[key]
@@ -84,19 +84,17 @@ function init() {
   window.socket.on('onUpdateHero', (updatedHero) => {
   	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
-  		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight(window.heros[updatedHero.id])
+  		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.heros[updatedHero.id])
   	}
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
-  		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth(window.heros[updatedHero.id])
+  		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
   	}
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)
-  	}
-  	else {
+  	} else {
   		Object.assign(window.heros[updatedHero.id], updatedHero)
   	}
   })
-
 
   window.socket.on('onResetHero', (hero) => {
   	if(hero.id === window.hero.id) {
@@ -111,6 +109,9 @@ function init() {
     }
     window.removeObject(id)
   })
+
+  window.socket.emit('askHeros');
+  window.socket.emit('askPreferences')
 }
 
 export default {

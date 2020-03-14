@@ -17,6 +17,11 @@ function init(hero){
       window.clickStart.x = null
       window.clickStart.y = null
     }
+
+    if(keysDown['32']){
+      console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
+      return
+    }
   }, false)
 
   window.addEventListener("keyup", function (e) {
