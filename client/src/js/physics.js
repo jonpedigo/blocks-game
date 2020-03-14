@@ -125,6 +125,7 @@ function update (hero, objects, delta) {
   const potentials = physicsObjects[window.hero.id].potentials()
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
+  let removeIds = []
 
   for(const body of potentials) {
     if(physicsObjects[window.hero.id].collides(body, result)) {
@@ -137,13 +138,13 @@ function update (hero, objects, delta) {
       }
 
       if(body.tags && body.tags['powerup']) {
-        console.log('checking')
         if(body.id !== window.hero.lastPowerUpId) {
-          console.log('setting')
           window.resetHero({...body.heroUpdate, lastPowerUpId: body.id})
+          if(body.tags && body.tags.deleteAfterPowerup) {
+            removeIds.push(body.id)
+          }
         }
       } else {
-        console.log('..?')
         window.hero.lastPowerUpId = null
       }
 
@@ -155,6 +156,10 @@ function update (hero, objects, delta) {
       }
     }
   }
+
+  removeIds.forEach((id) => {
+    window.socket.emit('removeObject', id)
+  })
 
   hero.onGround = false
 
@@ -231,13 +236,21 @@ function addObject(object, moving = false) {
 }
 
 function removeObject(object) {
-  system.remove(physicsObjects[object.id])
-  physicsObjects[object.id] = null;
+  try {
+    system.remove(physicsObjects[object.id])
+    physicsObjects[object.id] = null;
+  } catch(e) {
+
+  }
 }
 
 function removeObjectById(id) {
-  system.remove(physicsObjects[id])
-  physicsObjects[id] = null;
+  try {
+    system.remove(physicsObjects[id])
+    physicsObjects[id] = null;
+  } catch(e) {
+
+  }
 }
 
 

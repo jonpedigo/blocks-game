@@ -140,6 +140,10 @@ window.socket.on('onUpdateHero', (updatedHero) => {
 	}
 })
 
+window.socket.on('onRemoveObject', (id) => {
+  window.removeObject(id)
+})
+
 window.respawnHero = function() {
 	window.hero.x = window.hero.spawnPointX;
 	window.hero.y = window.hero.spawnPointY;
@@ -188,7 +192,6 @@ if(!window.usePlayEditor) {
 		window.location.reload()
 	})
 	window.socket.on('onEditObjects', (editedObjects) => {
-		console.log('editing', editedObjects)
 		Object.assign(window.objects, editedObjects)
 	})
 
@@ -196,15 +199,10 @@ if(!window.usePlayEditor) {
 		window.resetHero(updatedHero)
 	})
 
-	window.deleteObject = function(objectId) {
-		physics.removeObjectById(objectId)
-	}
-
 	window.socket.on('onSnapAllObjectsToGrid', () => {
 		window.snapAllObjectsToGrid()
 	})
 }
-
 
 // HERO
 const defaultHero = {
@@ -279,14 +277,10 @@ window.resetObjects = function() {
 }
 
 window.removeObject = function(id) {
-	for(let i = 0; i < window.objects.length; i++) {
-		if(window.objects[i].id === id){
-			window.objects.splice(i, 1)
-			break;
-		}
-	}
-	physics.removeObjectById(id)
-	window.socket.emit('removeObject', id)
+  window.objects = window.objects.filter((obj) => obj.id !== id)
+  if(!window.usePlayEditor) {
+    physics.removeObjectById(id)
+  }
 }
 
 var game = {

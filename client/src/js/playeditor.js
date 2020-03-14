@@ -43,6 +43,8 @@ let tags = {
   monster: false,
   coin: false,
   powerup: false,
+  once: false,
+  deleteAfterPowerup: false,
 }
 window.tags = tags
 
@@ -241,28 +243,34 @@ function init(ctx, objects) {
     modEl.onclick=function() {
       let editorState = simpleeditor.get()
       editorState.heroUpdate = modifiers[modifierName]
-      console.log(modifierName, editorState)
       simpleeditor.set(editorState)
       simpleeditor.expandAll()
+      emitEditedObject(editorState)
     }
     modSelectEl.appendChild(modEl)
   }
 
   let toolAddObjectEl = document.getElementById("tool-addObject")
+
+  let tagSelectEl = document.getElementById("tag-select")
   for(var tag in tags) {
-    let element = document.getElementById("tag-"+tag)
-    element.checked = tags[tag]
-    tags[tag] = element
+    let tagEl = document.createElement('input')
+    tagEl.type ='checkbox'
+    tagEl.checked = tags[tag]
+    tagEl.id = 'tag-'+tag
+    tags[tag] = tagEl
+    let tagContainerEl = document.createElement('div')
+    tagContainerEl.innerHTML = tag
+    tagContainerEl.appendChild(tagEl)
+
+    tagSelectEl.appendChild(tagContainerEl)
   }
 
   var simplejsoneditor = document.createElement("div")
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
   simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
-    delete window.objects[editingObject.i].x
-    delete window.objects[editingObject.i].y
-    window.objects[editingObject.i] = object
-    window.socket.emit('editObjects', window.objects)
+    emitEditedObject(object)
   }});
 
   var heroeditor = document.createElement("div")
@@ -404,6 +412,13 @@ function init(ctx, objects) {
     window.socket.emit('updateHero', heroCopy)
   }
 
+  function emitEditedObject(object) {
+    delete object.x
+    delete object.y
+    Object.assign(window.objects[editingObject.i], object)
+    window.socket.emit('editObjects', window.objects)
+  }
+
   function setHeroPos() {
     let hero = heroeditor.get()
     window.socket.emit('updateHero', { id: hero.id, x: hero.x, y: hero.y })
@@ -511,12 +526,6 @@ function init(ctx, objects) {
     }
   },false);
 
-  window.socket.on('onAddObjects', (objectsAdded) => {
-    window.objects.push(...objectsAdded)
-  })
-  window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    Object.assign(window.objects, objectsUpdated)
-  })
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
     if(!window.heros[heroUpdated.id]){
       window.heros[heroUpdated.id] = {}
@@ -528,7 +537,9 @@ function init(ctx, objects) {
     window.objects = []
     window.location.reload()
   })
-  window.socket.emit('askObjects')
+  window.socket.on('onUpdateObjects', (objectsUpdated) => {
+    window.objects = objectsUpdated
+  })
 }
 
 function createArena() {
