@@ -137,10 +137,13 @@ function update (hero, objects, delta) {
       }
 
       if(body.tags && body.tags['powerup']) {
+        console.log('checking')
         if(body.id !== window.hero.lastPowerUpId) {
+          console.log('setting')
           window.resetHero({...body.heroUpdate, lastPowerUpId: body.id})
         }
       } else {
+        console.log('..?')
         window.hero.lastPowerUpId = null
       }
 
@@ -154,23 +157,24 @@ function update (hero, objects, delta) {
   }
 
   hero.onGround = false
-  // hero.wallJumpLeft = false
-  // hero.wallJumpRight = false
-  if(result.overlap_y === 1) {
-    if(hero.velocityY > 0) hero.velocityY = 0
-    hero.onGround = true
-  } else if(result.overlap_y === -1){
-    if(hero.velocityY < 0) hero.velocityY = 0
-  }
-  if(result.overlap_x === 1) {
-    // if(hero.onGround === false) hero.wallJumpLeft = true
-    if(hero.velocityX > 0) hero.velocityX = 0
-  } else if(result.overlap_x === -1){
-    // if(hero.onGround === false) hero.wallJumpRight = true
-    if(hero.velocityX < 0) hero.velocityX = 0
-  }
 
   if(illegal) {
+    // hero.wallJumpLeft = false
+    // hero.wallJumpRight = false
+    if(result.overlap_y === 1) {
+      if(hero.velocityY > 0) hero.velocityY = 0
+      hero.onGround = true
+    } else if(result.overlap_y === -1){
+      if(hero.velocityY < 0) hero.velocityY = 0
+    }
+    if(result.overlap_x === 1) {
+      // if(hero.onGround === false) hero.wallJumpLeft = true
+      if(hero.velocityX > 0) hero.velocityX = 0
+    } else if(result.overlap_x === -1){
+      // if(hero.onGround === false) hero.wallJumpRight = true
+      if(hero.velocityX < 0) hero.velocityX = 0
+    }
+
     hero.x = correction.x
     hero.y = correction.y
     // physicsObjects[window.hero.id].x = hero.x
