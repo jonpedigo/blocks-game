@@ -2,6 +2,7 @@ import JSONEditor from 'jsoneditor'
 import collisions from './collisions'
 import gridTool from './grid.js'
 import procedural from './procedural.js'
+import modifiers from './modifiers'
 
 const camera = {
   x: 0,
@@ -231,6 +232,22 @@ function init(ctx, objects) {
     toolSelectEl.appendChild(toolEl)
   }
 
+  //mod select functionality
+  let modSelectEl = document.getElementById("modifier-select")
+  for(let modifierName in modifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = 'heroUpdate - ' + modifierName
+    modEl.onclick=function() {
+      let editorState = simpleeditor.get()
+      editorState.heroUpdate = modifiers[modifierName]
+      console.log(modifierName, editorState)
+      simpleeditor.set(editorState)
+      simpleeditor.expandAll()
+    }
+    modSelectEl.appendChild(modEl)
+  }
+
   let toolAddObjectEl = document.getElementById("tool-addObject")
   for(var tag in tags) {
     let element = document.getElementById("tag-"+tag)
@@ -269,16 +286,6 @@ function init(ctx, objects) {
   resetHeroButton.addEventListener('click', resetHero)
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', resetObjects)
-  var setPresetAsteroidsButton = document.getElementById("set-preset-asteroids");
-  setPresetAsteroidsButton.addEventListener('click', setPresetAsteroids)
-  var setPresetZeldaButton = document.getElementById("set-preset-zelda");
-  setPresetZeldaButton.addEventListener('click', setPresetZelda)
-  var setPresetMarioButton = document.getElementById("set-preset-mario");
-  setPresetMarioButton.addEventListener('click', setPresetMario)
-  var setPresetPokemonButton = document.getElementById("set-preset-pokemon");
-  setPresetPokemonButton.addEventListener('click', setPresetPokemon)
-  var setPresetSnakeButton = document.getElementById("set-preset-snake");
-  setPresetSnakeButton.addEventListener('click', setPresetSnake)
   var setPresetWorldArenaBoundaryButton = document.getElementById("set-preset-world-arenaboundary");
   setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
   var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
@@ -288,9 +295,9 @@ function init(ctx, objects) {
   var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
   setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
   var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/.9 }))
+  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: editingHero.id, zoomMultiplier: editingHero.zoomMultiplier/.9 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('updatePreferences', { zoomMultiplier: window.preferences.zoomMultiplier/1.1 }))
+  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: editingHero.id, zoomMultiplier: editingHero.zoomMultiplier/1.1 }))
   selectorGameToggle = document.getElementById('set-game')
   selectorCameraToggle = document.getElementById('set-camera')
   selectorSpawnToggle = document.getElementById('set-spawn')
@@ -387,61 +394,6 @@ function init(ctx, objects) {
   function getHero() {
     heroeditor.update({})
     heroeditor.update(window.heros[editingHero.id])
-  }
-
-  function setPresetMario() {
-    getHero()
-    let hero = heroeditor.get()
-    hero.arrowKeysBehavior = 'position'
-    hero.gravity = true
-    hero.jumpVelocity = -1200/window.divideScreenSizeBy
-    hero.velocityMax = 1200/window.divideScreenSizeBy
-    hero.velocityX = 0
-
-    heroeditor.set(hero)
-    setHero()
-  }
-
-  function setPresetZelda() {
-    getHero()
-    let editorState = editor.get()
-    editorState.hero.arrowKeysBehavior = 'position'
-    editorState.hero.gravity = false
-    editorState.hero.velocityY = 0
-    editorState.hero.velocityX = 0
-
-    editor.set(editorState)
-    setHero()
-    window.socket.emit('updateHero', heroCopy)
-  }
-
-  function setPresetAsteroids() {
-    getHero()
-    let editorState = editor.get()
-    editorState.hero.gravity = false
-    editorState.hero.arrowKeysBehavior = 'velocity'
-    editorState.hero.velocityMax = 1500/window.divideScreenSizeBy
-
-    editor.set(editorState)
-    setHero()
-  }
-
-  function setPresetPokemon() {
-    getHero()
-    editorState.hero.arrowKeysBehavior = 'grid'
-    editorState.hero.gravity = false
-
-    editor.set(editorState)
-    setHero()
-    window.socket.emit('snapAllObjectsToGrid')
-  }
-
-  function setPresetSnake() {
-    editorState.hero.arrowKeysBehavior = 'skating'
-    editorState.hero.gravity = false
-
-    editor.set(editorState)
-    setHero()
   }
 
   function setHero() {
@@ -702,7 +654,7 @@ function render(ctx, hero, objects) {
 
     if(window.preferences.lockCamera) {
       ctx.strokeStyle='#0A0';
-      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)})
+      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)})
     }
 
     if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {

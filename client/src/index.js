@@ -80,7 +80,6 @@ import io from 'socket.io-client'
 import procedural from './js/procedural.js'
 
 // SCREEN
-window.divideScreenSizeBy = 3
 if (window.location.origin.indexOf('localhost') > 0) {
   window.socket = io.connect('http://localhost:4000');
 } else {
@@ -229,6 +228,7 @@ const defaultHero = {
 	// spawnPointY: 0,
 	gravity: 0,
 	tags: {'hero': true},
+	zoomMultiplier: 1,
 }
 
 //hero
