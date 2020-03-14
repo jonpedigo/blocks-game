@@ -68,16 +68,15 @@ import chat from './js/chat.js'
 import physics from './js/physics.js'
 import input from './js/input.js'
 import camera from './js/camera.js'
-import playEditor from './js/playeditor.js'
+import playEditor from './js/playeditor/index.js'
 import shadow from './js/shadow.js'
 import action from './js/action.js'
 import intelligence from './js/intelligence.js'
 import grid from './js/grid.js'
-// import objects from './js/objects.js'
 import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
-import procedural from './js/procedural.js'
+import sockets from './js/sockets.js'
 
 // SCREEN
 if (window.location.origin.indexOf('localhost') > 0) {
@@ -108,52 +107,11 @@ const defaultPreferences = {
 	gameBoundaries: {},
 }
 window.preferences = defaultPreferences;
-window.socket.emit('askPreferences')
-window.socket.on('onUpdatePreferences', (updatedPreferences) => {
-	for(let key in updatedPreferences) {
-		const value = updatedPreferences[key]
-		window.preferences[key] = value
 
-		if(key === 'lockCamera' && !window.usePlayEditor) {
-			if(value.limitX) {
-				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-			} else {
-				camera.clearLimit();
-			}
-		}
-	}
-})
-
-window.socket.on('onUpdateHero', (updatedHero) => {
-	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
-	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
-		updatedHero.reachablePlatformHeight = resetReachablePlatformHeight(window.heros[updatedHero.id])
-	}
-	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
-		updatedHero.reachablePlatformWidth = resetReachablePlatformWidth(window.heros[updatedHero.id])
-	}
-	if(window.hero && updatedHero.id === window.hero.id){
-		window.resetHero(updatedHero)
-	}
-	else {
-		Object.assign(window.heros[updatedHero.id], updatedHero)
-	}
-})
-
-window.socket.on('onRemoveObject', (id) => {
-  window.removeObject(id)
-})
-
-window.respawnHero = function() {
+window.respawnHero = function () {
 	window.hero.x = window.hero.spawnPointX;
 	window.hero.y = window.hero.spawnPointY;
 }
-
-window.socket.on('onResetHero', (hero) => {
-	if(hero.id === window.hero.id) {
-		window.resetHero()
-	}
-})
 
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
@@ -169,39 +127,8 @@ window.resetHero = function(updatedHero) {
 
 window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
 if(!window.usePlayEditor) {
-	var editor = document.getElementById("play-editor");
-	editor.style = 'display:none';
-
-	window.socket.emit('askObjects')
-	window.socket.on('onAddObjects', (objectsAdded) => {
-		if(window.hero.arrowKeysBehavior === 'grid') {
-			objectsAdded.forEach((object) => {
-				grid.snapObjectToGrid(object)
-			})
-		}
-		window.objects.push(...objectsAdded)
-		objectsAdded.forEach((object) => {
-			physics.addObject(object)
-		})
-	})
-	window.socket.on('onResetObjects', (updatedObjects) => {
-		window.objects.forEach((object) => {
-			physics.removeObject(object)
-		})
-		window.objects.length = 0
-		window.location.reload()
-	})
-	window.socket.on('onEditObjects', (editedObjects) => {
-		Object.assign(window.objects, editedObjects)
-	})
-
-	window.socket.on('onUpdateHeroPos', (updatedHero) => {
-		window.resetHero(updatedHero)
-	})
-
-	window.socket.on('onSnapAllObjectsToGrid', () => {
-		window.snapAllObjectsToGrid()
-	})
+  var editor = document.getElementById("play-editor");
+  editor.style = 'display:none';
 }
 
 // HERO
@@ -298,6 +225,7 @@ const current = {
 
 var start = function () {
 	grid.init()
+  sockets.init()
 
   if(usePlayEditor) {
 		playEditor.init(ctx, window.objects, camera)

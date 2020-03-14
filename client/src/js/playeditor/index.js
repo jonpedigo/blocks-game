@@ -1,27 +1,29 @@
 import JSONEditor from 'jsoneditor'
-import collisions from './collisions'
-import gridTool from './grid.js'
+import collisions from '../collisions'
+import gridTool from '../grid.js'
 import procedural from './procedural.js'
-import modifiers from './modifiers'
+import modifiers from './modifiers.js'
+import camera from './camera.js'
+import input from './input.js'
 
-const camera = {
+window.camera = {
   x: 0,
   y: 0,
 }
 
-const clickStart = {
+window.clickStart = {
   x: null,
   y: null,
 }
 
-const mousePos = {
+window.mousePos = {
   x: null,
   y: null,
 }
 
 const keysDown = {}
 
-const TOOLS = {
+window.TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
   SIMPLE_EDITOR: 'simpleEditor',
@@ -30,11 +32,11 @@ const TOOLS = {
   PROCEDURAL: 'procedural',
 }
 
-let currentTool = TOOLS.ADD_OBJECT;
+window.currentTool = TOOLS.ADD_OBJECT;
 
-let scaleMultiplier = .3
+window.scaleMultiplier = .3
 
-let objectFactory = []
+window.objectFactory = []
 let simpleeditor = null
 var heroeditor = null
 
@@ -48,13 +50,13 @@ let tags = {
 }
 window.tags = tags
 
-let editingObject = {
+window.editingObject = {
   i: null,
   id: null,
 }
 
 window.heros = {}
-let editingHero = {
+window.editingHero = {
   id: null,
 }
 
@@ -62,8 +64,8 @@ const tools = {
   [TOOLS.SIMPLE_EDITOR]: {
     onFirstClick: (e) => {
       const click = {
-        x: (e.offsetX + camera.x)/scaleMultiplier,
-        y: (e.offsetY + camera.y)/scaleMultiplier,
+        x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
+        y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         width: 1,
         height: 1,
       }
@@ -73,7 +75,7 @@ const tools = {
         collisions.checkObject(click, object, () => {
           simpleeditor.set(Object.assign({}, object))
           simpleeditor.expandAll()
-          editingObject = {
+          window.editingObject = {
             i,
             id: object.id,
           }
@@ -84,8 +86,8 @@ const tools = {
   [TOOLS.EDITOR]: {
     onFirstClick: (e) => {
       const click = {
-        x: (e.offsetX + camera.x)/scaleMultiplier,
-        y: (e.offsetY + camera.y)/scaleMultiplier,
+        x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
+        y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         width: 1,
         height: 1,
       }
@@ -118,11 +120,11 @@ const tools = {
     onFirstClick: function(e){
       if(selectorSpawnToggle.checked) {
         const click = {
-          x: (e.offsetX + camera.x)/scaleMultiplier,
-          y: (e.offsetY + camera.y)/scaleMultiplier,
+          x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
+          y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
 
-        window.updateHero({id: editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+        window.updateHero({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
       } else {
         defaultFirstClick(e)
       }
@@ -130,14 +132,14 @@ const tools = {
     onSecondClick: (e) => {
       //translate
       const value = {
-        width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
-        height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
-        x: clickStart.x/scaleMultiplier,
-        y: clickStart.y/scaleMultiplier,
+        width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
+        height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
+        x: window.clickStart.x/window.scaleMultiplier,
+        y: window.clickStart.y/window.scaleMultiplier,
       }
 
       const {x, y, width, height} = value;
-      if(currentTool === TOOLS.PROCEDURAL) {
+      if(window.currentTool === TOOLS.PROCEDURAL) {
         const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { proceduralBoundaries })
       } else if(selectorCameraToggle.checked) {
@@ -153,8 +155,8 @@ const tools = {
     onFirstClick: (e) => {
       if(instantGridAddToggle.checked) {
         const click = {
-          x: (e.offsetX + camera.x)/scaleMultiplier,
-          y: (e.offsetY + camera.y)/scaleMultiplier,
+          x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
+          y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
         let object = gridTool.createGridNodeAt(click.x, click.y)
         object.tags = {}
@@ -175,10 +177,10 @@ const tools = {
     onSecondClick: (e) => {
       let newObject = {
         id: 'object' + Date.now(),
-        width: (e.offsetX - clickStart.x + camera.x)/scaleMultiplier,
-        height: (e.offsetY - clickStart.y + camera.y)/scaleMultiplier,
-        x: clickStart.x/scaleMultiplier,
-        y: clickStart.y/scaleMultiplier,
+        width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
+        height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
+        x: window.clickStart.x/window.scaleMultiplier,
+        y: window.clickStart.y/window.scaleMultiplier,
         color: 'white',
         tags: {},
         heroUpdate: {},
@@ -209,10 +211,12 @@ let selectorProceduralToggle;
 let selectorSpawnToggle;
 let selectorCameraToggle;
 function defaultFirstClick(e) {
-  clickStart.x = (e.offsetX + camera.x)
-  clickStart.y = (e.offsetY + camera.y)
+  window.clickStart.x = (e.offsetX + window.camera.x)
+  window.clickStart.y = (e.offsetY + window.camera.y)
 }
 function init(ctx, objects) {
+  input.init()
+
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
@@ -225,7 +229,7 @@ function init(ctx, objects) {
     toolEl.innerHTML = toolName
     toolEl.onclick=function() {
       console.log('current tool changed to ' + toolName)
-      currentTool = toolName
+      window.currentTool = toolName
       Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
         e.className = "tool-feature invisible"
       })
@@ -294,6 +298,8 @@ function init(ctx, objects) {
   resetHeroButton.addEventListener('click', resetHero)
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', resetObjects)
+  var deleteObjectButton = document.getElementById("delete-object");
+  deleteObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject.id))
   var setPresetWorldArenaBoundaryButton = document.getElementById("set-preset-world-arenaboundary");
   setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
   var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
@@ -303,9 +309,9 @@ function init(ctx, objects) {
   var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
   setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
   var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: editingHero.id, zoomMultiplier: editingHero.zoomMultiplier/.9 }))
+  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/.9 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: editingHero.id, zoomMultiplier: editingHero.zoomMultiplier/1.1 }))
+  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/1.1 }))
   selectorGameToggle = document.getElementById('set-game')
   selectorCameraToggle = document.getElementById('set-camera')
   selectorSpawnToggle = document.getElementById('set-spawn')
@@ -346,7 +352,7 @@ function init(ctx, objects) {
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
     window.socket.emit('addObjects', objectFactory)
-    objectFactory = []
+    window.objectFactory = []
   })
 
   instantGridAddToggle = document.getElementById("instant-grid-add")
@@ -393,7 +399,7 @@ function init(ctx, objects) {
   }
 
   function setEditingHero(hero) {
-    editingHero = hero
+    window.editingHero = hero
     getHero()
   }
   for(var heroId in window.heros) {
@@ -401,7 +407,7 @@ function init(ctx, objects) {
   }
   function getHero() {
     heroeditor.update({})
-    heroeditor.update(window.heros[editingHero.id])
+    heroeditor.update(window.heros[window.editingHero.id])
   }
 
   function setHero() {
@@ -415,7 +421,7 @@ function init(ctx, objects) {
   function emitEditedObject(object) {
     delete object.x
     delete object.y
-    Object.assign(window.objects[editingObject.i], object)
+    Object.assign(window.objects[window.editingObject.i], object)
     window.socket.emit('editObjects', window.objects)
   }
 
@@ -434,7 +440,7 @@ function init(ctx, objects) {
 
   window.updateHero = function(hero) {
     Object.assign(heros[hero.id], hero)
-    if(hero.id == editingHero.id) {
+    if(hero.id == window.editingHero.id) {
       getHero()
       setHero()
     }
@@ -445,15 +451,15 @@ function init(ctx, objects) {
   }
 
   function findHero() {
-    setCamera(ctx, window.heros[editingHero.id])
+    camera.setCamera(ctx, window.heros[window.editingHero.id])
   }
 
   function setPresetWorldArenaBoundary() {
     const value = {
       width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
       height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
-      centerX: editingHero.x + editingHero.width/2,
-      centerY: editingHero.y + editingHero.height/2,
+      centerX: window.editingHero.x + window.editingHero.width/2,
+      centerY: window.editingHero.y + window.editingHero.height/2,
     }
 
     createArena()
@@ -466,8 +472,8 @@ function init(ctx, objects) {
     const value = {
       width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
       height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
-      centerX: editingHero.x + editingHero.width/2,
-      centerY: editingHero.y + editingHero.height/2,
+      centerX: window.editingHero.x + window.editingHero.width/2,
+      centerY: window.editingHero.y + window.editingHero.height/2,
     }
 
     const {centerY, centerX, width, height} = value;
@@ -479,71 +485,33 @@ function init(ctx, objects) {
     window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })
   }
 
-
-  window.addEventListener("keydown", function (e) {
-    keysDown[e.keyCode] = true
-
-    // q and a zoom in and out
-    if(e.keyCode === 81) {
-      scaleMultiplier = scaleMultiplier * 1.1
-    }
-    if(e.keyCode === 65) {
-      scaleMultiplier = scaleMultiplier * .9
-    }
-
-    //if you press escape, cancel a drag
-    if(e.keyCode === 27) {
-      clickStart.x = null
-      clickStart.y = null
-    }
-  }, false)
-
-  window.addEventListener("keyup", function (e) {
-     delete keysDown[e.keyCode]
-  }, false)
-
   window.document.getElementById('game').addEventListener("mousemove", function(e) {
-    mousePos.x = ((e.offsetX + camera.x)/scaleMultiplier)
-    mousePos.y = ((e.offsetY + camera.y)/scaleMultiplier)
+    mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
+    mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
   })
 
   window.document.getElementById('game').addEventListener('click',function(e){
     if(keysDown['32']){
-      console.log('x: ' + e.offsetX/scaleMultiplier, ', y: ' + e.offsetY/scaleMultiplier)
+      console.log('x: ' + e.offsetX/window.scaleMultiplier, ', y: ' + e.offsetY/window.scaleMultiplier)
       return
     }
-    if(clickStart.x && clickStart.y) {
+    if(window.clickStart.x && window.clickStart.y) {
       //second click
-      if(tools[currentTool].onSecondClick) tools[currentTool].onSecondClick(e)
-      clickStart.x = null
-      clickStart.y = null
+      if(tools[window.currentTool].onSecondClick) tools[window.currentTool].onSecondClick(e)
+      window.clickStart.x = null
+      window.clickStart.y = null
     } else {
       // first click
-      if(tools[currentTool].onFirstClick) tools[currentTool].onFirstClick(e)
+      if(tools[window.currentTool].onFirstClick) tools[window.currentTool].onFirstClick(e)
       else {
         defaultFirstClick(e)
       }
     }
   },false);
-
-  window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-    if(!window.heros[heroUpdated.id]){
-      window.heros[heroUpdated.id] = {}
-    }
-    Object.assign(window.heros[heroUpdated.id], heroUpdated)
-    if(window.preferences.syncHero && editingHero.id === heroUpdated.id) getHero()
-  })
-  window.socket.on('onResetObjects', () => {
-    window.objects = []
-    window.location.reload()
-  })
-  window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    window.objects = objectsUpdated
-  })
 }
 
 function createArena() {
-  let boundaries = {x: editingHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + editingHero.width/2, y: editingHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + editingHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
+  let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
 
   let wallLeft = {
     id: 'wall-l' + Date.now(),
@@ -588,157 +556,8 @@ function createArena() {
   window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
 }
 
-
-function drawName(ctx, object){
-	ctx.fillStyle = "rgb(0, 0, 250)";
-	ctx.font = "12px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText(object.id ? object.id : '', (object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y);
-}
-
-function drawObject(ctx, object, withNames = false) {
-  if(object.color) ctx.fillStyle = object.color
-  ctx.fillRect((object.x * scaleMultiplier) - camera.x, (object.y * scaleMultiplier) - camera.y, (object.width * scaleMultiplier), (object.height * scaleMultiplier));
-
-  if(withNames) {
-    drawName(ctx, object)
-  }
-}
-
-function drawGrid(ctx, object) {
-  let thickness = .3
-  if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
-    thickness = .8
-  }
-  ctx.strokeStyle = "#999";
-  drawBorder(ctx, object, thickness)
-}
-
-function drawBorder(ctx, object, thickness = 2) {
-  ctx.lineWidth = thickness;
-  // ctx.fillRect(((object.x * scaleMultiplier) - camera.x) - (xBorderThickness), ((object.y * scaleMultiplier) - camera.y) - (yBorderThickness), (object.width * scaleMultiplier) + (xBorderThickness * 2), (object.height * scaleMultiplier) + (yBorderThickness * 2));
-  [({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}}),
-  ({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}}),
-  ({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}}),
-  ({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})].forEach((vertice) => {
-    drawVertice(ctx, vertice)
-  })
-}
-
-function drawVertice(ctx, vertice) {
-  ctx.beginPath();
-  ctx.moveTo( (vertice.a.x * scaleMultiplier - camera.x), (vertice.a.y * scaleMultiplier - camera.y));
-  ctx.lineTo( (vertice.b.x * scaleMultiplier - camera.x), (vertice.b.y * scaleMultiplier - camera.y));
-  ctx.stroke();
-}
-
-function render(ctx, hero, objects) {
-  //reset background
-	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-  if(window.grid) {
-    gridTool.forEach((grid) => {
-      drawGrid(ctx, grid)
-    })
-  }
-
-	ctx.fillStyle = 'white';
-	for(let i = 0; i < objects.length; i++){
-    drawObject(ctx, objects[i])
-	}
-  for(let i = 0; i < objectFactory.length; i++){
-    drawObject(ctx, objectFactory[i])
-  }
-
-  for(var heroId in window.heros) {
-    drawObject(ctx, window.heros[heroId]);
-  }
-
-  if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
-    drawObject(ctx, { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)})
-  }
-
-  for(var heroId in window.heros) {
-    let currentHero = window.heros[heroId];
-
-    if(window.preferences.lockCamera) {
-      ctx.strokeStyle='#0A0';
-      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)})
-    }
-
-    if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
-      ctx.strokeStyle = '#FFF'
-      let possibleBox = { x: (clickStart.x/scaleMultiplier), y: (clickStart.y/scaleMultiplier), width: mousePos.x - (clickStart.x/scaleMultiplier), height: mousePos.y - (clickStart.y/scaleMultiplier)}
-      if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
-      else ctx.strokeStyle = 'red'
-      drawBorder(ctx, possibleBox)
-    }
-
-    if(window.preferences.lockCamera) {
-      ctx.fillStyle='#0A0';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.lockCamera);
-      ctx.globalAlpha = 1.0;
-    }
-
-    if(window.preferences.gameBoundaries) {
-      ctx.fillStyle='white';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.gameBoundaries);
-      ctx.globalAlpha = 1.0;
-    }
-
-    if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
-      ctx.fillStyle='yellow';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.proceduralBoundaries);
-      ctx.globalAlpha = 1.0;
-    }
-
-    if(currentHero.reachablePlatformHeight && currentHero.gravity) {
-      let y = (currentHero.y + currentHero.height)
-      let x = currentHero.x - currentHero.reachablePlatformWidth
-      let width = (currentHero.reachablePlatformWidth * 2) + (currentHero.width)
-      let height = currentHero.reachablePlatformHeight
-      let color = 'rgba(50, 255, 50, 0.5)'
-      drawObject(ctx, {x, y, width, height, color})
-    }
-
-    drawObject(ctx, {x: currentHero.spawnPointX, y: currentHero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
-    drawObject(ctx, {x: currentHero.spawnPointX - 205, y: currentHero.spawnPointY, width: 400, height: 5, color: 'white'})
-  }
-}
-
-function update(delta) {
-  if (38 in keysDown) { // Player holding up
-    camera.y -= (40 * scaleMultiplier)
-  }
-  if (40 in keysDown) { // Player holding down
-    camera.y += (40 * scaleMultiplier)
-  }
-  if (37 in keysDown) { // Player holding left
-    camera.x -= (40 * scaleMultiplier)
-  }
-  if (39 in keysDown) { // Player holding right
-    camera.x += (40 * scaleMultiplier)
-  }
-}
-
-function setCameraHeroX(ctx, hero) {
-  camera.x = ((hero.x + hero.width/2) * scaleMultiplier) - ctx.canvas.width/2
-}
-function setCameraHeroY(ctx, hero) {
-  camera.y = ((hero.y + hero.height/2) * scaleMultiplier) - ctx.canvas.height/2
-}
-function setCamera(ctx, hero) {
-  setCameraHeroX(ctx, hero)
-  setCameraHeroY(ctx, hero)
-}
-
 export default {
   init,
-  update,
-  render,
+  render: camera.render,
+  update: input.update
 }
