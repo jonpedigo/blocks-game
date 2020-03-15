@@ -111,6 +111,15 @@ function init() {
     window.removeObject(id)
   })
 
+  window.socket.on('onSetWorld', (world) => {
+    window.objects = world.objects
+    window.heros = world.heros
+    window.preferences = world.preferences
+    window.grid = world.grid
+    window.gridNodeSize = world.gridNodeSize
+    window.gridSize = world.gridSize
+  })
+
   window.socket.emit('askHeros');
   window.socket.emit('askPreferences')
 }

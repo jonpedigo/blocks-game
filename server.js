@@ -2,6 +2,7 @@ var express = require('express')
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var fs = require('fs');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/client/dist/index.html')
@@ -24,8 +25,53 @@ let preferences = {
 
 }
 
+const worlds = {
+
+}
+
 io.on('connection', function(socket){
   //objects
+
+
+  socket.on('saveWorld', (name) => {
+    let data = {
+      objects: serverState,
+      heros,
+      preferences,
+      grid,
+      gridNodeSize,
+      gridSize,
+    };
+
+    if(!name) {
+      name = Date.now()
+    }
+    fs.writeFile('./data/' + name + '.json', JSON.stringify(data), 'utf8', () => {
+      console.log('world' + name + ' saved')
+    });
+  })
+
+  // this is for when one player on a network wants to get a world
+  socket.on('getWorld', (name) => {
+    fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+      let obj = JSON.parse(data); //now it an object
+      socket.emit('onSetWorld', obj)
+    }});
+  })
+
+  // this is for when we are editing and we want to send this world to all people
+  socket.on('setWorld', (name) => {
+    fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+      let obj = JSON.parse(data); //now it an object
+      io.emit('onSetWorld', obj)
+    }});
+  })
 
   socket.on('saveSocket', (hero) => {
     herosockets[hero.id] = socket
@@ -72,12 +118,19 @@ io.on('connection', function(socket){
 
   //hero
   socket.on('updateHeroPos', (hero) => {
+    if(!heros[hero.id]) {
+      heros[hero.id] = hero
+    }
     io.emit('onHeroPosUpdate', hero)
   })
   socket.on('updateHero', (hero) => {
+    if(!heros[hero.id]) {
+      heros[hero.id] = hero
+    }
     io.emit('onUpdateHero', hero)
   })
   socket.on('resetHero', (hero) => {
+    delete heros[hero.id]
     io.emit('onResetHero', hero)
   })
   socket.on('respawnHero', (hero) => {

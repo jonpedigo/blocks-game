@@ -1,7 +1,6 @@
 import collisions from './collisions'
 
 function init() {
-  // const gridSize = {x: 100, y: 50}
   window.gridNodeSize = 100/window.divideScreenSizeBy
 
   window.socket.emit('askGrid');

@@ -361,6 +361,16 @@ function init(ctx, objects) {
   zoomToUniverseButton.addEventListener('click', () => {
     window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplierTarget: 42 })
   })
+  var saveWorldButton = document.getElementById("save-world")
+  saveWorldButton.addEventListener('click', () => {
+    window.saveWorld()
+  })
+  var setWorldButton = document.getElementById("set-world")
+  setWorldButton.addEventListener('click', () => {
+    window.setWorld()
+  })
+
+
   var getHeroButton = document.getElementById("get-hero")
   getHeroButton.addEventListener('click', window.getHero)
   var setHeroButton = document.getElementById("set-hero")
@@ -536,6 +546,14 @@ function init(ctx, objects) {
   window.getHero = function() {
     heroeditor.update({})
     heroeditor.update(window.heros[window.editingHero.id])
+  }
+
+  window.saveWorld = function() {
+    window.socket.emit('saveWorld', document.getElementById('world-name').value)
+  }
+
+  window.setWorld = function() {
+    window.socket.emit('setWorld', document.getElementById('world-name').value)
   }
 
   function setPresetWorldArenaBoundary() {

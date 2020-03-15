@@ -1,3 +1,5 @@
+import gridTool from '../grid.js'
+
 function drawName(ctx, object){
 	ctx.fillStyle = "rgb(0, 0, 250)";
 	ctx.font = "12px Helvetica";
