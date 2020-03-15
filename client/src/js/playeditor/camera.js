@@ -53,57 +53,94 @@ function render(ctx, hero, objects) {
     })
   }
 
+
+  ////////////////
+  ////////////////
+  // OBJECTS
+  ////////////////
+  ////////////////
 	ctx.fillStyle = 'white';
-	for(let i = 0; i < objects.length; i++){
-    drawObject(ctx, objects[i])
-	}
-  for(let i = 0; i < objectFactory.length; i++){
-    drawObject(ctx, objectFactory[i])
+  let vertices = [...window.objects,...window.objectFactory].reduce((prev, object) => {
+		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
+		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
+		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
+		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})
+		return prev
+	}, [])
+  ctx.strokeStyle = '#FFF'
+  ctx.lineWidth = 1;
+
+  for(let i = 0; i < vertices.length; i++) {
+    drawVertice(ctx, vertices[i])
   }
 
+  ////////////////
+  ////////////////
+  // HEROS
+  ////////////////
+  ////////////////
   for(var heroId in window.heros) {
-    drawObject(ctx, window.heros[heroId]);
+    if(heroId === window.editingHero.id) {
+      drawObject(ctx, {...window.heros[heroId], color: 'red'});
+    } else {
+      drawObject(ctx, {...window.heros[heroId], color: 'white'});
+    }
   }
 
+
+  ////////////////
+  ////////////////
+  // DRAGGING UI BOXES
+  ////////////////
+  ////////////////
   if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
-    drawObject(ctx, { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)})
+    drawBorder(ctx, { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)})
+  }
+  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
+    ctx.strokeStyle = '#FFF'
+    let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
+    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
+    else ctx.strokeStyle = 'red'
+    drawBorder(ctx, possibleBox)
   }
 
+  ////////////////
+  ////////////////
+  // PREFERENCES
+  ////////////////
+  ////////////////
+  if(window.preferences.gameBoundaries) {
+    ctx.fillStyle='white';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, window.preferences.gameBoundaries);
+    ctx.globalAlpha = 1.0;
+  }
+
+  if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
+    ctx.fillStyle='yellow';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, window.preferences.proceduralBoundaries);
+    ctx.globalAlpha = 1.0;
+  }
+
+  if(window.preferences.lockCamera) {
+    ctx.fillStyle='#0A0';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, window.preferences.lockCamera);
+    ctx.globalAlpha = 1.0;
+  }
+
+  ////////////////
+  ////////////////
+  // HEROS SETTINGS
+  ////////////////
+  ////////////////
   for(var heroId in window.heros) {
     let currentHero = window.heros[heroId];
 
     if(window.preferences.lockCamera) {
       ctx.strokeStyle='#0A0';
       drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)})
-    }
-
-    if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
-      ctx.strokeStyle = '#FFF'
-      let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
-      if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
-      else ctx.strokeStyle = 'red'
-      drawBorder(ctx, possibleBox)
-    }
-
-    if(window.preferences.lockCamera) {
-      ctx.fillStyle='#0A0';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.lockCamera);
-      ctx.globalAlpha = 1.0;
-    }
-
-    if(window.preferences.gameBoundaries) {
-      ctx.fillStyle='white';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.gameBoundaries);
-      ctx.globalAlpha = 1.0;
-    }
-
-    if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
-      ctx.fillStyle='yellow';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, window.preferences.proceduralBoundaries);
-      ctx.globalAlpha = 1.0;
     }
 
     if(currentHero.reachablePlatformHeight && currentHero.gravity) {
@@ -114,10 +151,10 @@ function render(ctx, hero, objects) {
       let color = 'rgba(50, 255, 50, 0.5)'
       drawObject(ctx, {x, y, width, height, color})
     }
-
-    drawObject(ctx, {x: currentHero.spawnPointX, y: currentHero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
-    drawObject(ctx, {x: currentHero.spawnPointX - 205, y: currentHero.spawnPointY, width: 400, height: 5, color: 'white'})
   }
+
+  drawObject(ctx, {x: window.editingHero.spawnPointX, y: window.editingHero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
+  drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'white'})
 }
 
 function setCameraHeroX(ctx, hero) {
