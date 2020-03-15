@@ -246,6 +246,24 @@ var update = function (delta) {
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
+  if(window.hero.zoomMultiplierTarget) {
+    if(window.hero.zoomMultiplierTarget > window.hero.zoomMultiplier) {
+      window.hero.zoomMultiplier = window.hero.zoomMultiplier/.99
+      if(window.hero.zoomMultiplierTarget <= window.hero.zoomMultiplier) {
+        window.hero.zoomMultiplierTarget = null
+        window.socket.emit('updateHero', window.hero)
+      }
+    }
+
+    if(window.hero.zoomMultiplierTarget < window.hero.zoomMultiplier) {
+      window.hero.zoomMultiplier = window.hero.zoomMultiplier/1.01
+      if(window.hero.zoomMultiplierTarget >= window.hero.zoomMultiplier) {
+        window.hero.zoomMultiplierTarget = null
+        window.socket.emit('updateHero', window.hero)
+      }
+    }
+  }
+
 	if(window.hero.arrowKeysBehavior !== 'grid') {
 		physics.update(window.hero, window.objects, delta)
 	} else {

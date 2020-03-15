@@ -39,20 +39,13 @@ function init() {
   	})
 
     window.socket.emit('askObjects')
+  }
 
   ///////////////////////////////
   ///////////////////////////////
   /// only events for play editor
   ///////////////////////////////
-  } else if(window.usePlayEditor) {
-
-    window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-      if(!window.heros[heroUpdated.id]){
-        window.heros[heroUpdated.id] = {}
-      }
-      Object.assign(window.heros[heroUpdated.id], heroUpdated)
-      if(window.preferences.syncHero && window.editingHero.id === heroUpdated.id) window.getHero()
-    })
+  if(window.usePlayEditor) {
     window.socket.on('onResetObjects', () => {
       window.objects = []
       window.location.reload()
@@ -66,6 +59,14 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
+  window.socket.on('onHeroPosUpdate', (heroUpdated) => {
+    if(!window.heros[heroUpdated.id]){
+      window.heros[heroUpdated.id] = {}
+    }
+    Object.assign(window.heros[heroUpdated.id], heroUpdated)
+    if(window.usePlayEditor && window.preferences.syncHero && window.editingHero.id === heroUpdated.id) window.getHero()
+  })
+
   window.socket.on('onUpdatePreferences', (updatedPreferences) => {
   	for(let key in updatedPreferences) {
   		const value = updatedPreferences[key]

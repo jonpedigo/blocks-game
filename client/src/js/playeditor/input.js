@@ -1,5 +1,8 @@
 const keysDown = {}
 
+let justChangedHerosLeft = false
+let justChangedHerosRight = false
+
 function init(hero){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
@@ -22,6 +25,63 @@ function init(hero){
       console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
       return
     }
+
+
+    if(keysDown['188'] || keysDown['190']){
+      if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
+        for(var heroId in window.heros) {
+          window.setEditingHero(window.heros[heroId])
+        }
+        return
+      }
+    }
+
+    //select left
+    if(keysDown['188']){
+      delete window.heros['undefined']
+      if(window.currentTool === window.TOOLS.HERO_EDITOR) {
+        let heroNames = Object.keys(window.heros)
+        for(let i = 0; i < heroNames.length; i++) {
+          if(window.heros[heroNames[i]].id === window.editingHero.id) {
+            if(i === 0) {
+              window.setEditingHero(window.heros[heroNames[heroNames.length-1]])
+            } else {
+              window.setEditingHero(window.heros[heroNames[i-1]])
+            }
+            break;
+          }
+        }
+      }
+
+      if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
+
+      }
+      return
+    }
+
+    //select right
+    if(keysDown['190']){
+      delete window.heros['undefined']
+      if(window.currentTool === window.TOOLS.HERO_EDITOR) {
+        let heroNames = Object.keys(window.heros)
+        for(let i = 0; i < heroNames.length; i++) {
+          if(window.heros[heroNames[i]].id === window.editingHero.id) {
+            if(i === heroNames.length - 1) {
+              window.setEditingHero(window.heros[heroNames[0]])
+            } else {
+              window.setEditingHero(window.heros[heroNames[i+1]])
+            }
+            break;
+          }
+        }
+      }
+
+      if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
+
+      }
+      return
+    }
+
   }, false)
 
   window.addEventListener("keyup", function (e) {

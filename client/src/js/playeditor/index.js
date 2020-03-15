@@ -29,6 +29,7 @@ window.TOOLS = {
   HERO_EDITOR: 'heroEditor',
   GAME_FEEL: 'gameFeel',
   PROCEDURAL: 'procedural',
+  UNIVERSE_VIEW: 'universeView',
 }
 window.currentTool = TOOLS.ADD_OBJECT;
 window.scaleMultiplier = .3
@@ -356,6 +357,10 @@ function init(ctx, objects) {
   //ALL THE OTHA BUTTONS
   /////////////////////
   /////////////////////
+  var zoomToUniverseButton = document.getElementById("zoom-out-to-universe");
+  zoomToUniverseButton.addEventListener('click', () => {
+    window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplierTarget: 42 })
+  })
   var getHeroButton = document.getElementById("get-hero")
   getHeroButton.addEventListener('click', window.getHero)
   var setHeroButton = document.getElementById("set-hero")
@@ -523,14 +528,12 @@ function init(ctx, objects) {
     }
   }
 
-  window.getHero = function() {
-    if(Object.keys(window.heros).length === 1) {
-      for(var heroId in window.heros) {
-        window.editingHero = window.heros[heroId]
-        heroeditor.update(window.heros[window.editingHero.id])
-      }
-    }
+  window.setEditingHero = function(hero) {
+    window.editingHero = window.heros[hero.id]
+    heroeditor.update(window.heros[window.editingHero.id])
+  }
 
+  window.getHero = function() {
     heroeditor.update({})
     heroeditor.update(window.heros[window.editingHero.id])
   }
