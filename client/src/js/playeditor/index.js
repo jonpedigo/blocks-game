@@ -144,7 +144,8 @@ const tools = {
           y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
 
-        window.updateHero({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+        window.socket.emit('updatePreferences', {worldSpawnPointX: click.x, worldSpawnPointY: click.y})
+        // window.updateHero({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
       } else {
         defaultFirstClick(e)
       }

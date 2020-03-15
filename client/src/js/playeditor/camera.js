@@ -55,6 +55,12 @@ function render(ctx, hero, objects) {
     })
   }
 
+  //ORIGIN POINT
+  drawObject(ctx, {x: 0, y: 0 - 1005, width: 2, height: 2000, color: 'white'})
+  drawObject(ctx, {x: 0 - 1005, y: 0, width: 2000, height: 2, color: 'white'})
+
+  drawObject(ctx, {x: window.preferences.worldSpawnPointX, y: window.preferences.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
+  drawObject(ctx, {x: window.preferences.worldSpawnPointX - 205, y: window.preferences.worldSpawnPointY, width: 400, height: 5, color: 'white'})
 
   ////////////////
   ////////////////
@@ -155,8 +161,8 @@ function render(ctx, hero, objects) {
     }
   }
 
-  drawObject(ctx, {x: window.editingHero.spawnPointX, y: window.editingHero.spawnPointY - 205, width: 5, height: 400, color: 'white'})
-  drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'white'})
+  drawObject(ctx, {x: window.editingHero.spawnPointX, y: window.editingHero.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
+  drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
 }
 
 function setCameraHeroX(ctx, hero) {

@@ -51,7 +51,7 @@ io.on('connection', function(socket){
     });
   })
 
-  // this is for when one player on a network wants to get a world
+  // this is for when one player on a network wants to get a world... should all be 1 -hero games?
   socket.on('getWorld', (name) => {
     fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
@@ -69,6 +69,12 @@ io.on('connection', function(socket){
           console.log(err);
       } else {
       let obj = JSON.parse(data); //now it an object
+      let serverState = obj.objects
+      let heros = obj.heros
+      let preferences = obj.preferences
+      let grid = obj.grid
+      let gridNodeSize = obj.gridNodeSize
+      let gridSize = obj.gridSize
       io.emit('onSetWorld', obj)
     }});
   })

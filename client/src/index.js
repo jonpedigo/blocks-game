@@ -117,8 +117,13 @@ var flags = {
 
 }
 window.respawnHero = function () {
-	window.hero.x = window.hero.spawnPointX;
-	window.hero.y = window.hero.spawnPointY;
+  if(!window.preferences.spawnPointX) {
+    window.hero.x = window.hero.spawnPointX;
+    window.hero.y = window.hero.spawnPointY;
+    return
+  }
+  window.hero.x = window.preferences.worldSpawnPointX
+  window.hero.y = window.preferences.worldSpawnPointY
 }
 
 window.resetHero = function(updatedHero) {

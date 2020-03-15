@@ -23,8 +23,7 @@ function init() {
   		window.objects.forEach((object) => {
   			physics.removeObject(object)
   		})
-  		window.objects.length = 0
-  		window.location.reload()
+  		window.objects = []
   	})
   	window.socket.on('onEditObjects', (editedObjects) => {
   		Object.assign(window.objects, editedObjects)
@@ -48,7 +47,6 @@ function init() {
   if(window.usePlayEditor) {
     window.socket.on('onResetObjects', () => {
       window.objects = []
-      window.location.reload()
     })
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
@@ -111,13 +109,40 @@ function init() {
     window.removeObject(id)
   })
 
+
+  function findHeroInNewWorld() {
+    if(!Object.keys(window.heros).length) {
+      window.hero.x = window.preferences.worldSpawnPointX
+      window.hero.y = window.preferences.worldSpawnPointY
+    }
+    for(var heroId in window.heros) {
+      let currentHero = window.heros[heroId]
+      if(currentHero.id == window.hero.id) {
+        window.hero = currentHero
+        return
+      }
+    }
+    for(var heroId in window.heros) {
+      let currentHero = window.heros[heroId]
+      if(currentHero.tags.isPlayer) {
+        window.hero = currentHero
+        return
+      }
+    }
+
+    window.hero = window.heros[heroId]
+  }
   window.socket.on('onSetWorld', (world) => {
     window.objects = world.objects
+    window.objects.forEach((object) => {
+      physics.addObject(object)
+    })
     window.heros = world.heros
     window.preferences = world.preferences
     window.grid = world.grid
     window.gridNodeSize = world.gridNodeSize
     window.gridSize = world.gridSize
+    if(window.hero) findHeroInNewWorld()
   })
 
   window.socket.emit('askHeros');
