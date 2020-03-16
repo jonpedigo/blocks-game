@@ -146,7 +146,7 @@ function render(ctx, hero, objects) {
   if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
     drawBorder(ctx, { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)})
   }
-  if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
+  if(clickStart.x && (currentTool === TOOLS.AREA_SELECTOR || currentTool === TOOLS.PROCEDURAL)) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CAMERA_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT) ctx.strokeStyle = '#FFF'

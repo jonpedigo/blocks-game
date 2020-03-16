@@ -30,9 +30,11 @@ const worlds = {
 }
 
 io.on('connection', function(socket){
-  //objects
-
-
+  socket.on('saveSocket', (hero) => {
+    herosockets[hero.id] = socket
+    heros[hero.id] = hero
+  })
+  
   socket.on('saveWorld', (name) => {
     let data = {
       objects: serverState,
@@ -79,17 +81,13 @@ io.on('connection', function(socket){
     }});
   })
 
-  socket.on('saveSocket', (hero) => {
-    herosockets[hero.id] = socket
-    heros[hero.id] = hero
-  })
-
+  //objects
   socket.on('updateObjects', (objects) => {
     serverState = objects
     io.emit('onUpdateObjects', serverState)
   })
   socket.on('editObjects', (objects) => {
-    serverState = objects
+    Object.assign(serverState, objects)
     io.emit('onEditObjects', serverState)
   })
   socket.on('resetObjects', (objects) => {
