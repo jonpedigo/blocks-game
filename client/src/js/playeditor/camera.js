@@ -49,15 +49,57 @@ function render(ctx, hero, objects) {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+
+  ////////////////
+  ////////////////
+  // GRID
+  ////////////////
+  ////////////////
   if(window.grid) {
-    gridTool.forEach((grid) => {
-      drawGrid(ctx, grid)
-    })
+    let startGrid = grid[0][0]
+    let startX = startGrid.x
+    let startY = startGrid.y
+    let height = window.gridNodeSize * window.gridSize.y
+    let width = window.gridNodeSize * window.gridSize.x
+    ctx.strokeStyle = "#999";
+
+    for(var x = 0; x < window.gridSize.x; x++) {
+      ctx.lineWidth = .3
+      if(x % 10 === 0) {
+        ctx.lineWidth = .8
+      }
+      drawVertice(ctx, {a: {
+        x: startX + (x * window.gridNodeSize),
+        y: startY,
+      },
+      b: {
+        x: startX + (x * window.gridNodeSize),
+        y: startY + height,
+      }})
+    }
+    for(var y = 0; y < window.gridSize.y; y++) {
+      ctx.lineWidth = .3
+      if(y % 10 === 0) {
+        ctx.lineWidth = .8
+      }
+      drawVertice(ctx, {a: {
+        x: startX,
+        y: startY + (y * window.gridNodeSize),
+      },
+      b: {
+        x: startX + width,
+        y: startY + (y * window.gridNodeSize),
+      }})
+    }
   }
 
-  //ORIGIN POINT
-  drawObject(ctx, {x: 0, y: 0 - 1005, width: 2, height: 2000, color: 'white'})
-  drawObject(ctx, {x: 0 - 1005, y: 0, width: 2000, height: 2, color: 'white'})
+  ////////////////
+  ////////////////
+  // ORIGIN AND SPAWN POINTS
+  ////////////////
+  ////////////////
+  drawObject(ctx, {x: 0, y: 0, width: 2, height: 2000, color: 'white'})
+  drawObject(ctx, {x: 0, y: 0, width: 2000, height: 2, color: 'white'})
 
   drawObject(ctx, {x: window.preferences.worldSpawnPointX, y: window.preferences.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
   drawObject(ctx, {x: window.preferences.worldSpawnPointX - 205, y: window.preferences.worldSpawnPointY, width: 400, height: 5, color: 'white'})

@@ -87,13 +87,14 @@ if (window.location.origin.indexOf('localhost') > 0) {
 window.socket = socket
 
 // DOM
-window.canvasMultiplier = 2;
+window.canvasMultiplier = 1;
 window.CONSTANTS = {
 	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
 	PLAYER_CANVAS_HEIGHT: 360 * window.canvasMultiplier,
   PLAYER_CAMERA_WIDTH: 640,
   PLAYER_CAMERA_HEIGHT: 360,
 }
+
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
