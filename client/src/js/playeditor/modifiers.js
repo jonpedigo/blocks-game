@@ -1,4 +1,4 @@
-window.divideScreenSizeBy = 3
+
 const modifiers = {
   pokemon: {
     arrowKeysBehavior: 'grid',
@@ -8,7 +8,7 @@ const modifiers = {
   asteroids: {
     arrowKeysBehavior: 'velocity',
     gravity: false,
-    velocityMax: 1500/window.divideScreenSizeBy,
+    velocityMax: 600,
   },
   zelda: {
     arrowKeysBehavior: 'position',
@@ -18,8 +18,8 @@ const modifiers = {
   mario: {
     arrowKeysBehavior: 'position',
     gravity: true,
-    jumpVelocity: -1200/window.divideScreenSizeBy,
-    velocityMax: 1200/window.divideScreenSizeBy,
+    jumpVelocity: -480,
+    velocityMax: 480,
     velocityX: 0
   }
 }

@@ -24,10 +24,10 @@ function clearLimit() {
 }
 
 function setHeroX(ctx, hero) {
-  camera.x = ((hero.x + hero.width/2)/window.hero.zoomMultiplier) - ctx.canvas.width/2
+  camera.x = (((hero.x + hero.width/2)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
 }
 function setHeroY(ctx, hero) {
-  camera.y = ((hero.y + hero.height/2)/window.hero.zoomMultiplier) - ctx.canvas.height/2
+  camera.y = (((hero.y + hero.height/2)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2
 }
 
 
@@ -36,15 +36,16 @@ function get(){
 }
 
 function set(ctx, hero) {
+  camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
   if (camera.limitX) {
-    const potentialX = (hero.x + hero.width/2)/window.hero.zoomMultiplier
+    const potentialX = ((hero.x + hero.width/2)/camera.multiplier)
 
     // too late, more
-    if(potentialX > (((camera.centerX + camera.limitX)/window.hero.zoomMultiplier) - (ctx.canvas.width/2))) {
-      camera.x = ((camera.centerX + camera.limitX)/window.hero.zoomMultiplier) - ctx.canvas.width
+    if(potentialX > ((((camera.centerX + camera.limitX)/camera.multiplier)) - (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2))) {
+      camera.x = (((camera.centerX + camera.limitX)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_WIDTH
     // too soon, less
-  } else if (potentialX < (((camera.centerX - camera.limitX)/window.hero.zoomMultiplier) + (ctx.canvas.width/2))) {
-      camera.x = ((camera.centerX - camera.limitX)/window.hero.zoomMultiplier)
+  } else if (potentialX < ((((camera.centerX - camera.limitX)/camera.multiplier)) + (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2))) {
+      camera.x = (((camera.centerX - camera.limitX)/camera.multiplier))
     } else {
       setHeroX(ctx, hero)
     }
@@ -53,11 +54,12 @@ function set(ctx, hero) {
   }
 
   if (camera.limitY) {
-    const potentialY = (hero.y + hero.height/2)/window.hero.zoomMultiplier
-    if (potentialY > (((camera.centerY + camera.limitY)/window.hero.zoomMultiplier) - (ctx.canvas.height/2))) {
-      camera.y = ((camera.centerY + camera.limitY)/window.hero.zoomMultiplier) - ctx.canvas.height
-    } else if (potentialY < (((camera.centerY - camera.limitY)/window.hero.zoomMultiplier) + (ctx.canvas.height/2))) {
-      camera.y = (camera.centerY - camera.limitY)/window.hero.zoomMultiplier
+    const potentialY = ((hero.y + hero.height/2)/camera.multiplier)
+
+    if (potentialY > ((((camera.centerY + camera.limitY)/camera.multiplier))- (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2))) {
+      camera.y = (((camera.centerY + camera.limitY)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_HEIGHT
+    } else if (potentialY < ((((camera.centerY - camera.limitY)/camera.multiplier)) + (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2))) {
+      camera.y = ((camera.centerY - camera.limitY)/camera.multiplier)
     } else {
       setHeroY(ctx, hero)
     }
@@ -76,7 +78,7 @@ function drawName(ctx, object){
 
 function drawObject(ctx, object, withNames = false) {
   // if(object.color) ctx.fillStyle = object.color
-  ctx.fillRect((object.x/window.hero.zoomMultiplier - camera.x), (object.y/window.hero.zoomMultiplier - camera.y), object.width/window.hero.zoomMultiplier, object.height/window.hero.zoomMultiplier);
+  ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
   // ctx.fillStyle = 'white';
 
   if(withNames) {
@@ -87,12 +89,18 @@ function drawObject(ctx, object, withNames = false) {
 function drawVertice(ctx, vertice) {
   ctx.beginPath();
   // ctx.lineWidth = '4';
-  ctx.moveTo( (vertice.a.x/window.hero.zoomMultiplier - camera.x), (vertice.a.y/window.hero.zoomMultiplier - camera.y));
-  ctx.lineTo( (vertice.b.x/window.hero.zoomMultiplier - camera.x), (vertice.b.y/window.hero.zoomMultiplier - camera.y));
+  ctx.moveTo( (vertice.a.x/camera.multiplier - camera.x), (vertice.a.y/camera.multiplier - camera.y));
+  ctx.lineTo( (vertice.b.x/camera.multiplier - camera.x), (vertice.b.y/camera.multiplier - camera.y));
   ctx.stroke();
 }
 
+function init() {
+  camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
+  camera.objectSizeMultiplier = window.hero.zoomMultiplier
+}
+
 export default {
+  init,
   set,
   get,
 	drawObject,

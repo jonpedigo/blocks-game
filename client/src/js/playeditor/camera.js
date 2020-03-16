@@ -107,7 +107,7 @@ function render(ctx, hero, objects) {
   if(clickStart.x && currentTool === TOOLS.AREA_SELECTOR) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
-    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CANVAS_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CANVAS_HEIGHT) ctx.strokeStyle = '#FFF'
+    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CAMERA_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT) ctx.strokeStyle = '#FFF'
     else ctx.strokeStyle = 'red'
     drawBorder(ctx, possibleBox)
   }
@@ -148,7 +148,7 @@ function render(ctx, hero, objects) {
 
     if(window.preferences.lockCamera) {
       ctx.strokeStyle='#0A0';
-      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * currentHero.zoomMultiplier)})
+      drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)})
     }
 
     if(currentHero.reachablePlatformHeight && currentHero.gravity) {

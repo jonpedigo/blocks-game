@@ -559,8 +559,8 @@ function init(ctx, objects) {
 
   function setPresetWorldArenaBoundary() {
     const value = {
-      width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
-      height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+      width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier,
+      height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier,
       centerX: window.editingHero.x + window.editingHero.width/2,
       centerY: window.editingHero.y + window.editingHero.height/2,
     }
@@ -573,8 +573,8 @@ function init(ctx, objects) {
 
   function setPresetWorldArenaCyclical() {
     const value = {
-      width: window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier,
-      height: window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier,
+      width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier,
+      height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier,
       centerX: window.editingHero.x + window.editingHero.width/2,
       centerY: window.editingHero.y + window.editingHero.height/2,
     }
@@ -590,7 +590,7 @@ function init(ctx, objects) {
 }
 
 function createArena() {
-  let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CANVAS_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CANVAS_HEIGHT * window.preferences.zoomMultiplier)}
+  let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier)}
 
   let wallLeft = {
     id: 'wall-l' + Date.now(),

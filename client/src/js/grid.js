@@ -1,7 +1,7 @@
 import collisions from './collisions'
 
 function init() {
-  window.gridNodeSize = 100/window.divideScreenSizeBy
+  window.gridNodeSize = 40
 
   window.socket.emit('askGrid');
   window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
@@ -11,7 +11,7 @@ function init() {
   })
 }
 
-function createGrid(gridSize, gridNodeSize = 100/window.divideScreenSizeBy, start = { x: 0, y: 0 }) {
+function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {
   const grid = []
 
   for(var i = 0; i < gridSize.x; i++) {

@@ -1,5 +1,6 @@
 import grid from './grid.js'
 import physics from './physics.js'
+import camera from './camera.js'
 
 function init() {
 
@@ -140,6 +141,7 @@ function init() {
     window.heros = world.heros
     window.preferences = world.preferences
     window.grid = world.grid
+    window.socket.emit('updateGrid', world.grid, world.gridNodeSize, world.gridSize)
     window.gridNodeSize = world.gridNodeSize
     window.gridSize = world.gridSize
     if(window.hero) findHeroInNewWorld()

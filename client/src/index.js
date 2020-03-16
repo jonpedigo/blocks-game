@@ -87,9 +87,12 @@ if (window.location.origin.indexOf('localhost') > 0) {
 window.socket = socket
 
 // DOM
+window.canvasMultiplier = 2;
 window.CONSTANTS = {
-	PLAYER_CANVAS_WIDTH: 1920/window.divideScreenSizeBy,
-	PLAYER_CANVAS_HEIGHT: 1080/window.divideScreenSizeBy,
+	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
+	PLAYER_CANVAS_HEIGHT: 360 * window.canvasMultiplier,
+  PLAYER_CAMERA_WIDTH: 640,
+  PLAYER_CAMERA_HEIGHT: 360,
 }
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
@@ -117,6 +120,7 @@ var flags = {
 
 }
 window.respawnHero = function () {
+  // hero spawn point takes precedence
   if(!window.preferences.spawnPointX) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
@@ -181,24 +185,22 @@ window.preferences = defaultPreferences;
 /////////////
 /////////////
 const defaultHero = {
-	width: 100/window.divideScreenSizeBy,
-	height: 100/window.divideScreenSizeBy,
+	width: 40,
+	height: 40,
   paused: false,
 	id: 'hero-'+Date.now(),
 	velocityX: 0,
 	velocityY: 0,
-	velocityMax: 250,
+	velocityMax: 25,
 	accY: 0,
 	accX: 0,
 	accDecayX: 0,
 	accDecayY: 0,
-	speed: 250,
+	speed: 100,
 	arrowKeysBehavior: 'position',
-	jumpVelocity: -1200/window.divideScreenSizeBy,
-	spawnPointX: (100/window.divideScreenSizeBy) * 20,
-	spawnPointY: (100/window.divideScreenSizeBy) * 20,
-	// spawnPointX: 0,
-	// spawnPointY: 0,
+	jumpVelocity: -480,
+	spawnPointX: (40) * 20,
+	spawnPointY: (40) * 20,
 	gravity: 0,
 	tags: {'hero': true},
 	zoomMultiplier: 1,
@@ -238,6 +240,7 @@ var start = function () {
   if(usePlayEditor) {
 		playEditor.init(ctx, window.objects, camera)
 	} else {
+    camera.init()
 		input.init(hero)
 		chat.init(current, flags)
 		action.init(hero)
