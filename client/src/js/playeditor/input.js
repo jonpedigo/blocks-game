@@ -28,6 +28,7 @@ function init(hero){
 
 
     if(keysDown['188'] || keysDown['190']){
+      delete window.heros['undefined']
       if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
         for(var heroId in window.heros) {
           window.setEditingHero(window.heros[heroId])

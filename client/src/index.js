@@ -98,7 +98,7 @@ window.CONSTANTS = {
 }
 
 var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
+window.ctx = canvas.getContext("2d");
 canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
 canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
 canvas.id = 'game'
@@ -124,7 +124,7 @@ var flags = {
 }
 window.respawnHero = function () {
   // hero spawn point takes precedence
-  if(!window.preferences.spawnPointX) {
+  if(!window.preferences.worldSpawnPointX) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
     return
@@ -138,7 +138,9 @@ window.resetHero = function(updatedHero) {
 	if(updatedHero) {
 		Object.assign(window.hero, updatedHero)
 	} else {
-		Object.assign(window.hero, defaultHero)
+    let newHero = {}
+		Object.assign(newHero, defaultHero, {x: window.hero.x, y: window.hero.y})
+    window.hero = newHero
 	}
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
@@ -196,8 +198,8 @@ const defaultHero = {
 	speed: 100,
 	arrowKeysBehavior: 'position',
 	jumpVelocity: -480,
-	spawnPointX: (40) * 20,
-	spawnPointY: (40) * 20,
+	// spawnPointX: (40) * 20,
+	// spawnPointY: (40) * 20,
 	gravity: 0,
 	tags: {'hero': true, isPlayer: true},
 	zoomMultiplier: 1,
@@ -251,19 +253,19 @@ var update = function (delta) {
 	intelligence.update(window.hero, window.objects)
 
   /// zoom targets
-  if(window.hero.zoomMultiplierTarget) {
-    if(window.hero.zoomMultiplierTarget > window.hero.zoomMultiplier) {
-      window.hero.zoomMultiplier = window.hero.zoomMultiplier/.99
-      if(window.hero.zoomMultiplierTarget <= window.hero.zoomMultiplier) {
-        window.hero.zoomMultiplierTarget = null
+  if(window.hero.animationZoomTarget) {
+    if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
+      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.99
+      if(window.hero.animationZoomTarget <= window.hero.animationZoomMultiplier) {
+        if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
         window.socket.emit('updateHero', window.hero)
       }
     }
 
-    if(window.hero.zoomMultiplierTarget < window.hero.zoomMultiplier) {
-      window.hero.zoomMultiplier = window.hero.zoomMultiplier/1.01
-      if(window.hero.zoomMultiplierTarget >= window.hero.zoomMultiplier) {
-        window.hero.zoomMultiplierTarget = null
+    if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
+      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.01
+      if(window.hero.animationZoomTarget >= window.hero.animationZoomMultiplier) {
+        if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
         window.socket.emit('updateHero', window.hero)
       }
     }

@@ -35,8 +35,9 @@ function get(){
   return camera
 }
 
-function set(ctx, hero) {
+function set(ctx = window.ctx, hero = window.hero) {
   camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
+  if(window.hero.animationZoomMultiplier) camera.multiplier = window.hero.animationZoomMultiplier / window.canvasMultiplier
   if (camera.limitX) {
     const potentialX = ((hero.x + hero.width/2)/camera.multiplier)
 
@@ -96,7 +97,6 @@ function drawVertice(ctx, vertice) {
 
 function init() {
   camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
-  camera.objectSizeMultiplier = window.hero.zoomMultiplier
 }
 
 export default {

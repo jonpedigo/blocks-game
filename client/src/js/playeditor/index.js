@@ -362,11 +362,15 @@ function init(ctx, objects) {
   /////////////////////
   var zoomToUniverseButton = document.getElementById("zoom-out-to-universe");
   zoomToUniverseButton.addEventListener('click', () => {
-    window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplierTarget: 120 })
+    window.socket.emit('updateHero', { id: window.editingHero.id, animationZoomTarget: 120, animationZoomMultiplier: window.editingHero.zoomMultiplier, endAnimation: false })
+  })
+  var zoomToWorldButton = document.getElementById("zoom-in-to-world");
+  zoomToWorldButton.addEventListener('click', () => {
+    window.socket.emit('updateHero', { id: window.editingHero.id, animationZoomTarget: window.editingHero.zoomMultiplier, animationZoomMultiplier: 120, endAnimation: true, })
   })
   var saveWorldButton = document.getElementById("save-world")
   saveWorldButton.addEventListener('click', () => {
-    if(!shouldRestoreHeroToggle.checked && !window.preferences.spawnPointX) {
+    if(!shouldRestoreHeroToggle.checked && !window.preferences.worldSpawnPointX) {
       alert('no spawn point set')
       return
     }
@@ -430,9 +434,9 @@ function init(ctx, objects) {
   respawnHeroButton.addEventListener('click', respawnHero)
   var resetHeroButton = document.getElementById("reset-hero-other");
   resetHeroButton.addEventListener('click', resetHero)
-  var resetHeroButton = document.getElementById("delete-hero");
-  resetHeroButton.addEventListener('click', () => {
-    window.socket.emit('deleteHero', window.hero.id)
+  var deleteButton = document.getElementById("delete-hero");
+  deleteButton.addEventListener('click', () => {
+    window.socket.emit('deleteHero', editingHero.id)
   })
 
   window.syncHeroToggle = document.getElementById('sync-hero')
@@ -468,7 +472,7 @@ function init(ctx, objects) {
     window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
   function resetHero() {
-    window.socket.emit('resetHero', hero)
+    window.socket.emit('resetHero', editingHero)
   }
   function findHero() {
     camera.setCamera(ctx, window.heros[window.editingHero.id])

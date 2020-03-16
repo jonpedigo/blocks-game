@@ -40,6 +40,12 @@ function init() {
   		window.snapAllObjectsToGrid()
   	})
 
+    window.socket.on('onResetHero', (hero) => {
+      if(hero.id === window.hero.id) {
+        window.resetHero()
+      }
+    })
+
     window.socket.emit('askObjects')
   }
 
@@ -114,12 +120,6 @@ function init() {
   	}
   })
 
-  window.socket.on('onResetHero', (hero) => {
-  	if(hero.id === window.hero.id) {
-  		window.resetHero()
-  	}
-  })
-
   window.socket.on('onRemoveObject', (id) => {
     if(window.usePlayEditor && window.editingObject.id === id) {
       window.editingObject = {}
@@ -133,7 +133,6 @@ function init() {
     window.objects.forEach((object) => {
       physics.addObject(object)
     })
-    console.log('setting', world)
 
     window.heros = world.heros
     window.preferences = world.preferences
@@ -158,6 +157,9 @@ function init() {
 
   window.socket.on('onDeleteHero', (id) => {
     delete window.heros[id]
+    if(window.usePlayEditor && window.editingHero.id == id) {
+      window.editingHero = {}
+    }
   })
 
   window.socket.emit('askGrid');
