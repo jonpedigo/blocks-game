@@ -423,7 +423,7 @@ function init(ctx, objects) {
   /////////////////////
   /////////////////////
   var getHeroButton = document.getElementById("get-hero")
-  getHeroButton.addEventListener('click', window.getHero)
+  getHeroButton.addEventListener('click', window.getEditingHero)
   var setHeroButton = document.getElementById("set-hero")
   setHeroButton.addEventListener('click', setHero)
   var setHeroPosButton = document.getElementById("set-hero-pos")
@@ -468,8 +468,9 @@ function init(ctx, objects) {
   }
 
   function respawnHero() {
-    let hero = heroeditor.get()
-    window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
+    window.socket.emit('respawnHero')
+    // let hero = heroeditor.get()
+    // window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
   function resetHero() {
     window.socket.emit('resetHero', editingHero)
@@ -480,7 +481,7 @@ function init(ctx, objects) {
   window.updateHero = function(hero) {
     Object.assign(heros[hero.id], hero)
     if(hero.id == window.editingHero.id) {
-      window.getHero()
+      window.getEditingHero()
       setHero()
     }
   }
@@ -490,7 +491,7 @@ function init(ctx, objects) {
     heroeditor.update(window.heros[window.editingHero.id])
   }
 
-  window.getHero = function() {
+  window.getEditingHero = function() {
     heroeditor.update({})
     heroeditor.update(window.heros[window.editingHero.id])
   }

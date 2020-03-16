@@ -365,7 +365,10 @@ var main = function () {
   }else {
 		update(delta / 1000);
     render();
-    constellation.animate()
+    if(window.hero.animationZoomMultiplier) {
+      constellation.animate()
+    }
+    
 		// physics.drawSystem(ctx, hero)
   }
 

@@ -32,10 +32,6 @@ function init() {
   		Object.assign(window.objects, editedObjects)
   	})
 
-  	window.socket.on('onUpdateHeroPos', (updatedHero) => {
-  		window.resetHero(updatedHero)
-  	})
-
   	window.socket.on('onSnapAllObjectsToGrid', () => {
   		window.snapAllObjectsToGrid()
   	})
@@ -43,6 +39,12 @@ function init() {
     window.socket.on('onResetHero', (hero) => {
       if(hero.id === window.hero.id) {
         window.resetHero()
+      }
+    })
+
+    window.socket.on('onRespawnHero', (hero) => {
+      if(hero.id === window.hero.id) {
+        window.respawnHero()
       }
     })
 
@@ -74,8 +76,20 @@ function init() {
     if(!window.heros[heroUpdated.id]){
       window.heros[heroUpdated.id] = {}
     }
-    Object.assign(window.heros[heroUpdated.id], heroUpdated)
-    if(window.usePlayEditor && window.preferences.syncHero && window.editingHero.id === heroUpdated.id) window.getHero()
+
+    if(window.usePlayEditor) {
+      Object.assign(window.heros[heroUpdated.id], heroUpdated)
+      if(window.editingHero.id === heroUpdated.id) {
+        if(window.preferences.syncHero) {
+          window.editingHero = heroUpdated
+          window.getEditingHero()
+        }
+      }
+    } else {
+      if(!window.hero.id === heroUpdated.id) {
+        Object.assign(window.heros[heroUpdated.id], heroUpdated)
+      }
+    }
   })
 
   window.socket.on('onUpdatePreferences', (updatedPreferences) => {
