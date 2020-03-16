@@ -10,6 +10,8 @@ function init() {
   ///////////////////////////////
   if(!window.usePlayEditor) {
   	window.socket.on('onAddObjects', (objectsAdded) => {
+      if(!window.objects) window.objects = []
+
   		if(window.hero.arrowKeysBehavior === 'grid') {
   			objectsAdded.forEach((object) => {
   				grid.snapObjectToGrid(object)
@@ -58,6 +60,10 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
+  window.socket.on('onResetPreferences', (hero) => {
+    window.preferences = {}
+  })
+
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
     if(!window.heros[heroUpdated.id]){
       window.heros[heroUpdated.id] = {}
@@ -141,12 +147,17 @@ function init() {
     window.heros = world.heros
     window.preferences = world.preferences
     window.grid = world.grid
-    window.socket.emit('updateGrid', world.grid, world.gridNodeSize, world.gridSize)
     window.gridNodeSize = world.gridNodeSize
     window.gridSize = world.gridSize
     if(window.hero) findHeroInNewWorld()
   })
+  window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
+    window.grid = grid
+    window.gridSize = gridSize
+    window.gridNodeSize = gridNodeSize
+  })
 
+  window.socket.emit('askGrid');
   window.socket.emit('askHeros');
   window.socket.emit('askPreferences')
 }

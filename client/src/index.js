@@ -109,7 +109,7 @@ if(!window.usePlayEditor) {
 }
 
 /// GLOBAL
-window.objects = []
+// window.objects = []
 window.game ={}
 window.current = {
   chat: ''
@@ -175,7 +175,6 @@ window.removeObject = function(id) {
 /////////////
 /////////////
 const defaultPreferences = {
-	zoomMultiplier: 1,
 	lockCamera: {},
 	gameBoundaries: {},
 }
@@ -210,8 +209,7 @@ const defaultHero = {
 if(!window.usePlayEditor) {
 	let savedHero = JSON.parse(localStorage.getItem('hero'));
 	if(savedHero){
-		window.hero = {}
-		Object.assign(window.hero, savedHero);
+		window.hero = savedHero
 	}
 	if(!window.hero) {
 		window.hero = {...defaultHero}
@@ -239,12 +237,12 @@ var start = function () {
   sockets.init()
 
   if(usePlayEditor) {
-		playEditor.init(ctx, window.objects, camera)
+		playEditor.init(ctx)
 	} else {
     camera.init()
-		input.init(hero)
+		input.init()
 		chat.init(current, flags)
-		action.init(hero)
+		action.init()
 	}
 	main()
 };
@@ -255,6 +253,7 @@ var update = function (delta) {
 	chat.update(current.chat)
 	intelligence.update(window.hero, window.objects)
 
+  /// zoom targets
   if(window.hero.zoomMultiplierTarget) {
     if(window.hero.zoomMultiplierTarget > window.hero.zoomMultiplier) {
       window.hero.zoomMultiplier = window.hero.zoomMultiplier/.99
@@ -280,6 +279,7 @@ var update = function (delta) {
 	}
 
 	window.socket.emit('updateObjects', objects)
+  window.socket.emit('updateHeroPos', window.hero)
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
@@ -332,16 +332,20 @@ var render = function () {
 
 // The main game loop
 var main = function () {
+  if(!window.objects || !window.preferences || !window.grid || Object.keys(window.heros).length === 0) {
+    requestAnimationFrame(main);
+    return
+  }
+
 	var now = Date.now();
 	var delta = now - then;
 	if(delta > 23) delta = 23
 
-	if(usePlayEditor) {
+	if(window.usePlayEditor) {
 		playEditor.update(delta)
     playEditor.render(ctx, window.hero, window.objects);
   }else {
 		update(delta / 1000);
-		window.socket.emit('updateHeroPos', window.hero)
     render();
 		// physics.drawSystem(ctx, hero)
   }

@@ -11,8 +11,8 @@ import input from './input.js'
 /////////////////////
 /////////////////////
 window.camera = {
-  x: 0,
-  y: 0,
+  x: -100,
+  y: -100,
 }
 window.clickStart = {
   x: null,
@@ -375,6 +375,8 @@ function init(ctx, objects) {
   var newWorldButton = document.getElementById("new-world")
   newWorldButton.addEventListener('click', () => {
     window.resetObjects()
+    window.socket.emit('resetPreferences')
+    window.socket.emit('updateGrid', gridTool.createGrid({x: 50, y: 50}), window.gridNodeSize, {x: 50, y: 50})
   })
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', resetObjects)
@@ -489,6 +491,7 @@ function init(ctx, objects) {
 
   instantGridAddToggle = document.getElementById("instant-grid-add")
   instantAddToggle = document.getElementById("instant-add")
+  instantGridAddToggle.checked = true;
 
   function emitEditedObject(object) {
     delete object.x
@@ -535,10 +538,10 @@ function init(ctx, objects) {
   }
   var createGridButton = document.getElementById("create-grid");
   createGridButton.onclick = (e) => {
-    createGrid()
+    window.createGrid()
   }
 
-  function createGrid() {
+  window.createGrid = function() {
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
     let w = Math.floor(width / (window.gridNodeSize))

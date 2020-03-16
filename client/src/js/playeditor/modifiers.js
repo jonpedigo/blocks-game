@@ -1,4 +1,3 @@
-
 const modifiers = {
   pokemon: {
     arrowKeysBehavior: 'grid',

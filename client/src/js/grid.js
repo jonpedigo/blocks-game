@@ -2,13 +2,6 @@ import collisions from './collisions'
 
 function init() {
   window.gridNodeSize = 40
-
-  window.socket.emit('askGrid');
-  window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
-    window.grid = grid
-    window.gridSize = gridSize
-    window.gridNodeSize = gridNodeSize
-  })
 }
 
 function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {

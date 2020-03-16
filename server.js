@@ -34,7 +34,7 @@ io.on('connection', function(socket){
     herosockets[hero.id] = socket
     heros[hero.id] = hero
   })
-  
+
   socket.on('saveWorld', (name) => {
     let data = {
       objects: serverState,
@@ -118,6 +118,10 @@ io.on('connection', function(socket){
   socket.on('updatePreferences', (updatedPreferences) => {
     Object.assign(preferences, updatedPreferences)
     io.emit('onUpdatePreferences', updatedPreferences)
+  })
+  socket.on('resetPreferences', (updatedPreferences) => {
+    preferences = {}
+    io.emit('onResetPreferences', updatedPreferences)
   })
 
   //hero
