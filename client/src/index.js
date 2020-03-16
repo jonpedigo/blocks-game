@@ -79,6 +79,7 @@ import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 import sockets from './js/sockets.js'
+import constellation from './js/constellation.js'
 
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
@@ -124,13 +125,23 @@ var flags = {
 }
 window.respawnHero = function () {
   // hero spawn point takes precedence
-  if(!window.preferences.worldSpawnPointX) {
+  if(window.preferences.worldSpawnPointX) {
+    window.hero.x = window.preferences.worldSpawnPointX
+    window.hero.y = window.preferences.worldSpawnPointY
+    return
+  }
+
+  if(window.hero.spawnPointX) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
     return
   }
-  window.hero.x = window.preferences.worldSpawnPointX
-  window.hero.y = window.preferences.worldSpawnPointY
+
+  // default pos
+  window.hero.x = 0;
+  window.hero.y = 0;
+
+
 }
 
 window.resetHero = function(updatedHero) {
@@ -238,6 +249,7 @@ var start = function () {
   if(usePlayEditor) {
 		playEditor.init(ctx)
 	} else {
+    constellation.init(ctx)
     camera.init()
 		input.init()
 		chat.init(current, flags)
@@ -255,17 +267,23 @@ var update = function (delta) {
   /// zoom targets
   if(window.hero.animationZoomTarget) {
     if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.99
-      if(window.hero.animationZoomTarget <= window.hero.animationZoomMultiplier) {
+      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.97
+      if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
         if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
+        else {
+          window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+        }
         window.socket.emit('updateHero', window.hero)
       }
     }
 
     if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.01
-      if(window.hero.animationZoomTarget >= window.hero.animationZoomMultiplier) {
+      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.03
+      if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
         if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
+        else {
+          window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+        }
         window.socket.emit('updateHero', window.hero)
       }
     }
@@ -347,6 +365,7 @@ var main = function () {
   }else {
 		update(delta / 1000);
     render();
+    constellation.animate()
 		// physics.drawSystem(ctx, hero)
   }
 
