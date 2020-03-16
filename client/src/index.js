@@ -1,6 +1,8 @@
 // zooming in and out to different worlds, to pacman world and then to zelda world.
 // youll probably need to 'switch heros....'
 
+// Send player to... x, y ( have them like start to move really fast and possibly pathfind)
+// stop player (velocity)
 // attack button ( like papa bear spears!! )
 // procedural
 // pathfinding
@@ -158,11 +160,6 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-window.resetObjects = function() {
-	window.objects.length = 0
-	window.socket.emit('updateObjects', [])
-}
-
 window.removeObject = function(id) {
   window.objects = window.objects.filter((obj) => obj.id !== id)
   if(!window.usePlayEditor) {
@@ -202,7 +199,7 @@ const defaultHero = {
 	spawnPointX: (40) * 20,
 	spawnPointY: (40) * 20,
 	gravity: 0,
-	tags: {'hero': true},
+	tags: {'hero': true, isPlayer: true},
 	zoomMultiplier: 1,
 }
 
@@ -280,6 +277,7 @@ var update = function (delta) {
 
 	window.socket.emit('updateObjects', objects)
   window.socket.emit('updateHeroPos', window.hero)
+  window.socket.emit('updateHeroServerOnly', window.hero)
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 

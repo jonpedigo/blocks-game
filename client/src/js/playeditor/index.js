@@ -366,6 +366,10 @@ function init(ctx, objects) {
   })
   var saveWorldButton = document.getElementById("save-world")
   saveWorldButton.addEventListener('click', () => {
+    if(!shouldRestoreHeroToggle.checked && !window.preferences.spawnPointX) {
+      alert('no spawn point set')
+      return
+    }
     window.saveWorld()
   })
   var setWorldButton = document.getElementById("set-world")
@@ -376,14 +380,31 @@ function init(ctx, objects) {
   newWorldButton.addEventListener('click', () => {
     window.resetObjects()
     window.socket.emit('resetPreferences')
-    window.socket.emit('updateGrid', gridTool.createGrid({x: 50, y: 50}), window.gridNodeSize, {x: 50, y: 50})
+    window.socket.emit('updateGrid', gridTool.createGrid({x: 50, y: 50}), window.gridNodeSize || 40, {x: 50, y: 50})
   })
-  var resetObjectsButton = document.getElementById("reset-objects");
-  resetObjectsButton.addEventListener('click', resetObjects)
-
-  function resetObjects() {
+  window.resetObjects = function() {
     window.socket.emit('resetObjects')
   }
+  var resetObjectsButton = document.getElementById("reset-objects");
+  resetObjectsButton.addEventListener('click', window.resetObjects)
+
+  window.shouldRestoreHeroToggle = document.getElementById('should-restore-hero')
+  shouldRestoreHeroToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { shouldRestoreHero: true })
+    } else {
+      window.socket.emit('updatePreferences', { shouldRestoreHero: false })
+    }
+  }
+  window.isAsymmetricToggle = document.getElementById('is-asymmetric')
+  isAsymmetricToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { isAsymmetric: true })
+    } else {
+      window.socket.emit('updatePreferences', { isAsymmetric: false })
+    }
+  }
+
 
   window.saveWorld = function() {
     window.socket.emit('saveWorld', document.getElementById('world-name').value)
@@ -409,7 +430,12 @@ function init(ctx, objects) {
   respawnHeroButton.addEventListener('click', respawnHero)
   var resetHeroButton = document.getElementById("reset-hero-other");
   resetHeroButton.addEventListener('click', resetHero)
-  var syncHeroToggle = document.getElementById('sync-hero')
+  var resetHeroButton = document.getElementById("delete-hero");
+  resetHeroButton.addEventListener('click', () => {
+    window.socket.emit('deleteHero', window.hero.id)
+  })
+
+  window.syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
       window.socket.emit('updatePreferences', { syncHero: true })
@@ -471,7 +497,7 @@ function init(ctx, objects) {
   /////////////////////
   var deleteObjectButton = document.getElementById("delete-object");
   deleteObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject.id))
-  var syncObjectsToggle = document.getElementById('sync-objects')
+  window.syncObjectsToggle = document.getElementById('sync-objects')
   syncObjectsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
       window.socket.emit('updatePreferences', { syncObjects: true })
@@ -489,9 +515,9 @@ function init(ctx, objects) {
     window.objectFactory = []
   })
 
-  instantGridAddToggle = document.getElementById("instant-grid-add")
-  instantAddToggle = document.getElementById("instant-add")
-  instantGridAddToggle.checked = true;
+  window.instantGridAddToggle = document.getElementById("instant-grid-add")
+  window.instantAddToggle = document.getElementById("instant-add")
+  window.instantGridAddToggle.checked = true;
 
   function emitEditedObject(object) {
     delete object.x
@@ -504,10 +530,10 @@ function init(ctx, objects) {
   // SELECT AREA BUTTONS
   /////////////////////
   /////////////////////
-  selectorGameToggle = document.getElementById('set-game')
-  selectorCameraToggle = document.getElementById('set-camera')
-  selectorSpawnToggle = document.getElementById('set-spawn')
-  selectorProceduralToggle = document.getElementById('set-procedural')
+  window.selectorGameToggle = document.getElementById('set-game')
+  window.selectorCameraToggle = document.getElementById('set-camera')
+  window.selectorSpawnToggle = document.getElementById('set-spawn')
+  window.selectorProceduralToggle = document.getElementById('set-procedural')
   var clearcameralock = document.getElementById("clear-camera-lock")
   clearcameralock.addEventListener('click', (e) => {
     window.socket.emit('updatePreferences', { lockCamera: {} })
@@ -542,6 +568,7 @@ function init(ctx, objects) {
   }
 
   window.createGrid = function() {
+    if(!window.gridSize.x || !window.gridSize.x || !window.gridNodeSize) return
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
     let w = Math.floor(width / (window.gridNodeSize))

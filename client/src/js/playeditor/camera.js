@@ -55,7 +55,7 @@ function render(ctx, hero, objects) {
   // GRID
   ////////////////
   ////////////////
-  if(window.grid) {
+  if(window.grid && grid[0] && grid[0][0]) {
     let startGrid = grid[0][0]
     let startX = startGrid.x
     let startY = startGrid.y
@@ -188,10 +188,8 @@ function render(ctx, hero, objects) {
   for(var heroId in window.heros) {
     let currentHero = window.heros[heroId];
 
-    if(window.preferences.lockCamera) {
       ctx.strokeStyle='#0A0';
       drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)})
-    }
 
     if(currentHero.reachablePlatformHeight && currentHero.gravity) {
       let y = (currentHero.y + currentHero.height)

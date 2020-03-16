@@ -84,6 +84,18 @@ function init() {
   				camera.clearLimit();
   			}
   		}
+      if(key === 'shouldRestoreHero' && window.usePlayEditor) {
+        window.shouldRestoreHeroToggle.checked = value
+      }
+      if(key === 'syncHero' && window.usePlayEditor) {
+        window.syncHeroToggle.checked = value
+      }
+      if(key === 'syncObjects' && window.usePlayEditor) {
+        window.shouldRestoreHeroToggle.checked = value
+      }
+      if(key === 'isAsymmetric' && window.usePlayEditor) {
+        window.isAsymmetricToggle.checked = value
+      }
   	}
   })
 
@@ -116,45 +128,36 @@ function init() {
     window.removeObject(id)
   })
 
-
-  function findHeroInNewWorld() {
-    if(!Object.keys(window.heros).length) {
-      window.hero.x = window.preferences.worldSpawnPointX
-      window.hero.y = window.preferences.worldSpawnPointY
-    }
-    for(var heroId in window.heros) {
-      let currentHero = window.heros[heroId]
-      if(currentHero.id == window.hero.id) {
-        window.hero = currentHero
-        return
-      }
-    }
-    for(var heroId in window.heros) {
-      let currentHero = window.heros[heroId]
-      if(currentHero.tags.isPlayer) {
-        window.hero = currentHero
-        return
-      }
-    }
-
-    window.hero = window.heros[heroId]
-  }
   window.socket.on('onSetWorld', (world) => {
     window.objects = world.objects
     window.objects.forEach((object) => {
       physics.addObject(object)
     })
+    console.log('setting', world)
+
     window.heros = world.heros
     window.preferences = world.preferences
-    window.grid = world.grid
-    window.gridNodeSize = world.gridNodeSize
-    window.gridSize = world.gridSize
-    if(window.hero) findHeroInNewWorld()
+    window.grid = world.grid || []
+    window.gridNodeSize = world.gridNodeSize || 40
+    window.gridSize = world.gridSize || { x: 50, y: 50 }
+    if(window.hero && !window.usePlayEditor){
+      findHeroInNewWorld(world)
+      window.socket.emit('updateHero', window.hero)
+    }
+    if(window.usePlayEditor) {
+      window.socket.emit('updateGrid', window.grid, window.gridNodeSize, window.gridSize)
+    }
+
+    window.socket.emit('updatePreferences', window.preferences)
   })
   window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
     window.grid = grid
     window.gridSize = gridSize
     window.gridNodeSize = gridNodeSize
+  })
+
+  window.socket.on('onDeleteHero', (id) => {
+    delete window.heros[id]
   })
 
   window.socket.emit('askGrid');
@@ -164,4 +167,54 @@ function init() {
 
 export default {
   init
+}
+
+
+function findHeroInNewWorld(world) {
+  // if we have decided to restore position, find hero in hero list
+  if(world.preferences.shouldRestoreHero) {
+    for(var heroId in world.heros) {
+      let currentHero = world.heros[heroId]
+      if(currentHero.id == window.hero.id) {
+        window.hero = currentHero
+        return
+      }
+    }
+    console.log('failed to find hero with id' + window.hero.id)
+  }
+
+  if(!world.preferences.isAsymmetric) {
+    // save current users id to the world.hero object and then store all other variables as the new hero
+    world.hero.id = window.hero.id
+    window.hero = world.hero
+    // but then also respawn the hero
+    window.respawnHero()
+    return
+  }
+
+
+
+
+
+  // other random bullshit if theres two different versions of the hero
+  if(!Object.keys(world.heros).length) {
+    window.hero.x = window.preferences.worldSpawnPointX
+    window.hero.y = window.preferences.worldSpawnPointY
+  }
+  for(var heroId in world.heros) {
+    let currentHero = world.heros[heroId]
+    if(currentHero.id == window.hero.id) {
+      window.hero = currentHero
+      return
+    }
+  }
+  for(var heroId in world.heros) {
+    let currentHero = world.heros[heroId]
+    if(currentHero.tags.isPlayer) {
+      window.hero = currentHero
+      return
+    }
+  }
+
+  window.hero = world.heros[heroId]
 }

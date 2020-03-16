@@ -19,8 +19,8 @@ let herosockets = {
 }
 let serverState = []
 let grid = []
-let gridNodeSize = 0
-let gridSize = 0
+let gridNodeSize = 40
+let gridSize = { x: 50, y: 50}
 let preferences = {
 
 }
@@ -44,6 +44,15 @@ io.on('connection', function(socket){
       gridNodeSize,
       gridSize,
     };
+
+    if(!preferences.shouldRestoreHero && !preferences.isAsymmetric) {
+      if(Object.keys(heros).length > 1) {
+        console.log("ERROR, two heros sent to a non asymettric, non restoring world")
+      }
+      for(var heroId in heros) {
+      }
+      data.hero = heros[heroId]
+    }
 
     if(!name) {
       name = Date.now()
@@ -71,12 +80,12 @@ io.on('connection', function(socket){
           console.log(err);
       } else {
       let obj = JSON.parse(data); //now it an object
-      let serverState = obj.objects
-      let heros = obj.heros
-      let preferences = obj.preferences
-      let grid = obj.grid
-      let gridNodeSize = obj.gridNodeSize
-      let gridSize = obj.gridSize
+      serverState = obj.objects
+      heros = obj.heros
+      preferences = obj.preferences
+      grid = obj.grid || []
+      gridNodeSize = obj.gridNodeSize || 40
+      gridSize = obj.gridSize || { x: 50, y: 50 }
       io.emit('onSetWorld', obj)
     }});
   })
@@ -128,13 +137,17 @@ io.on('connection', function(socket){
   socket.on('updateHeroPos', (hero) => {
     if(!heros[hero.id]) {
       heros[hero.id] = hero
+    } else {
+      heros[hero.id].x = hero.x
+      heros[hero.id].y = hero.y
     }
     io.emit('onHeroPosUpdate', hero)
   })
+  socket.on('updateHeroServerOnly', (hero) => {
+    heros[hero.id] = hero
+  })
   socket.on('updateHero', (hero) => {
-    if(!heros[hero.id]) {
-      heros[hero.id] = hero
-    }
+    heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
   })
   socket.on('resetHero', (hero) => {
@@ -148,6 +161,10 @@ io.on('connection', function(socket){
     for(let heroId in heros) {
       socket.emit('onUpdateHero', heros[heroId])
     }
+  })
+  socket.on('deleteHero', (id) => {
+    delete heros[id]
+    socket.emit('onDeleteHero', id)
   })
 
   //onSnapAllObjectsToGrid
@@ -163,9 +180,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('askGrid', () => {
-    if(grid.length) {
-      io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
-    }
+    io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
   })
 });
 
