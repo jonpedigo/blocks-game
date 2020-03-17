@@ -260,8 +260,15 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  input.update(hero, delta)
-	intelligence.update(window.hero, window.objects)
+  if(!window.hero.paused) {
+    input.update(hero, delta)
+    intelligence.update(window.hero, window.objects)
+    if(window.hero.arrowKeysBehavior !== 'grid') {
+      physics.update(window.hero, window.objects, delta)
+    } else {
+      grid.update(window.hero, window.objects)
+    }
+  }
 
   /// zoom targets
   if(window.hero.animationZoomTarget) {
@@ -287,12 +294,6 @@ var update = function (delta) {
       }
     }
   }
-
-	if(window.hero.arrowKeysBehavior !== 'grid') {
-		physics.update(window.hero, window.objects, delta)
-	} else {
-		grid.update(window.hero, window.objects)
-	}
 
 	window.socket.emit('updateObjects', objects)
   window.socket.emit('updateHeroPos', window.hero)

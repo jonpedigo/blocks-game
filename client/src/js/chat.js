@@ -17,7 +17,7 @@ function init() {
 			if(!window.currentChat.length) {
 				if(window.currentChat.onChatEnd) window.currentChat.onChatEnd()
 				window.showChat = false
-				window.hero.pauseInput = false
+				window.hero.paused = false
 			}
 		}
   }, false)

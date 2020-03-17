@@ -97,6 +97,7 @@ function update (hero, objects, delta) {
     physicsObject.id = object.id
     physicsObject.tags = object.tags
     physicsObject.heroUpdate = object.heroUpdate
+    physicsObject.chat = object.chat
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
@@ -135,6 +136,12 @@ function update (hero, objects, delta) {
       }
       if(body.tags && body.tags['coin']) {
         window.score++
+      }
+
+      if(body.tags && body.tags['chatter']) {
+        window.showChat = true
+        window.currentChat = body.chat.slice()
+        window.hero.paused = true
       }
 
       if(body.tags && body.tags['powerup']) {

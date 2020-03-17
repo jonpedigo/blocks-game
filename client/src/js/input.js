@@ -47,7 +47,6 @@ function init(){
 }
 
 function update(hero, delta) {
-  if(window.hero.pauseInput) return
   /*
     left arrow	37
     up arrow	38
