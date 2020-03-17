@@ -86,6 +86,7 @@ function init() {
       }
     } else {
       if(!window.hero.id === heroUpdated.id) {
+        console.log('doing')
         Object.assign(window.heros[heroUpdated.id], heroUpdated)
       }
     }
@@ -126,11 +127,12 @@ function init() {
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
   		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
   	}
+    
+    Object.assign(window.heros[updatedHero.id], updatedHero)
+
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)
   	} else if(window.usePlayEditor){
-  		Object.assign(window.heros[updatedHero.id], updatedHero)
-
       if(!window.editingHero.id) {
         // init to any hero
         for(var heroId in window.heros) {
