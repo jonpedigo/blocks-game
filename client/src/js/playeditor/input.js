@@ -32,6 +32,7 @@ function init(hero){
       if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
         for(var heroId in window.heros) {
           window.setEditingHero(window.heros[heroId])
+          window.findHero()
         }
         return
       }
@@ -49,6 +50,8 @@ function init(hero){
             } else {
               window.setEditingHero(window.heros[heroNames[i-1]])
             }
+            window.findHero()
+
             break;
           }
         }
@@ -72,6 +75,8 @@ function init(hero){
             } else {
               window.setEditingHero(window.heros[heroNames[i+1]])
             }
+            window.findHero()
+
             break;
           }
         }

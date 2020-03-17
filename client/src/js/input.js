@@ -5,13 +5,12 @@ let direction = 'up'
 
 let lastJump = 0
 
-//BAD NOTE!!! FOR SOME REASON IT IS NOT PASS BY REFERENCE FOR MY HERO OBJECT IT IS PASS BY VALUE WTF
-function init(hero){
+function init(){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
     if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor) {
-      hero.velocityY = hero.jumpVelocity
+      window.hero.velocityY = hero.jumpVelocity
 
       lastJump = Date.now();
     }
@@ -47,8 +46,8 @@ function init(hero){
 
 }
 
-function update(flags, hero, delta) {
-  if(flags.heroPaused) return
+function update(hero, delta) {
+  if(window.hero.pauseInput) return
   /*
     left arrow	37
     up arrow	38

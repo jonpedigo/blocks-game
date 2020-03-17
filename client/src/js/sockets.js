@@ -81,8 +81,7 @@ function init() {
       Object.assign(window.heros[heroUpdated.id], heroUpdated)
       if(window.editingHero.id === heroUpdated.id) {
         if(window.preferences.syncHero) {
-          window.editingHero = heroUpdated
-          window.getEditingHero()
+          window.setEditingHero(heroUpdated)
         }
       }
     } else {
@@ -129,8 +128,18 @@ function init() {
   	}
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)
-  	} else {
+  	} else if(window.usePlayEditor){
   		Object.assign(window.heros[updatedHero.id], updatedHero)
+
+      if(!window.editingHero.id) {
+        // init to any hero
+        for(var heroId in window.heros) {
+          if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
+            window.setEditingHero(window.heros[heroId])
+            break;
+          }
+        }
+      }
   	}
   })
 
@@ -172,7 +181,7 @@ function init() {
   window.socket.on('onDeleteHero', (id) => {
     delete window.heros[id]
     if(window.usePlayEditor && window.editingHero.id == id) {
-      window.editingHero = {}
+      window.setEditingHero({})
     }
   })
 

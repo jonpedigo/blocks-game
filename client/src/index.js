@@ -252,7 +252,7 @@ var start = function () {
     constellation.init(ctx)
     camera.init()
 		input.init()
-		chat.init(current, flags)
+		chat.init()
 		action.init()
 	}
 	main()
@@ -260,8 +260,7 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  input.update(flags, hero, delta)
-	chat.update(current.chat)
+  input.update(hero, delta)
 	intelligence.update(window.hero, window.objects)
 
   /// zoom targets
@@ -367,8 +366,10 @@ var main = function () {
     render();
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
+    } else {
+      chat.render(ctx)
     }
-    
+
 		// physics.drawSystem(ctx, hero)
   }
 

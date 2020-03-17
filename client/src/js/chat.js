@@ -6,36 +6,30 @@ function drawChat(ctx, text){
 	ctx.fillText(text, 200, ctx.canvas.height - 80);
 }
 
+window.currentChat = []
+window.showChat = false
+
 const keysDown = {}
-function init(current, flags) {
+function init() {
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
-			current.chat.shift()
-			if(!current.chat.length) {
-				if(current.chat.onChatEnd) current.chat.onChatEnd()
-				flags.showChat = false
-				flags.heroPaused = false
+			window.currentChat.shift()
+			if(!window.currentChat.length) {
+				if(window.currentChat.onChatEnd) window.currentChat.onChatEnd()
+				window.showChat = false
+				window.hero.pauseInput = false
 			}
 		}
   }, false)
 }
 
-function update(currentChat){
-	// if(keysDown['32']){
-	// 	currentChat.shift()
-  // }
-}
-
-function render(ctx, flags, currentChat){
-
-	if(flags.showChat){
-		// Score
-		drawChat(ctx, currentChat[0][0])
+function render(ctx){
+	if(window.showChat){
+		drawChat(ctx, window.currentChat[0])
 	}
 }
 
 export default {
 	init,
-	update,
 	render
 }

@@ -41,6 +41,7 @@ window.tags = {
   powerup: false,
   once: false,
   deleteAfterPowerup: false,
+  chatter: false,
 }
 window.editingObject = {
   i: null,
@@ -429,7 +430,7 @@ function init(ctx, objects) {
   var setHeroPosButton = document.getElementById("set-hero-pos")
   setHeroPosButton.addEventListener('click', setHeroPos)
   var findHeroButton = document.getElementById("find-hero");
-  findHeroButton.addEventListener('click', findHero)
+  findHeroButton.addEventListener('click', window.findHero)
   var respawnHeroButton = document.getElementById("respawn-hero");
   respawnHeroButton.addEventListener('click', respawnHero)
   var resetHeroButton = document.getElementById("reset-hero-other");
@@ -475,24 +476,17 @@ function init(ctx, objects) {
   function resetHero() {
     window.socket.emit('resetHero', editingHero)
   }
-  function findHero() {
+
+  window.findHero = function() {
     camera.setCamera(ctx, window.heros[window.editingHero.id])
-  }
-  window.updateHero = function(hero) {
-    Object.assign(heros[hero.id], hero)
-    if(hero.id == window.editingHero.id) {
-      window.getEditingHero()
-      setHero()
-    }
   }
 
   window.setEditingHero = function(hero) {
-    window.editingHero = window.heros[hero.id]
-    heroeditor.update(window.heros[window.editingHero.id])
+    window.editingHero = hero
+    heroeditor.update(window.editingHero)
   }
 
   window.getEditingHero = function() {
-    heroeditor.update({})
     heroeditor.update(window.heros[window.editingHero.id])
   }
 
