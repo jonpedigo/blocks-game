@@ -85,6 +85,7 @@ function init() {
         }
       }
     } else {
+      console.log(window.hero.id, heroUpdated.id)
       if(!window.hero.id === heroUpdated.id) {
         console.log('doing')
         Object.assign(window.heros[heroUpdated.id], heroUpdated)
@@ -127,7 +128,7 @@ function init() {
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
   		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
   	}
-    
+
     Object.assign(window.heros[updatedHero.id], updatedHero)
 
   	if(window.hero && updatedHero.id === window.hero.id){
