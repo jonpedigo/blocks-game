@@ -1,5 +1,10 @@
 import gridTool from '../grid.js'
 
+window.camera = {
+  x: -100,
+  y: -100,
+}
+
 function drawName(ctx, object){
 	ctx.fillStyle = "rgb(0, 0, 250)";
 	ctx.font = "12px Helvetica";
@@ -219,7 +224,13 @@ function setCamera(ctx, hero) {
   setCameraHeroY(ctx, hero)
 }
 
+function init() {
+  window.camera.x = -150
+  window.camera.y = -150
+}
+
 export default {
+  init,
   render,
   setCamera,
 }

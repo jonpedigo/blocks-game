@@ -10,10 +10,6 @@ import input from './input.js'
 //GLOBALS
 /////////////////////
 /////////////////////
-window.camera = {
-  x: -100,
-  y: -100,
-}
 window.clickStart = {
   x: null,
   y: null,
@@ -241,6 +237,7 @@ tools[TOOLS.PROCEDURAL] = tools[TOOLS.AREA_SELECTOR]
 /////////////////////
 function init(ctx, objects) {
   input.init()
+  camera.init()
 
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
@@ -386,6 +383,9 @@ function init(ctx, objects) {
     window.resetObjects()
     window.socket.emit('resetPreferences')
     window.socket.emit('updateGrid', gridTool.createGrid({x: 50, y: 50}), window.gridNodeSize || 40, {x: 50, y: 50})
+    for(var heroId in window.heros) {
+      window.socket.emit('resetHero', window.heros[heroId])
+    }
   })
   window.resetObjects = function() {
     window.socket.emit('resetObjects')
@@ -469,7 +469,7 @@ function init(ctx, objects) {
   }
 
   function respawnHero() {
-    window.socket.emit('respawnHero')
+    window.socket.emit('respawnHero', editingHero)
     // let hero = heroeditor.get()
     // window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }

@@ -138,20 +138,16 @@ io.on('connection', function(socket){
     if(!heros[hero.id]) {
       heros[hero.id] = hero
     } else {
-      heros[hero.id].x = hero.x
-      heros[hero.id].y = hero.y
+      heros[hero.id] = hero
+      heros[hero.id] = hero
     }
     io.emit('onHeroPosUpdate', hero)
-  })
-  socket.on('updateHeroServerOnly', (hero) => {
-    heros[hero.id] = hero
   })
   socket.on('updateHero', (hero) => {
     heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
   })
   socket.on('resetHero', (hero) => {
-    delete heros[hero.id]
     io.emit('onResetHero', hero)
   })
   socket.on('respawnHero', (hero) => {
@@ -164,7 +160,7 @@ io.on('connection', function(socket){
   })
   socket.on('deleteHero', (id) => {
     delete heros[id]
-    socket.emit('onDeleteHero', id)
+    io.emit('onDeleteHero', id)
   })
 
   //onSnapAllObjectsToGrid

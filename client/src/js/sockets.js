@@ -86,7 +86,6 @@ function init() {
       }
     } else {
       if(window.hero.id !== heroUpdated.id) {
-        console.log('doing')
         Object.assign(window.heros[heroUpdated.id], heroUpdated)
       }
     }
@@ -136,6 +135,7 @@ function init() {
       if(!window.editingHero.id) {
         // init to any hero
         for(var heroId in window.heros) {
+          if(window.heros.undefined) window.socket.emit('deleteHero', 'undefined')
           if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
             window.setEditingHero(window.heros[heroId])
             break;

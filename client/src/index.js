@@ -138,10 +138,8 @@ window.respawnHero = function () {
   }
 
   // default pos
-  window.hero.x = 0;
-  window.hero.y = 0;
-
-
+  window.hero.x = 400;
+  window.hero.y = 400;
 }
 
 window.resetHero = function(updatedHero) {
@@ -150,8 +148,9 @@ window.resetHero = function(updatedHero) {
 		Object.assign(window.hero, updatedHero)
 	} else {
     let newHero = {}
-		Object.assign(newHero, defaultHero, {x: window.hero.x, y: window.hero.y})
+		Object.assign(newHero, defaultHero)
     window.hero = newHero
+    window.heros[window.hero.id] = window.hero
 	}
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
@@ -198,7 +197,6 @@ const defaultHero = {
 	width: 40,
 	height: 40,
   paused: false,
-	id: 'hero-'+Date.now(),
 	velocityX: 0,
 	velocityY: 0,
 	velocityMax: 25,
@@ -214,14 +212,18 @@ const defaultHero = {
 	gravity: 0,
 	tags: {'hero': true, isPlayer: true},
 	zoomMultiplier: 1,
+  x: 400,
+  y: 400,
 }
 
 if(!window.usePlayEditor) {
 	let savedHero = JSON.parse(localStorage.getItem('hero'));
 	if(savedHero){
 		window.hero = savedHero
-	}
-	if(!window.hero) {
+    // in case we need to reset
+    defaultHero.id = savedHero.id
+	} else if(!window.hero) {
+    defaultHero.id = 'hero-'+Date.now()
 		window.hero = {...defaultHero}
 		window.respawnHero()
 	}
@@ -297,7 +299,6 @@ var update = function (delta) {
 
 	window.socket.emit('updateObjects', objects)
   window.socket.emit('updateHeroPos', window.hero)
-  window.socket.emit('updateHeroServerOnly', window.hero)
   localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
@@ -344,7 +345,7 @@ var render = function () {
     camera.drawObject(ctx, currentHero);
   }
 
-  chat.render(ctx, flags, current.chat);
+  chat.render(ctx);
 	feedback.draw(ctx);
 }
 

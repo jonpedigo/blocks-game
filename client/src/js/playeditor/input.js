@@ -28,7 +28,6 @@ function init(hero){
 
 
     if(keysDown['188'] || keysDown['190']){
-      delete window.heros['undefined']
       if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
         for(var heroId in window.heros) {
           window.setEditingHero(window.heros[heroId])
@@ -40,7 +39,6 @@ function init(hero){
 
     //select left
     if(keysDown['188']){
-      delete window.heros['undefined']
       if(window.currentTool === window.TOOLS.HERO_EDITOR) {
         let heroNames = Object.keys(window.heros)
         for(let i = 0; i < heroNames.length; i++) {
@@ -65,7 +63,6 @@ function init(hero){
 
     //select right
     if(keysDown['190']){
-      delete window.heros['undefined']
       if(window.currentTool === window.TOOLS.HERO_EDITOR) {
         let heroNames = Object.keys(window.heros)
         for(let i = 0; i < heroNames.length; i++) {
