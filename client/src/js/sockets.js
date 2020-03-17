@@ -85,8 +85,7 @@ function init() {
         }
       }
     } else {
-      console.log(window.hero.id, heroUpdated.id)
-      if(!window.hero.id === heroUpdated.id) {
+      if(window.hero.id !== heroUpdated.id) {
         console.log('doing')
         Object.assign(window.heros[heroUpdated.id], heroUpdated)
       }
