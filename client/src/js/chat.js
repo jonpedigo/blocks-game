@@ -42,8 +42,8 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 
 function drawChat(ctx, chat){
 	//textbox
-	ctx.fillStyle="rgba(255,255,255, 0.1)"
-	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 210, 210, 420, 95)
+	ctx.fillStyle="rgba(255,255,255, 0.03)"
+	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) , (420 * window.canvasMultiplier), 95 * window.canvasMultiplier)
 
 	// //portrait
 	// if(window.hero.chat.portrait){
@@ -58,7 +58,7 @@ function drawChat(ctx, chat){
 	// 	}
 	// }
 
-	ctx.font ="24pt Arial"
+	ctx.font =`24pt Arial`
 	ctx.fillStyle="white"
 	//portrait name
 	if(chat.name) {
@@ -68,14 +68,14 @@ function drawChat(ctx, chat){
 	//text
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	let text = chat[0]
-	ctx.font ="18pt Arial"
-	wrapText(ctx, text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 200, 240, 410, 25)
+	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
+	wrapText(ctx, text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier, 410 * window.canvasMultiplier, 25 * window.canvasMultiplier)
 
 	// more text icon
-	if(chat.length > 1){
+	// if(chat.length > 1){
 		let x = window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
-		ctx.fillRect(x+190, 285, 10, 10)
-	}
+		ctx.fillRect(x - (25 * window.canvasMultiplier), 302.5 * window.canvasMultiplier, 50 * window.canvasMultiplier, 7 * window.canvasMultiplier)
+	// }
 	// ctx.fillStyle = "rgb(250, 250, 250)";
 	// ctx.font = "20px Helvetica";
 	// ctx.textAlign = "left";

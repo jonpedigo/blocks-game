@@ -141,18 +141,20 @@ function update (hero, objects, delta) {
       if(body.tags && body.tags['chatter'] && body.heroUpdate && body.heroUpdate.chat) {
         window.hero.showChat = true
         window.hero.chat = body.heroUpdate.chat.slice()
+        // window.hero.chat.name = body.id
         window.hero.paused = true
       }
 
       if(body.tags && body.tags['powerup']) {
         if(body.id !== window.hero.lastPowerUpId) {
-          window.resetHero({...body.heroUpdate, lastPowerUpId: body.id})
-          if(body.tags && body.tags.deleteAfterPowerup) {
-            removeIds.push(body.id)
-          }
+          Object.assign(window.hero, {...body.heroUpdate, lastPowerUpId: body.id})
         }
       } else {
         window.hero.lastPowerUpId = null
+      }
+
+      if(body.tags && body.tags.deleteAfterPowerup) {
+        removeIds.push(body.id)
       }
 
       if(body.tags && body.tags['obstacle']) {

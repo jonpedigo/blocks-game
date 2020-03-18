@@ -36,7 +36,7 @@ window.tags = {
   coin: false,
   powerup: false,
   once: false,
-  deleteAfterPowerup: false,
+  deleteAfter: false,
   chatter: false,
   glowing: false,
 }

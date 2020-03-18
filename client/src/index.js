@@ -204,7 +204,7 @@ const defaultHero = {
 	accX: 0,
 	accDecayX: 0,
 	accDecayY: 0,
-	speed: 100,
+	speed: 250,
 	arrowKeysBehavior: 'position',
 	jumpVelocity: -480,
 	// spawnPointX: (40) * 20,

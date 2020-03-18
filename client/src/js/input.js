@@ -9,7 +9,7 @@ function init(){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor) {
+    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor && !window.hero.paused && window.hero.gravity) {
       window.hero.velocityY = hero.jumpVelocity
 
       lastJump = Date.now();
@@ -60,7 +60,6 @@ function update(hero, delta) {
   if (38 in keysDown) { // Player holding up
     direction = 'up'
     if(hero.gravity > 0) {
-
     } else if(hero.arrowKeysBehavior === 'position') {
       hero.y -= Math.ceil(hero.speed * delta);
     } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
