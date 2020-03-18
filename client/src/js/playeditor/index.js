@@ -281,7 +281,8 @@ function init(ctx, objects) {
       Object.assign(editorState, modifiers[modifierName])
       heroeditor.set(editorState)
       heroeditor.expandAll()
-      setHero(editorState)
+      // this is what sync should mean. Does every edit send immediately?
+      if(true) setHero(editorState)
     }
     heroModSelectEl.appendChild(modEl)
   }
@@ -331,7 +332,8 @@ function init(ctx, objects) {
       editorState.heroUpdate = modifiers[modifierName]
       simpleeditor.set(editorState)
       simpleeditor.expandAll()
-      emitEditedObject(editorState)
+      // this is what sync should mean. Does every edit send immediately?
+      if(true) emitEditedObject(editorState)
     }
     modSelectEl.appendChild(modEl)
   }

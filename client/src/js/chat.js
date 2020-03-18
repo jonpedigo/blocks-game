@@ -6,17 +6,17 @@ function drawChat(ctx, text){
 	ctx.fillText(text, 200, ctx.canvas.height - 80);
 }
 
-window.currentChat = []
-window.showChat = false
-
 const keysDown = {}
 function init() {
+	window.hero.chat = []
+	window.hero.showChat = false
+	
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
-			window.currentChat.shift()
-			if(!window.currentChat.length) {
-				if(window.currentChat.onChatEnd) window.currentChat.onChatEnd()
-				window.showChat = false
+			window.hero.chat.shift()
+			if(!window.hero.chat.length) {
+				if(window.hero.chat.onChatEnd) window.hero.chat.onChatEnd()
+				window.hero.showChat = false
 				window.hero.paused = false
 			}
 		}
@@ -24,8 +24,8 @@ function init() {
 }
 
 function render(ctx){
-	if(window.showChat){
-		drawChat(ctx, window.currentChat[0])
+	if(window.hero.showChat){
+		drawChat(ctx, window.hero.chat[0])
 	}
 }
 

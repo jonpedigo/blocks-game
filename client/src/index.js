@@ -214,6 +214,8 @@ const defaultHero = {
 	zoomMultiplier: 1,
   x: 960,
   y: 960,
+  showChat: false,
+  chat: [],
 }
 
 if(!window.usePlayEditor) {

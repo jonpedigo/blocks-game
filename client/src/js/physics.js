@@ -138,9 +138,9 @@ function update (hero, objects, delta) {
         window.score++
       }
 
-      if(body.tags && body.tags['chatter']) {
-        window.showChat = true
-        window.currentChat = body.chat.slice()
+      if(body.tags && body.tags['chatter'] && body.heroUpdate && body.heroUpdate.chat) {
+        window.hero.showChat = true
+        window.hero.chat = body.heroUpdate.chat.slice()
         window.hero.paused = true
       }
 
