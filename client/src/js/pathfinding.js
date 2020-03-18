@@ -12,7 +12,12 @@
   // on that tick it updates the pathfinding on the grid and sets new goal points for all objects
   // this is outside of the physics updating.. Does it perhaps just tell physics which way its going?
   // does it just give it velocity in the right direction? OK! why not?
-  // ok so pathfinding just sets velocity and 
+  // ok so pathfinding just sets velocity and
+
+// UPDATE
+  // basically this system can be used under two conditions
+  // 1) No new obstacles are made
+  // 2) All obstacles that are made are aligned to the grid
 
 
 const PF = require('pathfinding');

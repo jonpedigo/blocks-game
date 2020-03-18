@@ -1,68 +1,24 @@
-// zooming in and out to different worlds, to pacman world and then to zelda world.
-// youll probably need to 'switch heros....'
-
-// Send player to... x, y ( have them like start to move really fast and possibly pathfind)
-// stop player (velocity)
 // attack button ( like papa bear spears!! )
-// procedural
+// RELATED ^ button management
 // pathfinding
-// respawning enemies area.
-// planet gravity! Would be cool to have..
-// can we create gravity points in space yeah ^^
-// reset hero 'other'..is dumb
-
-// function for adding objects ( I need to make sure to add all tags to an object from the start )
-// revise this bs idea of the more advanced editor..
-
-// Negatives
-//
-// Go back to respawn
-// Lose score
-// Lose Items
-// Lose Power up
-//
-// Positives
-//
-// Level Up ( Get experience, +1, advancement , makes game easier)
-// Get tool ( style change, changes game )
-// Add Life ( get a second chance to play game )
-// + score, destroy bad guy
+// set game boundaries to delete objects - default game boundaries with a default grid..
+// make it easier for admin to move objects
+// TRUE zelda camera work
+// enemy respawn points
 
 //--------
-
-// mode where I add just small filled in square! We need a way to let them know its a 'treasure'
-// switching to pacman mode, reset objects without page refresh
-// change drawborder to actually just draw lines....
-// test physics collisions to breaking point and find BVH bug
-// make it easier for admin to move objects
-// set game boundaries to delete objects
-// grid world pathfinding
-// preset worlds
-// shadow player ( that editor can play with in their own simulation )
-// treasure chest delayed queued updates
+// planet gravity! Would be cool to have..
+// Send player to... x, y ( have them like start to move really fast and possibly pathfind)
+// stop player (velocity)
+// objects that are children of other objects and therefore follow them??
 // toggle for score
 // toggle for show grid, show names, show camera area... stc
-
-// controlling X or Y scroll
-// TRUE zelda camera work
-
-// AHA MOMENTS
-// I WAS MOVING AROUND
-// ADDING GRAVITY
-// HAVING THE WORLD BEGIN POPULATING BEFORE YOU
-// SWITCHING PHYSICS BACK AND FORTH
-// FIELD OF VISION
-
+// controlling X or Y scroll. For example. allow X croll, but not Y scroll
+// lazy scroll that is not not immediate! Smoother...
 // leveling up
-
-// procedural
-
-// an out of bounds selector for object garbage collection
-// basic physics or properties within the grid system
-// MORE PRESETS. On ice is basically just switching between position and velocity input prop...
-// a preset for the camera to be exact specifications based on spawn point.
 // optimize shadow feature, not all vertices!
-// CREATE A FULL GAME LOOP
+// fit camera to grid, fit game boundaries to grid..
+// variable grid sizes, who owns the grid? Smarter grid synchronization and management
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
