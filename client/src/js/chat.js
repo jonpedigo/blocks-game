@@ -1,16 +1,8 @@
-function drawChat(ctx, text){
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "20px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText(text, 200, ctx.canvas.height - 80);
-}
-
 const keysDown = {}
 function init() {
 	window.hero.chat = []
 	window.hero.showChat = false
-	
+
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
 			window.hero.chat.shift()
@@ -25,8 +17,70 @@ function init() {
 
 function render(ctx){
 	if(window.hero.showChat){
-		drawChat(ctx, window.hero.chat[0])
+		drawChat(ctx, window.hero.chat)
 	}
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  var words = text.split(' ');
+  var line = '';
+
+  for(var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    var metrics = ctx.measureText(testLine);
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      ctx.fillText(line, x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
+}
+
+function drawChat(ctx, chat){
+	//textbox
+	ctx.fillStyle="rgba(255,255,255, 0.1)"
+	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 210, 210, 420, 95)
+
+	// //portrait
+	// if(window.hero.chat.portrait){
+	// 	//portrait outline
+	// 	ctx.fillStyle="rgba(255,255,255,.1)"
+	// 	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 200, 140, 80, 70)
+	//
+	// 	if(Game.textSequence.portrait === 'ship'){
+	// 		drawShip.down(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 183, 147, context, 25)
+	// 	}else{
+	// 		ctx.drawImage(IMAGES[Game.textSequence.portrait], window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 198, 142, 76, 66)
+	// 	}
+	// }
+
+	ctx.font ="24pt Arial"
+	ctx.fillStyle="white"
+	//portrait name
+	if(chat.name) {
+		ctx.fillText(chat.name ? chat.name : '???', window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 110, 205)
+	}
+
+	//text
+	ctx.fillStyle = "rgb(250, 250, 250)";
+	let text = chat[0]
+	ctx.font ="18pt Arial"
+	wrapText(ctx, text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 200, 240, 410, 25)
+
+	// more text icon
+	if(chat.length > 1){
+		let x = window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
+		ctx.fillRect(x+190, 285, 10, 10)
+	}
+	// ctx.fillStyle = "rgb(250, 250, 250)";
+	// ctx.font = "20px Helvetica";
+	// ctx.textAlign = "left";
+	// ctx.textBaseline = "top";
+	// ctx.fillText(text, 200, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - 80);
 }
 
 export default {
