@@ -68,6 +68,10 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
+  window.socket.on('onUpdateGridNode', (gridPos, update) => {
+    Object.assign(window.grid[gridPos.x][gridPos.y], update)
+  })
+
   window.socket.on('onResetPreferences', (hero) => {
     window.preferences = {}
   })
@@ -145,12 +149,17 @@ function init() {
   	}
   })
 
-  window.socket.on('onRemoveObject', (id) => {
-    if(window.usePlayEditor && window.editingObject.id === id) {
+  window.socket.on('onRemoveObject', (object) => {
+    if(window.usePlayEditor && window.editingObject.id === object.id) {
       window.editingObject = {}
       window.simpleeditor.set({})
     }
-    window.removeObject(id)
+
+    if(object.tags && object.tags.obstacle) {
+      grid.removeObstacle(object)
+    }
+
+    window.removeObject(object.id)
   })
 
   window.socket.on('onSetWorld', (world) => {

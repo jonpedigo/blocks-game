@@ -10,7 +10,7 @@ function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {
   for(var i = 0; i < gridSize.x; i++) {
     grid.push([])
     for(var j = 0; j < gridSize.y; j++) {
-      grid[i].push({x: start.x + (i * gridNodeSize), y: start.y + (j * gridNodeSize), width: gridNodeSize, height: gridNodeSize})
+      grid[i].push({x: start.x + (i * gridNodeSize), y: start.y + (j * gridNodeSize), width: gridNodeSize, height: gridNodeSize, gridX: i, gridY: j})
     }
   }
 
@@ -99,6 +99,65 @@ function createGridNodeAt(x, y) {
 
 }
 
+function addObstacle(object, options = {}) {
+  // pretend we are dealing with a 0,0 plane
+  let x = object.x - grid[0][0].x
+  let y = object.y - grid[0][0].y
+
+  let diffX = x % window.gridNodeSize
+  x -= diffX
+
+  let diffY = y % window.gridNodeSize
+  y -= diffY
+
+  if(x >= 0 && x < window.gridSize.x) {
+    if(y >= 0 && y < window.gridSize.y) {
+      let gridNode = grid[x][y]
+      if(!options.silently){
+        window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+      }
+      return {gridX: x, gridY: y}
+    }
+  }
+}
+
+function removeObstacle(object) {
+  // pretend we are dealing with a 0,0 plane
+  let x = object.x - grid[0][0].x
+  let y = object.y - grid[0][0].y
+
+  let diffX = x % window.gridNodeSize
+  x -= diffX
+
+  let diffY = y % window.gridNodeSize
+  y -= diffY
+
+  if(x >= 0 && x < window.gridSize.x) {
+    if(y >= 0 && y < window.gridSize.y) {
+      let gridNode = grid[x][y]
+      window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
+      return {gridX: x, gridY: y}
+    }
+  }
+}
+
+function updateGridObstacles() {
+  let start = Date.now();
+
+  forEach((gridNode) => {
+    gridNode.hasObstacle = false
+  })
+
+  window.objects.forEach((obj) => {
+    if(obj.tags && obj.tags.obstacle) {
+      addObstacle(obj, {silently: true})
+    }
+  })
+  console.log(Date.now() - start)
+
+  window.socket.emit('updateGrid', grid)
+}
+
 function generatePathfindingGrid() {
 
 }
@@ -112,4 +171,7 @@ export default {
   createGrid,
   generatePathfindingGrid,
   snapXYToGrid,
+  updateGridObstacles,
+  addObstacle,
+  removeObstacle
 }

@@ -101,10 +101,8 @@ const tools = {
         collisions.checkObject(click, object, () => {
           simpleeditor.set(Object.assign({}, object))
           simpleeditor.expandAll()
-          window.editingObject = {
-            i,
-            id: object.id,
-          }
+          window.editingObject = object
+          window.editingObject.i = i
         })
       })
     }
@@ -189,11 +187,19 @@ const tools = {
         object.tags = {}
         object.id = 'object' + Date.now()
         object.heroUpdate = {}
-        for(let tag in tags) {
-          if(tags[tag].checked){
+        for(let tag in window.tags) {
+          if(window.tags[tag].checked){
             object.tags[tag] = true
           } else {
             object.tags[tag] = false
+          }
+        }
+
+        if(object.tags.obstacle) {
+          let gridPos = gridTool.addObstacle(object)
+          if(gridPos) {
+            object.gridX = gridPos.x
+            object.gridY = gridPos.y
           }
         }
         window.socket.emit('addObjects', [object])
@@ -218,6 +224,14 @@ const tools = {
           newObject.tags[tag] = true
         } else {
           newObject.tags[tag] = false
+        }
+      }
+
+      if(object.tags.obstacle) {
+        let gridPos = gridTool.addObstacle(object)
+        if(gridPos) {
+          object.gridX = gridPos.x
+          object.gridY = gridPos.y
         }
       }
 
@@ -346,6 +360,17 @@ function init(ctx, objects) {
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
   window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
+    // this is what sync should mean. Does every edit send immediately?
+    if(object.tags.obstacle == false && window.editingObject.tags.obstacle == true) {
+      gridTool.removeObstacle(object)
+    }
+    if(object.tags.obstacle == true && window.editingObject.tags.obstacle == false) {
+      let gridPos = gridTool.addObstacle(object)
+      if(gridPos) {
+        object.gridX = gridPos.x
+        object.gridY = gridPos.y
+      }
+    }
     emitEditedObject(object)
   }});
 
@@ -353,6 +378,7 @@ function init(ctx, objects) {
   herojsoneditor.id = 'herojsoneditor'
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
   window.heroeditor = new JSONEditor(herojsoneditor, { onChangeJSON: (object) => {
+    // this is what sync should mean. Does every edit send immediately?
     setHero()
   }});
 
@@ -498,7 +524,7 @@ function init(ctx, objects) {
   /////////////////////
   /////////////////////
   var deleteObjectButton = document.getElementById("delete-object");
-  deleteObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject.id))
+  deleteObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject))
   window.syncObjectsToggle = document.getElementById('sync-objects')
   syncObjectsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
@@ -524,6 +550,7 @@ function init(ctx, objects) {
   function emitEditedObject(object) {
     delete object.x
     delete object.y
+    Object.assign(window.editingObject, object)
     Object.assign(window.objects[window.editingObject.i], object)
     window.socket.emit('editObjects', window.objects)
   }

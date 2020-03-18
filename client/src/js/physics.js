@@ -94,10 +94,7 @@ function update (hero, objects, delta) {
     let physicsObject = physicsObjects[object.id]
     physicsObject.x = object.x
     physicsObject.y = object.y
-    physicsObject.id = object.id
-    physicsObject.tags = object.tags
-    physicsObject.heroUpdate = object.heroUpdate
-    physicsObject.chat = object.chat
+    physicsObject.gameObject = object
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
@@ -126,38 +123,38 @@ function update (hero, objects, delta) {
   const potentials = physicsObjects[window.hero.id].potentials()
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
-  let removeIds = []
+  let removeObjects = []
 
   for(const body of potentials) {
     if(physicsObjects[window.hero.id].collides(body, result)) {
-      if(body.tags && body.tags['monster']) {
+      if(body.gameObject.tags && body.gameObject.tags['monster']) {
         window.score--
         window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
       }
-      if(body.tags && body.tags['coin']) {
+      if(body.gameObject.tags && body.gameObject.tags['coin']) {
         window.score++
       }
 
-      if(body.tags && body.tags['chatter'] && body.heroUpdate && body.heroUpdate.chat) {
+      if(body.gameObject.tags && body.gameObject.tags['chatter'] && body.gameObject.heroUpdate && body.gameObject.heroUpdate.chat) {
         window.hero.showChat = true
-        window.hero.chat = body.heroUpdate.chat.slice()
+        window.hero.chat = body.gameObject.heroUpdate.chat.slice()
         // window.hero.chat.name = body.id
         window.hero.paused = true
       }
 
-      if(body.tags && body.tags['powerup']) {
+      if(body.gameObject.tags && body.gameObject.tags['powerup']) {
         if(body.id !== window.hero.lastPowerUpId) {
-          Object.assign(window.hero, {...body.heroUpdate, lastPowerUpId: body.id})
+          Object.assign(window.hero, {...body.gameObject.heroUpdate, lastPowerUpId: body.gameObject.id})
         }
       } else {
         window.hero.lastPowerUpId = null
       }
 
-      if(body.tags && body.tags.deleteAfterPowerup) {
-        removeIds.push(body.id)
+      if(body.gameObject.tags && body.gameObject.tags.deleteAfter) {
+        removeObjects.push(body.gameObject)
       }
 
-      if(body.tags && body.tags['obstacle']) {
+      if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
         illegal = true
         correction.x -= result.overlap * result.overlap_x
         correction.y -= result.overlap * result.overlap_y
@@ -165,10 +162,6 @@ function update (hero, objects, delta) {
       }
     }
   }
-
-  removeIds.forEach((id) => {
-    window.socket.emit('removeObject', id)
-  })
 
   hero.onGround = false
 
@@ -195,7 +188,6 @@ function update (hero, objects, delta) {
     // physicsObjects[window.hero.id].y = hero.y
   }
 
-  let removeObjects = []
   for(let name in physicsObjects){
     if(!physicsObjects[name]) continue
     if(name === 'hero') continue
@@ -203,8 +195,8 @@ function update (hero, objects, delta) {
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
-        if(body.tags && po.tags && body.tags['monster'] && po.tags['bullet']) {
-          removeObjects.push(body.id)
+        if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['monster'] && po.gameObject.tags['bullet']) {
+          removeObjects.push(body.gameObject.id)
           window.score++
         }
       }
@@ -212,7 +204,7 @@ function update (hero, objects, delta) {
   }
 
   removeObjects.forEach((id) => {
-    window.removeObject(id)
+    window.socket.emit('removeObject', gameObject)
   })
 }
 

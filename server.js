@@ -103,14 +103,14 @@ io.on('connection', function(socket){
     serverState = []
     io.emit('onResetObjects')
   })
-  socket.on('removeObject', (id) => {
+  socket.on('removeObject', (object) => {
     for(let i = 0; i < serverState.length; i++) {
-  		if(serverState[i].id === id){
+  		if(serverState[i].id === object.id){
   			serverState.splice(i, 1)
   			break;
   		}
   	}
-    io.emit('onRemoveObject', id)
+    io.emit('onRemoveObject', object)
   })
   socket.on('askObjects', () => {
     socket.emit('onAddObjects', serverState)
@@ -173,6 +173,11 @@ io.on('connection', function(socket){
     gridNodeSize = gridNodeSizeIn
     gridSize = gridSizeIn
     io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+  })
+
+  socket.on('updateGridNode', (gridPos, update) => {
+    Object.assign(grid[gridPos.x][gridPos.y], update)
+    io.emit('onUpdateGridNode', gridPos, update)
   })
 
   socket.on('askGrid', () => {
