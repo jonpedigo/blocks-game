@@ -22,31 +22,51 @@ function drawObject(ctx, object, withNames = false) {
   }
 }
 
-function drawGrid(ctx, object) {
-  let thickness = .3
-  if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
-    thickness = .8
-  }
-  ctx.strokeStyle = "#999";
-  drawBorder(ctx, object, thickness)
-}
+// function drawGrid(ctx, object) {
+//   let thickness = .3
+//   if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
+//     thickness = .8
+//   }
+//   ctx.strokeStyle = "#999";
+//   drawBorder(ctx, object, thickness)
+// }
 
 function drawBorder(ctx, object, thickness = 2) {
-  ctx.lineWidth = thickness;
   // ctx.fillRect(((object.x * window.scaleMultiplier) - window.camera.x) - (xBorderThickness), ((object.y * window.scaleMultiplier) - window.camera.y) - (yBorderThickness), (object.width * window.scaleMultiplier) + (xBorderThickness * 2), (object.height * window.scaleMultiplier) + (yBorderThickness * 2));
-  [({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}}),
-  ({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}}),
-  ({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}}),
-  ({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})].forEach((vertice) => {
+  [({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, thickness}),
+  ({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, thickness}),
+  ({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, thickness}),
+  ({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, thickness})].forEach((vertice) => {
     drawVertice(ctx, vertice)
   })
 }
 
 function drawVertice(ctx, vertice) {
+  if(vertice.glow) {
+    ctx.filter = "drop-shadow(4px 4px 8px #fff) blur(5px)";
+  }
+  if(vertice.color) {
+    ctx.strokeStyle = vertice.color;
+  }
+  if(vertice.thickness) {
+    ctx.lineWidth = vertice.thickness
+  }
+
   ctx.beginPath();
   ctx.moveTo( (vertice.a.x * window.scaleMultiplier - window.camera.x), (vertice.a.y * window.scaleMultiplier - window.camera.y));
   ctx.lineTo( (vertice.b.x * window.scaleMultiplier - window.camera.x), (vertice.b.y * window.scaleMultiplier - window.camera.y));
   ctx.stroke();
+
+  if(vertice.glow) {
+    ctx.filter = "none";
+    drawVertice(ctx, {...vertice, glow: false})
+  }
+  if(vertice.color) {
+    ctx.strokeStyle = "#999";
+  }
+  if(vertice.thickness) {
+    ctx.lineWidth = 1
+  }
 }
 
 function render(ctx, hero, objects) {
@@ -66,13 +86,14 @@ function render(ctx, hero, objects) {
     let startY = startGrid.y
     let height = window.gridNodeSize * window.gridSize.y
     let width = window.gridNodeSize * window.gridSize.x
-    ctx.strokeStyle = "#999";
 
+    ctx.strokeStyle = "#999";
     for(var x = 0; x < window.gridSize.x; x++) {
       ctx.lineWidth = .3
       if(x % 10 === 0) {
         ctx.lineWidth = .8
       }
+
       drawVertice(ctx, {a: {
         x: startX + (x * window.gridNodeSize),
         y: startY,
@@ -114,17 +135,22 @@ function render(ctx, hero, objects) {
   // OBJECTS
   ////////////////
   ////////////////
-	ctx.fillStyle = 'white';
   let vertices = [...window.objects,...window.objectFactory].reduce((prev, object) => {
-		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
-		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
-		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
-		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})
+    const extraProps = {}
+    if(object.tags && object.tags.glowing) {
+      extraProps.glow = 3
+      extraProps.thickness = 2
+      extraProps.color = 'white'
+    }
+		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
+		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
+		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
+		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
 		return prev
 	}, [])
+
   ctx.strokeStyle = '#FFF'
   ctx.lineWidth = 1;
-
   for(let i = 0; i < vertices.length; i++) {
     drawVertice(ctx, vertices[i])
   }
@@ -134,6 +160,7 @@ function render(ctx, hero, objects) {
   // HEROS
   ////////////////
   ////////////////
+  ctx.fillStyle = 'white';
   for(var heroId in window.heros) {
     if(heroId === window.editingHero.id) {
       drawObject(ctx, {...window.heros[heroId], color: 'red'});

@@ -138,8 +138,8 @@ window.respawnHero = function () {
   }
 
   // default pos
-  window.hero.x = 400;
-  window.hero.y = 400;
+  window.hero.x = 960;
+  window.hero.y = 960;
 }
 
 window.resetHero = function(updatedHero) {
@@ -212,8 +212,8 @@ const defaultHero = {
 	gravity: 0,
 	tags: {'hero': true, isPlayer: true},
 	zoomMultiplier: 1,
-  x: 400,
-  y: 400,
+  x: 960,
+  y: 960,
 }
 
 if(!window.usePlayEditor) {
@@ -305,10 +305,16 @@ var update = function (delta) {
 // Draw everything
 var render = function () {
 	let vertices = [...window.objects].reduce((prev, object) => {
-		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}})
-		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}})
-		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}})
-		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}})
+    let extraProps = {}
+    if(object.tags && object.tags.glowing) {
+      extraProps.glow = 3
+      extraProps.thickness = 2
+      extraProps.color = 'white'
+    }
+		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
+		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
+		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
+		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
 		return prev
 	}, [])
 

@@ -89,11 +89,34 @@ function drawObject(ctx, object, withNames = false) {
 }
 
 function drawVertice(ctx, vertice) {
+  if(vertice.glow) {
+    ctx.filter = "drop-shadow(4px 4px 8px #fff) blur(5px)";
+    ctx.shadowBlur = vertice.glow;
+    ctx.shadowColor = "white";
+  }
+  if(vertice.color) {
+    ctx.strokeStyle = vertice.color;
+  }
+  if(vertice.thickness) {
+    ctx.lineWidth = vertice.thickness
+  }
   ctx.beginPath();
   // ctx.lineWidth = '4';
   ctx.moveTo( (vertice.a.x/camera.multiplier - camera.x), (vertice.a.y/camera.multiplier - camera.y));
   ctx.lineTo( (vertice.b.x/camera.multiplier - camera.x), (vertice.b.y/camera.multiplier - camera.y));
   ctx.stroke();
+
+  if(vertice.glow) {
+    ctx.shadowBlur = 0;
+    ctx.filter = "drop-shadow(0px 0px 0px #fff) blur(0px)";
+    drawVertice(ctx, {...vertice, glow: false})
+  }
+  if(vertice.color) {
+    ctx.strokeStyle = "#999";
+  }
+  if(vertice.thickness) {
+    ctx.lineWidth = 1
+  }
 }
 
 function init() {
