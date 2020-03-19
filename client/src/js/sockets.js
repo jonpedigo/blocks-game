@@ -12,6 +12,7 @@ function init() {
   if(!window.usePlayEditor) {
   	window.socket.on('onAddObjects', (objectsAdded) => {
       if(!window.objects) {
+        console.log('already set objects..?')
         window.objects = []
         window.socket.emit('askGrid');
       }

@@ -146,6 +146,7 @@ function walkAround(object) {
     if(Math.random() > .5 && direction !=='left'){
       if ( isGridWalkable(x + 1, y) ){
         object._direction = 'right'
+        console.log('right')
         return { x: x + 1, y: y}
       }
     }
@@ -154,6 +155,7 @@ function walkAround(object) {
     if(direction !== 'right') {
       if ( isGridWalkable(x - 1, y) ) {
         object._direction = 'left'
+        console.log('left')
         return { x: x - 1, y: y}
       }
     }
@@ -162,6 +164,7 @@ function walkAround(object) {
   // go down
   if(Math.random() > .5 && direction !== 'up'){
     if ( isGridWalkable(x, y + 1) ){
+      console.log('down')
       object._direction = 'down'
       return { x: x, y: y + 1}
     }
@@ -170,6 +173,7 @@ function walkAround(object) {
   // go up
   if(direction !== 'down') {
     if ( isGridWalkable(x, y - 1) ){
+      console.log('up')
       object._direction = 'up'
       return { x: x, y: y - 1}
     }
