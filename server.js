@@ -18,7 +18,7 @@ let herosockets = {
 
 }
 let serverState = []
-let grid = []
+let grid = require('./defaultGrid');
 let gridNodeSize = 40
 let gridSize = { x: 50, y: 50}
 let preferences = {

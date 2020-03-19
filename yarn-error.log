@@ -1,0 +1,87 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn install
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/manatarms/apache-ant-1.9.14/bin:/Applications/Muse
+
+Yarn version: 
+  1.22.0
+
+Node version: 
+  12.16.1
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/manatarms/Desktop/hackathons/gabe/package.json: Unexpected token } in JSON at position 1714
+      at JSON.parse (<anonymous>)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "webpack-boilerplate",
+    "version": "1.0.0",
+    "description": "Webpack 4 Boilerplate",
+    "main": "index.js",
+    "scripts": {
+      "start-dev": "cross-env NODE_ENV=production webpack-dev-server --config client/config/webpack.dev.js",
+      "start": "node server.js",
+      "build": "cross-env NODE_ENV=production webpack --config client/config/webpack.prod.js"
+    },
+    "keywords": [
+      "webpack",
+      "webpack 4",
+      "webpack boilerplate",
+      "boilerplate",
+      "hmr"
+    ],
+    "author": "Jon Pedigo <pedigojon@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+      "@babel/core": "^7.5.5",
+      "@babel/plugin-proposal-class-properties": "^7.5.5",
+      "@babel/preset-env": "^7.5.5",
+      "babel-eslint": "^10.0.3",
+      "babel-loader": "^8.0.6",
+      "clean-webpack-plugin": "^3.0.0",
+      "collisions": "^2.0.13",
+      "copy-webpack-plugin": "^5.0.4",
+      "cross-env": "^5.2.1",
+      "css-loader": "^3.2.0",
+      "cssnano": "^4.1.10",
+      "eslint": "^6.2.2",
+      "eslint-loader": "^3.0.0",
+      "file-loader": "^4.2.0",
+      "html-webpack-plugin": "^3.2.0",
+      "jsoneditor": "^7.0.4",
+      "mini-css-extract-plugin": "^0.8.0",
+      "node-sass": "^4.12.0",
+      "optimize-css-assets-webpack-plugin": "^5.0.3",
+      "postcss-loader": "^3.0.0",
+      "postcss-preset-env": "^6.7.0",
+      "sass-loader": "^8.0.0",
+      "socket.io-client": "^2.3.0",
+      "style-loader": "^1.0.0",
+      "terser-webpack-plugin": "^1.4.1",
+      "url-loader": "^2.1.0",
+      "webpack": "^4.39.3",
+      "webpack-cli": "^3.3.7",
+      "webpack-dev-server": "^3.8.0",
+      "webpack-merge": "^4.2.2",
+      "express": "^4.17.1",
+      "generate-maze-by-clustering": "0.0.4",
+      "pathfinder": "^0.3.0-1",
+      "socket.io": "^2.3.0",
+      "pathfinding": "^0.4.18",
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

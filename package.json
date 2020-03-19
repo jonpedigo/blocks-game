@@ -51,6 +51,7 @@
     "express": "^4.17.1",
     "generate-maze-by-clustering": "0.0.4",
     "pathfinder": "^0.3.0-1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "pathfinding": "^0.4.18"
   }
 }

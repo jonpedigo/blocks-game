@@ -6,6 +6,7 @@
 // make it easier for admin to move objects
 // TRUE zelda camera work
 // enemy respawn points
+// console log saved world so I can copy it to a file
 
 //--------
 // planet gravity! Would be cool to have..
@@ -71,9 +72,6 @@ if(!window.usePlayEditor) {
 /// GLOBAL
 // window.objects = []
 window.game ={}
-window.current = {
-  chat: ''
-}
 var game = {
   paused: false,
 }

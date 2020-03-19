@@ -1,6 +1,7 @@
-import grid from './grid.js'
+import gridTool from './grid.js'
 import physics from './physics.js'
 import camera from './camera.js'
+import pathfinding from './pathfinding.js'
 
 function init() {
 
@@ -14,7 +15,7 @@ function init() {
 
   		if(window.hero.arrowKeysBehavior === 'grid') {
   			objectsAdded.forEach((object) => {
-  				grid.snapObjectToGrid(object)
+  				gridTool.snapObjectToGrid(object)
   			})
   		}
   		window.objects.push(...objectsAdded)
@@ -47,8 +48,6 @@ function init() {
         window.respawnHero()
       }
     })
-
-    window.socket.emit('askObjects')
   }
 
   ///////////////////////////////
@@ -62,6 +61,12 @@ function init() {
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
     })
+    window.socket.on('onAddObjects', (objects) => {
+      if(!window.objects) {
+        window.objects = objects
+        window.socket.emit('askGrid');
+      }
+    })
   }
 
   ///////////////////////////////
@@ -70,6 +75,9 @@ function init() {
   ///////////////////////////////
   window.socket.on('onUpdateGridNode', (gridPos, update) => {
     Object.assign(window.grid[gridPos.x][gridPos.y], update)
+    if(window.pfgrid && update.hasObstacle !== undefined) {
+      window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
+    }
   })
 
   window.socket.on('onResetPreferences', (hero) => {
@@ -77,7 +85,7 @@ function init() {
   })
 
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-    if(!window.heros[heroUpdated.id]){
+    if(!window.heros[heroUpdated.id]) {
       window.heros[heroUpdated.id] = {}
     }
 
@@ -156,7 +164,7 @@ function init() {
     }
 
     if(object.tags && object.tags.obstacle) {
-      grid.removeObstacle(object)
+      gridTool.removeObstacle(object)
     }
 
     window.removeObject(object.id)
@@ -183,10 +191,13 @@ function init() {
 
     window.socket.emit('updatePreferences', window.preferences)
   })
+
   window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
     window.grid = grid
     window.gridSize = gridSize
     window.gridNodeSize = gridNodeSize
+    gridTool.updateGridObstacles({silently: true})
+    pathfinding.convertGridToPathfindingGrid(window.grid)
   })
 
   window.socket.on('onDeleteHero', (id) => {
@@ -196,9 +207,9 @@ function init() {
     }
   })
 
-  window.socket.emit('askGrid');
+  window.socket.emit('askObjects');
   window.socket.emit('askHeros');
-  window.socket.emit('askPreferences')
+  window.socket.emit('askPreferences');
 }
 
 export default {

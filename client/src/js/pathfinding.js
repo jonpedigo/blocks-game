@@ -22,17 +22,21 @@
 
 const PF = require('pathfinding');
 const finder = new PF.AStarFinder();
+window.pfgrid = null
 
-function convertGridToPathfindingGrid(grid) {
+function convertGridToPathfindingGrid(grid, saveToWindow = true) {
   const pfgrid = new PF.Grid(grid.length, grid[0].length);
 
   for (let x = 0; x < grid.length; x++) {
     for (let y = 0; y < grid[x].length; y++) {
-      if(grid[x][y].hasObstacle === false)
+      if(grid[x][y].hasObstacle) {
         pfgrid.setWalkableAt(x, y, false);
-        break;
       }
     }
+  }
+
+  if(saveToWindow) {
+    window.pfgrid = pfgrid
   }
 
   return pfgrid;
@@ -207,6 +211,10 @@ function sortByDistance(coordsA, coordsB, comparedTo){
   if(diffA < diffB) return -1
   else if(diffA > diffB)return 1
   else return 0
+}
+
+export default {
+  convertGridToPathfindingGrid
 }
 
 

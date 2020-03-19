@@ -20,7 +20,7 @@ function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {
 function forEach(fx) {
   for(var i = 0; i < window.gridSize.x; i++) {
     for(var j = 0; j < window.gridSize.y; j++) {
-      fx(grid[i][j])
+      fx(window.grid[i][j])
     }
   }
 }
@@ -106,15 +106,19 @@ function addObstacle(object, options = {}) {
 
   let diffX = x % window.gridNodeSize
   x -= diffX
+  x = x/window.gridNodeSize
 
   let diffY = y % window.gridNodeSize
   y -= diffY
+  y = y/window.gridNodeSize
 
   if(x >= 0 && x < window.gridSize.x) {
     if(y >= 0 && y < window.gridSize.y) {
       let gridNode = grid[x][y]
       if(!options.silently){
         window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+      } else {
+        grid[x][y].hasObstacle = true
       }
       return {gridX: x, gridY: y}
     }
@@ -128,22 +132,24 @@ function removeObstacle(object) {
 
   let diffX = x % window.gridNodeSize
   x -= diffX
+  x = x/window.gridNodeSize
 
   let diffY = y % window.gridNodeSize
   y -= diffY
+  y = y/window.gridNodeSize
+
 
   if(x >= 0 && x < window.gridSize.x) {
     if(y >= 0 && y < window.gridSize.y) {
       let gridNode = grid[x][y]
       window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
+      grid[x][y].hasObstacle = false
       return {gridX: x, gridY: y}
     }
   }
 }
 
-function updateGridObstacles() {
-  let start = Date.now();
-
+function updateGridObstacles(options = {}) {
   forEach((gridNode) => {
     gridNode.hasObstacle = false
   })
@@ -153,9 +159,10 @@ function updateGridObstacles() {
       addObstacle(obj, {silently: true})
     }
   })
-  console.log(Date.now() - start)
 
-  window.socket.emit('updateGrid', grid)
+  if(!options.silently) {
+    window.socket.emit('updateGrid', grid)
+  }
 }
 
 function generatePathfindingGrid() {
