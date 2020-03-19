@@ -69,15 +69,8 @@ if(!window.usePlayEditor) {
   editor.style = 'display:none';
 }
 
-/// GLOBAL
+/// GLOBAL FX
 // window.objects = []
-window.game ={}
-var game = {
-  paused: false,
-}
-var flags = {
-
-}
 window.respawnHero = function () {
   // hero spawn point takes precedence
   if(window.preferences.worldSpawnPointX) {

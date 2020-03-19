@@ -39,6 +39,7 @@ window.tags = {
   deleteAfter: false,
   chatter: false,
   glowing: false,
+  patrol: false,
 }
 window.editingObject = {
   i: null,

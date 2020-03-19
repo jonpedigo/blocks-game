@@ -11,7 +11,10 @@ function init() {
   ///////////////////////////////
   if(!window.usePlayEditor) {
   	window.socket.on('onAddObjects', (objectsAdded) => {
-      if(!window.objects) window.objects = []
+      if(!window.objects) {
+        window.objects = []
+        window.socket.emit('askGrid');
+      }
 
   		if(window.hero.arrowKeysBehavior === 'grid') {
   			objectsAdded.forEach((object) => {
@@ -48,6 +51,7 @@ function init() {
         window.respawnHero()
       }
     })
+
   }
 
   ///////////////////////////////

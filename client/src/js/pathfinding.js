@@ -19,9 +19,10 @@
   // 1) No new obstacles are made
   // 2) All obstacles that are made are aligned to the grid
 
+import gridTool from './grid.js'
 
-const PF = require('pathfinding');
-const finder = new PF.AStarFinder();
+const PF = require('pathfinding')
+const finder = new PF.AStarFinder()
 window.pfgrid = null
 
 function convertGridToPathfindingGrid(grid, saveToWindow = true) {
@@ -48,7 +49,7 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   const toX = toPosition.x
   const toY = toPosition.y
   const openGrid = findOpenGridNear({ position: toPosition, prioritizeNear: {x: prioritizeNear.x, y: prioritizeNear.y}, onFail})
-  return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, pathfindingGrid);
+  return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, window.pfgrid);
 }
 
 function findPath({fromPosition, toPosition}) {
@@ -56,7 +57,7 @@ function findPath({fromPosition, toPosition}) {
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
-  return finder.findPath(fromX, fromY, toX, toY, pathfindingGrid);
+  return finder.findPath(fromX, fromY, toX, toY, window.pfgrid);
 }
 
 // searches nearby grids for open space
@@ -64,7 +65,7 @@ function findPath({fromPosition, toPosition}) {
 function findOpenGridNear({ position, onlySurrounding = false, prioritizeNear, onFail = () => {} }){
   const { x, y } = position
 
-  pathfindingGrid = _convertGridToPathfindingGrid(grid)
+  window.pfgrid = _convertGridToPathfindingGrid(window.grid)
   // console.log('looking for open grid near', x, y)
 
   if(!onlySurrounding && isGridWalkable(x, y)) return { x, y }
@@ -97,7 +98,7 @@ function forceFindOpenGridNear({position, level = 0}){
   const {x, y} = position
 
   if(level == 0) {
-    pathfindingGrid = _convertGridToPathfindingGrid(grid)
+    window.pfgrid = _convertGridToPathfindingGrid(window.grid)
   }
 
   console.log('looking for open grid near', x, y)
@@ -126,27 +127,25 @@ function forceFindOpenGridNear({position, level = 0}){
 }
 
 function isGridWalkable( x, y) {
-  if(!pathfindingGrid.nodes[y]) return false
-  if(!pathfindingGrid.nodes[y][x]) return false
-  if(!pathfindingGrid.nodes[y][x].walkable) return false
+  if(!window.pfgrid.nodes[y]) return false
+  if(!window.pfgrid.nodes[y][x]) return false
+  if(!window.pfgrid.nodes[y][x].walkable) return false
   return true
 }
 
-function walkAround({ object, intelligence }) {
-  const { x, y } = object
+function walkAround(object) {
+  const { x, y } = gridTool.convertToGridXY(object)
 
   let direction = ''
-  if(intelligence == 'basic') {
-    if(object._direction) {
-      direction = object._direction
-    }
+  if(object._direction) {
+    direction = object._direction
   }
 
   if(Math.random() > .5){
     // go right
     if(Math.random() > .5 && direction !=='left'){
       if ( isGridWalkable(x + 1, y) ){
-        if (intelligence == 'basic') object._direction = 'right'
+        object._direction = 'right'
         return { x: x + 1, y: y}
       }
     }
@@ -154,7 +153,7 @@ function walkAround({ object, intelligence }) {
     // go left
     if(direction !== 'right') {
       if ( isGridWalkable(x - 1, y) ) {
-        if (intelligence == 'basic') object._direction = 'left'
+        object._direction = 'left'
         return { x: x - 1, y: y}
       }
     }
@@ -163,7 +162,7 @@ function walkAround({ object, intelligence }) {
   // go down
   if(Math.random() > .5 && direction !== 'up'){
     if ( isGridWalkable(x, y + 1) ){
-      if (intelligence == 'basic') object._direction = 'down'
+      object._direction = 'down'
       return { x: x, y: y + 1}
     }
   }
@@ -171,14 +170,14 @@ function walkAround({ object, intelligence }) {
   // go up
   if(direction !== 'down') {
     if ( isGridWalkable(x, y - 1) ){
-      if (intelligence == 'basic') object._direction = 'up'
+      object._direction = 'up'
       return { x: x, y: y - 1}
     }
   }
 
   // random failed, find somewhere to move
   object._direction = ''
-  // console.log('couldnt do rando movement, finding space')
+  console.log('couldnt do rando movement, finding space')
   const nearbyGrids = [
     { x, y: y-1},
     { x: x+1, y},
@@ -214,7 +213,8 @@ function sortByDistance(coordsA, coordsB, comparedTo){
 }
 
 export default {
-  convertGridToPathfindingGrid
+  convertGridToPathfindingGrid,
+  walkAround
 }
 
 

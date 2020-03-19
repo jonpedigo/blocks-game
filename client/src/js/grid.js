@@ -4,6 +4,22 @@ function init() {
   window.gridNodeSize = 40
 }
 
+function convertToGridXY(object) {
+  // pretend we are dealing with a 0,0 plane
+  let x = object.x - window.grid[0][0].x
+  let y = object.y - window.grid[0][0].y
+
+  let diffX = x % window.gridNodeSize
+  x -= diffX
+  x = x/window.gridNodeSize
+
+  let diffY = y % window.gridNodeSize
+  y -= diffY
+  y = y/window.gridNodeSize
+
+  return { x, y}
+}
+
 function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {
   const grid = []
 
@@ -180,5 +196,6 @@ export default {
   snapXYToGrid,
   updateGridObstacles,
   addObstacle,
-  removeObstacle
+  removeObstacle,
+  convertToGridXY,
 }
