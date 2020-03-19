@@ -4,11 +4,32 @@ function init() {
   window.gridNodeSize = 40
 }
 
-function convertToGridXY(object) {
+function convertToGridXY(object, options = {}) {
   // pretend we are dealing with a 0,0 plane
   let x = object.x - window.grid[0][0].x
   let y = object.y - window.grid[0][0].y
-  // 
+
+  if(options.strict) {
+    let diffX = x % window.gridNodeSize;
+    x -= diffX
+    x = x/window.gridNodeSize
+    if(diffX < 2) {
+    } else if (diffX > 38) {
+      x+=1
+    }
+
+    let diffY = y % window.gridNodeSize;
+    y -= diffY
+    y = y/window.gridNodeSize
+
+    if(diffY < 2) {
+    } else if (diffY > 38) {
+      y+=1
+    }
+
+    return { x, y, diffX, diffY }
+  }
+  //
   // let diffX = x % window.gridNodeSize;
   // if(diffX > window.gridNodeSize/2) {
   //   x += (window.gridNodeSize - diffX)

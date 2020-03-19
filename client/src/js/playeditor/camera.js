@@ -121,6 +121,19 @@ function render(ctx, hero, objects) {
 
   ////////////////
   ////////////////
+  // EDITING OBJECT SETTINGS
+  ////////////////
+  ////////////////
+  if(window.editingObject.id) {
+    let object = window.editingObject
+
+    if(object.gridX) {
+      drawObject(ctx, {color: '#BBB', x: (object.gridX * window.gridNodeSize) + window.grid[0][0].x, y: (object.gridY * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize})
+    }
+  }
+
+  ////////////////
+  ////////////////
   // ORIGIN AND SPAWN POINTS
   ////////////////
   ////////////////

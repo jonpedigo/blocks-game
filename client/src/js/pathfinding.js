@@ -137,16 +137,15 @@ function walkAround(object) {
   const { x, y } = gridTool.convertToGridXY(object)
 
   let direction = ''
-  if(object._direction) {
-    direction = object._direction
+  if(object.direction) {
+    direction = object.direction
   }
 
   if(Math.random() > .5){
     // go right
     if(Math.random() > .5 && direction !=='left'){
       if ( isGridWalkable(x + 1, y) ){
-        object._direction = 'right'
-        console.log('right')
+        object.direction = 'right'
         return { x: x + 1, y: y}
       }
     }
@@ -154,8 +153,7 @@ function walkAround(object) {
     // go left
     if(direction !== 'right') {
       if ( isGridWalkable(x - 1, y) ) {
-        object._direction = 'left'
-        console.log('left')
+        object.direction = 'left'
         return { x: x - 1, y: y}
       }
     }
@@ -164,8 +162,7 @@ function walkAround(object) {
   // go down
   if(Math.random() > .5 && direction !== 'up'){
     if ( isGridWalkable(x, y + 1) ){
-      console.log('down')
-      object._direction = 'down'
+      object.direction = 'down'
       return { x: x, y: y + 1}
     }
   }
@@ -173,14 +170,13 @@ function walkAround(object) {
   // go up
   if(direction !== 'down') {
     if ( isGridWalkable(x, y - 1) ){
-      console.log('up')
-      object._direction = 'up'
+      object.direction = 'up'
       return { x: x, y: y - 1}
     }
   }
 
   // random failed, find somewhere to move
-  object._direction = ''
+  object.direction = ''
   console.log('couldnt do rando movement, finding space')
   const nearbyGrids = [
     { x, y: y-1},
@@ -216,9 +212,33 @@ function sortByDistance(coordsA, coordsB, comparedTo){
   else return 0
 }
 
+function goombaWalk(object) {
+  const { x, y } = gridTool.convertToGridXY(object)
+  if(!object.direction) {
+    object.direction = 'right'
+  }
+
+  if(object.direction === 'right' ) {
+    if(isGridWalkable(x + 1, y)) {
+      object.path = [{ x: x + 1, y: y}]
+    } else {
+      object.direction = 'left'
+    }
+  }
+
+  if(object.direction === 'left') {
+    if(isGridWalkable(x - 1, y)) {
+      object.path = [{ x: x - 1, y: y}]
+    } else {
+      object.direction = 'right'
+    }
+  }
+}
+
 export default {
   convertGridToPathfindingGrid,
-  walkAround
+  walkAround,
+  goombaWalk
 }
 
 

@@ -192,6 +192,8 @@ function update (hero, objects, delta) {
     if(!physicsObjects[name]) continue
     if(name === 'hero') continue
     let po = physicsObjects[name]
+    let result = po.createResult()
+    let correction = {x: po.x, y: po.y}
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
@@ -199,8 +201,17 @@ function update (hero, objects, delta) {
           removeObjects.push(body.gameObject.id)
           window.score++
         }
+
+        if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+          correction.y -= result.overlap * result.overlap_y
+          break;
+        }
       }
     }
+    po.gameObject.x = correction.x
+    po.gameObject.y = correction.y
   }
 
   removeObjects.forEach((id) => {

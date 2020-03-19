@@ -41,7 +41,7 @@ function update(hero, objects, modifier) {
     if(object.path && object.path.length) {
       moveOnPath(object)
     }
-    
+
     if(object.tags && object.tags['monster']) {
       object.target = window.hero
 
@@ -66,9 +66,15 @@ function update(hero, objects, modifier) {
     }
 
 
-    if(object.tags && object.tags.patrol) {
+    if(object.tags && object.tags['patrol']) {
       if(!object.path || (object.path && !object.path.length)) {
         object.path = [pathfinding.walkAround(object)]
+      }
+    }
+
+    if(object.tags && object.tags['goomba']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        pathfinding.goombaWalk(object)
       }
     }
   })

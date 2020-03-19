@@ -65,9 +65,14 @@ function init() {
     })
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
+      if(window.editingObject.i) {
+        Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
+      }
     })
     window.socket.on('onAddObjects', (objects) => {
       if(!window.objects) {
+        console.log('already set objects..? - editor')
+
         window.objects = objects
         window.socket.emit('askGrid');
       }

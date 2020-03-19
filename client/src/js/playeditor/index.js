@@ -40,6 +40,7 @@ window.tags = {
   chatter: false,
   glowing: false,
   patrol: false,
+  goomba: false,
 }
 window.editingObject = {
   i: null,
