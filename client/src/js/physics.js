@@ -188,12 +188,13 @@ function update (hero, objects, delta) {
     // physicsObjects[window.hero.id].y = hero.y
   }
 
-  for(let name in physicsObjects){
-    if(!physicsObjects[name]) continue
-    if(name === 'hero') continue
-    let po = physicsObjects[name]
+  let corrections = {}
+  for(let id in physicsObjects){
+    if(!physicsObjects[id]) continue
+    if(id.indexOf('hero') > -1) continue
+    let po = physicsObjects[id]
     let result = po.createResult()
-    let correction = {x: po.x, y: po.y}
+    corrections[id] = {x: po.x, y: po.y}
     let potentials = po.potentials()
     for(const body of potentials) {
       if(po.collides(body, result)) {
@@ -210,8 +211,14 @@ function update (hero, objects, delta) {
         }
       }
     }
-    po.gameObject.x = correction.x
-    po.gameObject.y = correction.y
+  }
+
+  for(let id in physicsObjects){
+    if(corrections[id]){
+      let po = physicsObjects[id]
+      po.x = corrections[id].x
+      po.y = corrections[id].y
+    }
   }
 
   removeObjects.forEach((id) => {

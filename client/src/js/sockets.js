@@ -177,7 +177,11 @@ function init() {
       gridTool.removeObstacle(object)
     }
 
-    window.removeObject(object.id)
+    window.objects = window.objects.filter((obj) => obj.id !== object.id)
+
+    if(!window.usePlayEditor) {
+      physics.removeObjectById(object.id)
+    }
   })
 
   window.socket.on('onSetWorld', (world) => {

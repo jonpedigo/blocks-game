@@ -157,6 +157,15 @@ function createGridNodeAt(x, y) {
 }
 
 function addObstacle(object, options = {}) {
+  if(object.path && object.path.length) {
+    let x = object.path[0].x
+    let y = object.path[0].y
+    if(!options.silently){
+      window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+    }
+    grid[x][y].hasObstacle = true
+    return
+  }
   // pretend we are dealing with a 0,0 plane
   let x = object.x - grid[0][0].x
   let y = object.y - grid[0][0].y
@@ -174,15 +183,22 @@ function addObstacle(object, options = {}) {
       let gridNode = grid[x][y]
       if(!options.silently){
         window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-      } else {
-        grid[x][y].hasObstacle = true
       }
+      grid[x][y].hasObstacle = true
       return {gridX: x, gridY: y}
     }
   }
 }
 
 function removeObstacle(object) {
+  if(object.path && object.path.length) {
+    let x = object.path[0].x
+    let y = object.path[0].y
+    window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
+    grid[x][y].hasObstacle = false
+    return
+  }
+
   // pretend we are dealing with a 0,0 plane
   let x = object.x - grid[0][0].x
   let y = object.y - grid[0][0].y

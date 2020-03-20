@@ -119,13 +119,6 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-window.removeObject = function(id) {
-  window.objects = window.objects.filter((obj) => obj.id !== id)
-  if(!window.usePlayEditor) {
-    physics.removeObjectById(id)
-  }
-}
-
 /////////////
 //PREFERENCES
 /////////////
@@ -151,7 +144,7 @@ const defaultHero = {
 	accX: 0,
 	accDecayX: 0,
 	accDecayY: 0,
-	speed: 250,
+	speed: 150,
 	arrowKeysBehavior: 'position',
 	jumpVelocity: -480,
 	// spawnPointX: (40) * 20,

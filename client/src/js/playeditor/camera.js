@@ -119,6 +119,25 @@ function render(ctx, hero, objects) {
     }
   }
 
+  if(window.preferences.showPFGrid && window.pfgrid) {
+    ctx.lineWidth = 1
+    window.pfgrid.nodes.forEach((nodeRow) => {
+      nodeRow.forEach((node) => {
+        if(node.walkable == false) {  
+          drawVertice(ctx, {a: {
+            x: (node.x * window.gridNodeSize),
+            y: (node.y * window.gridNodeSize),
+          },
+          b: {
+            x: (node.x * window.gridNodeSize) + window.gridNodeSize,
+            y: (node.y * window.gridNodeSize) + window.gridNodeSize,
+          }, color: 'red'})
+        }
+      })
+
+    })
+  }
+
   ////////////////
   ////////////////
   // EDITING OBJECT SETTINGS

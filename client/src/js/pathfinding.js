@@ -126,7 +126,7 @@ function forceFindOpenGridNear({position, level = 0}){
   forceFindOpenGridNear(nextGrid.x, nextGrid.y, level++)
 }
 
-function isGridWalkable( x, y) {
+function isGridWalkable(x, y) {
   if(!window.pfgrid.nodes[y]) return false
   if(!window.pfgrid.nodes[y][x]) return false
   if(!window.pfgrid.nodes[y][x].walkable) return false
