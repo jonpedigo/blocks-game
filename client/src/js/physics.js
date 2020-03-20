@@ -25,7 +25,7 @@ function updatePosition(object, delta) {
   if(object.velocityX) {
     if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
     else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
-    object.x += Math.ceil( object.velocityX * delta)
+    object.x += object.velocityX * delta
   }
 
   // if(object.accY) {

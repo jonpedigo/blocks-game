@@ -1,6 +1,5 @@
 // attack button ( like papa bear spears!! )
 // RELATED ^ button management
-// pathfinding
 // grid pathfinding will break if two obstacles are on same grid ... Can we layer..?
 // set game boundaries to delete objects - default game boundaries with a default grid..
 // make it easier for admin to move objects
