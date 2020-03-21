@@ -49,7 +49,10 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   const toX = toPosition.x
   const toY = toPosition.y
   const openGrid = findOpenGridNear({ position: toPosition, prioritizeNear: {x: prioritizeNear.x, y: prioritizeNear.y}, onFail})
-  return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, window.pfgrid);
+  var gridBackup = window.pfgrid.clone();
+  return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, gridBackup).map((path) => {
+    return {x: path[0], y: path[1]}
+  });
 }
 
 function findPath({fromPosition, toPosition}) {
@@ -57,7 +60,10 @@ function findPath({fromPosition, toPosition}) {
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
-  return finder.findPath(fromX, fromY, toX, toY, window.pfgrid);
+  var gridBackup = window.pfgrid.clone();
+  return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
+    return {x: path[0], y: path[1]}
+  });
 }
 
 // searches nearby grids for open space
@@ -236,6 +242,7 @@ function goombaWalk(object) {
 }
 
 export default {
+  findPath,
   convertGridToPathfindingGrid,
   walkAround,
   goombaWalk

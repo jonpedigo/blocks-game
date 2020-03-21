@@ -32,6 +32,7 @@ window.objectFactory = []
 
 window.tags = {
   obstacle: true,
+  stationary: false,
   monster: false,
   coin: false,
   powerup: false,
@@ -39,8 +40,9 @@ window.tags = {
   deleteAfter: false,
   chatter: false,
   glowing: false,
-  patrol: false,
+  wander: false,
   goomba: false,
+  homing: false,
 }
 window.editingObject = {
   i: null,
