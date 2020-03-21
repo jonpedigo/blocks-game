@@ -119,11 +119,11 @@ function render(ctx, hero, objects) {
     }
   }
 
-  if(window.preferences.showPFGrid && window.pfgrid) {
+  if(window.pfgrid) {
     ctx.lineWidth = 1
     window.pfgrid.nodes.forEach((nodeRow) => {
       nodeRow.forEach((node) => {
-        if(node.walkable == false) {  
+        if(node.walkable == false) {
           drawVertice(ctx, {a: {
             x: (node.x * window.gridNodeSize),
             y: (node.y * window.gridNodeSize),
