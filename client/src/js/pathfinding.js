@@ -60,10 +60,16 @@ function findPath({fromPosition, toPosition}) {
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
-  var gridBackup = window.pfgrid.clone();
-  return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
-    return {x: path[0], y: path[1]}
-  });
+
+  //prevents someone from trying to path find off the grid.... BREAKS CODE
+  if(toX >= 0 && toX < window.gridSize.x) {
+    if(fromY >= 0 && fromY < window.gridSize.y) {
+      var gridBackup = window.pfgrid.clone();
+      return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
+        return {x: path[0], y: path[1]}
+      });
+    }
+  }
 }
 
 // searches nearby grids for open space

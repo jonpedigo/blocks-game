@@ -9,6 +9,7 @@
 // TRUE zelda camera work
 
 //--------
+// INVERT GAME, for example, when you get pacman powers
 // planet gravity! Would be cool to have..
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
 // stop player (velocity)
@@ -152,7 +153,7 @@ const defaultHero = {
 	// spawnPointY: (40) * 20,
 	gravity: 0,
 	tags: {hero: true, isPlayer: true, monsterDestroyer: false},
-	zoomMultiplier: 1,
+	zoomMultiplier: 1.8816764231589203,
   x: 960,
   y: 960,
   showChat: false,

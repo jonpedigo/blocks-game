@@ -91,8 +91,8 @@ function drawObject(ctx, object, withNames = false) {
 function drawVertice(ctx, vertice) {
   if(vertice.glow) {
     ctx.filter = "drop-shadow(4px 4px 8px #fff) blur(5px)";
-    ctx.shadowBlur = vertice.glow;
-    ctx.shadowColor = "white";
+    // ctx.shadowBlur = vertice.glow;
+    // ctx.shadowColor = "white";
   }
   if(vertice.color) {
     ctx.strokeStyle = vertice.color;
@@ -107,8 +107,8 @@ function drawVertice(ctx, vertice) {
   ctx.stroke();
 
   if(vertice.glow) {
-    ctx.shadowBlur = 0;
-    ctx.filter = "drop-shadow(0px 0px 0px #fff) blur(0px)";
+    // ctx.shadowBlur = 0;
+    ctx.filter = "none";
     drawVertice(ctx, {...vertice, glow: false})
   }
   if(vertice.color) {

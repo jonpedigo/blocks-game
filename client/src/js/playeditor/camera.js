@@ -43,7 +43,7 @@ function drawBorder(ctx, object, thickness = 2) {
 
 function drawVertice(ctx, vertice) {
   if(vertice.glow) {
-    ctx.filter = "drop-shadow(4px 4px 8px #fff) blur(5px)";
+    ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   }
   if(vertice.color) {
     ctx.strokeStyle = vertice.color;
@@ -183,7 +183,7 @@ function render(ctx, hero, objects) {
 		return prev
 	}, [])
 
-  ctx.strokeStyle = '#FFF'
+  ctx.strokeStyle = '#999'
   ctx.lineWidth = 1;
   for(let i = 0; i < vertices.length; i++) {
     drawVertice(ctx, vertices[i])
