@@ -1,11 +1,12 @@
+// enemy respawn points
+// console log saved world so I can copy it to a file
+// smaller grids to add. Like at in the teeny center of the grid a little dot LOL yeah ( pacman thing )
 // attack button ( like papa bear spears!! )
 // RELATED ^ button management
 // grid pathfinding will break if two obstacles are on same grid ... Can we layer..?
 // set game boundaries to delete objects - default game boundaries with a default grid..
 // make it easier for admin to move objects
 // TRUE zelda camera work
-// enemy respawn points
-// console log saved world so I can copy it to a file
 
 //--------
 // planet gravity! Would be cool to have..
@@ -150,7 +151,7 @@ const defaultHero = {
 	// spawnPointX: (40) * 20,
 	// spawnPointY: (40) * 20,
 	gravity: 0,
-	tags: {'hero': true, isPlayer: true},
+	tags: {hero: true, isPlayer: true, monsterDestroyer: false},
 	zoomMultiplier: 1,
   x: 960,
   y: 960,

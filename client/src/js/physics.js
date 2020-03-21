@@ -118,19 +118,35 @@ function update (hero, objects, delta) {
   // update physics system
   system.update()
 
-  // check for basic collisions
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  // OBJECTS COLLIDING WITH OTHER HERO
+  /////////////////////////////////////////////////////
   const result = physicsObjects[window.hero.id].createResult()
   const potentials = physicsObjects[window.hero.id].potentials()
   let illegal = false
   let correction = {x: hero.x, y: hero.y}
   let removeObjects = []
-
+  let heroPO = physicsObjects[window.hero.id]
   for(const body of potentials) {
-    if(physicsObjects[window.hero.id].collides(body, result)) {
+    if(heroPO.collides(body, result)) {
       if(body.gameObject.tags && body.gameObject.tags['monster']) {
-        window.score--
-        window.resetHero({x: window.hero.spawnPointX, y: window.hero.spawnPointY})
+        if(heroPO.gameObject.tags['monsterDestroyer']) {
+          if(body.gameObject.spawnPointX) {
+            body.gameObject.x = body.gameObject.spawnPointX
+            body.gameObject.y = body.gameObject.spawnPointY
+          } else {
+            removeObjects.push(body.gameObject)
+          }
+        } else {
+          window.score--
+          window.respawnHero()
+        }
       }
+
       if(body.gameObject.tags && body.gameObject.tags['coin']) {
         window.score++
       }
@@ -188,6 +204,13 @@ function update (hero, objects, delta) {
     // physicsObjects[window.hero.id].y = hero.y
   }
 
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  // OBJECTS COLLIDING WITH OTHER OBJECTS
+  /////////////////////////////////////////////////////
   let corrections = {}
   for(let id in physicsObjects){
     if(!physicsObjects[id]) continue
