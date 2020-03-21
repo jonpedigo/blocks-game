@@ -123,7 +123,7 @@ function update (hero, objects, delta) {
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
-  // OBJECTS COLLIDING WITH OTHER HERO
+  // OBJECTS COLLIDING WITH HERO
   /////////////////////////////////////////////////////
   const result = physicsObjects[window.hero.id].createResult()
   const potentials = physicsObjects[window.hero.id].potentials()
@@ -222,7 +222,7 @@ function update (hero, objects, delta) {
     for(const body of potentials) {
       if(po.collides(body, result)) {
         if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['monster'] && po.gameObject.tags['bullet']) {
-          removeObjects.push(body.gameObject.id)
+          removeObjects.push(body.gameObject)
           window.score++
         }
 
@@ -244,7 +244,7 @@ function update (hero, objects, delta) {
     }
   }
 
-  removeObjects.forEach((id) => {
+  removeObjects.forEach((gameObject) => {
     window.socket.emit('removeObject', gameObject)
   })
 }

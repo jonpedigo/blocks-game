@@ -81,14 +81,18 @@ const tools = {
         height: 1,
       }
 
-      Object.keys(window.heros).map((key) => window.heros[key])
-      .forEach((hero, i) => {
-        collisions.checkObject(click, hero, () => {
-          window.editingHero = hero
-          heroeditor.update(window.heros[window.editingHero.id])
-          heroeditor.expandAll()
+      if(clickToSetHeroSpawnToggle.checked) {
+        window.socket.emit('updateHero', {id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+      } else {
+        Object.keys(window.heros).map((key) => window.heros[key])
+        .forEach((hero, i) => {
+          collisions.checkObject(click, hero, () => {
+            window.editingHero = hero
+            heroeditor.update(window.heros[window.editingHero.id])
+            heroeditor.expandAll()
+          })
         })
-      })
+      }
     }
   },
   [TOOLS.SIMPLE_EDITOR]: {
@@ -100,15 +104,23 @@ const tools = {
         height: 1,
       }
 
-      window.objects
-      .forEach((object, i) => {
-        collisions.checkObject(click, object, () => {
-          simpleeditor.set(Object.assign({}, object))
-          simpleeditor.expandAll()
-          window.editingObject = object
-          window.editingObject.i = i
+      if(clickToSetObjectSpawnToggle.checked) {
+        let editingObject = simpleeditor.get()
+        Object.assign(editingObject, {spawnPointX: click.x, spawnPointY: click.y})
+        simpleeditor.set(editingObject)
+        simpleeditor.expandAll()
+        emitEditedObject(editingObject)
+      } else {
+        window.objects
+        .forEach((object, i) => {
+          collisions.checkObject(click, object, () => {
+            simpleeditor.set(Object.assign({}, object))
+            simpleeditor.expandAll()
+            window.editingObject = object
+            window.editingObject.i = i
+          })
         })
-      })
+      }
     }
   },
   [TOOLS.EDITOR]: {
@@ -145,7 +157,7 @@ const tools = {
     }
   },
   [TOOLS.AREA_SELECTOR]: {
-    onFirstClick: function(e){
+    onFirstClick: (e) => {
       if(selectorSpawnToggle.checked) {
         const click = {
           x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
@@ -473,6 +485,7 @@ function init(ctx, objects) {
     window.socket.emit('deleteHero', editingHero.id)
   })
 
+  window.clickToSetHeroSpawnToggle = document.getElementById('click-to-set-spawn-hero')
   window.syncHeroToggle = document.getElementById('sync-hero')
   syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
@@ -540,6 +553,7 @@ function init(ctx, objects) {
   if(window.preferences.syncObjects) {
     syncObjectsToggle.checked = true;
   }
+  window.clickToSetObjectSpawnToggle = document.getElementById('click-to-set-spawn-object')
 
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
@@ -550,14 +564,6 @@ function init(ctx, objects) {
   window.instantGridAddToggle = document.getElementById("instant-grid-add")
   window.instantAddToggle = document.getElementById("instant-add")
   window.instantGridAddToggle.checked = true;
-
-  function emitEditedObject(object) {
-    delete object.x
-    delete object.y
-    Object.assign(window.editingObject, object)
-    Object.assign(window.objects[window.editingObject.i], object)
-    window.socket.emit('editObjects', window.objects)
-  }
 
   /////////////////////
   // SELECT AREA BUTTONS
@@ -714,6 +720,17 @@ function init(ctx, objects) {
 //
 //   window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
 // }
+
+function emitEditedObject(object) {
+  let objectCopy = {...object}
+  delete objectCopy.x
+  delete objectCopy.y
+  delete objectCopy.velocityX
+  delete objectCopy.velocityY
+  Object.assign(window.editingObject, objectCopy)
+  Object.assign(window.objects[window.editingObject.i], objectCopy)
+  window.socket.emit('editObjects', window.objects)
+}
 
 export default {
   init,

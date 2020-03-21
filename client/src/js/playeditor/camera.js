@@ -149,6 +149,8 @@ function render(ctx, hero, objects) {
     if(object.gridX) {
       drawObject(ctx, {color: '#BBB', x: (object.gridX * window.gridNodeSize) + window.grid[0][0].x, y: (object.gridY * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize})
     }
+
+    drawObject(ctx, {...object, color: 'blue'})
   }
 
   ////////////////
