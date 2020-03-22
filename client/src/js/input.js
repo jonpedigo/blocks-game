@@ -57,6 +57,10 @@ function update(hero, delta) {
     s 83
     d 68
   */
+
+  hero._initialX = hero.x
+  hero._initialY = hero.y
+
   if (38 in keysDown) { // Player holding up
     direction = 'up'
     if(hero.gravity > 0) {

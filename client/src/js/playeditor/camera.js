@@ -119,25 +119,6 @@ function render(ctx, hero, objects) {
     }
   }
 
-  if(window.pfgrid) {
-    ctx.lineWidth = 1
-    window.pfgrid.nodes.forEach((nodeRow) => {
-      nodeRow.forEach((node) => {
-        if(node.walkable == false) {
-          drawVertice(ctx, {a: {
-            x: (node.x * window.gridNodeSize),
-            y: (node.y * window.gridNodeSize),
-          },
-          b: {
-            x: (node.x * window.gridNodeSize) + window.gridNodeSize,
-            y: (node.y * window.gridNodeSize) + window.gridNodeSize,
-          }, color: 'red'})
-        }
-      })
-
-    })
-  }
-
   ////////////////
   ////////////////
   // EDITING OBJECT SETTINGS
@@ -197,11 +178,35 @@ function render(ctx, hero, objects) {
   ctx.fillStyle = 'white';
   for(var heroId in window.heros) {
     if(heroId === window.editingHero.id) {
-      drawObject(ctx, {...window.heros[heroId], color: 'red'});
+      drawObject(ctx, {...window.heros[heroId], color: '#0A0'});
     } else {
       drawObject(ctx, {...window.heros[heroId], color: 'white'});
     }
   }
+
+  ////////////////
+  /// PATHFINDING OBSTACLES
+  ////////////////
+  ////////////////
+  if(window.pfgrid) {
+    ctx.lineWidth = 1
+    window.pfgrid.nodes.forEach((nodeRow) => {
+      nodeRow.forEach((node) => {
+        if(node.walkable == false) {
+          drawVertice(ctx, {a: {
+            x: (node.x * window.gridNodeSize) + window.grid[0][0].x,
+            y: (node.y * window.gridNodeSize) + window.grid[0][0].y,
+          },
+          b: {
+            x: (node.x * window.gridNodeSize) + window.gridNodeSize + window.grid[0][0].x,
+            y: (node.y * window.gridNodeSize) + window.gridNodeSize + window.grid[0][0].y,
+          }, color: 'red'})
+        }
+      })
+
+    })
+  }
+
 
 
   ////////////////

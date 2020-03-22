@@ -7,7 +7,7 @@ const modifiers = {
   asteroids: {
     arrowKeysBehavior: 'velocity',
     gravity: false,
-    velocityMax: 600,
+    velocityMax: 400,
   },
   zelda: {
     arrowKeysBehavior: 'position',

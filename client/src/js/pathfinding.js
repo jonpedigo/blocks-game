@@ -190,16 +190,12 @@ function walkAround(object) {
   // random failed, find somewhere to move
   object.direction = ''
   console.log('couldnt do rando movement, finding space')
-  const nearbyGrids = [
+  let nearbyGrids = shuffle([
     { x, y: y-1},
     { x: x+1, y},
     { x: x, y: y+1},
     { x: x-1, y},
-  ]
-
-  if(Math.random() > .5){
-    nearbyGrids.reverse()
-  }
+  ])
 
   for (let i = 0; i < nearbyGrids.length; i++) {
     let { x, y } = nearbyGrids[i]
@@ -210,6 +206,17 @@ function walkAround(object) {
 
   console.log('found nowhere to move')
   return { x, y }
+}
+
+function shuffle(a) {
+  var j, x, i;
+  for (i = a.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
+  }
+  return a;
 }
 
 function getDistance(coords, comparedTo) {
@@ -225,25 +232,16 @@ function sortByDistance(coordsA, coordsB, comparedTo){
 }
 
 function goombaWalk(object) {
-  const { x, y } = gridTool.convertToGridXY(object)
   if(!object.direction) {
     object.direction = 'right'
   }
 
   if(object.direction === 'right' ) {
-    if(isGridWalkable(x + 1, y)) {
-      object.path = [{ x: x + 1, y: y}]
-    } else {
-      object.direction = 'left'
-    }
+    object.velocityX = object.speed || 100
   }
 
   if(object.direction === 'left') {
-    if(isGridWalkable(x - 1, y)) {
-      object.path = [{ x: x - 1, y: y}]
-    } else {
-      object.direction = 'right'
-    }
+    object.velocityX = -object.speed || -100
   }
 }
 

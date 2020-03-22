@@ -1,4 +1,5 @@
 import { Collisions, Polygon } from 'collisions';
+import intelligence from './intelligence'
 
 const physicsObjects = {}
 // Create the collision system
@@ -8,6 +9,11 @@ const system = new Collisions()
 let result = system.createResult()
 
 function updatePosition(object, delta) {
+  if(object.id.indexOf('hero') === -1) {
+    object._initialX = object.x
+    object._initialY = object.y
+  }
+
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
   //     if(object.accX > 0) {
@@ -60,6 +66,22 @@ function updatePosition(object, delta) {
     if(!object.gravity) {
       object.y += object.velocityY * delta
     }
+  }
+
+  //CONTAIN WITHIN BOUNDARIES OF THE GRID!!
+  if(object.x + object.width > (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x) {
+    object.x = (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x - object.width
+  }
+  if(object.y + object.height > (window.gridNodeSize * window.gridSize.y) + window.grid[0][0].y) {
+    object.y = (window.gridNodeSize * window.gridSize.y) + window.grid[0][0].y - object.height
+  }
+
+  if(object.x < window.grid[0][0].x) {
+    object.x = window.grid[0][0].x
+  }
+
+  if(object.y < window.grid[0][0].y) {
+    object.y = window.grid[0][0].y
   }
 }
 
@@ -169,39 +191,66 @@ function update (hero, objects, delta) {
       if(body.gameObject.tags && body.gameObject.tags.deleteAfter) {
         removeObjects.push(body.gameObject)
       }
-
-      if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
-        illegal = true
-        correction.x -= result.overlap * result.overlap_x
-        correction.y -= result.overlap * result.overlap_y
-        break;
-      }
     }
   }
 
   hero.onGround = false
 
-  if(illegal) {
-    // hero.wallJumpLeft = false
-    // hero.wallJumpRight = false
-    if(result.overlap_y === 1) {
-      if(hero.velocityY > 0) hero.velocityY = 0
-      hero.onGround = true
-    } else if(result.overlap_y === -1){
-      if(hero.velocityY < 0) hero.velocityY = 0
-    }
-    if(result.overlap_x === 1) {
-      // if(hero.onGround === false) hero.wallJumpLeft = true
-      if(hero.velocityX > 0) hero.velocityX = 0
-    } else if(result.overlap_x === -1){
-      // if(hero.onGround === false) hero.wallJumpRight = true
-      if(hero.velocityX < 0) hero.velocityX = 0
+  heroCorrectionPhase()
+  system.update()
+  heroCorrectionPhase()
+  system.update()
+  heroCorrectionPhase(true)
+  system.update()
+
+  function heroCorrectionPhase(final = false) {
+    const result = physicsObjects[window.hero.id].createResult()
+    const potentials = physicsObjects[window.hero.id].potentials()
+    let illegal = false
+    let correction = {x: hero.x, y: hero.y}
+    let heroPO = physicsObjects[window.hero.id]
+    for(const body of potentials) {
+      if(heroPO.collides(body, result)) {
+        if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+          correction.y -= result.overlap * result.overlap_y
+          break;
+        }
+      }
     }
 
-    hero.x = correction.x
-    hero.y = correction.y
-    // physicsObjects[window.hero.id].x = hero.x
-    // physicsObjects[window.hero.id].y = hero.y
+    if(illegal) {
+      // hero.wallJumpLeft = false
+      // hero.wallJumpRight = false
+      if(result.overlap_y === 1) {
+        if(hero.velocityY > 0) hero.velocityY = 0
+        hero.onGround = true
+      } else if(result.overlap_y === -1){
+        if(hero.velocityY < 0) hero.velocityY = 0
+      }
+      if(result.overlap_x === 1) {
+        // if(hero.onGround === false) hero.wallJumpLeft = true
+        if(hero.velocityX > 0) hero.velocityX = 0
+      } else if(result.overlap_x === -1){
+        // if(hero.onGround === false) hero.wallJumpRight = true
+        if(hero.velocityX < 0) hero.velocityX = 0
+      }
+
+      heroPO.x = correction.x
+      heroPO.y = correction.y
+    }
+
+    if(final) {
+      // just give up correction and prevent any movement from these mother fuckers
+      if(illegal) {
+        hero.x = hero._initialX
+        hero.y = hero._initialY
+      } else {
+        hero.x = heroPO.x
+        hero.y = heroPO.y
+      }
+    }
   }
 
   /////////////////////////////////////////////////////
@@ -211,36 +260,93 @@ function update (hero, objects, delta) {
   /////////////////////////////////////////////////////
   // OBJECTS COLLIDING WITH OTHER OBJECTS
   /////////////////////////////////////////////////////
-  let corrections = {}
   for(let id in physicsObjects){
     if(!physicsObjects[id]) continue
     if(id.indexOf('hero') > -1) continue
     let po = physicsObjects[id]
-    let result = po.createResult()
-    corrections[id] = {x: po.x, y: po.y}
     let potentials = po.potentials()
+    let result = po.createResult()
     for(const body of potentials) {
       if(po.collides(body, result)) {
-        if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['monster'] && po.gameObject.tags['bullet']) {
-          removeObjects.push(body.gameObject)
+        if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['bullet'] && po.gameObject.tags['monster']) {
+          removeObjects.push(po.gameObject)
           window.score++
         }
 
-        if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
-          illegal = true
-          correction.x -= result.overlap * result.overlap_x
-          correction.y -= result.overlap * result.overlap_y
-          break;
+        if(po.gameObject.tags && po.gameObject.tags['goomba'] && body.gameObject.tags && body.gameObject.tags['obstacle']) {
+          if(result.overlap_x === 1 && po.gameObject.direction === 'right') {
+            po.gameObject.direction = 'left'
+          }
+          if(result.overlap_x === -1 && po.gameObject.direction === 'left') {
+            po.gameObject.direction = 'right'
+          }
         }
       }
     }
   }
 
-  for(let id in physicsObjects){
-    if(corrections[id]){
+  correctionPhase()
+  system.update()
+  correctionPhase()
+  system.update()
+  correctionPhase(true)
+
+  function correctionPhase(final = false) {
+    for(let id in physicsObjects){
+      if(!physicsObjects[id]) continue
+      if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
-      po.x = corrections[id].x
-      po.y = corrections[id].y
+      let result = po.createResult()
+      let correction = {x: po.x, y: po.y}
+      let potentials = po.potentials()
+      let illegal = false
+      for(const body of potentials) {
+        if(po.collides(body, result)) {
+          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && po.gameObject.tags['zombie']) {
+            if(Math.abs(result.overlap_x) !== 0) {
+              illegal = true
+              correction.x -= result.overlap * result.overlap_x
+            }
+            if(Math.abs(result.overlap_y) !== 0) {
+              illegal = true
+              correction.y -= result.overlap * result.overlap_y
+            }
+            break;
+          }
+        }
+      }
+
+      if(illegal) {
+        // hero.wallJumpLeft = false
+        // hero.wallJumpRight = false
+        if(result.overlap_y === 1) {
+          if(po.gameObject.velocityY > 0) po.gameObject.velocityY = 0
+          po.gameObject.onGround = true
+        } else if(result.overlap_y === -1){
+          if(po.gameObject.velocityY < 0) po.gameObject.velocityY = 0
+        }
+        if(result.overlap_x === 1) {
+          // if(po.gameObject.onGround === false) po.gameObject.wallJumpLeft = true
+          if(po.gameObject.velocityX > 0) po.gameObject.velocityX = 0
+        } else if(result.overlap_x === -1){
+          // if(po.gameObject.onGround === false) po.gameObject.wallJumpRight = true
+          if(po.gameObject.velocityX < 0) po.gameObject.velocityX = 0
+        }
+
+        po.x = correction.x
+        po.y = correction.y
+      }
+
+      if(final) {
+        // just give up correction and prevent any movement from these mother fuckers
+        if(illegal) {
+          po.gameObject.x = po.gameObject._initialX
+          po.gameObject.y = po.gameObject._initialY
+        } else {
+          po.gameObject.x = po.x
+          po.gameObject.y = po.y
+        }
+      }
     }
   }
 

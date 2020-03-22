@@ -43,6 +43,7 @@ window.tags = {
   wander: false,
   goomba: false,
   homing: false,
+  zombie: false,
 }
 window.editingObject = {
   i: null,

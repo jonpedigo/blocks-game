@@ -165,27 +165,28 @@ function addObstacle(object, options = {}) {
     }
     grid[x][y].hasObstacle = true
     return
-  }
-  // pretend we are dealing with a 0,0 plane
-  let x = object.x - grid[0][0].x
-  let y = object.y - grid[0][0].y
+  } else if(object.tags.stationary) {
+    // pretend we are dealing with a 0,0 plane
+    let x = object.x - grid[0][0].x
+    let y = object.y - grid[0][0].y
 
-  let diffX = x % window.gridNodeSize
-  x -= diffX
-  x = x/window.gridNodeSize
+    let diffX = x % window.gridNodeSize
+    x -= diffX
+    x = x/window.gridNodeSize
 
-  let diffY = y % window.gridNodeSize
-  y -= diffY
-  y = y/window.gridNodeSize
+    let diffY = y % window.gridNodeSize
+    y -= diffY
+    y = y/window.gridNodeSize
 
-  if(x >= 0 && x < window.gridSize.x) {
-    if(y >= 0 && y < window.gridSize.y) {
-      let gridNode = grid[x][y]
-      if(!options.silently){
-        window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+    if(x >= 0 && x < window.gridSize.x) {
+      if(y >= 0 && y < window.gridSize.y) {
+        let gridNode = grid[x][y]
+        if(!options.silently){
+          window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+        }
+        grid[x][y].hasObstacle = true
+        return {gridX: x, gridY: y}
       }
-      grid[x][y].hasObstacle = true
-      return {gridX: x, gridY: y}
     }
   }
 }
@@ -197,27 +198,26 @@ function removeObstacle(object) {
     window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
     grid[x][y].hasObstacle = false
     return
-  }
+  } else if(object.tags.stationary) {
+    // pretend we are dealing with a 0,0 plane
+    let x = object.x - grid[0][0].x
+    let y = object.y - grid[0][0].y
 
-  // pretend we are dealing with a 0,0 plane
-  let x = object.x - grid[0][0].x
-  let y = object.y - grid[0][0].y
+    let diffX = x % window.gridNodeSize
+    x -= diffX
+    x = x/window.gridNodeSize
 
-  let diffX = x % window.gridNodeSize
-  x -= diffX
-  x = x/window.gridNodeSize
+    let diffY = y % window.gridNodeSize
+    y -= diffY
+    y = y/window.gridNodeSize
 
-  let diffY = y % window.gridNodeSize
-  y -= diffY
-  y = y/window.gridNodeSize
-
-
-  if(x >= 0 && x < window.gridSize.x) {
-    if(y >= 0 && y < window.gridSize.y) {
-      let gridNode = grid[x][y]
-      window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
-      grid[x][y].hasObstacle = false
-      return {gridX: x, gridY: y}
+    if(x >= 0 && x < window.gridSize.x) {
+      if(y >= 0 && y < window.gridSize.y) {
+        let gridNode = grid[x][y]
+        window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
+        grid[x][y].hasObstacle = false
+        return {gridX: x, gridY: y}
+      }
     }
   }
 }

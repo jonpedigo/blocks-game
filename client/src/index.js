@@ -9,6 +9,9 @@
 // TRUE zelda camera work
 
 //--------
+// spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
+// push block
+//Smarter rendering
 // INVERT GAME, for example, when you get pacman powers
 // planet gravity! Would be cool to have..
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
@@ -208,12 +211,12 @@ var start = function () {
 var update = function (delta) {
   if(!window.hero.paused) {
     input.update(hero, delta)
-    intelligence.update(window.hero, window.objects)
     if(window.hero.arrowKeysBehavior !== 'grid') {
       physics.update(window.hero, window.objects, delta)
     } else {
       grid.update(window.hero, window.objects)
     }
+    intelligence.update(window.hero, window.objects, delta)
   }
 
   /// zoom targets
