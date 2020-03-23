@@ -61,11 +61,23 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   }
 }
 
-function findPath({fromPosition, toPosition}) {
+function findPath({fromPosition, toPosition}, pathfindingLimit) {
   const fromX = fromPosition.x
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
+
+  if(pathfindingLimit) {
+    if(toX > pathfindingLimit.x + pathfindingLimit.width - 1) {
+      return []
+    } else if(toX < pathfindingLimit.x - 1) {
+      return []
+    } else if(toY > pathfindingLimit.y + pathfindingLimit.height - 1) {
+      return []
+    } else if(toY < pathfindingLimit.y - 1) {
+      return []
+    }
+  }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
   if(toX >= 0 && toX < window.gridSize.x) {
@@ -147,10 +159,10 @@ function forceFindOpenGridNear({position, level = 0}){
 function isGridWalkable(x, y, limit) {
   // for pathfinding with area
   if(limit) {
-    if(x < limit.x || x > limit.x + limit.width) {
+    if(x < limit.x || x > limit.x + limit.width - 1) {
       return false
     }
-    if(y < limit.y || y > limit.y + limit.height) {
+    if(y < limit.y || y > limit.y + limit.height - 1) {
       return false
     }
   }

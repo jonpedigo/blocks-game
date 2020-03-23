@@ -9,26 +9,26 @@ function convertToGridXY(object, options = {}) {
   let x = object.x - window.grid[0][0].x
   let y = object.y - window.grid[0][0].y
 
-  if(options.strict) {
-    let diffX = x % window.gridNodeSize;
-    x -= diffX
-    x = x/window.gridNodeSize
-    if(diffX < 2) {
-    } else if (diffX > 38) {
-      x+=1
-    }
-
-    let diffY = y % window.gridNodeSize;
-    y -= diffY
-    y = y/window.gridNodeSize
-
-    if(diffY < 2) {
-    } else if (diffY > 38) {
-      y+=1
-    }
-
-    return { x, y, diffX, diffY }
-  }
+  // if(options.strict) {
+  //   let diffX = x % window.gridNodeSize;
+  //   x -= diffX
+  //   x = x/window.gridNodeSize
+  //   if(diffX < 2) {
+  //   } else if (diffX > 38) {
+  //     x+=1
+  //   }
+  //
+  //   let diffY = y % window.gridNodeSize;
+  //   y -= diffY
+  //   y = y/window.gridNodeSize
+  //
+  //   if(diffY < 2) {
+  //   } else if (diffY > 38) {
+  //     y+=1
+  //   }
+  //
+  //   return { x, y, diffX, diffY }
+  // }
   //
   // let diffX = x % window.gridNodeSize;
   // if(diffX > window.gridNodeSize/2) {
@@ -53,12 +53,14 @@ function convertToGridXY(object, options = {}) {
   x -= diffX
   x = x/window.gridNodeSize
 
-
   let diffY = y % window.gridNodeSize
   y -= diffY
   y = y/window.gridNodeSize
 
-  return { x, y, diffX, diffY }
+  let width = Math.floor(object.width / window.gridNodeSize)
+  let height = Math.floor(object.height / window.gridNodeSize)
+
+  return { x, y, diffX, diffY, width, height }
 }
 
 function createGrid(gridSize, gridNodeSize = 40, start = { x: 0, y: 0 }) {
@@ -158,13 +160,14 @@ function createGridNodeAt(x, y) {
 
 function addObstacle(object, options = {}) {
   if(object.path && object.path.length) {
-    let x = object.path[0].x
-    let y = object.path[0].y
-    if(!options.silently){
-      window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-    }
-    grid[x][y].hasObstacle = true
-    return
+    //if pathfinding objects cant path through eachother
+    // let x = object.path[0].x
+    // let y = object.path[0].y
+    // if(!options.silently){
+    //   window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
+    // }
+    // grid[x][y].hasObstacle = true
+    // return
   } else if(object.tags.stationary) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - grid[0][0].x
@@ -193,11 +196,11 @@ function addObstacle(object, options = {}) {
 
 function removeObstacle(object) {
   if(object.path && object.path.length) {
-    let x = object.path[0].x
-    let y = object.path[0].y
-    window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
-    grid[x][y].hasObstacle = false
-    return
+    // let x = object.path[0].x
+    // let y = object.path[0].y
+    // window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
+    // grid[x][y].hasObstacle = false
+    // return
   } else {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - grid[0][0].x

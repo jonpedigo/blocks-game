@@ -39,7 +39,7 @@ function moveOnPath(object) {
   object.gridX = x
   object.gridY = y
 
-  if(object.gridY == object.path[0].y && object.gridX == object.path[0].x && diffX < 2 && diffY < 2) {
+  if(object.gridY == object.path[0].y && object.gridX == object.path[0].x && diffX <= 2 && diffY <= 2) {
     object.velocityX = 0
     object.velocityY = 0
     object.path.shift();
@@ -49,19 +49,21 @@ function moveOnPath(object) {
     return
   }
 
-  if(object.gridX == object.path[0].x && diffX < 2) {
+  let pathX = (object.path[0].x * window.gridNodeSize) + window.grid[0][0].x
+  let pathY = (object.path[0].y * window.gridNodeSize) + window.grid[0][0].y
+  if(object.gridX == object.path[0].x && diffX <= 2) {
     object.velocityX = 0
-  } else if(object.gridX > object.path[0].x) {
+  } else if(object.x > pathX) {
     object.velocityX = -object.speed || -100
-  } else if(object.gridX < object.path[0].x) {
+  } else if(object.x < pathX) {
     object.velocityX = object.speed || 100
   }
 
-  if(object.gridY == object.path[0].y && diffY < 2) {
+  if(object.gridY == object.path[0].y && diffY <= 2) {
     object.velocityY = 0
-  } else if(object.gridY > object.path[0].y) {
+  } else if(object.y > pathY) {
     object.velocityY = -object.speed || -100
-  } else if(object.gridY < object.path[0].y) {
+  } else if(object.y < pathY) {
     object.velocityY = object.speed || 100
   }
 }
@@ -70,9 +72,6 @@ function update(hero, objects, modifier) {
   objects.forEach((object) => {
     if(object.path && object.path.length) {
       moveOnPath(object)
-    } else if(object.path) {
-      object.velocityX = 0
-      object.velocityY = 0
     }
 
     if(object.tags && object.tags['zombie']) {
@@ -110,7 +109,7 @@ function update(hero, objects, modifier) {
         }, toPosition: {
           x: window.hero.gridX,
           y: window.hero.gridY,
-        }})
+        }}, object.pathfindingLimit)
 
         if(object.path && object.path.length) startOnPathNode(object)
       }

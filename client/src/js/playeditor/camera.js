@@ -133,6 +133,10 @@ function render(ctx, hero, objects) {
 
     drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
 
+    if(window.editingObject.pathfindingLimit) {
+      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.x * window.gridNodeSize) + window.grid[0][0].x, y: (window.editingObject.pathfindingLimit.y * window.gridNodeSize) + window.grid[0][0].y, width: window.editingObject.pathfindingLimit.width * window.gridNodeSize, height: window.editingObject.pathfindingLimit.height * window.gridNodeSize, color: 'rgba(255,255,0, .5)'})
+    }
+
     if(window.editingObject.path && window.editingObject.path.length) {
       window.editingObject.path.forEach((path) => {
         drawObject(ctx, {x: (path.x * window.gridNodeSize) + window.grid[0][0].x, y: (path.y * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize, color: 'rgba(0,255,255, .5)'})
@@ -220,10 +224,10 @@ function render(ctx, hero, objects) {
   // DRAGGING UI BOXES
   ////////////////
   ////////////////
-  if(clickStart.x && currentTool === TOOLS.ADD_OBJECT) {
+  if(window.clickStart.x && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
     drawBorder(ctx, { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)})
   }
-  if(clickStart.x && (currentTool === TOOLS.AREA_SELECTOR || currentTool === TOOLS.PROCEDURAL)) {
+  if(window.clickStart.x && (currentTool === TOOLS.AREA_SELECTOR || currentTool === TOOLS.PROCEDURAL )) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CAMERA_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT) ctx.strokeStyle = '#FFF'

@@ -107,6 +107,8 @@ const tools = {
 
       if(window.setObjectSpawnToggle.checked) {
         emitEditedObject({spawnPointX: click.x, spawnPointY: click.y})
+      } else if(window.setObjectPathfindingLimitToggle.checked) {
+        defaultFirstClick(e)
       } else if(window.selectorObjectToggle.checked){
         window.objects
         .forEach((object, i) => {
@@ -117,6 +119,19 @@ const tools = {
             window.editingObject.i = i
           })
         })
+      }
+    },
+    onSecondClick: (e) => {
+      const value = {
+        width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
+        height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
+        x: window.clickStart.x/window.scaleMultiplier,
+        y: window.clickStart.y/window.scaleMultiplier,
+      }
+
+      if(window.setObjectPathfindingLimitToggle.checked) {
+        const {x, y, width, height} = gridTool.convertToGridXY(value);
+        emitEditedObject({ pathfindingLimit: { x, y , width, height }})
       }
     }
   },
@@ -378,7 +393,7 @@ function init(ctx, objects) {
       gridTool.addObstacle(object)
     }
 
-    emitEditedObject({ tags: object.tags})
+    emitEditedObject({ tags: objectEdited.tags})
   }});
 
   var herojsoneditor = document.createElement("div")
