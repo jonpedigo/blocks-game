@@ -32,6 +32,7 @@ function convertGridToPathfindingGrid(grid, saveToWindow = true) {
     for (let y = 0; y < grid[x].length; y++) {
       if(grid[x][y].hasObstacle) {
         pfgrid.setWalkableAt(x, y, false);
+        window.resetPaths = true
       }
     }
   }
@@ -49,10 +50,15 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   const toX = toPosition.x
   const toY = toPosition.y
   const openGrid = findOpenGridNear({ position: toPosition, prioritizeNear: {x: prioritizeNear.x, y: prioritizeNear.y}, onFail})
-  var gridBackup = window.pfgrid.clone();
-  return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, gridBackup).map((path) => {
-    return {x: path[0], y: path[1]}
-  });
+  //prevents someone from trying to path find off the grid.... BREAKS CODE
+  if(toX >= 0 && toX < window.gridSize.x) {
+    if(fromY >= 0 && fromY < window.gridSize.y) {
+      var gridBackup = window.pfgrid.clone();
+      return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, gridBackup).map((path) => {
+        return {x: path[0], y: path[1]}
+      });
+    }
+  }
 }
 
 function findPath({fromPosition, toPosition}) {
@@ -138,7 +144,16 @@ function forceFindOpenGridNear({position, level = 0}){
   forceFindOpenGridNear(nextGrid.x, nextGrid.y, level++)
 }
 
-function isGridWalkable(x, y) {
+function isGridWalkable(x, y, limit) {
+  // for pathfinding with area
+  if(limit) {
+    if(x < limit.x || x > limit.x + limit.width) {
+      return false
+    }
+    if(y < limit.y || y > limit.y + limit.height) {
+      return false
+    }
+  }
   if(!window.pfgrid.nodes[y]) return false
   if(!window.pfgrid.nodes[y][x]) return false
   if(!window.pfgrid.nodes[y][x].walkable) return false
@@ -157,7 +172,7 @@ function walkAround(object) {
 
   if(random <= .25) {
     if(direction !=='left'){
-      if ( isGridWalkable(x + 1, y) ){
+      if ( isGridWalkable(x + 1, y, object.pathfindingLimit) ){
         object.direction = 'right'
         return { x: x + 1, y: y}
       }
@@ -165,7 +180,7 @@ function walkAround(object) {
   } else if(random > .25 && random <= .5) {
     // go left
     if(direction !== 'right') {
-      if ( isGridWalkable(x - 1, y) ) {
+      if ( isGridWalkable(x - 1, y, object.pathfindingLimit) ) {
         object.direction = 'left'
         return { x: x - 1, y: y}
       }
@@ -173,7 +188,7 @@ function walkAround(object) {
   } else if(random >= .5 && random < .75) {
     // go down
     if(direction !== 'up') {
-      if ( isGridWalkable(x, y + 1) ) {
+      if ( isGridWalkable(x, y + 1, object.pathfindingLimit) ) {
         object.direction = 'down'
         return { x: x, y: y + 1}
       }
@@ -181,16 +196,16 @@ function walkAround(object) {
   } else if(random >= .75) {
     // go up
     if(direction !== 'down') {
-      if ( isGridWalkable(x, y - 1) ){
+      if ( isGridWalkable(x, y - 1, object.pathfindingLimit) ){
         object.direction = 'up'
         return { x: x, y: y - 1}
       }
     }
   }
 
-  // random failed, find somewhere to move
+  // directional movement failed, find somewhere to move
   object.direction = ''
-  console.log('couldnt do rando movement, finding space')
+  console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
     { x, y: y-1},
     { x: x+1, y},
@@ -198,9 +213,8 @@ function walkAround(object) {
     { x: x-1, y},
   ])
 
-
   for (let i = 0; i < nearbyGrids.length; i++) {
-    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y)) {
+    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, object.pathfindingLimit)) {
       return nearbyGrids[i]
     }
   }

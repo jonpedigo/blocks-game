@@ -17,9 +17,8 @@
     <hr/>
 
     <div id='tool-heroEditor' class="tool-feature invisible">
-      <button id='get-hero'>Get Hero</button>
-      <button id='set-hero-pos'>Set Hero Pos</button>
-      <button id='set-hero'>Set Hero Other</button>
+      <button id='send-hero-pos'>Send Hero Pos</button>
+      <button id='send-hero'>Send Hero Other</button>
       <hr>
       <button id='find-hero'>Find Hero</button>
       <button id='respawn-hero'>Respawn Hero</button>
@@ -62,10 +61,13 @@
       <button id='clear-game-boundaries'>clear game boundaries</button>
     </div>
 
-    <div id='tool-simpleEditor' class="tool-feature invisible">
+    <div id='tool-objectEditor' class="tool-feature invisible">
       <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
-      <div><input type='checkbox' id='click-to-set-spawn-object'>Click to set spawn</input></div>
       <div><button id='delete-object'>Delete Object</button></div>
+      <hr>
+      <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
+      <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
+      <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
       <hr>
       <div id='modifier-select'></div>
     </div>

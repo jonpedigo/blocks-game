@@ -65,7 +65,7 @@ function init() {
     })
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
-      if(window.editingObject.i) {
+      if(window.editingObject.i >= 0) {
         Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
       }
     })
@@ -87,6 +87,7 @@ function init() {
     Object.assign(window.grid[gridPos.x][gridPos.y], update)
     if(window.pfgrid && update.hasObstacle !== undefined) {
       window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
+      window.resetPaths = true
     }
   })
 

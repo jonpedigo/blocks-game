@@ -124,14 +124,20 @@ function render(ctx, hero, objects) {
   // EDITING OBJECT SETTINGS
   ////////////////
   ////////////////
-  if(window.editingObject.id) {
+  if(window.editingObject.id && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
     let object = window.editingObject
 
-    if(object.gridX) {
-      drawObject(ctx, {color: '#BBB', x: (object.gridX * window.gridNodeSize) + window.grid[0][0].x, y: (object.gridY * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize})
-    }
+    // if(object.gridX) {
+    //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.gridNodeSize) + window.grid[0][0].x, y: (object.gridY * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize})
+    // }
 
-    drawObject(ctx, {...object, color: 'blue'})
+    drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
+
+    if(window.editingObject.path && window.editingObject.path.length) {
+      window.editingObject.path.forEach((path) => {
+        drawObject(ctx, {x: (path.x * window.gridNodeSize) + window.grid[0][0].x, y: (path.y * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize, color: 'rgba(0,255,255, .5)'})
+      })
+    }
   }
 
   ////////////////
@@ -177,7 +183,7 @@ function render(ctx, hero, objects) {
   ////////////////
   ctx.fillStyle = 'white';
   for(var heroId in window.heros) {
-    if(heroId === window.editingHero.id) {
+    if(heroId === window.editingHero.id && window.currentTool == window.TOOLS.HERO_EDITOR) {
       drawObject(ctx, {...window.heros[heroId], color: '#0A0'});
     } else {
       drawObject(ctx, {...window.heros[heroId], color: 'white'});
@@ -272,11 +278,15 @@ function render(ctx, hero, objects) {
     }
   }
 
-  if(window.editingHero.spawnPointX) {
+  if(window.editingHero.spawnPointX && window.currentTool == window.TOOLS.HERO_EDITOR) {
     drawObject(ctx, {x: window.editingHero.spawnPointX, y: window.editingHero.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
     drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
   }
 
+  if(window.editingObject.spawnPointX && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+    drawObject(ctx, {x: window.editingObject.spawnPointX, y: window.editingObject.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
+    drawObject(ctx, {x: window.editingObject.spawnPointX - 205, y: window.editingObject.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
+  }
 }
 
 function setCameraHeroX(ctx, hero) {

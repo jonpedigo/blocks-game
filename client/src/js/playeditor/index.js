@@ -21,7 +21,7 @@ window.mousePos = {
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
   AREA_SELECTOR: 'areaSelector',
-  SIMPLE_EDITOR: 'simpleEditor',
+  SIMPLE_EDITOR: 'objectEditor',
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
   UNIVERSE_VIEW: 'universeView',
@@ -105,13 +105,9 @@ const tools = {
         height: 1,
       }
 
-      if(clickToSetObjectSpawnToggle.checked) {
-        let editingObject = simpleeditor.get()
-        Object.assign(editingObject, {spawnPointX: click.x, spawnPointY: click.y})
-        simpleeditor.set(editingObject)
-        simpleeditor.expandAll()
-        emitEditedObject(editingObject)
-      } else {
+      if(window.setObjectSpawnToggle.checked) {
+        emitEditedObject({spawnPointX: click.x, spawnPointY: click.y})
+      } else if(window.selectorObjectToggle.checked){
         window.objects
         .forEach((object, i) => {
           collisions.checkObject(click, object, () => {
@@ -313,7 +309,7 @@ function init(ctx, objects) {
       heroeditor.set(editorState)
       heroeditor.expandAll()
       // this is what sync should mean. Does every edit send immediately?
-      if(true) setHero(editorState)
+      if(true) sendHero()
     }
     heroModSelectEl.appendChild(modEl)
   }
@@ -359,12 +355,8 @@ function init(ctx, objects) {
     modEl.className = 'button';
     modEl.innerHTML = 'heroUpdate - ' + modifierName
     modEl.onclick=function() {
-      let editorState = simpleeditor.get()
-      editorState.heroUpdate = modifiers[modifierName]
-      simpleeditor.set(editorState)
-      simpleeditor.expandAll()
       // this is what sync should mean. Does every edit send immediately?
-      if(true) emitEditedObject(editorState)
+      if(true) emitEditedObject({ heroUpdate : modifiers[modifierName]})
     }
     modSelectEl.appendChild(modEl)
   }
@@ -376,21 +368,17 @@ function init(ctx, objects) {
   var simplejsoneditor = document.createElement("div")
   simplejsoneditor.id = 'simplejsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
-  window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
-    // this is what sync should mean. Does every edit send immediately?
-    console.log(window.editingObject.tags.stationary, object.tags.stationary)
+  window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (objectEdited) => {
+    let object = window.objects[window.editingObject.i]
 
     if((object.tags.obstacle == false && window.editingObject.tags.obstacle == true) || (object.tags.stationary == false && window.editingObject.tags.stationary == true)) {
       gridTool.removeObstacle(object)
     }
     if((object.tags.obstacle == true && window.editingObject.tags.obstacle == false) || (object.tags.stationary == true && window.editingObject.tags.stationary == false)) {
-      let gridPos = gridTool.addObstacle(object)
-      if(gridPos) {
-        object.gridX = gridPos.x
-        object.gridY = gridPos.y
-      }
+      gridTool.addObstacle(object)
     }
-    emitEditedObject(object)
+
+    emitEditedObject({ tags: object.tags})
   }});
 
   var herojsoneditor = document.createElement("div")
@@ -398,7 +386,7 @@ function init(ctx, objects) {
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
   window.heroeditor = new JSONEditor(herojsoneditor, { onChangeJSON: (object) => {
     // this is what sync should mean. Does every edit send immediately?
-    setHero()
+    // sendHero()
   }});
 
 
@@ -471,12 +459,10 @@ function init(ctx, objects) {
   //HERO_VIEW BUTTONS
   /////////////////////
   /////////////////////
-  var getHeroButton = document.getElementById("get-hero")
-  getHeroButton.addEventListener('click', window.getEditingHero)
-  var setHeroButton = document.getElementById("set-hero")
-  setHeroButton.addEventListener('click', setHero)
-  var setHeroPosButton = document.getElementById("set-hero-pos")
-  setHeroPosButton.addEventListener('click', setHeroPos)
+  var sendHeroButton = document.getElementById("send-hero")
+  sendHeroButton.addEventListener('click', sendHero)
+  var sendHeroPosButton = document.getElementById("send-hero-pos")
+  sendHeroPosButton.addEventListener('click', sendHeroPos)
   var findHeroButton = document.getElementById("find-hero");
   findHeroButton.addEventListener('click', window.findHero)
   var respawnHeroButton = document.getElementById("respawn-hero");
@@ -505,14 +491,14 @@ function init(ctx, objects) {
   var zoomInButton = document.getElementById("hero-zoomIn");
   zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/1.1 }))
 
-  function setHero() {
+  function sendHero() {
     let hero = heroeditor.get()
     const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
     delete heroCopy.y
     window.socket.emit('updateHero', heroCopy)
   }
-  function setHeroPos() {
+  function sendHeroPos() {
     let hero = heroeditor.get()
     window.socket.emit('updateHero', { id: hero.id, x: hero.x, y: hero.y })
   }
@@ -556,7 +542,9 @@ function init(ctx, objects) {
   if(window.preferences.syncObjects) {
     syncObjectsToggle.checked = true;
   }
-  window.clickToSetObjectSpawnToggle = document.getElementById('click-to-set-spawn-object')
+  window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
+  window.selectorObjectToggle = document.getElementById('select-object')
+  window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
 
   var saveObjects = document.getElementById("save-factory");
   saveObjects.addEventListener('click', function(e){
@@ -724,12 +712,8 @@ function init(ctx, objects) {
 //   window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
 // }
 
-function emitEditedObject(object) {
-  let objectCopy = {...object}
-  delete objectCopy.x
-  delete objectCopy.y
-  delete objectCopy.velocityX
-  delete objectCopy.velocityY
+function emitEditedObject(objectUpdate) {
+  let objectCopy = { ...objectUpdate }
   Object.assign(window.editingObject, objectCopy)
   Object.assign(window.objects[window.editingObject.i], objectCopy)
   window.socket.emit('editObjects', window.objects)

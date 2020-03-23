@@ -27,10 +27,11 @@ function startOnPathNode(object) {
     //   return
     // }
 
-    window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: false})
-    window.grid[object.gridX][object.gridY].hasObstacle = false
-    window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: true})
-    window.grid[object.gridX][object.gridY].hasObstacle = true
+    // if its really important that paths dont cross......
+    // window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: false})
+    // window.grid[object.gridX][object.gridY].hasObstacle = false
+    // window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: true})
+    // window.grid[object.path[0].x][object.path[0].y].hasObstacle = true
   }
 }
 function moveOnPath(object) {
@@ -42,7 +43,7 @@ function moveOnPath(object) {
     object.velocityX = 0
     object.velocityY = 0
     object.path.shift();
-    if(object.path > 1) {
+    if(object.path.length >= 1) {
       startOnPathNode(object)
     }
     return
@@ -69,6 +70,9 @@ function update(hero, objects, modifier) {
   objects.forEach((object) => {
     if(object.path && object.path.length) {
       moveOnPath(object)
+    } else if(object.path) {
+      object.velocityX = 0
+      object.velocityY = 0
     }
 
     if(object.tags && object.tags['zombie']) {
@@ -91,7 +95,7 @@ function update(hero, objects, modifier) {
     }
 
     if(object.tags && object.tags['homing']) {
-      if(!object.path || (object.path && !object.path.length)) {
+      if(window.resetPaths || !object.path || (object.path && !object.path.length)) {
         const { x, y } = gridTool.convertToGridXY(object)
         object.gridX = x
         object.gridY = y

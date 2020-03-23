@@ -217,6 +217,7 @@ var update = function (delta) {
       grid.update(window.hero, window.objects)
     }
     intelligence.update(window.hero, window.objects, delta)
+    window.resetPaths = false
   }
 
   /// zoom targets
