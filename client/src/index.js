@@ -1,13 +1,17 @@
 // Drop blocks like walls to design their own level
 // BASICALLY I NEEED A RELIABLE WAY TO SET CAMERA, GRID, GAME WORLD, ALL TO THE SAME THING
 
-// console log saved world so I can copy it to a file
+// console log saved world so I can copy it to a file - dont save grid, regenerate grid
 // attack button ( like papa bear spears!! )
 // RELATED ^ button management
 // grid pathfinding will break if two obstacles are on same grid ... Can we layer..?
 // set game boundaries to delete objects - default game boundaries with a default grid..
 // make it easier for admin to move objects
 // TRUE zelda camera work
+
+// death by jump
+
+// satisfying death animations? satisfing death states or idk.. things?
 
 //--------
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
@@ -42,6 +46,7 @@ import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 import sockets from './js/sockets.js'
 import constellation from './js/constellation.js'
+import pathfinding from './js/pathfinding.js'
 
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
@@ -305,7 +310,7 @@ var render = function () {
 
 // The main game loop
 var main = function () {
-  if(!window.objects || !window.preferences || !window.grid || Object.keys(window.heros).length === 0) {
+  if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return
   }
@@ -328,6 +333,9 @@ var main = function () {
 
 		// physics.drawSystem(ctx, hero)
   }
+
+  grid.updateGridObstacles()
+  window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
 
 	then = now;
 

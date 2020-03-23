@@ -17,13 +17,13 @@ function init(){
 
     if(window.hero.arrowKeysBehavior === 'grid') {
       if (38 in keysDown) { // Player holding up
-        window.hero.y -= window.grid.gridNodeSize
+        window.hero.y -= window.grid.nodeSize
       } else if (40 in keysDown) { // Player holding down
-        window.hero.y += window.grid.gridNodeSize
+        window.hero.y += window.grid.nodeSize
       } else if (37 in keysDown) { // Player holding left
-        window.hero.x -= window.grid.gridNodeSize
+        window.hero.x -= window.grid.nodeSize
       } else if (39 in keysDown) { // Player holding right
-        window.hero.x += window.grid.gridNodeSize
+        window.hero.x += window.grid.nodeSize
       }
     }
 

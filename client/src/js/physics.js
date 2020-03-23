@@ -73,19 +73,19 @@ function updatePosition(object, delta) {
 
 function containObjectWithinGridBoundaries(object) {
   //CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x) {
-    object.x = (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x - object.width
+  if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+    object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
   }
-  if(object.y + object.height > (window.gridNodeSize * window.gridSize.y) + window.grid[0][0].y) {
-    object.y = (window.gridNodeSize * window.gridSize.y) + window.grid[0][0].y - object.height
-  }
-
-  if(object.x < window.grid[0][0].x) {
-    object.x = window.grid[0][0].x
+  if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+    object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
   }
 
-  if(object.y < window.grid[0][0].y) {
-    object.y = window.grid[0][0].y
+  if(object.x < window.grid.startX) {
+    object.x = window.grid.startX
+  }
+
+  if(object.y < window.grid.startY) {
+    object.y = window.grid.startY
   }
 }
 

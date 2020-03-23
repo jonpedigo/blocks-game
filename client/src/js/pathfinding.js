@@ -32,13 +32,9 @@ function convertGridToPathfindingGrid(grid, saveToWindow = true) {
     for (let y = 0; y < grid[x].length; y++) {
       if(grid[x][y].hasObstacle) {
         pfgrid.setWalkableAt(x, y, false);
-        window.resetPaths = true
+        // window.resetPaths = true
       }
     }
-  }
-
-  if(saveToWindow) {
-    window.pfgrid = pfgrid
   }
 
   return pfgrid;
@@ -51,8 +47,8 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   const toY = toPosition.y
   const openGrid = findOpenGridNear({ position: toPosition, prioritizeNear: {x: prioritizeNear.x, y: prioritizeNear.y}, onFail})
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(toX >= 0 && toX < window.gridSize.x) {
-    if(fromY >= 0 && fromY < window.gridSize.y) {
+  if(toX >= 0 && toX < window.grid.width) {
+    if(fromY >= 0 && fromY < window.grid.height) {
       var gridBackup = window.pfgrid.clone();
       return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, gridBackup).map((path) => {
         return {x: path[0], y: path[1]}
@@ -80,8 +76,8 @@ function findPath({fromPosition, toPosition}, pathfindingLimit) {
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(toX >= 0 && toX < window.gridSize.x) {
-    if(fromY >= 0 && fromY < window.gridSize.y) {
+  if(toX >= 0 && toX < window.grid.width) {
+    if(fromY >= 0 && fromY < window.grid.height) {
       var gridBackup = window.pfgrid.clone();
       return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
         return {x: path[0], y: path[1]}
@@ -95,7 +91,7 @@ function findPath({fromPosition, toPosition}, pathfindingLimit) {
 function findOpenGridNear({ position, onlySurrounding = false, prioritizeNear, onFail = () => {} }){
   const { x, y } = position
 
-  window.pfgrid = _convertGridToPathfindingGrid(window.grid)
+  window.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
   // console.log('looking for open grid near', x, y)
 
   if(!onlySurrounding && isGridWalkable(x, y)) return { x, y }
@@ -128,7 +124,7 @@ function forceFindOpenGridNear({position, level = 0}){
   const {x, y} = position
 
   if(level == 0) {
-    window.pfgrid = _convertGridToPathfindingGrid(window.grid)
+    window.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
   }
 
   console.log('looking for open grid near', x, y)

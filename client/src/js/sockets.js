@@ -64,6 +64,9 @@ function init() {
       window.objects = []
     })
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
+      if(!window.objects) {
+        window.socket.emit('askGrid');
+      }
       window.objects = objectsUpdated
       if(window.editingObject.i >= 0) {
         Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
@@ -72,7 +75,6 @@ function init() {
     window.socket.on('onAddObjects', (objects) => {
       if(!window.objects) {
         console.log('already set objects..? - editor')
-
         window.objects = objects
         window.socket.emit('askGrid');
       }
@@ -207,12 +209,11 @@ function init() {
     window.socket.emit('updatePreferences', window.preferences)
   })
 
-  window.socket.on('onUpdateGrid', (grid, gridNodeSize, gridSize) => {
+  window.socket.on('onUpdateGrid', (grid) => {
     window.grid = grid
-    window.gridSize = gridSize
-    window.gridNodeSize = gridNodeSize
+    window.grid.nodes = gridTool.generateGridNodes(grid)
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     gridTool.updateGridObstacles({silently: true})
-    pathfinding.convertGridToPathfindingGrid(window.grid)
   })
 
   window.socket.on('onDeleteHero', (id) => {

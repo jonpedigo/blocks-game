@@ -18,9 +18,13 @@ let herosockets = {
 
 }
 let serverState = []
-let grid = require('./defaultGrid');
-let gridNodeSize = 40
-let gridSize = { x: 50, y: 50}
+let grid = {
+  width: 50,
+  height: 50,
+  nodeSize: 40,
+  startX: 0,
+  startY: 0,
+}
 let preferences = {
 
 }
@@ -41,8 +45,6 @@ io.on('connection', function(socket){
       heros,
       preferences,
       grid,
-      gridNodeSize,
-      gridSize,
     };
 
     if(!preferences.shouldRestoreHero && !preferences.isAsymmetric) {
@@ -83,9 +85,7 @@ io.on('connection', function(socket){
       serverState = obj.objects
       heros = obj.heros
       preferences = obj.preferences
-      grid = obj.grid || []
-      gridNodeSize = obj.gridNodeSize || 40
-      gridSize = obj.gridSize || { x: 50, y: 50 }
+      grid = obj.grid || grid
       io.emit('onSetWorld', obj)
     }});
   })
@@ -168,20 +168,18 @@ io.on('connection', function(socket){
     io.emit('onSnapAllObjectsToGrid', hero)
   })
 
-  socket.on('updateGrid', (gridIn, gridNodeSizeIn, gridSizeIn) => {
+  socket.on('updateGrid', (gridIn) => {
     grid = gridIn
-    gridNodeSize = gridNodeSizeIn
-    gridSize = gridSizeIn
-    io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+    io.emit('onUpdateGrid', gridIn)
   })
 
-  socket.on('updateGridNode', (gridPos, update) => {
-    Object.assign(grid[gridPos.x][gridPos.y], update)
-    io.emit('onUpdateGridNode', gridPos, update)
-  })
+  // socket.on('updateGridNode', (gridPos, update) => {
+  //   Object.assign(grid[gridPos.x][gridPos.y], update)
+  //   io.emit('onUpdateGridNode', gridPos, update)
+  // })
 
   socket.on('askGrid', () => {
-    io.emit('onUpdateGrid', grid, gridNodeSize, gridSize)
+    io.emit('onUpdateGrid', grid)
   })
 });
 

@@ -24,7 +24,7 @@ function drawObject(ctx, object, withNames = false) {
 
 // function drawGrid(ctx, object) {
 //   let thickness = .3
-//   if(object.x % (window.gridNodeSize * 10) === 0 && object.y % (window.gridNodeSize * 10) === 0) {
+//   if(object.x % (window.grid.nodeSize * 10) === 0 && object.y % (window.grid.nodeSize * 10) === 0) {
 //     thickness = .8
 //   }
 //   ctx.strokeStyle = "#999";
@@ -80,41 +80,38 @@ function render(ctx, hero, objects) {
   // GRID
   ////////////////
   ////////////////
-  if(window.grid && grid[0] && grid[0][0]) {
-    let startGrid = grid[0][0]
-    let startX = startGrid.x
-    let startY = startGrid.y
-    let height = window.gridNodeSize * window.gridSize.y
-    let width = window.gridNodeSize * window.gridSize.x
+  if(window.grid) {
+    let height = window.grid.nodeSize * window.grid.height
+    let width = window.grid.nodeSize * window.grid.width
 
     ctx.strokeStyle = "#999";
-    for(var x = 0; x < window.gridSize.x; x++) {
+    for(var x = 0; x < window.grid.width; x++) {
       ctx.lineWidth = .3
       if(x % 10 === 0) {
         ctx.lineWidth = .8
       }
 
       drawVertice(ctx, {a: {
-        x: startX + (x * window.gridNodeSize),
-        y: startY,
+        x: window.grid.startX + (x * window.grid.nodeSize),
+        y: window.grid.startY,
       },
       b: {
-        x: startX + (x * window.gridNodeSize),
-        y: startY + height,
+        x: window.grid.startX + (x * window.grid.nodeSize),
+        y: window.grid.startY + height,
       }})
     }
-    for(var y = 0; y < window.gridSize.y; y++) {
+    for(var y = 0; y < window.grid.height; y++) {
       ctx.lineWidth = .3
       if(y % 10 === 0) {
         ctx.lineWidth = .8
       }
       drawVertice(ctx, {a: {
-        x: startX,
-        y: startY + (y * window.gridNodeSize),
+        x: window.grid.startX,
+        y: window.grid.startY + (y * window.grid.nodeSize),
       },
       b: {
-        x: startX + width,
-        y: startY + (y * window.gridNodeSize),
+        x: window.grid.startX + width,
+        y: window.grid.startY + (y * window.grid.nodeSize),
       }})
     }
   }
@@ -128,18 +125,18 @@ function render(ctx, hero, objects) {
     let object = window.editingObject
 
     // if(object.gridX) {
-    //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.gridNodeSize) + window.grid[0][0].x, y: (object.gridY * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize})
+    //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.grid.nodeSize) + window.grid.startX, y: (object.gridY * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize})
     // }
 
     drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
 
     if(window.editingObject.pathfindingLimit) {
-      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.x * window.gridNodeSize) + window.grid[0][0].x, y: (window.editingObject.pathfindingLimit.y * window.gridNodeSize) + window.grid[0][0].y, width: window.editingObject.pathfindingLimit.width * window.gridNodeSize, height: window.editingObject.pathfindingLimit.height * window.gridNodeSize, color: 'rgba(255,255,0, .5)'})
+      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.x * window.grid.nodeSize) + window.grid.startX, y: (window.editingObject.pathfindingLimit.y * window.grid.nodeSize) + window.grid.startY, width: window.editingObject.pathfindingLimit.width * window.grid.nodeSize, height: window.editingObject.pathfindingLimit.height * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
     }
 
     if(window.editingObject.path && window.editingObject.path.length) {
       window.editingObject.path.forEach((path) => {
-        drawObject(ctx, {x: (path.x * window.gridNodeSize) + window.grid[0][0].x, y: (path.y * window.gridNodeSize) + window.grid[0][0].y, width: window.gridNodeSize, height: window.gridNodeSize, color: 'rgba(0,255,255, .5)'})
+        drawObject(ctx, {x: (path.x * window.grid.nodeSize) + window.grid.startX, y: (path.y * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
       })
     }
   }
@@ -204,12 +201,12 @@ function render(ctx, hero, objects) {
       nodeRow.forEach((node) => {
         if(node.walkable == false) {
           drawVertice(ctx, {a: {
-            x: (node.x * window.gridNodeSize) + window.grid[0][0].x,
-            y: (node.y * window.gridNodeSize) + window.grid[0][0].y,
+            x: (node.x * window.grid.nodeSize) + window.grid.startX,
+            y: (node.y * window.grid.nodeSize) + window.grid.startY,
           },
           b: {
-            x: (node.x * window.gridNodeSize) + window.gridNodeSize + window.grid[0][0].x,
-            y: (node.y * window.gridNodeSize) + window.gridNodeSize + window.grid[0][0].y,
+            x: (node.x * window.grid.nodeSize) + window.grid.nodeSize + window.grid.startX,
+            y: (node.y * window.grid.nodeSize) + window.grid.nodeSize + window.grid.startY,
           }, color: 'red'})
         }
       })

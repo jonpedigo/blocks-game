@@ -217,8 +217,8 @@ const tools = {
         const { x, y } = gridTool.createGridNodeAt(click.x, click.y)
         let newObject = {
           id: 'object' + Date.now(),
-          width: window.gridNodeSize,
-          height: window.gridNodeSize,
+          width: window.grid.nodeSize,
+          height: window.grid.nodeSize,
           x: x,
           y: y,
           color: 'white',
@@ -229,8 +229,8 @@ const tools = {
         if(window.dotAddToggle.checked) {
           newObject.width = Number(document.getElementById('add-dot-size').value)
           newObject.height = Number(document.getElementById('add-dot-size').value)
-          newObject.x += (window.gridNodeSize/2 - newObject.width/2)
-          newObject.y += (window.gridNodeSize/2 - newObject.height/2)
+          newObject.x += (window.grid.nodeSize/2 - newObject.width/2)
+          newObject.y += (window.grid.nodeSize/2 - newObject.height/2)
         }
 
         for(let tag in window.tags) {
@@ -446,7 +446,7 @@ function init(ctx, objects) {
   newWorldButton.addEventListener('click', () => {
     window.resetObjects()
     window.socket.emit('resetPreferences')
-    window.socket.emit('updateGrid', gridTool.createGrid({x: 50, y: 50}), window.gridNodeSize || 40, {x: 50, y: 50})
+    window.socket.emit('updateGrid', { width: 50, height: 50, startX: 0, startY: 0, nodeSize: 40})
     for(var heroId in window.heros) {
       window.socket.emit('resetHero', window.heros[heroId])
     }
@@ -628,22 +628,23 @@ function init(ctx, objects) {
   }
 
   window.createGrid = function() {
-    if(!window.gridSize.x || !window.gridSize.x || !window.gridNodeSize) return
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
-    let w = Math.floor(width / (window.gridNodeSize))
-    let h = Math.floor(height / (window.gridNodeSize))
-
-    let gridSize = { x: w, y: h };
-    let grid = gridTool.createGrid(gridSize, window.gridNodeSize, { x, y })
-    window.socket.emit('updateGrid', grid, window.gridNodeSize, gridSize)
+    let w = Math.floor(width / (window.grid.nodeSize))
+    let h = Math.floor(height / (window.grid.nodeSize))
+    window.grid.width = w
+    window.grid.height = h
+    window.grid.startX = x
+    window.grid.startY = y
+    window.grid.nodes = gridTool.generateGridNodes(window.grid)
+    window.socket.emit('updateGrid', window.grid)
   }
 
   function createMaze() {
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
-    let w = Math.floor(width / (window.gridNodeSize * window.mazeWidthMultiplier)/2)
-    let h = Math.floor(height / (window.gridNodeSize * window.mazeWidthMultiplier)/2)
+    let w = Math.floor(width / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
+    let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
     let maze = procedural.genMaze(w, h, x, y)
     window.socket.emit('addObjects', maze)

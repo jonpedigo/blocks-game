@@ -10,10 +10,10 @@ function init(hero, objects){
 
 function cancelPathNode(object) {
   if(object.tags && object.tags.obstacle) {
-    window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: true})
-    window.grid[object.gridX][object.gridY].hasObstacle = true
-    window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: false})
-    window.grid[object.path[0].x][object.path[0].y].hasObstacle = false
+    // window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: true})
+    // window.grid.nodes[object.gridX][object.gridY].hasObstacle = true
+    // window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: false})
+    // window.grid.nodes[object.path[0].x][object.path[0].y].hasObstacle = false
   }
 }
 
@@ -21,17 +21,17 @@ function startOnPathNode(object) {
   if(object.tags && object.tags.obstacle) {
     // if(object.path.length > 1) {
     //   window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: false})
-    //   window.grid[object.path[0].x][object.path[0].y].hasObstacle = false
+    //   window.grid.nodes[object.path[0].x][object.path[0].y].hasObstacle = false
     //   window.socket.emit('updateGridNode', {x: object.path[1].x, y: object.path[1].y}, {hasObstacle: true})
-    //   window.grid[object.path[1].x][object.path[1].y].hasObstacle = true
+    //   window.grid.nodes[object.path[1].x][object.path[1].y].hasObstacle = true
     //   return
     // }
 
     // if its really important that paths dont cross......
     // window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: false})
-    // window.grid[object.gridX][object.gridY].hasObstacle = false
+    // window.grid.nodes[object.gridX][object.gridY].hasObstacle = false
     // window.socket.emit('updateGridNode', {x: object.path[0].x, y: object.path[0].y}, {hasObstacle: true})
-    // window.grid[object.path[0].x][object.path[0].y].hasObstacle = true
+    // window.grid.nodes[object.path[0].x][object.path[0].y].hasObstacle = true
   }
 }
 function moveOnPath(object) {
@@ -49,8 +49,8 @@ function moveOnPath(object) {
     return
   }
 
-  let pathX = (object.path[0].x * window.gridNodeSize) + window.grid[0][0].x
-  let pathY = (object.path[0].y * window.gridNodeSize) + window.grid[0][0].y
+  let pathX = (object.path[0].x * window.grid.nodeSize) + window.grid.nodes[0][0].x
+  let pathY = (object.path[0].y * window.grid.nodeSize) + window.grid.nodes[0][0].y
   if(object.gridX == object.path[0].x && diffX <= 2) {
     object.velocityX = 0
   } else if(object.x > pathX) {
@@ -136,9 +136,9 @@ function update(hero, objects, modifier) {
 
         if(x !== object.gridX || y !== object.gridY) {
           // window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: false})
-          // window.grid[object.gridX][object.gridY].hasObstacle = false
+          // window.grid.nodes[object.gridX][object.gridY].hasObstacle = false
           // window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-          // window.grid[x][y].hasObstacle = true
+          // window.grid.nodes[x][y].hasObstacle = true
 
           object.gridX = x
           object.gridY = y

@@ -12,7 +12,7 @@ function genMaze (width = 10, height = 10, xOff, yOff) {
       if(cell.isBroken) {
         return null
       } else if(cell.position) {
-        return {id: Date.now() + '-maze-' + y + ',' + x, x: xOff + cell.position[0] * (window.gridNodeSize * mazeWidthMultiplier), y: yOff + cell.position[1] * (window.gridNodeSize * mazeWidthMultiplier), width: (window.gridNodeSize * mazeWidthMultiplier), height: (window.gridNodeSize * mazeWidthMultiplier), tags: { obstacle: true }}
+        return {id: Date.now() + '-maze-' + y + ',' + x, x: xOff + cell.position[0] * (window.grid.nodeSize * mazeWidthMultiplier), y: yOff + cell.position[1] * (window.grid.nodeSize * mazeWidthMultiplier), width: (window.grid.nodeSize * mazeWidthMultiplier), height: (window.grid.nodeSize * mazeWidthMultiplier), tags: { obstacle: true }}
       }
     }).filter((cell) => !!cell))
 
