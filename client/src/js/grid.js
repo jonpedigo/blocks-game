@@ -175,7 +175,6 @@ function addObstacle(object, options = {}) {
   //   // grid[x][y].hasObstacle = true
   //   // return
   // } else if(true) {
-    snapObjectToGrid(object)
 
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
@@ -240,7 +239,6 @@ function removeObstacle(object) {
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        console.log(currentx, currenty)
         emitObstacleUpdate(currentx, currenty, false)
       }
     }

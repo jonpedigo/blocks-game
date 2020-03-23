@@ -264,6 +264,8 @@ const tools = {
         heroUpdate: {},
       }
 
+      snapObjectToGrid(newObject)
+
       for(let tag in tags) {
         if(tags[tag].checked){
           newObject.tags[tag] = true
