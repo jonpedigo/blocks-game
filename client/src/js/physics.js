@@ -220,7 +220,6 @@ function update (hero, objects, delta) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
           correction.y -= result.overlap * result.overlap_y
-          break;
         }
       }
     }

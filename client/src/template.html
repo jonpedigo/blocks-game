@@ -36,8 +36,11 @@
 
     <div id='tool-addObject' class="tool-feature invisible">
       <button id='save-factory'>save factory</button>
-      <div><input type='checkbox' id='instant-grid-add'>instant grid add</input></div>
-      <div><input type='checkbox' id='instant-add'>instant add</input></div>
+      <div><input type='radio' name="add-object" checked id='add-object-grid-node'>grid node add</input></div>
+      <div><input type='radio' name="add-object" checked id='add-object-dot'>little dot</input></div>
+      <div><input type='radio' name="add-object" checked id='add-object-drag'>drag</input></div>
+      <hr>
+      <div><input type='checkbox' checked id='instant-add'>send instantly</input></div>
       <hr>
       <div id="tag-select">
       </div>

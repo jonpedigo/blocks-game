@@ -57,7 +57,7 @@ window.editingHero = {
 window.simpleeditor = null
 window.heroeditor = null
 
-window.instantGridAddToggle = true
+window.gridNodeAddToggle = true
 window.instantAddToggle = false
 window.selectorGameToggle = false
 window.selectorProceduralToggle = false
@@ -206,33 +206,50 @@ const tools = {
   },
   [TOOLS.ADD_OBJECT] : {
     onFirstClick: (e) => {
-      if(instantGridAddToggle.checked) {
+      if(window.dragAddToggle.checked) {
+        defaultFirstClick(e)
+      } else {
         const click = {
           x: (e.offsetX + window.camera.x)/window.scaleMultiplier,
           y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
-        let object = gridTool.createGridNodeAt(click.x, click.y)
-        object.tags = {}
-        object.id = 'object' + Date.now()
-        object.heroUpdate = {}
+
+        let newObject = {
+          id: 'object' + Date.now(),
+          width: window.gridNodeSize,
+          height: window.gridNodeSize,
+          x: click.x,
+          y: click.y,
+          color: 'white',
+          tags: {},
+          heroUpdate: {},
+        }
+
+        if(window.dotAddToggle.checked) {
+          const { x, y } = gridTool.createGridNodeAt(newObject.x, newObject.y )
+          newObject.width = 5
+          newObject.height = 5
+          newObject.x = x + (window.gridNodeSize/2 - newObject.width/2)
+          newObject.y = y + (window.gridNodeSize/2 - newObject.height/2)
+        }
+
         for(let tag in window.tags) {
           if(window.tags[tag].checked){
-            object.tags[tag] = true
+            newObject.tags[tag] = true
           } else {
-            object.tags[tag] = false
+            newObject.tags[tag] = false
           }
         }
 
-        if(object.tags.obstacle) {
-          let gridPos = gridTool.addObstacle(object)
-          if(gridPos) {
-            object.gridX = gridPos.x
-            object.gridY = gridPos.y
-          }
+        if(newObject.tags.obstacle) {
+          let gridPos = gridTool.addObstacle(newObject)
         }
-        window.socket.emit('addObjects', [object])
-      } else {
-        defaultFirstClick(e)
+
+        if(instantAddToggle.checked) {
+          window.socket.emit('addObjects', [newObject])
+        } else {
+          window.objectFactory.push(newObject)
+        }
       }
     },
     onSecondClick: (e) => {
@@ -255,12 +272,8 @@ const tools = {
         }
       }
 
-      if(object.tags.obstacle) {
-        let gridPos = gridTool.addObstacle(object)
-        if(gridPos) {
-          object.gridX = gridPos.x
-          object.gridY = gridPos.y
-        }
+      if(newObject.tags.obstacle) {
+        gridTool.addObstacle(newObject)
       }
 
       if(instantAddToggle.checked) {
@@ -567,9 +580,11 @@ function init(ctx, objects) {
     window.objectFactory = []
   })
 
-  window.instantGridAddToggle = document.getElementById("instant-grid-add")
+  window.gridNodeAddToggle = document.getElementById("add-object-grid-node")
+  window.dragAddToggle = document.getElementById("add-object-drag")
+  window.dotAddToggle = document.getElementById("add-object-dot")
   window.instantAddToggle = document.getElementById("instant-add")
-  window.instantGridAddToggle.checked = true;
+  window.gridNodeAddToggle.checked = true;
 
   /////////////////////
   // SELECT AREA BUTTONS

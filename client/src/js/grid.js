@@ -169,6 +169,8 @@ function addObstacle(object, options = {}) {
     // grid[x][y].hasObstacle = true
     // return
   } else if(object.tags.stationary) {
+    snapObjectToGrid(object)
+
     // pretend we are dealing with a 0,0 plane
     let x = object.x - grid[0][0].x
     let y = object.y - grid[0][0].y
@@ -181,15 +183,26 @@ function addObstacle(object, options = {}) {
     y -= diffY
     y = y/window.gridNodeSize
 
-    if(x >= 0 && x < window.gridSize.x) {
-      if(y >= 0 && y < window.gridSize.y) {
-        let gridNode = grid[x][y]
-        if(!options.silently){
-          window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-        }
-        grid[x][y].hasObstacle = true
-        return {gridX: x, gridY: y}
+    let gridWidth = object.width / window.gridNodeSize;
+    let gridHeight = object.height / window.gridNodeSize;
+
+    for(let currentx = x; currentx < x + gridWidth; currentx++) {
+      for(let currenty = y; currenty < y + gridHeight; currenty++) {
+        emitObstacleUpdate(currentx, currenty, true, options.silently)
       }
+    }
+  }
+}
+
+function emitObstacleUpdate(x, y, hasObstacle, silently) {
+  if(x >= 0 && x < window.gridSize.x) {
+    if(y >= 0 && y < window.gridSize.y) {
+      let gridNode = grid[x][y]
+      if(!silently){
+        window.socket.emit('updateGridNode', {x, y}, {hasObstacle})
+      }
+      grid[x][y].hasObstacle = hasObstacle
+      return {gridX: x, gridY: y}
     }
   }
 }
@@ -214,12 +227,12 @@ function removeObstacle(object) {
     y -= diffY
     y = y/window.gridNodeSize
 
-    if(x >= 0 && x < window.gridSize.x) {
-      if(y >= 0 && y < window.gridSize.y) {
-        let gridNode = grid[x][y]
-        window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
-        grid[x][y].hasObstacle = false
-        return {gridX: x, gridY: y}
+    let gridWidth = object.width / window.gridNodeSize;
+    let gridHeight = object.height / window.gridNodeSize;
+
+    for(let currentx = x; currentx < x + gridWidth; currentx++) {
+      for(let currenty = y; currenty < y + gridHeight; currenty++) {
+        emitObstacleUpdate(currentx, currenty, false)
       }
     }
   }
@@ -241,10 +254,6 @@ function updateGridObstacles(options = {}) {
   }
 }
 
-function generatePathfindingGrid() {
-
-}
-
 export default {
   init,
   forEach,
@@ -252,7 +261,6 @@ export default {
   snapObjectToGrid,
   createGridNodeAt,
   createGrid,
-  generatePathfindingGrid,
   snapXYToGrid,
   updateGridObstacles,
   addObstacle,
