@@ -198,7 +198,7 @@ function removeObstacle(object) {
     window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
     grid[x][y].hasObstacle = false
     return
-  } else if(object.tags.stationary) {
+  } else {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - grid[0][0].x
     let y = object.y - grid[0][0].y

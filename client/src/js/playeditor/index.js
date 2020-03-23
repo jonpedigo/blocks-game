@@ -378,10 +378,12 @@ function init(ctx, objects) {
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(simplejsoneditor);
   window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (object) => {
     // this is what sync should mean. Does every edit send immediately?
-    if(object.tags.obstacle == false && window.editingObject.tags.obstacle == true) {
+    console.log(window.editingObject.tags.stationary, object.tags.stationary)
+
+    if((object.tags.obstacle == false && window.editingObject.tags.obstacle == true) || (object.tags.stationary == false && window.editingObject.tags.stationary == true)) {
       gridTool.removeObstacle(object)
     }
-    if(object.tags.obstacle == true && window.editingObject.tags.obstacle == false) {
+    if((object.tags.obstacle == true && window.editingObject.tags.obstacle == false) || (object.tags.stationary == true && window.editingObject.tags.stationary == false)) {
       let gridPos = gridTool.addObstacle(object)
       if(gridPos) {
         object.gridX = gridPos.x

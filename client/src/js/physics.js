@@ -68,6 +68,10 @@ function updatePosition(object, delta) {
     }
   }
 
+  containObjectWithinGridBoundaries(object)
+}
+
+function containObjectWithinGridBoundaries(object) {
   //CONTAIN WITHIN BOUNDARIES OF THE GRID!!
   if(object.x + object.width > (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x) {
     object.x = (window.gridNodeSize * window.gridSize.x) + window.grid[0][0].x - object.width
@@ -102,6 +106,7 @@ function update (hero, objects, delta) {
   // set objects new position and widths
   [...objects, hero].forEach((object, i) => {
     updatePosition(object, delta)
+    containObjectWithinGridBoundaries(object)
 
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
@@ -353,6 +358,12 @@ function update (hero, objects, delta) {
   removeObjects.forEach((gameObject) => {
     window.socket.emit('removeObject', gameObject)
   })
+
+  window.objects.forEach((object, i) => {
+    containObjectWithinGridBoundaries(object)
+  })
+  containObjectWithinGridBoundaries(window.hero)
+
 }
 
 

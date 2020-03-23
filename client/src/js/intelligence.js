@@ -67,13 +67,6 @@ function moveOnPath(object) {
 
 function update(hero, objects, modifier) {
   objects.forEach((object) => {
-    if(object.tags && object.tags['stationary']) {
-      object.velocityY = 0
-      object.velocityX = 0
-      object.accY = 0
-      object.accX = 0
-    }
-
     if(object.path && object.path.length) {
       moveOnPath(object)
     }
@@ -150,6 +143,13 @@ function update(hero, objects, modifier) {
       }
 
       pathfinding.goombaWalk(object)
+    }
+
+    if(object.tags && object.tags['stationary']) {
+      object.velocityY = 0
+      object.velocityX = 0
+      object.accY = 0
+      object.accX = 0
     }
   })
 }
