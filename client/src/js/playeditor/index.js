@@ -214,23 +214,23 @@ const tools = {
           y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
 
+        const { x, y } = gridTool.createGridNodeAt(click.x, click.y)
         let newObject = {
           id: 'object' + Date.now(),
           width: window.gridNodeSize,
           height: window.gridNodeSize,
-          x: click.x,
-          y: click.y,
+          x: x,
+          y: y,
           color: 'white',
           tags: {},
           heroUpdate: {},
         }
 
         if(window.dotAddToggle.checked) {
-          const { x, y } = gridTool.createGridNodeAt(newObject.x, newObject.y )
-          newObject.width = 5
-          newObject.height = 5
-          newObject.x = x + (window.gridNodeSize/2 - newObject.width/2)
-          newObject.y = y + (window.gridNodeSize/2 - newObject.height/2)
+          newObject.width = Number(document.getElementById('add-dot-size').value)
+          newObject.height = Number(document.getElementById('add-dot-size').value)
+          newObject.x += (window.gridNodeSize/2 - newObject.width/2)
+          newObject.y += (window.gridNodeSize/2 - newObject.height/2)
         }
 
         for(let tag in window.tags) {

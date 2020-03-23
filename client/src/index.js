@@ -1,6 +1,7 @@
-// enemy respawn points
+// Drop blocks like walls to design their own level
+// BASICALLY I NEEED A RELIABLE WAY TO SET CAMERA, GRID, GAME WORLD, ALL TO THE SAME THING
+
 // console log saved world so I can copy it to a file
-// smaller grids to add. Like at in the teeny center of the grid a little dot LOL yeah ( pacman thing )
 // attack button ( like papa bear spears!! )
 // RELATED ^ button management
 // grid pathfinding will break if two obstacles are on same grid ... Can we layer..?
@@ -11,7 +12,7 @@
 //--------
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
 // push block
-//Smarter rendering
+// Smarter rendering
 // INVERT GAME, for example, when you get pacman powers
 // planet gravity! Would be cool to have..
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
@@ -24,7 +25,6 @@
 // leveling up
 // optimize shadow feature, not all vertices!
 // fit camera to grid, fit game boundaries to grid..
-// variable grid sizes, who owns the grid? Smarter grid synchronization and management
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'

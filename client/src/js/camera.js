@@ -90,7 +90,7 @@ function drawObject(ctx, object, withNames = false) {
 
 function drawVertice(ctx, vertice) {
   if(vertice.glow) {
-    ctx.filter = "drop-shadow(4px 4px 8px #fff) blur(5px)";
+    ctx.filter = "drop-shadow(4px 4px 8px #fff)";
     // ctx.shadowBlur = vertice.glow;
     // ctx.shadowColor = "white";
   }
