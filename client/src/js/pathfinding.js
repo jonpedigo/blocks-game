@@ -153,15 +153,16 @@ function walkAround(object) {
     direction = object.direction
   }
 
-  if(Math.random() > .5){
-    // go right
-    if(Math.random() > .5 && direction !=='left'){
+  let random = Math.random()
+
+  if(random <= .25) {
+    if(direction !=='left'){
       if ( isGridWalkable(x + 1, y) ){
         object.direction = 'right'
         return { x: x + 1, y: y}
       }
     }
-
+  } else if(random > .25 && random <= .5) {
     // go left
     if(direction !== 'right') {
       if ( isGridWalkable(x - 1, y) ) {
@@ -169,21 +170,21 @@ function walkAround(object) {
         return { x: x - 1, y: y}
       }
     }
-  }
-
-  // go down
-  if(Math.random() > .5 && direction !== 'up'){
-    if ( isGridWalkable(x, y + 1) ){
-      object.direction = 'down'
-      return { x: x, y: y + 1}
+  } else if(random >= .5 && random < .75) {
+    // go down
+    if(direction !== 'up') {
+      if ( isGridWalkable(x, y + 1) ) {
+        object.direction = 'down'
+        return { x: x, y: y + 1}
+      }
     }
-  }
-
-  // go up
-  if(direction !== 'down') {
-    if ( isGridWalkable(x, y - 1) ){
-      object.direction = 'up'
-      return { x: x, y: y - 1}
+  } else if(random >= .75) {
+    // go up
+    if(direction !== 'down') {
+      if ( isGridWalkable(x, y - 1) ){
+        object.direction = 'up'
+        return { x: x, y: y - 1}
+      }
     }
   }
 
@@ -197,8 +198,8 @@ function walkAround(object) {
     { x: x-1, y},
   ])
 
+
   for (let i = 0; i < nearbyGrids.length; i++) {
-    let { x, y } = nearbyGrids[i]
     if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y)) {
       return nearbyGrids[i]
     }
