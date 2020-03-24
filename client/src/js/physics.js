@@ -67,8 +67,6 @@ function updatePosition(object, delta) {
       object.y += object.velocityY * delta
     }
   }
-
-  containObjectWithinGridBoundaries(object)
 }
 
 function containObjectWithinGridBoundaries(object) {

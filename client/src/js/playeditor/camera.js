@@ -90,7 +90,6 @@ function render(ctx, hero, objects) {
       if(x % 10 === 0) {
         ctx.lineWidth = .8
       }
-
       drawVertice(ctx, {a: {
         x: window.grid.startX + (x * window.grid.nodeSize),
         y: window.grid.startY,
@@ -201,12 +200,12 @@ function render(ctx, hero, objects) {
       nodeRow.forEach((node) => {
         if(node.hasObstacle == true) {
           drawVertice(ctx, {a: {
-            x: (node.x) + window.grid.startX,
-            y: (node.y) + window.grid.startY,
+            x: node.gridX * window.grid.nodeSize + window.grid.startX,
+            y: node.gridY * window.grid.nodeSize + window.grid.startY,
           },
           b: {
-            x: (node.x) + window.grid.nodeSize + window.grid.startX,
-            y: (node.y) + window.grid.nodeSize + window.grid.startY,
+            x: (node.gridX + 1) * window.grid.nodeSize + window.grid.startX,
+            y: (node.gridY + 1) * window.grid.nodeSize + window.grid.startY,
           }, color: 'red'})
         }
       })
@@ -227,7 +226,7 @@ function render(ctx, hero, objects) {
   if(window.clickStart.x && (currentTool === TOOLS.AREA_SELECTOR || currentTool === TOOLS.PROCEDURAL )) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
-    if(Math.abs(possibleBox.width) >= window.CONSTANTS.PLAYER_CAMERA_WIDTH && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT) ctx.strokeStyle = '#FFF'
+    if(Math.abs(possibleBox.width) >= (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier) && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier) ctx.strokeStyle = '#FFF'
     else ctx.strokeStyle = 'red'
     drawBorder(ctx, possibleBox)
   }

@@ -192,15 +192,17 @@ const tools = {
         y: window.clickStart.y/window.scaleMultiplier,
       }
 
+      gridTool.snapObjectToGrid(value)
+
       const {x, y, width, height} = value;
       if(window.currentTool === TOOLS.PROCEDURAL) {
-        const proceduralBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        const proceduralBoundaries = { x, y, width, height };
         window.socket.emit('updatePreferences', { proceduralBoundaries })
       } else if(selectorCameraToggle.checked) {
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { lockCamera })
       } else if(selectorGameToggle.checked) {
-        const gameBoundaries = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        const gameBoundaries = { x, y, width, height };
         window.socket.emit('updatePreferences', { gameBoundaries })
       }
     },
@@ -626,6 +628,32 @@ function init(ctx, objects) {
     }
   })
 
+  var setCameraLockToHeroCamera = document.getElementById("set-camera-lock-to-hero-camera");
+  setCameraLockToHeroCamera.addEventListener('click', function(){
+    const value = {
+      width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier,
+      height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier,
+      centerX: window.editingHero.x + window.editingHero.width/2,
+      centerY: window.editingHero.y + window.editingHero.height/2,
+    }
+    const {centerY, centerX, width, height} = value;
+    const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+    window.socket.emit('updatePreferences', { lockCamera: lockCamera })
+  })
+
+  var setCameraLockToGrid = document.getElementById("set-camera-lock-to-grid");
+  setCameraLockToGrid.addEventListener('click', function(){
+    const value = {
+      width: window.grid.width * window.grid.nodeSize,
+      height: window.grid.height * window.grid.nodeSize,
+      x: window.grid.startX,
+      y: window.grid.startY
+    }
+    const { x, y, width, height} = value
+    const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+    window.socket.emit('updatePreferences', { lockCamera: lockCamera })
+  })
+
 
   /////////////////////
   // PROCEDURAL BUTTONS
@@ -672,8 +700,7 @@ function init(ctx, objects) {
   // setPresetWorldArenaBoundaryButton.addEventListener('click', setPresetWorldArenaBoundary)
   // var setPresetWorldArenaCyclicalButton = document.getElementById("set-preset-world-arenacyclical");
   // setPresetWorldArenaCyclicalButton.addEventListener('click', setPresetWorldArenaCyclical)
-  // var setPresetWorldArenaCyclicalButton2 = document.getElementById("set-preset-world-arenacyclical-2");
-  // setPresetWorldArenaCyclicalButton2.addEventListener('click', setPresetWorldArenaCyclical)
+
   // var setPresetWorldAdventureZoomedButton = document.getElementById("set-preset-world-adventurezoomed");
   // setPresetWorldAdventureZoomedButton.addEventListener('click', setPresetWorldAdventureZoomed)
 
@@ -692,18 +719,7 @@ function init(ctx, objects) {
   //   window.socket.emit('updatePreferences', { lockCamera: lockCamera , gameBoundaries: {} })
   // }
   //
-  // function setPresetWorldArenaCyclical() {
-  //   const value = {
-  //     width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier,
-  //     height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier,
-  //     centerX: window.editingHero.x + window.editingHero.width/2,
-  //     centerY: window.editingHero.y + window.editingHero.height/2,
-  //   }
-  //
-  //   const {centerY, centerX, width, height} = value;
-  //   const lockCamera = { x: centerX - width/2, y: centerY - height/2, height, width, centerX , centerY, limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-  //   window.socket.emit('updatePreferences', { lockCamera: lockCamera, gameBoundaries: lockCamera })
-  // }
+
   //
   // function setPresetWorldAdventureZoomed() {
   //   window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })

@@ -217,7 +217,6 @@ function removeObstacle(object) {
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        console.log(currentx, currenty)
         hasObstacleUpdate(currentx, currenty, false)
       }
     }
