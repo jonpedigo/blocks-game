@@ -402,12 +402,13 @@ function init(ctx, objects) {
   window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (objectEdited) => {
     let object = window.objects[window.editingObject.i]
 
-    // if((object.tags.obstacle == false && window.editingObject.tags.obstacle == true) || (object.tags.stationary == false && window.editingObject.tags.stationary == true)) {
-    //   gridTool.removeObstacle(object)
-    // }
-    // if((object.tags.obstacle == true && window.editingObject.tags.obstacle == false) || (object.tags.stationary == true && window.editingObject.tags.stationary == false)) {
-    //   gridTool.addObstacle(object)
-    // }
+    if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
+      gridTool.removeObstacle({...object, tags: objectEdited.tags})
+    }
+
+    if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true)) {
+      gridTool.addObstacle({...object, tags: objectEdited.tags})
+    }
 
     emitEditedObject({ tags: objectEdited.tags})
   }});

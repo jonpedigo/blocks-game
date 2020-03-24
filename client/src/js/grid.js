@@ -199,7 +199,7 @@ function hasObstacleUpdate(x, y, hasObstacle) {
 }
 
 function removeObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.preferences.calculatePathCollisions) {
+  if(true) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY
@@ -217,6 +217,7 @@ function removeObstacle(object) {
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
+        console.log(currentx, currenty)
         hasObstacleUpdate(currentx, currenty, false)
       }
     }

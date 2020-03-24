@@ -152,7 +152,7 @@ function init() {
       if(key === 'isAsymmetric' && window.usePlayEditor) {
         window.isAsymmetricToggle.checked = value
       }
-      if(key === 'calculatePathCollisions' && window.grid) {
+      if(key === 'calculatePathCollisions' && window.grid.nodes) {
         gridTool.updateGridObstacles()
         if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
