@@ -195,18 +195,18 @@ function render(ctx, hero, objects) {
   /// PATHFINDING OBSTACLES
   ////////////////
   ////////////////
-  if(window.pfgrid) {
+  if(window.grid) {
     ctx.lineWidth = 1
-    window.pfgrid.nodes.forEach((nodeRow) => {
+    window.grid.nodes.forEach((nodeRow) => {
       nodeRow.forEach((node) => {
-        if(node.walkable == false) {
+        if(node.hasObstacle == true) {
           drawVertice(ctx, {a: {
-            x: (node.x * window.grid.nodeSize) + window.grid.startX,
-            y: (node.y * window.grid.nodeSize) + window.grid.startY,
+            x: (node.x) + window.grid.startX,
+            y: (node.y) + window.grid.startY,
           },
           b: {
-            x: (node.x * window.grid.nodeSize) + window.grid.nodeSize + window.grid.startX,
-            y: (node.y * window.grid.nodeSize) + window.grid.nodeSize + window.grid.startY,
+            x: (node.x) + window.grid.nodeSize + window.grid.startX,
+            y: (node.y) + window.grid.nodeSize + window.grid.startY,
           }, color: 'red'})
         }
       })

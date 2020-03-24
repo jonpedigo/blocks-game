@@ -334,8 +334,10 @@ var main = function () {
 		// physics.drawSystem(ctx, hero)
   }
 
-  grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+  if(window.preferences.calculatePathCollisions) {
+    grid.updateGridObstacles()
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+  }
 
 	then = now;
 

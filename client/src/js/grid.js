@@ -164,18 +164,8 @@ function createGridNodeAt(x, y) {
 
 }
 
-function addObstacle(object, options = {}) {
-  // if(object.path && object.path.length) {
-  //   //if pathfinding objects cant path through eachother
-  //   // let x = object.path[0].x
-  //   // let y = object.path[0].y
-  //   // if(!options.silently){
-  //   //   window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-  //   // }
-  //   // grid[x][y].hasObstacle = true
-  //   // return
-  // } else if(true) {
-
+function addObstacle(object) {
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.preferences.calculatePathCollisions) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY
@@ -193,35 +183,23 @@ function addObstacle(object, options = {}) {
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        emitObstacleUpdate(currentx, currenty, true, options.silently)
+        hasObstacleUpdate(currentx, currenty, true)
       }
     }
-  // }
+  }
 }
 
-function emitObstacleUpdate(x, y, hasObstacle, silently) {
+function hasObstacleUpdate(x, y, hasObstacle) {
   if(x >= 0 && x < window.grid.width) {
     if(y >= 0 && y < window.grid.height) {
       let gridNode = window.grid.nodes[x][y]
-      // if(!silently){
-      //   console.log('emitting')
-      //   window.socket.emit('updateGrid', window.grid)
-      // }
       gridNode.hasObstacle = hasObstacle
-      // window.pfgrid.setWalkableAt(x, y, !gridNode.hasObstacle);
-      return {gridX: x, gridY: y}
     }
   }
 }
 
 function removeObstacle(object) {
-  if(object.path && object.path.length) {
-    // let x = object.path[0].x
-    // let y = object.path[0].y
-    // window.socket.emit('updateGridNode', {x, y}, {hasObstacle: false})
-    // grid[x][y].hasObstacle = false
-    // return
-  } else {
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.preferences.calculatePathCollisions) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY
@@ -239,26 +217,22 @@ function removeObstacle(object) {
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        emitObstacleUpdate(currentx, currenty, false)
+        hasObstacleUpdate(currentx, currenty, false)
       }
     }
   }
 }
 
-function updateGridObstacles(options = {}) {
+function updateGridObstacles() {
   forEach((gridNode) => {
     gridNode.hasObstacle = false
   })
 
   window.objects.forEach((obj) => {
     if(obj.tags && obj.tags.obstacle) {
-      addObstacle(obj, {silently: true})
+      addObstacle(obj)
     }
   })
-
-  // if(!options.silently) {
-  //   window.socket.emit('updateGrid', grid)
-  // }
 }
 
 export default {

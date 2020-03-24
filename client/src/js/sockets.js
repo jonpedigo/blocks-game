@@ -17,29 +17,41 @@ function init() {
         window.socket.emit('askGrid');
       }
 
-  		if(window.hero.arrowKeysBehavior === 'grid') {
-  			objectsAdded.forEach((object) => {
-  				gridTool.snapObjectToGrid(object)
-  			})
-  		}
   		window.objects.push(...objectsAdded)
   		objectsAdded.forEach((object) => {
   			physics.addObject(object)
   		})
+
+      if(window.grid.nodes && !window.preferences.calculatePathCollisions) {
+        gridTool.updateGridObstacles()
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      }
   	})
+
   	window.socket.on('onResetObjects', (updatedObjects) => {
   		window.objects.forEach((object) => {
   			physics.removeObject(object)
   		})
   		window.objects = []
-  	})
-  	window.socket.on('onEditObjects', (editedObjects) => {
-  		Object.assign(window.objects, editedObjects)
+
+      if(!window.preferences.calculatePathCollisions) {
+        gridTool.updateGridObstacles()
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      }
   	})
 
-  	window.socket.on('onSnapAllObjectsToGrid', () => {
-  		window.snapAllObjectsToGrid()
+  	window.socket.on('onEditObjects', (editedObjects) => {
+  		Object.assign(window.objects, editedObjects)
+
+      if(!window.preferences.calculatePathCollisions) {
+        gridTool.updateGridObstacles()
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      }
   	})
+
+  	// window.socket.on('onSnapAllObjectsToGrid', () => {
+  	// 	window.snapAllObjectsToGrid()
+  	// })
 
     window.socket.on('onResetHero', (hero) => {
       if(hero.id === window.hero.id) {
@@ -85,13 +97,13 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
-  window.socket.on('onUpdateGridNode', (gridPos, update) => {
-    Object.assign(window.grid[gridPos.x][gridPos.y], update)
-    if(window.pfgrid && update.hasObstacle !== undefined) {
-      window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
-      window.resetPaths = true
-    }
-  })
+  // window.socket.on('onUpdateGridNode', (gridPos, update) => {
+  //   Object.assign(window.grid.nodes[gridPos.x][gridPos.y], update)
+  //   if(window.pfgrid && update.hasObstacle !== undefined) {
+  //     window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
+  //     window.resetPaths = true
+  //   }
+  // })
 
   window.socket.on('onResetPreferences', (hero) => {
     window.preferences = {}
@@ -176,8 +188,9 @@ function init() {
       window.simpleeditor.set({})
     }
 
-    if(object.tags && object.tags.obstacle) {
-      gridTool.removeObstacle(object)
+    if(!window.preferences.calculatePathCollisions) {
+      gridTool.updateGridObstacles()
+      if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
     window.objects = window.objects.filter((obj) => obj.id !== object.id)
@@ -195,15 +208,13 @@ function init() {
 
     window.heros = world.heros
     window.preferences = world.preferences
-    window.grid = world.grid || []
-    window.gridNodeSize = world.gridNodeSize || 40
-    window.gridSize = world.gridSize || { x: 50, y: 50 }
+    window.grid = world.grid
     if(window.hero && !window.usePlayEditor){
       findHeroInNewWorld(world)
       window.socket.emit('updateHero', window.hero)
     }
     if(window.usePlayEditor) {
-      window.socket.emit('updateGrid', window.grid, window.gridNodeSize, window.gridSize)
+      window.socket.emit('updateGrid', window.grid)
     }
 
     window.socket.emit('updatePreferences', window.preferences)
@@ -212,8 +223,10 @@ function init() {
   window.socket.on('onUpdateGrid', (grid) => {
     window.grid = grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
-    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    gridTool.updateGridObstacles({silently: true})
+    gridTool.updateGridObstacles()
+    if(!window.usePlayEditor) {
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
   })
 
   window.socket.on('onDeleteHero', (id) => {

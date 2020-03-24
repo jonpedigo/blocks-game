@@ -5,6 +5,7 @@ import procedural from './procedural.js'
 import modifiers from './modifiers.js'
 import camera from './camera.js'
 import input from './input.js'
+import pathfinding from '../pathfinding'
 
 /////////////////////
 //GLOBALS
@@ -241,8 +242,8 @@ const tools = {
           }
         }
 
-        if(newObject.tags.obstacle) {
-          let gridPos = gridTool.addObstacle(newObject)
+        if(!window.preferences.calculatePathCollisions) {
+          gridTool.addObstacle(newObject)
         }
 
         if(instantAddToggle.checked) {
@@ -264,7 +265,7 @@ const tools = {
         heroUpdate: {},
       }
 
-      snapObjectToGrid(newObject)
+      gridTool.snapObjectToGrid(newObject)
 
       for(let tag in tags) {
         if(tags[tag].checked){
@@ -274,7 +275,7 @@ const tools = {
         }
       }
 
-      if(newObject.tags.obstacle) {
+      if(!window.preferences.calculatePathCollisions) {
         gridTool.addObstacle(newObject)
       }
 
@@ -401,12 +402,12 @@ function init(ctx, objects) {
   window.simpleeditor = new JSONEditor(simplejsoneditor, { onChangeJSON: (objectEdited) => {
     let object = window.objects[window.editingObject.i]
 
-    if((object.tags.obstacle == false && window.editingObject.tags.obstacle == true) || (object.tags.stationary == false && window.editingObject.tags.stationary == true)) {
-      gridTool.removeObstacle(object)
-    }
-    if((object.tags.obstacle == true && window.editingObject.tags.obstacle == false) || (object.tags.stationary == true && window.editingObject.tags.stationary == false)) {
-      gridTool.addObstacle(object)
-    }
+    // if((object.tags.obstacle == false && window.editingObject.tags.obstacle == true) || (object.tags.stationary == false && window.editingObject.tags.stationary == true)) {
+    //   gridTool.removeObstacle(object)
+    // }
+    // if((object.tags.obstacle == true && window.editingObject.tags.obstacle == false) || (object.tags.stationary == true && window.editingObject.tags.stationary == false)) {
+    //   gridTool.addObstacle(object)
+    // }
 
     emitEditedObject({ tags: objectEdited.tags})
   }});
@@ -473,6 +474,15 @@ function init(ctx, objects) {
       window.socket.emit('updatePreferences', { isAsymmetric: true })
     } else {
       window.socket.emit('updatePreferences', { isAsymmetric: false })
+    }
+  }
+
+  window.calculatePathCollisionsToggle = document.getElementById('calculate-path-collisions')
+  calculatePathCollisionsToggle.onclick = (e) => {
+    if(e.srcElement.checked) {
+      window.socket.emit('updatePreferences', { calculatePathCollisions: true })
+    } else {
+      window.socket.emit('updatePreferences', { calculatePathCollisions: false })
     }
   }
 
