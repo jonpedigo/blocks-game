@@ -1,5 +1,4 @@
 // Drop blocks like walls to design their own level
-// BASICALLY I NEEED A RELIABLE WAY TO SET CAMERA, GRID, GAME WORLD, ALL TO THE SAME THING
 
 // console log saved world so I can copy it to a file - dont save grid, regenerate grid
 // attack button ( like papa bear spears!! )

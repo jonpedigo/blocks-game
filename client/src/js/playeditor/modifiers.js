@@ -23,6 +23,9 @@ const modifiers = {
   },
   chatter: {
     chat: ['Hello'],
+  },
+  gun: {
+    actionBehavior: 'dropWall',
   }
 }
 export default modifiers

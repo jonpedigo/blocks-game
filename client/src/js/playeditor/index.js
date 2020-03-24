@@ -779,7 +779,6 @@ function addObjects(objects, options = { bypassCollisions: false, instantAdd: tr
     if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
       return newObject
     } else {
-      console.log('?')
       alertAboutCollision = true
     }
   }).filter(obj => !!obj)
