@@ -668,6 +668,11 @@ function init(ctx, objects) {
     window.createGrid()
   }
 
+  var createArenaButton = document.getElementById("create-arena");
+  createArenaButton.onclick = (e) => {
+    createArena(window.preferences.proceduralBoundaries)
+  }
+
   window.createGrid = function() {
     const { width, height } = window.preferences.proceduralBoundaries
     const { x, y } = gridTool.snapXYToGrid(window.preferences.proceduralBoundaries.x, window.preferences.proceduralBoundaries.y);
@@ -689,6 +694,59 @@ function init(ctx, objects) {
 
     let maze = procedural.genMaze(w, h, x, y)
     window.socket.emit('addObjects', maze)
+  }
+
+  function createArena(boundaries) {
+    // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)}
+
+    let wallLeft = {
+      id: 'wall-l' + Date.now(),
+      width: 5,
+      height: boundaries.height,
+      x: boundaries.x,
+      y: boundaries.y,
+      color: 'white',
+      tags: {'obstacle':true, 'stationary': true},
+    }
+
+    let wallTop = {
+      id: 'wall-t' + Date.now(),
+      width: boundaries.width,
+      height: 5,
+      x: boundaries.x,
+      y: boundaries.y,
+      color: 'white',
+      tags: {'obstacle':true, 'stationary': true},
+    }
+
+    let wallRight = {
+      id: 'wall-r' + Date.now(),
+      width: 5,
+      height: boundaries.height,
+      x: boundaries.x + (boundaries.width) - 5,
+      y: boundaries.y,
+      color: 'white',
+      tags: {'obstacle':true, 'stationary': true},
+    }
+
+    let wallBottom = {
+      id: 'wall-b' + Date.now(),
+      width: boundaries.width,
+      height: 5,
+      x: boundaries.x,
+      y: boundaries.y + (boundaries.height) - 5,
+      color: 'white',
+      tags: {'obstacle':true, 'stationary': true},
+    }
+
+    if(!window.preferences.calculatePathCollisions) {
+      gridTool.addObstacle(wallTop)
+      gridTool.addObstacle(wallRight)
+      gridTool.addObstacle(wallLeft)
+      gridTool.addObstacle(wallBottom)
+    }
+
+    window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
   }
 
 
@@ -725,52 +783,6 @@ function init(ctx, objects) {
   //   window.socket.emit('updatePreferences', { lockCamera: {}, gameBoundaries: {}, zoomMultiplier: 1 })
   // }
 }
-
-// function createArena() {
-//   let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.preferences.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.preferences.zoomMultiplier)}
-//
-//   let wallLeft = {
-//     id: 'wall-l' + Date.now(),
-//     width: 5,
-//     height: boundaries.height,
-//     x: boundaries.x,
-//     y: boundaries.y,
-//     color: 'white',
-//     tags: {'obstacle':true},
-//   }
-//
-//   let wallTop = {
-//     id: 'wall-t' + Date.now(),
-//     width: boundaries.width,
-//     height: 5,
-//     x: boundaries.x,
-//     y: boundaries.y,
-//     color: 'white',
-//     tags: {'obstacle':true},
-//   }
-//
-//   let wallRight = {
-//     id: 'wall-r' + Date.now(),
-//     width: 5,
-//     height: boundaries.height,
-//     x: boundaries.x + (boundaries.width) - 5,
-//     y: boundaries.y,
-//     color: 'white',
-//     tags: {'obstacle':true},
-//   }
-//
-//   let wallBottom = {
-//     id: 'wall-b' + Date.now(),
-//     width: boundaries.width,
-//     height: 5,
-//     x: boundaries.x,
-//     y: boundaries.y + (boundaries.height) - 5,
-//     color: 'white',
-//     tags: {'obstacle':true},
-//   }
-//
-//   window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
-// }
 
 function emitEditedObject(objectUpdate) {
   let objectCopy = { ...objectUpdate }
