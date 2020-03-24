@@ -161,7 +161,6 @@ function createGridNodeAt(x, y) {
   return {
     x, y, width: window.grid.nodeSize, height: window.grid.nodeSize,
   }
-
 }
 
 function addObstacle(object) {

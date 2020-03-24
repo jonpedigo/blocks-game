@@ -236,23 +236,7 @@ const tools = {
           newObject.y += (window.grid.nodeSize/2 - newObject.height/2)
         }
 
-        for(let tag in window.tags) {
-          if(window.tags[tag].checked){
-            newObject.tags[tag] = true
-          } else {
-            newObject.tags[tag] = false
-          }
-        }
-
-        if(!window.preferences.calculatePathCollisions) {
-          gridTool.addObstacle(newObject)
-        }
-
-        if(instantAddToggle.checked) {
-          window.socket.emit('addObjects', [newObject])
-        } else {
-          window.objectFactory.push(newObject)
-        }
+        addObjects(newObject)
       }
     },
     onSecondClick: (e) => {
@@ -269,23 +253,7 @@ const tools = {
 
       gridTool.snapObjectToGrid(newObject)
 
-      for(let tag in tags) {
-        if(tags[tag].checked){
-          newObject.tags[tag] = true
-        } else {
-          newObject.tags[tag] = false
-        }
-      }
-
-      if(!window.preferences.calculatePathCollisions) {
-        gridTool.addObstacle(newObject)
-      }
-
-      if(instantAddToggle.checked) {
-        window.socket.emit('addObjects', [newObject])
-      } else {
-        window.objectFactory.push(newObject)
-      }
+      addObjects(newObject)
     },
   }
 }
@@ -693,7 +661,7 @@ function init(ctx, objects) {
     let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
     let maze = procedural.genMaze(w, h, x, y)
-    window.socket.emit('addObjects', maze)
+    addObjects(maze)
   }
 
   function createArena(boundaries) {
@@ -739,14 +707,7 @@ function init(ctx, objects) {
       tags: {'obstacle':true, 'stationary': true},
     }
 
-    if(!window.preferences.calculatePathCollisions) {
-      gridTool.addObstacle(wallTop)
-      gridTool.addObstacle(wallRight)
-      gridTool.addObstacle(wallLeft)
-      gridTool.addObstacle(wallBottom)
-    }
-
-    window.socket.emit('addObjects', [wallTop, wallRight, wallLeft, wallBottom])
+    addObjects([wallTop, wallRight, wallLeft, wallBottom])
   }
 
 
@@ -789,6 +750,56 @@ function emitEditedObject(objectUpdate) {
   Object.assign(window.editingObject, objectCopy)
   Object.assign(window.objects[window.editingObject.i], objectCopy)
   window.socket.emit('editObjects', window.objects)
+}
+
+function addObjects(objects, options = { bypassCollisions: false, instantAdd: true }) {
+  if(!objects.length) {
+    objects = [objects]
+  }
+
+  let alertAboutCollision
+
+  objects = objects.map((newObject) => {
+    if(!newObject.tags) {
+      newObject.tags = []
+    }
+
+    for(let tag in window.tags) {
+      if(window.tags[tag].checked || newObject.tags[tag] === true){
+        newObject.tags[tag] = true
+      } else {
+        newObject.tags[tag] = false
+      }
+    }
+
+    if(!window.preferences.calculatePathCollisions) {
+      gridTool.addObstacle(newObject)
+    }
+
+    if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
+      return newObject
+    } else {
+      console.log('?')
+      alertAboutCollision = true
+    }
+  }).filter(obj => !!obj)
+
+
+  if(alertAboutCollision) {
+    if(confirm('already an object on this grid node..confirm to add anyways')) {
+      emitNewObjects()
+    }
+  } else {
+    emitNewObjects()
+  }
+
+  function emitNewObjects() {
+    if(instantAddToggle.checked || options.instantAddToggle) {
+      window.socket.emit('addObjects', objects)
+    } else {
+      window.objectFactory.push(...objects)
+    }
+  }
 }
 
 export default {
