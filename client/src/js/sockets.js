@@ -107,6 +107,7 @@ function init() {
 
   window.socket.on('onResetPreferences', (hero) => {
     window.preferences = {}
+    camera.clearLimit()
   })
 
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {

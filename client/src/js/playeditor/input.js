@@ -28,12 +28,14 @@ function init(hero){
 
 
     if(keysDown['188'] || keysDown['190']){
-      if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
-        for(var heroId in window.heros) {
-          window.setEditingHero(window.heros[heroId])
-          window.findHero()
+      if(window.currentTool === window.TOOLS.HERO_EDITOR) {
+        if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
+          for(var heroId in window.heros) {
+            window.setEditingHero(window.heros[heroId])
+            window.findHero()
+          }
+          return
         }
-        return
       }
     }
 
@@ -56,7 +58,15 @@ function init(hero){
       }
 
       if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
-
+        let newI = window.editingObject.i
+        if(window.editingObject.i === 0) {
+          newI = window.objects.length -1
+        } else {
+          newI -= 1
+        }
+        window.editingObject = window.objects[newI]
+        window.editingObject.i = newI
+        window.findObject()
       }
       return
     }
@@ -80,7 +90,15 @@ function init(hero){
       }
 
       if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
-
+        let newI = window.editingObject.i
+        if(window.editingObject.i === window.objects.length -1) {
+          newI = 0
+        } else {
+          newI += 1
+        }
+        window.editingObject = window.objects[newI]
+        window.editingObject.i = newI
+        window.findObject()
       }
       return
     }

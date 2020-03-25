@@ -528,6 +528,10 @@ function init(ctx, objects) {
     camera.setCamera(ctx, window.heros[window.editingHero.id])
   }
 
+  window.findObject = function() {
+    camera.setCamera(ctx, window.editingObject)
+  }
+
   window.setEditingHero = function(hero) {
     window.editingHero = hero
     heroeditor.update(window.editingHero)
