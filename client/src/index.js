@@ -1,9 +1,5 @@
-// Drop blocks like walls to design their own level
-
 // console log saved world so I can copy it to a file - dont save grid, regenerate grid
 // attack button ( like papa bear spears!! )
-// RELATED ^ button management
-// grid pathfinding will break if two obstacles are on same grid ... Can we layer..?
 // set game boundaries to delete objects - default game boundaries with a default grid..
 // make it easier for admin to move objects
 // TRUE zelda camera work
@@ -27,7 +23,6 @@
 // lazy scroll that is not not immediate! Smoother...
 // leveling up
 // optimize shadow feature, not all vertices!
-// fit camera to grid, fit game boundaries to grid..
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -209,6 +204,16 @@ var start = function () {
 		action.init()
 	}
 	main()
+  if(!window.usePlayEditor) {
+    setInterval(() => {
+      if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
+        return
+      }
+      window.socket.emit('updateObjects', window.objects)
+      window.socket.emit('updateHeroPos', window.hero)
+      localStorage.setItem('hero', JSON.stringify(window.hero));
+    }, 100)
+  }
 };
 
 // Update game objects
@@ -248,10 +253,6 @@ var update = function (delta) {
       }
     }
   }
-
-	window.socket.emit('updateObjects', objects)
-  window.socket.emit('updateHeroPos', window.hero)
-  localStorage.setItem('hero', JSON.stringify(window.hero));
 };
 
 // Draw everything
@@ -309,6 +310,7 @@ var render = function () {
 
 // The main game loop
 var main = function () {
+  console.log('main')
   if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return
