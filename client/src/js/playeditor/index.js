@@ -5,7 +5,6 @@ import procedural from './procedural.js'
 import modifiers from './modifiers.js'
 import camera from './camera.js'
 import input from './input.js'
-import pathfinding from '../pathfinding'
 
 /////////////////////
 //GLOBALS
@@ -91,7 +90,7 @@ const tools = {
         .forEach((hero, i) => {
           collisions.checkObject(click, hero, () => {
             window.editingHero = hero
-            heroeditor.update(window.heros[window.editingHero.id])
+            heroeditor.set(window.heros[window.editingHero.id])
             heroeditor.expandAll()
           })
         })
@@ -306,12 +305,7 @@ function init(ctx, objects) {
     modEl.className = 'button';
     modEl.innerHTML = 'apply mod - ' + modifierName
     modEl.onclick=function() {
-      let editorState = heroeditor.get()
-      Object.assign(editorState, modifiers[modifierName])
-      heroeditor.set(editorState)
-      heroeditor.expandAll()
-      // this is what sync should mean. Does every edit send immediately?
-      if(true) sendHero()
+      sendHeroUpdate(modifiers[modifierName])
     }
     heroModSelectEl.appendChild(modEl)
   }
@@ -381,7 +375,7 @@ function init(ctx, objects) {
       gridTool.addObstacle({...object, tags: objectEdited.tags})
     }
 
-    emitEditedObject({ tags: objectEdited.tags})
+    emitEditedObject({ tags: objectEdited.tags })
   }});
 
   var herojsoneditor = document.createElement("div")
@@ -389,7 +383,7 @@ function init(ctx, objects) {
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
   window.heroeditor = new JSONEditor(herojsoneditor, { onChangeJSON: (object) => {
     // this is what sync should mean. Does every edit send immediately?
-    // sendHero()
+    sendHeroUpdate({ tags: object.tags, flags: object.flags })
   }});
 
 
@@ -503,7 +497,15 @@ function init(ctx, objects) {
   var zoomInButton = document.getElementById("hero-zoomIn");
   zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/1.1 }))
 
-  function sendHero() {
+  function sendHeroUpdate(update) {
+    window.mergeDeep(window.editingHero, update)
+    window.socket.emit('updateHero', window.editingHero)
+    heroeditor.set(window.editingHero)
+    heroeditor.expandAll()
+  }
+
+  function sendHero(update) {
+    // get the hero from the editor, everything except for the x, y values
     let hero = heroeditor.get()
     const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
@@ -534,11 +536,13 @@ function init(ctx, objects) {
 
   window.setEditingHero = function(hero) {
     window.editingHero = hero
-    heroeditor.update(window.editingHero)
+    heroeditor.set(window.editingHero)
+    heroeditor.expandAll()
   }
 
   window.getEditingHero = function() {
-    heroeditor.update(window.heros[window.editingHero.id])
+    heroeditor.set(window.heros[window.editingHero.id])
+    heroeditor.expandAll()
   }
 
   /////////////////////

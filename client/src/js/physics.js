@@ -167,25 +167,25 @@ function update (hero, objects, delta) {
             removeObjects.push(body.gameObject)
           }
         } else {
-          window.score--
+          window.hero.score--
           window.respawnHero()
         }
       }
 
       if(body.gameObject.tags && body.gameObject.tags['coin']) {
-        window.score++
+        window.hero.score++
       }
 
       if(body.gameObject.tags && body.gameObject.tags['chatter'] && body.gameObject.heroUpdate && body.gameObject.heroUpdate.chat) {
-        window.hero.showChat = true
+        window.hero.flags.showChat = true
         window.hero.chat = body.gameObject.heroUpdate.chat.slice()
         // window.hero.chat.name = body.id
-        window.hero.paused = true
+        window.hero.flags.paused = true
       }
 
       if(body.gameObject.tags && body.gameObject.tags['powerup']) {
         if(body.id !== window.hero.lastPowerUpId) {
-          Object.assign(window.hero, {...body.gameObject.heroUpdate, lastPowerUpId: body.gameObject.id})
+          window.mergeDeep(window.hero, {...body.gameObject.heroUpdate, lastPowerUpId: body.gameObject.id})
         }
       } else {
         window.hero.lastPowerUpId = null
@@ -276,7 +276,7 @@ function update (hero, objects, delta) {
       if(po.collides(body, result)) {
         if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['bullet'] && po.gameObject.tags['monster']) {
           removeObjects.push(po.gameObject)
-          window.score++
+          window.hero.score++
         }
 
         if(po.gameObject.tags && po.gameObject.tags['goomba'] && body.gameObject.tags && body.gameObject.tags['obstacle']) {

@@ -1,22 +1,22 @@
 const keysDown = {}
 function init() {
 	window.hero.chat = []
-	window.hero.showChat = false
+	window.hero.flags.showChat = false
 
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
 			window.hero.chat.shift()
 			if(!window.hero.chat.length) {
 				if(window.hero.chat.onChatEnd) window.hero.chat.onChatEnd()
-				window.hero.showChat = false
-				window.hero.paused = false
+				window.hero.flags.showChat = false
+				window.hero.flags.paused = false
 			}
 		}
   }, false)
 }
 
 function render(ctx){
-	if(window.hero.showChat){
+	if(window.hero.flags.showChat){
 		drawChat(ctx, window.hero.chat)
 	}
 }

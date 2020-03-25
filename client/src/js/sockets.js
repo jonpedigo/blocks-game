@@ -176,8 +176,10 @@ function init() {
   	} else if(window.usePlayEditor){
       if(!window.editingHero.id) {
         // init to any hero
+        if(window.heros.undefined) window.socket.emit('deleteHero', 'undefined')
+        delete window.heros.undefined
         for(var heroId in window.heros) {
-          if(window.heros.undefined) window.socket.emit('deleteHero', 'undefined')
+          console.log(window.heros[heroId].tags)
           if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
             window.setEditingHero(window.heros[heroId])
             break;

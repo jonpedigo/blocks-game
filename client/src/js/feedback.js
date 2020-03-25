@@ -1,15 +1,16 @@
-window.score = 0;
-
-function draw(ctx) {
-  ctx.font = "30px Arial";
-  ctx.strokeText(score, 10,30)
+function init() {
+  window.hero.score = 0;
+  window.hero.flags.showScore = false
 }
 
-function addScore(amount) {
-  score += amount
+function draw(ctx) {
+  if(window.hero.flags.showScore) {
+    ctx.font = "30px Arial";
+    ctx.fillText(window.hero.score, 10,30)
+  }
 }
 
 export default {
+  init,
   draw,
-  addScore,
 }

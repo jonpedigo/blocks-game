@@ -41,7 +41,7 @@ import io from 'socket.io-client'
 import sockets from './js/sockets.js'
 import constellation from './js/constellation.js'
 import pathfinding from './js/pathfinding.js'
-
+import utils from './js/utils.js'
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
   window.socket = io.connect('http://localhost:4000');
@@ -165,8 +165,12 @@ const defaultHero = {
 	zoomMultiplier: 1.8816764231589203,
   x: 960,
   y: 960,
-  showChat: false,
+  score: 0,
   chat: [],
+  flags : {
+    showChat: false,
+    showScore: false,
+  }
 }
 
 if(!window.usePlayEditor) {
@@ -204,6 +208,7 @@ var start = function () {
   if(usePlayEditor) {
 		playEditor.init(ctx)
 	} else {
+    feedback.init()
     constellation.init(ctx)
     camera.init()
 		input.init()
@@ -225,7 +230,7 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  if(!window.hero.paused) {
+  if(!window.hero.flags.paused) {
     input.update(hero, delta)
     if(window.hero.arrowKeysBehavior !== 'grid') {
       physics.update(window.hero, window.objects, delta)

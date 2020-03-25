@@ -9,7 +9,7 @@ function init(){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor && !window.hero.paused && window.hero.tags.gravity) {
+    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor && !window.hero.flags.paused && window.hero.tags.gravity) {
       window.hero.velocityY = hero.jumpVelocity
 
       lastJump = Date.now();
