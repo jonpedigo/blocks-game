@@ -138,6 +138,9 @@ function addObjects(objects, options = { bypassCollisions: false }) {
       }
     }
 
+    newObject.spawnPointX = newObject.x
+    newObject.spawnPointY = newObject.y
+
     if(!window.preferences.calculatePathCollisions) {
       gridTool.addObstacle(newObject)
     }
