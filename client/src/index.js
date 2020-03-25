@@ -74,6 +74,13 @@ if(!window.usePlayEditor) {
 
 /// GLOBAL FX
 // window.objects = []
+window.defaultObject = {
+  velocityX: 0,
+  velocityY: 0,
+  velocityMax: 0,
+  speed: 100,
+}
+
 window.respawnHero = function () {
   // hero spawn point takes precedence
   if(window.preferences.worldSpawnPointX) {
@@ -144,17 +151,17 @@ const defaultHero = {
 	velocityX: 0,
 	velocityY: 0,
 	velocityMax: 25,
-	accY: 0,
-	accX: 0,
-	accDecayX: 0,
-	accDecayY: 0,
+	// accY: 0,
+	// accX: 0,
+	// accDecayX: 0,
+	// accDecayY: 0,
 	speed: 150,
 	arrowKeysBehavior: 'position',
+  actionButtonBehavior: 'dropWall',
 	jumpVelocity: -480,
 	// spawnPointX: (40) * 20,
 	// spawnPointY: (40) * 20,
-	gravity: 0,
-	tags: {hero: true, isPlayer: true, monsterDestroyer: false},
+	tags: {hero: true, isPlayer: true, monsterDestroyer: false, gravity: false},
 	zoomMultiplier: 1.8816764231589203,
   x: 960,
   y: 960,
@@ -310,7 +317,6 @@ var render = function () {
 
 // The main game loop
 var main = function () {
-  console.log('main')
   if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return

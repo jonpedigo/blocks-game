@@ -268,7 +268,7 @@ function render(ctx, hero, objects) {
       ctx.strokeStyle='#0A0';
       drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)})
 
-    if(currentHero.reachablePlatformHeight && currentHero.gravity) {
+    if(currentHero.reachablePlatformHeight && currentHero.tags.gravity) {
       let y = (currentHero.y + currentHero.height)
       let x = currentHero.x - currentHero.reachablePlatformWidth
       let width = (currentHero.reachablePlatformWidth * 2) + (currentHero.width)

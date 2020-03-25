@@ -254,25 +254,11 @@ function sortByDistance(coordsA, coordsB, comparedTo){
   else return 0
 }
 
-function goombaWalk(object) {
-  if(!object.direction) {
-    object.direction = 'right'
-  }
-
-  if(object.direction === 'right' ) {
-    object.velocityX = object.speed || 100
-  }
-
-  if(object.direction === 'left') {
-    object.velocityX = -object.speed || -100
-  }
-}
 
 export default {
   findPath,
   convertGridToPathfindingGrid,
   walkAround,
-  goombaWalk
 }
 
 

@@ -49,7 +49,7 @@ function updatePosition(object, delta) {
   //   }
   // }
 
-  if(object.gravity) {
+  if(object.tags && object.tags.gravity) {
     let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
     object.y += distance
     object.velocityY += (1000 * delta)
@@ -63,7 +63,7 @@ function updatePosition(object, delta) {
       object.velocityY = object.velocityMax * -1
     }
 
-    if(!object.gravity) {
+    if(object.tags && !object.tags.gravity) {
       object.y += object.velocityY * delta
     }
   }
@@ -210,6 +210,7 @@ function update (hero, objects, delta) {
     const result = physicsObjects[window.hero.id].createResult()
     const potentials = physicsObjects[window.hero.id].potentials()
     let illegal = false
+    let onGround = false
     let correction = {x: hero.x, y: hero.y}
     let heroPO = physicsObjects[window.hero.id]
     for(const body of potentials) {
@@ -218,6 +219,9 @@ function update (hero, objects, delta) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
           correction.y -= result.overlap * result.overlap_y
+          if(result.overlap_y === 1) {
+            onGround = true
+          }
         }
       }
     }
@@ -225,7 +229,7 @@ function update (hero, objects, delta) {
     if(illegal) {
       // hero.wallJumpLeft = false
       // hero.wallJumpRight = false
-      if(result.overlap_y === 1) {
+      if(onGround) {
         if(hero.velocityY > 0) hero.velocityY = 0
         hero.onGround = true
       } else if(result.overlap_y === -1){
@@ -283,6 +287,15 @@ function update (hero, objects, delta) {
             po.gameObject.direction = 'right'
           }
         }
+
+        if(po.gameObject.tags && po.gameObject.tags['goombaSideways'] && body.gameObject.tags && body.gameObject.tags['obstacle']) {
+          if(result.overlap_y === 1 && po.gameObject.direction === 'down') {
+            po.gameObject.direction = 'up'
+          }
+          if(result.overlap_y === -1 && po.gameObject.direction === 'up') {
+            po.gameObject.direction = 'down'
+          }
+        }
       }
     }
   }
@@ -304,7 +317,7 @@ function update (hero, objects, delta) {
       let illegal = false
       for(const body of potentials) {
         if(po.collides(body, result)) {
-          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && po.gameObject.tags['zombie']) {
+          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'])) {
             if(Math.abs(result.overlap_x) !== 0) {
               illegal = true
               correction.x -= result.overlap * result.overlap_x

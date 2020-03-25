@@ -126,26 +126,35 @@ function update(hero, objects, modifier) {
     }
 
     if(object.tags && object.tags['goomba']) {
-      if(object.tags.obstacle) {
-        let { x, y, diffX, diffY } = gridTool.convertToGridXY(object)
+      if(object.velocityMax === 0) object.velocityMax = 100
 
-        if(!object.gridX) {
-          object.gridX = x
-          object.gridY = y
-        }
-
-        if(x !== object.gridX || y !== object.gridY) {
-          // window.socket.emit('updateGridNode', {x: object.gridX, y: object.gridY}, {hasObstacle: false})
-          // window.grid.nodes[object.gridX][object.gridY].hasObstacle = false
-          // window.socket.emit('updateGridNode', {x, y}, {hasObstacle: true})
-          // window.grid.nodes[x][y].hasObstacle = true
-
-          object.gridX = x
-          object.gridY = y
-        }
+      if(!object.direction) {
+        object.direction = 'right'
       }
 
-      pathfinding.goombaWalk(object)
+      if(object.direction === 'right' ) {
+        object.velocityX = object.speed || 100
+      }
+
+      if(object.direction === 'left') {
+        object.velocityX = -object.speed || -100
+      }
+    }
+
+    if(object.tags && object.tags['goombaSideways']) {
+      if(object.velocityMax === 0) object.velocityMax = 100
+
+      if(!object.direction) {
+        object.direction = 'down'
+      }
+
+      if(object.direction === 'down' ) {
+        object.velocityY = object.speed || 100
+      }
+
+      if(object.direction === 'up') {
+        object.velocityY = -object.speed || -100
+      }
     }
 
     if(object.tags && object.tags['stationary']) {

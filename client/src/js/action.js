@@ -96,11 +96,11 @@ function init(hero){
     //shoot out thing
     if(e.keyCode === 90) {
 
-      if(window.hero.actionBehavior === 'shootBullet') {
+      if(window.hero.actionButtonBehavior === 'shootBullet') {
         shootBullet()
       }
 
-      if(window.hero.actionBehavior === 'dropWall') {
+      if(window.hero.actionButtonBehavior === 'dropWall') {
         dropWall()
       }
 
@@ -124,6 +124,8 @@ function addObjects(objects, options = { bypassCollisions: false }) {
   }
 
   objects = objects.map((newObject) => {
+    Object.assign(newObject, window.defaultObject)
+
     if(!newObject.tags) {
       newObject.tags = []
     }

@@ -37,12 +37,13 @@ window.tags = {
   monster: false,
   coin: false,
   powerup: false,
-  once: false,
+  gravity: false,
   deleteAfter: false,
   chatter: false,
   glowing: false,
   wander: false,
   goomba: false,
+  goombaSideways: false,
   homing: false,
   zombie: false,
 }
@@ -760,6 +761,8 @@ function addObjects(objects, options = { bypassCollisions: false, instantAdd: tr
   let alertAboutCollision
 
   objects = objects.map((newObject) => {
+    Object.assign(newObject, window.defaultObject)
+
     if(!newObject.tags) {
       newObject.tags = []
     }
