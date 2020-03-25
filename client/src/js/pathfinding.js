@@ -67,7 +67,7 @@ function findPath(fromPosition, toPosition, pathfindingLimit) {
 }
 
 function keepPathWithinBoundaries(attemptingX, attemptingY, pathfindingLimit) {
-  if(window.preferences.gameBoundaries.x) {
+  if(window.preferences.gameBoundaries.x && window.preferences.gameBoundaries.behavior === 'boundaryAll') {
     const {x, y, width, height } = gridTool.convertToGridXY(window.preferences.gameBoundaries)
     if(attemptingX > x + width - 2) {
       return false

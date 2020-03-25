@@ -243,7 +243,7 @@ function render(ctx, hero, objects) {
     ctx.globalAlpha = 1.0;
   }
 
-  if(currentTool == TOOLS.PROCEDURAL && window.preferences.proceduralBoundaries) {
+  if((currentTool == TOOLS.AREA_SELECTOR || currentTool == TOOLS.PROCEDURAL) && window.preferences.proceduralBoundaries) {
     ctx.fillStyle='yellow';
     ctx.globalAlpha = 0.2;
     drawObject(ctx, window.preferences.proceduralBoundaries);

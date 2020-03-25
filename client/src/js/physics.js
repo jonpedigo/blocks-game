@@ -74,7 +74,7 @@ function containObjectWithinGridBoundaries(object) {
   //DO THE PACMAN FLIP!!
   let gameBoundaries = window.preferences.gameBoundaries
   if(gameBoundaries.x) {
-    if(window.preferences.gameBoundaries.behavior === 'pacmanFlip') {
+    if(gameBoundaries.behavior === 'pacmanFlip') {
       if(object.x < gameBoundaries.x - object.width) {
         object.x = gameBoundaries.x + gameBoundaries.width
       } else if (object.x > gameBoundaries.x + gameBoundaries.width) {
@@ -84,7 +84,7 @@ function containObjectWithinGridBoundaries(object) {
       } else if (object.y > gameBoundaries.y + gameBoundaries.height) {
         object.y = gameBoundaries.y - object.height
       }
-    } else {
+    } else if(gameBoundaries.behavior == 'boundaryAll' || object.id.indexOf('hero') > -1){
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(object.x + object.width > gameBoundaries.x + gameBoundaries.width) {
         object.x = gameBoundaries.x + gameBoundaries.width - object.width

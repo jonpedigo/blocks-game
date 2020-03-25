@@ -60,14 +60,16 @@
       <div><input type='radio' name='selector' id='set-spawn'>spawn</input></div>
       <div><input type='radio' name='selector' id='set-procedural'>procedural</input></div>
       <hr/>
-      <button id='set-camera-lock-to-hero-camera'>set camera lock to hero camera</button>
-      <button id='set-camera-lock-to-grid'>set camera lock to grid</button>
-      <button id='match-game-and-camera'>set game to cameralock</button>
+      <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
+      <button id='set-selected-to-grid'>set selected to grid</button>
+      <button id='set-selected-to-game-boundary'>set selected to gameboundary</button>
+      <button id='match-game-boundary-to-selected'>set gameboundary to selected</button>
       <hr/>
-      <button id='clear-area-selected'>clear selected</button>
+      <button id='clear-area-selected'>clear selected preference</button>
       <hr/>
         <strong>Game boundary behavior</strong>
-        <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary</input></div>
+        <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary - hero only</input></div>
+        <div><input type='radio' name='game-boundary-behavior' id='set-game-boundary-all'>boundary</input></div>
         <div><input type='radio' name='game-boundary-behavior' id='set-pacman-flip'>pacman flip</input></div>
         <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory ( doesn't work yet )</input></div>
     </div>
