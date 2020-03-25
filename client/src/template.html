@@ -64,8 +64,12 @@
       <button id='set-camera-lock-to-grid'>set camera lock to grid</button>
       <button id='match-game-and-camera'>set game to cameralock</button>
       <hr/>
-      <button id='clear-camera-lock'>clear camera boundaries</button>
-      <button id='clear-game-boundaries'>clear game boundaries</button>
+      <button id='clear-area-selected'>clear selected</button>
+      <hr/>
+        <strong>Game boundary behavior</strong>
+        <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary</input></div>
+        <div><input type='radio' name='game-boundary-behavior' id='set-pacman-flip'>pacman flip</input></div>
+        <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory ( doesn't work yet )</input></div>
     </div>
 
     <div id='tool-objectEditor' class="tool-feature invisible">

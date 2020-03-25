@@ -83,13 +83,13 @@ window.defaultObject = {
 
 window.respawnHero = function () {
   // hero spawn point takes precedence
-  if(window.preferences.worldSpawnPointX) {
+  if(window.preferences.worldSpawnPointX >= 0) {
     window.hero.x = window.preferences.worldSpawnPointX
     window.hero.y = window.preferences.worldSpawnPointY
     return
   }
 
-  if(window.hero.spawnPointX) {
+  if(window.hero.spawnPointX >= 0) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
     return
@@ -161,7 +161,12 @@ const defaultHero = {
 	jumpVelocity: -480,
 	// spawnPointX: (40) * 20,
 	// spawnPointY: (40) * 20,
-	tags: {hero: true, isPlayer: true, monsterDestroyer: false, gravity: false},
+	tags: {
+    hero: true,
+    isPlayer: true,
+    monsterDestroyer: false,
+    gravity: false,
+  },
 	zoomMultiplier: 1.8816764231589203,
   x: 960,
   y: 960,
@@ -170,6 +175,7 @@ const defaultHero = {
   flags : {
     showChat: false,
     showScore: false,
+    paused: false,
   }
 }
 

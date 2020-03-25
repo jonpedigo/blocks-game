@@ -24,6 +24,7 @@ function init() {
 
       if(window.grid.nodes && !window.preferences.calculatePathCollisions) {
         gridTool.updateGridObstacles()
+        window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
   	})
@@ -45,6 +46,7 @@ function init() {
 
       if(!window.preferences.calculatePathCollisions) {
         gridTool.updateGridObstacles()
+        window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
   	})
@@ -108,6 +110,9 @@ function init() {
   window.socket.on('onResetPreferences', (hero) => {
     window.preferences = {}
     camera.clearLimit()
+    gridTool.updateGridObstacles()
+    window.resetPaths = true
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
   })
 
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
@@ -133,7 +138,6 @@ function init() {
   	for(let key in updatedPreferences) {
   		const value = updatedPreferences[key]
   		window.preferences[key] = value
-
   		if(key === 'lockCamera' && !window.usePlayEditor) {
   			if(value.limitX) {
   				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
@@ -157,6 +161,12 @@ function init() {
         gridTool.updateGridObstacles()
         if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
+      if(key === 'gameBoundaries') {
+        // breaks if game has not 'started' yet or 'loaded yet'
+        // gridTool.updateGridObstacles()
+        // window.resetPaths = true
+        // if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      }
   	}
   })
 
@@ -179,7 +189,6 @@ function init() {
         if(window.heros.undefined) window.socket.emit('deleteHero', 'undefined')
         delete window.heros.undefined
         for(var heroId in window.heros) {
-          console.log(window.heros[heroId].tags)
           if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
             window.setEditingHero(window.heros[heroId])
             break;

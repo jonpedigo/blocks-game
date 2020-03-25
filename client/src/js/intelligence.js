@@ -35,6 +35,10 @@ function startOnPathNode(object) {
   }
 }
 function moveOnPath(object) {
+  if(object.velocityMax == 0) {
+    object.velocityMax = object.speed || 100
+  }
+
   const { x, y, diffX, diffY } = gridTool.convertToGridXY(object)
   object.gridX = x
   object.gridY = y
@@ -71,7 +75,11 @@ function moveOnPath(object) {
 function update(hero, objects, modifier) {
   objects.forEach((object) => {
     if(object.path && object.path.length) {
-      moveOnPath(object)
+      if(window.resetPaths) {
+        object.path = []
+        object.velocityX = 0
+        object.velocityY = 0
+      } else moveOnPath(object)
     }
 
     if(object.tags && object.tags['zombie']) {
@@ -94,7 +102,7 @@ function update(hero, objects, modifier) {
     }
 
     if(object.tags && object.tags['homing']) {
-      if(window.resetPaths || !object.path || (object.path && !object.path.length)) {
+      if(!object.path || (object.path && !object.path.length)) {
         const { x, y } = gridTool.convertToGridXY(object)
         object.gridX = x
         object.gridY = y
@@ -103,13 +111,13 @@ function update(hero, objects, modifier) {
         window.hero.gridX = heroGridPos.x
         window.hero.gridY = heroGridPos.y
 
-        object.path = pathfinding.findPath({fromPosition: {
+        object.path = pathfinding.findPath({
           x: x,
           y: y,
-        }, toPosition: {
+        }, {
           x: window.hero.gridX,
           y: window.hero.gridY,
-        }}, object.pathfindingLimit)
+        }, object.pathfindingLimit)
 
         if(object.path && object.path.length) startOnPathNode(object)
       }

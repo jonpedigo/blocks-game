@@ -31,15 +31,25 @@ window.scaleMultiplier = .3
 window.objectFactory = []
 
 window.tags = {
+
+  // COLLISIONS
   obstacle: true,
   stationary: false,
   monster: false,
   coin: false,
   powerup: false,
-  gravity: false,
   deleteAfter: false,
+
+  // PHYSICS
+  gravity: false,
+
+  // UI
   chatter: false,
+
+  // GRAPHICAL
   glowing: false,
+
+  // INTELLIGENCE
   wander: false,
   goomba: false,
   goombaSideways: false,
@@ -192,7 +202,7 @@ const tools = {
         y: window.clickStart.y/window.scaleMultiplier,
       }
 
-      gridTool.snapObjectToGrid(value)
+      gridTool.snapDragToGrid(value, {dragging: true})
 
       const {x, y, width, height} = value;
       if(window.currentTool === TOOLS.PROCEDURAL) {
@@ -251,8 +261,7 @@ const tools = {
         heroUpdate: {},
       }
 
-      gridTool.snapObjectToGrid(newObject)
-
+      gridTool.snapDragToGrid(newObject, { dragging: true })
       addObjects(newObject)
     },
   }
@@ -586,14 +595,34 @@ function init(ctx, objects) {
   window.selectorCameraToggle = document.getElementById('set-camera')
   window.selectorSpawnToggle = document.getElementById('set-spawn')
   window.selectorProceduralToggle = document.getElementById('set-procedural')
-  var clearcameralock = document.getElementById("clear-camera-lock")
-  clearcameralock.addEventListener('click', (e) => {
-    window.socket.emit('updatePreferences', { lockCamera: {} })
+
+  var cleararea = document.getElementById("clear-area-selected")
+  cleararea.addEventListener('click', (e) => {
+    if(window.selectorGameToggle.checked) {
+      window.socket.emit('updatePreferences', { gameBoundaries: {} })
+    }
+    if(window.selectorCameraToggle.checked) {
+      window.socket.emit('updatePreferences', { lockCamera: {} })
+    }
+    if(window.selectorSpawnToggle.checked) {
+      window.socket.emit('updatePreferences', { worldSpawnPointX: null, worldSpawnPointY: null })
+    }
+    if(window.selectorProceduralToggle.checked) {
+      window.socket.emit('updatePreferences', { proceduralBoundaries: {} })
+    }
   })
 
-  var cleargameboundaries = document.getElementById("clear-game-boundaries")
-  cleargameboundaries.addEventListener('click', (e) => {
-    window.socket.emit('updatePreferences', { gameBoundaries: {} })
+  var setGameBoundaryDefault = document.getElementById("set-game-boundary-default")
+  setGameBoundaryDefault.addEventListener('click', (e) => {
+    window.socket.emit('updatePreferences', { gameBoundaries: { ...window.preferences.gameBoundaries, behavior: 'default' } })
+  })
+  var setGameBoundaryPacmanFlip = document.getElementById("set-pacman-flip")
+  setGameBoundaryPacmanFlip.addEventListener('click', (e) => {
+    window.socket.emit('updatePreferences', { gameBoundaries: { ...window.preferences.gameBoundaries, behavior: 'pacmanFlip' } })
+  })
+  var setGameBoundaryPurgatory = document.getElementById("set-purgatory")
+  setGameBoundaryPurgatory.addEventListener('click', (e) => {
+    window.socket.emit('updatePreferences', { gameBoundaries: { ...window.preferences.gameBoundaries, behavior: 'purgatory' } })
   })
 
   var setGameToCamera = document.getElementById("match-game-and-camera")

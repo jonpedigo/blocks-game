@@ -59,13 +59,14 @@ function init(hero){
 
       if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
         let newI = window.editingObject.i
-        if(window.editingObject.i === 0) {
-          newI = window.objects.length -1
+        if(!window.editingObject.i) {
+          newI = window.objects.length - 1
         } else {
           newI -= 1
         }
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
+        window.simpleeditor.set(window.editingObject)
         window.findObject()
       }
       return
@@ -98,6 +99,7 @@ function init(hero){
         }
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
+        window.simpleeditor.set(window.editingObject)
         window.findObject()
       }
       return

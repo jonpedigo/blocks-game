@@ -70,41 +70,58 @@ function updatePosition(object, delta) {
 }
 
 function containObjectWithinGridBoundaries(object) {
-  //CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
-    object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
-  }
-  if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
-    object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
-  }
 
-  if(object.x < window.grid.startX) {
-    object.x = window.grid.startX
-  }
+  //DO THE PACMAN FLIP!!
+  let gameBoundaries = window.preferences.gameBoundaries
+  if(gameBoundaries.x) {
+    if(window.preferences.gameBoundaries.behavior === 'pacmanFlip') {
+      if(object.x < gameBoundaries.x - object.width) {
+        object.x = gameBoundaries.x + gameBoundaries.width
+      } else if (object.x > gameBoundaries.x + gameBoundaries.width) {
+        object.x = gameBoundaries.x - object.width
+      } else if(object.y < gameBoundaries.y - object.height) {
+        object.y = gameBoundaries.y + gameBoundaries.height
+      } else if (object.y > gameBoundaries.y + gameBoundaries.height) {
+        object.y = gameBoundaries.y - object.height
+      }
+    } else {
+      //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
+      if(object.x + object.width > gameBoundaries.x + gameBoundaries.width) {
+        object.x = gameBoundaries.x + gameBoundaries.width - object.width
+      }
+      if(object.y + object.height > gameBoundaries.y + gameBoundaries.height) {
+        object.y = gameBoundaries.y + gameBoundaries.height - object.height
+      }
+      if(object.x < gameBoundaries.x) {
+        object.x = gameBoundaries.x
+      }
+      if(object.y < gameBoundaries.y) {
+        object.y = gameBoundaries.y
+      }
+    }
+  } else {
+    //NO GAME BOUNDARIES - CONTAIN WITHIN BOUNDARIES OF THE GRID!!
+    if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+      object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
+    }
+    if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+      object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
+    }
 
-  if(object.y < window.grid.startY) {
-    object.y = window.grid.startY
+    if(object.x < window.grid.startX) {
+      object.x = window.grid.startX
+    }
+
+    if(object.y < window.grid.startY) {
+      object.y = window.grid.startY
+    }
   }
 }
 
 function update (hero, objects, delta) {
-  let gameBoundaries = window.preferences.gameBoundaries
-  if(gameBoundaries) {
-    if(hero.x < gameBoundaries.x - hero.width) {
-      hero.x = gameBoundaries.x + gameBoundaries.width
-    } else if (hero.x > gameBoundaries.x + gameBoundaries.width) {
-      hero.x = gameBoundaries.x - hero.width
-    } else if(hero.y < gameBoundaries.y - hero.height) {
-      hero.y = gameBoundaries.y + gameBoundaries.height
-    } else if (hero.y > gameBoundaries.y + gameBoundaries.height) {
-      hero.y = gameBoundaries.y - hero.height
-    }
-  }
-
   // set objects new position and widths
   [...objects, hero].forEach((object, i) => {
     updatePosition(object, delta)
-    containObjectWithinGridBoundaries(object)
 
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
@@ -160,7 +177,7 @@ function update (hero, objects, delta) {
     if(heroPO.collides(body, result)) {
       if(body.gameObject.tags && body.gameObject.tags['monster']) {
         if(heroPO.gameObject.tags['monsterDestroyer']) {
-          if(body.gameObject.spawnPointX) {
+          if(body.gameObject.spawnPointX >= 0 && body.gameObject.tags['respawn']) {
             body.gameObject.x = body.gameObject.spawnPointX
             body.gameObject.y = body.gameObject.spawnPointY
           } else {

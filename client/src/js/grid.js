@@ -137,6 +137,58 @@ function snapObjectToGrid(object) {
   }
 }
 
+function snapDragToGrid(object) {
+  // if negative width
+  if(object.width < 0) {
+    object.x += object.width
+    object.width = Math.abs(object.width)
+  }
+  if(object.height < 0) {
+    object.y += object.height
+    object.height = Math.abs(object.height)
+  }
+
+  let diffX = object.x % window.grid.nodeSize
+  object.x -= diffX
+
+  if(diffX > window.grid.nodeSize/2) {
+    diffX -= window.grid.nodeSize/2
+  }
+
+  let diffY = object.y % window.grid.nodeSize;
+  object.y -= diffY
+
+  if(diffY > window.grid.nodeSize/2) {
+    diffY -= window.grid.nodeSize/2
+  }
+
+  let diffWidth = object.width % window.grid.nodeSize;
+  if(diffWidth > window.grid.nodeSize/2) {
+    // object.width += (window.grid.nodeSize - diffWidth)
+  } else {
+    // object.width -= diffWidth
+  }
+
+  let diffHeight = object.height % window.grid.nodeSize;
+  if(diffHeight > window.grid.nodeSize/2) {
+    // object.height += (window.grid.nodeSize - diffHeight)
+  } else {
+    // object.height -= diffHeight
+  }
+
+  object.width = Math.ceil(object.width/window.grid.nodeSize) * window.grid.nodeSize
+  object.height = Math.ceil(object.height/window.grid.nodeSize) * window.grid.nodeSize
+
+  if(diffY + diffHeight > window.grid.nodeSize) {
+    object.height += window.grid.nodeSize
+  }
+  if(diffX + diffWidth > window.grid.nodeSize) {
+    object.width += window.grid.nodeSize
+  }
+
+
+}
+
 window.snapAllObjectsToGrid = function() {
 	window.objects.forEach((object) => {
 		snapObjectToGrid(object)
@@ -239,6 +291,7 @@ export default {
   forEach,
   update,
   snapObjectToGrid,
+  snapDragToGrid,
   createGridNodeAt,
   generateGridNodes,
   snapXYToGrid,

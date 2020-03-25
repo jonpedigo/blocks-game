@@ -46,44 +46,58 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
   const toX = toPosition.x
   const toY = toPosition.y
   const openGrid = findOpenGridNear({ position: toPosition, prioritizeNear: {x: prioritizeNear.x, y: prioritizeNear.y}, onFail})
-  //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(toX >= 0 && toX < window.grid.width) {
-    if(fromY >= 0 && fromY < window.grid.height) {
-      var gridBackup = window.pfgrid.clone();
-      return finder.findPath(fromX, fromY, openGrid.x, openGrid.y, gridBackup).map((path) => {
-        return {x: path[0], y: path[1]}
-      });
-    }
-  }
+  return findPath(fromPosition, openGrid)
 }
 
-function findPath({fromPosition, toPosition}, pathfindingLimit) {
+// these x and ys are in gridFormat
+function findPath(fromPosition, toPosition, pathfindingLimit) {
   const fromX = fromPosition.x
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
 
-  if(pathfindingLimit) {
-    if(toX > pathfindingLimit.x + pathfindingLimit.width - 1) {
-      return []
-    } else if(toX < pathfindingLimit.x - 1) {
-      return []
-    } else if(toY > pathfindingLimit.y + pathfindingLimit.height - 1) {
-      return []
-    } else if(toY < pathfindingLimit.y - 1) {
-      return []
+  if(keepPathWithinBoundaries(toX, toY, pathfindingLimit)) {
+    var gridBackup = window.pfgrid.clone();
+    return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
+      return {x: path[0], y: path[1]}
+    });
+  } else {
+    return []
+  }
+}
+
+function keepPathWithinBoundaries(attemptingX, attemptingY, pathfindingLimit) {
+  if(window.preferences.gameBoundaries.x) {
+    const {x, y, width, height } = gridTool.convertToGridXY(window.preferences.gameBoundaries)
+    if(attemptingX > x + width - 2) {
+      return false
+    } else if(attemptingX < x) {
+      return false
+    } else if(attemptingY > y + height - 2) {
+      return false
+    } else if(attemptingY < y) {
+      return false
+    }
+  } else if(pathfindingLimit){
+    if(attemptingX > pathfindingLimit.x + pathfindingLimit.width - 1) {
+      return false
+    } else if(attemptingX < pathfindingLimit.x - 1) {
+      return false
+    } else if(attemptingY > pathfindingLimit.y + pathfindingLimit.height - 1) {
+      return false
+    } else if(attemptingY < pathfindingLimit.y - 1) {
+      return false
     }
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(toX >= 0 && toX < window.grid.width) {
-    if(fromY >= 0 && fromY < window.grid.height) {
-      var gridBackup = window.pfgrid.clone();
-      return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
-        return {x: path[0], y: path[1]}
-      });
+  if(attemptingX >= 0 && attemptingX < window.grid.width) {
+    if(attemptingY >= 0 && attemptingY < window.grid.height) {
+      return true
     }
   }
+
+  return false
 }
 
 // searches nearby grids for open space
@@ -154,18 +168,12 @@ function forceFindOpenGridNear({position, level = 0}){
 
 function isGridWalkable(x, y, limit) {
   // for pathfinding with area
-  if(limit) {
-    if(x < limit.x || x > limit.x + limit.width - 1) {
-      return false
-    }
-    if(y < limit.y || y > limit.y + limit.height - 1) {
-      return false
-    }
-  }
-  if(!window.pfgrid.nodes[y]) return false
-  if(!window.pfgrid.nodes[y][x]) return false
-  if(!window.pfgrid.nodes[y][x].walkable) return false
-  return true
+  if(keepPathWithinBoundaries(x, y, limit)) {
+    if(!window.pfgrid.nodes[y]) return false
+    if(!window.pfgrid.nodes[y][x]) return false
+    if(!window.pfgrid.nodes[y][x].walkable) return false
+    return true
+  } else return false
 }
 
 function walkAround(object) {
