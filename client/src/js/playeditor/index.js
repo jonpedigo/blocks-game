@@ -673,10 +673,8 @@ function init(ctx, objects) {
   setSelectedToGameBoundary.addEventListener('click', function(){
     const value = window.preferences.gameBoundaries
     if(window.preferences.gameBoundaries.x >= 0) {
-      console.log('?')
       if(window.selectorCameraToggle.checked) {
         const { x, y, width, height} = value
-        console.log('?')
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
         window.socket.emit('updatePreferences', { lockCamera })
       }

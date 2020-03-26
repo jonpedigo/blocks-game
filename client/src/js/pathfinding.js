@@ -70,7 +70,6 @@ function keepPathWithinBoundaries(attemptingX, attemptingY, options = { bypassGa
   if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
     const {x, y, width, height } = gridTool.convertToGridXY(window.preferences.gameBoundaries)
     if(attemptingX > x + width - 1) {
-      console.log(attemptingX, x + width - 1)
       return false
     } else if(attemptingX < x) {
       return false
