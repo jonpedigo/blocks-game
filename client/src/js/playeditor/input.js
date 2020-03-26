@@ -66,7 +66,7 @@ function init(hero){
         }
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
-        window.simpleeditor.set(window.editingObject)
+        window.objecteditor.set(window.editingObject)
         window.findObject()
       }
       return
@@ -99,7 +99,7 @@ function init(hero){
         }
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
-        window.simpleeditor.set(window.editingObject)
+        window.objecteditor.set(window.editingObject)
         window.findObject()
       }
       return

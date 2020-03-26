@@ -51,9 +51,9 @@ function init() {
       }
   	})
 
-  	// window.socket.on('onSnapAllObjectsToGrid', () => {
-  	// 	window.snapAllObjectsToGrid()
-  	// })
+  	window.socket.on('onSnapAllObjectsToGrid', () => {
+  		window.snapAllObjectsToGrid()
+  	})
 
     window.socket.on('onResetHero', (hero) => {
       if(hero.id === window.hero.id) {
@@ -67,6 +67,9 @@ function init() {
       }
     })
 
+    window.socket.on('onAnticipateObjectAdd', () => {
+  		window.anticipateObjectAdd = true
+  	})
   }
 
   ///////////////////////////////
@@ -84,6 +87,10 @@ function init() {
       window.objects = objectsUpdated
       if(window.editingObject.i >= 0) {
         Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
+        if(window.syncObjectsToggle.checked) {
+          window.objecteditor.set(window.editingObject)
+          window.objecteditor.expandAll()
+        }
       }
     })
     window.socket.on('onAddObjects', (objects) => {
@@ -201,7 +208,7 @@ function init() {
   window.socket.on('onRemoveObject', (object) => {
     if(window.usePlayEditor && window.editingObject.id === object.id) {
       window.editingObject = {}
-      window.simpleeditor.set({})
+      window.objecteditor.set({})
     }
 
     if(!window.preferences.calculatePathCollisions) {

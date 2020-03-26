@@ -17,12 +17,12 @@
     <hr/>
 
     <div id='tool-heroEditor' class="tool-feature invisible">
-      <button id='send-hero-pos'>Send Hero Pos</button>
-      <button id='send-hero'>Send Hero Other</button>
+      <button id='send-hero-pos'>Send Editor Hero Pos</button>
+      <button id='send-hero'>Send Editor Hero Other</button>
       <hr>
       <button id='find-hero'>Find Hero</button>
       <button id='respawn-hero'>Respawn Hero</button>
-      <button id='reset-hero-other'>Reset Hero Other</button>
+      <button id='reset-hero'>Reset Hero To Default</button>
       <button id='hero-zoomIn'>Hero - Zoom In</button>
       <button id='hero-zoomOut'>Hero - Zoom Out</button>
       <hr>
@@ -41,8 +41,10 @@
       <hr>
       <input value="5" id='add-dot-size'></input>Little dot size (px)
       <hr>
-      <div><input type='checkbox' checked id='instant-add'>send instantly</input></div>
+      <div><input type='checkbox' checked id='instant-add'>send immediately when created</input></div>
       <button id='save-factory'>save factory</button>
+      <hr>
+      <button id='anticipated-object-add'>anticipated object add</button>
       <hr>
       <div id="tag-select">
       </div>
@@ -67,14 +69,16 @@
       <hr/>
       <button id='clear-area-selected'>clear selected preference</button>
       <hr/>
-        <strong>Game boundary behavior</strong>
-        <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary - hero only</input></div>
-        <div><input type='radio' name='game-boundary-behavior' id='set-game-boundary-all'>boundary</input></div>
-        <div><input type='radio' name='game-boundary-behavior' id='set-pacman-flip'>pacman flip</input></div>
-        <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory ( doesn't work yet )</input></div>
+      <strong>Game boundary behavior</strong>
+      <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary - hero only</input></div>
+      <div><input type='radio' name='game-boundary-behavior' id='set-game-boundary-all'>boundary</input></div>
+      <div><input type='radio' name='game-boundary-behavior' id='set-pacman-flip'>pacman flip</input></div>
+      <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory ( doesn't work yet )</input></div>
     </div>
 
     <div id='tool-objectEditor' class="tool-feature invisible">
+      <button id='send-object-pos'>send editor object pos</button>
+      <button id='send-object-other'>send editor object other</button>
       <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
       <div><button id='delete-object'>Delete Object</button></div>
       <hr>

@@ -103,10 +103,6 @@ function update(hero, delta) {
     }
   }
 
-  if(13 in keysDown) {
-    // camera.setLimit(100, 100)
-  }
-
   if(hero.arrowKeysBehavior === 'skating') {
     if(direction === 'up') {
       hero.y -= Math.ceil(hero.speed * delta);
@@ -118,6 +114,8 @@ function update(hero, delta) {
       hero.x += Math.ceil(hero.speed * delta);
     }
   }
+
+  window.hero.direction = direction
 }
 
 function getDirection() {

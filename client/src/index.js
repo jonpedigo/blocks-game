@@ -30,6 +30,7 @@ import chat from './js/chat.js'
 import physics from './js/physics.js'
 import input from './js/input.js'
 import camera from './js/camera.js'
+import collisions from './js/collisions.js'
 import playEditor from './js/playeditor/index.js'
 import shadow from './js/shadow.js'
 import action from './js/action.js'
@@ -79,6 +80,9 @@ window.defaultObject = {
   velocityY: 0,
   velocityMax: 0,
   speed: 100,
+  color: 'white',
+  tags: {},
+  heroUpdate: {},
 }
 
 window.respawnHero = function () {
@@ -128,6 +132,74 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
 	let width = (velocity * deltaInAir)
 	return width * 2
+}
+
+window.addObjects = function(objects, options = { bypassCollisions: false, instantAdd: true }) {
+  if(!objects.length) {
+    objects = [objects]
+  }
+
+  let alertAboutCollision
+
+  objects = objects.map((newObject) => {
+    Object.assign(newObject, window.defaultObject)
+
+    if(!newObject.id){
+      newObject.id = 'object' + Date.now();
+    }
+
+    for(let tag in window.tags) {
+      if(window.tags[tag].checked || newObject.tags[tag] === true){
+        newObject.tags[tag] = true
+      } else {
+        newObject.tags[tag] = false
+      }
+    }
+
+    newObject.spawnPointX = newObject.x
+    newObject.spawnPointY = newObject.y
+
+    if(!window.preferences.calculatePathCollisions) {
+      grid.addObstacle(newObject)
+    }
+
+    if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
+      return newObject
+    } else {
+      alertAboutCollision = true
+    }
+  }).filter(obj => !!obj)
+
+  if(!window.usePlayEditor){
+    console.log('?')
+    window.objects.push(...objects)
+    objects.forEach((object) => {
+      physics.addObject(object)
+    })
+
+    if(!window.preferences.calculatePathCollisions) {
+      grid.updateGridObstacles()
+      window.resetPaths = true
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+    return
+  }
+
+  if(alertAboutCollision) {
+    if(confirm('already an object on this grid node..confirm to add anyways')) {
+      emitNewObjects()
+    }
+  } else {
+    emitNewObjects()
+  }
+
+  function emitNewObjects() {
+    if(window.instantAddToggle.checked || options.instantAddToggle) {
+      window.socket.emit('addObjects', objects)
+    } else {
+      window.objectFactory.push(...objects)
+    }
+  }
 }
 
 /////////////
@@ -269,6 +341,48 @@ var update = function (delta) {
         }
         window.socket.emit('updateHero', window.hero)
       }
+    }
+  }
+
+  if(window.anticipateObjectAdd) {
+    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff } = window.getViewBoundaries(window.hero)
+
+    if (leftDiff < 1 && window.hero.direction == 'left') {
+      let newObject = {
+        x: minX - window.grid.nodeSize,
+        y: centerY,
+        width: window.grid.nodeSize,
+        height: window.grid.nodeSize,
+      }
+      window.addObjects([newObject])
+      window.anticipatedObjectAdd = false
+    } else if (topDiff < 1 && window.hero.direction == 'up') {
+      let newObject = {
+        x: centerX,
+        y: minY - window.grid.nodeSize,
+        width: window.grid.nodeSize,
+        height: window.grid.nodeSize,
+      }
+      window.addObjects([newObject])
+      window.anticipatedObjectAdd = false
+    } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.direction == 'right') {
+      let newObject = {
+        x: maxX,
+        y: centerY,
+        width: window.grid.nodeSize,
+        height: window.grid.nodeSize,
+      }
+      window.addObjects([newObject])
+      window.anticipatedObjectAdd = false
+    } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.direction == 'down') {
+      let newObject = {
+        x: centerX,
+        y: maxY,
+        width: window.grid.nodeSize,
+        height: window.grid.nodeSize,
+      }
+      window.addObjects([newObject])
+      window.anticipatedObjectAdd = false
     }
   }
 };

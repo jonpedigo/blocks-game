@@ -91,6 +91,10 @@ io.on('connection', function(socket){
   })
 
   //objects
+  socket.on('anticipateObjectAdd', (hero) => {
+    io.emit('onAnticipateObjectAdd', hero)
+  })
+
   socket.on('updateObjects', (objects) => {
     serverState = objects
     io.emit('onUpdateObjects', serverState)

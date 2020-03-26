@@ -118,41 +118,6 @@ function update(flags, hero, modifier) {
 
 }
 
-function addObjects(objects, options = { bypassCollisions: false }) {
-  if(!objects.length) {
-    objects = [objects]
-  }
-
-  objects = objects.map((newObject) => {
-    Object.assign(newObject, window.defaultObject)
-
-    if(!newObject.tags) {
-      newObject.tags = []
-    }
-
-    for(let tag in window.tags) {
-      if(window.tags[tag].checked || newObject.tags[tag] === true){
-        newObject.tags[tag] = true
-      } else {
-        newObject.tags[tag] = false
-      }
-    }
-
-    newObject.spawnPointX = newObject.x
-    newObject.spawnPointY = newObject.y
-
-    if(!window.preferences.calculatePathCollisions) {
-      gridTool.addObstacle(newObject)
-    }
-
-    if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
-      return newObject
-    }
-  }).filter(obj => !!obj)
-
-  window.socket.emit('addObjects', objects)
-}
-
 export default {
   init,
   update,

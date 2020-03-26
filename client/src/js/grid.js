@@ -107,6 +107,14 @@ function snapXYToGrid(x, y) {
   return { x, y }
 }
 
+function getAllDiffs({x, y, width, height}) {
+  let leftDiff = x % window.grid.nodeSize
+  let topDiff = y % window.grid.nodeSize
+  let rightDiff = (x + width) % window.grid.nodeSize
+  let bottomDiff = (y + height) % window.grid.nodeSize
+  return { leftDiff, topDiff, rightDiff, bottomDiff }
+}
+
 function snapObjectToGrid(object) {
   let diffX = object.x % window.grid.nodeSize;
   if(diffX > window.grid.nodeSize/2) {
@@ -296,6 +304,7 @@ export default {
   generateGridNodes,
   snapXYToGrid,
   updateGridObstacles,
+  getAllDiffs,
   addObstacle,
   removeObstacle,
   convertToGridXY,
