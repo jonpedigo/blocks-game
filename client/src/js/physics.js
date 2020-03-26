@@ -73,48 +73,52 @@ function containObjectWithinGridBoundaries(object) {
 
   //DO THE PACMAN FLIP!!
   let gameBoundaries = window.preferences.gameBoundaries
-  if(gameBoundaries && gameBoundaries.x) {
+  if(gameBoundaries && gameBoundaries.x >= 0) {
+    let objectToEdit = object
+    if(object.tags.fresh) {
+      objectToEdit = {...object}
+    }
+
     if(gameBoundaries.behavior === 'pacmanFlip') {
-      if(object.x < gameBoundaries.x - object.width) {
-        object.x = gameBoundaries.x + gameBoundaries.width
-      } else if (object.x > gameBoundaries.x + gameBoundaries.width) {
-        object.x = gameBoundaries.x - object.width
-      } else if(object.y < gameBoundaries.y - object.height) {
-        object.y = gameBoundaries.y + gameBoundaries.height
-      } else if (object.y > gameBoundaries.y + gameBoundaries.height) {
-        object.y = gameBoundaries.y - object.height
+      if(objectToEdit.x < gameBoundaries.x - objectToEdit.width) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width
+      } else if (objectToEdit.x > gameBoundaries.x + gameBoundaries.width) {
+        objectToEdit.x = gameBoundaries.x - objectToEdit.width
+      } else if(objectToEdit.y < gameBoundaries.y - objectToEdit.height) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height
+      } else if (objectToEdit.y > gameBoundaries.y + gameBoundaries.height) {
+        objectToEdit.y = gameBoundaries.y - objectToEdit.height
+      } else {
+        object.tags.fresh = false
       }
-    } else if(gameBoundaries.behavior == 'boundaryAll' || object.id.indexOf('hero') > -1){
+    } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
-      if(object.x + object.width > gameBoundaries.x + gameBoundaries.width) {
-        object.x = gameBoundaries.x + gameBoundaries.width - object.width
-      }
-      if(object.y + object.height > gameBoundaries.y + gameBoundaries.height) {
-        object.y = gameBoundaries.y + gameBoundaries.height - object.height
-      }
-      if(object.x < gameBoundaries.x) {
-        object.x = gameBoundaries.x
-      }
-      if(object.y < gameBoundaries.y) {
-        object.y = gameBoundaries.y
+      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
+      } else if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
+      } else if(objectToEdit.x < gameBoundaries.x) {
+        objectToEdit.x = gameBoundaries.x
+      } else if(objectToEdit.y < gameBoundaries.y) {
+        objectToEdit.y = gameBoundaries.y
+      } else {
+        object.tags.fresh = false
       }
     }
-  } else {
-    //NO GAME BOUNDARIES - CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-    if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
-      object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
-    }
-    if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
-      object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
-    }
+  }
 
-    if(object.x < window.grid.startX) {
-      object.x = window.grid.startX
-    }
-
-    if(object.y < window.grid.startY) {
-      object.y = window.grid.startY
-    }
+  //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
+  if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+    object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
+  }
+  if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+    object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
+  }
+  if(object.x < window.grid.startX) {
+    object.x = window.grid.startX
+  }
+  if(object.y < window.grid.startY) {
+    object.y = window.grid.startY
   }
 }
 

@@ -57,6 +57,10 @@ window.tags = {
   goombaSideways: false,
   homing: false,
   zombie: false,
+
+  // TEMPORARY STATE
+  fresh: false,
+
 }
 window.editingObject = {
   i: null,
@@ -664,44 +668,24 @@ function init(ctx, objects) {
       window.socket.emit('updatePreferences', { proceduralBoundaries: value })
     }
   })
-  var setSelectedToGrid = document.getElementById("set-selected-to-grid");
-  setSelectedToGrid.addEventListener('click', function(){
-    const value = {
-      width: window.grid.width * window.grid.nodeSize,
-      height: window.grid.height * window.grid.nodeSize,
-      x: window.grid.startX,
-      y: window.grid.startY
-    }
-    if(window.selectorGameToggle.checked) {
-      window.socket.emit('updatePreferences', { gameBoundaries: value })
-    }
-    if(window.selectorCameraToggle.checked) {
-      const { x, y, width, height} = value
-      const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-      window.socket.emit('updatePreferences', { lockCamera })
-    }
-    if(window.selectorSpawnToggle.checked) {
-      window.socket.emit('updatePreferences', { worldSpawnArea: value })
-    }
-    if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updatePreferences', { proceduralBoundaries: value })
-    }
-  })
 
   var setSelectedToGameBoundary = document.getElementById("set-selected-to-game-boundary");
   setSelectedToGameBoundary.addEventListener('click', function(){
     const value = window.preferences.gameBoundaries
-    if(!window.preferences.gameBoundaries.x) return
-    if(window.selectorCameraToggle.checked) {
-      const { x, y, width, height} = value
-      const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-      window.socket.emit('updatePreferences', { lockCamera })
-    }
-    if(window.selectorSpawnToggle.checked) {
-      window.socket.emit('updatePreferences', { worldSpawnArea: value })
-    }
-    if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updatePreferences', { proceduralBoundaries: value })
+    if(window.preferences.gameBoundaries.x >= 0) {
+      console.log('?')
+      if(window.selectorCameraToggle.checked) {
+        const { x, y, width, height} = value
+        console.log('?')
+        const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+        window.socket.emit('updatePreferences', { lockCamera })
+      }
+      if(window.selectorSpawnToggle.checked) {
+        window.socket.emit('updatePreferences', { worldSpawnArea: value })
+      }
+      if(window.selectorProceduralToggle.checked) {
+        window.socket.emit('updatePreferences', { proceduralBoundaries: value })
+      }
     }
   })
 

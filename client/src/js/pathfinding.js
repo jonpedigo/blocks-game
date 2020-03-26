@@ -50,13 +50,13 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
 }
 
 // these x and ys are in gridFormat
-function findPath(fromPosition, toPosition, pathfindingLimit) {
+function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   const fromX = fromPosition.x
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
 
-  if(keepPathWithinBoundaries(toX, toY, pathfindingLimit)) {
+  if(keepPathWithinBoundaries(toX, toY, options)) {
     var gridBackup = window.pfgrid.clone();
     return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
       return {x: path[0], y: path[1]}
@@ -66,19 +66,23 @@ function findPath(fromPosition, toPosition, pathfindingLimit) {
   }
 }
 
-function keepPathWithinBoundaries(attemptingX, attemptingY, pathfindingLimit) {
-  if(window.preferences.gameBoundaries.x && window.preferences.gameBoundaries.behavior === 'boundaryAll') {
+function keepPathWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
     const {x, y, width, height } = gridTool.convertToGridXY(window.preferences.gameBoundaries)
-    if(attemptingX > x + width - 2) {
+    if(attemptingX > x + width - 1) {
+      console.log(attemptingX, x + width - 1)
       return false
     } else if(attemptingX < x) {
       return false
-    } else if(attemptingY > y + height - 2) {
+    } else if(attemptingY > y + height - 1) {
       return false
     } else if(attemptingY < y) {
       return false
     }
-  } else if(pathfindingLimit){
+  }
+
+  const pathfindingLimit = options.pathfindingLimit
+  if(pathfindingLimit){
     if(attemptingX > pathfindingLimit.x + pathfindingLimit.width - 1) {
       return false
     } else if(attemptingX < pathfindingLimit.x - 1) {
@@ -91,8 +95,8 @@ function keepPathWithinBoundaries(attemptingX, attemptingY, pathfindingLimit) {
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(attemptingX >= 0 && attemptingX < window.grid.width) {
-    if(attemptingY >= 0 && attemptingY < window.grid.height) {
+  if(attemptingX >= window.grid.startX && attemptingX < window.grid.width + window.grid.startX) {
+    if(attemptingY >= window.grid.startY && attemptingY < window.grid.height + window.grid.startY) {
       return true
     }
   }
@@ -166,9 +170,9 @@ function forceFindOpenGridNear({position, level = 0}){
   forceFindOpenGridNear(nextGrid.x, nextGrid.y, level++)
 }
 
-function isGridWalkable(x, y, limit) {
+function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   // for pathfinding with area
-  if(keepPathWithinBoundaries(x, y, limit)) {
+  if(keepPathWithinBoundaries(x, y, options)) {
     if(!window.pfgrid.nodes[y]) return false
     if(!window.pfgrid.nodes[y][x]) return false
     if(!window.pfgrid.nodes[y][x].walkable) return false
@@ -184,11 +188,13 @@ function walkAround(object) {
     direction = object.direction
   }
 
+  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+
   let random = Math.random()
 
   if(random <= .25) {
     if(direction !=='left'){
-      if ( isGridWalkable(x + 1, y, object.pathfindingLimit) ){
+      if ( isGridWalkable(x + 1, y, options) ){
         object.direction = 'right'
         return { x: x + 1, y: y}
       }
@@ -196,7 +202,7 @@ function walkAround(object) {
   } else if(random > .25 && random <= .5) {
     // go left
     if(direction !== 'right') {
-      if ( isGridWalkable(x - 1, y, object.pathfindingLimit) ) {
+      if ( isGridWalkable(x - 1, y, options) ) {
         object.direction = 'left'
         return { x: x - 1, y: y}
       }
@@ -204,7 +210,7 @@ function walkAround(object) {
   } else if(random >= .5 && random < .75) {
     // go down
     if(direction !== 'up') {
-      if ( isGridWalkable(x, y + 1, object.pathfindingLimit) ) {
+      if ( isGridWalkable(x, y + 1, options) ) {
         object.direction = 'down'
         return { x: x, y: y + 1}
       }
@@ -212,7 +218,7 @@ function walkAround(object) {
   } else if(random >= .75) {
     // go up
     if(direction !== 'down') {
-      if ( isGridWalkable(x, y - 1, object.pathfindingLimit) ){
+      if ( isGridWalkable(x, y - 1, options) ){
         object.direction = 'up'
         return { x: x, y: y - 1}
       }
@@ -221,7 +227,7 @@ function walkAround(object) {
 
   // directional movement failed, find somewhere to move
   object.direction = ''
-  console.log('couldnt find directional movement, finding random space')
+  // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
     { x, y: y-1},
     { x: x+1, y},
@@ -230,12 +236,14 @@ function walkAround(object) {
   ])
 
   for (let i = 0; i < nearbyGrids.length; i++) {
-    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, object.pathfindingLimit)) {
+    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, options)) {
       return nearbyGrids[i]
     }
   }
 
-  console.log('found nowhere to move')
+  if(object.gridX == 31) {
+    console.log('found nowhere to move')
+  }
   return { x, y }
 }
 

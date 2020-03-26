@@ -2,11 +2,9 @@ import pathfinding from './pathfinding.js'
 import collision from './collisions'
 import gridTool from './grid.js'
 
-function init(hero, objects){
-
+function init(){
 
 }
-
 
 function cancelPathNode(object) {
   if(object.tags && object.tags.obstacle) {
@@ -46,10 +44,14 @@ function moveOnPath(object) {
   if(object.gridY == object.path[0].y && object.gridX == object.path[0].x && diffX <= 2 && diffY <= 2) {
     object.velocityX = 0
     object.velocityY = 0
+    if(object.gridX == 31 && object.path[0].x === 31) {
+      console.log(object)
+    }
     object.path.shift();
     if(object.path.length >= 1) {
       startOnPathNode(object)
     }
+
     return
   }
 
