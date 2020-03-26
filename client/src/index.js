@@ -43,6 +43,7 @@ import sockets from './js/sockets.js'
 import constellation from './js/constellation.js'
 import pathfinding from './js/pathfinding.js'
 import utils from './js/utils.js'
+
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
   window.socket = io.connect('http://localhost:4000');
@@ -81,7 +82,9 @@ window.defaultObject = {
   velocityMax: 0,
   speed: 100,
   color: 'white',
-  tags: {},
+  tags: {
+    obstacle: true
+  },
   heroUpdate: {},
 }
 
@@ -116,90 +119,6 @@ window.resetHero = function(updatedHero) {
 	}
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
-}
-
-window.resetReachablePlatformHeight = function(heroIn) {
-	let velocity = heroIn.jumpVelocity
-	let gravity = 1000
-	let delta = (0 - velocity)/gravity
-	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
-	return height
-}
-
-window.resetReachablePlatformWidth = function(heroIn) {
-	let velocity = heroIn.speed
-	let gravity = 1000
-	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
-	let width = (velocity * deltaInAir)
-	return width * 2
-}
-
-window.addObjects = function(objects, options = { bypassCollisions: false, instantAdd: true }) {
-  if(!objects.length) {
-    objects = [objects]
-  }
-
-  let alertAboutCollision
-
-  objects = objects.map((newObject) => {
-    Object.assign(newObject, window.defaultObject)
-
-    if(!newObject.id){
-      newObject.id = 'object' + Date.now();
-    }
-
-    for(let tag in window.tags) {
-      if(window.tags[tag].checked || newObject.tags[tag] === true){
-        newObject.tags[tag] = true
-      } else {
-        newObject.tags[tag] = false
-      }
-    }
-
-    newObject.spawnPointX = newObject.x
-    newObject.spawnPointY = newObject.y
-
-    if(!window.preferences.calculatePathCollisions) {
-      grid.addObstacle(newObject)
-    }
-
-    if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
-      return newObject
-    } else {
-      alertAboutCollision = true
-    }
-  }).filter(obj => !!obj)
-
-  if(!window.usePlayEditor){
-    console.log('?')
-    window.objects.push(...objects)
-    objects.forEach((object) => {
-      physics.addObject(object)
-    })
-
-    if(!window.preferences.calculatePathCollisions) {
-      grid.updateGridObstacles()
-      window.resetPaths = true
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    }
-    return
-  }
-
-  if(alertAboutCollision) {
-    if(confirm('already an object on this grid node..confirm to add anyways')) {
-      emitNewObjects()
-    }
-  } else {
-    emitNewObjects()
-  }
-
-  function emitNewObjects() {
-    if(window.instantAddToggle.checked || options.instantAddToggle) {
-      window.socket.emit('addObjects', objects)
-    } else {
-      window.objectFactory.push(...objects)
-    }
-  }
 }
 
 /////////////
@@ -345,44 +264,44 @@ var update = function (delta) {
   }
 
   if(window.anticipateObjectAdd) {
-    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff } = window.getViewBoundaries(window.hero)
+    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
     if (leftDiff < 1 && window.hero.direction == 'left') {
       let newObject = {
         x: minX - window.grid.nodeSize,
-        y: centerY,
+        y: grid.getRandomGridWithinXY(minY, maxY),
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
       window.addObjects([newObject])
-      window.anticipatedObjectAdd = false
+      window.anticipateObjectAdd = false
     } else if (topDiff < 1 && window.hero.direction == 'up') {
       let newObject = {
-        x: centerX,
+        x: grid.getRandomGridWithinXY(minX, maxX),
         y: minY - window.grid.nodeSize,
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
       window.addObjects([newObject])
-      window.anticipatedObjectAdd = false
+      window.anticipateObjectAdd = false
     } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.direction == 'right') {
       let newObject = {
         x: maxX,
-        y: centerY,
+        y: grid.getRandomGridWithinXY(minY, maxY),
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
       window.addObjects([newObject])
-      window.anticipatedObjectAdd = false
+      window.anticipateObjectAdd = false
     } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.direction == 'down') {
       let newObject = {
-        x: centerX,
+        x: grid.getRandomGridWithinXY(minX, maxX),
         y: maxY,
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
       window.addObjects([newObject])
-      window.anticipatedObjectAdd = false
+      window.anticipateObjectAdd = false
     }
   }
 };

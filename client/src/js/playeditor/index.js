@@ -802,32 +802,6 @@ function sendObjectUpdate(objectUpdate) {
   window.objecteditor.expandAll()
 }
 
-window.getViewBoundaries = function(hero) {
-  const value = {
-    width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier,
-    height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier,
-    centerX: hero.x + hero.width/2,
-    centerY: hero.y + hero.height/2,
-  }
-  value.x = value.centerX - value.width/2
-  value.y = value.centerY - value.height/2
-  const { leftDiff, rightDiff, topDiff, bottomDiff } = gridTool.getAllDiffs(value)
-  gridTool.snapDragToGrid(value)
-
-  return {
-    centerX: value.centerX,
-    centerY: value.centerY,
-    minX: value.x,
-    minY: value.y,
-    maxX: value.x + value.width,
-    maxY: value.y + value.height,
-    leftDiff,
-    rightDiff,
-    topDiff,
-    bottomDiff,
-  }
-}
-
 function update(delta) {
   input.update(delta)
 }

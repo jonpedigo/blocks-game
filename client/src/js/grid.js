@@ -15,46 +15,6 @@ function convertToGridXY(object, options = {}) {
   let x = object.x - window.grid.nodes[0][0].x
   let y = object.y - window.grid.nodes[0][0].y
 
-  // if(options.strict) {
-  //   let diffX = x % window.grid.nodeSize;
-  //   x -= diffX
-  //   x = x/window.grid.nodeSize
-  //   if(diffX < 2) {
-  //   } else if (diffX > 38) {
-  //     x+=1
-  //   }
-  //
-  //   let diffY = y % window.grid.nodeSize;
-  //   y -= diffY
-  //   y = y/window.grid.nodeSize
-  //
-  //   if(diffY < 2) {
-  //   } else if (diffY > 38) {
-  //     y+=1
-  //   }
-  //
-  //   return { x, y, diffX, diffY }
-  // }
-  //
-  // let diffX = x % window.grid.nodeSize;
-  // if(diffX > window.grid.nodeSize/2) {
-  //   x += (window.grid.nodeSize - diffX)
-  // } else {
-  //   x -= diffX
-  // }
-  // x = x/window.grid.nodeSize
-  //
-  // let diffY = y % window.grid.nodeSize;
-  // console.log('diffY', diffY)
-  // if(diffY > window.grid.nodeSize/2) {
-  //   y += (window.grid.nodeSize - diffY)
-  // } else {
-  //   y -= diffY
-  // }
-  // y = y/window.grid.nodeSize
-  //
-  // return { x, y, diffX, diffY }
-
   let diffX = x % window.grid.nodeSize
   x -= diffX
   x = x/window.grid.nodeSize
@@ -105,6 +65,12 @@ function snapXYToGrid(x, y) {
     y -= diffY
   }
   return { x, y }
+}
+
+function getRandomGridWithinXY(min, max) {
+  let xyrandom = (Math.random() * (max - min)) + min
+  let diff = xyrandom % window.grid.nodeSize
+  return xyrandom - diff
 }
 
 function getAllDiffs({x, y, width, height}) {
@@ -193,8 +159,6 @@ function snapDragToGrid(object) {
   if(diffX + diffWidth > window.grid.nodeSize) {
     object.width += window.grid.nodeSize
   }
-
-
 }
 
 window.snapAllObjectsToGrid = function() {
@@ -308,4 +272,5 @@ export default {
   addObstacle,
   removeObstacle,
   convertToGridXY,
+  getRandomGridWithinXY,
 }

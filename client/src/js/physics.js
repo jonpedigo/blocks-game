@@ -73,7 +73,7 @@ function containObjectWithinGridBoundaries(object) {
 
   //DO THE PACMAN FLIP!!
   let gameBoundaries = window.preferences.gameBoundaries
-  if(gameBoundaries.x) {
+  if(gameBoundaries && gameBoundaries.x) {
     if(gameBoundaries.behavior === 'pacmanFlip') {
       if(object.x < gameBoundaries.x - object.width) {
         object.x = gameBoundaries.x + gameBoundaries.width
