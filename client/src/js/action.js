@@ -5,7 +5,7 @@ import collisions from './collisions.js'
 const keysDown = {}
 
 function shootBullet() {
-  let direction = input.getDirection()
+  let direction = window.hero.inputDirection
   let shootedd = {
     id: 'bullet-' + Date.now(),
     width: 4,
@@ -47,7 +47,7 @@ function shootBullet() {
 }
 
 function dropWall() {
-  let direction = input.getDirection()
+  let direction = window.hero.inputDirection
   let wall = {
     id: 'wall-' + Date.now(),
     width: window.grid.nodeSize,

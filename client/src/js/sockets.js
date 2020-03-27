@@ -130,6 +130,7 @@ function init() {
     if(window.usePlayEditor) {
       Object.assign(window.heros[heroUpdated.id], heroUpdated)
       if(window.editingHero.id === heroUpdated.id) {
+        window.editingHero = heroUpdated
         if(window.preferences.syncHero) {
           window.setEditingHero(heroUpdated)
         }

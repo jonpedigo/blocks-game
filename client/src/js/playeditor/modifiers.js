@@ -18,7 +18,7 @@ const modifiers = {
     tags: {
       gravity: false,
     },
-    velocityMax: 0,
+    velocityMax: 200,
   },
   mario: {
     arrowKeysBehavior: 'position',

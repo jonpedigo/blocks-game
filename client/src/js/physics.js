@@ -220,20 +220,21 @@ function update (hero, objects, delta) {
 
   hero.onGround = false
 
-  heroCorrectionPhase()
+  heroCorrectionPhase(false, 1)
   system.update()
-  heroCorrectionPhase()
+  heroCorrectionPhase(false, 2)
   system.update()
-  heroCorrectionPhase(true)
+  heroCorrectionPhase(true, 3)
   system.update()
 
-  function heroCorrectionPhase(final = false) {
+  function heroCorrectionPhase(final = false, round) {
     const result = physicsObjects[window.hero.id].createResult()
     const potentials = physicsObjects[window.hero.id].potentials()
     let illegal = false
     let onGround = false
-    let correction = {x: hero.x, y: hero.y}
     let heroPO = physicsObjects[window.hero.id]
+    let correction = {x: heroPO.x, y: heroPO.y}
+    // console.log('round' + round, correction.x, correction.y)
     for(const body of potentials) {
       if(heroPO.collides(body, result)) {
         if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
@@ -243,6 +244,8 @@ function update (hero, objects, delta) {
           if(result.overlap_y === 1) {
             onGround = true
           }
+          // console.log('collided' + body.gameObject.id, window.hero.x - correction.x, window.hero.y - correction.y)
+          break
         }
       }
     }
@@ -251,17 +254,17 @@ function update (hero, objects, delta) {
       // hero.wallJumpLeft = false
       // hero.wallJumpRight = false
       if(onGround) {
-        if(hero.velocityY > 0) hero.velocityY = 0
+        hero.velocityY = 0
         hero.onGround = true
       } else if(result.overlap_y === -1){
-        if(hero.velocityY < 0) hero.velocityY = 0
+        hero.velocityY = 0
       }
       if(result.overlap_x === 1) {
         // if(hero.onGround === false) hero.wallJumpLeft = true
-        if(hero.velocityX > 0) hero.velocityX = 0
+        hero.velocityX = 0
       } else if(result.overlap_x === -1){
         // if(hero.onGround === false) hero.wallJumpRight = true
-        if(hero.velocityX < 0) hero.velocityX = 0
+        hero.velocityX = 0
       }
 
       heroPO.x = correction.x
@@ -269,11 +272,23 @@ function update (hero, objects, delta) {
     }
 
     if(final) {
+      hero.directions = {...window.defaultHero.directions}
       // just give up correction and prevent any movement from these mother fuckers
       if(illegal) {
         hero.x = hero._initialX
         hero.y = hero._initialY
       } else {
+        if(heroPO.x > hero._initialX) {
+          hero.directions.right = true
+        } else if(heroPO.x < hero._initialX) {
+          hero.directions.left = true
+        }
+        if(heroPO.y > hero._initialY) {
+          hero.directions.down = true
+        } else if(heroPO.y < hero._initialY) {
+          hero.directions.up = true
+        }
+
         hero.x = heroPO.x
         hero.y = heroPO.y
       }

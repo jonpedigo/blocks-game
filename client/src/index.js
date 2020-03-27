@@ -132,7 +132,7 @@ window.preferences = defaultPreferences;
 // HERO
 /////////////
 /////////////
-const defaultHero = {
+window.defaultHero = {
 	width: 40,
 	height: 40,
   paused: false,
@@ -164,6 +164,12 @@ const defaultHero = {
     showChat: false,
     showScore: false,
     paused: false,
+  },
+  directions: {
+    up: false,
+    down: false,
+    right: false,
+    left: false,
   }
 }
 
@@ -172,10 +178,10 @@ if(!window.usePlayEditor) {
 	if(savedHero){
 		window.hero = savedHero
     // in case we need to reset
-    defaultHero.id = savedHero.id
+    window.defaultHero.id = savedHero.id
 	} else if(!window.hero) {
-    defaultHero.id = 'hero-'+Date.now()
-		window.hero = {...defaultHero}
+    window.defaultHero.id = 'hero-'+Date.now()
+		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
 		window.respawnHero()
 	}
 	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)

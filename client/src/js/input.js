@@ -1,8 +1,8 @@
 import camera from './camera';
 
 const keysDown = {}
-let direction = 'up'
 
+let inputDirection = 'up'
 let lastJump = 0
 
 function init(){
@@ -62,10 +62,8 @@ function update(hero, delta) {
   hero._initialY = hero.y
 
   if (38 in keysDown) { // Player holding up
-    direction = 'up'
+    inputDirection = 'up'
     if(hero.tags.gravity == true) {
-    } else if(hero.arrowKeysBehavior === 'position') {
-      hero.y -= Math.ceil(hero.speed * delta);
     } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accY -= (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
@@ -73,30 +71,24 @@ function update(hero, delta) {
     }
   }
   if (40 in keysDown) { // Player holding down
-    direction = 'down'
-    if(hero.arrowKeysBehavior === 'position') {
-      hero.y += Math.ceil(hero.speed * delta);
-    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+    inputDirection = 'down'
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accY += (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityY += (hero.speed) * delta;
     }
   }
   if (37 in keysDown) { // Player holding left
-    direction = 'left'
-    if(hero.arrowKeysBehavior === 'position') {
-      hero.x -= Math.ceil(hero.speed * delta);
-    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+    inputDirection = 'left'
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accX -= (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityX -= (hero.speed) * delta;
     }
   }
   if (39 in keysDown) { // Player holding right
-    direction = 'right'
-    if(hero.arrowKeysBehavior === 'position') {
-      hero.x += Math.ceil(hero.speed * delta);
-    } else if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+    inputDirection = 'right'
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accX += (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityX += (hero.speed) * delta;
@@ -104,22 +96,66 @@ function update(hero, delta) {
   }
 
   if(hero.arrowKeysBehavior === 'skating') {
-    if(direction === 'up') {
+    if(inputDirection === 'up') {
       hero.y -= Math.ceil(hero.speed * delta);
-    } else if(direction === 'down') {
+    } else if(inputDirection === 'down') {
       hero.y += Math.ceil(hero.speed * delta);
-    } else if(direction === 'left') {
+    } else if(inputDirection === 'left') {
       hero.x -= Math.ceil(hero.speed * delta);
-    } else if(direction === 'right') {
+    } else if(inputDirection === 'right') {
       hero.x += Math.ceil(hero.speed * delta);
     }
   }
 
-  window.hero.direction = direction
+  function positionInput() {
+    if(hero.arrowKeysBehavior === 'position') {
+      hero.velocityX = 0
+      hero.velocityY = 0
+
+      if (38 in keysDown && window.hero.directions.up) { // Player holding up
+        hero.velocityY = -Math.ceil(hero.speed * delta) * 150
+        return
+      }
+
+      if (40 in keysDown && window.hero.directions.down) { // Player holding down
+        hero.velocityY = Math.ceil(hero.speed * delta) * 150
+        return
+      }
+
+      if (37 in keysDown && window.hero.directions.left) { // Player holding left
+        hero.velocityX = -Math.ceil(hero.speed * delta) * 150
+        return
+      }
+
+      if (39 in keysDown && window.hero.directions.right) { // Player holding right
+        hero.velocityX = Math.ceil(hero.speed * delta) * 150
+        return
+      }
+
+      if (38 in keysDown) { // Player holding up
+        hero.velocityY = -Math.ceil(hero.speed * delta) * 60
+      }
+
+      if (40 in keysDown) { // Player holding down
+        hero.velocityY = Math.ceil(hero.speed * delta) * 60
+      }
+
+      if (37 in keysDown) { // Player holding left
+        hero.velocityX = -Math.ceil(hero.speed * delta) * 60
+      }
+
+      if (39 in keysDown) { // Player holding right
+        hero.velocityX = Math.ceil(hero.speed * delta) * 60
+      }
+    }
+  }
+  positionInput()
+
+  window.hero.inputDirection = inputDirection
 }
 
 function getDirection() {
-  return direction
+  return inputDirection
 }
 
 export default {

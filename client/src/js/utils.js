@@ -93,7 +93,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       newObject.id = 'object' + Date.now();
     }
 
-    if(!newObject.tagss){
+    if(!newObject.tags){
       newObject.tags = {};
     }
 
@@ -102,8 +102,6 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     }
 
     for(let tag in window.tags) {
-      if(window.tags[tag].checked) console.log(tag)
-      if(newObject.tags[tag] === true) console.log('has tag', tag)
       if(window.tags[tag].checked || newObject.tags[tag] === true){
         newObject.tags[tag] = true
       } else {
@@ -118,11 +116,11 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       grid.addObstacle(newObject)
     }
 
-    if(!collisions.check(newObject, window.objects) || options.bypassCollisions) {
-      return newObject
-    } else {
+    if(collisions.check(newObject, window.objects) || options.bypassCollisions) {
       alertAboutCollision = true
     }
+
+    return newObject
   }).filter(obj => !!obj)
 
   if(!window.usePlayEditor){
@@ -149,6 +147,8 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
   function emitNewObjects() {
     if(window.instantAddToggle.checked || options.instantAddToggle) {
+      // need to do a local add first
+      window.objects.push(...objects)
       window.socket.emit('addObjects', objects)
     } else {
       window.objectFactory.push(...objects)
