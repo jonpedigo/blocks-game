@@ -58,6 +58,7 @@ function init(hero){
       }
 
       if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
+        if(window.objects.length == 0) return
         let newI = window.editingObject.i
         if(!window.editingObject.i) {
           newI = window.objects.length - 1
@@ -91,8 +92,9 @@ function init(hero){
       }
 
       if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
+        if(window.objects.length == 0) return
         let newI = window.editingObject.i
-        if(window.editingObject.i === window.objects.length -1) {
+        if(window.editingObject.i === window.objects.length -1 || window.editingObject.i == null) {
           newI = 0
         } else {
           newI += 1

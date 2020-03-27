@@ -207,7 +207,10 @@ function init() {
 
   window.socket.on('onRemoveObject', (object) => {
     if(window.usePlayEditor && window.editingObject.id === object.id) {
-      window.editingObject = {}
+      window.editingObject = {
+        id: null,
+        i: null,
+      }
       window.objecteditor.set({})
     }
 
