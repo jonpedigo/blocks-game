@@ -82,10 +82,7 @@ window.defaultObject = {
   velocityMax: 0,
   speed: 100,
   color: 'white',
-  tags: {
-    obstacle: true
-  },
-  heroUpdate: {},
+  // cant put objects in it cuz of some pass by reference BS...
 }
 
 window.respawnHero = function () {

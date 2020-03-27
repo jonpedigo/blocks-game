@@ -87,13 +87,23 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   let alertAboutCollision
 
   objects = objects.map((newObject) => {
-    Object.assign(newObject, window.defaultObject)
+    Object.assign(newObject, {...window.defaultObject})
 
     if(!newObject.id){
       newObject.id = 'object' + Date.now();
     }
 
+    if(!newObject.tagss){
+      newObject.tags = {};
+    }
+
+    if(!newObject.heroUpdate){
+      newObject.heroUpdate = {};
+    }
+
     for(let tag in window.tags) {
+      if(window.tags[tag].checked) console.log(tag)
+      if(newObject.tags[tag] === true) console.log('has tag', tag)
       if(window.tags[tag].checked || newObject.tags[tag] === true){
         newObject.tags[tag] = true
       } else {

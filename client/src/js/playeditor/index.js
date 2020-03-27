@@ -725,7 +725,7 @@ function createMaze() {
   let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
   let maze = procedural.genMaze(w, h, x, y)
-  window.addObjects(maze.forEach(m => m.tags.stationary = true))
+  window.addObjects(maze)
 }
 
 function createArena(boundaries) {
