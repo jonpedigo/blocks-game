@@ -558,6 +558,11 @@ function init(ctx, objects) {
     window.socket.emit('anticipateObject', {tags: getCheckedTags()});
   })
 
+  var anticipatedObjectAdd = document.getElementById("anticipated-wall-add");
+  anticipatedObjectAdd.addEventListener('click', function(e){
+    window.socket.emit('anticipateObject', {wall: true, tags: getCheckedTags()});
+  })
+
   function getCheckedTags() {
     return Object.keys(window.tags).reduce((acc, tag) => {
       acc[tag] = window.tags[tag].checked
