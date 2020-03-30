@@ -14,14 +14,14 @@ const modifiers = {
     velocityMax: 400,
   },
   zelda: {
-    arrowKeysBehavior: 'position',
+    arrowKeysBehavior: 'flatDiagonal',
     tags: {
       gravity: false,
     },
     velocityMax: 200,
   },
   mario: {
-    arrowKeysBehavior: 'position',
+    arrowKeysBehavior: 'flatDiagonal',
     tags: {
       gravity: true,
     },

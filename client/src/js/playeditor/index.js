@@ -44,6 +44,7 @@ window.tags = {
 
   // PHYSICS
   gravity: false,
+  movingPlatform: false,
 
   // UI
   chatter: false,

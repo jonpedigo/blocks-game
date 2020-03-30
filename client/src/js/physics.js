@@ -248,7 +248,7 @@ function update (hero, objects, delta) {
   function heroCorrectionPhase(final = false, round) {
     const potentials = physicsObjects[window.hero.id].potentials()
     let illegal = false
-    let onGround = false
+    let landingObject = null
     let heroPO = physicsObjects[window.hero.id]
     let corrections = []
     // console.log('round' + round, heroPO.x, heroPO.y)
@@ -260,7 +260,9 @@ function update (hero, objects, delta) {
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
           if(result.overlap_y === 1) {
-            onGround = true
+            if(body.gameObject.tags.movingPlatform) {
+              landingObject = body.gameObject
+            }
           }
           // console.log('collided' + body.gameObject.id, window.hero.x - correction.x, window.hero.y - correction.y)
         }
@@ -279,9 +281,13 @@ function update (hero, objects, delta) {
       }, { overlap_y: 0, overlap_x: 0 })
 
       function correctHeroY() {
-        if(onGround) {
+        if(result.overlap_y > 0) {
           hero.velocityY = 0
           hero.onGround = true
+          if(landingObject && landingObject.tags['movingPlatform']) {
+            let diffX = landingObject._initialX - landingObject.x
+            heroPO.x -= diffX
+          }
         } else if(result.overlap_y < 0){
           hero.velocityY = 0
         }
@@ -391,6 +397,7 @@ function update (hero, objects, delta) {
       if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
       // if you are creating a result up here youll only be able to correct for one obj at a time
+      // if you are accumulating the result like for the hero
       let result = po.createResult()
       let correction = {x: po.x, y: po.y}
       let potentials = po.potentials()
