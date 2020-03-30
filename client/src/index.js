@@ -6,6 +6,9 @@
 
 // death by jump
 
+// Pathfinding for something larger than one grid node
+// Perhaps not PATHFINDING but… targeting.
+
 // satisfying death animations? satisfing death states or idk.. things?
 
 //--------
@@ -23,6 +26,10 @@
 // lazy scroll that is not not immediate! Smoother...
 // leveling up
 // optimize shadow feature, not all vertices!
+// Instead of creating one big block, create a bunch of small blocks, OPTION
+// Maybe make a diagonal wall..
+// pause objects
+// reset score / display score
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -138,13 +145,13 @@ window.defaultHero = {
   paused: false,
 	velocityX: 0,
 	velocityY: 0,
-	velocityMax: 25,
+	velocityMax: 200,
 	// accY: 0,
 	// accX: 0,
 	// accDecayX: 0,
 	// accDecayY: 0,
 	speed: 150,
-	arrowKeysBehavior: 'position',
+	arrowKeysBehavior: 'flatDiagonal',
   actionButtonBehavior: 'dropWall',
 	jumpVelocity: -480,
 	// spawnPointX: (40) * 20,

@@ -228,47 +228,72 @@ function update (hero, objects, delta) {
   system.update()
 
   function heroCorrectionPhase(final = false, round) {
-    const result = physicsObjects[window.hero.id].createResult()
     const potentials = physicsObjects[window.hero.id].potentials()
     let illegal = false
     let onGround = false
     let heroPO = physicsObjects[window.hero.id]
-    let correction = {x: heroPO.x, y: heroPO.y}
-    // console.log('round' + round, correction.x, correction.y)
+    let corrections = []
+    // console.log('round' + round, heroPO.x, heroPO.y)
     for(const body of potentials) {
+      let result = physicsObjects[window.hero.id].createResult()
       if(heroPO.collides(body, result)) {
         if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
           illegal = true
-          correction.x -= result.overlap * result.overlap_x
-          correction.y -= result.overlap * result.overlap_y
+          // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
+          corrections.push(result)
           if(result.overlap_y === 1) {
             onGround = true
           }
           // console.log('collided' + body.gameObject.id, window.hero.x - correction.x, window.hero.y - correction.y)
-          break
         }
       }
     }
 
     if(illegal) {
-      // hero.wallJumpLeft = false
-      // hero.wallJumpRight = false
-      if(onGround) {
-        hero.velocityY = 0
-        hero.onGround = true
-      } else if(result.overlap_y === -1){
-        hero.velocityY = 0
-      }
-      if(result.overlap_x === 1) {
-        // if(hero.onGround === false) hero.wallJumpLeft = true
-        hero.velocityX = 0
-      } else if(result.overlap_x === -1){
-        // if(hero.onGround === false) hero.wallJumpRight = true
-        hero.velocityX = 0
+      let result = corrections.reduce((acc, next) => {
+        if(Math.abs(next.overlap_y) !== 0 && acc.overlap_y == 0) {
+          acc.overlap_y = next.overlap * next.overlap_y
+        }
+        if(Math.abs(next.overlap_x) !== 0 && acc.overlap_x == 0) {
+          acc.overlap_x = next.overlap * next.overlap_x
+        }
+        return acc
+      }, { overlap_y: 0, overlap_x: 0 })
+
+      function correctHeroY() {
+        if(onGround) {
+          hero.velocityY = 0
+          hero.onGround = true
+        } else if(result.overlap_y < 0){
+          hero.velocityY = 0
+        }
+        heroPO.y -= result.overlap_y
       }
 
-      heroPO.x = correction.x
-      heroPO.y = correction.y
+      function correctHeroX() {
+        if(result.overlap_x > 0) {
+          hero.velocityX = 0
+        } else if(result.overlap_x < 0){
+          hero.velocityX = 0
+        }
+        heroPO.x -= result.overlap_x
+      }
+
+      // there was a problem with a double object collision. One Would
+      // collide with X, one would collide with Y but both corrections were made,
+      // even though one correction would have concelled out the other..
+      // it was hard to tell which correction to prioritize. Basically now
+      // I prioritize the correction that DOES NOT IMPEDE the heros current direction
+      if(round === 1) {
+        if(window.hero.directions.up || window.hero.directions.down) {
+          correctHeroX()
+        } else if(window.hero.directions.left || window.hero.directions.right) {
+          correctHeroY()
+        }
+      } else {
+        correctHeroX()
+        correctHeroY()
+      }
     }
 
     if(final) {
@@ -347,6 +372,7 @@ function update (hero, objects, delta) {
       if(!physicsObjects[id]) continue
       if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
+      // if you are creating a result up here youll only be able to correct for one obj at a time
       let result = po.createResult()
       let correction = {x: po.x, y: po.y}
       let potentials = po.potentials()
@@ -368,8 +394,6 @@ function update (hero, objects, delta) {
       }
 
       if(illegal) {
-        // hero.wallJumpLeft = false
-        // hero.wallJumpRight = false
         if(result.overlap_y === 1) {
           if(po.gameObject.velocityY > 0) po.gameObject.velocityY = 0
           po.gameObject.onGround = true
@@ -377,10 +401,8 @@ function update (hero, objects, delta) {
           if(po.gameObject.velocityY < 0) po.gameObject.velocityY = 0
         }
         if(result.overlap_x === 1) {
-          // if(po.gameObject.onGround === false) po.gameObject.wallJumpLeft = true
           if(po.gameObject.velocityX > 0) po.gameObject.velocityX = 0
         } else if(result.overlap_x === -1){
-          // if(po.gameObject.onGround === false) po.gameObject.wallJumpRight = true
           if(po.gameObject.velocityX < 0) po.gameObject.velocityX = 0
         }
 
