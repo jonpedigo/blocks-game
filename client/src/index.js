@@ -63,9 +63,9 @@ window.socket = socket
 window.canvasMultiplier = 1;
 window.CONSTANTS = {
 	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
-	PLAYER_CANVAS_HEIGHT: 360 * window.canvasMultiplier,
+	PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
   PLAYER_CAMERA_WIDTH: 640,
-  PLAYER_CAMERA_HEIGHT: 360,
+  PLAYER_CAMERA_HEIGHT: 320,
 }
 
 var canvas = document.createElement("canvas");
@@ -162,7 +162,7 @@ window.defaultHero = {
     monsterDestroyer: false,
     gravity: false,
   },
-	zoomMultiplier: 1.8816764231589203,
+	zoomMultiplier: 1.875,
   x: 960,
   y: 960,
   score: 0,
@@ -273,45 +273,50 @@ var update = function (delta) {
     }
   }
 
-  if(window.anticipateObjectAdd) {
+  if(window.anticipatedObject) {
     const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
-    if (leftDiff < 1 && window.hero.direction == 'left') {
+    if (leftDiff < 1 && window.hero.directions.left) {
       let newObject = {
         x: minX - window.grid.nodeSize,
         y: grid.getRandomGridWithinXY(minY, maxY),
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
-      window.addObjects([newObject])
-      window.anticipateObjectAdd = false
-    } else if (topDiff < 1 && window.hero.direction == 'up') {
+      addAnticipatedObject(newObject)
+    } else if (topDiff < 1 && window.hero.directions.up) {
       let newObject = {
         x: grid.getRandomGridWithinXY(minX, maxX),
         y: minY - window.grid.nodeSize,
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
-      window.addObjects([newObject])
-      window.anticipateObjectAdd = false
-    } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.direction == 'right') {
+      addAnticipatedObject(newObject)
+    } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.directions.right) {
       let newObject = {
         x: maxX,
         y: grid.getRandomGridWithinXY(minY, maxY),
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
-      window.addObjects([newObject])
-      window.anticipateObjectAdd = false
-    } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.direction == 'down') {
+      addAnticipatedObject(newObject)
+    } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.directions.down) {
       let newObject = {
         x: grid.getRandomGridWithinXY(minX, maxX),
         y: maxY,
         width: window.grid.nodeSize,
         height: window.grid.nodeSize,
       }
-      window.addObjects([newObject])
-      window.anticipateObjectAdd = false
+      addAnticipatedObject(newObject)
+    }
+
+    function addAnticipatedObject(newObject) {
+      let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
+      if(grid.keepGridXYWithinBoundaries(x/window.grid.nodeSize, y/window.grid.nodeSize)) {
+        console.log('?')
+        window.addObjects([{...newObject, ...window.anticipatedObject}])
+        window.anticipatedObject = null
+      }
     }
   }
 };

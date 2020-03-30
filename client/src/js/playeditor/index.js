@@ -10,7 +10,7 @@ import input from './input.js'
 //GLOBALS
 /////////////////////
 /////////////////////
-window.scaleMultiplier = .3
+window.scaleMultiplier = .2
 window.objectFactory = []
 
 window.clickStart = {
@@ -386,7 +386,9 @@ function init(ctx, objects) {
     }
   })
   var resetObjectsButton = document.getElementById("reset-objects");
-  resetObjectsButton.addEventListener('click', window.resetObjects)
+  resetObjectsButton.addEventListener('click', () => {
+    window.resetObjects()
+  })
 
   window.shouldRestoreHeroToggle = document.getElementById('should-restore-hero')
   window.shouldRestoreHeroToggle.onclick = (e) => {
@@ -456,15 +458,13 @@ function init(ctx, objects) {
     window.syncHeroToggle.checked = true;
   }
   var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/.9 }))
+  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .0625 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier/1.1 }))
+  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .0625 }))
 
   function sendHeroUpdate(update) {
     window.mergeDeep(window.editingHero, update)
     window.socket.emit('updateHero', window.editingHero)
-    window.heroeditor.set(window.editingHero)
-    window.heroeditor.expandAll()
   }
 
   function sendEditorHeroOther(update) {
@@ -555,8 +555,15 @@ function init(ctx, objects) {
 
   var anticipatedObjectAdd = document.getElementById("anticipated-object-add");
   anticipatedObjectAdd.addEventListener('click', function(e){
-    window.socket.emit('anticipateObjectAdd');
+    window.socket.emit('anticipateObject', {tags: getCheckedTags()});
   })
+
+  function getCheckedTags() {
+    return Object.keys(window.tags).reduce((acc, tag) => {
+      acc[tag] = window.tags[tag].checked
+      return acc
+    }, {})
+  }
 
   window.gridNodeAddToggle = document.getElementById("add-object-grid-node")
   window.dragAddToggle = document.getElementById("add-object-drag")
@@ -631,6 +638,7 @@ function init(ctx, objects) {
     value.y = value.centerY - value.height/2
     value.limitX = Math.abs(value.width/2)
     value.limitY = Math.abs(value.height/2)
+    gridTool.snapObjectToGrid(value)
     if(window.selectorGameToggle.checked) {
       window.socket.emit('updatePreferences', { gameBoundaries: value })
     }
@@ -714,8 +722,8 @@ function createGrid() {
   window.grid.height = h
   window.grid.startX = x
   window.grid.startY = y
+  window.socket.emit('updateGrid', {...window.grid, nodes: null})
   window.grid.nodes = gridTool.generateGridNodes(window.grid)
-  window.socket.emit('updateGrid', window.grid)
 }
 
 function createMaze() {

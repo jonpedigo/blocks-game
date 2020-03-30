@@ -56,7 +56,7 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
   const toX = toPosition.x
   const toY = toPosition.y
 
-  if(keepPathWithinBoundaries(toX, toY, options)) {
+  if(gridTool.keepGridXYWithinBoundaries(toX, toY, options)) {
     var gridBackup = window.pfgrid.clone();
     return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
       return {x: path[0], y: path[1]}
@@ -64,43 +64,6 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
   } else {
     return []
   }
-}
-
-function keepPathWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
-    const {x, y, width, height } = gridTool.convertToGridXY(window.preferences.gameBoundaries)
-    if(attemptingX > x + width - 1) {
-      return false
-    } else if(attemptingX < x) {
-      return false
-    } else if(attemptingY > y + height - 1) {
-      return false
-    } else if(attemptingY < y) {
-      return false
-    }
-  }
-
-  const pathfindingLimit = options.pathfindingLimit
-  if(pathfindingLimit){
-    if(attemptingX > pathfindingLimit.x + pathfindingLimit.width - 1) {
-      return false
-    } else if(attemptingX < pathfindingLimit.x - 1) {
-      return false
-    } else if(attemptingY > pathfindingLimit.y + pathfindingLimit.height - 1) {
-      return false
-    } else if(attemptingY < pathfindingLimit.y - 1) {
-      return false
-    }
-  }
-
-  //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(attemptingX >= window.grid.startX && attemptingX < window.grid.width + window.grid.startX) {
-    if(attemptingY >= window.grid.startY && attemptingY < window.grid.height + window.grid.startY) {
-      return true
-    }
-  }
-
-  return false
 }
 
 // searches nearby grids for open space
@@ -171,7 +134,7 @@ function forceFindOpenGridNear({position, level = 0}){
 
 function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   // for pathfinding with area
-  if(keepPathWithinBoundaries(x, y, options)) {
+  if(gridTool.keepGridXYWithinBoundaries(x, y, options)) {
     if(!window.pfgrid.nodes[y]) return false
     if(!window.pfgrid.nodes[y][x]) return false
     if(!window.pfgrid.nodes[y][x].walkable) return false

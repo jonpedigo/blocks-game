@@ -79,29 +79,47 @@ function containObjectWithinGridBoundaries(object) {
       objectToEdit = {...object}
     }
 
-    if(gameBoundaries.behavior === 'pacmanFlip') {
+    if(gameBoundaries.behavior === 'pacmanFlip' || gameBoundaries.behavior === 'purgatory') {
+      let legal = false
       if(objectToEdit.x < gameBoundaries.x - objectToEdit.width) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width
-      } else if (objectToEdit.x > gameBoundaries.x + gameBoundaries.width) {
+        legal = true
+      }
+      if (objectToEdit.x > gameBoundaries.x + gameBoundaries.width) {
         objectToEdit.x = gameBoundaries.x - objectToEdit.width
-      } else if(objectToEdit.y < gameBoundaries.y - objectToEdit.height) {
+        legal = true
+      }
+      if(objectToEdit.y < gameBoundaries.y - objectToEdit.height) {
         objectToEdit.y = gameBoundaries.y + gameBoundaries.height
-      } else if (objectToEdit.y > gameBoundaries.y + gameBoundaries.height) {
+        legal = true
+      }
+      if (objectToEdit.y > gameBoundaries.y + gameBoundaries.height) {
         objectToEdit.y = gameBoundaries.y - objectToEdit.height
-      } else {
+        legal = true
+      }
+      if(legal){
         object.tags.fresh = false
       }
     } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
+      let legal = false
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
-      } else if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
+        legal = true
+      }
+      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
         objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
-      } else if(objectToEdit.x < gameBoundaries.x) {
+        legal = true
+      }
+      if(objectToEdit.x < gameBoundaries.x) {
         objectToEdit.x = gameBoundaries.x
-      } else if(objectToEdit.y < gameBoundaries.y) {
+        legal = true
+      }
+      if(objectToEdit.y < gameBoundaries.y) {
         objectToEdit.y = gameBoundaries.y
-      } else {
+        legal = true
+      }
+      if(legal){
         object.tags.fresh = false
       }
     }

@@ -28,10 +28,25 @@ let grid = {
 let preferences = {
 
 }
+let initialWorld = 'purgatory'
+setWorld(initialWorld, (world) => {
+  console.log('initial world set to ' + initialWorld)
+})
 
-const worlds = {
-
+function setWorld(name, cb) {
+  fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
+    if (err){
+        console.log(err);
+    } else {
+    let world = JSON.parse(data); //now it an worldect
+    serverState = world.objects
+    heros = world.heros
+    preferences = world.preferences
+    grid = world.grid || grid
+    return cb(world)
+  }});
 }
+
 
 io.on('connection', function(socket){
   socket.on('saveSocket', (hero) => {
@@ -77,22 +92,14 @@ io.on('connection', function(socket){
 
   // this is for when we are editing and we want to send this world to all people
   socket.on('setWorld', (name) => {
-    fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
-      if (err){
-          console.log(err);
-      } else {
-      let obj = JSON.parse(data); //now it an object
-      serverState = obj.objects
-      heros = obj.heros
-      preferences = obj.preferences
-      grid = obj.grid || grid
-      io.emit('onSetWorld', obj)
-    }});
+    setWorld(name, (world) => {
+      io.emit('onSetWorld', world)
+    })
   })
 
   //objects
-  socket.on('anticipateObjectAdd', (hero) => {
-    io.emit('onAnticipateObjectAdd', hero)
+  socket.on('anticipateObject', (object) => {
+    io.emit('onAnticipateObject', object)
   })
 
   socket.on('updateObjects', (objects) => {

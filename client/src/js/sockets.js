@@ -35,6 +35,7 @@ function init() {
   		})
   		window.objects = []
 
+      console.log('resetting')
       if(!window.preferences.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -67,8 +68,8 @@ function init() {
       }
     })
 
-    window.socket.on('onAnticipateObjectAdd', () => {
-  		window.anticipateObjectAdd = true
+    window.socket.on('onAnticipateObject', (object) => {
+  		window.anticipatedObject = object
   	})
   }
 

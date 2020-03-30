@@ -258,6 +258,56 @@ function updateGridObstacles() {
   })
 }
 
+function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
+    const {x, y, width, height } = convertToGridXY(window.preferences.gameBoundaries)
+    if(attemptingX > x + width - 1) {
+      return false
+    } else if(attemptingX < x) {
+      return false
+    } else if(attemptingY > y + height - 1) {
+      return false
+    } else if(attemptingY < y) {
+      return false
+    }
+  }
+
+  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+    const {x, y, width, height } = convertToGridXY(window.preferences.gameBoundaries)
+    if(attemptingX > x + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+      return false
+    } else if(attemptingX < x - 1 + (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+      return false
+    } else if(attemptingY > y + height - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT)/window.grid.nodeSize) {
+      return false
+    } else if(attemptingY < y - 1 + (window.CONSTANTS.PLAYER_CAMERA_HEIGHT)/window.grid.nodeSize) {
+      return false
+    }
+  }
+
+  const pathfindingLimit = options.pathfindingLimit
+  if(pathfindingLimit){
+    if(attemptingX > pathfindingLimit.x + pathfindingLimit.width - 1) {
+      return false
+    } else if(attemptingX < pathfindingLimit.x - 1) {
+      return false
+    } else if(attemptingY > pathfindingLimit.y + pathfindingLimit.height - 1) {
+      return false
+    } else if(attemptingY < pathfindingLimit.y - 1) {
+      return false
+    }
+  }
+
+  //prevents someone from trying to path find off the grid.... BREAKS CODE
+  if(attemptingX >= (window.grid.startX/window.grid.nodeSize) && attemptingX < window.grid.width + window.grid.startX) {
+    if(attemptingY >= (window.grid.startY/window.grid.nodeSize) && attemptingY < window.grid.height + window.grid.startY) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export default {
   init,
   forEach,
@@ -273,4 +323,5 @@ export default {
   removeObstacle,
   convertToGridXY,
   getRandomGridWithinXY,
+  keepGridXYWithinBoundaries,
 }
