@@ -103,6 +103,10 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
     for(let tag in window.tags) {
       if(window.tags[tag].checked || newObject.tags[tag] === true){
+        if(tag === 'monster' && window.usePlayEditor && !(window.preferences.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
+          alert('You cannot add a monster without setting spawn point first')
+          return
+        }
         newObject.tags[tag] = true
       } else {
         newObject.tags[tag] = false
