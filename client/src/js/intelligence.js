@@ -32,11 +32,26 @@ function startOnPathNode(object) {
     // window.grid.nodes[object.path[0].x][object.path[0].y].hasObstacle = true
   }
 }
-function moveOnPath(object) {
-  if(object.velocityMax == 0) {
-    object.velocityMax = object.speed || 100
+
+function moveTowardsTarget(object, modifier) {
+  if(object.x > object.target.x) {
+    object.velocityX -= (object.speed || 100) * modifier
+  } else if(object.x < object.target.x) {
+    object.velocityX += (object.speed || 100) * modifier
+  } else {
+    object.velocityX = 0
   }
 
+  if(object.y > object.target.y) {
+    object.velocityY -= (object.speed || 100) * modifier
+  } else if(object.y < object.target.y) {
+    object.velocityY += (object.speed || 100) * modifier
+  } else {
+    object.velocityY = 0
+  }
+}
+
+function moveOnPath(object) {
   const { x, y, diffX, diffY } = gridTool.convertToGridXY(object)
   object.gridX = x
   object.gridY = y
@@ -82,21 +97,11 @@ function update(hero, objects, modifier) {
     }
 
     if(object.tags && object.tags['zombie']) {
-      if(!object.velocityMax){
-        object.velocityMax = 100
-        object.velocityX = 0
-        object.velocityY = 0
-      }
-      if(object.x > window.hero.x) {
-        object.velocityX -= (object.speed || 100) * modifier
-      } else {
-        object.velocityX += (object.speed || 100) * modifier
-      }
+      if(object.tags) {
 
-      if(object.y > window.hero.y) {
-        object.velocityY -= (object.speed || 100) * modifier
       } else {
-        object.velocityY += (object.speed || 100) * modifier
+        object.target = { x: window.hero.x, y: window.hero.y }
+        moveTowardsTarget(object, modifier)
       }
     }
 

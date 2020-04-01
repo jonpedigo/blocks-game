@@ -25,7 +25,7 @@ let grid = {
   startX: 0,
   startY: 0,
 }
-let preferences = {
+let game = {
 
 }
 let initialWorld = 'purgatory'
@@ -41,7 +41,7 @@ function setWorld(name, cb) {
     let world = JSON.parse(data); //now it an worldect
     serverState = world.objects
     heros = world.heros
-    preferences = world.preferences
+    game = world.game
     grid = world.grid || grid
     return cb(world)
   }});
@@ -58,11 +58,11 @@ io.on('connection', function(socket){
     let data = {
       objects: serverState,
       heros,
-      preferences,
+      game,
       grid,
     };
 
-    if(!preferences.shouldRestoreHero && !preferences.isAsymmetric) {
+    if(!game.shouldRestoreHero && !game.isAsymmetric) {
       if(Object.keys(heros).length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
@@ -131,17 +131,17 @@ io.on('connection', function(socket){
     io.emit('onAddObjects', objects)
   })
 
-  //preferences
-  socket.on('askPreferences', () => {
-    socket.emit('onUpdatePreferences', preferences)
+  //game
+  socket.on('askGame', () => {
+    socket.emit('onUpdateGame', game)
   })
-  socket.on('updatePreferences', (updatedPreferences) => {
-    Object.assign(preferences, updatedPreferences)
-    io.emit('onUpdatePreferences', updatedPreferences)
+  socket.on('updateGame', (updatedGame) => {
+    Object.assign(game, updatedGame)
+    io.emit('onUpdateGame', updatedGame)
   })
-  socket.on('resetPreferences', (updatedPreferences) => {
-    preferences = {}
-    io.emit('onResetPreferences', updatedPreferences)
+  socket.on('resetGame', (updatedGame) => {
+    game = {}
+    io.emit('onResetGame', updatedGame)
   })
 
   //hero

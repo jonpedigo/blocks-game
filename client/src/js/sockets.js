@@ -22,7 +22,7 @@ function init() {
   			physics.addObject(object)
   		})
 
-      if(window.grid.nodes && !window.preferences.calculatePathCollisions) {
+      if(window.grid.nodes && !window.game.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -36,7 +36,7 @@ function init() {
   		window.objects = []
 
       console.log('resetting')
-      if(!window.preferences.calculatePathCollisions) {
+      if(!window.game.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
@@ -45,7 +45,7 @@ function init() {
   	window.socket.on('onEditObjects', (editedObjects) => {
   		Object.assign(window.objects, editedObjects)
 
-      if(!window.preferences.calculatePathCollisions) {
+      if(!window.game.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -115,8 +115,8 @@ function init() {
   //   }
   // })
 
-  window.socket.on('onResetPreferences', (hero) => {
-    window.preferences = {}
+  window.socket.on('onResetGame', (hero) => {
+    window.game = {}
     camera.clearLimit()
     gridTool.updateGridObstacles()
     window.resetPaths = true
@@ -132,7 +132,7 @@ function init() {
       Object.assign(window.heros[heroUpdated.id], heroUpdated)
       if(window.editingHero.id === heroUpdated.id) {
         window.editingHero = heroUpdated
-        if(window.preferences.syncHero) {
+        if(window.game.syncHero) {
           window.setEditingHero(heroUpdated)
         }
       }
@@ -143,10 +143,10 @@ function init() {
     }
   })
 
-  window.socket.on('onUpdatePreferences', (updatedPreferences) => {
-  	for(let key in updatedPreferences) {
-  		const value = updatedPreferences[key]
-  		window.preferences[key] = value
+  window.socket.on('onUpdateGame', (updatedGame) => {
+  	for(let key in updatedGame) {
+  		const value = updatedGame[key]
+  		window.game[key] = value
   		if(key === 'lockCamera' && !window.usePlayEditor) {
   			if(value.limitX) {
   				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
@@ -216,7 +216,7 @@ function init() {
       window.objecteditor.set({})
     }
 
-    if(!window.preferences.calculatePathCollisions) {
+    if(!window.game.calculatePathCollisions) {
       gridTool.updateGridObstacles()
       if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
@@ -235,7 +235,7 @@ function init() {
     })
 
     window.heros = world.heros
-    window.preferences = world.preferences
+    window.game = world.game
     window.grid = world.grid
     if(window.hero && !window.usePlayEditor){
       findHeroInNewWorld(world)
@@ -245,7 +245,7 @@ function init() {
       window.socket.emit('updateGrid', window.grid)
     }
 
-    window.socket.emit('updatePreferences', window.preferences)
+    window.socket.emit('updateGame', window.game)
   })
 
   window.socket.on('onUpdateGrid', (grid) => {
@@ -266,7 +266,7 @@ function init() {
 
   window.socket.emit('askObjects');
   window.socket.emit('askHeros');
-  window.socket.emit('askPreferences');
+  window.socket.emit('askGame');
 }
 
 export default {
@@ -276,7 +276,7 @@ export default {
 
 function findHeroInNewWorld(world) {
   // if we have decided to restore position, find hero in hero list
-  if(world.preferences.shouldRestoreHero) {
+  if(world.game.shouldRestoreHero) {
     for(var heroId in world.heros) {
       let currentHero = world.heros[heroId]
       if(currentHero.id == window.hero.id) {
@@ -287,7 +287,7 @@ function findHeroInNewWorld(world) {
     console.log('failed to find hero with id' + window.hero.id)
   }
 
-  if(!world.preferences.isAsymmetric) {
+  if(!world.game.isAsymmetric) {
     // save current users id to the world.hero object and then store all other variables as the new hero
     world.hero.id = window.hero.id
     window.hero = world.hero
@@ -302,8 +302,8 @@ function findHeroInNewWorld(world) {
 
   // other random bullshit if theres two different versions of the hero
   if(!Object.keys(world.heros).length) {
-    window.hero.x = window.preferences.worldSpawnPointX
-    window.hero.y = window.preferences.worldSpawnPointY
+    window.hero.x = window.game.worldSpawnPointX
+    window.hero.y = window.game.worldSpawnPointY
   }
   for(var heroId in world.heros) {
     let currentHero = world.heros[heroId]

@@ -72,7 +72,7 @@ function updatePosition(object, delta) {
 function containObjectWithinGridBoundaries(object) {
 
   //DO THE PACMAN FLIP!!
-  let gameBoundaries = window.preferences.gameBoundaries
+  let gameBoundaries = window.game.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
     if(object.tags.fresh) {

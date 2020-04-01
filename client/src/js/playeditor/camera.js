@@ -29,7 +29,7 @@ function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, 
   }
   for(var y = 0; y <= gridHeight; y++) {
     ctx.lineWidth = normalLineWidth
-    if(x % 10 === 0) {
+    if(y % 10 === 0) {
       ctx.lineWidth = specialLineWidth
     }
     drawVertice(ctx, {a: {
@@ -120,27 +120,27 @@ function render(ctx, hero, objects) {
   ////////////////
   if(window.grid && window.grid.nodes) {
     drawGrid({startX: window.grid.startX, startY: window.grid.startY, gridWidth: window.grid.width, gridHeight: window.grid.height, normalLineWidth: .2, specialLineWidth: .5, color: 'white'})
-    if(window.preferences && window.preferences.gameBoundaries && window.preferences.gameBoundaries.behavior == 'purgatory') {
+    if(window.game && window.game.gameBoundaries && window.game.gameBoundaries.behavior == 'purgatory') {
       // let value = {
-      //   startX: window.preferences.gameBoundaries.x,
-      //   startY: window.preferences.gameBoundaries.y,
-      //   gridWidth: window.preferences.gameBoundaries.width/window.grid.nodeSize,
-      //   gridHeight: window.preferences.gameBoundaries.height/window.grid.nodeSize
+      //   startX: window.game.gameBoundaries.x,
+      //   startY: window.game.gameBoundaries.y,
+      //   gridWidth: window.game.gameBoundaries.width/window.grid.nodeSize,
+      //   gridHeight: window.game.gameBoundaries.height/window.grid.nodeSize
       // }
       // drawGrid({...value, normalLineWidth: .2, specialLineWidth: 0, color: 'red'})
       // let value2 = {
-      //   startX: window.preferences.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
-      //   startY: window.preferences.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
-      //   gridWidth: ((window.preferences.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)/window.grid.nodeSize) + 2,
-      //   gridHeight: ((window.preferences.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)/window.grid.nodeSize) + 2
+      //   startX: window.game.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
+      //   startY: window.game.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
+      //   gridWidth: ((window.game.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)/window.grid.nodeSize) + 2,
+      //   gridHeight: ((window.game.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)/window.grid.nodeSize) + 2
       // }
       // drawGrid({...value2, normalLineWidth: .3})
-    } else if(window.preferences && window.preferences.gameBoundaries) {
+    } else if(window.game && window.game.gameBoundaries) {
       // let value = {
-      //   startX: window.preferences.gameBoundaries.x,
-      //   startY: window.preferences.gameBoundaries.y,
-      //   gridWidth: window.preferences.gameBoundaries.width/window.grid.nodeSize,
-      //   gridHeight: window.preferences.gameBoundaries.height/window.grid.nodeSize
+      //   startX: window.game.gameBoundaries.x,
+      //   startY: window.game.gameBoundaries.y,
+      //   gridWidth: window.game.gameBoundaries.width/window.grid.nodeSize,
+      //   gridHeight: window.game.gameBoundaries.height/window.grid.nodeSize
       // }
       // drawGrid({...value, normalLineWidth: .4})
     }
@@ -179,8 +179,8 @@ function render(ctx, hero, objects) {
   drawObject(ctx, {x: 0, y: 0, width: 2, height: 2000, color: 'white'})
   drawObject(ctx, {x: 0, y: 0, width: 2000, height: 2, color: 'white'})
 
-  drawObject(ctx, {x: window.preferences.worldSpawnPointX, y: window.preferences.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
-  drawObject(ctx, {x: window.preferences.worldSpawnPointX - 205, y: window.preferences.worldSpawnPointY, width: 400, height: 5, color: 'white'})
+  drawObject(ctx, {x: window.game.worldSpawnPointX, y: window.game.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
+  drawObject(ctx, {x: window.game.worldSpawnPointX - 205, y: window.game.worldSpawnPointY, width: 400, height: 5, color: 'white'})
 
   ////////////////
   ////////////////
@@ -264,37 +264,37 @@ function render(ctx, hero, objects) {
 
   ////////////////
   ////////////////
-  // PREFERENCES
+  // GAME
   ////////////////
   ////////////////
 
-  if((currentTool == TOOLS.AREA_SELECTOR || currentTool == TOOLS.PROCEDURAL) && window.preferences.proceduralBoundaries) {
+  if((currentTool == TOOLS.AREA_SELECTOR || currentTool == TOOLS.PROCEDURAL) && window.game.proceduralBoundaries) {
     ctx.fillStyle='yellow';
     ctx.globalAlpha = 0.2;
-    drawObject(ctx, window.preferences.proceduralBoundaries);
+    drawObject(ctx, window.game.proceduralBoundaries);
     ctx.globalAlpha = 1.0;
   }
 
-  if(window.preferences.lockCamera) {
+  if(window.game.lockCamera) {
     ctx.strokeStyle='#0A0';
-    drawBorder(ctx, window.preferences.lockCamera);
+    drawBorder(ctx, window.game.lockCamera);
   }
 
-  if(window.preferences && window.preferences.gameBoundaries && window.preferences.gameBoundaries.behavior == 'purgatory') {
+  if(window.game && window.game.gameBoundaries && window.game.gameBoundaries.behavior == 'purgatory') {
     ctx.strokeStyle='red';
     let valueRed = {
-      x: window.preferences.gameBoundaries.x-1,
-      y: window.preferences.gameBoundaries.y-1,
-      width: window.preferences.gameBoundaries.width+1,
-      height: window.preferences.gameBoundaries.height+1
+      x: window.game.gameBoundaries.x-1,
+      y: window.game.gameBoundaries.y-1,
+      width: window.game.gameBoundaries.width+1,
+      height: window.game.gameBoundaries.height+1
     }
     drawBorder(ctx, valueRed);
     ctx.strokeStyle='white';
     let valueWhite = {
-      x: window.preferences.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
-      y: window.preferences.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
-      width: ((window.preferences.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)) + (2 * window.grid.nodeSize),
-      height: ((window.preferences.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)) + (2 * window.grid.nodeSize)
+      x: window.game.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
+      y: window.game.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
+      width: ((window.game.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)) + (2 * window.grid.nodeSize),
+      height: ((window.game.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)) + (2 * window.grid.nodeSize)
     }
     drawBorder(ctx, valueWhite);
   }
@@ -308,7 +308,7 @@ function render(ctx, hero, objects) {
   for(var heroId in window.heros) {
     let currentHero = window.heros[heroId];
 
-    if(!window.preferences.lockCamera || !window.preferences.lockCamera.x) {
+    if(!window.game.lockCamera || !window.game.lockCamera.x) {
       ctx.strokeStyle='#0A0';
       drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)})
     }

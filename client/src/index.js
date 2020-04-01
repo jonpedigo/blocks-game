@@ -50,6 +50,7 @@ import sockets from './js/sockets.js'
 import constellation from './js/constellation.js'
 import pathfinding from './js/pathfinding.js'
 import utils from './js/utils.js'
+import './js/events.js'
 
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
@@ -86,7 +87,7 @@ if(!window.usePlayEditor) {
 window.defaultObject = {
   velocityX: 0,
   velocityY: 0,
-  velocityMax: 0,
+  velocityMax: 100,
   speed: 100,
   color: 'white',
   // cant put objects in it cuz of some pass by reference BS...
@@ -94,9 +95,9 @@ window.defaultObject = {
 
 window.respawnHero = function () {
   // hero spawn point takes precedence
-  if(window.preferences.worldSpawnPointX >= 0) {
-    window.hero.x = window.preferences.worldSpawnPointX
-    window.hero.y = window.preferences.worldSpawnPointY
+  if(window.game.worldSpawnPointX >= 0) {
+    window.hero.x = window.game.worldSpawnPointX
+    window.hero.y = window.game.worldSpawnPointY
     return
   }
 
@@ -109,6 +110,8 @@ window.respawnHero = function () {
   // default pos
   window.hero.x = 960;
   window.hero.y = 960;
+
+  window.client.emit('onRespawnHero')
 }
 
 window.resetHero = function(updatedHero) {
@@ -126,14 +129,14 @@ window.resetHero = function(updatedHero) {
 }
 
 /////////////
-//PREFERENCES
+//GAME
 /////////////
 /////////////
-const defaultPreferences = {
+const defaultGame = {
 	lockCamera: {},
 	gameBoundaries: {},
 }
-window.preferences = defaultPreferences;
+window.game = defaultGame;
 
 /////////////
 // HERO
@@ -225,7 +228,7 @@ var start = function () {
 	main()
   if(!window.usePlayEditor) {
     setInterval(() => {
-      if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
+      if(!window.objects || !window.game || !window.grid.nodes || Object.keys(window.heros).length === 0) {
         return
       }
       window.socket.emit('updateObjects', window.objects)
@@ -345,15 +348,15 @@ var render = function () {
 	//set camera so we render everything in the right place
   camera.set(ctx, window.hero)
 
-	window.preferences.renderStyle = 'outlines'
- 	if (window.preferences.renderStyle === 'outlines') {
+	window.game.renderStyle = 'outlines'
+ 	if (window.game.renderStyle === 'outlines') {
 		ctx.strokeStyle = "#999";
 		for(var i=0;i<vertices.length;i++){
 			camera.drawVertice(ctx, vertices[i])
 		}
 		ctx.fillStyle = 'white';
 		camera.drawObject(ctx, window.hero)
-	} else if(window.preferences.renderStyle === 'physics'){
+	} else if(window.game.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {
 		for(let i = 0; i < window.objects.length; i++){
@@ -361,8 +364,8 @@ var render = function () {
 		}
 	}
 
-	window.preferences.shadows = false
-	if(window.preferences.shadows === true) {
+	window.game.shadows = false
+	if(window.game.shadows === true) {
 		shadow.draw(ctx, vertices, hero)
 	}
 
@@ -377,7 +380,7 @@ var render = function () {
 
 // The main game loop
 var main = function () {
-  if(!window.objects || !window.preferences || !window.grid.nodes || Object.keys(window.heros).length === 0) {
+  if(!window.objects || !window.game || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return
   }
@@ -401,7 +404,7 @@ var main = function () {
 		// physics.drawSystem(ctx, hero)
   }
 
-  if(window.preferences.calculatePathCollisions) {
+  if(window.game.calculatePathCollisions) {
     grid.updateGridObstacles()
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
   }

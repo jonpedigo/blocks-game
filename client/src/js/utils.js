@@ -103,7 +103,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
     for(let tag in window.tags) {
       if(window.tags[tag].checked || newObject.tags[tag] === true){
-        if(tag === 'monster' && window.usePlayEditor && !(window.preferences.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
+        if(tag === 'monster' && window.usePlayEditor && !(window.game.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
           alert('You cannot add a monster without setting spawn point first')
           return
         }
@@ -116,7 +116,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
-    if(!window.preferences.calculatePathCollisions) {
+    if(!window.game.calculatePathCollisions) {
       grid.addObstacle(newObject)
     }
 
@@ -133,7 +133,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       physics.addObject(object)
     })
 
-    if(!window.preferences.calculatePathCollisions) {
+    if(!window.game.calculatePathCollisions) {
       grid.updateGridObstacles()
       window.resetPaths = true
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)

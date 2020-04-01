@@ -188,7 +188,7 @@ function createGridNodeAt(x, y) {
 }
 
 function addObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.preferences.calculatePathCollisions) {
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.game.calculatePathCollisions) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY
@@ -258,9 +258,15 @@ function updateGridObstacles() {
   })
 }
 
+function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+  const {x, y} = convertToGridXY(object)
+  console.log()
+  return keepGridXYWithinBoundaries(x, y, options)
+}
+
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
-    const {x, y, width, height } = convertToGridXY(window.preferences.gameBoundaries)
+  if(window.game.gameBoundaries.x >= 0 && window.game.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
+    const {x, y, width, height } = convertToGridXY(window.game.gameBoundaries)
     if(attemptingX > x + width - 1) {
       return false
     } else if(attemptingX < x) {
@@ -272,8 +278,8 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
   }
 
-  if(window.preferences.gameBoundaries.x >= 0 && window.preferences.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    const {x, y, width, height } = convertToGridXY(window.preferences.gameBoundaries)
+  if(window.game.gameBoundaries.x >= 0 && window.game.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+    const {x, y, width, height } = convertToGridXY(window.game.gameBoundaries)
     if(attemptingX > x + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
       return false
     } else if(attemptingX < x - 1 + (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
@@ -324,4 +330,5 @@ export default {
   convertToGridXY,
   getRandomGridWithinXY,
   keepGridXYWithinBoundaries,
+  keepXYWithinBoundaries,
 }
