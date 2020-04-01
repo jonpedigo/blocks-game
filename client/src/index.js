@@ -95,23 +95,21 @@ window.defaultObject = {
 
 window.respawnHero = function () {
   // hero spawn point takes precedence
-  if(window.game.worldSpawnPointX >= 0) {
-    window.hero.x = window.game.worldSpawnPointX
-    window.hero.y = window.game.worldSpawnPointY
-    return
-  }
+  window.client.emit('onRespawnHero')
 
-  if(window.hero.spawnPointX >= 0) {
+  if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
-    return
+  } else if(window.game.worldSpawnPointX && window.game.worldSpawnPointX >= 0) {
+    window.hero.x = window.game.worldSpawnPointX
+    window.hero.y = window.game.worldSpawnPointY
+  } else {
+    // default pos
+    window.hero.x = 960;
+    window.hero.y = 960;
   }
 
-  // default pos
-  window.hero.x = 960;
-  window.hero.y = 960;
-
-  window.client.emit('onRespawnHero')
+  console.log(window.hero.x)
 }
 
 window.resetHero = function(updatedHero) {
@@ -250,7 +248,7 @@ var update = function (delta) {
   if(!window.hero.flags.paused) {
     input.update(hero, delta)
     if(window.hero.arrowKeysBehavior !== 'grid') {
-      physics.update(window.hero, window.objects, delta)
+      physics.update(delta)
     } else {
       grid.update(window.hero, window.objects)
     }
