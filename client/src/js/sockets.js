@@ -22,7 +22,7 @@ function init() {
   			physics.addObject(object)
   		})
 
-      if(window.grid.nodes && !window.game.calculatePathCollisions) {
+      if(window.grid.nodes && !window.game.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -36,7 +36,7 @@ function init() {
   		window.objects = []
 
       console.log('resetting')
-      if(!window.game.calculatePathCollisions) {
+      if(!window.game.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
@@ -45,7 +45,7 @@ function init() {
   	window.socket.on('onEditObjects', (editedObjects) => {
   		Object.assign(window.objects, editedObjects)
 
-      if(!window.game.calculatePathCollisions) {
+      if(!window.game.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -146,7 +146,14 @@ function init() {
   window.socket.on('onUpdateGame', (updatedGame) => {
   	for(let key in updatedGame) {
   		const value = updatedGame[key]
-  		window.game[key] = value
+
+      if(window.game[key] instanceof Object) {
+        Object.assign(window.game[key], value)
+      } else {
+        window.game[key] = value
+      }
+      
+      // no need to over write nested values ( flags, tags )
   		if(key === 'lockCamera' && !window.usePlayEditor) {
   			if(value.limitX) {
   				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
@@ -177,6 +184,11 @@ function init() {
         // if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
   	}
+
+    if(window.usePlayEditor) {
+      window.gameeditor.set(window.game)
+      window.gameeditor.expandAll()
+    }
   })
 
   window.socket.on('onUpdateHero', (updatedHero) => {
@@ -216,7 +228,7 @@ function init() {
       window.objecteditor.set({})
     }
 
-    if(!window.game.calculatePathCollisions) {
+    if(!window.game.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
       if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }

@@ -23,7 +23,7 @@ window.mousePos = {
 }
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
-  AREA_SELECTOR: 'areaSelector',
+  GAME_EDITOR: 'gameEditor',
   SIMPLE_EDITOR: 'objectEditor',
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
@@ -31,9 +31,16 @@ window.TOOLS = {
 }
 window.currentTool = TOOLS.ADD_OBJECT;
 
+window.zoneTags = {
+  // GRAPHICAL
+  invisible: false,
+
+  // BEHAVIORAL
+  spawnZone: false,
+  safeZone: false,
+}
 
 window.tags = {
-
   // COLLISIONS
   obstacle: true,
   stationary: false,
@@ -146,7 +153,7 @@ const tools = {
       }
     }
   },
-  [TOOLS.AREA_SELECTOR]: {
+  [TOOLS.GAME_EDITOR]: {
     onFirstClick: (e) => {
       if(window.selectorSpawnToggle.checked) {
         const click = {
@@ -224,7 +231,7 @@ const tools = {
     },
   }
 }
-tools[TOOLS.PROCEDURAL] = tools[TOOLS.AREA_SELECTOR]
+tools[TOOLS.PROCEDURAL] = tools[TOOLS.GAME_EDITOR]
 
 /////////////////////
 //DOM
@@ -330,7 +337,7 @@ function init(ctx, objects) {
   var objectjsoneditor = document.createElement("div")
   objectjsoneditor.id = 'objectjsoneditor'
   document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(objectjsoneditor);
-  window.objecteditor = new JSONEditor(objectjsoneditor, { onChangeJSON: (objectEdited) => {
+  window.objecteditor = new JSONEditor(objectjsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
     let object = window.objects[window.editingObject.i]
 
     if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
@@ -347,11 +354,20 @@ function init(ctx, objects) {
   var herojsoneditor = document.createElement("div")
   herojsoneditor.id = 'herojsoneditor'
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
-  window.heroeditor = new JSONEditor(herojsoneditor, { onChangeJSON: (object) => {
+  window.heroeditor = new JSONEditor(herojsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (object) => {
     // this is what sync should mean. Does every edit send immediately?
     sendHeroUpdate({ tags: object.tags, flags: object.flags })
   }});
 
+  var gamejsoneditor = document.createElement("div")
+  gamejsoneditor.id = 'gamejsoneditor'
+  document.getElementById('tool-'+TOOLS.GAME_EDITOR).appendChild(gamejsoneditor);
+  window.gameeditor = new JSONEditor(gamejsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (game) => {
+    // this is what sync should mean. Does every edit send immediately?
+    window.socket.emit('updateGame', { globalTags: game.globalTags });
+  }});
+  window.gameeditor.set(window.game)
+  window.gameeditor.expandAll()
 
   /////////////////////
   //UNIVERSE_VIEW BUTTONS
@@ -411,9 +427,9 @@ function init(ctx, objects) {
   window.calculatePathCollisionsToggle = document.getElementById('calculate-path-collisions')
   window.calculatePathCollisionsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { calculatePathCollisions: true })
+      window.socket.emit('updateGame', { globalTags: {...window.game.globalsTags, calculatePathCollisions: true } } )
     } else {
-      window.socket.emit('updateGame', { calculatePathCollisions: false })
+      window.socket.emit('updateGame', { globalTags: {...window.game.globalsTags, calculatePathCollisions: false } } )
     }
   }
 

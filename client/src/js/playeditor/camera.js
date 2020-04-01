@@ -254,7 +254,7 @@ function render(ctx, hero, objects) {
   if(window.clickStart.x && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
     drawBorder(ctx, { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)})
   }
-  if(window.clickStart.x && (currentTool === TOOLS.AREA_SELECTOR || currentTool === TOOLS.PROCEDURAL )) {
+  if(window.clickStart.x && (currentTool === TOOLS.GAME_EDITOR || currentTool === TOOLS.PROCEDURAL )) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
     if(Math.abs(possibleBox.width) >= (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier) && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier) ctx.strokeStyle = '#FFF'
@@ -268,7 +268,7 @@ function render(ctx, hero, objects) {
   ////////////////
   ////////////////
 
-  if((currentTool == TOOLS.AREA_SELECTOR || currentTool == TOOLS.PROCEDURAL) && window.game.proceduralBoundaries) {
+  if((currentTool == TOOLS.GAME_EDITOR || currentTool == TOOLS.PROCEDURAL) && window.game.proceduralBoundaries) {
     ctx.fillStyle='yellow';
     ctx.globalAlpha = 0.2;
     drawObject(ctx, window.game.proceduralBoundaries);
@@ -280,23 +280,34 @@ function render(ctx, hero, objects) {
     drawBorder(ctx, window.game.lockCamera);
   }
 
-  if(window.game && window.game.gameBoundaries && window.game.gameBoundaries.behavior == 'purgatory') {
-    ctx.strokeStyle='red';
-    let valueRed = {
-      x: window.game.gameBoundaries.x-1,
-      y: window.game.gameBoundaries.y-1,
-      width: window.game.gameBoundaries.width+1,
-      height: window.game.gameBoundaries.height+1
+  if(window.game && window.game.gameBoundaries) {
+    if(window.game.gameBoundaries.behavior == 'purgatory') {
+      ctx.strokeStyle='red';
+      let valueRed = {
+        x: window.game.gameBoundaries.x-1,
+        y: window.game.gameBoundaries.y-1,
+        width: window.game.gameBoundaries.width+1,
+        height: window.game.gameBoundaries.height+1
+      }
+      drawBorder(ctx, valueRed);
+      ctx.strokeStyle='white';
+      let valueWhite = {
+        x: window.game.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
+        y: window.game.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
+        width: ((window.game.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)) + (2 * window.grid.nodeSize),
+        height: ((window.game.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)) + (2 * window.grid.nodeSize)
+      }
+      drawBorder(ctx, valueWhite);
+    } else {
+      ctx.strokeStyle='white';
+      let value = {
+        x: window.game.gameBoundaries.x-1,
+        y: window.game.gameBoundaries.y-1,
+        width: window.game.gameBoundaries.width+1,
+        height: window.game.gameBoundaries.height+1
+      }
+      drawBorder(ctx, value);
     }
-    drawBorder(ctx, valueRed);
-    ctx.strokeStyle='white';
-    let valueWhite = {
-      x: window.game.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
-      y: window.game.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
-      width: ((window.game.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)) + (2 * window.grid.nodeSize),
-      height: ((window.game.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)) + (2 * window.grid.nodeSize)
-    }
-    drawBorder(ctx, valueWhite);
   }
 
 

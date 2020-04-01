@@ -188,7 +188,7 @@ function createGridNodeAt(x, y) {
 }
 
 function addObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.game.calculatePathCollisions) {
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.game.globalTags.calculatePathCollisions) {
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY

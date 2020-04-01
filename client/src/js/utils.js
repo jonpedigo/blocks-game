@@ -116,7 +116,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
-    if(!window.game.calculatePathCollisions) {
+    if(!window.game.globalTags.calculatePathCollisions) {
       grid.addObstacle(newObject)
     }
 
@@ -133,7 +133,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       physics.addObject(object)
     })
 
-    if(!window.game.calculatePathCollisions) {
+    if(!window.game.globalTags.calculatePathCollisions) {
       grid.updateGridObstacles()
       window.resetPaths = true
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)

@@ -17,7 +17,12 @@ function init() {
 
 function render(ctx){
 	if(window.hero.flags.showChat){
-		drawChat(ctx, window.hero.chat)
+		if(window.hero.chat.length) {
+			drawChat(ctx, window.hero.chat)
+		} else {
+			window.hero.flags.showChat = false
+			window.hero.flags.paused = false 
+		}
 	}
 }
 

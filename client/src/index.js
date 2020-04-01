@@ -133,8 +133,16 @@ window.resetHero = function(updatedHero) {
 /////////////
 /////////////
 const defaultGame = {
+  id: 'game-' + Date.now(),
 	lockCamera: {},
 	gameBoundaries: {},
+  procedural: {},
+  worldSpawnPointX: null,
+  worldSpawnPointY: null,
+  globalTags: {
+    calculatePathCollisions: false,
+    noCamping: true,
+  }
 }
 window.game = defaultGame;
 
@@ -145,7 +153,6 @@ window.game = defaultGame;
 window.defaultHero = {
 	width: 40,
 	height: 40,
-  paused: false,
 	velocityX: 0,
 	velocityY: 0,
 	velocityMax: 200,
@@ -404,7 +411,7 @@ var main = function () {
 		// physics.drawSystem(ctx, hero)
   }
 
-  if(window.game.calculatePathCollisions) {
+  if(window.game.globalTags.calculatePathCollisions) {
     grid.updateGridObstacles()
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
   }
