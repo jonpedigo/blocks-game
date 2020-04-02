@@ -100,6 +100,24 @@ function update(hero, objects, modifier) {
       }
     }
 
+    if(object.tags && object.tags['pacer']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.walkWithPurpose(object)]
+        const { x, y } = gridTool.convertToGridXY(object)
+        object.gridX = x
+        object.gridY = y
+      }
+    }
+
+    if(object.tags && object.tags['lemmings']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.walkIntoWall(object)]
+        const { x, y } = gridTool.convertToGridXY(object)
+        object.gridX = x
+        object.gridY = y
+      }
+    }
+
     if(object.tags && object.tags['goomba']) {
       if(object.velocityMax === 0) object.velocityMax = 100
 

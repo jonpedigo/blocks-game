@@ -141,6 +141,7 @@ const defaultGame = {
     calculatePathCollisions: false,
     noCamping: true,
     targetOnSight: true,
+    paused: false,
   }
 }
 window.game = defaultGame;

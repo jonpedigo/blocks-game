@@ -64,6 +64,8 @@ window.tags = {
   jittery: false,
 
   // INTELLIGENCE
+  pacer: false,
+  lemmings: false,
   wander: false,
   goomba: false,
   goombaSideways: false,

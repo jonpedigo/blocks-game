@@ -142,6 +142,111 @@ function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfind
   } else return false
 }
 
+function walkIntoWall(object) {
+  const { x, y } = gridTool.convertToGridXY(object)
+
+  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+
+  if(object.direction === 'right'){
+    if ( isGridWalkable(x + 1, y, options) ){
+      return { x: x + 1, y: y}
+    }
+  }
+
+  if(object.direction === 'left') {
+    if ( isGridWalkable(x - 1, y, options) ) {
+      return { x: x - 1, y: y}
+    }
+  }
+
+  if(object.direction === 'up') {
+    if ( isGridWalkable(x, y - 1, options) ){
+      return { x: x, y: y - 1}
+    }
+  }
+
+  if(object.direction === 'down') {
+    if ( isGridWalkable(x, y + 1, options) ) {
+      return { x: x, y: y + 1}
+    }
+  }
+
+  /// if youve gotten here that means that the grid in the direction you are going
+  // is a wall, so now u switch direction
+  let directions = [
+    'left',
+    'right',
+    'up',
+    'down',
+  ].filter((dir) => dir !== object.direction)
+  object.direction = directions[Math.floor(Math.random() * 3)]
+
+  console.log('found nowhere to move')
+  return { x, y }
+}
+
+function walkWithPurpose(object) {
+  const { x, y } = gridTool.convertToGridXY(object)
+
+  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+
+  let random = Math.random()
+
+  if(random <= .25 || !object.direction) {
+    let directions = [
+      'left',
+      'right',
+      'up',
+      'down',
+    ].filter((dir) => dir !== object.direction)
+    object.direction = directions[Math.floor(Math.random() * (object.direction ? 3 : 4))]
+  }
+
+  if(object.direction === 'right'){
+    if ( isGridWalkable(x + 1, y, options) ){
+      return { x: x + 1, y: y}
+    }
+  }
+
+  if(object.direction === 'left') {
+    if ( isGridWalkable(x - 1, y, options) ) {
+      return { x: x - 1, y: y}
+    }
+  }
+
+  if(object.direction === 'up') {
+    if ( isGridWalkable(x, y - 1, options) ){
+      return { x: x, y: y - 1}
+    }
+  }
+
+  if(object.direction === 'down') {
+    if ( isGridWalkable(x, y + 1, options) ) {
+      return { x: x, y: y + 1}
+    }
+  }
+
+  // directional movement failed, find somewhere to move
+  object.direction = ''
+  // console.log('couldnt find directional movement, finding random space')
+  let nearbyGrids = shuffle([
+    { x, y: y-1},
+    { x: x+1, y},
+    { x: x, y: y+1},
+    { x: x-1, y},
+  ])
+
+  for (let i = 0; i < nearbyGrids.length; i++) {
+    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, options)) {
+      return nearbyGrids[i]
+    }
+  }
+
+  console.log('found nowhere to move')
+  return { x, y }
+
+}
+
 function walkAround(object) {
   const { x, y } = gridTool.convertToGridXY(object)
 
@@ -203,9 +308,7 @@ function walkAround(object) {
     }
   }
 
-  if(object.gridX == 31) {
-    console.log('found nowhere to move')
-  }
+  console.log('found nowhere to move')
   return { x, y }
 }
 
@@ -237,6 +340,8 @@ export default {
   findPath,
   convertGridToPathfindingGrid,
   walkAround,
+  walkWithPurpose,
+  walkIntoWall,
 }
 
 
