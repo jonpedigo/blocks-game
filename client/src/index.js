@@ -140,6 +140,7 @@ const defaultGame = {
   globalTags: {
     calculatePathCollisions: false,
     noCamping: true,
+    targetOnSight: true,
   }
 }
 window.game = defaultGame;
@@ -173,11 +174,13 @@ window.defaultHero = {
 	zoomMultiplier: 1.875,
   x: 960,
   y: 960,
+  lives: 10,
   score: 0,
   chat: [],
   flags : {
     showChat: false,
     showScore: false,
+    showLives: false,
     paused: false,
   },
   directions: {
@@ -245,7 +248,7 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  if(!window.hero.flags.paused) {
+  if(!window.game.globalTags.paused) {
     input.update(hero, delta)
     if(window.hero.arrowKeysBehavior !== 'grid') {
       physics.update(delta)

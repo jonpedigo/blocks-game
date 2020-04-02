@@ -27,10 +27,13 @@ const modifiers = {
     },
     jumpVelocity: -480,
     velocityMax: 480,
-    velocityX: 0
   },
   chatter: {
     chat: ['Hello'],
+    flags : {
+      showChat: true,
+      paused: true,
+    }
   },
   bobthebuilder: {
     actionButtonBehavior: 'dropWall',

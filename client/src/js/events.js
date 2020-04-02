@@ -32,7 +32,6 @@ window.client = new EventEmitter()
 
 
 window.client.on('onRespawnHero', () => {
-  console.log('event ?')
   if(window.game.globalTags.noCamping) {
     window.objects.forEach((obj) => {
       if(obj.tags.zombie || obj.tags.homing || obj.tags.wander) {

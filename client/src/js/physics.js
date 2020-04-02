@@ -164,9 +164,6 @@ function update (delta) {
     }
   })
 
-  console.log('physics', window.hero.x)
-
-
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
   // // update physics system
@@ -210,7 +207,10 @@ function update (delta) {
               removeObjects.push(body.gameObject)
             }
           } else {
-            window.hero.score--
+            if(window.hero.lives == 0) {
+              window.client.emit('gameOver')
+            }
+            window.hero.lives--
             window.respawnHero()
             return
           }
@@ -221,15 +221,56 @@ function update (delta) {
         }
 
         if(body.gameObject.tags && body.gameObject.tags['chatter'] && body.gameObject.heroUpdate && body.gameObject.heroUpdate.chat) {
-          window.hero.flags.showChat = true
-          window.hero.chat = body.gameObject.heroUpdate.chat.slice()
-          // window.hero.chat.name = body.id
-          window.hero.flags.paused = true
+          if(body.id !== window.hero.lastChatId) {
+            window.hero.chat = body.gameObject.heroUpdate.chat.slice()
+            // window.hero.chat.name = body.id
+            window.hero.lastChatId = body.gameObject.id
+          }
         }
 
         if(body.gameObject.tags && body.gameObject.tags['powerup']) {
-          if(body.id !== window.hero.lastPowerUpId) {
-            window.mergeDeep(window.hero, {...body.gameObject.heroUpdate, lastPowerUpId: body.gameObject.id})
+          if(body.gameObject.id !== window.hero.lastPowerUpId) {
+            if(!window.hero.updateHistory) {
+              window.hero.updateHistory = []
+            }
+
+            // only have 4 edits in the history at a time
+            if(window.hero.updateHistory.length >= 4) {
+              window.hero.updateHistory.shift()
+            }
+
+            let heroUpdate = body.gameObject.heroUpdate
+            let update = {
+              update: heroUpdate,
+              prev: {},
+              id: body.gameObject.id,
+            }
+            for(var prop in heroUpdate) {
+              if(prop == 'flags' || prop == 'tags') {
+                let ags = heroUpdate[prop]
+                update.prev[prop] = {}
+                for(let ag in ags) {
+                  update.prev[prop][ag] = window.hero[prop][ag]
+                }
+              } else {
+                update.prev[prop] = window.hero[prop]
+              }
+            }
+            window.hero.updateHistory.push(update)
+            window.mergeDeep(window.hero, {...body.gameObject.heroUpdate})
+            window.hero.lastPowerUpId = body.gameObject.id
+
+            if(body.gameObject.tags['revertAfterTimeout']) {
+              window.setTimeout(() => {
+                window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
+                  if(body.gameObject.id === update.id) {
+                    window.mergeDeep(window.hero, {...update.prev})
+                    return false
+                  }
+                  return true
+                })
+              }, body.gameObject.powerUpTimer || 30000)
+            }
           }
         } else {
           window.hero.lastPowerUpId = null

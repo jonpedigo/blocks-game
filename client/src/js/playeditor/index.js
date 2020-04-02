@@ -48,6 +48,7 @@ window.tags = {
   coin: false,
   powerup: false,
   deleteAfter: false,
+  revertAfterTimeout: false,
 
   // PHYSICS
   gravity: false,
@@ -58,6 +59,9 @@ window.tags = {
 
   // GRAPHICAL
   glowing: false,
+  flashing: false,
+  filled: false,
+  jittery: false,
 
   // INTELLIGENCE
   wander: false,
@@ -66,7 +70,7 @@ window.tags = {
   homing: false,
   zombie: false,
 
-  // TEMPORARY STATE
+  // TEMPORARY STATE ( are temporary things...flags? )
   fresh: false,
 
 }

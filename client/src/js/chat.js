@@ -21,7 +21,7 @@ function render(ctx){
 			drawChat(ctx, window.hero.chat)
 		} else {
 			window.hero.flags.showChat = false
-			window.hero.flags.paused = false 
+			window.hero.flags.paused = false
 		}
 	}
 }
