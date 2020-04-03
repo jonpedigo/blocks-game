@@ -302,7 +302,7 @@ function update (delta) {
       for(const body of potentials) {
         let result = physicsObjects[window.hero.id].createResult()
         if(heroPO.collides(body, result)) {
-          if(body.gameObject.tags && body.gameObject.tags['obstacle']) {
+          if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
             illegal = true
             // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
             corrections.push(result)
@@ -463,7 +463,19 @@ function update (delta) {
       let illegal = false
       for(const body of potentials) {
         if(po.collides(body, result)) {
-          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'])) {
+          if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
+            if(Math.abs(result.overlap_x) !== 0) {
+              illegal = true
+              correction.x -= result.overlap * result.overlap_x
+            }
+            if(Math.abs(result.overlap_y) !== 0) {
+              illegal = true
+              correction.y -= result.overlap * result.overlap_y
+            }
+            break;
+          }
+
+          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'] || po.gameObject.tags['goombaSideways'])) {
             if(Math.abs(result.overlap_x) !== 0) {
               illegal = true
               correction.x -= result.overlap * result.overlap_x

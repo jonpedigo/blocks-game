@@ -58,6 +58,8 @@ window.tags = {
   gravity: false,
   movingPlatform: false,
   child: false,
+  onlyHeroAllowed: false,
+  noHeroAllowed: false,
 
   // UI
   chatter: false,
@@ -379,7 +381,8 @@ function init(ctx, objects) {
       gridTool.removeObstacle({...object, tags: objectEdited.tags})
     }
 
-    if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true)) {
+    if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && objectEdited.tags.onlyHeroAllowed == true)) {
+      console.log('adding obstacle')
       gridTool.addObstacle({...object, tags: objectEdited.tags})
     }
 
@@ -816,8 +819,6 @@ function sendObjectUpdate(objectUpdate) {
   Object.assign(window.editingObject, objectCopy)
   Object.assign(window.objects[window.editingObject.i], objectCopy)
   window.socket.emit('editObjects', window.objects)
-  window.objecteditor.set(window.editingObject)
-  window.objecteditor.expandAll()
 }
 
 function update(delta) {

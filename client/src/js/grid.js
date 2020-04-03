@@ -188,7 +188,9 @@ function createGridNodeAt(x, y) {
 }
 
 function addObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.world.globalTags.calculatePathCollisions) {
+  console.log(object.tags)
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || window.world.globalTags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+    console.log('?')
     // pretend we are dealing with a 0,0 plane
     let x = object.x - window.grid.startX
     let y = object.y - window.grid.startY
@@ -252,7 +254,7 @@ function updateGridObstacles() {
   })
 
   window.objects.forEach((obj) => {
-    if(obj.tags && obj.tags.obstacle) {
+    if(obj.tags && obj.tags.obstacle || obj.tags.onlyHeroAllowed) {
       addObstacle(obj)
     }
   })
