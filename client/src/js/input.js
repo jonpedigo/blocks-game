@@ -8,7 +8,7 @@ function init(){
   window.hero.inputDirection = 'up'
 
   window.addEventListener("keydown", function (e) {
-    if(window.hero.flags.paused || window.game.globalTags.paused) return
+    if(window.hero.flags.paused || window.world.globalTags.paused) return
 
     keysDown[e.keyCode] = true
 

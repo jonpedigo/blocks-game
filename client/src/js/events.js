@@ -32,9 +32,9 @@ window.client = new EventEmitter()
 
 
 window.client.on('onRespawnHero', () => {
-  if(window.game.globalTags.noCamping) {
+  if(window.world.globalTags.noCamping) {
     window.objects.forEach((obj) => {
-      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander) {
+      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
         const { x, y } = gridTool.convertToGridXY(obj)
         obj.gridX = x
         obj.gridY = y

@@ -25,25 +25,26 @@ let grid = {
   startX: 0,
   startY: 0,
 }
-let game = {
+let world = {
 
 }
-let initialWorld = 'purgatory'
-setWorld(initialWorld, (world) => {
-  console.log('initial world set to ' + initialWorld)
+
+let initialGame = 'purgatory'
+setGame(initialGame, (game) => {
+  console.log('initial game set to ' + initialGame)
 })
 
-function setWorld(name, cb) {
+function setGame(name, cb) {
   fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
     if (err){
         console.log(err);
     } else {
-    let world = JSON.parse(data); //now it an worldect
-    serverState = world.objects
-    heros = world.heros
-    game = world.game
-    grid = world.grid || grid
-    return cb(world)
+    let game = JSON.parse(data); //now it an gameect
+    serverState = game.objects
+    heros = game.heros
+    world = game.world
+    grid = game.grid
+    return cb(game)
   }});
 }
 
@@ -54,15 +55,15 @@ io.on('connection', function(socket){
     heros[hero.id] = hero
   })
 
-  socket.on('saveWorld', (name) => {
+  socket.on('saveGame', (name) => {
     let data = {
       objects: serverState,
       heros,
-      game,
+      world,
       grid,
     };
 
-    if(!game.shouldRestoreHero && !game.isAsymmetric) {
+    if(!world.globalTags.shouldRestoreHero && !world.globalTags.isAsymmetric) {
       if(Object.keys(heros).length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
@@ -75,25 +76,26 @@ io.on('connection', function(socket){
       name = Date.now()
     }
     fs.writeFile('./data/' + name + '.json', JSON.stringify(data), 'utf8', () => {
-      console.log('world' + name + ' saved')
+      console.log('game: ' + name + ' saved')
     });
   })
 
-  // this is for when one player on a network wants to get a world... should all be 1 -hero games?
-  socket.on('getWorld', (name) => {
+  // this is for when one player on a network wants to get a game... should all be 1 -hero worlds?
+  socket.on('getGame', (name) => {
     fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {
       let obj = JSON.parse(data); //now it an object
-      socket.emit('onSetWorld', obj)
+      socket.emit('onSetGame', obj)
     }});
   })
 
   // this is for when we are editing and we want to send this world to all people
-  socket.on('setWorld', (name) => {
-    setWorld(name, (world) => {
-      io.emit('onSetWorld', world)
+  socket.on('setGame', (name) => {
+    setGame(name, (game) => {
+      console.log('?')
+      io.emit('onSetGame', game)
     })
   })
 
@@ -131,17 +133,17 @@ io.on('connection', function(socket){
     io.emit('onAddObjects', objects)
   })
 
-  //game
-  socket.on('askGame', () => {
-    socket.emit('onUpdateGame', game)
+  //world
+  socket.on('askWorld', () => {
+    socket.emit('onUpdateWorld', world)
   })
-  socket.on('updateGame', (updatedGame) => {
-    Object.assign(game, updatedGame)
-    io.emit('onUpdateGame', updatedGame)
+  socket.on('updateWorld', (updatedWorld) => {
+    world = updatedWorld
+    Object.assign(world, updatedWorld)
+    io.emit('onUpdateWorld', updatedWorld)
   })
-  socket.on('resetGame', (updatedGame) => {
-    game = {}
-    io.emit('onResetGame', updatedGame)
+  socket.on('resetWorld', (updatedWorld) => {
+    io.emit('onResetWorld', updatedWorld)
   })
 
   //hero

@@ -22,7 +22,7 @@ function init() {
   			physics.addObject(object)
   		})
 
-      if(window.grid.nodes && !window.game.globalTags.calculatePathCollisions) {
+      if(window.grid.nodes && !window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -36,7 +36,7 @@ function init() {
   		window.objects = []
 
       console.log('resetting')
-      if(!window.game.globalTags.calculatePathCollisions) {
+      if(!window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
@@ -45,7 +45,7 @@ function init() {
   	window.socket.on('onEditObjects', (editedObjects) => {
   		Object.assign(window.objects, editedObjects)
 
-      if(!window.game.globalTags.calculatePathCollisions) {
+      if(!window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -115,12 +115,13 @@ function init() {
   //   }
   // })
 
-  window.socket.on('onResetGame', (hero) => {
-    window.game = {}
+  window.socket.on('onResetWorld', (hero) => {
+    window.world = JSON.parse(JSON.stringify(window.defaultWorld))
     camera.clearLimit()
     gridTool.updateGridObstacles()
     window.resetPaths = true
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    window.socket.emit('updateWorld', window.world)
   })
 
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
@@ -132,7 +133,7 @@ function init() {
       Object.assign(window.heros[heroUpdated.id], heroUpdated)
       if(window.editingHero.id === heroUpdated.id) {
         window.editingHero = heroUpdated
-        if(window.game.syncHero) {
+        if(window.world.syncHero) {
           window.setEditingHero(heroUpdated)
         }
       }
@@ -143,16 +144,16 @@ function init() {
     }
   })
 
-  window.socket.on('onUpdateGame', (updatedGame) => {
-  	for(let key in updatedGame) {
-  		const value = updatedGame[key]
+  window.socket.on('onUpdateWorld', (updatedWorld) => {
+  	for(let key in updatedWorld) {
+  		const value = updatedWorld[key]
 
-      if(window.game[key] instanceof Object) {
-        Object.assign(window.game[key], value)
+      if(window.world[key] instanceof Object) {
+        Object.assign(window.world[key], value)
       } else {
-        window.game[key] = value
+        window.world[key] = value
       }
-      
+
       // no need to over write nested values ( flags, tags )
   		if(key === 'lockCamera' && !window.usePlayEditor) {
   			if(value.limitX) {
@@ -161,33 +162,32 @@ function init() {
   				camera.clearLimit();
   			}
   		}
-      if(key === 'shouldRestoreHero' && window.usePlayEditor) {
-        window.shouldRestoreHeroToggle.checked = value
-      }
-      if(key === 'syncHero' && window.usePlayEditor) {
-        window.syncHeroToggle.checked = value
-      }
-      if(key === 'syncObjects' && window.usePlayEditor) {
-        window.shouldRestoreHeroToggle.checked = value
-      }
-      if(key === 'isAsymmetric' && window.usePlayEditor) {
-        window.isAsymmetricToggle.checked = value
-      }
-      if(key === 'calculatePathCollisions' && window.grid.nodes) {
-        gridTool.updateGridObstacles()
-        if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-      }
       if(key === 'gameBoundaries') {
         // breaks if game has not 'started' yet or 'loaded yet'
         // gridTool.updateGridObstacles()
         // window.resetPaths = true
         // if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
+
+      if(key === 'globalTags') {
+        for(let tag in updatedWorld.globalTags) {
+          if(tag === 'syncHero' && window.usePlayEditor) {
+            window.syncHeroToggle.checked = value
+          }
+          if(tag === 'syncObjects' && window.usePlayEditor) {
+            window.shouldRestoreHeroToggle.checked = value
+          }
+          if(tag === 'calculatePathCollisions' && window.grid.nodes) {
+            gridTool.updateGridObstacles()
+            if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+          }
+        }
+      }
   	}
 
     if(window.usePlayEditor) {
-      window.gameeditor.set(window.game)
-      window.gameeditor.expandAll()
+      window.worldeditor.set(window.world)
+      window.worldeditor.expandAll()
     }
   })
 
@@ -228,7 +228,7 @@ function init() {
       window.objecteditor.set({})
     }
 
-    if(!window.game.globalTags.calculatePathCollisions) {
+    if(!window.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
       if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
@@ -240,24 +240,24 @@ function init() {
     }
   })
 
-  window.socket.on('onSetWorld', (world) => {
-    window.objects = world.objects
+  window.socket.on('onSetGame', (game) => {
+    window.objects = game.objects
     window.objects.forEach((object) => {
       physics.addObject(object)
     })
 
-    window.heros = world.heros
-    window.game = world.game
-    window.grid = world.grid
+    window.heros = game.heros
+    window.world = game.world
+    window.grid = game.grid
     if(window.hero && !window.usePlayEditor){
-      findHeroInNewWorld(world)
+      findHeroInNewWorld(game)
       window.socket.emit('updateHero', window.hero)
     }
     if(window.usePlayEditor) {
       window.socket.emit('updateGrid', window.grid)
     }
 
-    window.socket.emit('updateGame', window.game)
+    window.socket.emit('updateWorld', window.world)
   })
 
   window.socket.on('onUpdateGrid', (grid) => {
@@ -278,7 +278,7 @@ function init() {
 
   window.socket.emit('askObjects');
   window.socket.emit('askHeros');
-  window.socket.emit('askGame');
+  window.socket.emit('askWorld');
 }
 
 export default {
@@ -286,11 +286,11 @@ export default {
 }
 
 
-function findHeroInNewWorld(world) {
+function findHeroInNewWorld(game) {
   // if we have decided to restore position, find hero in hero list
-  if(world.game.shouldRestoreHero) {
-    for(var heroId in world.heros) {
-      let currentHero = world.heros[heroId]
+  if(game.world.globalTags.shouldRestoreHero) {
+    for(var heroId in game.heros) {
+      let currentHero = game.heros[heroId]
       if(currentHero.id == window.hero.id) {
         window.hero = currentHero
         return
@@ -299,10 +299,10 @@ function findHeroInNewWorld(world) {
     console.log('failed to find hero with id' + window.hero.id)
   }
 
-  if(!world.game.isAsymmetric) {
+  if(!game.world.globalTags.isAsymmetric) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    world.hero.id = window.hero.id
-    window.hero = world.hero
+    game.hero.id = window.hero.id
+    window.hero = game.hero
     // but then also respawn the hero
     window.respawnHero()
     return
@@ -313,24 +313,24 @@ function findHeroInNewWorld(world) {
 
 
   // other random bullshit if theres two different versions of the hero
-  if(!Object.keys(world.heros).length) {
-    window.hero.x = window.game.worldSpawnPointX
-    window.hero.y = window.game.worldSpawnPointY
+  if(!Object.keys(game.heros).length) {
+    window.hero.x = window.world.worldSpawnPointX
+    window.hero.y = window.world.worldSpawnPointY
   }
-  for(var heroId in world.heros) {
-    let currentHero = world.heros[heroId]
+  for(var heroId in game.heros) {
+    let currentHero = game.heros[heroId]
     if(currentHero.id == window.hero.id) {
       window.hero = currentHero
       return
     }
   }
-  for(var heroId in world.heros) {
-    let currentHero = world.heros[heroId]
+  for(var heroId in game.heros) {
+    let currentHero = game.heros[heroId]
     if(currentHero.tags.isPlayer) {
       window.hero = currentHero
       return
     }
   }
 
-  window.hero = world.heros[heroId]
+  window.hero = game.heros[heroId]
 }

@@ -1,5 +1,6 @@
 import { Collisions, Polygon } from 'collisions';
 import intelligence from './intelligence'
+import collisions from './collisions';
 
 const physicsObjects = {}
 // Create the collision system
@@ -72,7 +73,7 @@ function updatePosition(object, delta) {
 function containObjectWithinGridBoundaries(object) {
 
   //DO THE PACMAN FLIP!!
-  let gameBoundaries = window.game.gameBoundaries
+  let gameBoundaries = window.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
     if(object.tags.fresh) {
@@ -228,7 +229,7 @@ function update (delta) {
           }
         }
 
-        if(body.gameObject.tags && body.gameObject.tags['powerup']) {
+        if(body.gameObject.tags && body.gameObject.tags['heroUpdate'] && body.gameObject.heroUpdate) {
           if(body.gameObject.id !== window.hero.lastPowerUpId) {
             if(!window.hero.updateHistory) {
               window.hero.updateHistory = []
@@ -429,6 +430,15 @@ function update (delta) {
           if(result.overlap_y === -1 && po.gameObject.direction === 'up') {
             po.gameObject.direction = 'down'
           }
+        }
+
+        if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && collisions.shouldEffect(po.gameObject, body.gameObject)) {
+          if(po.gameObject.lastPowerUpId !== body.gameObject.id) {
+            window.mergeDeep(po.gameObject, {...body.gameObject.objectUpdate})
+            po.gameObject.lastPowerUpId = body.gameObject.id
+          }
+        } else {
+          po.gameObject.lastPowerUpId = null
         }
       }
     }

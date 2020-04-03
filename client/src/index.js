@@ -20,7 +20,6 @@
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
 // stop player (velocity)
 // objects that are children of other objects and therefore follow them??
-// toggle for score
 // toggle for show grid, show names, show camera area... stc
 // controlling X or Y scroll. For example. allow X croll, but not Y scroll
 // lazy scroll that is not not immediate! Smoother...
@@ -28,8 +27,6 @@
 // optimize shadow feature, not all vertices!
 // Instead of creating one big block, create a bunch of small blocks, OPTION
 // Maybe make a diagonal wall..
-// pause objects
-// reset score / display score
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -100,16 +97,14 @@ window.respawnHero = function () {
   if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
-  } else if(window.game.worldSpawnPointX && window.game.worldSpawnPointX >= 0) {
-    window.hero.x = window.game.worldSpawnPointX
-    window.hero.y = window.game.worldSpawnPointY
+  } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
+    window.hero.x = window.world.worldSpawnPointX
+    window.hero.y = window.world.worldSpawnPointY
   } else {
     // default pos
     window.hero.x = 960;
     window.hero.y = 960;
   }
-
-  console.log(window.hero.x)
 }
 
 window.resetHero = function(updatedHero) {
@@ -118,7 +113,7 @@ window.resetHero = function(updatedHero) {
 		Object.assign(window.hero, updatedHero)
 	} else {
     let newHero = {}
-		Object.assign(newHero, defaultHero)
+		Object.assign(newHero, JSON.parse(JSON.stringify(defaultHero)))
     window.hero = newHero
     window.heros[window.hero.id] = window.hero
 	}
@@ -130,8 +125,8 @@ window.resetHero = function(updatedHero) {
 //GAME
 /////////////
 /////////////
-const defaultGame = {
-  id: 'game-' + Date.now(),
+window.defaultWorld = {
+  id: 'world-' + Date.now(),
 	lockCamera: {},
 	gameBoundaries: {},
   procedural: {},
@@ -142,9 +137,11 @@ const defaultGame = {
     noCamping: true,
     targetOnSight: true,
     paused: false,
+    isAsymmetric: false,
+    shouldRestoreHero: false,
   }
 }
-window.game = defaultGame;
+window.world = JSON.parse(JSON.stringify(window.defaultWorld));
 
 /////////////
 // HERO
@@ -237,7 +234,7 @@ var start = function () {
 	main()
   if(!window.usePlayEditor) {
     setInterval(() => {
-      if(!window.objects || !window.game || !window.grid.nodes || Object.keys(window.heros).length === 0) {
+      if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
         return
       }
       window.socket.emit('updateObjects', window.objects)
@@ -249,7 +246,7 @@ var start = function () {
 
 // Update game objects
 var update = function (delta) {
-  if(!window.game.globalTags.paused) {
+  if(!window.world.globalTags.paused) {
     input.update(hero, delta)
     if(window.hero.arrowKeysBehavior !== 'grid') {
       physics.update(delta)
@@ -337,8 +334,9 @@ var update = function (delta) {
 // Draw everything
 var render = function () {
 	let vertices = [...window.objects].reduce((prev, object) => {
+    if(object.tags.invisible) return prev
     let extraProps = {}
-    if(object.tags && object.tags.glowing) {
+    if(object.tags.glowing) {
       extraProps.glow = 3
       extraProps.thickness = 2
       extraProps.color = 'white'
@@ -357,28 +355,30 @@ var render = function () {
 	//set camera so we render everything in the right place
   camera.set(ctx, window.hero)
 
-	window.game.renderStyle = 'outlines'
- 	if (window.game.renderStyle === 'outlines') {
+	window.world.renderStyle = 'outlines'
+ 	if (window.world.renderStyle === 'outlines') {
 		ctx.strokeStyle = "#999";
 		for(var i=0;i<vertices.length;i++){
 			camera.drawVertice(ctx, vertices[i])
 		}
 		ctx.fillStyle = 'white';
 		camera.drawObject(ctx, window.hero)
-	} else if(window.game.renderStyle === 'physics'){
+	} else if(window.world.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {
 		for(let i = 0; i < window.objects.length; i++){
+      if(object[i].invisible) continue
 			camera.drawObject(ctx, window.objects[i])
 		}
 	}
 
-	window.game.shadows = false
-	if(window.game.shadows === true) {
+	window.world.shadows = false
+	if(window.world.shadows === true) {
 		shadow.draw(ctx, vertices, hero)
 	}
 
   for(var heroId in window.heros) {
+    if(heroId === window.hero.id) continue;
     let currentHero = window.heros[heroId];
     camera.drawObject(ctx, currentHero);
   }
@@ -389,7 +389,7 @@ var render = function () {
 
 // The main game loop
 var main = function () {
-  if(!window.objects || !window.game || !window.grid.nodes || Object.keys(window.heros).length === 0) {
+  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return
   }
@@ -413,7 +413,7 @@ var main = function () {
 		// physics.drawSystem(ctx, hero)
   }
 
-  if(window.game.globalTags.calculatePathCollisions) {
+  if(window.world.globalTags.calculatePathCollisions) {
     grid.updateGridObstacles()
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
   }

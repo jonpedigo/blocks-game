@@ -24,7 +24,34 @@ function checkObject(agent, object, onCollide) {
   }
 }
 
+function shouldEffect(agent, collider) {
+  if(collider.idRequirement) {
+    if(agent.id === collider.idRequirement) {
+      return true
+    } else {
+      return false
+    }
+  } else if(collider.tagRequirements && collider.tagRequirements) {
+    if(collider.needsAllTagRequirements) {
+      if(collider.tagRequirements.all((requirement) => {
+        return agent.tags[requirement]
+      })) {
+        return true
+      } else return false
+    } else {
+      if(collider.tagRequirements.some((requirement) => {
+        return agent.tags[requirement]
+      })) {
+        return true
+      } else return false
+    }
+  }
+
+  return true
+}
+
 export default {
   check,
   checkObject,
+  shouldEffect
 }

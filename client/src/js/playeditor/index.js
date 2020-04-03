@@ -2,7 +2,9 @@ import JSONEditor from 'jsoneditor'
 import collisions from '../collisions'
 import gridTool from '../grid.js'
 import procedural from './procedural.js'
-import modifiers from './modifiers.js'
+import heroModifiers from './heroModifiers.js'
+import worldModifiers from './worldModifiers.js'
+import objectModifiers from './objectModifiers.js'
 import camera from './camera.js'
 import input from './input.js'
 
@@ -23,7 +25,7 @@ window.mousePos = {
 }
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
-  GAME_EDITOR: 'gameEditor',
+  WORLD_EDITOR: 'worldEditor',
   SIMPLE_EDITOR: 'objectEditor',
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
@@ -46,13 +48,16 @@ window.tags = {
   stationary: false,
   monster: false,
   coin: false,
-  powerup: false,
+  heroUpdate: false,
+  objectUpdate: false,
+  gameUpdate: false,
   deleteAfter: false,
   revertAfterTimeout: false,
 
   // PHYSICS
   gravity: false,
   movingPlatform: false,
+  child: false,
 
   // UI
   chatter: false,
@@ -62,6 +67,7 @@ window.tags = {
   flashing: false,
   filled: false,
   jittery: false,
+  invisible: false,
 
   // INTELLIGENCE
   pacer: false,
@@ -159,7 +165,7 @@ const tools = {
       }
     }
   },
-  [TOOLS.GAME_EDITOR]: {
+  [TOOLS.WORLD_EDITOR]: {
     onFirstClick: (e) => {
       if(window.selectorSpawnToggle.checked) {
         const click = {
@@ -167,7 +173,7 @@ const tools = {
           y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
         }
 
-        window.socket.emit('updateGame', {worldSpawnPointX: click.x, worldSpawnPointY: click.y})
+        window.socket.emit('updateWorld', {worldSpawnPointX: click.x, worldSpawnPointY: click.y})
       } else {
         defaultFirstClick(e)
       }
@@ -186,13 +192,13 @@ const tools = {
       const {x, y, width, height} = value;
       if(window.currentTool === TOOLS.PROCEDURAL || selectorProceduralToggle.checked) {
         const proceduralBoundaries = { x, y, width, height };
-        window.socket.emit('updateGame', { proceduralBoundaries })
+        window.socket.emit('updateWorld', { proceduralBoundaries })
       } else if(selectorCameraToggle.checked) {
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-        window.socket.emit('updateGame', { lockCamera })
+        window.socket.emit('updateWorld', { lockCamera })
       } else if(selectorGameToggle.checked) {
         const gameBoundaries = { x, y, width, height };
-        window.socket.emit('updateGame', { gameBoundaries })
+        window.socket.emit('updateWorld', { gameBoundaries })
       }
     },
   },
@@ -237,7 +243,7 @@ const tools = {
     },
   }
 }
-tools[TOOLS.PROCEDURAL] = tools[TOOLS.GAME_EDITOR]
+tools[TOOLS.PROCEDURAL] = tools[TOOLS.WORLD_EDITOR]
 
 /////////////////////
 //DOM
@@ -279,12 +285,12 @@ function init(ctx, objects) {
   /////////////////////
   /////////////////////
   let heroModSelectEl = document.getElementById("hero-modifier-select")
-  for(let modifierName in modifiers) {
+  for(let modifierName in heroModifiers) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
     modEl.innerHTML = 'apply mod - ' + modifierName
     modEl.onclick=function() {
-      sendHeroUpdate(modifiers[modifierName])
+      sendHeroUpdate(heroModifiers[modifierName])
     }
     heroModSelectEl.appendChild(modEl)
   }
@@ -324,16 +330,39 @@ function init(ctx, objects) {
   }
 
   //mod select functionality
-  let modSelectEl = document.getElementById("modifier-select")
-  for(let modifierName in modifiers) {
+  let modSelectHerosEl = document.getElementById("modifier-select-heros")
+  for(let modifierName in heroModifiers) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
     modEl.innerHTML = 'heroUpdate - ' + modifierName
     modEl.onclick=function() {
-      // this is what sync should mean. Does every edit send immediately?
-      if(true) sendObjectUpdate({ heroUpdate : modifiers[modifierName]})
+      sendObjectUpdate({ heroUpdate : heroModifiers[modifierName]})
     }
-    modSelectEl.appendChild(modEl)
+    modSelectHerosEl.appendChild(modEl)
+  }
+
+  //mod select functionality
+  let modSelectObjectsEl = document.getElementById("modifier-select-objects")
+  for(let modifierName in objectModifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = 'objectUpdate - ' + modifierName
+    modEl.onclick=function() {
+      sendObjectUpdate({ objectUpdate : objectModifiers[modifierName]})
+    }
+    modSelectObjectsEl.appendChild(modEl)
+  }
+
+  //mod select functionality
+  let modSelectWorldEl = document.getElementById("modifier-select-world")
+  for(let modifierName in worldModifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = 'worldUpdate - ' + modifierName
+    modEl.onclick=function() {
+      sendObjectUpdate({ worldUpdate : worldModifiers[modifierName]})
+    }
+    modSelectWorldEl.appendChild(modEl)
   }
 
   /////////////////////
@@ -365,15 +394,15 @@ function init(ctx, objects) {
     sendHeroUpdate({ tags: object.tags, flags: object.flags })
   }});
 
-  var gamejsoneditor = document.createElement("div")
-  gamejsoneditor.id = 'gamejsoneditor'
-  document.getElementById('tool-'+TOOLS.GAME_EDITOR).appendChild(gamejsoneditor);
-  window.gameeditor = new JSONEditor(gamejsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (game) => {
+  var worldjsoneditor = document.createElement("div")
+  worldjsoneditor.id = 'worldjsoneditor'
+  document.getElementById('tool-'+TOOLS.WORLD_EDITOR).appendChild(worldjsoneditor);
+  window.worldeditor = new JSONEditor(worldjsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (world) => {
     // this is what sync should mean. Does every edit send immediately?
-    window.socket.emit('updateGame', { globalTags: game.globalTags });
+    window.socket.emit('updateWorld', { globalTags: world.globalTags });
   }});
-  window.gameeditor.set(window.game)
-  window.gameeditor.expandAll()
+  window.worldeditor.set(window.world)
+  window.worldeditor.expandAll()
 
   /////////////////////
   //UNIVERSE_VIEW BUTTONS
@@ -387,22 +416,18 @@ function init(ctx, objects) {
   zoomToWorldButton.addEventListener('click', () => {
     window.socket.emit('updateHero', { id: window.editingHero.id, animationZoomTarget: window.editingHero.zoomMultiplier, endAnimation: true, })
   })
-  var saveWorldButton = document.getElementById("save-world")
-  saveWorldButton.addEventListener('click', () => {
-    if(!shouldRestoreHeroToggle.checked && !window.game.worldSpawnPointX) {
-      alert('no spawn point set')
-      return
-    }
-    window.saveWorld()
+  var saveGameButton = document.getElementById("save-game")
+  saveGameButton.addEventListener('click', () => {
+    window.saveGame()
   })
-  var setWorldButton = document.getElementById("set-world")
-  setWorldButton.addEventListener('click', () => {
-    window.setWorld()
+  var setGameButton = document.getElementById("set-game")
+  setGameButton.addEventListener('click', () => {
+    window.setGame()
   })
-  var newWorldButton = document.getElementById("new-world")
-  newWorldButton.addEventListener('click', () => {
+  var newGameButton = document.getElementById("new-game")
+  newGameButton.addEventListener('click', () => {
     window.resetObjects()
-    window.socket.emit('resetGame')
+    window.socket.emit('resetWorld')
     window.socket.emit('updateGrid', { width: 50, height: 50, startX: 0, startY: 0, nodeSize: 40})
     for(var heroId in window.heros) {
       window.socket.emit('resetHero', window.heros[heroId])
@@ -413,40 +438,15 @@ function init(ctx, objects) {
     window.resetObjects()
   })
 
-  window.shouldRestoreHeroToggle = document.getElementById('should-restore-hero')
-  window.shouldRestoreHeroToggle.onclick = (e) => {
-    if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { shouldRestoreHero: true })
-    } else {
-      window.socket.emit('updateGame', { shouldRestoreHero: false })
-    }
-  }
-  window.isAsymmetricToggle = document.getElementById('is-asymmetric')
-  window.isAsymmetricToggle.onclick = (e) => {
-    if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { isAsymmetric: true })
-    } else {
-      window.socket.emit('updateGame', { isAsymmetric: false })
-    }
-  }
-
-  window.calculatePathCollisionsToggle = document.getElementById('calculate-path-collisions')
-  window.calculatePathCollisionsToggle.onclick = (e) => {
-    if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { globalTags: {...window.game.globalsTags, calculatePathCollisions: true } } )
-    } else {
-      window.socket.emit('updateGame', { globalTags: {...window.game.globalsTags, calculatePathCollisions: false } } )
-    }
-  }
 
   window.resetObjects = function() {
     window.socket.emit('resetObjects')
   }
-  window.saveWorld = function() {
-    window.socket.emit('saveWorld', document.getElementById('world-name').value)
+  window.saveGame = function() {
+    window.socket.emit('saveGame', document.getElementById('game-name').value)
   }
-  window.setWorld = function() {
-    window.socket.emit('setWorld', document.getElementById('world-name').value)
+  window.setGame = function() {
+    window.socket.emit('setGame', document.getElementById('game-name').value)
   }
 
   /////////////////////
@@ -472,12 +472,12 @@ function init(ctx, objects) {
   window.syncHeroToggle = document.getElementById('sync-hero')
   window.syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { syncHero: true })
+      window.socket.emit('updateWorld', { syncHero: true })
     } else {
-      window.socket.emit('updateGame', { syncHero: false })
+      window.socket.emit('updateWorld', { syncHero: false })
     }
   }
-  if(window.game.syncHero) {
+  if(window.world.syncHero) {
     window.syncHeroToggle.checked = true;
   }
   var zoomOutButton = document.getElementById("hero-zoomOut");
@@ -554,12 +554,12 @@ function init(ctx, objects) {
   window.syncObjectsToggle = document.getElementById('sync-objects')
   window.syncObjectsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
-      window.socket.emit('updateGame', { syncObjects: true })
+      window.socket.emit('updateWorld', { syncObjects: true })
     } else {
-      window.socket.emit('updateGame', { syncObjects: false })
+      window.socket.emit('updateWorld', { syncObjects: false })
     }
   }
-  if(window.game.syncObjects) {
+  if(window.world.syncObjects) {
     syncObjectsToggle.checked = true;
   }
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
@@ -606,7 +606,7 @@ function init(ctx, objects) {
   // SELECT AREA BUTTONS
   /////////////////////
   /////////////////////
-  window.selectorGameToggle = document.getElementById('set-game')
+  window.selectorGameToggle = document.getElementById('set-game-boundaries')
   window.selectorCameraToggle = document.getElementById('set-camera')
   window.selectorSpawnToggle = document.getElementById('set-spawn')
   window.selectorProceduralToggle = document.getElementById('set-procedural')
@@ -614,43 +614,43 @@ function init(ctx, objects) {
   var cleararea = document.getElementById("clear-area-selected")
   cleararea.addEventListener('click', (e) => {
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateGame', { gameBoundaries: {} })
+      window.socket.emit('updateWorld', { gameBoundaries: {} })
     }
     if(window.selectorCameraToggle.checked) {
-      window.socket.emit('updateGame', { lockCamera: {} })
+      window.socket.emit('updateWorld', { lockCamera: {} })
     }
     if(window.selectorSpawnToggle.checked) {
-      window.socket.emit('updateGame', { worldSpawnPointX: null, worldSpawnPointY: null })
+      window.socket.emit('updateWorld', { worldSpawnPointX: null, worldSpawnPointY: null })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateGame', { proceduralBoundaries: {} })
+      window.socket.emit('updateWorld', { proceduralBoundaries: {} })
     }
   })
 
   var setGameBoundaryDefault = document.getElementById("set-game-boundary-default")
   setGameBoundaryDefault.addEventListener('click', (e) => {
-    window.socket.emit('updateGame', { gameBoundaries: { ...window.game.gameBoundaries, behavior: 'default' } })
+    window.socket.emit('updateWorld', { gameBoundaries: { ...window.world.gameBoundaries, behavior: 'default' } })
   })
   var setGameBoundaryAll = document.getElementById("set-game-boundary-all")
   setGameBoundaryAll.addEventListener('click', (e) => {
-    window.socket.emit('updateGame', { gameBoundaries: { ...window.game.gameBoundaries, behavior: 'boundaryAll' } })
+    window.socket.emit('updateWorld', { gameBoundaries: { ...window.world.gameBoundaries, behavior: 'boundaryAll' } })
   })
   var setGameBoundaryPacmanFlip = document.getElementById("set-pacman-flip")
   setGameBoundaryPacmanFlip.addEventListener('click', (e) => {
-    window.socket.emit('updateGame', { gameBoundaries: { ...window.game.gameBoundaries, behavior: 'pacmanFlip' } })
+    window.socket.emit('updateWorld', { gameBoundaries: { ...window.world.gameBoundaries, behavior: 'pacmanFlip' } })
   })
   var setGameBoundaryPurgatory = document.getElementById("set-purgatory")
   setGameBoundaryPurgatory.addEventListener('click', (e) => {
-    window.socket.emit('updateGame', { gameBoundaries: { ...window.game.gameBoundaries, behavior: 'purgatory' } })
+    window.socket.emit('updateWorld', { gameBoundaries: { ...window.world.gameBoundaries, behavior: 'purgatory' } })
   })
 
   var setGameToSelected = document.getElementById("match-game-boundary-to-selected")
   setGameToSelected.addEventListener('click', (e) => {
     if(window.selectorCameraToggle.checked) {
-      window.socket.emit('updateGame', { gameBoundaries: window.game.lockCamera })
+      window.socket.emit('updateWorld', { gameBoundaries: window.world.lockCamera })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateGame', { gameBoundaries: window.game.proceduralBoundaries })
+      window.socket.emit('updateWorld', { gameBoundaries: window.world.proceduralBoundaries })
     }
   })
 
@@ -668,16 +668,16 @@ function init(ctx, objects) {
     value.limitY = Math.abs(value.height/2)
     gridTool.snapObjectToGrid(value)
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateGame', { gameBoundaries: value })
+      window.socket.emit('updateWorld', { gameBoundaries: value })
     }
     if(window.selectorCameraToggle.checked) {
-      window.socket.emit('updateGame', { lockCamera: value })
+      window.socket.emit('updateWorld', { lockCamera: value })
     }
     if(window.selectorSpawnToggle.checked) {
-      window.socket.emit('updateGame', { worldSpawnPointX: value.x, worldSpawnPointY: value.y })
+      window.socket.emit('updateWorld', { worldSpawnPointX: value.x, worldSpawnPointY: value.y })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateGame', { proceduralBoundaries: value })
+      window.socket.emit('updateWorld', { proceduralBoundaries: value })
     }
   })
 
@@ -690,35 +690,35 @@ function init(ctx, objects) {
       y: window.grid.startY
     }
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateGame', { gameBoundaries: value })
+      window.socket.emit('updateWorld', { gameBoundaries: value })
     }
     if(window.selectorCameraToggle.checked) {
       const { x, y, width, height} = value
       const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-      window.socket.emit('updateGame', { lockCamera })
+      window.socket.emit('updateWorld', { lockCamera })
     }
     if(window.selectorSpawnToggle.checked) {
-      window.socket.emit('updateGame', { worldSpawnPointX: value.x, worldSpawnPointY: value.y })
+      window.socket.emit('updateWorld', { worldSpawnPointX: value.x, worldSpawnPointY: value.y })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateGame', { proceduralBoundaries: value })
+      window.socket.emit('updateWorld', { proceduralBoundaries: value })
     }
   })
 
   var setSelectedToGameBoundary = document.getElementById("set-selected-to-game-boundary");
   setSelectedToGameBoundary.addEventListener('click', function(){
-    const value = window.game.gameBoundaries
-    if(window.game.gameBoundaries.x >= 0) {
+    const value = window.world.gameBoundaries
+    if(window.world.gameBoundaries.x >= 0) {
       if(window.selectorCameraToggle.checked) {
         const { x, y, width, height} = value
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-        window.socket.emit('updateGame', { lockCamera })
+        window.socket.emit('updateWorld', { lockCamera })
       }
       if(window.selectorSpawnToggle.checked) {
-        window.socket.emit('updateGame', { worldSpawnArea: value })
+        window.socket.emit('updateWorld', { worldSpawnArea: value })
       }
       if(window.selectorProceduralToggle.checked) {
-        window.socket.emit('updateGame', { proceduralBoundaries: value })
+        window.socket.emit('updateWorld', { proceduralBoundaries: value })
       }
     }
   })
@@ -737,13 +737,13 @@ function init(ctx, objects) {
   }
   var createArenaButton = document.getElementById("create-arena");
   createArenaButton.onclick = (e) => {
-    createArena(window.game.proceduralBoundaries)
+    createArena(window.world.proceduralBoundaries)
   }
 }
 
 function createGrid() {
-  const { width, height } = window.game.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.game.proceduralBoundaries.x, window.game.proceduralBoundaries.y);
+  const { width, height } = window.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
   let w = Math.floor(width / (window.grid.nodeSize))
   let h = Math.floor(height / (window.grid.nodeSize))
   window.grid.width = w
@@ -755,8 +755,8 @@ function createGrid() {
 }
 
 function createMaze() {
-  const { width, height } = window.game.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.game.proceduralBoundaries.x, window.game.proceduralBoundaries.y);
+  const { width, height } = window.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
   let w = Math.floor(width / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
   let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
 

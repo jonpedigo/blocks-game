@@ -97,13 +97,9 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       newObject.tags = {};
     }
 
-    if(!newObject.heroUpdate){
-      newObject.heroUpdate = {};
-    }
-
     for(let tag in window.tags) {
       if(window.tags[tag].checked || newObject.tags[tag] === true){
-        if(tag === 'monster' && window.usePlayEditor && !(window.game.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
+        if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
           alert('You cannot add a monster without setting spawn point first')
           return
         }
@@ -116,12 +112,30 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
-    if(!window.game.globalTags.calculatePathCollisions) {
+    if(!window.world.globalTags.calculatePathCollisions) {
       grid.addObstacle(newObject)
     }
 
-    if(collisions.check(newObject, window.objects) || options.bypassCollisions) {
+    if(newObject.tags.obstacle && collisions.check(newObject, window.objects) && !options.bypassCollisions) {
       alertAboutCollision = true
+    }
+
+    //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
+    if(newObject.x + newObject.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.y + newObject.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.x < window.grid.startX) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.y < window.grid.startY) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
     }
 
     return newObject
@@ -133,7 +147,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       physics.addObject(object)
     })
 
-    if(!window.game.globalTags.calculatePathCollisions) {
+    if(!window.world.globalTags.calculatePathCollisions) {
       grid.updateGridObstacles()
       window.resetPaths = true
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)

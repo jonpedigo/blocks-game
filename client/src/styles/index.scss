@@ -44,10 +44,11 @@ body {
   top:0;
   right:0;
   position: fixed;
-  width:150px;
+  width:180px;
   color:white;
   background-color:#333;
-
+  overflow-y: scroll;
+  height: 100%;
   // .button {
   //   background-color:white; /* Green */
   //   border: 1px solid;
@@ -63,7 +64,7 @@ body {
 
 }
 
-#gamejsoneditor {
+#worldjsoneditor {
   background:white;
   position: fixed;
   top:0;

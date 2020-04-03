@@ -58,8 +58,8 @@
       <button id='create-arena'>create arena</button>
     </div>
 
-    <div id='tool-gameEditor' class="tool-feature invisible">
-      <div><input type='radio' name='selector' checked id='set-game'>game</input></div>
+    <div id='tool-worldEditor' class="tool-feature invisible">
+      <div><input type='radio' name='selector' checked id='set-game-boundaries'>game</input></div>
       <div><input type='radio' name='selector' id='set-camera'>camera</input></div>
       <div><input type='radio' name='selector' id='set-spawn'>spawn</input></div>
       <div><input type='radio' name='selector' id='set-procedural'>procedural</input></div>
@@ -87,8 +87,11 @@
       <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
       <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
       <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
+      <div><input type='radio' name='object-selector' id='set-object-parent'>Select Parent of Object</input></div>
       <hr>
-      <div id='modifier-select'></div>
+      <div id='modifier-select-heros'></div>
+      <div id='modifier-select-objects'></div>
+      <div id='modifier-select-world'></div>
     </div>
 
     <!-- <div id='tool-gameFeel' class="tool-feature invisible">
@@ -107,18 +110,12 @@
       <button id='zoom-out-to-universe'>Zoom hero to universe</button>
       <button id='zoom-in-to-world'>Zoom back to world</button>
       <hr>
-      <div><input type='checkbox' id='should-restore-hero'>Should restore hero</input></div>
-      <div><input type='checkbox' id='is-asymmetric'>is Asymmetric</input></div>
-      <hr>
-      <hr>
-      <div><input type='checkbox' id='calculate-path-collisions'>Calculate Path Collisions</input></div>
-      <hr>
-      <input id='world-name'></input>
-      <button id='save-world'>Log (Save) world</button>
-      <button id='set-world'>Set world</button>
+      <input id='game-name'></input>
+      <button id='save-game'>Log (Save) game</button>
+      <button id='set-game'>Set game</button>
       <hr>
       <button id='reset-objects'>Reset Objects</button>
-      <button id='new-world'>New world</button>
+      <button id='new-game'>New game</button>
     </dif>
 </body>
 
