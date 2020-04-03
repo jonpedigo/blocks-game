@@ -1,6 +1,10 @@
 const modifiers = {
-  pokemon: {
-    name: 'pikachue'
+  spawnZone: {
+    spawnTotal: 3,
+    spawnTags: {
+      obstacle: true,
+      lemmings: true,
+    },
   },
 }
 export default modifiers

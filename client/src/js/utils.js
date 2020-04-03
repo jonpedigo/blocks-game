@@ -144,6 +144,8 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   if(!window.usePlayEditor){
     window.objects.push(...objects)
     objects.forEach((object) => {
+      if(object.removed) return
+
       physics.addObject(object)
     })
 

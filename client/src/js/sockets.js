@@ -14,12 +14,14 @@ function init() {
       if(!window.objects) {
         console.log('already set objects..?')
         window.objects = []
+        window.objectsById = {}
         window.socket.emit('askGrid');
       }
 
   		window.objects.push(...objectsAdded)
   		objectsAdded.forEach((object) => {
   			physics.addObject(object)
+        window.objectsById[object.id] = object
   		})
 
       if(window.grid.nodes && !window.world.globalTags.calculatePathCollisions) {
@@ -31,11 +33,13 @@ function init() {
 
   	window.socket.on('onResetObjects', (updatedObjects) => {
   		window.objects.forEach((object) => {
+        if(object.removed) return
+
   			physics.removeObject(object)
   		})
   		window.objects = []
+      window.objectsById = {}
 
-      console.log('resetting')
       if(!window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
@@ -85,7 +89,12 @@ function init() {
       if(!window.objects) {
         window.socket.emit('askGrid');
       }
-      window.objects = objectsUpdated
+      if(window.objects.length !== objectsUpdated.length) {
+        window.objectsById = objects.reduce((prev, next) => {
+          prev[next.id] = next
+        }, {})
+      }
+      Object.assign(window.objects, objectsUpdated)
       if(window.editingObject.i >= 0) {
         Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
         if(window.syncObjectsToggle.checked) {
@@ -99,6 +108,9 @@ function init() {
         console.log('already set objects..? - editor')
         window.objects = objects
         window.socket.emit('askGrid');
+        window.objectsById = objects.reduce((prev, next) => {
+          prev[next.id] = next
+        }, {})
       }
     })
   }
@@ -220,6 +232,15 @@ function init() {
   })
 
   window.socket.on('onRemoveObject', (object) => {
+    if(!window.world.globalTags.calculatePathCollisions) {
+      gridTool.updateGridObstacles()
+      if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+
+    window.objectsById[object.id].removed = true
+  })
+
+  window.socket.on('onDeleteObject', (object) => {
     if(window.usePlayEditor && window.editingObject.id === object.id) {
       window.editingObject = {
         id: null,
@@ -234,6 +255,7 @@ function init() {
     }
 
     window.objects = window.objects.filter((obj) => obj.id !== object.id)
+    delete window.objectsById[object.id]
 
     if(!window.usePlayEditor) {
       physics.removeObjectById(object.id)
@@ -249,7 +271,7 @@ function init() {
     window.heros = game.heros
     window.world = game.world
     window.grid = game.grid
-    if(window.hero && !window.usePlayEditor){
+    if(window.hero && !window.usePlayEditor) {
       findHeroInNewWorld(game)
       window.socket.emit('updateHero', window.hero)
     }

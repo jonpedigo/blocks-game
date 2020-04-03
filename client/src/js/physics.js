@@ -10,6 +10,8 @@ const system = new Collisions()
 let result = system.createResult()
 
 function updatePosition(object, delta) {
+  if(object.removed) return
+
   if(object.id.indexOf('hero') === -1) {
     object._initialX = object.x
     object._initialY = object.y
@@ -198,6 +200,7 @@ function update (delta) {
     let correction = {x: window.hero.x, y: window.hero.y}
     let heroPO = physicsObjects[window.hero.id]
     for(const body of potentials) {
+      if(body.gameObject.removed) continue
       if(heroPO.collides(body, result)) {
         if(body.gameObject.tags && body.gameObject.tags['monster']) {
           if(heroPO.gameObject.tags['monsterDestroyer']) {
@@ -300,6 +303,7 @@ function update (delta) {
       let corrections = []
       // console.log('round' + round, heroPO.x, heroPO.y)
       for(const body of potentials) {
+        if(body.gameObject.removed) continue
         let result = physicsObjects[window.hero.id].createResult()
         if(heroPO.collides(body, result)) {
           if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
@@ -403,11 +407,13 @@ function update (delta) {
   /////////////////////////////////////////////////////
   for(let id in physicsObjects){
     if(!physicsObjects[id]) continue
+    if(physicsObjects[id].gameObject.removed) continue
     if(id.indexOf('hero') > -1) continue
     let po = physicsObjects[id]
     let potentials = po.potentials()
     let result = po.createResult()
     for(const body of potentials) {
+      if(body.gameObject.removed) continue
       if(po.collides(body, result)) {
         if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['bullet'] && po.gameObject.tags['monster']) {
           removeObjects.push(po.gameObject)
@@ -453,6 +459,7 @@ function update (delta) {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       if(!physicsObjects[id]) continue
+      if(physicsObjects[id].gameObject.removed) continue
       if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
       // if you are creating a result up here youll only be able to correct for one obj at a time
@@ -462,6 +469,7 @@ function update (delta) {
       let potentials = po.potentials()
       let illegal = false
       for(const body of potentials) {
+        if(body.gameObject.removed) continue
         if(po.collides(body, result)) {
           if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
             if(Math.abs(result.overlap_x) !== 0) {
@@ -524,6 +532,8 @@ function update (delta) {
   })
 
   window.objects.forEach((object, i) => {
+    if(object.removed) return
+
     containObjectWithinGridBoundaries(object)
   })
   containObjectWithinGridBoundaries(window.hero)

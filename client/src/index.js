@@ -334,6 +334,7 @@ var update = function (delta) {
 // Draw everything
 var render = function () {
 	let vertices = [...window.objects].reduce((prev, object) => {
+    if(object.removed) return prev
     if(object.tags.invisible) return prev
     let extraProps = {}
     if(object.tags.glowing) {
@@ -367,7 +368,8 @@ var render = function () {
 		physics.drawSystem(ctx, vertices)
 	} else {
 		for(let i = 0; i < window.objects.length; i++){
-      if(object[i].invisible) continue
+      if(window.objects[i].removed) continue
+      if(window.objects[i].tags.invisible) continue
 			camera.drawObject(ctx, window.objects[i])
 		}
 	}

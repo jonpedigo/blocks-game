@@ -57,6 +57,8 @@ function moveOnPath(object) {
 
 function update(hero, objects, modifier) {
   objects.forEach((object) => {
+    if(object.removed) return
+
     if(object.path && object.path.length) {
       if(window.resetPaths) {
         object.path = []

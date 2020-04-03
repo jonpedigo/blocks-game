@@ -291,10 +291,21 @@ function init(ctx, objects) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
     modEl.innerHTML = 'apply mod - ' + modifierName
-    modEl.onclick=function() {
+    modEl.onclick= function() {
       sendHeroUpdate(heroModifiers[modifierName])
     }
     heroModSelectEl.appendChild(modEl)
+  }
+
+  let applyObjectModEl = document.getElementById("apply-object-mod")
+  for(let modifierName in objectModifiers) {
+    let modEl = document.createElement('div')
+    modEl.className = 'button';
+    modEl.innerHTML = modifierName
+    modEl.onclick=function() {
+      sendObjectUpdate(objectModifiers[modifierName])
+    }
+    applyObjectModEl.appendChild(modEl)
   }
 
   let toolAddObjectEl = document.getElementById("tool-addObject")
@@ -336,7 +347,7 @@ function init(ctx, objects) {
   for(let modifierName in heroModifiers) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
-    modEl.innerHTML = 'heroUpdate - ' + modifierName
+    modEl.innerHTML = modifierName
     modEl.onclick=function() {
       sendObjectUpdate({ heroUpdate : heroModifiers[modifierName]})
     }
@@ -348,7 +359,7 @@ function init(ctx, objects) {
   for(let modifierName in objectModifiers) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
-    modEl.innerHTML = 'objectUpdate - ' + modifierName
+    modEl.innerHTML =  modifierName
     modEl.onclick=function() {
       sendObjectUpdate({ objectUpdate : objectModifiers[modifierName]})
     }
@@ -360,7 +371,7 @@ function init(ctx, objects) {
   for(let modifierName in worldModifiers) {
     let modEl = document.createElement('div')
     modEl.className = 'button';
-    modEl.innerHTML = 'worldUpdate - ' + modifierName
+    modEl.innerHTML = modifierName
     modEl.onclick=function() {
       sendObjectUpdate({ worldUpdate : worldModifiers[modifierName]})
     }
@@ -552,8 +563,10 @@ function init(ctx, objects) {
     sendObjectUpdate(editingObj)
   })
 
+  var removeObjectButton = document.getElementById("remove-object");
+  removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject))
   var deleteObjectButton = document.getElementById("delete-object");
-  deleteObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject))
+  deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.editingObject))
   window.syncObjectsToggle = document.getElementById('sync-objects')
   window.syncObjectsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
