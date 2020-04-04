@@ -145,7 +145,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     window.objects.push(...objects)
     objects.forEach((object) => {
       if(object.removed) return
-
+      window.objectsById[object.id] = object
       physics.addObject(object)
     })
 
@@ -154,7 +154,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       window.resetPaths = true
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
-    return
+    return objects
   }
 
   if(alertAboutCollision) {
@@ -174,4 +174,6 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       window.objectFactory.push(...objects)
     }
   }
+
+  return objects
 }

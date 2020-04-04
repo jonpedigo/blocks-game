@@ -33,15 +33,6 @@ window.TOOLS = {
 }
 window.currentTool = TOOLS.ADD_OBJECT;
 
-window.zoneTags = {
-  // GRAPHICAL
-  invisible: false,
-
-  // BEHAVIORAL
-  spawnZone: false,
-  safeZone: false,
-}
-
 window.tags = {
   // COLLISIONS
   obstacle: true,
@@ -71,7 +62,7 @@ window.tags = {
   jittery: false,
   invisible: false,
 
-  // INTELLIGENCE
+  // MOVEMENT
   pacer: false,
   lemmings: false,
   wander: false,
@@ -79,6 +70,9 @@ window.tags = {
   goombaSideways: false,
   homing: false,
   zombie: false,
+
+  // ZONE
+  spawnZone: false,
 
   // TEMPORARY STATE ( are temporary things...flags? )
   fresh: false,
@@ -829,8 +823,8 @@ function createArena(boundaries) {
 
 function sendObjectUpdate(objectUpdate) {
   let objectCopy = { ...objectUpdate }
-  Object.assign(window.editingObject, objectCopy)
-  Object.assign(window.objects[window.editingObject.i], objectCopy)
+  window.mergeDeep(window.editingObject, objectCopy)
+  window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
   window.socket.emit('editObjects', window.objects)
 }
 

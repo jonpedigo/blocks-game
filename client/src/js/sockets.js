@@ -47,8 +47,9 @@ function init() {
   	})
 
   	window.socket.on('onEditObjects', (editedObjects) => {
-  		Object.assign(window.objects, editedObjects)
-
+      editedObjects.forEach((obj) => {
+        window.mergeDeep(window.objectsById[obj.id], obj)
+      })
       if(!window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
@@ -89,14 +90,14 @@ function init() {
       if(!window.objects) {
         window.socket.emit('askGrid');
       }
-      if(window.objects.length !== objectsUpdated.length) {
-        window.objectsById = objects.reduce((prev, next) => {
-          prev[next.id] = next
-        }, {})
-      }
-      Object.assign(window.objects, objectsUpdated)
+
+      window.objects = objectsUpdated
+      window.objectsById = window.objects.reduce((prev, next) => {
+        prev[next.id] = next
+      }, {})
+      
       if(window.editingObject.i >= 0) {
-        Object.assign(window.editingObject, objectsUpdated[window.editingObject.i])
+        window.mergeDeep(window.editingObject, objectsUpdated[window.editingObject.i])
         if(window.syncObjectsToggle.checked) {
           window.objecteditor.set(window.editingObject)
           window.objecteditor.expandAll()
@@ -120,7 +121,7 @@ function init() {
   //shared events
   ///////////////////////////////
   // window.socket.on('onUpdateGridNode', (gridPos, update) => {
-  //   Object.assign(window.grid.nodes[gridPos.x][gridPos.y], update)
+  //   window.mergeDeep(window.grid.nodes[gridPos.x][gridPos.y], update)
   //   if(window.pfgrid && update.hasObstacle !== undefined) {
   //     window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
   //     window.resetPaths = true
@@ -142,7 +143,7 @@ function init() {
     }
 
     if(window.usePlayEditor) {
-      Object.assign(window.heros[heroUpdated.id], heroUpdated)
+      window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
       if(window.editingHero.id === heroUpdated.id) {
         window.editingHero = heroUpdated
         if(window.world.syncHero) {
@@ -151,7 +152,7 @@ function init() {
       }
     } else {
       if(window.hero.id !== heroUpdated.id) {
-        Object.assign(window.heros[heroUpdated.id], heroUpdated)
+        window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
       }
     }
   })
@@ -161,7 +162,7 @@ function init() {
   		const value = updatedWorld[key]
 
       if(window.world[key] instanceof Object) {
-        Object.assign(window.world[key], value)
+        window.mergeDeep(window.world[key], value)
       } else {
         window.world[key] = value
       }
@@ -212,7 +213,7 @@ function init() {
   		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
   	}
 
-    Object.assign(window.heros[updatedHero.id], updatedHero)
+    window.mergeDeep(window.heros[updatedHero.id], updatedHero)
 
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)

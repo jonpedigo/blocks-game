@@ -1,9 +1,11 @@
 const modifiers = {
   spawnZone: {
     spawnTotal: 3,
-    spawnTags: {
-      obstacle: true,
-      lemmings: true,
+    spawnObject: {
+      tags: {
+        obstacle: true,
+        lemmings: true,
+      }
     },
   },
 }

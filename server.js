@@ -17,7 +17,7 @@ let heros = {
 let herosockets = {
 
 }
-let serverState = []
+let objects = []
 let grid = {
   width: 50,
   height: 50,
@@ -29,7 +29,7 @@ let world = {
 
 }
 
-let initialGame = 'purgatory'
+let initialGame = 'default'
 setGame(initialGame, (game) => {
   console.log('initial game set to ' + initialGame)
 })
@@ -40,7 +40,7 @@ function setGame(name, cb) {
         console.log(err);
     } else {
     let game = JSON.parse(data); //now it an gameect
-    serverState = game.objects
+    objects = game.objects
     heros = game.heros
     world = game.world
     grid = game.grid
@@ -57,7 +57,7 @@ io.on('connection', function(socket){
 
   socket.on('saveGame', (name) => {
     let data = {
-      objects: serverState,
+      objects: objects,
       heros,
       world,
       grid,
@@ -104,35 +104,35 @@ io.on('connection', function(socket){
     io.emit('onAnticipateObject', object)
   })
 
-  socket.on('updateObjects', (objects) => {
-    serverState = objects
-    io.emit('onUpdateObjects', serverState)
+  socket.on('updateObjects', (updatedobjects) => {
+    objects = updatedobjects
+    io.emit('onUpdateObjects', objects)
   })
-  socket.on('editObjects', (objects) => {
-    Object.assign(serverState, objects)
-    io.emit('onEditObjects', serverState)
+  socket.on('editObjects', (editedobjects) => {
+    objects = editedobjects
+    io.emit('onEditObjects', objects)
   })
   socket.on('resetObjects', (objects) => {
-    serverState = []
+    objects = []
     io.emit('onResetObjects')
   })
   socket.on('removeObject', (object) => {
     io.emit('onRemoveObject', object)
   })
   socket.on('deleteObject', (object) => {
-    for(let i = 0; i < serverState.length; i++) {
-  		if(serverState[i].id === object.id){
-  			serverState.splice(i, 1)
+    for(let i = 0; i < objects.length; i++) {
+  		if(objects[i].id === object.id){
+  			objects.splice(i, 1)
   			break;
   		}
   	}
     io.emit('onDeleteObject', object)
   })
   socket.on('askObjects', () => {
-    socket.emit('onAddObjects', serverState)
+    socket.emit('onAddObjects', objects)
   })
-  socket.on('addObjects', (objects) => {
-    serverState.push(...objects)
+  socket.on('addObjects', (addedobjects) => {
+    objects.push(...addedobjects)
     io.emit('onAddObjects', objects)
   })
 
@@ -142,7 +142,6 @@ io.on('connection', function(socket){
   })
   socket.on('updateWorld', (updatedWorld) => {
     world = updatedWorld
-    Object.assign(world, updatedWorld)
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', (updatedWorld) => {

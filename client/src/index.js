@@ -110,7 +110,7 @@ window.respawnHero = function () {
 window.resetHero = function(updatedHero) {
 	physics.removeObject(window.hero)
 	if(updatedHero) {
-		Object.assign(window.hero, updatedHero)
+		window.mergeDeep(window.hero, updatedHero)
 	} else {
     let newHero = {}
 		Object.assign(newHero, JSON.parse(JSON.stringify(defaultHero)))

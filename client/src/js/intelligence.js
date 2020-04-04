@@ -59,6 +59,16 @@ function update(hero, objects, modifier) {
   objects.forEach((object) => {
     if(object.removed) return
 
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //MOVEMENT
+    //////////////////////////////////////////
+    //////////////////////////////////////////
     if(object.path && object.path.length) {
       if(window.resetPaths) {
         object.path = []
@@ -157,6 +167,42 @@ function update(hero, objects, modifier) {
       object.velocityX = 0
       object.accY = 0
       object.accX = 0
+    }
+
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    // ZONE STUFF
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    if(object.tags && object.tags['spawnZone']) {
+      if(!object.spawned) object.spawned = []
+
+      object.spawned = object.spawned.filter((obj) => {
+        if(window.objectsById[obj.id] && !window.objectsById[obj.id].removed) {
+          return true
+        } else return false
+      })
+
+      if(object.spawnTotal && object.spawned.length < object.spawnTotal) {
+        let newObject = {
+          x: object.x,
+          y: object.y,
+          width: object.width,
+          height: object.height,
+          ...object.spawnObject,
+        }
+        // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
+        // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
+
+        let createdObject = window.addObjects([newObject])
+        object.spawned.push(...createdObject)
+      }
     }
   })
 }
