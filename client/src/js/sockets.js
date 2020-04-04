@@ -117,7 +117,7 @@ function init() {
   ///////////////////////////////
 
   // EDITOR CALLS THIS
-  window.socket.on('onResetWorld', (hero) => {
+  window.socket.on('onResetWorld', () => {
     window.world = JSON.parse(JSON.stringify(window.defaultWorld))
     camera.clearLimit()
     gridTool.updateGridObstacles()
@@ -214,6 +214,8 @@ function init() {
         // init to any hero
         if(window.heros.undefined) window.socket.emit('deleteHero', 'undefined')
         delete window.heros.undefined
+        if(window.heros.null) window.socket.emit('deleteHero', 'null')
+        delete window.heros.null
         for(var heroId in window.heros) {
           if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
             window.setEditingHero(window.heros[heroId])
@@ -289,7 +291,7 @@ function init() {
       findHeroInNewWorld(game)
     }
 
-    window.world = window.mergeDeep(window.defaultWorld, game.world)
+    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()

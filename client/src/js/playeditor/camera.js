@@ -1,8 +1,16 @@
 import gridTool from '../grid.js'
 
-window.camera = {
-  x: -100,
-  y: -100,
+
+function init() {
+  window.camera = {
+    x: -100,
+    y: -100,
+  }
+
+  window.scaleMultiplier = .2
+
+  window.camera.x = -150
+  window.camera.y = -150
 }
 
 function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, specialLineWidth = .6, color = 'white'}) {
@@ -276,7 +284,6 @@ function render(ctx, hero, objects) {
   // GAME
   ////////////////
   ////////////////
-
   if((currentTool == TOOLS.WORLD_EDITOR || currentTool == TOOLS.PROCEDURAL) && window.world.proceduralBoundaries) {
     ctx.fillStyle='yellow';
     ctx.globalAlpha = 0.2;
@@ -365,10 +372,6 @@ function setCamera(ctx, hero) {
   setCameraHeroY(ctx, hero)
 }
 
-function init() {
-  window.camera.x = -150
-  window.camera.y = -150
-}
 
 export default {
   init,

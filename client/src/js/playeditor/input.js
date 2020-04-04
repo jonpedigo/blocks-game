@@ -7,8 +7,6 @@ function init(hero){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-
-
     //if you press escape, cancel a drag
     if(e.keyCode === 27) {
       window.clickStart.x = null
@@ -23,7 +21,7 @@ function init(hero){
 
     // if shift +
     if(keysDown['16']) {
-      
+
       // q and a zoom in and out
       if(e.keyCode === 81) {
         window.scaleMultiplier = window.scaleMultiplier * 1.1

@@ -11,10 +11,11 @@ function Star(x,y,r,color){
     this.color = color;
 }
 
-camera = {
+let camera = {
   x: 0,
   y: 0
 }
+
 Star.prototype = {
     constructor: Star,
     render: function(){

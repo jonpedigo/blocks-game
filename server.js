@@ -147,8 +147,8 @@ io.on('connection', function(socket){
     currentGame.world = updatedWorld
     io.emit('onUpdateWorld', updatedWorld)
   })
-  socket.on('resetWorld', (updatedWorld) => {
-    io.emit('onResetWorld', updatedWorld)
+  socket.on('resetWorld', () => {
+    io.emit('onResetWorld')
   })
 
   //hero
