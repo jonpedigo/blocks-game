@@ -37,10 +37,8 @@ import camera from './js/camera.js'
 import collisions from './js/collisions.js'
 import playEditor from './js/playeditor/index.js'
 import shadow from './js/shadow.js'
-import action from './js/action.js'
 import intelligence from './js/intelligence.js'
 import grid from './js/grid.js'
-import battle from './js/battle.js'
 import feedback from './js/feedback.js'
 import io from 'socket.io-client'
 import sockets from './js/sockets.js'
@@ -50,9 +48,12 @@ import utils from './js/utils.js'
 import objects from './js/objects.js'
 import hero from './js/hero.js'
 import world from './js/world.js'
+import render from './js/render.js'
 import './js/events.js'
 
+import defaultGame from './js/games/default'
 import pacman from './js/games/pacman'
+window.defaultGame = defaultGame
 window.customGame = pacman
 
 window.init = function () {
@@ -101,14 +102,16 @@ window.init = function () {
 		input.init()
 		chat.init()
 		action.init()
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.init()
+    }
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.init()
     }
 	}
 };
-
-
 
 // Update game objects
 var update = function (delta) {
@@ -117,21 +120,14 @@ var update = function (delta) {
     intelligence.update(window.hero, window.objects, delta)
     physics.update(delta)
 
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.update(delta)
+    }
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.update(delta)
     }
-
-    window.resetPaths = false
-  }
-
-  /// zoom targets
-  if(window.hero.animationZoomTarget) {
-    window.heroZoomAnimation()
-  }
-
-  if(window.anticipatedObject) {
-    window.anticipateObjectAdd()
   }
 };
 
@@ -158,6 +154,11 @@ var main = function () {
 		update(delta / 1000);
     render.update();
 
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.render(ctx)
+    }
+
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.render(ctx)
@@ -182,13 +183,20 @@ var main = function () {
 var then;
 window.startGame = function() {
   then = Date.now()
-  window.world.startTime = then
-
   if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (!window.usePlayEditor && !window.hero)) {
     console.log('trying to start game without critical data aborting')
     return
   }
   main()
+
+  /// DEFAULT GAME FX
+  if(window.defaultGame) {
+    window.defaultGame.start()
+  }
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.start()
+  }
 
   if(!window.usePlayEditor) {
     setInterval(() => {

@@ -1,3 +1,8 @@
+import physics from './physics.js'
+import pathfinding from './pathfinding.js'
+import collisions from './collisions'
+import grid from './grid.js'
+
 function init() {
   window.defaultObject = {
     velocityX: 0,
@@ -56,6 +61,106 @@ window.anticipateObjectAdd = function() {
     }
   }
 }
+
+window.addObjects = function(objects, options = { bypassCollisions: false, instantAdd: true }) {
+  if(!objects.length) {
+    objects = [objects]
+  }
+
+  let alertAboutCollision
+
+  objects = objects.map((newObject) => {
+    Object.assign(newObject, {...window.defaultObject})
+
+    if(!newObject.id){
+      newObject.id = 'object' + Date.now();
+    }
+
+    if(!newObject.tags){
+      newObject.tags = {};
+    }
+
+    for(let tag in window.tags) {
+      if(window.tags[tag].checked || newObject.tags[tag] === true){
+        if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
+          alert('You cannot add a monster without setting spawn point first')
+          return
+        }
+        newObject.tags[tag] = true
+      } else {
+        newObject.tags[tag] = false
+      }
+    }
+
+    newObject.spawnPointX = newObject.x
+    newObject.spawnPointY = newObject.y
+
+    if(!window.world.globalTags.calculatePathCollisions) {
+      grid.addObstacle(newObject)
+    }
+
+    if(newObject.tags.obstacle && collisions.check(newObject, window.objects) && !options.bypassCollisions) {
+      alertAboutCollision = true
+    }
+
+    //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
+    if(newObject.x + newObject.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.y + newObject.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.x < window.grid.startX) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+    if(newObject.y < window.grid.startY) {
+      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      return null
+    }
+
+    return newObject
+  }).filter(obj => !!obj)
+
+  if(!window.usePlayEditor){
+    window.objects.push(...objects)
+    objects.forEach((object) => {
+      if(object.removed) return
+      window.objectsById[object.id] = object
+      physics.addObject(object)
+    })
+
+    if(!window.world.globalTags.calculatePathCollisions) {
+      grid.updateGridObstacles()
+      window.resetPaths = true
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+    return objects
+  }
+
+  if(alertAboutCollision) {
+    if(confirm('already an object on this grid node..confirm to add anyways')) {
+      emitNewObjects()
+    }
+  } else {
+    emitNewObjects()
+  }
+
+  function emitNewObjects() {
+    if(window.instantAddToggle.checked || options.instantAddToggle) {
+      // need to do a local add first
+      window.objects.push(...objects)
+      window.socket.emit('addObjects', objects)
+    } else {
+      window.objectFactory.push(...objects)
+    }
+  }
+
+  return objects
+}
+
 
 export default {
   init

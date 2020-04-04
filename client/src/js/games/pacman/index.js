@@ -7,6 +7,14 @@ function init() {
 
 }
 
+function start() {
+
+}
+
+function onKeyDown(keysDown) {
+
+}
+
 function input(keysDown, delta) {
 
 }
@@ -15,7 +23,7 @@ function intelligence(object, delta) {
 
 }
 
-function onCollide(agent, collider) {
+function onCollide(agent, collider, result, removeObjects) {
 
 }
 
@@ -29,6 +37,8 @@ function render(ctx) {
 
 export default {
   init,
+  start,
+  onKeyDown,
   input,
   update,
   intelligence,

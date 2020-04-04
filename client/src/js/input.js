@@ -54,6 +54,16 @@ function init(){
     //   hero.velocityX = 200
     //   hero.velocityY = -400
     // }
+
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.onKeyDown(keysDown)
+    }
+
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.onKeyDown(keysDown)
+    }
   }, false)
 
   window.addEventListener("keyup", function (e) {
@@ -185,8 +195,12 @@ function update(delta) {
     }
   }
 
-
   positionInput()
+
+  /// DEFAULT GAME FX
+  if(window.defaultGame) {
+    window.defaultGame.input(keysDown, delta)
+  }
 
   /// CUSTOM GAME FX
   if(window.customGame) {

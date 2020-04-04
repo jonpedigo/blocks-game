@@ -1,12 +1,10 @@
-import input from './input'
-import gridTool from './grid.js'
-import collisions from './collisions.js'
-
-const keysDown = {}
+import collisions from '../../collisions'
+import gridTool from '../../grid.js'
+import pathfinding from '../../pathfinding.js'
 
 function shootBullet() {
   let direction = window.hero.inputDirection
-  let shootedd = {
+  let shooted = {
     id: 'bullet-' + Date.now(),
     width: 4,
     height: 4,
@@ -89,38 +87,7 @@ function dropWall() {
   addObjects([wall])
 }
 
-function init(hero){
-  window.addEventListener("keydown", function (e) {
-    if(window.hero.flags.paused || window.world.globalTags.paused) return
-    keysDown[e.keyCode] = true
-
-
-    //shoot out thing
-    if(e.keyCode === 90) {
-
-      if(window.hero.actionButtonBehavior === 'shootBullet') {
-        shootBullet()
-      }
-
-      if(window.hero.actionButtonBehavior === 'dropWall') {
-        dropWall()
-      }
-
-    }
-  }, false)
-
-  window.addEventListener("keyup", function (e) {
-	   delete keysDown[e.keyCode]
-  }, false)
-
-
-}
-
-function update(modifier) {
-
-}
-
 export default {
-  init,
-  update,
+  shootBullet,
+  dropWall,
 }

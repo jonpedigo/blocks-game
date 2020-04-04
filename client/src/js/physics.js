@@ -1,6 +1,7 @@
 import { Collisions, Polygon } from 'collisions';
 import intelligence from './intelligence'
 import collisions from './collisions';
+import hero from './hero';
 
 const physicsObjects = {}
 // Create the collision system
@@ -202,87 +203,7 @@ function update (delta) {
     for(const body of potentials) {
       if(body.gameObject.removed) continue
       if(heroPO.collides(body, result)) {
-        if(body.gameObject.tags && body.gameObject.tags['monster']) {
-          if(heroPO.gameObject.tags['monsterDestroyer']) {
-            if(body.gameObject.spawnPointX >= 0 && body.gameObject.tags['respawn']) {
-              body.gameObject.x = body.gameObject.spawnPointX
-              body.gameObject.y = body.gameObject.spawnPointY
-            } else {
-              removeObjects.push(body.gameObject)
-            }
-          } else {
-            if(window.hero.lives == 0) {
-              window.client.emit('gameOver')
-            }
-            window.hero.lives--
-            window.respawnHero()
-            return
-          }
-        }
-
-        if(body.gameObject.tags && body.gameObject.tags['coin']) {
-          window.hero.score++
-        }
-
-        if(body.gameObject.tags && body.gameObject.tags['chatter'] && body.gameObject.heroUpdate && body.gameObject.heroUpdate.chat) {
-          if(body.id !== window.hero.lastChatId) {
-            window.hero.chat = body.gameObject.heroUpdate.chat.slice()
-            // window.hero.chat.name = body.id
-            window.hero.lastChatId = body.gameObject.id
-          }
-        }
-
-        if(body.gameObject.tags && body.gameObject.tags['heroUpdate'] && body.gameObject.heroUpdate) {
-          if(body.gameObject.id !== window.hero.lastPowerUpId) {
-            if(!window.hero.updateHistory) {
-              window.hero.updateHistory = []
-            }
-
-            // only have 4 edits in the history at a time
-            if(window.hero.updateHistory.length >= 4) {
-              window.hero.updateHistory.shift()
-            }
-
-            let heroUpdate = body.gameObject.heroUpdate
-            let update = {
-              update: heroUpdate,
-              prev: {},
-              id: body.gameObject.id,
-            }
-            for(var prop in heroUpdate) {
-              if(prop == 'flags' || prop == 'tags') {
-                let ags = heroUpdate[prop]
-                update.prev[prop] = {}
-                for(let ag in ags) {
-                  update.prev[prop][ag] = window.hero[prop][ag]
-                }
-              } else {
-                update.prev[prop] = window.hero[prop]
-              }
-            }
-            window.hero.updateHistory.push(update)
-            window.mergeDeep(window.hero, {...body.gameObject.heroUpdate})
-            window.hero.lastPowerUpId = body.gameObject.id
-
-            if(body.gameObject.tags['revertAfterTimeout']) {
-              window.setTimeout(() => {
-                window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
-                  if(body.gameObject.id === update.id) {
-                    window.mergeDeep(window.hero, {...update.prev})
-                    return false
-                  }
-                  return true
-                })
-              }, body.gameObject.powerUpTimer || 30000)
-            }
-          }
-        } else {
-          window.hero.lastPowerUpId = null
-        }
-
-        if(body.gameObject.tags && body.gameObject.tags.deleteAfter) {
-          removeObjects.push(body.gameObject)
-        }
+        hero.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects)
       }
     }
 
@@ -415,29 +336,6 @@ function update (delta) {
     for(const body of potentials) {
       if(body.gameObject.removed) continue
       if(po.collides(body, result)) {
-        if(body.gameObject.tags && po.gameObject.tags && body.gameObject.tags['bullet'] && po.gameObject.tags['monster']) {
-          removeObjects.push(po.gameObject)
-          window.hero.score++
-        }
-
-        if(po.gameObject.tags && po.gameObject.tags['goomba'] && body.gameObject.tags && body.gameObject.tags['obstacle']) {
-          if(result.overlap_x === 1 && po.gameObject.direction === 'right') {
-            po.gameObject.direction = 'left'
-          }
-          if(result.overlap_x === -1 && po.gameObject.direction === 'left') {
-            po.gameObject.direction = 'right'
-          }
-        }
-
-        if(po.gameObject.tags && po.gameObject.tags['goombaSideways'] && body.gameObject.tags && body.gameObject.tags['obstacle']) {
-          if(result.overlap_y === 1 && po.gameObject.direction === 'down') {
-            po.gameObject.direction = 'up'
-          }
-          if(result.overlap_y === -1 && po.gameObject.direction === 'up') {
-            po.gameObject.direction = 'down'
-          }
-        }
-
         if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && collisions.shouldEffect(po.gameObject, body.gameObject)) {
           if(po.gameObject.lastPowerUpId !== body.gameObject.id) {
             window.mergeDeep(po.gameObject, {...body.gameObject.objectUpdate})
@@ -447,9 +345,14 @@ function update (delta) {
           po.gameObject.lastPowerUpId = null
         }
 
+        /// DEFAULT GAME FX
+        if(window.defaultGame) {
+          window.defaultGame.onCollide(po.gameObject, body.gameObject, result, removeObjects)
+        }
+
         /// CUSTOM GAME FX
         if(window.customGame) {
-          window.customGame.onCollide(po.gameObject, body.gameObject)
+          window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects)
         }
       }
     }

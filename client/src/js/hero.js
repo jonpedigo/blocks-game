@@ -1,4 +1,7 @@
 import physics from './physics.js'
+import pathfinding from './pathfinding.js'
+import collisions from './collisions'
+import grid from './grid.js'
 
 function init() {
   window.defaultHero = {
@@ -123,6 +126,133 @@ window.heroZoomAnimation = function() {
   }
 }
 
+window.getViewBoundaries = function(hero) {
+  const value = {
+    width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier,
+    height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier,
+    centerX: hero.x + hero.width/2,
+    centerY: hero.y + hero.height/2,
+  }
+  value.x = value.centerX - value.width/2
+  value.y = value.centerY - value.height/2
+  const { leftDiff, rightDiff, topDiff, bottomDiff } = grid.getAllDiffs(value)
+  grid.snapDragToGrid(value)
+
+  return {
+    centerX: value.centerX,
+    centerY: value.centerY,
+    minX: value.x,
+    minY: value.y,
+    maxX: value.x + value.width,
+    maxY: value.y + value.height,
+    leftDiff,
+    rightDiff,
+    topDiff,
+    bottomDiff,
+  }
+}
+
+window.resetReachablePlatformHeight = function(heroIn) {
+	let velocity = heroIn.jumpVelocity
+	let gravity = 1000
+	let delta = (0 - velocity)/gravity
+	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+	return height
+}
+
+window.resetReachablePlatformWidth = function(heroIn) {
+	let velocity = heroIn.speed
+	let gravity = 1000
+	let deltaInAir = (0 - heroIn.jumpVelocity)/gravity
+	let width = (velocity * deltaInAir)
+	return width * 2
+}
+
+function onCollide(hero, collider, result, removeObjects) {
+  if(collider.tags && collider.tags['monster']) {
+    if(window.hero.tags['monsterDestroyer']) {
+      if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
+        collider.x = collider.spawnPointX
+        collider.y = collider.spawnPointY
+      } else {
+        removeObjects.push(collider)
+      }
+    } else {
+      if(window.hero.lives == 0) {
+        window.client.emit('gameOver')
+      }
+      window.hero.lives--
+      window.respawnHero()
+      return
+    }
+  }
+
+  if(collider.tags && collider.tags['coin']) {
+    window.hero.score++
+  }
+
+  if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat) {
+    if(colliderid !== window.hero.lastChatId) {
+      window.hero.chat = collider.heroUpdate.chat.slice()
+      // window.hero.chat.name = body.id
+      window.hero.lastChatId = collider.id
+    }
+  }
+
+  if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
+    if(collider.id !== window.hero.lastPowerUpId) {
+      if(!window.hero.updateHistory) {
+        window.hero.updateHistory = []
+      }
+
+      // only have 4 edits in the history at a time
+      if(window.hero.updateHistory.length >= 4) {
+        window.hero.updateHistory.shift()
+      }
+
+      let heroUpdate = collider.heroUpdate
+      let update = {
+        update: heroUpdate,
+        prev: {},
+        id: collider.id,
+      }
+      for(var prop in heroUpdate) {
+        if(prop == 'flags' || prop == 'tags') {
+          let ags = heroUpdate[prop]
+          update.prev[prop] = {}
+          for(let ag in ags) {
+            update.prev[prop][ag] = window.hero[prop][ag]
+          }
+        } else {
+          update.prev[prop] = window.hero[prop]
+        }
+      }
+      window.hero.updateHistory.push(update)
+      window.mergeDeep(window.hero, {...collider.heroUpdate})
+      window.hero.lastPowerUpId = collider.id
+
+      if(collider.tags['revertAfterTimeout']) {
+        window.setTimeout(() => {
+          window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
+            if(collider.id === update.id) {
+              window.mergeDeep(window.hero, {...update.prev})
+              return false
+            }
+            return true
+          })
+        }, collider.powerUpTimer || 30000)
+      }
+    }
+  } else {
+    window.hero.lastPowerUpId = null
+  }
+
+  if(collider.tags && collider.tags.deleteAfter) {
+    removeObjects.push(collider)
+  }
+}
+
 export default {
-  init
+  init,
+  onCollide,
 }
