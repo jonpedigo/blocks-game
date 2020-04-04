@@ -94,8 +94,9 @@ function init() {
       window.objects = objectsUpdated
       window.objectsById = window.objects.reduce((prev, next) => {
         prev[next.id] = next
+        return prev
       }, {})
-      
+
       if(window.editingObject.i >= 0) {
         window.mergeDeep(window.editingObject, objectsUpdated[window.editingObject.i])
         if(window.syncObjectsToggle.checked) {
@@ -111,6 +112,7 @@ function init() {
         window.socket.emit('askGrid');
         window.objectsById = objects.reduce((prev, next) => {
           prev[next.id] = next
+          return prev
         }, {})
       }
     })

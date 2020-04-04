@@ -181,15 +181,15 @@ function update(hero, objects, modifier) {
     //////////////////////////////////////////
     //////////////////////////////////////////
     if(object.tags && object.tags['spawnZone']) {
-      if(!object.spawned) object.spawned = []
+      if(!object.spawnedIds) object.spawnedIds = []
 
-      object.spawned = object.spawned.filter((obj) => {
-        if(window.objectsById[obj.id] && !window.objectsById[obj.id].removed) {
+      object.spawnedIds = object.spawnedIds.filter((id) => {
+        if(window.objectsById[id] && !window.objectsById[id].removed) {
           return true
         } else return false
       })
 
-      if(object.spawnTotal && object.spawned.length < object.spawnTotal) {
+      if(object.spawnedIds.length < object.spawnTotal && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0)) {
         let newObject = {
           x: object.x,
           y: object.y,
@@ -201,7 +201,13 @@ function update(hero, objects, modifier) {
         // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
 
         let createdObject = window.addObjects([newObject])
-        object.spawned.push(...createdObject)
+        object.spawnedIds.push(createdObject[0].id)
+        if(object.spawnPool) object.spawnPool--
+
+        object.spawnWait = true
+        setTimeout(() => {
+          object.spawnWait = false
+        }, object.spawnWaitTime || 1000)
       }
     }
   })
