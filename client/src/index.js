@@ -47,186 +47,54 @@ import sockets from './js/sockets.js'
 import constellation from './js/constellation.js'
 import pathfinding from './js/pathfinding.js'
 import utils from './js/utils.js'
+import objects from './js/objects.js'
+import hero from './js/hero.js'
+import world from './js/world.js'
 import './js/events.js'
 
 import pacman from './js/games/pacman'
 window.customGame = pacman
 
-// SOCKET START
-if (window.location.origin.indexOf('localhost') > 0) {
-  window.socket = io.connect('http://localhost:4000');
-} else {
-  window.socket = io.connect();
-}
-window.socket = socket
-
-// DOM
-window.canvasMultiplier = 1;
-window.CONSTANTS = {
-	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
-	PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
-  PLAYER_CAMERA_WIDTH: 640,
-  PLAYER_CAMERA_HEIGHT: 320,
-}
-
-var canvas = document.createElement("canvas");
-window.ctx = canvas.getContext("2d");
-canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
-canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
-canvas.id = 'game'
-document.body.appendChild(canvas);
-
-window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-if(!window.usePlayEditor) {
-  var editor = document.getElementById("play-editor");
-  editor.style = 'display:none';
-}
-
-/// GLOBAL FX
-// window.objects = []
-window.defaultObject = {
-  velocityX: 0,
-  velocityY: 0,
-  velocityMax: 100,
-  speed: 100,
-  color: 'white',
-  // cant put objects in it cuz of some pass by reference BS...
-}
-
-window.respawnHero = function () {
-  // hero spawn point takes precedence
-  window.client.emit('onRespawnHero')
-
-  if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
-    window.hero.x = window.hero.spawnPointX;
-    window.hero.y = window.hero.spawnPointY;
-  } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
-    window.hero.x = window.world.worldSpawnPointX
-    window.hero.y = window.world.worldSpawnPointY
+window.init = function () {
+  // SOCKET START
+  if (window.location.origin.indexOf('localhost') > 0) {
+    window.socket = io.connect('http://localhost:4000');
   } else {
-    // default pos
-    window.hero.x = 960;
-    window.hero.y = 960;
+    window.socket = io.connect();
   }
-}
+  window.socket = socket
 
-window.resetHero = function(updatedHero) {
-	physics.removeObject(window.hero)
-	if(updatedHero) {
-		window.mergeDeep(window.hero, updatedHero)
-	} else {
-    let newHero = {}
-		Object.assign(newHero, JSON.parse(JSON.stringify(defaultHero)))
-    window.hero = newHero
-    window.heros[window.hero.id] = window.hero
-	}
-	localStorage.setItem('hero', JSON.stringify(window.hero));
-	physics.addObject(window.hero)
-}
-
-/////////////
-//GAME
-/////////////
-/////////////
-window.defaultWorld = {
-  id: 'world-' + Date.now(),
-	lockCamera: {},
-	gameBoundaries: {},
-  procedural: {},
-  worldSpawnPointX: null,
-  worldSpawnPointY: null,
-  globalTags: {
-    calculatePathCollisions: false,
-    noCamping: true,
-    targetOnSight: true,
-    paused: false,
-    isAsymmetric: false,
-    shouldRestoreHero: false,
+  // DOM
+  window.canvasMultiplier = 1;
+  window.CONSTANTS = {
+  	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
+  	PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
+    PLAYER_CAMERA_WIDTH: 640,
+    PLAYER_CAMERA_HEIGHT: 320,
   }
-}
-window.world = JSON.parse(JSON.stringify(window.defaultWorld));
 
-/////////////
-// HERO
-/////////////
-/////////////
-window.defaultHero = {
-	width: 40,
-	height: 40,
-	velocityX: 0,
-	velocityY: 0,
-	velocityMax: 200,
-	// accY: 0,
-	// accX: 0,
-	// accDecayX: 0,
-	// accDecayY: 0,
-	speed: 150,
-	arrowKeysBehavior: 'flatDiagonal',
-  actionButtonBehavior: 'dropWall',
-	jumpVelocity: -480,
-	// spawnPointX: (40) * 20,
-	// spawnPointY: (40) * 20,
-	tags: {
-    hero: true,
-    isPlayer: true,
-    monsterDestroyer: false,
-    gravity: false,
-  },
-	zoomMultiplier: 1.875,
-  x: 960,
-  y: 960,
-  lives: 10,
-  score: 0,
-  chat: [],
-  flags : {
-    showChat: false,
-    showScore: false,
-    showLives: false,
-    paused: false,
-  },
-  directions: {
-    up: false,
-    down: false,
-    right: false,
-    left: false,
+  window.canvas = document.createElement("canvas");
+  window.ctx = window.canvas.getContext("2d");
+  window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
+  window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
+  window.canvas.id = 'game'
+  document.body.appendChild(window.canvas);
+
+  window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
+  if(!window.usePlayEditor) {
+    var editor = document.getElementById("play-editor");
+    editor.style = 'display:none';
   }
-}
 
-if(!window.usePlayEditor) {
-	let savedHero = JSON.parse(localStorage.getItem('hero'));
-	if(savedHero){
-		window.hero = savedHero
-    // in case we need to reset
-    window.defaultHero.id = savedHero.id
-	} else if(!window.hero) {
-    window.defaultHero.id = 'hero-'+Date.now()
-		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-		window.respawnHero()
-	}
-	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
-	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
-
-	window.socket.emit('saveSocket', hero)
-
-	// fuckin window.heros...
-	window.heros = {
-		[window.hero.id]:window.hero,
-	}
-
-	physics.addObject(window.hero)
-}
-
-/////////////
-//GAME LOOP
-/////////////
-/////////////
-var start = function () {
+  objects.init()
+  world.init()
 	grid.init()
   sockets.init()
 
   if(usePlayEditor) {
 		playEditor.init(ctx)
 	} else {
+    hero.init()
     feedback.init()
     constellation.init(ctx)
     camera.init()
@@ -238,173 +106,38 @@ var start = function () {
       window.customGame.init()
     }
 	}
-	main()
-  if(!window.usePlayEditor) {
-    setInterval(() => {
-      if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
-        return
-      }
-      window.socket.emit('updateObjects', window.objects)
-      window.socket.emit('updateHeroPos', window.hero)
-      localStorage.setItem('hero', JSON.stringify(window.hero));
-    }, 100)
-  }
 };
+
+
 
 // Update game objects
 var update = function (delta) {
   if(!window.world.globalTags.paused) {
-    input.update(hero, delta)
-
+    input.update(delta)
     intelligence.update(window.hero, window.objects, delta)
-
-    if(window.hero.arrowKeysBehavior !== 'grid') {
-      physics.update(delta)
-    } else {
-      grid.update(window.hero, window.objects)
-    }
+    physics.update(delta)
 
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.update(delta)
     }
 
-
     window.resetPaths = false
   }
 
   /// zoom targets
   if(window.hero.animationZoomTarget) {
-    if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.97
-      if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-        if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
-        else {
-          window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
-        }
-        window.socket.emit('updateHero', window.hero)
-      }
-    }
-
-    if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-      window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.03
-      if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-        if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
-        else {
-          window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
-        }
-        window.socket.emit('updateHero', window.hero)
-      }
-    }
+    window.heroZoomAnimation()
   }
 
   if(window.anticipatedObject) {
-    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
-
-    let isWall = window.anticipatedObject.wall
-
-    if (leftDiff < 1 && window.hero.directions.left) {
-      let newObject = {
-        x: minX - window.grid.nodeSize,
-        y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-        width: window.grid.nodeSize,
-        height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 3) : window.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    } else if (topDiff < 1 && window.hero.directions.up) {
-      let newObject = {
-        x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-        y: minY - window.grid.nodeSize,
-        width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
-        height: window.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.directions.right) {
-      let newObject = {
-        x: maxX + window.grid.nodeSize,
-        y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-        width: window.grid.nodeSize,
-        height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.directions.down) {
-      let newObject = {
-        x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-        y: maxY + window.grid.nodeSize,
-        width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
-        height: window.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    }
-
-    function addAnticipatedObject(newObject) {
-      let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
-      if(grid.keepGridXYWithinBoundaries(x/window.grid.nodeSize, y/window.grid.nodeSize)) {
-        window.addObjects([{...newObject, ...window.anticipatedObject}])
-        window.anticipatedObject = null
-      }
-    }
+    window.anticipateObjectAdd()
   }
 };
 
-// Draw everything
-var render = function () {
-	let vertices = [...window.objects].reduce((prev, object) => {
-    if(object.removed) return prev
-    if(object.tags.invisible) return prev
-    let extraProps = {}
-    if(object.tags.glowing) {
-      extraProps.glow = 3
-      extraProps.thickness = 2
-      extraProps.color = 'white'
-    }
-		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
-		return prev
-	}, [])
-
-  //reset background
-	ctx.fillStyle = 'black';
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	//set camera so we render everything in the right place
-  camera.set(ctx, window.hero)
-
-	window.world.renderStyle = 'outlines'
- 	if (window.world.renderStyle === 'outlines') {
-		ctx.strokeStyle = "#999";
-		for(var i=0;i<vertices.length;i++){
-			camera.drawVertice(ctx, vertices[i])
-		}
-		ctx.fillStyle = 'white';
-		camera.drawObject(ctx, window.hero)
-	} else if(window.world.renderStyle === 'physics'){
-		physics.drawSystem(ctx, vertices)
-	} else {
-		for(let i = 0; i < window.objects.length; i++){
-      if(window.objects[i].removed) continue
-      if(window.objects[i].tags.invisible) continue
-			camera.drawObject(ctx, window.objects[i])
-		}
-	}
-
-	window.world.shadows = false
-	if(window.world.shadows === true) {
-		shadow.draw(ctx, vertices, hero)
-	}
-
-  for(var heroId in window.heros) {
-    if(heroId === window.hero.id) continue;
-    let currentHero = window.heros[heroId];
-    camera.drawObject(ctx, currentHero);
-  }
-
-  chat.render(ctx);
-	feedback.draw(ctx);
-}
-
+// Cross-browser support for requestAnimationFrame
+var w = window;
+requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 // The main game loop
 var main = function () {
   if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
@@ -414,6 +147,8 @@ var main = function () {
 
 	var now = Date.now();
 	var delta = now - then;
+  window.fps = 1000 / delta;
+
 	if(delta > 23) delta = 23
 
 	if(window.usePlayEditor) {
@@ -421,7 +156,7 @@ var main = function () {
     playEditor.render(ctx, window.hero, window.objects);
   }else {
 		update(delta / 1000);
-    render();
+    render.update();
 
     /// CUSTOM GAME FX
     if(window.customGame) {
@@ -431,8 +166,6 @@ var main = function () {
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
     }
-
-		// physics.drawSystem(ctx, hero)
   }
 
   if(window.world.globalTags.calculatePathCollisions) {
@@ -446,10 +179,23 @@ var main = function () {
 	requestAnimationFrame(main);
 };
 
-// Cross-browser support for requestAnimationFrame
-var w = window;
-requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+var then;
+window.startGame = function() {
+  then = Date.now()
+  window.world.startTime = then
 
-// Let's play this game!
-var then = Date.now();
-setTimeout(start, 1000);
+  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (!window.usePlayEditor && !window.hero)) {
+    console.log('trying to start game without critical data aborting')
+    return
+  }
+  main()
+
+  if(!window.usePlayEditor) {
+    setInterval(() => {
+      window.socket.emit('updateObjects', window.objects)
+      window.socket.emit('updateHeroPos', window.hero)
+      localStorage.setItem('hero', JSON.stringify(window.hero));
+    }, 100)
+  }
+}
+window.init()

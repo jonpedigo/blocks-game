@@ -88,6 +88,7 @@ function dropWall() {
 
   addObjects([wall])
 }
+
 function init(hero){
   window.addEventListener("keydown", function (e) {
     if(window.hero.flags.paused || window.world.globalTags.paused) return
@@ -115,7 +116,7 @@ function init(hero){
 
 }
 
-function update(flags, hero, modifier) {
+function update(modifier) {
 
 }
 

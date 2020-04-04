@@ -11,22 +11,22 @@ app.get('/', function(req, res){
 // Set static file location for production
 app.use(express.static(require('path').resolve('./client/dist')))
 
-let heros = {
-
-}
 let herosockets = {
 
 }
-let objects = []
-let grid = {
-  width: 50,
-  height: 50,
-  nodeSize: 40,
-  startX: 0,
-  startY: 0,
-}
-let world = {
 
+let currentGame = {
+  world: {},
+  heros: {},
+  hero: {},
+  objects: [],
+  grid: {
+    width: 50,
+    height: 50,
+    nodeSize: 40,
+    startX: 0,
+    startY: 0,
+  }
 }
 
 let initialGame = 'default'
@@ -40,10 +40,7 @@ function setGame(name, cb) {
         console.log(err);
     } else {
     let game = JSON.parse(data); //now it an gameect
-    objects = game.objects
-    heros = game.heros
-    world = game.world
-    grid = game.grid
+    currentGame = game
     return cb(game)
   }});
 }
@@ -52,12 +49,12 @@ function setGame(name, cb) {
 io.on('connection', function(socket){
   socket.on('saveSocket', (hero) => {
     herosockets[hero.id] = socket
-    heros[hero.id] = hero
+    currentGame.heros[hero.id] = hero
   })
 
   socket.on('saveGame', (name) => {
     let game = {
-      name
+      name,
       objects: objects,
       heros,
       world,
@@ -70,7 +67,7 @@ io.on('connection', function(socket){
       }
       for(var heroId in heros) {
       }
-      game.hero = heros[heroId]
+      currentGame.hero = heros[heroId]
     }
 
     if(!name) {
@@ -81,7 +78,7 @@ io.on('connection', function(socket){
     });
   })
 
-  // this is for when one player on a network wants to get a game... should all be 1 -hero worlds?
+  // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
   socket.on('getGame', (name) => {
     fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
@@ -95,9 +92,14 @@ io.on('connection', function(socket){
   // this is for when we are editing and we want to send this world to all people
   socket.on('setGame', (name) => {
     setGame(name, (game) => {
-      console.log('?')
       io.emit('onSetGame', game)
     })
+  })
+
+  // this is really only for the live editing shit when im reloading their page all the time
+  socket.on('askCurrentGame', () => {
+    console.log(currentGame.objects)
+    socket.emit('setGame', currentGame)
   })
 
   //objects
@@ -106,35 +108,35 @@ io.on('connection', function(socket){
   })
 
   socket.on('updateObjects', (updatedobjects) => {
-    objects = updatedobjects
-    io.emit('onUpdateObjects', objects)
+    currentGame.objects = updatedobjects
+    io.emit('onUpdateObjects', currentGame.objects)
   })
   socket.on('editObjects', (editedobjects) => {
-    objects = editedobjects
-    io.emit('onEditObjects', objects)
+    currentGame.objects = editedobjects
+    io.emit('onEditObjects', currentGame.objects)
   })
   socket.on('resetObjects', (objects) => {
-    objects = []
+    currentGame.objects = []
     io.emit('onResetObjects')
   })
   socket.on('removeObject', (object) => {
     io.emit('onRemoveObject', object)
   })
   socket.on('deleteObject', (object) => {
-    for(let i = 0; i < objects.length; i++) {
-  		if(objects[i].id === object.id){
-  			objects.splice(i, 1)
+    for(let i = 0; i < currentGame.objects.length; i++) {
+  		if(currentGame.objects[i].id === object.id){
+  			currentGame.objects.splice(i, 1)
   			break;
   		}
   	}
     io.emit('onDeleteObject', object)
   })
   socket.on('askObjects', () => {
-    socket.emit('onAddObjects', objects)
+    socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
-    objects.push(...addedobjects)
-    io.emit('onAddObjects', objects)
+    currentGame.objects.push(...addedobjects)
+    io.emit('onAddObjects', addedobjects)
   })
 
   //world
@@ -142,7 +144,7 @@ io.on('connection', function(socket){
     socket.emit('onUpdateWorld', world)
   })
   socket.on('updateWorld', (updatedWorld) => {
-    world = updatedWorld
+    currentGame.world = updatedWorld
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', (updatedWorld) => {
@@ -151,16 +153,15 @@ io.on('connection', function(socket){
 
   //hero
   socket.on('updateHeroPos', (hero) => {
-    if(!heros[hero.id]) {
-      heros[hero.id] = hero
+    if(!currentGame.heros[hero.id]) {
+      currentGame.heros[hero.id] = hero
     } else {
-      heros[hero.id] = hero
-      heros[hero.id] = hero
+      currentGame.heros[hero.id] = hero
     }
     io.emit('onHeroPosUpdate', hero)
   })
   socket.on('updateHero', (hero) => {
-    heros[hero.id] = hero
+    currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
   })
   socket.on('resetHero', (hero) => {
@@ -170,12 +171,12 @@ io.on('connection', function(socket){
     io.emit('onRespawnHero', hero)
   })
   socket.on('askHeros', () => {
-    for(let heroId in heros) {
-      socket.emit('onUpdateHero', heros[heroId])
+    for(let heroId in currentGame.heros) {
+      socket.emit('onUpdateHero', currentGame.heros[heroId])
     }
   })
   socket.on('deleteHero', (id) => {
-    delete heros[id]
+    delete currentGame.heros[id]
     io.emit('onDeleteHero', id)
   })
 
@@ -185,7 +186,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('updateGrid', (gridIn) => {
-    grid = gridIn
+    currentGame.grid = gridIn
     io.emit('onUpdateGrid', gridIn)
   })
 
@@ -195,7 +196,7 @@ io.on('connection', function(socket){
   // })
 
   socket.on('askGrid', () => {
-    io.emit('onUpdateGrid', grid)
+    io.emit('onUpdateGrid', currentGame.grid)
   })
 });
 

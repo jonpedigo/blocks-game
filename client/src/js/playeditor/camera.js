@@ -189,10 +189,10 @@ function render(ctx, hero, objects) {
   ////////////////
   let vertices = [...window.objects,...window.objectFactory].reduce((prev, object) => {
     if(object.removed) return prev
-    
+
     const extraProps = {}
     if(object.tags.invisible) {
-      ctx.fillStyle='#999';
+      ctx.fillStyle='red';
       ctx.globalAlpha = 0.2;
       drawObject(ctx, object);
       ctx.globalAlpha = 1.0;

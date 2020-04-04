@@ -10,14 +10,9 @@ function init() {
   //just for clients
   ///////////////////////////////
   if(!window.usePlayEditor) {
-  	window.socket.on('onAddObjects', (objectsAdded) => {
-      if(!window.objects) {
-        console.log('already set objects..?')
-        window.objects = []
-        window.objectsById = {}
-        window.socket.emit('askGrid');
-      }
 
+    // EDITOR CALLS THIS
+  	window.socket.on('onAddObjects', (objectsAdded) => {
   		window.objects.push(...objectsAdded)
   		objectsAdded.forEach((object) => {
   			physics.addObject(object)
@@ -31,6 +26,7 @@ function init() {
       }
   	})
 
+    // EDITOR CALLS THIS
   	window.socket.on('onResetObjects', (updatedObjects) => {
   		window.objects.forEach((object) => {
         if(object.removed) return
@@ -46,6 +42,7 @@ function init() {
       }
   	})
 
+    // EDITOR CALLS THIS
   	window.socket.on('onEditObjects', (editedObjects) => {
       editedObjects.forEach((obj) => {
         window.mergeDeep(window.objectsById[obj.id], obj)
@@ -57,22 +54,26 @@ function init() {
       }
   	})
 
+    // EDITOR CALLS THIS
   	window.socket.on('onSnapAllObjectsToGrid', () => {
   		window.snapAllObjectsToGrid()
   	})
 
+    // EDITOR CALLS THIS
     window.socket.on('onResetHero', (hero) => {
       if(hero.id === window.hero.id) {
         window.resetHero()
       }
     })
 
+    // EDITOR CALLS THIS
     window.socket.on('onRespawnHero', (hero) => {
       if(hero.id === window.hero.id) {
         window.respawnHero()
       }
     })
 
+    // EDITOR CALLS THIS
     window.socket.on('onAnticipateObject', (object) => {
   		window.anticipatedObject = object
   	})
@@ -83,9 +84,12 @@ function init() {
   /// only events for play editor
   ///////////////////////////////
   if(window.usePlayEditor) {
+    // EDITOR CALLS THIS
     window.socket.on('onResetObjects', () => {
       window.objects = []
     })
+
+    // CLIENT HOST CALLS THIS
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       if(!window.objects) {
         window.socket.emit('askGrid');
@@ -105,31 +109,14 @@ function init() {
         }
       }
     })
-    window.socket.on('onAddObjects', (objects) => {
-      if(!window.objects) {
-        console.log('already set objects..? - editor')
-        window.objects = objects
-        window.socket.emit('askGrid');
-        window.objectsById = objects.reduce((prev, next) => {
-          prev[next.id] = next
-          return prev
-        }, {})
-      }
-    })
   }
 
   ///////////////////////////////
   ///////////////////////////////
   //shared events
   ///////////////////////////////
-  // window.socket.on('onUpdateGridNode', (gridPos, update) => {
-  //   window.mergeDeep(window.grid.nodes[gridPos.x][gridPos.y], update)
-  //   if(window.pfgrid && update.hasObstacle !== undefined) {
-  //     window.pfgrid.setWalkableAt(gridPos.x, gridPos.y, !update.hasObstacle);
-  //     window.resetPaths = true
-  //   }
-  // })
 
+  // EDITOR CALLS THIS
   window.socket.on('onResetWorld', (hero) => {
     window.world = JSON.parse(JSON.stringify(window.defaultWorld))
     camera.clearLimit()
@@ -139,6 +126,7 @@ function init() {
     window.socket.emit('updateWorld', window.world)
   })
 
+  // CLIENT HOST CALLS THIS
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
     if(!window.heros[heroUpdated.id]) {
       window.heros[heroUpdated.id] = {}
@@ -159,6 +147,7 @@ function init() {
     }
   })
 
+  // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
   	for(let key in updatedWorld) {
   		const value = updatedWorld[key]
@@ -177,11 +166,11 @@ function init() {
   				camera.clearLimit();
   			}
   		}
+
       if(key === 'gameBoundaries') {
-        // breaks if game has not 'started' yet or 'loaded yet'
-        // gridTool.updateGridObstacles()
-        // window.resetPaths = true
-        // if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+        gridTool.updateGridObstacles()
+        window.resetPaths = true
+        if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
 
       if(key === 'globalTags') {
@@ -206,6 +195,7 @@ function init() {
     }
   })
 
+  // CLIENT HOST CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
   	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
@@ -234,6 +224,7 @@ function init() {
   	}
   })
 
+  // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveObject', (object) => {
     if(!window.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
@@ -243,6 +234,7 @@ function init() {
     window.objectsById[object.id].removed = true
   })
 
+  // EDITOR CALLS THIS
   window.socket.on('onDeleteObject', (object) => {
     if(window.usePlayEditor && window.editingObject.id === object.id) {
       window.editingObject = {
@@ -265,26 +257,7 @@ function init() {
     }
   })
 
-  window.socket.on('onSetGame', (game) => {
-    window.objects = game.objects
-    window.objects.forEach((object) => {
-      physics.addObject(object)
-    })
-
-    window.heros = game.heros
-    window.world = game.world
-    window.grid = game.grid
-    if(window.hero && !window.usePlayEditor) {
-      findHeroInNewWorld(game)
-      window.socket.emit('updateHero', window.hero)
-    }
-    if(window.usePlayEditor) {
-      window.socket.emit('updateGrid', window.grid)
-    }
-
-    window.socket.emit('updateWorld', window.world)
-  })
-
+  // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
     window.grid = grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
@@ -301,9 +274,32 @@ function init() {
     }
   })
 
-  window.socket.emit('askObjects');
-  window.socket.emit('askHeros');
-  window.socket.emit('askWorld');
+  // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
+  window.socket.emit('askCurrentGame')
+  window.socket.on('setGame', (game) => {
+    window.objects = game.objects
+    if(!window.objectsById) window.objectsById = {}
+    window.objects.forEach((object) => {
+      window.objectsById[object.id] = object
+      physics.addObject(object)
+    })
+
+    window.heros = game.heros
+    if(!window.hero && !window.usePlayEditor) {
+      findHeroInNewWorld(game)
+    }
+
+    window.world = window.mergeDeep(window.defaultWorld, game.world)
+    window.grid = game.grid
+    window.grid.nodes = gridTool.generateGridNodes(grid)
+    gridTool.updateGridObstacles()
+    if(!window.usePlayEditor) {
+      console.log('client')
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    } else console.log('editor')
+
+    window.startGame()
+  })
 }
 
 export default {
