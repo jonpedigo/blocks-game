@@ -44,6 +44,20 @@ function init() {
     fresh: false,
 
   }
+
+  let tagSelectEl = document.getElementById("tag-select")
+  for(var tag in window.tags) {
+    let tagEl = document.createElement('input')
+    tagEl.type ='checkbox'
+    tagEl.checked = window.tags[tag]
+    tagEl.id = 'tag-'+tag
+    tags[tag] = tagEl
+    let tagContainerEl = document.createElement('div')
+    tagContainerEl.innerHTML = tag
+    tagContainerEl.appendChild(tagEl)
+
+    tagSelectEl.appendChild(tagContainerEl)
+  }
 }
 
 export default {

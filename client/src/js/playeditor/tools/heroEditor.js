@@ -15,7 +15,7 @@ function init() {
     // this is what sync should mean. Does every edit send immediately?
     sendHeroUpdate({ tags: object.tags, flags: object.flags })
   }});
-  
+
   let heroModSelectEl = document.getElementById("hero-modifier-select")
   for(let modifierName in heroModifiers) {
     let modEl = document.createElement('div')
@@ -103,6 +103,27 @@ function init() {
   window.findHero = function() {
     camera.setCamera(ctx, window.heros[window.editingHero.id])
   }
+
+  window.setEditorToAnyHero = function () {
+    // init to any hero
+    if(window.heros.undefined) {
+      window.socket.emit('deleteHero', 'undefined')
+      delete window.heros.undefined
+    }
+
+    if(window.heros.null) {
+      window.socket.emit('deleteHero', 'null')
+      delete window.heros.null
+    }
+
+    for(var heroId in window.heros) {
+      if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
+        window.setEditingHero(window.heros[heroId])
+        break;
+      }
+    }
+  }
+
 }
 
 

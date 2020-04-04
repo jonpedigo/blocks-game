@@ -35,42 +35,9 @@ function init() {
     modEl.innerHTML = modifierName
     modEl.onclick=function() {
       window.sendObjectUpdate(objectModifiers[modifierName])
+      window.updateEditorState()
     }
     applyObjectModEl.appendChild(modEl)
-  }
-
-  let toolAddObjectEl = document.getElementById("tool-addObject")
-
-  let tagSelectEl = document.getElementById("tag-select")
-  for(var tag in window.tags) {
-    let tagEl = document.createElement('input')
-    tagEl.type ='checkbox'
-    tagEl.checked = window.tags[tag]
-    tagEl.id = 'tag-'+tag
-    tags[tag] = tagEl
-    let tagContainerEl = document.createElement('div')
-    tagContainerEl.innerHTML = tag
-    tagContainerEl.appendChild(tagEl)
-
-    tagSelectEl.appendChild(tagContainerEl)
-  }
-
-  //tool select functionality
-  let toolSelectEl = document.getElementById("tool-select")
-  for(var tool in TOOLS) {
-    let toolName = TOOLS[tool];
-    let toolEl = document.createElement('div')
-    toolEl.className = 'button';
-    toolEl.innerHTML = toolName
-    toolEl.onclick=function() {
-      console.log('current tool changed to ' + toolName)
-      window.currentTool = toolName
-      Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
-        e.className = "tool-feature invisible"
-      })
-      document.getElementById("tool-"+toolName).className='tool-feature visible'
-    }
-    toolSelectEl.appendChild(toolEl)
   }
 
   //mod select functionality
@@ -81,6 +48,7 @@ function init() {
     modEl.innerHTML = modifierName
     modEl.onclick=function() {
       window.sendObjectUpdate({ heroUpdate : heroModifiers[modifierName]})
+      window.updateEditorState()
     }
     modSelectHerosEl.appendChild(modEl)
   }
@@ -93,6 +61,7 @@ function init() {
     modEl.innerHTML =  modifierName
     modEl.onclick=function() {
       window.sendObjectUpdate({ objectUpdate : objectModifiers[modifierName]})
+      window.updateEditorState()
     }
     modSelectObjectsEl.appendChild(modEl)
   }
@@ -105,6 +74,7 @@ function init() {
     modEl.innerHTML = modifierName
     modEl.onclick=function() {
       window.sendObjectUpdate({ worldUpdate : worldModifiers[modifierName]})
+      window.updateEditorState()
     }
     modSelectWorldEl.appendChild(modEl)
   }
@@ -141,6 +111,11 @@ function init() {
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
+}
+
+window.updateEditorState = function() {
+  window.objecteditor.set(window.objects[window.editingObject.i])
+  window.objecteditor.expandAll()
 }
 
 window.sendObjectUpdate = function(objectUpdate) {

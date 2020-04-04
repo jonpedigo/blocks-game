@@ -207,8 +207,12 @@ function update (delta) {
       }
     }
 
+    heroPO.x = window.hero.x
+    heroPO.y = window.hero.y
+
     window.hero.onGround = false
 
+    system.update()
     heroCorrectionPhase(false, 1)
     system.update()
     heroCorrectionPhase(false, 2)

@@ -31,6 +31,24 @@ window.TOOLS = {
   GAME_MANAGER: 'gameManager',
 }
 window.currentTool = TOOLS.ADD_OBJECT;
+let toolAddObjectEl = document.getElementById("tool-addObject")
+//tool select functionality
+let toolSelectEl = document.getElementById("tool-select")
+for(var tool in TOOLS) {
+  let toolName = TOOLS[tool];
+  let toolEl = document.createElement('div')
+  toolEl.className = 'button';
+  toolEl.innerHTML = toolName
+  toolEl.onclick=function() {
+    console.log('current tool changed to ' + toolName)
+    window.currentTool = toolName
+    Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
+      e.className = "tool-feature invisible"
+    })
+    document.getElementById("tool-"+toolName).className='tool-feature visible'
+  }
+  toolSelectEl.appendChild(toolEl)
+}
 
 /////////////////////
 //DOM
@@ -138,6 +156,10 @@ function createArena(boundaries) {
   window.addObjects([wallTop, wallRight, wallLeft, wallBottom])
 }
 
+function start() {
+  window.setEditorToAnyHero()
+}
+
 function update(delta) {
   input.update(delta)
 }
@@ -148,6 +170,7 @@ function render(ctx) {
 
 export default {
   init,
+  start,
   render,
   update,
 }

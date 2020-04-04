@@ -28,6 +28,11 @@
 // Instead of creating one big block, create a bunch of small blocks, OPTION
 // Maybe make a diagonal wall..
 
+///////
+// Debounce editors so they submit save after a couple seconds wait or when you navigate away
+// reset spawning
+// set zoom multiplier to fit camera boundary
+
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'
@@ -50,11 +55,8 @@ import hero from './js/hero.js'
 import world from './js/world.js'
 import render from './js/render.js'
 import './js/events.js'
+import games from './js/games/index'
 
-import defaultGame from './js/games/default'
-import pacman from './js/games/pacman'
-window.defaultGame = defaultGame
-window.customGame = pacman
 
 window.init = function () {
   // SOCKET START
@@ -87,6 +89,7 @@ window.init = function () {
     editor.style = 'display:none';
   }
 
+  games.init()
   objects.init()
   world.init()
 	grid.init()
@@ -101,7 +104,6 @@ window.init = function () {
     camera.init()
 		input.init()
 		chat.init()
-		action.init()
     /// DEFAULT GAME FX
     if(window.defaultGame) {
       window.defaultGame.init()
@@ -204,6 +206,8 @@ window.startGame = function() {
       window.socket.emit('updateHeroPos', window.hero)
       localStorage.setItem('hero', JSON.stringify(window.hero));
     }, 100)
+  } else {
+    playEditor.start()
   }
 }
 window.init()
