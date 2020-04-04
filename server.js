@@ -56,7 +56,8 @@ io.on('connection', function(socket){
   })
 
   socket.on('saveGame', (name) => {
-    let data = {
+    let game = {
+      name
       objects: objects,
       heros,
       world,
@@ -69,13 +70,13 @@ io.on('connection', function(socket){
       }
       for(var heroId in heros) {
       }
-      data.hero = heros[heroId]
+      game.hero = heros[heroId]
     }
 
     if(!name) {
       name = Date.now()
     }
-    fs.writeFile('./data/' + name + '.json', JSON.stringify(data), 'utf8', () => {
+    fs.writeFile('./data/' + name + '.json', JSON.stringify(game), 'utf8', () => {
       console.log('game: ' + name + ' saved')
     });
   })

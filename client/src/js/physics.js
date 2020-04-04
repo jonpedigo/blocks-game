@@ -446,6 +446,11 @@ function update (delta) {
         } else {
           po.gameObject.lastPowerUpId = null
         }
+
+        /// CUSTOM GAME FX
+        if(window.customGame) {
+          window.customGame.onCollide(po.gameObject, body.gameObject)
+        }
       }
     }
   }

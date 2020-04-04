@@ -6,19 +6,19 @@ function init(){
 
 }
 
-function moveTowardsTarget(object, modifier) {
+function moveTowardsTarget(object, delta) {
   if(object.x > object.target.x) {
-    object.velocityX -= (object.speed || 100) * modifier
+    object.velocityX -= (object.speed || 100) * delta
   } else if(object.x < object.target.x) {
-    object.velocityX += (object.speed || 100) * modifier
+    object.velocityX += (object.speed || 100) * delta
   } else {
     object.velocityX = 0
   }
 
   if(object.y > object.target.y) {
-    object.velocityY -= (object.speed || 100) * modifier
+    object.velocityY -= (object.speed || 100) * delta
   } else if(object.y < object.target.y) {
-    object.velocityY += (object.speed || 100) * modifier
+    object.velocityY += (object.speed || 100) * delta
   } else {
     object.velocityY = 0
   }
@@ -55,9 +55,14 @@ function moveOnPath(object) {
   }
 }
 
-function update(hero, objects, modifier) {
+function update(hero, objects, delta) {
   objects.forEach((object) => {
     if(object.removed) return
+
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.intelligence(delta, object)
+    }
 
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -76,7 +81,7 @@ function update(hero, objects, modifier) {
         object.velocityY = 0
       } else moveOnPath(object)
     } else if(object.target) {
-      moveTowardsTarget(object, modifier)
+      moveTowardsTarget(object, delta)
     }
 
     if(object.tags && object.tags['zombie']) {

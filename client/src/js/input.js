@@ -185,6 +185,11 @@ function update(hero, delta) {
     }
   }
   positionInput()
+
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.input(keysDown, delta)
+  }
 }
 
 function getDirection() {

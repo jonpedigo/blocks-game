@@ -49,6 +49,9 @@ import pathfinding from './js/pathfinding.js'
 import utils from './js/utils.js'
 import './js/events.js'
 
+import pacman from './js/games/pacman'
+window.customGame = pacman
+
 // SOCKET START
 if (window.location.origin.indexOf('localhost') > 0) {
   window.socket = io.connect('http://localhost:4000');
@@ -230,6 +233,10 @@ var start = function () {
 		input.init()
 		chat.init()
 		action.init()
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.init()
+    }
 	}
 	main()
   if(!window.usePlayEditor) {
@@ -248,12 +255,21 @@ var start = function () {
 var update = function (delta) {
   if(!window.world.globalTags.paused) {
     input.update(hero, delta)
+
+    intelligence.update(window.hero, window.objects, delta)
+
     if(window.hero.arrowKeysBehavior !== 'grid') {
       physics.update(delta)
     } else {
       grid.update(window.hero, window.objects)
     }
-    intelligence.update(window.hero, window.objects, delta)
+
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.update(delta)
+    }
+
+
     window.resetPaths = false
   }
 
@@ -406,10 +422,14 @@ var main = function () {
   }else {
 		update(delta / 1000);
     render();
+
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.render(ctx)
+    }
+
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
-    } else {
-      chat.render(ctx)
     }
 
 		// physics.drawSystem(ctx, hero)
