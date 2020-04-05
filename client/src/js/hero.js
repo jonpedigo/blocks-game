@@ -46,16 +46,16 @@ function init() {
     }
   }
 
-  if(!window.usePlayEditor) {
-  	let savedHero = JSON.parse(localStorage.getItem('hero'));
-  	if(savedHero){
-  		window.hero = savedHero
+  if(window.isPlayer) {
+  	let savedHero = localStorage.getItem('hero');
+  	if(savedHero !== 'undefined'){
+  		window.hero = JSON.parse(savedHero)
       // in case we need to reset
       window.defaultHero.id = savedHero.id
   	} else if(!window.hero) {
       window.defaultHero.id = 'hero-'+Date.now()
   		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  		window.respawnHero()
+  		window.spawnHero()
   	}
   	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
   	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
@@ -66,15 +66,15 @@ function init() {
   	window.heros = {
   		[window.hero.id]:window.hero,
   	}
+  }
 
-  	physics.addObject(window.hero)
+  if(window.hero && window.host) {
+    physics.addObject(window.hero)
   }
 }
 
-window.respawnHero = function () {
+window.spawnHero = function () {
   // hero spawn point takes precedence
-  window.client.emit('onRespawnHero')
-
   if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
@@ -86,6 +86,13 @@ window.respawnHero = function () {
     window.hero.x = 960;
     window.hero.y = 960;
   }
+}
+
+window.respawnHero = function () {
+  // hero spawn point takes precedence
+  window.client.emit('onRespawnHero')
+
+  window.spawnHero()
 }
 
 window.resetHero = function(updatedHero) {

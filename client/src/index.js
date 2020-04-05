@@ -1,6 +1,5 @@
-// console log saved world so I can copy it to a file - dont save grid, regenerate grid
 // attack button ( like papa bear spears!! )
-// set game boundaries to delete objects - default game boundaries with a default grid..
+// set game boundaries to delete objects
 // make it easier for admin to move objects
 // TRUE zelda camera work
 
@@ -26,11 +25,10 @@
 // optimize shadow feature, not all vertices!
 // Instead of creating one big block, create a bunch of small blocks, OPTION
 // Maybe make a diagonal wall..
-// Local game state saving outside of server
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
-// EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games )
+// EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -83,8 +81,22 @@ window.init = function () {
   document.body.appendChild(window.canvas);
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-  if(!window.usePlayEditor) {
+  window.host = true
+  window.isPlayer = true
+
+  if(window.usePlayEditor) {
+    window.host = false
+    window.isPlayer = false
+  }
+
+  if(window.getParameterByName('editorPlayer')) {
+    window.usePlayEditor = false
+    window.editorPlayer = true
+    window.isPlayer = true
     window.host = true
+  }
+
+  if(!window.usePlayEditor) {
     var editor = document.getElementById("play-editor");
     editor.style = 'display:none';
   }
@@ -120,26 +132,27 @@ window.init = function () {
 // Update game objects
 var update = function (delta) {
   if(!window.gameState.paused) {
+
+    // non hosts will have to submit some sort of input, but not run the physics or ai sim
     input.update(delta)
-    intelligence.update(window.hero, window.objects, delta)
-    physics.update(delta)
 
-    /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.update(delta)
-    }
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.update(delta)
-    }
+    if(window.host) {
+      intelligence.update(window.hero, window.objects, delta)
+      physics.update(delta)
 
-    if(window.anticipatedObject) {
-      window.anticipateObjectAdd()
-    }
-  }
+      /// DEFAULT GAME FX
+      if(window.defaultGame) {
+        window.defaultGame.update(delta)
+      }
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.update(delta)
+      }
 
-  if(window.hero.animationZoomTarget) {
-    window.heroZoomAnimation()
+      if(window.anticipatedObject) {
+        window.anticipateObjectAdd()
+      }
+    }
   }
 };
 
@@ -176,6 +189,10 @@ var mainLoop = function () {
       window.customGame.render(ctx)
     }
 
+    if(window.hero.animationZoomTarget) {
+      window.heroZoomAnimation()
+    }
+
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
     }
@@ -195,7 +212,7 @@ var mainLoop = function () {
 var then;
 window.onGameLoaded = function() {
   then = Date.now()
-  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (!window.usePlayEditor && !window.hero)) {
+  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (window.isPlayer && !window.hero)) {
     console.log('game loaded without critical data, aborting')
     return
   }
@@ -203,9 +220,13 @@ window.onGameLoaded = function() {
   // begin main loop
   mainLoop()
 
-  if(!window.usePlayEditor) {
+  if(window.usePlayEditor) {
+    playEditor.loaded()
+  }
+
+  if(window.host) {
     function emitGameToEditor() {
-      if(window.host) {
+      if(!window.editorPlayer) {
         window.socket.emit('updateObjects', window.objects)
         window.socket.emit('updateGameState', window.gameState)
       }
@@ -220,8 +241,6 @@ window.onGameLoaded = function() {
     }
 
     setTimeout(emitGameToEditor, 100)
-  } else {
-    playEditor.loaded()
   }
 }
 window.init()

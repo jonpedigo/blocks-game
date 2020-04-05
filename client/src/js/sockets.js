@@ -7,9 +7,9 @@ function init() {
 
   ///////////////////////////////
   ///////////////////////////////
-  //just for clients
+  // just for host
   ///////////////////////////////
-  if(!window.usePlayEditor) {
+  if(window.host) {
 
     // EDITOR CALLS THIS
   	window.socket.on('onAddObjects', (objectsAdded) => {
@@ -60,20 +60,6 @@ function init() {
   	})
 
     // EDITOR CALLS THIS
-    window.socket.on('onResetHero', (hero) => {
-      if(hero.id === window.hero.id) {
-        window.resetHero()
-      }
-    })
-
-    // EDITOR CALLS THIS
-    window.socket.on('onRespawnHero', (hero) => {
-      if(hero.id === window.hero.id) {
-        window.respawnHero()
-      }
-    })
-
-    // EDITOR CALLS THIS
     window.socket.on('onAnticipateObject', (object) => {
   		window.anticipatedObject = object
   	})
@@ -91,27 +77,53 @@ function init() {
 
   ///////////////////////////////
   ///////////////////////////////
-  /// only events for play editor
+  /// for players
   ///////////////////////////////
-  if(window.usePlayEditor) {
+  // EDITOR CALLS THIS
+  if(window.isPlayer) {
+    window.socket.on('onResetHero', (hero) => {
+      if(hero.id === window.hero.id) {
+        window.resetHero()
+      }
+    })
+
+    // EDITOR CALLS THIS
+    window.socket.on('onRespawnHero', (hero) => {
+      if(hero.id === window.hero.id) {
+        window.respawnHero()
+      }
+    })
+  }
+
+  ///////////////////////////////
+  ///////////////////////////////
+  /// only events for non hosts
+  ///////////////////////////////
+  if(!window.host) {
     // EDITOR CALLS THIS
     window.socket.on('onResetObjects', () => {
       window.objects = []
     })
 
+    // client host calls this
+    window.socket.on('onUpdateGameState', (gameState) => {
+      window.gameState = gameState
+      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+        window.gamestateeditor.set(gameState)
+      }
+    })
+  }
+
+  if(window.editorPlayer || window.usePlayEditor) {
     // CLIENT HOST CALLS THIS
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
-      if(!window.objects) {
-        window.socket.emit('askGrid');
-      }
-
       window.objects = objectsUpdated
       window.objectsById = window.objects.reduce((prev, next) => {
         prev[next.id] = next
         return prev
       }, {})
 
-      if(window.editingObject.i >= 0) {
+      if(window.usePlayEditor && window.editingObject.i >= 0) {
         window.mergeDeep(window.editingObject, objectsUpdated[window.editingObject.i])
         if(window.syncObjectsToggle.checked) {
           window.objecteditor.set(window.editingObject)
@@ -125,29 +137,6 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
-
-  // client calls this
-  window.socket.on('onUpdateGameState', (gameState) => {
-    if(!window.host) {
-      window.gameState = gameState
-      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
-        window.gamestateeditor.set(gameState)
-      }
-    }
-  })
-
-  // editor calls this
-  window.socket.on('onEditGameState', (gameState) => {
-    if(window.host) {
-      window.gameState = gameState
-    }
-  })
-
-
-  // editor calls this
-  window.socket.on('onResetGameState', () => {
-    window.gameState = {}
-  })
 
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
@@ -203,7 +192,7 @@ function init() {
       if(key === 'gameBoundaries') {
         gridTool.updateGridObstacles()
         window.resetPaths = true
-        if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+        if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
       }
 
       if(key === 'globalTags') {
@@ -216,7 +205,7 @@ function init() {
           }
           if(tag === 'calculatePathCollisions' && window.grid.nodes) {
             gridTool.updateGridObstacles()
-            if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+            if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
           }
         }
       }
@@ -242,7 +231,9 @@ function init() {
 
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)
-  	} else if(window.usePlayEditor){
+  	}
+
+    if(window.usePlayEditor){
       if(!window.editingHero.id) {
         window.setEditorToAnyHero()
       }
@@ -253,7 +244,7 @@ function init() {
   window.socket.on('onRemoveObject', (object) => {
     if(!window.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
     window.objectsById[object.id].removed = true
@@ -271,13 +262,13 @@ function init() {
 
     if(!window.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(!window.usePlayEditor) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
     window.objects = window.objects.filter((obj) => obj.id !== object.id)
     delete window.objectsById[object.id]
 
-    if(!window.usePlayEditor) {
+    if(window.host) {
       physics.removeObjectById(object.id)
     }
   })
@@ -287,7 +278,7 @@ function init() {
     window.grid = grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
-    if(!window.usePlayEditor) {
+    if(window.host) {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
   })
@@ -315,7 +306,7 @@ function init() {
     // hero
     // if this is the first reload in a hackathon session we probably wont have a locally stored hero yet
     window.heros = game.heros
-    if(!window.hero && !window.usePlayEditor) {
+    if(!window.hero && window.isPlayer) {
       findHeroInNewWorld(game)
     }
 
@@ -327,10 +318,14 @@ function init() {
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
-    if(!window.usePlayEditor) {
-      console.log('client')
+    if(window.host) {
+      console.log('host')
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    } else console.log('editor')
+    } else if(window.usePlayEditor) {
+      console.log('editor')
+    } else {
+      console.log('non host')
+    }
 
     // gameState
     // if game state is on the object it very likely means it has already been loaded..
@@ -338,12 +333,10 @@ function init() {
       window.gameState = game.gameState
     }
 
-    if(window.usePlayEditor) {
-      window.tags = JSON.parse(JSON.stringify(window.defaultTags))
-    }
+    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
     window.changeGame(game.id)
-    if(!window.gameState.loaded && !window.usePlayEditor) {
+    if(!window.gameState.loaded && window.host) {
       /// didnt get to init because it wasnt set yet
       if(window.customGame) {
         window.customGame.init()
@@ -402,12 +395,12 @@ function init() {
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
-    if(!window.usePlayEditor) {
+    if(window.host) {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
     // reset to initial positions and state
-    if(!window.usePlayEditor) {
+    if(window.host) {
       findHeroInNewWorld(game)
     } else {
       // by default we reset all spawned objects
@@ -426,7 +419,7 @@ function init() {
       // if we've set the game it means it didnt happen on page load.
       // so we need to init it as well..
       window.customGame.init()
-      if(!window.usePlayEditor) {
+      if(window.host) {
         window.customGame.loaded()
       }
     }

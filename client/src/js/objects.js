@@ -124,7 +124,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     return newObject
   }).filter(obj => !!obj)
 
-  if(!window.usePlayEditor){
+  if(window.host){
     window.objects.push(...objects)
     objects.forEach((object) => {
       if(object.removed) return

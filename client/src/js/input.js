@@ -23,7 +23,7 @@ function init(){
     if(window.hero.flags.paused || window.gameState.paused) return
 
 
-    if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor && window.hero.tags.gravity) {
+    if(e.keyCode === 32 && window.hero.onGround && window.isPlayer && window.hero.tags.gravity) {
       window.hero.velocityY = hero.jumpVelocity
 
       lastJump = Date.now();
