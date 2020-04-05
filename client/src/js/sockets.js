@@ -189,7 +189,7 @@ function init() {
 
       // no need to over write nested values ( flags, tags )
   		if(key === 'lockCamera' && !window.usePlayEditor) {
-  			if(value.limitX) {
+  			if(value && value.limitX) {
   				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
   			} else {
   				camera.clearLimit();

@@ -22,16 +22,16 @@ function init() {
   var cleararea = document.getElementById("clear-area-selected")
   cleararea.addEventListener('click', (e) => {
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateWorld', { gameBoundaries: {} })
+      window.socket.emit('updateWorld', { gameBoundaries: null })
     }
     if(window.selectorCameraToggle.checked) {
-      window.socket.emit('updateWorld', { lockCamera: {} })
+      window.socket.emit('updateWorld', { lockCamera: null })
     }
     if(window.selectorSpawnToggle.checked) {
       window.socket.emit('updateWorld', { worldSpawnPointX: null, worldSpawnPointY: null })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateWorld', { proceduralBoundaries: {} })
+      window.socket.emit('updateWorld', { proceduralBoundaries: null })
     }
   })
 
@@ -116,7 +116,7 @@ function init() {
   var setSelectedToGameBoundary = document.getElementById("set-selected-to-game-boundary");
   setSelectedToGameBoundary.addEventListener('click', function(){
     const value = window.world.gameBoundaries
-    if(window.world.gameBoundaries.x >= 0) {
+    if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0) {
       if(window.selectorCameraToggle.checked) {
         const { x, y, width, height} = value
         const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
@@ -128,6 +128,22 @@ function init() {
       if(window.selectorProceduralToggle.checked) {
         window.socket.emit('updateWorld', { proceduralBoundaries: value })
       }
+    }
+  })
+
+  var setZoomToSelected = document.getElementById("set-zoom-to-selected");
+  setZoomToSelected.addEventListener('click', function(){
+    if(window.selectorGameToggle.checked) {
+      let zoomMultiplier = window.world.gameBoundaries.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      window.sendHeroUpdate({ zoomMultiplier })
+    }
+    if(window.selectorCameraToggle.checked) {
+      let zoomMultiplier = window.world.lockCamera.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      window.sendHeroUpdate({ zoomMultiplier })
+    }
+    if(window.selectorProceduralToggle.checked) {
+      let zoomMultiplier = window.world.proceduralBoundaries.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      window.sendHeroUpdate({ zoomMultiplier })
     }
   })
 }

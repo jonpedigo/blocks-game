@@ -269,7 +269,7 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  if(window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
+  if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
     const {x, y, width, height } = convertToGridXY(window.world.gameBoundaries)
     if(attemptingX > x + width - 1) {
       return false
@@ -282,7 +282,7 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
   }
 
-  if(window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+  if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
     const {x, y, width, height } = convertToGridXY(window.world.gameBoundaries)
     if(attemptingX > x + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
       return false

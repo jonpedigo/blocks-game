@@ -65,6 +65,7 @@ function init() {
     window.mergeDeep(window.editingHero, update)
     window.socket.emit('updateHero', window.editingHero)
   }
+  window.sendHeroUpdate = sendHeroUpdate
 
   function sendEditorHeroOther(update) {
     // get the hero from the editor, everything except for the x, y values
