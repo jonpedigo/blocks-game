@@ -11,7 +11,6 @@ function init() {
 
 // once we have loaded up the game from the server for the first time, not on reload
 function loaded() {
-  console.log('pausing')
   window.gameState.paused = true
 }
 
@@ -35,6 +34,7 @@ function onKeyDown(keysDown) {
 }
 
 function input(keysDown, delta) {
+  if(window.hero.flags.paused || window.gameState.paused) return
 
 }
 
@@ -193,15 +193,6 @@ function onCollide(agent, collider, result, removeObjects) {
 
 // after input, intel, physics, but before render
 function update(delta) {
-  /// zoom targets
-  if(window.hero.animationZoomTarget) {
-    window.heroZoomAnimation()
-  }
-
-  if(window.anticipatedObject) {
-    window.anticipateObjectAdd()
-  }
-
   window.resetPaths = false
 }
 

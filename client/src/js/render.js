@@ -3,6 +3,9 @@ import chat from './chat.js'
 import feedback from './feedback.js'
 
 function update() {
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = 'none';
+
   let vertices = [...window.objects].reduce((prev, object) => {
     if(object.removed) return prev
     if(object.tags.invisible) return prev

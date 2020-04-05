@@ -6,6 +6,7 @@ const camera = {
   centerX: null,
   centerY: null,
 }
+window.camera = camera
 
 function setLimit(limitX = null, limitY = null, centerX = camera.x, centerY = camera.y) {
   camera.centerX = centerX
@@ -38,7 +39,6 @@ function get(){
 function set(ctx = window.ctx, hero = window.hero) {
   camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
   if(window.hero.animationZoomMultiplier) camera.multiplier = window.hero.animationZoomMultiplier / window.canvasMultiplier
-
   if (camera.limitX) {
     const potentialX = ((hero.x + hero.width/2)/camera.multiplier)
 
@@ -79,6 +79,16 @@ function drawName(ctx, object){
 }
 
 function drawObject(ctx, object, withNames = false) {
+  // if(object.color) ctx.fillStyle = object.color
+  ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
+  // ctx.fillStyle = 'white';
+
+  if(withNames) {
+    drawName(ctx, object)
+  }
+}
+
+function drawText(ctx, object, withNames = false) {
   // if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
   // ctx.fillStyle = 'white';

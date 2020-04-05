@@ -132,6 +132,14 @@ var update = function (delta) {
     if(window.customGame) {
       window.customGame.update(delta)
     }
+
+    if(window.anticipatedObject) {
+      window.anticipateObjectAdd()
+    }
+  }
+
+  if(window.hero.animationZoomTarget) {
+    window.heroZoomAnimation()
   }
 };
 

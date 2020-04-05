@@ -6,8 +6,7 @@ function pad(num, size) {
 }
 
 function init() {
-  window.hero.score = 0;
-  window.hero.flags.showScore = false
+
 }
 
 function draw(ctx) {
@@ -20,6 +19,7 @@ function draw(ctx) {
   }
 
   if(window.hero.flags.showScore) {
+    ctx.fillStyle = 'white'
     ctx.font = "21px Courier New";
     ctx.fillText(pad(window.hero.score, 4), 18, 30)
   }

@@ -8,9 +8,20 @@ function init(){
   window.hero.inputDirection = 'up'
 
   window.addEventListener("keydown", function (e) {
+    keysDown[e.keyCode] = true
+
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.onKeyDown(keysDown)
+    }
+
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.onKeyDown(keysDown)
+    }
+
     if(window.hero.flags.paused || window.gameState.paused) return
 
-    keysDown[e.keyCode] = true
 
     if(e.keyCode === 32 && window.hero.onGround && !window.usePlayEditor && window.hero.tags.gravity) {
       window.hero.velocityY = hero.jumpVelocity
@@ -54,16 +65,6 @@ function init(){
     //   hero.velocityX = 200
     //   hero.velocityY = -400
     // }
-
-    /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.onKeyDown(keysDown)
-    }
-
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.onKeyDown(keysDown)
-    }
   }, false)
 
   window.addEventListener("keyup", function (e) {

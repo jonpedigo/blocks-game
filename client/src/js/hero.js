@@ -149,6 +149,8 @@ window.getViewBoundaries = function(hero) {
     rightDiff,
     topDiff,
     bottomDiff,
+    cameraWidth: window.CONSTANTS.PLAYER_CAMERA_WIDTH,
+    cameraHeight: window.CONSTANTS.PLAYER_CAMERA_HEIGHT,
   }
 }
 
