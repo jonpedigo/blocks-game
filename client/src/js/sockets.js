@@ -77,6 +77,16 @@ function init() {
     window.socket.on('onAnticipateObject', (object) => {
   		window.anticipatedObject = object
   	})
+
+    // EDITOR CALLS THIS
+    window.socket.on('onStartGame', () => {
+      if(window.defaultGame) {
+        window.defaultGame.start()
+      }
+      if(window.customGame) {
+        window.customGame.start()
+      }
+    })
   }
 
   ///////////////////////////////
@@ -126,7 +136,6 @@ function init() {
   })
 
   window.socket.on('onEditGameState', (gameState) => {
-    console.log("?")
     if(window.host) {
       window.gameState = gameState
     }
@@ -319,12 +328,25 @@ function init() {
     } else console.log('editor')
 
     // gameState
-    console.log(game.gameState)
+    // if game state is on the object it very likely means it has already been loaded..
     if(game.gameState) {
       window.gameState = game.gameState
     }
 
-    window.startGame()
+    if(!window.gameState.loaded && !window.usePlayEditor) {
+      /// DEFAULT GAME FX
+      if(window.defaultGame) {
+        window.defaultGame.loaded()
+      }
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.loaded()
+      }
+
+      window.gameState.loaded = true
+    }
+
+    window.onGameLoaded()
   })
 
   // this is switching between games
@@ -376,7 +398,15 @@ function init() {
     // reset game state
     window.gameState = {}
 
-    window.startGame()
+    if(window.defaultGame) {
+      window.defaultGame.loaded()
+    }
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.loaded()
+    }
+    window.gameState.loaded = true
+    window.onGameLoaded()
   })
 }
 

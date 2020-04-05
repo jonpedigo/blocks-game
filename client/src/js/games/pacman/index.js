@@ -7,8 +7,13 @@ function init() {
 
 }
 
-function start() {
+function loaded() {
 
+}
+
+function start() {
+  window.resetSpawnAreasAndObjects()
+  window.respawnHero()
 }
 
 function onKeyDown(keysDown) {
@@ -37,6 +42,7 @@ function render(ctx) {
 
 export default {
   init,
+  loaded,
   start,
   onKeyDown,
   input,

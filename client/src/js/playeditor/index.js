@@ -156,7 +156,7 @@ function createArena(boundaries) {
   window.addObjects([wallTop, wallRight, wallLeft, wallBottom])
 }
 
-function start() {
+function loaded() {
   window.setEditorToAnyHero()
 }
 
@@ -170,7 +170,7 @@ function render(ctx) {
 
 export default {
   init,
-  start,
+  loaded,
   render,
   update,
 }

@@ -45,20 +45,24 @@ function init() {
     window.resetSpawnAreasAndObjects()
   })
 
-  window.syncGameStateToggle = document.getElementById('sync-game-state')
+  var startGameButton = document.getElementById("start-game");
+  startGameButton.addEventListener('click', () => {
+    window.startGame()
+  })
 
-  window.resetSpawnAreasAndObjects = function() {
-    window.objects.forEach((object) => {
-      if(object.removed) return
-      if(object.tags.spawnZone) {
-        object.spawnedIds.forEach((id) => {
-          window.socket.emit('deleteObject', window.objectsById[id])
-        })
-        object.spawnedIds = []
-        object.spawnPool = object.initialSpawnPool
-      }
-    })
-  }
+  var restartGameButton = document.getElementById("restart-game");
+  restartGameButton.addEventListener('click', () => {
+    window.socket.emit('resetGameState')
+    window.socket.emit('startGame')
+  })
+
+  var pauseResumeGameToggle = document.getElementById("pause-resume-game");
+  pauseResumeGameToggle.addEventListener('click', () => {
+    emitEditorGameState({ paused: !window.gameState.paused })
+  })
+
+
+  window.syncGameStateToggle = document.getElementById('sync-game-state')
 
   window.resetObjects = function() {
     window.socket.emit('resetObjects')
@@ -69,10 +73,28 @@ function init() {
   window.setGame = function() {
     window.socket.emit('setGame', document.getElementById('game-name').value)
   }
-
-  function emitEditorGameState (gameState) {
-    window.socket.emit('editGameState', gameState)
+  window.startGame = function() {
+    window.socket.emit('startGame')
   }
+
+  function emitEditorGameState (gameStateUpdate) {
+    window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
+  }
+}
+
+// client uses this sometimes
+window.resetSpawnAreasAndObjects = function() {
+  window.objects.forEach((object) => {
+    if(object.removed) return
+    if(object.tags.spawnZone) {
+      object.spawnedIds.forEach((id) => {
+        if(!window.objectsById[id]) return
+        window.socket.emit('deleteObject', window.objectsById[id])
+      })
+      object.spawnedIds = []
+      object.spawnPool = object.initialSpawnPool
+    }
+  })
 }
 
 export default {

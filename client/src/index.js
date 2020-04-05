@@ -20,19 +20,18 @@
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
 // stop player (velocity)
 // objects that are children of other objects and therefore follow them??
-// toggle for show grid, show names, show camera area... stc
 // controlling X or Y scroll. For example. allow X croll, but not Y scroll
 // lazy scroll that is not not immediate! Smoother...
 // leveling up
 // optimize shadow feature, not all vertices!
 // Instead of creating one big block, create a bunch of small blocks, OPTION
 // Maybe make a diagonal wall..
-// Local game state saving outside of server. DO NOT SAVE GAME STATE INSIDE OF file game data
+// Local game state saving outside of server
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
-// reset spawning
 // set zoom multiplier to fit camera boundary
+// EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games )
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -186,10 +185,10 @@ var mainLoop = function () {
 };
 
 var then;
-window.startGame = function() {
+window.onGameLoaded = function() {
   then = Date.now()
   if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (!window.usePlayEditor && !window.hero)) {
-    console.log('trying to start game without critical data aborting')
+    console.log('game loaded without critical data, aborting')
     return
   }
 
@@ -197,15 +196,6 @@ window.startGame = function() {
   mainLoop()
 
   if(!window.usePlayEditor) {
-    /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.start()
-    }
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.start()
-    }
-
     setInterval(() => {
       if(window.host) {
         window.socket.emit('updateObjects', window.objects)
@@ -215,7 +205,7 @@ window.startGame = function() {
       localStorage.setItem('hero', JSON.stringify(window.hero));
     }, 100)
   } else {
-    playEditor.start()
+    playEditor.loaded()
   }
 }
 window.init()

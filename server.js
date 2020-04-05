@@ -76,6 +76,11 @@ io.on('connection', function(socket){
     if(!name) {
       name = Date.now()
     }
+
+    // never save gameState
+    if(currentGame.gameState) {
+      delete currentGame.gameState
+    }
     fs.writeFile('./data/' + name + '.json', JSON.stringify(currentGame), 'utf8', () => {
       console.log('game: ' + name + ' saved')
     });
@@ -120,6 +125,10 @@ io.on('connection', function(socket){
     io.emit('onEditGameState', gameState)
   })
 
+  socket.on('startGame', () => {
+    io.emit('onStartGame')
+  })
+
   ///////////////////////////
   ///////////////////////////
   ///////////////////////////
@@ -147,6 +156,7 @@ io.on('connection', function(socket){
     io.emit('onRemoveObject', object)
   })
   socket.on('deleteObject', (object) => {
+    console.log(object)
     for(let i = 0; i < currentGame.objects.length; i++) {
   		if(currentGame.objects[i].id === object.id){
   			currentGame.objects.splice(i, 1)

@@ -4,11 +4,21 @@ import camera from '../../camera.js'
 import pathfinding from '../../pathfinding.js'
 import action from './action'
 
+// we organize the code on the front end, default values, etc
 function init() {
 
 }
 
+// once we have loaded up the game from the server for the first time, not on reload
+function loaded() {
+  console.log('pausing')
+  window.gameState.paused = true
+}
+
+// this is an editor event but can also serve as a client event when its standalone arcade mode
+// called by the editor
 function start() {
+  window.gameState.paused = false
   window.gameState.startTime = Date.now()
 }
 
@@ -181,6 +191,7 @@ function onCollide(agent, collider, result, removeObjects) {
   }
 }
 
+// after input, intel, physics, but before render
 function update(delta) {
   /// zoom targets
   if(window.hero.animationZoomTarget) {
@@ -200,6 +211,7 @@ function render(ctx) {
 
 export default {
   init,
+  loaded,
   start,
   onKeyDown,
   input,
