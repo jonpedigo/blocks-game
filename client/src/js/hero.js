@@ -78,11 +78,9 @@ window.respawnHero = function () {
   if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
     window.hero.x = window.hero.spawnPointX;
     window.hero.y = window.hero.spawnPointY;
-    console.log('?x')
   } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
     window.hero.x = window.world.worldSpawnPointX
     window.hero.y = window.world.worldSpawnPointY
-    console.log('?xx')
   } else {
     // default pos
     window.hero.x = 960;

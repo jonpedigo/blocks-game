@@ -138,6 +138,7 @@ function intelligence(object, delta) {
         y: object.y,
         width: object.width,
         height: object.height,
+        id: 'spawned-' + object.spawnedIds.length + object.id + Date.now(),
         ...object.spawnObject,
       }
       // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)

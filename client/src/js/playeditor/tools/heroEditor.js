@@ -1,4 +1,4 @@
-import heroModifiers from '../heroModifiers.js'
+import heroModifiers from '../modifiers/heroModifiers.js'
 import camera from '../camera.js'
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'

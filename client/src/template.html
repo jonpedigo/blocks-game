@@ -16,24 +16,6 @@
     </div>
     <hr/>
 
-    <div id='tool-heroEditor' class="tool-feature invisible">
-      <button id='send-hero-pos'>Send Editor Hero Pos</button>
-      <button id='send-hero'>Send Editor Hero Other</button>
-      <hr>
-      <button id='find-hero'>Find Hero</button>
-      <button id='respawn-hero'>Respawn Hero</button>
-      <button id='reset-hero'>Reset Hero To Default</button>
-      <button id='hero-zoomIn'>Hero - Zoom In</button>
-      <button id='hero-zoomOut'>Hero - Zoom Out</button>
-      <hr>
-      <button id='delete-hero'>Delete Hero</button>
-      <hr>
-      <div><input type='checkbox' id='click-to-set-spawn-hero'>Click to set spawn</input></div>
-      <div><input type='checkbox' id='sync-hero'>Sync Hero</input></div>
-      <hr>
-      <div id='hero-modifier-select'></div>
-    </div>
-
     <div id='tool-addObject' class="tool-feature invisible">
       <div><input type='radio' name="add-object" checked id='add-object-grid-node'>grid node add</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-dot'>little dot</input></div>
@@ -50,12 +32,6 @@
       <hr>
       <div id="tag-select">
       </div>
-    </div>
-
-    <div id='tool-procedural' class="tool-feature invisible">
-      <button id='create-maze'>create maze</button>
-      <button id='create-grid'>create grid</button>
-      <button id='create-arena'>create arena</button>
     </div>
 
     <div id='tool-worldEditor' class="tool-feature invisible">
@@ -100,17 +76,29 @@
       <div id='modifier-select-world'></div>
     </div>
 
-    <!-- <div id='tool-gameFeel' class="tool-feature invisible">
-      <button id='set-preset-asteroids'>Set Hero - Asteroids</button>
-      <button id='set-preset-zelda'>Set Hero - Zelda</button>
-      <button id='set-preset-mario'>Set Hero - Mario</button>
-      <button id='set-preset-pokemon'>Set Hero - Pokemon</button>
-      <button id='set-preset-snake'>Set Hero - Snake</button>
-      <hr/>
-      <button id='set-preset-world-arenaboundary'>Set World - Arena Boundary</button>
-      <button id='set-preset-world-arenacyclical'>Set World - Arena Cyclical</button>
-      <button id='set-preset-world-adventurezoomed'>Set World - Adventure Zoomed</button>
-    </div> -->
+    <div id='tool-heroEditor' class="tool-feature invisible">
+      <button id='send-hero-pos'>Send Editor Hero Pos</button>
+      <button id='send-hero'>Send Editor Hero Other</button>
+      <hr>
+      <button id='find-hero'>Find Hero</button>
+      <button id='respawn-hero'>Respawn Hero</button>
+      <button id='reset-hero'>Reset Hero To Default</button>
+      <button id='hero-zoomIn'>Hero - Zoom In</button>
+      <button id='hero-zoomOut'>Hero - Zoom Out</button>
+      <hr>
+      <button id='delete-hero'>Delete Hero</button>
+      <hr>
+      <div><input type='checkbox' id='click-to-set-spawn-hero'>Click to set spawn</input></div>
+      <div><input type='checkbox' id='sync-hero'>Sync Hero</input></div>
+      <hr>
+      <div id='hero-modifier-select'></div>
+    </div>
+
+    <div id='tool-procedural' class="tool-feature invisible">
+      <button id='create-maze'>create maze</button>
+      <button id='create-grid'>create grid</button>
+      <button id='create-arena'>create arena</button>
+    </div>
 
     <div id='tool-gameManager' class="tool-feature invisible">
       <button id='zoom-out-to-universe'>Zoom hero to universe</button>
@@ -121,6 +109,7 @@
       <button id='set-game'>Set game</button>
       <hr>
       <button id='reset-objects'>Reset Objects</button>
+      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Objects</button>
       <button id='new-game'>New game</button>
     </dif>
 </body>

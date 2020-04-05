@@ -331,10 +331,9 @@ function update (delta) {
   // OBJECTS COLLIDING WITH OTHER OBJECTS
   /////////////////////////////////////////////////////
   for(let id in physicsObjects){
-    if(!physicsObjects[id]) continue
-    if(physicsObjects[id].gameObject.removed) continue
-    if(id.indexOf('hero') > -1) continue
     let po = physicsObjects[id]
+    if(po.gameObject.removed) continue
+    if(id.indexOf('hero') > -1) continue
     let potentials = po.potentials()
     let result = po.createResult()
     for(const body of potentials) {
@@ -370,10 +369,9 @@ function update (delta) {
 
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
-      if(!physicsObjects[id]) continue
-      if(physicsObjects[id].gameObject.removed) continue
       if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
+      if(po.gameObject.removed) continue
       // if you are creating a result up here youll only be able to correct for one obj at a time
       // if you are accumulating the result like for the hero
       let result = po.createResult()

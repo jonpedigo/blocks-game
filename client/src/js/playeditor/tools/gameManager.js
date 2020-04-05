@@ -29,6 +29,24 @@ function init() {
     window.resetObjects()
   })
 
+  var resetSpawnAreasAndObjects = document.getElementById("reset-spawn-and-objects");
+  resetSpawnAreasAndObjects.addEventListener('click', function(){
+    console.log('?')
+    window.objects.forEach((object) => {
+      if(object.removed) return
+
+      console.log(object)
+
+      if(object.tags.spawnZone) {
+        object.spawnedIds.forEach((id) => {
+          window.socket.emit('deleteObject', window.objectsById[id])
+        })
+        object.spawnedIds = []
+        object.spawnPool = object.initialSpawnPool
+      }
+    })
+  })
+
   window.resetObjects = function() {
     window.socket.emit('resetObjects')
   }
