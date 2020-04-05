@@ -61,6 +61,12 @@ function init() {
     emitEditorGameState({ paused: !window.gameState.paused })
   })
 
+  var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
+  copyGameToClipBoard.addEventListener('click', () => {
+    var copyText = JSON.stringify(window.game);
+    window.copyToClipBoard(copyText)
+  })
+
 
   window.syncGameStateToggle = document.getElementById('sync-game-state')
 
@@ -79,6 +85,20 @@ function init() {
 
   function emitEditorGameState (gameStateUpdate) {
     window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
+  }
+
+  window.copyToClipBoard = function(copyText) {
+    navigator.permissions.query({name: "clipboard-write"}).then(result => {
+      if (result.state == "granted" || result.state == "prompt") {
+        /* write to the clipboard now */
+        navigator.clipboard.writeText(copyText).then(function() {
+          console.log('copied', window.game.id, 'to clipboard')
+        }, function() {
+          console.log('copy failed')
+          /* clipboard write failed */
+        });
+      }
+    });
   }
 }
 

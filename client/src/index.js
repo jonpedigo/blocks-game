@@ -79,7 +79,7 @@ window.init = function () {
   window.ctx = window.canvas.getContext("2d");
   window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
   window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
-  window.canvas.id = 'game'
+  window.canvas.id = 'game-canvas'
   document.body.appendChild(window.canvas);
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'

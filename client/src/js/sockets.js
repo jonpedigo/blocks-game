@@ -303,6 +303,7 @@ function init() {
   // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
   window.socket.emit('askRestoreCurrentGame')
   window.socket.on('onAskRestoreCurrentGame', (game) => {
+    window.game = game
     // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}
@@ -343,12 +344,18 @@ function init() {
 
     window.changeGame(game.id)
     if(!window.gameState.loaded && !window.usePlayEditor) {
+      /// didnt get to init because it wasnt set yet
+      if(window.customGame) {
+        window.customGame.init()
+      }
+
       /// DEFAULT GAME FX
       if(window.defaultGame) {
         window.defaultGame.loaded()
       }
       /// CUSTOM GAME FX
       if(window.customGame) {
+        window.customGame.init()
         window.customGame.loaded()
       }
 
@@ -360,6 +367,8 @@ function init() {
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
+    window.game = game
+
     // if theres already a game going on, need to unload it
     if(window.objects.length) {
       if(window.usePlayEditor) {
@@ -421,9 +430,7 @@ function init() {
         window.customGame.loaded()
       }
     }
-
     window.gameState.loaded = true
-    window.onGameLoaded()
   })
 }
 

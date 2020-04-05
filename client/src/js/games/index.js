@@ -13,6 +13,7 @@ function init() {
 
 window.changeGame = function(id) {
   window.customGame = customGames[id]
+  document.getElementById('current-game-id').innerHTML = id
 }
 
 export default {

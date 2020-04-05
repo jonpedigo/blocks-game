@@ -30,13 +30,13 @@ let currentGame = {
   gameState: {}
 }
 
-let initialGame = 'default'
-setGame(initialGame, (game) => {
-  console.log('initial game set to ' + initialGame)
+let initialGameId = 'default'
+setGame(initialGameId, (game) => {
+  console.log('initial game set to ' + initialGameId)
 })
 
-function setGame(name, cb) {
-  fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
+function setGame(id, cb) {
+  fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
     if (err){
         console.log(err);
     } else {
@@ -61,8 +61,8 @@ io.on('connection', function(socket){
   // Game
   ///////////////////////////
   ///////////////////////////
-  socket.on('saveGame', (name) => {
-    currentGame.name = name
+  socket.on('saveGame', (id) => {
+    currentGame.id = id
 
     if(!currentGame.world.globalTags.shouldRestoreHero && !currentGame.world.globalTags.isAsymmetric) {
       if(Object.keys(currentGame.heros).length > 1) {
@@ -73,16 +73,16 @@ io.on('connection', function(socket){
       currentGame.hero = currentGame.heros[heroId]
     }
 
-    if(!name) {
-      name = Date.now()
+    if(!id) {
+      id = Date.now()
     }
 
     // never save gameState
     if(currentGame.gameState) {
       delete currentGame.gameState
     }
-    fs.writeFile('./data/' + name + '.json', JSON.stringify(currentGame), 'utf8', () => {
-      console.log('game: ' + name + ' saved')
+    fs.writeFile('./data/' + id + '.json', JSON.stringify(currentGame), 'utf8', () => {
+      console.log('game: ' + id + ' saved')
     });
   })
 
@@ -156,7 +156,6 @@ io.on('connection', function(socket){
     io.emit('onRemoveObject', object)
   })
   socket.on('deleteObject', (object) => {
-    console.log(object)
     for(let i = 0; i < currentGame.objects.length; i++) {
   		if(currentGame.objects[i].id === object.id){
   			currentGame.objects.splice(i, 1)

@@ -11,12 +11,12 @@ function init() {
     y: null,
   }
 
-  window.document.getElementById('game').addEventListener("mousemove", function(e) {
+  window.document.getElementById('game-canvas').addEventListener("mousemove", function(e) {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
   })
 
-  window.document.getElementById('game').addEventListener('click',function(e){
+  window.document.getElementById('game-canvas').addEventListener('click',function(e){
     if(window.clickStart.x && window.clickStart.y) {
       //second click
       if(window.tools[window.currentTool].onSecondClick) window.tools[window.currentTool].onSecondClick(e)
