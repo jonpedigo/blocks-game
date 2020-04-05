@@ -30,7 +30,6 @@
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
-// set zoom multiplier to fit camera boundary
 // EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games )
 
 import './styles/index.scss'

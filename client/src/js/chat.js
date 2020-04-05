@@ -1,8 +1,5 @@
 const keysDown = {}
 function init() {
-	window.hero.chat = []
-	window.hero.flags.showChat = false
-
 	window.addEventListener("keydown", function (e) {
 		if(e.keyCode == '32'){
 			window.hero.chat.shift()

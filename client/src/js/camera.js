@@ -72,7 +72,7 @@ function set(ctx = window.ctx, hero = window.hero) {
 
 function drawName(ctx, object){
 	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "12px Helvetica";
+	ctx.font = "12px Courier New";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText(object.name ? object.name : '', object.x - camera.x, object.y - camera.y);

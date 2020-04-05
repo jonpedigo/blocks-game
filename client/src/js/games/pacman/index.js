@@ -75,7 +75,7 @@ function render(ctx) {
 
     ctx.fillStyle = `rgba(0,0,0, ${.8 * multiplier})`;
     ctx.fillRect(0, 0, window.CONSTANTS.PLAYER_CANVAS_WIDTH, window.CONSTANTS.PLAYER_CANVAS_HEIGHT);
-    ctx.font =`20pt Arial`
+    ctx.font =`20pt Courier New`
     ctx.fillStyle =`rgba(255,255,255, ${1 * multiplier})`;
     let text = window.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
     let metrics = ctx.measureText(text)
