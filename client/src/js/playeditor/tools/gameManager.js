@@ -93,6 +93,7 @@ window.resetSpawnAreasAndObjects = function() {
       })
       object.spawnedIds = []
       object.spawnPool = object.initialSpawnPool
+      object.spawnWait = false
     }
   })
 }

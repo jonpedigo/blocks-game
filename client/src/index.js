@@ -105,15 +105,16 @@ window.init = function () {
 		input.init()
 		chat.init()
     gameState.init()
-    /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.init()
-    }
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.init()
-    }
 	}
+
+  /// DEFAULT GAME FX
+  if(window.defaultGame) {
+    window.defaultGame.init()
+  }
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.init()
+  }
 };
 
 // Update game objects
@@ -155,7 +156,7 @@ var mainLoop = function () {
 	var now = Date.now();
 	var delta = now - then;
   window.fps = 1000 / delta;
-
+  window.lastDelta = delta;
 	if(delta > 23) delta = 23
 
 	if(window.usePlayEditor) {
@@ -203,14 +204,22 @@ window.onGameLoaded = function() {
   mainLoop()
 
   if(!window.usePlayEditor) {
-    setInterval(() => {
+    function emitGameToEditor() {
       if(window.host) {
         window.socket.emit('updateObjects', window.objects)
         window.socket.emit('updateGameState', window.gameState)
       }
       window.socket.emit('updateHeroPos', window.hero)
       localStorage.setItem('hero', JSON.stringify(window.hero));
-    }, 100)
+
+      let timeout = window.lastDelta * 7
+      if(timeout > 250) {
+        timeout = 250
+      }
+      setTimeout(emitGameToEditor, timeout)
+    }
+
+    setTimeout(emitGameToEditor, 100)
   } else {
     playEditor.loaded()
   }

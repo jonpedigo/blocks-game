@@ -5,22 +5,26 @@ import pathfinding from '../../pathfinding.js'
 import action from './action'
 
 // we organize the code on the front end, default values, etc
+// happens on every load, including reload
+// on client and editor
 function init() {
 
 }
 
 // once we have loaded up the game from the server for the first time, not on reload
+// interact with other values and initial game state
+// only on client
 function loaded() {
-  window.gameState.paused = true
+
 }
 
-// this is an editor event but can also serve as a client event when its standalone arcade mode
-// called by the editor
+// called by editor or player
+// only on client
 function start() {
-  window.gameState.paused = false
-  window.gameState.startTime = Date.now()
+
 }
 
+// only on client
 function onKeyDown(keysDown) {
   if(90 in keysDown) {
     if(window.hero.actionButtonBehavior === 'shootBullet') {
@@ -33,11 +37,13 @@ function onKeyDown(keysDown) {
   }
 }
 
+// only on client
 function input(keysDown, delta) {
   if(window.hero.flags.paused || window.gameState.paused) return
 
 }
 
+// only on client
 function intelligence(object, delta) {
   if(object.tags && object.tags['zombie']) {
     object.target = { x: window.hero.x, y: window.hero.y }
@@ -166,6 +172,7 @@ function intelligence(object, delta) {
   }
 }
 
+// only on client
 function onCollide(agent, collider, result, removeObjects) {
   if(collider.tags && agent.tags && collider.tags['bullet'] && agent.tags['monster']) {
     removeObjects.push(agent)
@@ -192,10 +199,12 @@ function onCollide(agent, collider, result, removeObjects) {
 }
 
 // after input, intel, physics, but before render
+// only on client
 function update(delta) {
   window.resetPaths = false
 }
 
+// only on client
 function render(ctx) {
 
 }

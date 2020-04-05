@@ -1,9 +1,18 @@
 import defaultGame from './default'
 import pacman from './pacman'
 
+let customGames = {
+  default: defaultGame,
+  pacman,
+  lab: pacman,
+}
+
 function init() {
   window.defaultGame = defaultGame
-  window.customGame = pacman
+}
+
+window.changeGame = function(id) {
+  window.customGame = customGames[id]
 }
 
 export default {

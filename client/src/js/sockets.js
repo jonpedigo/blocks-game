@@ -126,6 +126,7 @@ function init() {
   //shared events
   ///////////////////////////////
 
+  // client calls this
   window.socket.on('onUpdateGameState', (gameState) => {
     if(!window.host) {
       window.gameState = gameState
@@ -135,12 +136,15 @@ function init() {
     }
   })
 
+  // editor calls this
   window.socket.on('onEditGameState', (gameState) => {
     if(window.host) {
       window.gameState = gameState
     }
   })
 
+
+  // editor calls this
   window.socket.on('onResetGameState', () => {
     window.gameState = {}
   })
@@ -333,6 +337,11 @@ function init() {
       window.gameState = game.gameState
     }
 
+    if(window.usePlayEditor) {
+      window.tags = JSON.parse(JSON.stringify(window.defaultTags))
+    }
+
+    window.changeGame(game.id)
     if(!window.gameState.loaded && !window.usePlayEditor) {
       /// DEFAULT GAME FX
       if(window.defaultGame) {
@@ -392,19 +401,27 @@ function init() {
     if(!window.usePlayEditor) {
       findHeroInNewWorld(game)
     } else {
+      // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
 
     // reset game state
     window.gameState = {}
 
-    if(window.defaultGame) {
-      window.defaultGame.loaded()
-    }
+    // reset tags to default
+    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
+
     /// CUSTOM GAME FX
+    window.changeGame(game.id)
     if(window.customGame) {
-      window.customGame.loaded()
+      // if we've set the game it means it didnt happen on page load.
+      // so we need to init it as well..
+      window.customGame.init()
+      if(!window.usePlayEditor) {
+        window.customGame.loaded()
+      }
     }
+
     window.gameState.loaded = true
     window.onGameLoaded()
   })

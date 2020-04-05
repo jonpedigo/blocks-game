@@ -8,11 +8,14 @@ function init() {
 }
 
 function loaded() {
+  window.gameState.paused = true
   window.hero.flags.showLives = true;
   window.hero.flags.showScore = true;
 }
 
 function start() {
+  window.gameState.paused = false
+  window.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
   window.respawnHero()
   window.hero.lives = 3
