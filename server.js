@@ -52,28 +52,30 @@ io.on('connection', function(socket){
     currentGame.heros[hero.id] = hero
   })
 
-  socket.on('saveGame', (name) => {
-    let game = {
-      name,
-      objects: objects,
-      heros,
-      world,
-      grid,
-    };
 
-    if(!world.globalTags.shouldRestoreHero && !world.globalTags.isAsymmetric) {
-      if(Object.keys(heros).length > 1) {
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  // Game
+  ///////////////////////////
+  ///////////////////////////
+  socket.on('saveGame', (name) => {
+    currentGame.name = name
+
+    if(!currentGame.world.globalTags.shouldRestoreHero && !currentGame.world.globalTags.isAsymmetric) {
+      if(Object.keys(currentGame.heros).length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
-      for(var heroId in heros) {
+      for(var heroId in currentGame.heros) {
       }
-      currentGame.hero = heros[heroId]
+      currentGame.hero = currentGame.heros[heroId]
     }
 
     if(!name) {
       name = Date.now()
     }
-    fs.writeFile('./data/' + name + '.json', JSON.stringify(game), 'utf8', () => {
+    fs.writeFile('./data/' + name + '.json', JSON.stringify(currentGame), 'utf8', () => {
       console.log('game: ' + name + ' saved')
     });
   })
@@ -97,12 +99,17 @@ io.on('connection', function(socket){
   })
 
   // this is really only for the live editing shit when im reloading their page all the time
-  socket.on('askCurrentGame', () => {
-    console.log(currentGame.objects)
-    socket.emit('setGame', currentGame)
+  socket.on('askRestoreCurrentGame', () => {
+    socket.emit('onAskRestoreCurrentGame', currentGame)
   })
 
-  //objects
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  // Objects
+  ///////////////////////////
+  ///////////////////////////
   socket.on('anticipateObject', (object) => {
     io.emit('onAnticipateObject', object)
   })
@@ -139,19 +146,31 @@ io.on('connection', function(socket){
     io.emit('onAddObjects', addedobjects)
   })
 
-  //world
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  // World
+  ///////////////////////////
+  ///////////////////////////
   socket.on('askWorld', () => {
     socket.emit('onUpdateWorld', world)
   })
   socket.on('updateWorld', (updatedWorld) => {
-    currentGame.world = updatedWorld
+    mergeDeep(currentGame.world, updatedWorld)
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', () => {
     io.emit('onResetWorld')
   })
 
-  //hero
+
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  //HERO
+  ///////////////////////////
   socket.on('updateHeroPos', (hero) => {
     if(!currentGame.heros[hero.id]) {
       currentGame.heros[hero.id] = hero
@@ -180,7 +199,12 @@ io.on('connection', function(socket){
     io.emit('onDeleteHero', id)
   })
 
-  //onSnapAllObjectsToGrid
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  // GRIDS
+  ///////////////////////////
   socket.on('snapAllObjectsToGrid', (hero) => {
     io.emit('onSnapAllObjectsToGrid', hero)
   })
@@ -190,11 +214,6 @@ io.on('connection', function(socket){
     io.emit('onUpdateGrid', gridIn)
   })
 
-  // socket.on('updateGridNode', (gridPos, update) => {
-  //   Object.assign(grid[gridPos.x][gridPos.y], update)
-  //   io.emit('onUpdateGridNode', gridPos, update)
-  // })
-
   socket.on('askGrid', () => {
     io.emit('onUpdateGrid', currentGame.grid)
   })
@@ -203,3 +222,36 @@ io.on('connection', function(socket){
 http.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
 });
+
+
+/**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+function mergeDeep(target, ...sources) {
+  if (!sources.length) return target;
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
+}

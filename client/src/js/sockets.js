@@ -226,7 +226,7 @@ function init() {
     window.objectsById[object.id].removed = true
   })
 
-  // EDITOR CALLS THIS
+  // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
     if(window.usePlayEditor && window.editingObject.id === object.id) {
       window.editingObject = {
@@ -259,6 +259,7 @@ function init() {
     }
   })
 
+  // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
     delete window.heros[id]
     if(window.usePlayEditor && window.editingHero.id == id) {
@@ -267,8 +268,9 @@ function init() {
   })
 
   // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
-  window.socket.emit('askCurrentGame')
-  window.socket.on('setGame', (game) => {
+  window.socket.emit('askRestoreCurrentGame')
+  window.socket.on('onAskRestoreCurrentGame', (game) => {
+    // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}
     window.objects.forEach((object) => {
@@ -276,12 +278,18 @@ function init() {
       physics.addObject(object)
     })
 
+    // hero
+    // if this is the first reload in a hackathon session we probably wont have a locally stored hero yet
     window.heros = game.heros
     if(!window.hero && !window.usePlayEditor) {
       findHeroInNewWorld(game)
     }
 
+
+    // world
     window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+
+    // grid
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
@@ -289,6 +297,54 @@ function init() {
       console.log('client')
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     } else console.log('editor')
+
+    window.startGame()
+  })
+
+  window.socket.on('onSetGame', (game) => {
+    // if theres already a game going on, need to unload it
+    if(window.objects.length) {
+      if(window.usePlayEditor) {
+        window.editingObject = {
+          id: null,
+          i: null,
+        }
+        window.objecteditor.set({})
+      } else {
+        window.objects.forEach((object) => {
+          physics.removeObjectById(object.id)
+        })
+      }
+    }
+
+    // objects
+    window.objects = game.objects
+    if(!window.objectsById) window.objectsById = {}
+    window.objects.forEach((object) => {
+      window.objectsById[object.id] = object
+      physics.addObject(object)
+    })
+
+    // heros
+    window.heros = game.heros
+
+    // world
+    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+
+    // grid
+    window.grid = game.grid
+    window.grid.nodes = gridTool.generateGridNodes(grid)
+    gridTool.updateGridObstacles()
+    if(!window.usePlayEditor) {
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+
+    // reset to initial positions and state
+    if(!window.usePlayEditor) {
+      findHeroInNewWorld(game)
+    } else {
+      window.resetSpawnAreasAndObjects()
+    }
 
     window.startGame()
   })

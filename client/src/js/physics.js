@@ -162,6 +162,7 @@ function update (delta) {
     let physicsObject = physicsObjects[object.id]
     physicsObject.x = object.x
     physicsObject.y = object.y
+    physicsObject.id = object.id
     physicsObject.gameObject = object
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
@@ -331,9 +332,10 @@ function update (delta) {
   // OBJECTS COLLIDING WITH OTHER OBJECTS
   /////////////////////////////////////////////////////
   for(let id in physicsObjects){
-    let po = physicsObjects[id]
-    if(po.gameObject.removed) continue
     if(id.indexOf('hero') > -1) continue
+    let po = physicsObjects[id]
+    // console.log(po)
+    if(po.gameObject.removed) continue
     let potentials = po.potentials()
     let result = po.createResult()
     for(const body of potentials) {
@@ -481,7 +483,7 @@ function addObject(object, moving = false) {
 function removeObject(object) {
   try {
     system.remove(physicsObjects[object.id])
-    physicsObjects[object.id] = null;
+    delete physicsObjects[object.id];
   } catch(e) {
 
   }
@@ -490,7 +492,7 @@ function removeObject(object) {
 function removeObjectById(id) {
   try {
     system.remove(physicsObjects[id])
-    physicsObjects[id] = null;
+    delete physicsObjects[id];
   } catch(e) {
 
   }
