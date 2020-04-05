@@ -83,6 +83,15 @@ body {
   height: 100%;
 }
 
+#gamestateeditor {
+  background:white;
+  position: fixed;
+  top:0;
+  left:0;
+  width:400px;
+  height: 100%;
+}
+
 
 .tool-feature.visible {
   display: initial;

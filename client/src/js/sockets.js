@@ -116,6 +116,26 @@ function init() {
   //shared events
   ///////////////////////////////
 
+  window.socket.on('onUpdateGameState', (gameState) => {
+    if(!window.host) {
+      window.gameState = gameState
+      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+        window.gamestateeditor.set(gameState)
+      }
+    }
+  })
+
+  window.socket.on('onEditGameState', (gameState) => {
+    console.log("?")
+    if(window.host) {
+      window.gameState = gameState
+    }
+  })
+
+  window.socket.on('onResetGameState', () => {
+    window.gameState = {}
+  })
+
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
     window.world = JSON.parse(JSON.stringify(window.defaultWorld))
@@ -298,9 +318,16 @@ function init() {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     } else console.log('editor')
 
+    // gameState
+    console.log(game.gameState)
+    if(game.gameState) {
+      window.gameState = game.gameState
+    }
+
     window.startGame()
   })
 
+  // this is switching between games
   window.socket.on('onSetGame', (game) => {
     // if theres already a game going on, need to unload it
     if(window.objects.length) {
@@ -345,6 +372,9 @@ function init() {
     } else {
       window.resetSpawnAreasAndObjects()
     }
+
+    // reset game state
+    window.gameState = {}
 
     window.startGame()
   })

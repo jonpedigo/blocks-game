@@ -26,7 +26,8 @@ let currentGame = {
     nodeSize: 40,
     startX: 0,
     startY: 0,
-  }
+  },
+  gameState: {}
 }
 
 let initialGame = 'default'
@@ -101,6 +102,22 @@ io.on('connection', function(socket){
   // this is really only for the live editing shit when im reloading their page all the time
   socket.on('askRestoreCurrentGame', () => {
     socket.emit('onAskRestoreCurrentGame', currentGame)
+  })
+
+  // great to have a constantly updating object shared on all computers
+  socket.on('updateGameState', (gameState) => {
+    currentGame.gameState = gameState
+    io.emit('onUpdateGameState', gameState)
+  })
+
+  socket.on('resetGameState', (gameState) => {
+    currentGame.gameState = {}
+    io.emit('onResetGameState', gameState)
+  })
+
+  socket.on('editGameState', (gameState) => {
+    currentGame.gameState = gameState
+    io.emit('onEditGameState', gameState)
   })
 
   ///////////////////////////

@@ -27,6 +27,7 @@
 // optimize shadow feature, not all vertices!
 // Instead of creating one big block, create a bunch of small blocks, OPTION
 // Maybe make a diagonal wall..
+// Local game state saving outside of server. DO NOT SAVE GAME STATE INSIDE OF file game data
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
@@ -54,9 +55,9 @@ import objects from './js/objects.js'
 import hero from './js/hero.js'
 import world from './js/world.js'
 import render from './js/render.js'
+import gameState from './js/gameState.js'
 import './js/events.js'
 import games from './js/games/index'
-
 
 window.init = function () {
   // SOCKET START
@@ -85,6 +86,7 @@ window.init = function () {
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
   if(!window.usePlayEditor) {
+    window.host = true
     var editor = document.getElementById("play-editor");
     editor.style = 'display:none';
   }
@@ -104,6 +106,7 @@ window.init = function () {
     camera.init()
 		input.init()
 		chat.init()
+    gameState.init()
     /// DEFAULT GAME FX
     if(window.defaultGame) {
       window.defaultGame.init()
@@ -117,7 +120,7 @@ window.init = function () {
 
 // Update game objects
 var update = function (delta) {
-  if(!window.world.globalTags.paused) {
+  if(!window.gameState.paused) {
     input.update(delta)
     intelligence.update(window.hero, window.objects, delta)
     physics.update(delta)
@@ -137,7 +140,7 @@ var update = function (delta) {
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 // The main game loop
-var main = function () {
+var mainLoop = function () {
   if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
     requestAnimationFrame(main);
     return
@@ -179,7 +182,7 @@ var main = function () {
 	then = now;
 
 	// Request to do this again ASAP
-	requestAnimationFrame(main);
+	requestAnimationFrame(mainLoop);
 };
 
 var then;
@@ -189,20 +192,25 @@ window.startGame = function() {
     console.log('trying to start game without critical data aborting')
     return
   }
-  main()
 
-  /// DEFAULT GAME FX
-  if(window.defaultGame) {
-    window.defaultGame.start()
-  }
-  /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.start()
-  }
+  // begin main loop
+  mainLoop()
 
   if(!window.usePlayEditor) {
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.start()
+    }
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.start()
+    }
+
     setInterval(() => {
-      window.socket.emit('updateObjects', window.objects)
+      if(window.host) {
+        window.socket.emit('updateObjects', window.objects)
+        window.socket.emit('updateGameState', window.gameState)
+      }
       window.socket.emit('updateHeroPos', window.hero)
       localStorage.setItem('hero', JSON.stringify(window.hero));
     }, 100)

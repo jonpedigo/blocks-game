@@ -9,7 +9,7 @@ function init() {
 }
 
 function start() {
-  window.world.startTime = Date.now()
+  window.gameState.startTime = Date.now()
 }
 
 function onKeyDown(keysDown) {

@@ -10,7 +10,6 @@ function init() {
       calculatePathCollisions: false,
       noCamping: true,
       targetOnSight: true,
-      paused: false,
       isAsymmetric: false,
       shouldRestoreHero: false,
     }
