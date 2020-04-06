@@ -106,7 +106,10 @@ function createMaze() {
   let w = Math.floor(width / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
   let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
-  let maze = procedural.genMaze(w, h, x, y)
+  let maze = procedural.genMaze(w, h, x, y).map((o) => {
+    o.tags.stationary = true
+    return o
+  })
   window.addObjects(maze)
 }
 

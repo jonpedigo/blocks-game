@@ -70,7 +70,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   let alertAboutCollision
 
   objects = objects.map((newObject) => {
-    Object.assign(newObject, {...window.defaultObject})
+    Object.assign(newObject, JSON.parse(JSON.stringify(window.defaultObject)))
 
     if(!newObject.id){
       newObject.id = 'object' + Date.now();
@@ -80,17 +80,19 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       newObject.tags = {};
     }
 
-    for(let tag in window.tags) {
-      if((window.usePlayEditor && window.tagEls[tag].checked) || newObject.tags[tag] === true){
-        if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
-          alert('You cannot add a monster without setting spawn point first')
-          return
+    if(window.usePlayEditor){
+      for(let tag in window.tags) {
+        if(window.tagEls[tag].checked){
+          if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
+            alert('You cannot add a monster without setting spawn point first')
+            return
+          }
+          newObject.tags[tag] = true
         }
-        newObject.tags[tag] = true
-      } else {
-        newObject.tags[tag] = false
       }
     }
+
+    newObject.tags = Object.assign(JSON.parse(JSON.stringify(window.tags)), newObject.tags)
 
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y

@@ -16,8 +16,8 @@ function init() {
   })
 
   function getCheckedTags() {
-    return Object.keys(window.tags).reduce((acc, tag) => {
-      acc[tag] = window.tags[tag].checked
+    return Object.keys(window.tagEls).reduce((acc, tag) => {
+      acc[tag] = window.tagEls[tag].checked
       return acc
     }, {})
   }

@@ -25,7 +25,7 @@ function init() {
       gridTool.addObstacle({...object, tags: objectEdited.tags})
     }
 
-    window.sendObjectUpdate({ tags: objectEdited.tags, color: objectEdited.color })
+    window.sendObjectUpdateOther({ tags: objectEdited.tags, color: objectEdited.color })
   }});
 
   let applyObjectModEl = document.getElementById("apply-object-mod")
@@ -88,9 +88,7 @@ function init() {
   var sendObjectOther = document.getElementById("send-object-other");
   sendObjectOther.addEventListener('click', () => {
     let editingObj = window.objecteditor.get();
-    delete editingObj.x
-    delete editingObj.y
-    window.sendObjectUpdate(editingObj)
+    window.sendObjectUpdateOther(editingObj)
   })
 
   var removeObjectButton = document.getElementById("remove-object");
@@ -123,6 +121,17 @@ window.sendObjectUpdate = function(objectUpdate) {
   window.mergeDeep(window.editingObject, objectCopy)
   window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
   window.socket.emit('editObjects', window.objects)
+}
+
+window.sendObjectUpdateOther = function(objectUpdate) {
+  let objectCopy = { ...objectUpdate }
+  window.mergeDeep(window.editingObject, objectCopy)
+  window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(window.objects)).map((obj) => {
+    delete obj.x
+    delete obj.y
+    return obj
+  }))
 }
 
 window.findObject = function() {

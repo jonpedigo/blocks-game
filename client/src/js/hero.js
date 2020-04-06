@@ -90,6 +90,8 @@ window.spawnHero = function () {
 }
 
 window.respawnHero = function () {
+  window.hero.velocityX = 0
+  window.hero.velocityY = 0
   window.client.emit('onRespawnHero')
   window.spawnHero()
 }

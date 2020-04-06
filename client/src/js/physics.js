@@ -411,15 +411,15 @@ function update (delta) {
 
       if(illegal) {
         if(result.overlap_y === 1) {
-          if(po.gameObject.velocityY > 0) po.gameObject.velocityY = 0
+          po.gameObject.velocityY = 0
           po.gameObject.onGround = true
         } else if(result.overlap_y === -1){
-          if(po.gameObject.velocityY < 0) po.gameObject.velocityY = 0
+          po.gameObject.velocityY = 0
         }
         if(result.overlap_x === 1) {
-          if(po.gameObject.velocityX > 0) po.gameObject.velocityX = 0
+          po.gameObject.velocityX = 0
         } else if(result.overlap_x === -1){
-          if(po.gameObject.velocityX < 0) po.gameObject.velocityX = 0
+          po.gameObject.velocityX = 0
         }
 
         po.x = correction.x
@@ -440,6 +440,8 @@ function update (delta) {
   }
 
   removeObjects.forEach((gameObject) => {
+    // remove locally first
+    gameObject.removed = true
     window.socket.emit('removeObject', gameObject)
   })
 
