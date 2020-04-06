@@ -157,11 +157,6 @@ var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 // The main game loop
 var mainLoop = function () {
-  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0) {
-    requestAnimationFrame(main);
-    return
-  }
-
 	var now = Date.now();
 	var delta = now - then;
   window.fps = 1000 / delta;
@@ -208,7 +203,7 @@ var mainLoop = function () {
 var then;
 window.onGameLoaded = function() {
   then = Date.now()
-  if(!window.objects || !window.world || !window.grid.nodes || Object.keys(window.heros).length === 0 || (window.isPlayer && !window.hero)) {
+  if(!window.objects || !window.world || !window.grid.nodes || !window.heros || (window.isPlayer && !window.hero)) {
     console.log('game loaded without critical data, aborting')
     return
   }

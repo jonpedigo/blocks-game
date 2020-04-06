@@ -61,34 +61,34 @@ io.on('connection', function(socket){
   // Game
   ///////////////////////////
   ///////////////////////////
-  socket.on('saveGame', (id) => {
-    currentGame.id = id
-
-    if(!currentGame.world.globalTags.shouldRestoreHero && !currentGame.world.globalTags.isAsymmetric) {
-      if(Object.keys(currentGame.heros).length > 1) {
+  socket.on('saveGame', (game) => {
+    if(!game.world.globalTags.shouldRestoreHero && !game.world.globalTags.isAsymmetric) {
+      if(Object.keys(game.heros).length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
-      for(var heroId in currentGame.heros) {
+      for(var heroId in game.heros) {
       }
-      currentGame.hero = currentGame.heros[heroId]
+      game.hero = game.heros[heroId]
     }
 
-    if(!id) {
-      id = Date.now()
+    if(!game.id) {
+      game.id = Date.now()
     }
 
     // never save gameState
-    if(currentGame.gameState) {
-      delete currentGame.gameState
+    if(game.gameState) {
+      delete game.gameState
     }
-    fs.writeFile('./data/' + id + '.json', JSON.stringify(currentGame), 'utf8', () => {
-      console.log('game: ' + id + ' saved')
+    fs.writeFile('./data/' + game.id + '.json', JSON.stringify(game), 'utf8', () => {
+      console.log('game: ' + game.id + ' saved')
     });
+    io.emit('onGameSaved', game.id)
+    currentGame = game
   })
 
   // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
-  socket.on('getGame', (name) => {
-    fs.readFile('./data/' +name+'.json', 'utf8', function readFileCallback(err, data){
+  socket.on('getGame', (id) => {
+    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {
@@ -98,8 +98,8 @@ io.on('connection', function(socket){
   })
 
   // this is for when we are editing and we want to send this world to all people
-  socket.on('setGame', (name) => {
-    setGame(name, (game) => {
+  socket.on('setGame', (id) => {
+    setGame(id, (game) => {
       io.emit('onSetGame', game)
     })
   })
@@ -127,6 +127,10 @@ io.on('connection', function(socket){
 
   socket.on('startGame', () => {
     io.emit('onStartGame')
+  })
+
+  socket.on('newGame', () => {
+    io.emit('onNewGame')
   })
 
   ///////////////////////////
@@ -187,6 +191,7 @@ io.on('connection', function(socket){
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', () => {
+    currentGame.world = {}
     io.emit('onResetWorld')
   })
 

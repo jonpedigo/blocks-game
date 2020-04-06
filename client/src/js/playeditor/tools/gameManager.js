@@ -34,6 +34,7 @@ function init() {
       window.socket.emit('resetHero', window.heros[heroId])
     }
     window.socket.emit('resetGameState')
+    window.socket.emit('newGame')
   })
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', () => {
@@ -74,7 +75,14 @@ function init() {
     window.socket.emit('resetObjects')
   }
   window.saveGame = function() {
-    window.socket.emit('saveGame', document.getElementById('game-name').value)
+    window.game = {
+      heros: window.heros,
+      objects: window.objects,
+      world: window.world,
+      grid: window.grid,
+      id: document.getElementById('game-name').value
+    }
+    window.socket.emit('saveGame', window.game)
   }
   window.setGame = function() {
     window.socket.emit('setGame', document.getElementById('game-name').value)

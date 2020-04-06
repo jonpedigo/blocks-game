@@ -271,9 +271,11 @@ function init() {
 
     // hero
     // if this is the first reload in a hackathon session we probably wont have a locally stored hero yet
-    window.heros = game.heros
     if(!window.hero && window.isPlayer) {
       findHeroInNewWorld(game)
+      window.heros = {[window.hero.id] : window.hero}
+    } else {
+      window.heros = {}
     }
 
     // grid
@@ -356,7 +358,8 @@ function init() {
     })
 
     // heros
-    window.heros = game.heros
+    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
+    else window.heros = {}
 
     // grid
     window.grid = game.grid
@@ -394,6 +397,13 @@ function init() {
       }
     }
     window.gameState.loaded = true
+  })
+
+  window.socket.on('onNewGame', () => {
+    window.changeGame(null)
+  })
+  window.socket.on('onGameSaved', (id) => {
+    window.changeGame(id)
   })
 }
 

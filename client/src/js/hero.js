@@ -47,15 +47,16 @@ function init() {
   }
 
   if(window.isPlayer) {
-  	let savedHero = localStorage.getItem('hero');
-  	if(savedHero !== 'undefined'){
+  	let savedHero = null;
+  	if(savedHero !== 'undefined' && savedHero !== null){
   		window.hero = JSON.parse(savedHero)
       // in case we need to reset
       window.defaultHero.id = savedHero.id
-  	} else if(!window.hero) {
+  	} else {
       window.defaultHero.id = 'hero-'+Date.now()
   		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
   		window.spawnHero()
+      localStorage.setItem('hero', JSON.stringify(window.hero));
   	}
   	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
   	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
