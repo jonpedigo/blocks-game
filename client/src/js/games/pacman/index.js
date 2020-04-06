@@ -2,9 +2,11 @@ import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import camera from '../../camera.js'
 import pathfinding from '../../pathfinding.js'
+import particles from '../../particles.js'
 
+let explodingParticles;
 function init() {
-
+  explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
 }
 
 function loaded() {
@@ -50,7 +52,11 @@ function update(delta) {
   }
 }
 
-function render(ctx) {
+function render(ctx, delta) {
+  explodingParticles.forEach((particle) => {
+    particle.draw(ctx, delta)
+  })
+
   if(window.gameState.paused) {
     const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 

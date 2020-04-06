@@ -359,6 +359,10 @@ function render(ctx, hero, objects) {
     drawObject(ctx, {x: window.editingObject.spawnPointX, y: window.editingObject.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
     drawObject(ctx, {x: window.editingObject.spawnPointX - 205, y: window.editingObject.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
   }
+
+  ctx.font =`24pt Arial`
+  ctx.fillStyle="rgba(255,255,255,0.3)"
+  ctx.fillText(Math.ceil(window.fps), window.innerWidth - 240, 40)
 }
 
 function setCameraHeroX(ctx, hero) {

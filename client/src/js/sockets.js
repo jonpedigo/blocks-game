@@ -141,11 +141,11 @@ function init() {
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
     window.world = JSON.parse(JSON.stringify(window.defaultWorld))
-    camera.clearLimit()
+    if(!window.playEditor) camera.clearLimit()
     gridTool.updateGridObstacles()
-    window.resetPaths = true
-    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    window.socket.emit('updateWorld', window.world)
+    if(window.host) window.resetPaths = true
+    if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    handleWorldUpdate(window.world)
   })
 
   // CLIENT HOST CALLS THIS
@@ -171,7 +171,7 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
-  	for(let key in updatedWorld) {
+    for(let key in updatedWorld) {
   		const value = updatedWorld[key]
 
       if(window.world[key] instanceof Object) {
@@ -179,42 +179,8 @@ function init() {
       } else {
         window.world[key] = value
       }
-
-      // no need to over write nested values ( flags, tags )
-  		if(key === 'lockCamera' && !window.usePlayEditor) {
-  			if(value && value.limitX) {
-  				camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-  			} else {
-  				camera.clearLimit();
-  			}
-  		}
-
-      if(key === 'gameBoundaries') {
-        gridTool.updateGridObstacles()
-        window.resetPaths = true
-        if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-      }
-
-      if(key === 'globalTags') {
-        for(let tag in updatedWorld.globalTags) {
-          if(tag === 'syncHero' && window.usePlayEditor) {
-            window.syncHeroToggle.checked = value
-          }
-          if(tag === 'syncObjects' && window.usePlayEditor) {
-            window.shouldRestoreHeroToggle.checked = value
-          }
-          if(tag === 'calculatePathCollisions' && window.grid.nodes) {
-            gridTool.updateGridObstacles()
-            if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-          }
-        }
-      }
-  	}
-
-    if(window.usePlayEditor) {
-      window.worldeditor.set(window.world)
-      window.worldeditor.expandAll()
     }
+  	handleWorldUpdate(updatedWorld)
   })
 
   // CLIENT HOST CALLS THIS
@@ -310,22 +276,17 @@ function init() {
       findHeroInNewWorld(game)
     }
 
-
-    // world
-    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-
     // grid
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
     if(window.host) {
-      console.log('host')
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    } else if(window.usePlayEditor) {
-      console.log('editor')
-    } else {
-      console.log('non host')
     }
+
+    // world
+    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+    handleWorldUpdate(window.world)
 
     // gameState
     // if game state is on the object it very likely means it has already been loaded..
@@ -336,19 +297,19 @@ function init() {
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
     window.changeGame(game.id)
-    if(!window.gameState.loaded && window.host) {
-      /// didnt get to init because it wasnt set yet
-      if(window.customGame) {
-        window.customGame.init()
-      }
 
+    /// didnt get to init because it wasnt set yet
+    if(window.customGame) {
+      window.customGame.init()
+    }
+
+    if(!window.gameState.loaded && window.host) {
       /// DEFAULT GAME FX
       if(window.defaultGame) {
         window.defaultGame.loaded()
       }
       /// CUSTOM GAME FX
       if(window.customGame) {
-        window.customGame.init()
         window.customGame.loaded()
       }
 
@@ -356,6 +317,15 @@ function init() {
     }
 
     window.onGameLoaded()
+
+
+    if(window.host) {
+      console.log('host')
+    } else if(window.usePlayEditor) {
+      console.log('editor')
+    } else {
+      console.log('non host')
+    }
   })
 
   // this is switching between games
@@ -388,9 +358,6 @@ function init() {
     // heros
     window.heros = game.heros
 
-    // world
-    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-
     // grid
     window.grid = game.grid
     window.grid.nodes = gridTool.generateGridNodes(grid)
@@ -399,6 +366,15 @@ function init() {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
+    // world
+    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+    handleWorldUpdate(window.world)
+
+    // reset tags to default
+    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
+
+    // reset game state
+    window.gameState = {}
     // reset to initial positions and state
     if(window.host) {
       findHeroInNewWorld(game)
@@ -406,12 +382,6 @@ function init() {
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
-
-    // reset game state
-    window.gameState = {}
-
-    // reset tags to default
-    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
     /// CUSTOM GAME FX
     window.changeGame(game.id)
@@ -431,6 +401,49 @@ export default {
   init
 }
 
+
+function handleWorldUpdate(updatedWorld) {
+  for(let key in updatedWorld) {
+    const value = updatedWorld[key]
+
+    if(key === 'lockCamera' && !window.usePlayEditor) {
+      if(value && value.limitX) {
+        camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+      } else {
+        camera.clearLimit();
+      }
+    }
+
+    if(key === 'gameBoundaries') {
+      gridTool.updateGridObstacles()
+      if(window.host) window.resetPaths = true
+      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+
+    if(key === 'globalTags' || key === 'editorTags') {
+      for(let tag in updatedWorld.globalTags) {
+        if(tag === 'calculatePathCollisions' && window.grid.nodes) {
+          gridTool.updateGridObstacles()
+          if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+        }
+      }
+      if(key === 'syncHero' && window.usePlayEditor) {
+        window.syncHeroToggle.checked = value
+      }
+      if(key === 'syncObjects' && window.usePlayEditor) {
+        window.syncObjectsToggle.checked = value
+      }
+      if(key === 'syncGameState' && window.usePlayEditor) {
+        window.syncGameStateToggle.checked = value
+      }
+    }
+  }
+
+  if(window.usePlayEditor) {
+    window.worldeditor.set(window.world)
+    window.worldeditor.expandAll()
+  }
+}
 
 function findHeroInNewWorld(game) {
   // if we have decided to restore position, find hero in hero list
@@ -453,10 +466,6 @@ function findHeroInNewWorld(game) {
     window.respawnHero()
     return
   }
-
-
-
-
 
   // other random bullshit if theres two different versions of the hero
   if(!Object.keys(game.heros).length) {

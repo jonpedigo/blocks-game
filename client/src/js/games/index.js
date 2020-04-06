@@ -8,6 +8,7 @@ let customGames = {
 }
 
 function init() {
+  window.customGame = null
   window.defaultGame = defaultGame
 }
 

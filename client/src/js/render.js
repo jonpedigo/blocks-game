@@ -6,6 +6,8 @@ function update() {
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
 
+  ctx.filter = "drop-shadow(4px 4px 8px #fff)";
+  ctx.filter = "none"
   let vertices = [...window.objects].reduce((prev, object) => {
     if(object.removed) return prev
     if(object.tags.invisible) return prev

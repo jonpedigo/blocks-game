@@ -123,10 +123,6 @@ window.init = function () {
   if(window.defaultGame) {
     window.defaultGame.init()
   }
-  /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.init()
-  }
 };
 
 // Update game objects
@@ -177,16 +173,16 @@ var mainLoop = function () {
     playEditor.render(ctx, window.hero, window.objects);
   }else {
 		update(delta / 1000);
-    render.update();
+    render.update(ctx, delta / 1000);
 
     /// DEFAULT GAME FX
     if(window.defaultGame) {
-      window.defaultGame.render(ctx)
+      window.defaultGame.render(ctx, delta / 1000)
     }
 
     /// CUSTOM GAME FX
     if(window.customGame) {
-      window.customGame.render(ctx)
+      window.customGame.render(ctx, delta / 1000)
     }
 
     if(window.hero.animationZoomTarget) {

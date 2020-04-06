@@ -1,9 +1,9 @@
 function init() {
   window.defaultWorld = {
     id: 'world-' + Date.now(),
-  	lockCamera: {},
-  	gameBoundaries: {},
-    procedural: {},
+  	lockCamera: null,
+  	gameBoundaries: null,
+    procedural: null,
     worldSpawnPointX: null,
     worldSpawnPointY: null,
     globalTags: {

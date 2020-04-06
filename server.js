@@ -180,7 +180,7 @@ io.on('connection', function(socket){
   ///////////////////////////
   ///////////////////////////
   socket.on('askWorld', () => {
-    socket.emit('onUpdateWorld', world)
+    socket.emit('onUpdateWorld', currentGame.world)
   })
   socket.on('updateWorld', (updatedWorld) => {
     mergeDeep(currentGame.world, updatedWorld)

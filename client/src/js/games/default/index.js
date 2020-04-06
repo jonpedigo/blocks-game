@@ -3,6 +3,7 @@ import gridTool from '../../grid.js'
 import camera from '../../camera.js'
 import pathfinding from '../../pathfinding.js'
 import action from './action'
+import particles from '../../particles.js'
 
 // we organize the code on the front end, default values, etc
 // happens on every load, including reload
@@ -12,7 +13,7 @@ function init() {
 }
 
 // once we have loaded up the game from the server for the first time, not on reload
-// interact with other values and initial game state
+// interact with other values and setup initial game state
 // only on client
 function loaded() {
 
@@ -207,6 +208,21 @@ function update(delta) {
 // only on client
 function render(ctx) {
 
+  if(window.hero) {
+    if(window.hero.directions.down) {
+      let sWidth = 17.5;
+      let sHeight = 20;
+      var path=new Path2D();
+      let x = window.hero.x/window.camera.multiplier - window.camera.x
+      let y = window.hero.y/window.camera.multiplier - window.camera.y - 15
+      path.moveTo(x + (sWidth/2) +5, y+ sHeight/2);
+      path.lineTo(x + (sWidth/2), y+ (sHeight/2)-10);
+      path.lineTo(x + (sWidth/2)-5, y + sHeight/2);
+      ctx.fill(path);
+    } else {
+
+    }
+  }
 }
 
 export default {
