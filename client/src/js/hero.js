@@ -90,9 +90,7 @@ window.spawnHero = function () {
 }
 
 window.respawnHero = function () {
-  // hero spawn point takes precedence
   window.client.emit('onRespawnHero')
-
   window.spawnHero()
 }
 
@@ -102,7 +100,8 @@ window.resetHero = function(updatedHero) {
 		window.mergeDeep(window.hero, updatedHero)
 	} else {
     let newHero = {}
-		Object.assign(newHero, JSON.parse(JSON.stringify(defaultHero)))
+    window.defaultHero.id = window.hero.id
+		Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
     window.hero = newHero
     window.heros[window.hero.id] = window.hero
 	}
