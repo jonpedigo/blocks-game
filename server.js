@@ -15,7 +15,7 @@ let herosockets = {
 
 }
 
-let currentGame = {
+let defaultGame = {
   world: {},
   heros: {},
   hero: {},
@@ -29,6 +29,8 @@ let currentGame = {
   },
   gameState: {}
 }
+
+let currentGame = JSON.parse(JSON.stringify(defaultGame))
 
 let initialGameId = 'default'
 setGame(initialGameId, (game) => {
@@ -130,6 +132,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('newGame', () => {
+    currentGame = JSON.parse(JSON.stringify(defaultGame))
     io.emit('onNewGame')
   })
 

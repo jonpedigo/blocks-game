@@ -270,7 +270,7 @@ function init() {
     })
 
     // hero
-    // if this is the first reload in a hackathon session we probably wont have a locally stored hero yet
+    // yeah I dont think we'll ever get here since well have done hero.init already
     if(!window.hero && window.isPlayer) {
       findHeroInNewWorld(game)
       window.heros = {[window.hero.id] : window.hero}
@@ -357,9 +357,7 @@ function init() {
       physics.addObject(object)
     })
 
-    // heros
-    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
-    else window.heros = {}
+
 
     // grid
     window.grid = game.grid
@@ -373,15 +371,21 @@ function init() {
     window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
     handleWorldUpdate(window.world)
 
-    // reset tags to default
-    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
-
-    // reset game state
-    window.gameState = {}
+    // heros
+    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
+    else window.heros = {}
     // reset to initial positions and state
     if(window.host) {
+      physics.removeObject(window.hero)
       findHeroInNewWorld(game)
-    } else {
+      physics.addObject(window.hero)
+    }
+
+    // reset tags to default
+    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
+    // reset game state
+    window.gameState = {}
+    if(window.host){
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
@@ -401,6 +405,7 @@ function init() {
 
   window.socket.on('onNewGame', () => {
     window.changeGame(null)
+    window.gameState = {}
   })
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)

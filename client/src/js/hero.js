@@ -47,8 +47,8 @@ function init() {
   }
 
   if(window.isPlayer) {
-  	let savedHero = null;
-  	if(savedHero !== 'undefined' && savedHero !== null){
+  	let savedHero = localStorage.getItem('hero');
+  	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
   		window.hero = JSON.parse(savedHero)
       // in case we need to reset
       window.defaultHero.id = savedHero.id
