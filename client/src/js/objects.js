@@ -55,7 +55,7 @@ window.anticipateObjectAdd = function() {
 
   function addAnticipatedObject(newObject) {
     let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
-    if(grid.keepGridXYWithinBoundaries(x/window.grid.nodeSize, y/window.grid.nodeSize)) {
+    if(grid.keepGridXYWithinBoundaries(x/window.grid.nodeSize, y/window.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/window.grid.nodeSize, (y + newObject.height)/window.grid.nodeSize)) {
       window.addObjects([{...newObject, ...window.anticipatedObject}])
       window.anticipatedObject = null
     }

@@ -55,6 +55,11 @@ function init() {
   	})
 
     // EDITOR CALLS THIS
+    window.socket.on('onEditGameState', (gameState) => {
+      window.gameState = gameState
+    })
+
+    // EDITOR CALLS THIS
   	window.socket.on('onSnapAllObjectsToGrid', () => {
   		window.snapAllObjectsToGrid()
   	})

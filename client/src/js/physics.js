@@ -365,8 +365,6 @@ function update (delta) {
 
   correctionPhase()
   system.update()
-  correctionPhase()
-  system.update()
   correctionPhase(true)
 
   function correctionPhase(final = false) {

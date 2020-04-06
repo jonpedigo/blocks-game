@@ -17,6 +17,7 @@ function loaded() {
 
 function start() {
   window.gameState.paused = false
+  window.gameState.started = true
   window.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
   window.respawnHero()
@@ -57,7 +58,7 @@ function render(ctx, delta) {
     particle.draw(ctx, delta)
   })
 
-  if(window.gameState.paused) {
+  if(window.gameState.paused && window.gameState.started) {
     const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
     // ctx.fillStyle = 'rgba(0,0,0,0.8)';
