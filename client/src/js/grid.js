@@ -17,16 +17,16 @@ function convertToGridXY(object, options = {}) {
 
   let diffX = x % window.grid.nodeSize
   x -= diffX
-  x = x/window.grid.nodeSize
+  let gridX = x/window.grid.nodeSize
 
   let diffY = y % window.grid.nodeSize
   y -= diffY
-  y = y/window.grid.nodeSize
+  let gridY = y/window.grid.nodeSize
 
   let width = Math.floor(object.width / window.grid.nodeSize)
   let height = Math.floor(object.height / window.grid.nodeSize)
 
-  return { x, y, diffX, diffY, width, height }
+  return { x, y, gridX, gridY, diffX, diffY, width, height }
 }
 
 function generateGridNodes(gridProps) {
@@ -263,30 +263,29 @@ function updateGridObstacles() {
 }
 
 function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  const {x, y} = convertToGridXY(object)
-  console.log()
-  return keepGridXYWithinBoundaries(x, y, options)
+  const {gridX, gridY} = convertToGridXY(object)
+  return keepGridXYWithinBoundaries(gridX, gridY, options)
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
-    const {x, y, width, height } = convertToGridXY(window.world.gameBoundaries)
-    if(attemptingX > x + width - 1) {
+    const {gridX, gridY, width, height } = convertToGridXY(window.world.gameBoundaries)
+    if(attemptingX > gridX + width - 1) {
       return false
-    } else if(attemptingX < x) {
+    } else if(attemptingX < gridX) {
       return false
-    } else if(attemptingY > y + height - 1) {
+    } else if(attemptingY > gridY + height - 1) {
       return false
-    } else if(attemptingY < y) {
+    } else if(attemptingY < gridY) {
       return false
     }
   }
 
   if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    const {x, y, width, height } = convertToGridXY(window.world.gameBoundaries)
-    if(attemptingX > x + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+    const {gridX, y, width, height } = convertToGridXY(window.world.gameBoundaries)
+    if(attemptingX > gridX + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
       return false
-    } else if(attemptingX < x - 1 + (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+    } else if(attemptingX < gridX - 1 + (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
       return false
     } else if(attemptingY > y + height - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT)/window.grid.nodeSize) {
       return false

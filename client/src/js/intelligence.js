@@ -25,9 +25,9 @@ function moveTowardsTarget(object, delta) {
 }
 
 function moveOnPath(object) {
-  const { x, y, diffX, diffY } = gridTool.convertToGridXY(object)
-  object.gridX = x
-  object.gridY = y
+  const { gridX, gridY, x, y, diffX, diffY } = gridTool.convertToGridXY(object)
+  object.gridX = gridX
+  object.gridY = gridY
 
   if(object.gridY == object.path[0].y && object.gridX == object.path[0].x && diffX <= 2 && diffY <= 2) {
     object.velocityX = 0
@@ -39,6 +39,7 @@ function moveOnPath(object) {
   let pathX = (object.path[0].x * window.grid.nodeSize) + window.grid.nodes[0][0].x
   let pathY = (object.path[0].y * window.grid.nodeSize) + window.grid.nodes[0][0].y
   if(object.gridX == object.path[0].x && diffX <= 2) {
+    object.x = x
     object.velocityX = 0
   } else if(object.x > pathX) {
     object.velocityX = -object.speed || -100
@@ -47,6 +48,7 @@ function moveOnPath(object) {
   }
 
   if(object.gridY == object.path[0].y && diffY <= 2) {
+    object.y = y
     object.velocityY = 0
   } else if(object.y > pathY) {
     object.velocityY = -object.speed || -100

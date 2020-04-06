@@ -179,12 +179,11 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-function onCollide(hero, collider, result, removeObjects) {
+function onCollide(hero, collider, result, removeObjects, respawnObjects) {
   if(collider.tags && collider.tags['monster']) {
     if(window.hero.tags['monsterDestroyer']) {
       if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
-        collider.x = collider.spawnPointX
-        collider.y = collider.spawnPointY
+        respawnObjects.push(collider)
       } else {
         removeObjects.push(collider)
       }
@@ -193,7 +192,7 @@ function onCollide(hero, collider, result, removeObjects) {
         window.client.emit('gameOver')
       }
       window.hero.lives--
-      window.respawnHero()
+      respawnObjects.push(hero)
       return
     }
   }

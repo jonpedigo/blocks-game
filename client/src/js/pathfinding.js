@@ -143,7 +143,7 @@ function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfind
 }
 
 function walkIntoWall(object) {
-  const { x, y } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridTool.convertToGridXY(object)
 
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
@@ -186,7 +186,7 @@ function walkIntoWall(object) {
 }
 
 function walkWithPurpose(object) {
-  const { x, y } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridTool.convertToGridXY(object)
 
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
@@ -248,7 +248,7 @@ function walkWithPurpose(object) {
 }
 
 function walkAround(object) {
-  const { x, y } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridTool.convertToGridXY(object)
 
   let direction = ''
   if(object.direction) {

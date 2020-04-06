@@ -37,18 +37,18 @@ window.client.on('onRespawnHero', () => {
       if(obj.removed) return
 
       if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
-        const { x, y } = gridTool.convertToGridXY(obj)
-        obj.gridX = x
-        obj.gridY = y
+        const { gridX, gridY } = gridTool.convertToGridXY(obj)
+        obj.gridX = gridX
+        obj.gridY = gridY
 
         const spawnGridPos = gridTool.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
 
         obj.path = pathfinding.findPath({
-          x: x,
-          y: y,
+          x: gridX,
+          y: gridY,
         }, {
-          x: spawnGridPos.x,
-          y: spawnGridPos.y,
+          x: spawnGridPos.gridX,
+          y: spawnGridPos.gridY,
         }, obj.pathfindingLimit)
       }
     })

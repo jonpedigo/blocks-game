@@ -52,17 +52,17 @@ function intelligence(object, delta) {
 
   if(object.tags && object.tags['homing']) {
     if(!object.path || (object.path && !object.path.length)) {
-      const { x, y } = gridTool.convertToGridXY(object)
-      object.gridX = x
-      object.gridY = y
+      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      object.gridX = gridX
+      object.gridY = gridY
 
       const heroGridPos = gridTool.convertToGridXY(window.hero)
-      window.hero.gridX = heroGridPos.x
-      window.hero.gridY = heroGridPos.y
+      window.hero.gridX = heroGridPos.gridX
+      window.hero.gridY = heroGridPos.gridY
 
       object.path = pathfinding.findPath({
-        x: x,
-        y: y,
+        x: gridX,
+        y: gridY,
       }, {
         x: window.hero.gridX,
         y: window.hero.gridY,
@@ -73,27 +73,27 @@ function intelligence(object, delta) {
   if(object.tags && object.tags['wander']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkAround(object)]
-      const { x, y } = gridTool.convertToGridXY(object)
-      object.gridX = x
-      object.gridY = y
+      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      object.gridX = gridX
+      object.gridY = gridY
     }
   }
 
   if(object.tags && object.tags['pacer']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkWithPurpose(object)]
-      const { x, y } = gridTool.convertToGridXY(object)
-      object.gridX = x
-      object.gridY = y
+      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      object.gridX = gridX
+      object.gridY = gridY
     }
   }
 
   if(object.tags && object.tags['lemmings']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkIntoWall(object)]
-      const { x, y } = gridTool.convertToGridXY(object)
-      object.gridX = x
-      object.gridY = y
+      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      object.gridX = gridX
+      object.gridY = gridY
     }
   }
 

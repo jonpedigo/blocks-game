@@ -99,8 +99,8 @@ function init() {
         }
 
         if(window.setObjectPathfindingLimitToggle.checked) {
-          const {x, y, width, height} = gridTool.convertToGridXY(value);
-          window.sendObjectUpdate({ pathfindingLimit: { x, y , width, height }})
+          const {gridX, gridY, width, height} = gridTool.convertToGridXY(value);
+          window.sendObjectUpdate({ pathfindingLimit: { gridX, gridY , width, height }})
         }
       }
     },

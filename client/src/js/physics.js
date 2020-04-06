@@ -187,6 +187,7 @@ function update (delta) {
   // update physics system
   system.update()
   let removeObjects = []
+  let respawnObjects = []
 
   function heroCollisions() {
     /////////////////////////////////////////////////////
@@ -204,7 +205,7 @@ function update (delta) {
     for(const body of potentials) {
       if(body.gameObject.removed) continue
       if(heroPO.collides(body, result)) {
-        hero.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects)
+        hero.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
       }
     }
 
@@ -352,12 +353,12 @@ function update (delta) {
 
         /// DEFAULT GAME FX
         if(window.defaultGame) {
-          window.defaultGame.onCollide(po.gameObject, body.gameObject, result, removeObjects)
+          window.defaultGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
         }
 
         /// CUSTOM GAME FX
         if(window.customGame) {
-          window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects)
+          window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
         }
       }
     }
@@ -442,6 +443,17 @@ function update (delta) {
     gameObject.removed = true
     window.socket.emit('removeObject', gameObject)
   })
+
+  respawnObjects.forEach((gameObject) => {
+    if(gameObject.id.indexOf('hero') > -1) {
+      window.respawnHero()
+    } else if(gameObject.spawnPointX >= 0){
+      gameObject.x = gameObject.spawnPointX
+      gameObject.y = gameObject.spawnPointY
+    }
+
+  })
+
 
   window.objects.forEach((object, i) => {
     if(object.removed) return
