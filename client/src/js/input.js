@@ -85,6 +85,17 @@ function update(delta) {
     s 83
     d 68
   */
+  /// DEFAULT GAME FX
+  if(window.defaultGame) {
+    window.defaultGame.input(keysDown, delta)
+  }
+
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.input(keysDown, delta)
+  }
+
+  if(window.hero.flags.paused || window.gameState.paused) return
 
   window.hero._initialX = window.hero.x
   window.hero._initialY = window.hero.y
@@ -197,16 +208,6 @@ function update(delta) {
   }
 
   positionInput()
-
-  /// DEFAULT GAME FX
-  if(window.defaultGame) {
-    window.defaultGame.input(keysDown, delta)
-  }
-
-  /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.input(keysDown, delta)
-  }
 }
 
 function getDirection() {

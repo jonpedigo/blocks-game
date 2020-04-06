@@ -23,6 +23,20 @@ body {
   background: #0f0f0f;
 }
 
+#game-canvas {
+  position: fixed;
+  left: 0px;
+}
+
+#editor {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 622px;
+}
+
 #jsoneditor {
   background:white;
   position: fixed;
@@ -50,6 +64,8 @@ body {
   background-color:#333;
   overflow-y: scroll;
   height: 100%;
+  z-index: 3;
+  position: fixed;
   // .button {
   //   background-color:white; /* Green */
   //   border: 1px solid;

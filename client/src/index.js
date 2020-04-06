@@ -23,12 +23,14 @@
 // lazy scroll that is not not immediate! Smoother...
 // leveling up
 // optimize shadow feature, not all vertices!
-// Instead of creating one big block, create a bunch of small blocks, OPTION
+// Instead of creating one big block, create a bunch of small blocks, OPTION. NO DDO NOT DDO THIS. MAybe make it a design...
+// INSTEAD allow for stationary objects that are touching eachother to all be combined! This helps with physics and performance
 // Maybe make a diagonal wall..
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
 // EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
+// editor gridsnap toggle in world editorPref
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'

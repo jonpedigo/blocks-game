@@ -1,5 +1,6 @@
 import defaultGame from './default'
 import pacman from './pacman'
+import template from './template'
 
 let customGames = {
   default: defaultGame,

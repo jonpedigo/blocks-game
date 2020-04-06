@@ -159,7 +159,7 @@ function render(ctx, hero, objects) {
   // EDITING OBJECT SETTINGS
   ////////////////
   ////////////////
-  if(window.editingObject.id && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+  if(window.editingObject.id) {
     let object = window.editingObject
 
     // if(object.gridX) {
@@ -233,7 +233,7 @@ function render(ctx, hero, objects) {
   ////////////////
   ctx.fillStyle = 'white';
   for(var heroId in window.heros) {
-    if(heroId === window.editingHero.id && window.currentTool == window.TOOLS.HERO_EDITOR) {
+    if(heroId === window.editingHero.id) {
       drawObject(ctx, {...window.heros[heroId], color: '#0A0'});
     } else {
       drawObject(ctx, {...window.heros[heroId], color: 'white'});

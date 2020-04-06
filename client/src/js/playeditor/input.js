@@ -11,6 +11,10 @@ function init(hero){
     if(e.keyCode === 27) {
       window.clickStart.x = null
       window.clickStart.y = null
+
+      if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
+        window.onChangeTool(window.TOOLS.ADD_OBJECT)
+      }
     }
 
     if(keysDown['32']){
@@ -32,83 +36,79 @@ function init(hero){
 
       //, .
       if(keysDown['188'] || keysDown['190']){
-        if(window.currentTool === window.TOOLS.HERO_EDITOR) {
-          if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
-            for(var heroId in window.heros) {
-              window.setEditingHero(window.heros[heroId])
-              window.findHero()
-            }
-            return
+        if(Object.keys(window.heros).length === 1 || !window.editingHero.id) {
+          for(var heroId in window.heros) {
+            window.setEditingHero(window.heros[heroId])
+            window.findHero()
           }
+          return
         }
       }
 
       //select left
       if(keysDown['188']){
-        if(window.currentTool === window.TOOLS.HERO_EDITOR) {
-          let heroNames = Object.keys(window.heros)
-          for(let i = 0; i < heroNames.length; i++) {
-            if(window.heros[heroNames[i]].id === window.editingHero.id) {
-              if(i === 0) {
-                window.setEditingHero(window.heros[heroNames[heroNames.length-1]])
-              } else {
-                window.setEditingHero(window.heros[heroNames[i-1]])
-              }
-              window.findHero()
-
-              break;
+        let heroNames = Object.keys(window.heros)
+        for(let i = 0; i < heroNames.length; i++) {
+          if(window.heros[heroNames[i]].id === window.editingHero.id) {
+            if(i === 0) {
+              window.setEditingHero(window.heros[heroNames[heroNames.length-1]])
+            } else {
+              window.setEditingHero(window.heros[heroNames[i-1]])
             }
-          }
-        }
+            window.findHero()
 
-        if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
-          if(window.objects.length == 0) return
-          let newI = window.editingObject.i
-          if(!window.editingObject.i) {
-            newI = window.objects.length - 1
-          } else {
-            newI -= 1
+            break;
           }
-          window.editingObject = window.objects[newI]
-          window.editingObject.i = newI
-          window.objecteditor.set(window.editingObject)
-          window.findObject()
         }
         return
       }
 
       //select right
       if(keysDown['190']){
-        if(window.currentTool === window.TOOLS.HERO_EDITOR) {
-          let heroNames = Object.keys(window.heros)
-          for(let i = 0; i < heroNames.length; i++) {
-            if(window.heros[heroNames[i]].id === window.editingHero.id) {
-              if(i === heroNames.length - 1) {
-                window.setEditingHero(window.heros[heroNames[0]])
-              } else {
-                window.setEditingHero(window.heros[heroNames[i+1]])
-              }
-              window.findHero()
-
-              break;
+        let heroNames = Object.keys(window.heros)
+        for(let i = 0; i < heroNames.length; i++) {
+          if(window.heros[heroNames[i]].id === window.editingHero.id) {
+            if(i === heroNames.length - 1) {
+              window.setEditingHero(window.heros[heroNames[0]])
+            } else {
+              window.setEditingHero(window.heros[heroNames[i+1]])
             }
-          }
-        }
+            window.findHero()
 
-        if(window.currentTool === window.TOOLS.SIMPLE_EDITOR) {
-          if(window.objects.length == 0) return
-          let newI = window.editingObject.i
-          if(window.editingObject.i === window.objects.length -1 || window.editingObject.i == null) {
-            newI = 0
-          } else {
-            newI += 1
+            break;
           }
-          window.editingObject = window.objects[newI]
-          window.editingObject.i = newI
-          window.objecteditor.set(window.editingObject)
-          window.findObject()
         }
         return
+      }
+
+      // right
+      if(keysDown['222']){
+        if(window.objects.length == 0) return
+        let newI = window.editingObject.i
+        if(window.editingObject.i === window.objects.length -1 || window.editingObject.i == null) {
+          newI = 0
+        } else {
+          newI += 1
+        }
+        window.editingObject = window.objects[newI]
+        window.editingObject.i = newI
+        window.objecteditor.set(window.editingObject)
+        window.findObject()
+      }
+
+      //left
+      if(keysDown['186']){
+        if(window.objects.length == 0) return
+        let newI = window.editingObject.i
+        if(!window.editingObject.i) {
+          newI = window.objects.length - 1
+        } else {
+          newI -= 1
+        }
+        window.editingObject = window.objects[newI]
+        window.editingObject.i = newI
+        window.objecteditor.set(window.editingObject)
+        window.findObject()
       }
     }
 

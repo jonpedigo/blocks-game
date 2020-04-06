@@ -14,6 +14,12 @@ import objectEditor from './tools/objectEditor.js'
 import heroEditor from './tools/heroEditor.js'
 import gameManager from './tools/gameManager.js'
 import addObject from './tools/addObject.js'
+//
+import 'ace-builds'
+import 'ace-builds/webpack-resolver';
+// // then the mode, theme & extension
+import 'ace-builds/src-noconflict/mode-json';
+// import 'ace-builds/src-noconflict/ext-searchbox';
 
 /////////////////////
 //GLOBALS
@@ -29,8 +35,10 @@ window.TOOLS = {
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
   GAME_MANAGER: 'gameManager',
+  CUSTOM_GAME: 'customGame',
 }
 window.currentTool = TOOLS.ADD_OBJECT;
+
 let toolAddObjectEl = document.getElementById("tool-addObject")
 //tool select functionality
 let toolSelectEl = document.getElementById("tool-select")
@@ -40,14 +48,29 @@ for(var tool in TOOLS) {
   toolEl.className = 'button';
   toolEl.innerHTML = toolName
   toolEl.onclick=function() {
-    console.log('current tool changed to ' + toolName)
-    window.currentTool = toolName
-    Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
-      e.className = "tool-feature invisible"
-    })
-    document.getElementById("tool-"+toolName).className='tool-feature visible'
+    window.onChangeTool(toolName)
   }
   toolSelectEl.appendChild(toolEl)
+}
+
+window.onChangeTool = function(toolName) {
+  console.log('current tool changed to ' + toolName)
+  window.currentTool = toolName
+  Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
+    e.className = "tool-feature invisible"
+  })
+  document.getElementById("tool-"+toolName).className='tool-feature visible'
+
+  if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
+    document.getElementById('game-canvas').style="left: 400px;"
+    ctx.canvas.width = window.innerWidth - 400;
+  } else if(toolName === window.TOOLS.CUSTOM_GAME) {
+    document.getElementById('game-canvas').style="left: 622px;"
+    ctx.canvas.width = window.innerWidth - 622;
+  } else {
+    ctx.canvas.width = window.innerWidth;
+    document.getElementById('game-canvas').style="left: 0px;"
+  }
 }
 
 /////////////////////
@@ -69,6 +92,15 @@ function init(ctx, objects) {
   gameManager.init()
   addObject.init()
 
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/monokai");
+  editor.session.setMode("ace/mode/javascript");
+  editor.resize()
+  editor.setValue(window.templateGameString);
+  editor.setOptions({
+    fontFamily: "tahoma",
+    fontSize: "20pt"
+  });
   /////////////////////
   // PROCEDURAL BUTTONS
   /////////////////////
