@@ -9,7 +9,7 @@ function init() {
     velocityY: 0,
     velocityMax: 100,
     speed: 100,
-    color: 'white',
+    color: '#999',
     // cant put objects in it cuz of some pass by reference BS...
   }
 }
@@ -81,7 +81,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     }
 
     for(let tag in window.tags) {
-      if(window.tags[tag].checked || newObject.tags[tag] === true){
+      if((window.usePlayEditor && window.tagEls[tag].checked) || newObject.tags[tag] === true){
         if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
           alert('You cannot add a monster without setting spawn point first')
           return

@@ -207,21 +207,62 @@ function update(delta) {
 
 // only on client
 function render(ctx) {
-
   if(window.hero) {
-    if(window.hero.directions.down) {
-      let sWidth = 17.5;
-      let sHeight = 20;
-      var path=new Path2D();
-      let x = window.hero.x/window.camera.multiplier - window.camera.x
-      let y = window.hero.y/window.camera.multiplier - window.camera.y - 15
-      path.moveTo(x + (sWidth/2) +5, y+ sHeight/2);
-      path.lineTo(x + (sWidth/2), y+ (sHeight/2)-10);
-      path.lineTo(x + (sWidth/2)-5, y + sHeight/2);
-      ctx.fill(path);
-    } else {
 
-    }
+    // got some gradients to work..
+    // let startx = (window.hero.x + 20)/window.camera.multiplier - window.camera.x
+    // let starty = (window.hero.y - 40)/window.camera.multiplier - window.camera.y
+    // let endx = (window.hero.x + 20)/window.camera.multiplier - window.camera.x
+    // let endy = (window.hero.y - 20)/window.camera.multiplier - window.camera.y
+    // var cx=250;
+    // var cy=250;
+    // var r=30;
+    // var PI2=Math.PI*2;
+    //
+    // var gradient=ctx.createLinearGradient(startx,starty, endx, endy);
+    // gradient.addColorStop(0.00,"transparent");
+    // gradient.addColorStop(1.00,"white");
+    //
+    // ctx.lineWidth=40/window.camera.multiplier
+    // ctx.lineCap="square";
+    // ctx.beginPath();
+    // ctx.moveTo(startx,starty);
+    // ctx.lineTo(endx,endy);
+    // ctx.strokeStyle=gradient;
+    // ctx.stroke();
+
+    // ctx.beginPath();
+    // ctx.arc(75,75,20,0,PI2);
+    // ctx.closePath();
+    // ctx.fillStyle="gold";
+    // ctx.globalAlpha=0.50;
+    // ctx.fill();
+    // ctx.globalAlpha=1.00;
+    //
+    // ctx.beginPath();
+    // ctx.arc(75,75,20,0,PI2);
+    // ctx.closePath();
+    // ctx.fillStyle="gold";
+    // ctx.shadowColor="gold";
+    // ctx.shadowBlur=5;
+    // ctx.fill();
+
+    // ctx.strokeStyle = 'white'
+    // ctx.lineWidth=1;
+    //
+    // if(window.hero.directions.down) {
+    //   let sWidth = 17.5;
+    //   let sHeight = 20;
+    //   var path=new Path2D();
+    //   let x = window.hero.x/window.camera.multiplier - window.camera.x
+    //   let y = (window.hero.y-20)/window.camera.multiplier - window.camera.y
+    //   path.moveTo(x + (sWidth/2) +5, y+ sHeight/2);
+    //   path.lineTo(x + (sWidth/2), y+ (sHeight/2)-10);
+    //   path.lineTo(x + (sWidth/2)-5, y + sHeight/2);
+    //   ctx.fill(path);
+    // } else {
+    //
+    // }
   }
 }
 

@@ -47,17 +47,17 @@ window.defaultTags = {
 window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
 function init() {
+  window.tagEls = {}
   let tagSelectEl = document.getElementById("tag-select")
   for(var tag in window.tags) {
     let tagEl = document.createElement('input')
     tagEl.type ='checkbox'
     tagEl.checked = window.tags[tag]
     tagEl.id = 'tag-'+tag
-    tags[tag] = tagEl
+    tagEls[tag] = tagEl
     let tagContainerEl = document.createElement('div')
     tagContainerEl.innerHTML = tag
     tagContainerEl.appendChild(tagEl)
-
     tagSelectEl.appendChild(tagContainerEl)
   }
 }

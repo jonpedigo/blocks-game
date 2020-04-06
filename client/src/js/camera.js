@@ -79,7 +79,7 @@ function drawName(ctx, object){
 }
 
 function drawObject(ctx, object, withNames = false) {
-  // if(object.color) ctx.fillStyle = object.color
+  if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
   // ctx.fillStyle = 'white';
 
@@ -110,6 +110,7 @@ function drawVertice(ctx, vertice) {
   if(vertice.thickness) {
     ctx.lineWidth = vertice.thickness
   }
+
   ctx.beginPath();
   // ctx.lineWidth = '4';
   ctx.moveTo( (vertice.a.x/camera.multiplier - camera.x), (vertice.a.y/camera.multiplier - camera.y));

@@ -10,6 +10,7 @@ function update() {
   ctx.filter = "none"
   let vertices = [...window.objects].reduce((prev, object) => {
     if(object.removed) return prev
+    if(object.tags.filled) return prev
     if(object.tags.invisible) return prev
     let extraProps = {}
     if(object.tags.glowing) {
@@ -17,6 +18,7 @@ function update() {
       extraProps.thickness = 2
       extraProps.color = 'white'
     }
+    if(object.color) extraProps.color = object.color
 		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
 		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
 		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
@@ -39,6 +41,12 @@ function update() {
 		}
 		ctx.fillStyle = 'white';
 		camera.drawObject(ctx, window.hero)
+    for(let i = 0; i < window.objects.length; i++){
+      if(!window.objects[i].tags.filled) continue
+      if(window.objects[i].removed) continue
+      if(window.objects[i].tags.invisible) continue
+      camera.drawObject(ctx, window.objects[i])
+    }
 	} else if(window.world.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {
@@ -49,15 +57,15 @@ function update() {
 		}
 	}
 
-	window.world.shadows = false
-	if(window.world.shadows === true) {
-		shadow.draw(ctx, vertices, hero)
-	}
-
   for(var heroId in window.heros) {
     if(heroId === window.hero.id) continue;
     let currentHero = window.heros[heroId];
     camera.drawObject(ctx, currentHero);
+  }
+
+  window.world.shadows = false
+  if(window.world.shadows === true) {
+    shadow.draw(ctx, vertices, hero)
   }
 
   ctx.font =`24pt Arial`

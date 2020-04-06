@@ -25,7 +25,7 @@ function init() {
       gridTool.addObstacle({...object, tags: objectEdited.tags})
     }
 
-    window.sendObjectUpdate({ tags: objectEdited.tags })
+    window.sendObjectUpdate({ tags: objectEdited.tags, color: objectEdited.color })
   }});
 
   let applyObjectModEl = document.getElementById("apply-object-mod")
