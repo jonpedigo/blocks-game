@@ -2,10 +2,22 @@ const keysDown = {}
 
 function init(){
 
-  window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  window.hero.color = 'rgba(255,255,255,0.1)'
-  window.hero.id = 'ghost'
-  window.heros.ghost = window.hero
+  let ghostData = JSON.parse(localStorage.getItem('ghostData'));
+  if(ghostData.selectedHeroId) {
+    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
+    window.hero.id = ghostData.selectedHeroId
+    if(ghostData.selectedHeroId == 'ghost') {
+      window.hero.color = 'rgba(255,255,255,0.1)'
+      window.heros.ghost = window.hero
+    } else {
+      window.heros = {'ghost': ghostData.ghost}
+    }
+  } else {
+    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
+    window.hero.color = 'rgba(255,255,255,0.1)'
+    window.hero.id = 'ghost'
+    window.heros.ghost = window.hero
+  }
 
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
@@ -51,6 +63,11 @@ function init(){
 
 }
 
+function update(delta) {
+  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: window.heros.ghost}))
+}
+
 export default {
   init,
+  update,
 }

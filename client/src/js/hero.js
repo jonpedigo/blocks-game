@@ -48,6 +48,9 @@ function init() {
     }
   }
 
+  if(window.ghost) {
+    ghost.init()
+  }
   if(window.isPlayer) {
   	let savedHero = localStorage.getItem('hero');
   	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
@@ -69,8 +72,6 @@ function init() {
   	window.heros = {
   		[window.hero.id]:window.hero,
   	}
-  } else if(window.ghost) {
-    ghost.init()
   }
 
   if(window.hero && window.host) {
@@ -107,7 +108,6 @@ window.resetHero = function(updatedHero) {
 	} else {
     let newHero = {}
     window.defaultHero.id = window.hero.id
-    console.log(window.defaultHero.color)
 		Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
     window.hero = newHero
     window.heros[window.hero.id] = window.hero

@@ -94,6 +94,7 @@ window.init = function () {
 
   if(window.getParameterByName('editorPlayer')) {
     window.usePlayEditor = false
+    // the only reason this editorPlayer flag exists is to handle the half host who only updates their own hero..
     window.editorPlayer = true
     window.isPlayer = true
     window.host = true
@@ -163,6 +164,10 @@ var update = function (delta) {
       if(window.anticipatedObject) {
         window.anticipateObjectAdd()
       }
+    }
+
+    if(window.ghost) {
+      ghost.update()
     }
   }
 };
@@ -243,7 +248,6 @@ window.onGameLoaded = function() {
       }
       window.socket.emit('updateHeroPos', window.hero)
       localStorage.setItem('hero', JSON.stringify(window.hero));
-
       let timeout = window.lastDelta * 7
       if(timeout > 250) {
         timeout = 250

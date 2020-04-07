@@ -34,7 +34,7 @@ function init() {
       window.socket.emit('resetHero', window.heros[heroId])
     }
     window.socket.emit('resetGameState')
-    window.socket.emit('newGame')
+    window.socket.emit('setGame', 'default')
   })
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', () => {

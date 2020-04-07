@@ -175,9 +175,11 @@ function init() {
           window.setEditingHero(heroUpdated)
         }
       }
+      if(!window.editingHero.id) {
+        window.setEditorToAnyHero()
+      }
     } else {
       if(window.hero.id !== heroUpdated.id || window.ghost) {
-        console.log('here', heroUpdated.id)
         window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
       }
     }
@@ -211,12 +213,6 @@ function init() {
 
   	if(window.hero && updatedHero.id === window.hero.id){
   		window.resetHero(updatedHero)
-  	}
-
-    if(window.usePlayEditor){
-      if(!window.editingHero.id) {
-        window.setEditorToAnyHero()
-      }
   	}
   })
 
@@ -282,13 +278,6 @@ function init() {
       window.objectsById[object.id] = object
       physics.addObject(object)
     })
-
-    // hero
-    // yeah I dont think we'll ever get here since well have done hero.init already
-    if(!window.hero && window.isPlayer) {
-      findHeroInNewWorld(game)
-      window.heros = {[window.hero.id] : window.hero}
-    }
 
     // grid
     window.grid = game.grid
@@ -392,13 +381,14 @@ function init() {
     handleWorldUpdate(window.world)
 
     // heros
-    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
     // reset to initial positions and state
-    if(window.host) {
+    if(window.host && window.isPlayer) {
       physics.removeObject(window.hero)
       findHeroInNewWorld(game)
       physics.addObject(window.hero)
     }
+    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
+
 
     // reset tags to default
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))

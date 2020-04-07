@@ -37,7 +37,7 @@ window.TOOLS = {
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
   GAME_MANAGER: 'gameManager',
-  CUSTOM_GAME: 'customGame',
+  CUSTOM_GAME: 'codeEditor',
 }
 window.currentTool = TOOLS.ADD_OBJECT;
 

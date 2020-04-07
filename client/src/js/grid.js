@@ -2,8 +2,8 @@ import collisions from './collisions'
 
 function init() {
   window.defaultGrid = {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     nodeSize: 40,
     startX: 0,
     startY: 0,

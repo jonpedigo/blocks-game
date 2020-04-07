@@ -47,7 +47,9 @@ function init() {
     localStorage.setItem('codeEditor', null)
   }
 
-  document.body.onclick = function(e) {   //when the document body is clicked
+  document.body.onclick = function(e) {
+    if(!e.target) return
+       //when the document body is clicked
     if (e.target.className && e.target.className.indexOf('start-game-fx-only') != -1) {
       window.socket.emit('customFxEvent', 'start')
     }
