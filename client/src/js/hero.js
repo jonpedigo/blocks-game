@@ -67,6 +67,9 @@ function init() {
   	window.heros = {
   		[window.hero.id]:window.hero,
   	}
+  } else if(window.heroGhostId) {
+    window.defaultHero.id = window.heroGhostId
+    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
   }
 
   if(window.hero && window.host) {

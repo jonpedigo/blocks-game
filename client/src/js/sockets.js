@@ -2,6 +2,8 @@ import gridTool from './grid.js'
 import physics from './physics.js'
 import camera from './camera.js'
 import pathfinding from './pathfinding.js'
+import collisions from './collisions.js'
+import particles from './particles.js'
 
 function init() {
 
@@ -158,6 +160,9 @@ function init() {
 
   // CLIENT HOST CALLS THIS
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
+    if(!window.heros) {
+      window.heros = {}
+    }
     if(!window.heros[heroUpdated.id]) {
       window.heros[heroUpdated.id] = {}
     }
@@ -173,6 +178,8 @@ function init() {
     } else {
       if(window.hero.id !== heroUpdated.id) {
         window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
+      } else if(window.heroGhostId == heroUpdated.id) {
+        window.mergeDeep(window.hero, heroUpdated)
       }
     }
   })
@@ -439,8 +446,10 @@ function init() {
   window.socket.on('onUpdateCustomGameFx', (customFx) => {
     if(window.host) {
       try {
-        customFx = eval('(function a() {' + customFx + ' return { init, loaded, start, onKeyDown, input, onCollide, intelligence, update, render } })')
-        customFx = customFx()
+        customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles) {
+          const w = window
+          ${customFx} return { init, loaded, start, onKeyDown, input, onCollide, intelligence, update, render } })`)
+        customFx = customFx(pathfinding, gridTool, camera, collisions, particles)
         window.liveCustomGame = customFx
       } catch (e) {
         console.log(e)

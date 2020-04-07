@@ -71,6 +71,13 @@ function update() {
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
   ctx.fillText(Math.ceil(window.fps), window.CONSTANTS.PLAYER_CANVAS_WIDTH - 50, 40)
+
+  if(window.heroGhostId) {
+    ctx.font =`24pt Arial`
+    ctx.fillStyle="rgba(255,255,255,0.3)"
+    ctx.fillText('Ghost View Id: ' + window.hero.id, 10, 40)
+  }
+
   chat.render(ctx);
 	feedback.draw(ctx);
 }

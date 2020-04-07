@@ -46,16 +46,22 @@ function init() {
     window.resetSpawnAreasAndObjects()
   })
 
-  var startGameButton = document.getElementById("start-game");
-  startGameButton.addEventListener('click', () => {
-    window.startGame()
+  var resetGameStateButton = document.getElementById("reset-game-state");
+  resetGameStateButton.addEventListener('click', () => {
+    window.socket.emit('resetGameState')
   })
 
-  var restartGameButton = document.getElementById("restart-game");
-  restartGameButton.addEventListener('click', () => {
-    window.socket.emit('resetGameState')
-    window.socket.emit('startGame')
-  })
+  document.body.onclick = function(e) {   //when the document body is clicked
+    if (e.target.className && e.target.className.indexOf('start-game') != -1) {
+      window.startGame()
+    }
+  }
+
+  document.body.onclick = function(e) {   //when the document body is clicked
+    if (e.target.className && e.target.className.indexOf('start-game') != -1) {
+      window.startGame()
+    }
+  }
 
   var pauseResumeGameToggle = document.getElementById("pause-resume-game");
   pauseResumeGameToggle.addEventListener('click', () => {

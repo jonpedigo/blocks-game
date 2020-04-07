@@ -1,13 +1,14 @@
 import collisions from './collisions'
 
 function init() {
-  window.grid = {
+  window.defaultGrid = {
     width: 50,
     height: 50,
     nodeSize: 40,
     startX: 0,
     startY: 0,
   }
+  window.grid = JSON.parse(JSON.stringify(window.defaultGrid))
 }
 
 function convertToGridXY(object, options = {}) {

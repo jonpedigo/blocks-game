@@ -11,11 +11,11 @@
 
 <body>
   <div id='play-editor'>
+    <span>Current Game Id:<h3 style="padding:0px; margin:0px" id='current-game-id'></h3> </span>
     <div id='tool-select'>
-
+    <hr>
     </div>
     <hr/>
-
     <div id='tool-addObject' class="tool-feature invisible">
       <div><input type='radio' name="add-object" checked id='add-object-grid-node'>grid node add</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-dot'>little dot</input></div>
@@ -112,23 +112,25 @@
       <div id='game-dom-elem' style="display:none;">test</div>
       <hr>
       <button id='reset-objects'>Reset Objects</button>
-      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Objects</button>
+      <button id='reset-game-state'>Reset game state</button>
+      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
       <button id='new-game'>New game</button>
       <hr>
       <div><input type='checkbox' checked id='sync-game-state'>Sync Game State</input></div>
       <hr>
-      <button id='start-game'>Start game</button>
-      <button id='restart-game'>Restart game</button>
+      <button class='start-game'>Start game</button>
       <button id='pause-resume-game'>Pause/Resume game</button>
       <hr>
-      <span>Current Game Id:<h3 style="padding:0px; margin:0px" id='current-game-id'></h3> </span>
     </div>
 
     <div id='tool-customGame' class="tool-feature invisible">
       <div id="editor"></div>
       <h1 id='is-code-editor-saved'>Saved</h1>
+      <hr>
       <button id='save-custom-fx'>Save custom game fx</button>
       <button id='reset-custom-fx'>Reset custom game fx</button>
+      <hr>
+      <button class='start-game'>Start game</button>
     </div>
 </body>
 

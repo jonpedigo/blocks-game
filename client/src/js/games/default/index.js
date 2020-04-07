@@ -5,15 +5,15 @@ import pathfinding from '../../pathfinding.js'
 import action from './action'
 import particles from '../../particles.js'
 
-// we organize the code on the front end, default values, etc
+// Add events, and default values
 // happens on every load, including reload
 // on client and editor
 function init() {
 
 }
 
-// once we have loaded up the game from the server for the first time, not on reload
-// interact with other values and setup initial game state
+// once we have loaded up the game from the server for the first time
+// interact with values loaded by the game, the values of other services
 // only on client
 function loaded() {
 

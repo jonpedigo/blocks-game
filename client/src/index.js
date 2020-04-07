@@ -2,7 +2,7 @@
 // set game boundaries to delete objects
 // make it easier for admin to move objects
 // TRUE zelda camera work
-
+// ghost view mode
 // death by jump
 
 // Pathfinding for something larger than one grid node
@@ -96,6 +96,14 @@ window.init = function () {
     window.editorPlayer = true
     window.isPlayer = true
     window.host = true
+  }
+
+  if(window.getParameterByName('ghost')) {
+    window.usePlayEditor = false
+    window.editorPlayer = true
+    window.isPlayer = false
+    window.host = false
+    window.heroGhostId = window.getParameterByName('ghost')
   }
 
   if(!window.usePlayEditor) {
