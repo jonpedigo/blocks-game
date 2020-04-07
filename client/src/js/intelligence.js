@@ -80,7 +80,7 @@ function update(hero, objects, delta) {
       moveTowardsTarget(object, delta)
     }
 
-    /// CUSTOM GAME FX
+    /// DEFAULT GAME FX
     if(window.defaultGame) {
       window.defaultGame.intelligence(object, delta)
     }
@@ -88,6 +88,11 @@ function update(hero, objects, delta) {
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.intelligence(object, delta)
+    }
+
+    /// LIVE CUSTOM GAME FX
+    if(window.liveCustomGame) {
+      window.liveCustomGame.intelligence(object, delta)
     }
 
     if(object.tags && object.tags['stationary']) {

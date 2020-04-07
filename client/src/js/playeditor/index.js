@@ -14,6 +14,8 @@ import objectEditor from './tools/objectEditor.js'
 import heroEditor from './tools/heroEditor.js'
 import gameManager from './tools/gameManager.js'
 import addObject from './tools/addObject.js'
+import customGame from './tools/customGame.js'
+
 //
 import 'ace-builds'
 import 'ace-builds/webpack-resolver';
@@ -63,10 +65,11 @@ window.onChangeTool = function(toolName) {
 
   if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
     document.getElementById('game-canvas').style="left: 400px;"
-    ctx.canvas.width = window.innerWidth - 400;
+    ctx.canvas.width = window.innerWidth - 400 - 180;
   } else if(toolName === window.TOOLS.CUSTOM_GAME) {
-    document.getElementById('game-canvas').style="left: 622px;"
-    ctx.canvas.width = window.innerWidth - 622;
+    let width = document.getElementById("editor").getBoundingClientRect().width
+    document.getElementById('game-canvas').style=`left: ${width}px`
+    ctx.canvas.width = window.innerWidth - width - 180;
   } else {
     ctx.canvas.width = window.innerWidth;
     document.getElementById('game-canvas').style="left: 0px;"
@@ -91,16 +94,8 @@ function init(ctx, objects) {
   worldEditor.init()
   gameManager.init()
   addObject.init()
+  customGame.init()
 
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/monokai");
-  editor.session.setMode("ace/mode/javascript");
-  editor.resize()
-  editor.setValue(window.templateGameString);
-  editor.setOptions({
-    fontFamily: "tahoma",
-    fontSize: "20pt"
-  });
   /////////////////////
   // PROCEDURAL BUTTONS
   /////////////////////

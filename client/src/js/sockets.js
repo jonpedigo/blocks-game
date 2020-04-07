@@ -77,6 +77,9 @@ function init() {
       if(window.customGame) {
         window.customGame.start()
       }
+      if(window.liveCustomGame) {
+        window.liveCustomGame.start()
+      }
     })
   }
 
@@ -310,6 +313,10 @@ function init() {
       window.customGame.init()
     }
 
+    if(window.liveCustomGame) {
+      window.liveCustomGame.init()
+    }
+
     if(!window.gameState.loaded && window.host) {
       /// DEFAULT GAME FX
       if(window.defaultGame) {
@@ -318,6 +325,10 @@ function init() {
       /// CUSTOM GAME FX
       if(window.customGame) {
         window.customGame.loaded()
+      }
+
+      if(window.liveCustomGame) {
+        window.liveCustomGame.init()
       }
 
       window.gameState.loaded = true
@@ -405,6 +416,14 @@ function init() {
         window.customGame.loaded()
       }
     }
+    if(window.liveCustomGame) {
+      // if we've set the game it means it didnt happen on page load.
+      // so we need to init it as well..
+      window.liveCustomGame.init()
+      if(window.host) {
+        window.liveCustomGame.loaded()
+      }
+    }
     window.gameState.loaded = true
   })
 
@@ -414,6 +433,23 @@ function init() {
   })
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)
+  })
+
+
+  window.socket.on('onUpdateCustomGameFx', (customFx) => {
+    if(window.host) {
+      try {
+        customFx = eval('(function a() {' + customFx + ' return { init, loaded, start, onKeyDown, input, onCollide, intelligence, update, render } })')
+        customFx = customFx()
+        window.liveCustomGame = customFx
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if(window.usePlayEditor) {
+      window.customFx = customFx
+    }
   })
 }
 

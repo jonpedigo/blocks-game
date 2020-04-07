@@ -5,6 +5,7 @@ let justChangedHerosRight = false
 
 function init(hero){
   window.addEventListener("keydown", function (e) {
+    delete keysDown['83']
     keysDown[e.keyCode] = true
 
     //if you press escape, cancel a drag
@@ -20,6 +21,12 @@ function init(hero){
     if(keysDown['32']){
       console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
       return
+    }
+
+    if(keysDown['91'] && keysDown['83']){
+      window.saveCodeEditor()
+      document.getElementById("is-code-editor-saved").innerHTML = "Saved"
+      e.preventDefault()
     }
 
 

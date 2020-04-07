@@ -360,6 +360,11 @@ function update (delta) {
         if(window.customGame) {
           window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
         }
+
+        /// LIVE CUSTOM GAME FX
+        if(window.liveCustomGame) {
+          window.liveCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+        }
       }
     }
   }

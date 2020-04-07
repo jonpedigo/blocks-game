@@ -251,6 +251,17 @@ io.on('connection', function(socket){
   socket.on('askGrid', () => {
     io.emit('onUpdateGrid', currentGame.grid)
   })
+
+
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  ///////////////////////////
+  // CUSTOM GAME FX
+  ///////////////////////////
+  socket.on('updateCustomGameFx', (customGameFx) => {
+    io.emit('onUpdateCustomGameFx', customGameFx)
+  })
 });
 
 http.listen(process.env.PORT || 4000, function(){

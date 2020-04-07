@@ -20,6 +20,11 @@ function init(){
       window.customGame.onKeyDown(keysDown)
     }
 
+    /// CUSTOM GAME FX
+    if(window.liveCustomGame) {
+      window.liveCustomGame.onKeyDown(keysDown)
+    }
+
     if(window.hero.flags.paused || window.gameState.paused) return
 
 
@@ -93,6 +98,11 @@ function update(delta) {
   /// CUSTOM GAME FX
   if(window.customGame) {
     window.customGame.input(keysDown, delta)
+  }
+
+  /// LIVE CUSTOM GAME FX
+  if(window.liveCustomGame) {
+    window.liveCustomGame.input(keysDown, delta)
   }
 
   if(window.hero.flags.paused || window.gameState.paused) return

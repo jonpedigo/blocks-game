@@ -146,6 +146,10 @@ var update = function (delta) {
       if(window.customGame) {
         window.customGame.update(delta)
       }
+      /// CUSTOM GAME FX
+      if(window.liveCustomGame) {
+        window.liveCustomGame.update(delta)
+      }
 
       if(window.anticipatedObject) {
         window.anticipateObjectAdd()
@@ -180,6 +184,11 @@ var mainLoop = function () {
     /// CUSTOM GAME FX
     if(window.customGame) {
       window.customGame.render(ctx, delta / 1000)
+    }
+
+    /// CUSTOM GAME FX
+    if(window.liveCustomGame) {
+      window.liveCustomGame.render(ctx, delta / 1000)
     }
 
     if(window.hero.animationZoomTarget) {
