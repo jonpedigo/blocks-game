@@ -2,6 +2,7 @@ import physics from './physics.js'
 import pathfinding from './pathfinding.js'
 import collisions from './collisions'
 import grid from './grid.js'
+import ghost from './ghost.js'
 
 function init() {
   window.defaultHero = {
@@ -10,6 +11,7 @@ function init() {
   	velocityX: 0,
   	velocityY: 0,
   	velocityMax: 200,
+    color: 'white',
   	// accY: 0,
   	// accX: 0,
   	// accDecayX: 0,
@@ -67,9 +69,8 @@ function init() {
   	window.heros = {
   		[window.hero.id]:window.hero,
   	}
-  } else if(window.heroGhostId) {
-    window.defaultHero.id = window.heroGhostId
-    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
+  } else if(window.ghost) {
+    ghost.init()
   }
 
   if(window.hero && window.host) {
@@ -106,6 +107,7 @@ window.resetHero = function(updatedHero) {
 	} else {
     let newHero = {}
     window.defaultHero.id = window.hero.id
+    console.log(window.defaultHero.color)
 		Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
     window.hero = newHero
     window.heros[window.hero.id] = window.hero

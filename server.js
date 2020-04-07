@@ -262,6 +262,10 @@ io.on('connection', function(socket){
   socket.on('updateCustomGameFx', (customGameFx) => {
     io.emit('onUpdateCustomGameFx', customGameFx)
   })
+
+  socket.on('customFxEvent', (eventIn) => {
+    io.emit('onCustomFxEvent', eventIn)
+  })
 });
 
 http.listen(process.env.PORT || 4000, function(){

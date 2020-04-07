@@ -46,6 +46,18 @@ function init() {
     window.customGameEditor.setValue(window.templateGameString);
     localStorage.setItem('codeEditor', null)
   }
+
+  document.body.onclick = function(e) {   //when the document body is clicked
+    if (e.target.className && e.target.className.indexOf('start-game-fx-only') != -1) {
+      window.socket.emit('customFxEvent', 'start')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-fx-only') != -1) {
+      window.socket.emit('customFxEvent', 'loaded')
+    }
+    if (e.target.className && e.target.className.indexOf('init-game-fx-only') != -1) {
+      window.socket.emit('customFxEvent', 'init')
+    }
+  }
 }
 
 export default {

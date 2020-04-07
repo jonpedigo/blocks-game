@@ -56,6 +56,7 @@ import render from './js/render.js'
 import gameState from './js/gameState.js'
 import './js/events.js'
 import games from './js/games/index'
+import ghost from './js/ghost.js'
 
 window.init = function () {
   // SOCKET START
@@ -103,7 +104,7 @@ window.init = function () {
     window.editorPlayer = true
     window.isPlayer = false
     window.host = false
-    window.heroGhostId = window.getParameterByName('ghost')
+    window.ghost = true
   }
 
   if(!window.usePlayEditor) {

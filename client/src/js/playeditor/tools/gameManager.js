@@ -29,7 +29,7 @@ function init() {
   newGameButton.addEventListener('click', () => {
     window.resetObjects()
     window.socket.emit('resetWorld')
-    window.socket.emit('updateGrid', { width: 50, height: 50, startX: 0, startY: 0, nodeSize: 40})
+    window.socket.emit('updateGrid', window.defaultGrid)
     for(var heroId in window.heros) {
       window.socket.emit('resetHero', window.heros[heroId])
     }
@@ -51,17 +51,11 @@ function init() {
     window.socket.emit('resetGameState')
   })
 
-  document.body.onclick = function(e) {   //when the document body is clicked
-    if (e.target.className && e.target.className.indexOf('start-game') != -1) {
-      window.startGame()
-    }
-  }
+  var startGameButton = document.getElementById("start-game");
+  startGameButton.addEventListener('click', () => {
+    window.startGame()
+  })
 
-  document.body.onclick = function(e) {   //when the document body is clicked
-    if (e.target.className && e.target.className.indexOf('start-game') != -1) {
-      window.startGame()
-    }
-  }
 
   var pauseResumeGameToggle = document.getElementById("pause-resume-game");
   pauseResumeGameToggle.addEventListener('click', () => {

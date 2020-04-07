@@ -176,10 +176,9 @@ function init() {
         }
       }
     } else {
-      if(window.hero.id !== heroUpdated.id) {
+      if(window.hero.id !== heroUpdated.id || window.ghost) {
+        console.log('here', heroUpdated.id)
         window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
-      } else if(window.heroGhostId == heroUpdated.id) {
-        window.mergeDeep(window.hero, heroUpdated)
       }
     }
   })
@@ -289,8 +288,6 @@ function init() {
     if(!window.hero && window.isPlayer) {
       findHeroInNewWorld(game)
       window.heros = {[window.hero.id] : window.hero}
-    } else {
-      window.heros = {}
     }
 
     // grid
@@ -396,7 +393,6 @@ function init() {
 
     // heros
     if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
-    else window.heros = {}
     // reset to initial positions and state
     if(window.host) {
       physics.removeObject(window.hero)
@@ -458,6 +454,13 @@ function init() {
 
     if(window.usePlayEditor) {
       window.customFx = customFx
+    }
+  })
+
+  window.socket.on('onCustomFxEvent', (event) => {
+    if(event !== 'loaded' && event !== 'init' && event !== 'start') return
+    if(window.host && window.liveCustomGame && window.liveCustomGame[event]) {
+      window.liveCustomGame[event]()
     }
   })
 }
