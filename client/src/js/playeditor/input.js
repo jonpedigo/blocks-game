@@ -100,6 +100,8 @@ function init(hero){
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
         window.objecteditor.set(window.editingObject)
+        window.editingObject.live = true
+        window.updateObjectEditor()
         window.findObject()
       }
 
@@ -114,7 +116,9 @@ function init(hero){
         }
         window.editingObject = window.objects[newI]
         window.editingObject.i = newI
+        window.objecteditor.live = true
         window.objecteditor.set(window.editingObject)
+        window.updateObjectEditor()
         window.findObject()
       }
     }

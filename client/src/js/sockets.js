@@ -299,6 +299,8 @@ function init() {
     // if game state is on the object it very likely means it has already been loaded..
     if(game.gameState) {
       window.gameState = game.gameState
+    } else {
+      window.gameState = {}
     }
 
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))

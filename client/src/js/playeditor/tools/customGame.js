@@ -18,6 +18,7 @@ function init() {
   editor.setOptions({
     fontSize: "20pt",
   });
+
   window.customGameEditor = editor
   window.customGameEditor.session.on('change', function(delta) {
     document.getElementById("is-code-editor-saved").innerHTML = "Not saved"

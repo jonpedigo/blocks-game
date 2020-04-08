@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 
 <body>
   <div id='play-editor'>
     <span>Current Game Id:<h3 style="padding:0px; margin:0px" id='current-game-id'></h3> </span>
     <div id='tool-select'>
-    <hr>
     </div>
-    <hr/>
+    <hr>
     <div id='tool-addObject' class="tool-feature invisible">
+      <div class='is-edit-live'></div>
+
       <div><input type='radio' name="add-object" checked id='add-object-grid-node'>grid node add</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-dot'>little dot</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-drag'>drag</input></div>
@@ -59,6 +59,8 @@
     </div>
 
     <div id='tool-objectEditor' class="tool-feature invisible">
+      <div class='is-edit-live'></div>
+
       <button id='send-object-pos'>send editor object pos</button>
       <button id='send-object-other'>send editor object other</button>
       <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
@@ -69,8 +71,7 @@
       <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
       <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
       <div><input type='radio' name='object-selector' id='set-object-parent'>Select Parent of Object</input></div>
-      <hr>
-      <strong>Apply Mod</strong>
+      <hr>      <strong>Apply Mod</strong>
       <div id='apply-object-mod'></div>
       <strong>Set Hero Update</strong>
       <div id='modifier-select-heros'></div>
@@ -78,6 +79,7 @@
       <div id='modifier-select-objects'></div>
       <strong>Set World Update</strong>
       <div id='modifier-select-world'></div>
+
     </div>
 
     <div id='tool-heroEditor' class="tool-feature invisible">

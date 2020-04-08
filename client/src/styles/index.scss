@@ -28,6 +28,17 @@ body {
   left: 0px;
 }
 
+.is-edit-live {
+  height: 25px;
+  width: 25px;
+  background-color: red;
+  border-radius: 50%;
+  display: none;
+  position: fixed;
+  right: 205px;
+  top:10px;
+}
+
 #editor {
   position: fixed;
   top: 0;

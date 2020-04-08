@@ -14,19 +14,24 @@ function init() {
 
   var objectjsoneditor = document.createElement("div")
   objectjsoneditor.id = 'objectjsoneditor'
-  document.getElementById('tool-'+TOOLS.SIMPLE_EDITOR).appendChild(objectjsoneditor);
-  window.objecteditor = new JSONEditor(objectjsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
-    let object = window.objects[window.editingObject.i]
+  document.body.appendChild(objectjsoneditor);
+  window.objecteditor = new JSONEditor(objectjsoneditor, {
+    modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
+    if(objectEdited.id) {
+      let object = window.objects[window.editingObject.i]
 
-    if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
-      gridTool.removeObstacle({...object, tags: objectEdited.tags})
+      if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
+        gridTool.removeObstacle({...object, tags: objectEdited.tags})
+      }
+
+      if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && objectEdited.tags.onlyHeroAllowed == true)) {
+        gridTool.addObstacle({...object, tags: objectEdited.tags})
+      }
+
+      window.sendObjectUpdateOther({ tags: objectEdited.tags, color: objectEdited.color })
+    } else {
+      // window.updateCompendiumObject(objectEdited)
     }
-
-    if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && objectEdited.tags.onlyHeroAllowed == true)) {
-      gridTool.addObstacle({...object, tags: objectEdited.tags})
-    }
-
-    window.sendObjectUpdateOther({ tags: objectEdited.tags, color: objectEdited.color })
   }});
 
   let applyObjectModEl = document.getElementById("apply-object-mod")
@@ -139,6 +144,24 @@ window.findObject = function() {
   camera.setCamera(ctx, window.editingObject)
 }
 
+function loaded() {
+  window.objecteditor.set(window.defaultObject)
+  window.objecteditor.expandAll()
+}
+
+window.updateObjectEditor = function() {
+  let x=document.getElementsByClassName("is-edit-live");  // Find the elements
+  for(var i = 0; i < x.length; i++){
+    if(window.objecteditor.live) {
+      x[i].style = 'display:inline-block'
+    } else {
+      x[i].style = 'display:none'
+    }
+  }
+  window.objecteditor.expandAll()
+}
+
 export default {
-  init
+  init,
+  loaded,
 }

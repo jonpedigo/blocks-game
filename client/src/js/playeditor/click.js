@@ -84,6 +84,8 @@ function init() {
             collisions.checkObject(click, object, () => {
               window.objecteditor.set(Object.assign({}, object))
               window.objecteditor.expandAll()
+              window.objecteditor.live = true
+              window.updateObjectEditor()
               window.editingObject = object
               window.editingObject.i = i
             })
@@ -152,7 +154,7 @@ function init() {
           }
 
           const { x, y } = gridTool.createGridNodeAt(click.x, click.y)
-          let newObject = {
+          let location = {
             width: window.grid.nodeSize,
             height: window.grid.nodeSize,
             x: x,
@@ -160,24 +162,39 @@ function init() {
           }
 
           if(window.dotAddToggle.checked) {
-            newObject.width = Number(document.getElementById('add-dot-size').value)
-            newObject.height = Number(document.getElementById('add-dot-size').value)
-            newObject.x += (window.grid.nodeSize/2 - newObject.width/2)
-            newObject.y += (window.grid.nodeSize/2 - newObject.height/2)
+            location.width = Number(document.getElementById('add-dot-size').value)
+            location.height = Number(document.getElementById('add-dot-size').value)
+            location.x += (window.grid.nodeSize/2 - location.width/2)
+            location.y += (window.grid.nodeSize/2 - location.height/2)
           }
+
+          let editorObject = window.objecteditor.get()
+          console.log(editorObject.tags.stationary)
+
+          let newObject = JSON.parse(JSON.stringify(editorObject))
+
+          Object.assign(newObject, location)
+
+          console.log(location, newObject.tags.stationary, editorObject.tags.stationary)
 
           window.addObjects(newObject)
         }
       },
       onSecondClick: (e) => {
-        let newObject = {
+        let location = {
           width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
           height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
           x: window.clickStart.x/window.scaleMultiplier,
           y: window.clickStart.y/window.scaleMultiplier,
         }
+        gridTool.snapDragToGrid(location, { dragging: true })
 
-        gridTool.snapDragToGrid(newObject, { dragging: true })
+        let editorObject = window.objecteditor.get()
+
+        let newObject = JSON.parse(JSON.stringify(editorObject))
+
+        Object.assign(newObject, location)
+
         window.addObjects(newObject)
       },
     }

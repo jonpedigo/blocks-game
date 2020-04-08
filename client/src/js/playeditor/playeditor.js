@@ -32,8 +32,8 @@ window.heros = {}
 
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
-  WORLD_EDITOR: 'worldEditor',
   SIMPLE_EDITOR: 'objectEditor',
+  WORLD_EDITOR: 'worldEditor',
   HERO_EDITOR: 'heroEditor',
   PROCEDURAL: 'procedural',
   GAME_MANAGER: 'gameManager',
@@ -41,7 +41,6 @@ window.TOOLS = {
 }
 window.currentTool = TOOLS.ADD_OBJECT;
 
-let toolAddObjectEl = document.getElementById("tool-addObject")
 //tool select functionality
 let toolSelectEl = document.getElementById("tool-select")
 for(var tool in TOOLS) {
@@ -63,18 +62,29 @@ window.onChangeTool = function(toolName) {
   })
   document.getElementById("tool-"+toolName).className='tool-feature visible'
 
-  if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
-    document.getElementById('game-canvas').style="left: 400px;"
-    ctx.canvas.width = window.innerWidth - 400 - 180;
-  } else if(toolName === window.TOOLS.CUSTOM_GAME) {
+  // if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
+  //   // document.getElementById('game-canvas').style="left: 400px;"
+  //   // ctx.canvas.width = window.innerWidth - 400 - 180;
+  // } else
+  if(toolName === window.TOOLS.CUSTOM_GAME) {
     let width = document.getElementById("editor").getBoundingClientRect().width
     document.getElementById('game-canvas').style=`left: ${width}px`
     ctx.canvas.width = window.innerWidth - width - 180;
   } else {
-    ctx.canvas.width = window.innerWidth;
-    document.getElementById('game-canvas').style="left: 0px;"
+    document.getElementById('game-canvas').style="left: 400px;"
+    ctx.canvas.width = window.innerWidth - 400 - 180;
+    // ctx.canvas.width = window.innerWidth;
+    // document.getElementById('game-canvas').style="left: 0px;"
+  }
+
+  let x=document.getElementById("objectjsoneditor");  // Find the elements
+  if(toolName === window.TOOLS.ADD_OBJECT || toolName === window.TOOLS.SIMPLE_EDITOR) {
+    x.style ='display:block'
+  } else {
+    x.style ='display:none'
   }
 }
+
 
 /////////////////////
 //DOM
@@ -86,8 +96,10 @@ function init(ctx, objects) {
   click.init()
   tags.init()
 
-  ctx.canvas.width = window.innerWidth;
+  // ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
+  document.getElementById('game-canvas').style="left: 400px;"
+  ctx.canvas.width = window.innerWidth - 400 - 180;
 
   heroEditor.init()
   objectEditor.init()
@@ -95,6 +107,9 @@ function init(ctx, objects) {
   gameManager.init()
   addObject.init()
   customGame.init()
+
+  window.onChangeTool(window.TOOLS.WORLD_EDITOR)
+
 
   /////////////////////
   // PROCEDURAL BUTTONS
@@ -188,6 +203,7 @@ function createArena(boundaries) {
 
 function loaded() {
   window.setEditorToAnyHero()
+  objectEditor.loaded()
 }
 
 function update(delta) {

@@ -2,7 +2,6 @@
 // set game boundaries to delete objects
 // make it easier for admin to move objects
 // TRUE zelda camera work
-// ghost view mode
 // death by jump
 
 // Pathfinding for something larger than one grid node
@@ -26,6 +25,8 @@
 // Instead of creating one big block, create a bunch of small blocks, OPTION. NO DDO NOT DDO THIS. MAybe make it a design...
 // INSTEAD allow for stationary objects that are touching eachother to all be combined! This helps with physics and performance
 // Maybe make a diagonal wall..
+// path goals AKA patrol
+
 
 ///////
 // Debounce editors so they submit save after a couple seconds wait or when you navigate away
@@ -39,7 +40,7 @@ import physics from './js/physics.js'
 import input from './js/input.js'
 import camera from './js/camera.js'
 import collisions from './js/collisions.js'
-import playEditor from './js/playeditor/index.js'
+import playEditor from './js/playeditor/playeditor.js'
 import shadow from './js/shadow.js'
 import intelligence from './js/intelligence.js'
 import grid from './js/grid.js'
@@ -233,7 +234,7 @@ window.onGameLoaded = function() {
     return
   }
 
-
+  objects.loaded()
   if(window.isPlayer || window.editorPlayer) {
     hero.loaded()
     input.loaded()

@@ -148,26 +148,26 @@ function walkIntoWall(object) {
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
   if(object.direction === 'right'){
-    if ( isGridWalkable(x + 1, y, options) ){
-      return { x: x + 1, y: y}
+    if ( isGridWalkable(gridX + 1, gridY, options) ){
+      return { x: gridX + 1, y: gridY}
     }
   }
 
   if(object.direction === 'left') {
-    if ( isGridWalkable(x - 1, y, options) ) {
-      return { x: x - 1, y: y}
+    if ( isGridWalkable(gridX - 1, gridY, options) ) {
+      return { x: gridX - 1, y: gridY}
     }
   }
 
   if(object.direction === 'up') {
-    if ( isGridWalkable(x, y - 1, options) ){
-      return { x: x, y: y - 1}
+    if ( isGridWalkable(gridX, gridY - 1, options) ){
+      return { x: gridX, y: gridY - 1}
     }
   }
 
   if(object.direction === 'down') {
-    if ( isGridWalkable(x, y + 1, options) ) {
-      return { x: x, y: y + 1}
+    if ( isGridWalkable(gridX, gridY + 1, options) ) {
+      return { x: gridX, y: gridY + 1}
     }
   }
 
@@ -182,7 +182,7 @@ function walkIntoWall(object) {
   object.direction = directions[Math.floor(Math.random() * 3)]
 
   console.log('found nowhere to move')
-  return { x, y }
+  return { gridX, gridY }
 }
 
 function walkWithPurpose(object) {
@@ -203,26 +203,26 @@ function walkWithPurpose(object) {
   }
 
   if(object.direction === 'right'){
-    if ( isGridWalkable(x + 1, y, options) ){
-      return { x: x + 1, y: y}
+    if ( isGridWalkable(gridX + 1, gridY, options) ){
+      return { x: gridX + 1, y: gridY}
     }
   }
 
   if(object.direction === 'left') {
-    if ( isGridWalkable(x - 1, y, options) ) {
-      return { x: x - 1, y: y}
+    if ( isGridWalkable(gridX - 1, gridY, options) ) {
+      return { x: gridX - 1, y: gridY}
     }
   }
 
   if(object.direction === 'up') {
-    if ( isGridWalkable(x, y - 1, options) ){
-      return { x: x, y: y - 1}
+    if ( isGridWalkable(gridX, gridY - 1, options) ){
+      return { x: gridX, y: gridY - 1}
     }
   }
 
   if(object.direction === 'down') {
-    if ( isGridWalkable(x, y + 1, options) ) {
-      return { x: x, y: y + 1}
+    if ( isGridWalkable(gridX, gridY + 1, options) ) {
+      return { x: gridX, y: gridY + 1}
     }
   }
 
@@ -261,33 +261,33 @@ function walkAround(object) {
 
   if(random <= .25) {
     if(direction !=='left'){
-      if ( isGridWalkable(x + 1, y, options) ){
+      if ( isGridWalkable(gridX + 1, gridY, options) ){
         object.direction = 'right'
-        return { x: x + 1, y: y}
+        return { x: gridX + 1, y: gridY}
       }
     }
   } else if(random > .25 && random <= .5) {
     // go left
     if(direction !== 'right') {
-      if ( isGridWalkable(x - 1, y, options) ) {
+      if ( isGridWalkable(gridX - 1, gridY, options) ) {
         object.direction = 'left'
-        return { x: x - 1, y: y}
+        return { x: gridX - 1, y: gridY}
       }
     }
   } else if(random >= .5 && random < .75) {
     // go down
     if(direction !== 'up') {
-      if ( isGridWalkable(x, y + 1, options) ) {
+      if ( isGridWalkable(gridX, gridY + 1, options) ) {
         object.direction = 'down'
-        return { x: x, y: y + 1}
+        return { x: gridX, y: gridY + 1}
       }
     }
   } else if(random >= .75) {
     // go up
     if(direction !== 'down') {
-      if ( isGridWalkable(x, y - 1, options) ){
+      if ( isGridWalkable(gridX, gridY - 1, options) ){
         object.direction = 'up'
-        return { x: x, y: y - 1}
+        return { x: gridX, y: gridY - 1}
       }
     }
   }
@@ -296,10 +296,10 @@ function walkAround(object) {
   object.direction = ''
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
-    { x, y: y-1},
-    { x: x+1, y},
-    { x: x, y: y+1},
-    { x: x-1, y},
+    { x: gridX, y: gridY-1},
+    { x: gridX+1, y: gridY},
+    { x: gridX, y: gridY+1},
+    { x: gridX-1, gridY},
   ])
 
   for (let i = 0; i < nearbyGrids.length; i++) {
@@ -308,8 +308,8 @@ function walkAround(object) {
     }
   }
 
-  console.log('found nowhere to move')
-  return { x, y }
+  // console.log('found nowhere to move')
+  return { gridX, gridY }
 }
 
 function shuffle(a) {

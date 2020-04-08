@@ -14,6 +14,10 @@ function init() {
   }
 }
 
+function loaded() {
+  window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
+}
+
 window.anticipateObjectAdd = function() {
   const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
@@ -70,29 +74,11 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   let alertAboutCollision
 
   objects = objects.map((newObject) => {
-    Object.assign(newObject, JSON.parse(JSON.stringify(window.defaultObject)))
+    newObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultObject)), newObject)
 
     if(!newObject.id){
       newObject.id = 'object' + Date.now();
     }
-
-    if(!newObject.tags){
-      newObject.tags = {};
-    }
-
-    if(window.usePlayEditor){
-      for(let tag in window.tags) {
-        if(window.tagEls[tag].checked){
-          if(tag === 'monster' && window.usePlayEditor && !(window.world.worldSpawnPointX >= 0 || window.editingHero.spawnPointX >= 0)) {
-            alert('You cannot add a monster without setting spawn point first')
-            return
-          }
-          newObject.tags[tag] = true
-        }
-      }
-    }
-
-    newObject.tags = Object.assign(JSON.parse(JSON.stringify(window.tags)), newObject.tags)
 
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
@@ -165,5 +151,6 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
 
 export default {
-  init
+  init,
+  loaded,
 }

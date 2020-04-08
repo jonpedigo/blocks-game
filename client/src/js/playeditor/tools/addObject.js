@@ -7,20 +7,13 @@ function init() {
 
   var anticipatedObjectAdd = document.getElementById("anticipated-object-add");
   anticipatedObjectAdd.addEventListener('click', function(e){
-    window.socket.emit('anticipateObject', {tags: getCheckedTags()});
+    window.socket.emit('anticipateObject', window.editingObject);
   })
 
-  var anticipatedObjectAdd = document.getElementById("anticipated-wall-add");
-  anticipatedObjectAdd.addEventListener('click', function(e){
-    window.socket.emit('anticipateObject', {wall: true, tags: getCheckedTags()});
+  var anticipatedWallAdd = document.getElementById("anticipated-wall-add");
+  anticipatedWallAdd.addEventListener('click', function(e){
+    window.socket.emit('anticipateObject', {...window.editingObject, wall: true});
   })
-
-  function getCheckedTags() {
-    return Object.keys(window.tagEls).reduce((acc, tag) => {
-      acc[tag] = window.tagEls[tag].checked
-      return acc
-    }, {})
-  }
 
   window.gridNodeAddToggle = document.getElementById("add-object-grid-node")
   window.dragAddToggle = document.getElementById("add-object-drag")
