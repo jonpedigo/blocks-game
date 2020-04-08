@@ -55,10 +55,10 @@ function init() {
   var setGameToSelected = document.getElementById("match-game-boundary-to-selected")
   setGameToSelected.addEventListener('click', (e) => {
     if(window.selectorCameraToggle.checked) {
-      window.socket.emit('updateWorld', { gameBoundaries: window.world.lockCamera })
+      window.socket.emit('updateWorld', { gameBoundaries: {...window.world.lockCamera, behavior: window.world.gameBoundaries ? window.world.gameBoundaries.behavior : 'default' } })
     }
     if(window.selectorProceduralToggle.checked) {
-      window.socket.emit('updateWorld', { gameBoundaries: window.world.proceduralBoundaries })
+      window.socket.emit('updateWorld', { gameBoundaries: {...window.world.proceduralBoundaries, behavior: window.world.gameBoundaries ? window.world.gameBoundaries.behavior : 'default' } })
     }
   })
 
@@ -75,8 +75,10 @@ function init() {
     value.limitX = Math.abs(value.width/2)
     value.limitY = Math.abs(value.height/2)
     gridTool.snapObjectToGrid(value)
+    value.width = window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier
+    value.height = window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateWorld', { gameBoundaries: value })
+      window.socket.emit('updateWorld', { gameBoundaries: {...value, behavior: window.world.gameBoundaries ? window.world.gameBoundaries.behavior : 'default' }})
     }
     if(window.selectorCameraToggle.checked) {
       window.socket.emit('updateWorld', { lockCamera: value })
@@ -98,7 +100,31 @@ function init() {
       y: window.grid.startY
     }
     if(window.selectorGameToggle.checked) {
-      window.socket.emit('updateWorld', { gameBoundaries: value })
+      window.socket.emit('updateWorld', { gameBoundaries: {...value, behavior: window.world.gameBoundaries ? window.world.gameBoundaries.behavior : 'default' } })
+    }
+    if(window.selectorCameraToggle.checked) {
+      const { x, y, width, height} = value
+      const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+      window.socket.emit('updateWorld', { lockCamera })
+    }
+    if(window.selectorSpawnToggle.checked) {
+      window.socket.emit('updateWorld', { worldSpawnPointX: value.x, worldSpawnPointY: value.y })
+    }
+    if(window.selectorProceduralToggle.checked) {
+      window.socket.emit('updateWorld', { proceduralBoundaries: value })
+    }
+  })
+
+  var setSelectedToGrid = document.getElementById("set-selected-to-grid-minus-1");
+  setSelectedToGrid.addEventListener('click', function(){
+    const value = {
+      width: (window.grid.width - 2) * window.grid.nodeSize,
+      height: (window.grid.height - 2) * window.grid.nodeSize,
+      x: window.grid.startX + window.grid.nodeSize,
+      y: window.grid.startY + window.grid.nodeSize
+    }
+    if(window.selectorGameToggle.checked) {
+      window.socket.emit('updateWorld', { gameBoundaries: {...value, behavior: window.world.gameBoundaries ? window.world.gameBoundaries.behavior : 'default' } })
     }
     if(window.selectorCameraToggle.checked) {
       const { x, y, width, height} = value

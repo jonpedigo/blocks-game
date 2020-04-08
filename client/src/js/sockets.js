@@ -190,7 +190,8 @@ function init() {
     for(let key in updatedWorld) {
   		const value = updatedWorld[key]
 
-      if(window.world[key] instanceof Object) {
+      if(value instanceof Object) {
+        window.world[key] = {}
         window.mergeDeep(window.world[key], value)
       } else {
         window.world[key] = value
@@ -273,7 +274,7 @@ function init() {
     window.game = game
     window.grid = game.grid
     window.client.emit('onGridLoaded')
-    
+
     // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}

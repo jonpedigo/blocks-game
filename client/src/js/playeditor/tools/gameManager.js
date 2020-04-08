@@ -25,17 +25,6 @@ function init() {
   setGameButton.addEventListener('click', () => {
     window.setGame()
   })
-  var newGameButton = document.getElementById("new-game")
-  newGameButton.addEventListener('click', () => {
-    window.resetObjects()
-    window.socket.emit('resetWorld')
-    window.socket.emit('updateGrid', window.defaultGrid)
-    for(var heroId in window.heros) {
-      window.socket.emit('resetHero', window.heros[heroId])
-    }
-    window.socket.emit('resetGameState')
-    window.socket.emit('setGame', 'default')
-  })
   var resetObjectsButton = document.getElementById("reset-objects");
   resetObjectsButton.addEventListener('click', () => {
     window.resetObjects()
@@ -108,6 +97,46 @@ function init() {
       }
     });
   }
+
+  function resetDefaults() {
+    window.resetObjects()
+    window.socket.emit('resetWorld')
+    window.socket.emit('updateGrid', window.defaultGrid)
+    for(var heroId in window.heros) {
+      window.socket.emit('resetHero', window.heros[heroId])
+    }
+    window.socket.emit('resetGameState')
+  }
+
+  document.body.addEventListener('click', function(e) {
+    if(!e.target) return
+       //when the document body is clicked
+
+    if (e.target.className && e.target.className.indexOf('new-game') != -1) {
+     resetDefaults()
+     window.socket.emit('setGame', 'default')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-purgatory') != -1) {
+      resetDefaults()
+      window.socket.emit('setGame', 'purgatory')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-smasharena') != -1) {
+      resetDefaults()
+      window.socket.emit('setGame', 'smasharena')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-fliparena') != -1) {
+      resetDefaults()
+      window.socket.emit('setGame', 'fliparena')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-adventure') != -1) {
+      resetDefaults()
+      window.socket.emit('setGame', 'adventure')
+    }
+    if (e.target.className && e.target.className.indexOf('load-game-platformer') != -1) {
+      resetDefaults()
+      window.socket.emit('setGame', 'platformer')
+    }
+  })
 }
 
 // client uses this sometimes

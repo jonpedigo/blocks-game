@@ -59,6 +59,10 @@ io.on('connection', function(socket){
       game.id = Date.now()
     }
 
+    if(game.grid && game.grid.nodes) {
+      delete game.grid.nodes
+    }
+
     // never save gameState
     if(game.gameState) {
       delete game.gameState

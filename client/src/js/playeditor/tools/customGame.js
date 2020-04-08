@@ -47,7 +47,7 @@ function init() {
     localStorage.setItem('codeEditor', null)
   }
 
-  document.body.onclick = function(e) {
+  document.body.addEventListener('click', function(e) {
     if(!e.target) return
        //when the document body is clicked
     if (e.target.className && e.target.className.indexOf('start-game-fx-only') != -1) {
@@ -59,7 +59,7 @@ function init() {
     if (e.target.className && e.target.className.indexOf('init-game-fx-only') != -1) {
       window.socket.emit('customFxEvent', 'init')
     }
-  }
+  })
 }
 
 export default {

@@ -79,7 +79,6 @@ function init() {
     }
 
     if(window.hero && window.host) {
-      console.log('?')
       physics.addObject(window.hero)
     }
   })

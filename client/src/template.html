@@ -42,6 +42,7 @@
       <hr/>
       <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
       <button id='set-selected-to-grid'>set selected to grid</button>
+      <button id='set-selected-to-grid-minus-1'>set selected to grid minus 1 ( for flips)</button>
       <button id='set-selected-to-game-boundary'>set selected to gameboundary</button>
       <button id='match-game-boundary-to-selected'>set gameboundary to selected</button>
       <button id='set-zoom-to-selected'>set zoomMultiplier to selected</button>
@@ -52,7 +53,9 @@
       <div><input type='radio' name='game-boundary-behavior' checked id='set-game-boundary-default'>boundary - hero only</input></div>
       <div><input type='radio' name='game-boundary-behavior' id='set-game-boundary-all'>boundary</input></div>
       <div><input type='radio' name='game-boundary-behavior' id='set-pacman-flip'>pacman flip</input></div>
-      <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory ( doesn't work yet )</input></div>
+      <div><input type='radio' name='game-boundary-behavior' id='set-purgatory'>purgatory</input></div>
+      <hr>
+      </hr>
     </div>
 
     <div id='tool-objectEditor' class="tool-feature invisible">
@@ -111,15 +114,20 @@
       <button id='copy-game-to-clipboard'>Copy Game to Clipboard</button>
       <div id='game-dom-elem' style="display:none;">test</div>
       <hr>
-      <button id='reset-objects'>Reset Objects</button>
-      <button id='reset-game-state'>Reset game state</button>
-      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
-      <button id='new-game'>New game</button>
-      <hr>
       <div><input type='checkbox' checked id='sync-game-state'>Sync Game State</input></div>
       <hr>
       <button id='start-game'>Start game</button>
       <button id='pause-resume-game'>Pause/Resume game</button>
+      <hr>
+      <button id='reset-objects'>Reset Objects</button>
+      <button id='reset-game-state'>Reset game state</button>
+      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
+      <button class='new-game'>New game - default</button>
+      <button class='load-game-purgatory'>New game - purgatory</button>
+      <button class='load-game-smasharena'>New game - smash arena</button>
+      <button class='load-game-fliparena'>New game - flip arena</button>
+      <button class='load-game-adventure'>New game - adventure</button>
+      <button class='load-game-platformer'>New game - platformer</button>
       <hr>
     </div>
 
