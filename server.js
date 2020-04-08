@@ -229,7 +229,6 @@ io.on('connection', function(socket){
     io.emit('onUpdateGrid', currentGame.grid)
   })
 
-
   ///////////////////////////
   ///////////////////////////
   ///////////////////////////

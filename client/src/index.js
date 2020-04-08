@@ -233,12 +233,20 @@ window.onGameLoaded = function() {
     return
   }
 
+
+  if(window.isPlayer || window.editorPlayer) {
+    hero.loaded()
+    input.loaded()
+  }
+  if(window.usePlayEditor) {
+    playEditor.loaded()
+  } else {
+    camera.loaded()
+  }
+
   // begin main loop
   mainLoop()
 
-  if(window.usePlayEditor) {
-    playEditor.loaded()
-  }
 
   if(window.host) {
     function emitGameToEditor() {

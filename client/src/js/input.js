@@ -5,8 +5,6 @@ const keysDown = {}
 let lastJump = 0
 
 function init(){
-  window.hero.inputDirection = 'up'
-
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
@@ -220,12 +218,17 @@ function update(delta) {
   positionInput()
 }
 
+function loaded() {
+  window.hero.inputDirection = 'up'
+}
+
 function getDirection() {
   return inputDirection
 }
 
 export default {
   init,
+  loaded,
   update,
   getDirection,
 }

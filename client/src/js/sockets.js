@@ -271,6 +271,9 @@ function init() {
   window.socket.emit('askRestoreCurrentGame')
   window.socket.on('onAskRestoreCurrentGame', (game) => {
     window.game = game
+    window.grid = game.grid
+    window.client.emit('onGridLoaded')
+    
     // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}

@@ -29,8 +29,8 @@ function init() {
       gravity: false,
     },
   	zoomMultiplier: 1.875,
-    x: 960,
-    y: 960,
+    x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
+    y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
     lives: 10,
     score: 0,
     chat: [],
@@ -48,35 +48,45 @@ function init() {
     }
   }
 
-  if(window.ghost) {
-    ghost.init()
-  }
-  if(window.isPlayer) {
-  	let savedHero = localStorage.getItem('hero');
-  	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
-  		window.hero = JSON.parse(savedHero)
-      // in case we need to reset
-      window.defaultHero.id = savedHero.id
-  	} else {
-      window.defaultHero.id = 'hero-'+Date.now()
-  		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  		window.spawnHero()
-      localStorage.setItem('hero', JSON.stringify(window.hero));
-  	}
-  	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
-  	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
+  window.client.on('onGridLoaded', () => {
+    window.defaultHero.x = window.grid.startX + (window.grid.width * window.grid.nodeSize)/2
+    window.defaultHero.y = window.grid.startY + (window.grid.height * window.grid.nodeSize)/2
 
-  	window.socket.emit('saveSocket', hero)
+    if(window.ghost) {
+      ghost.init()
+    }
+    if(window.isPlayer) {
+    	let savedHero = localStorage.getItem('hero');
+    	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
+    		window.hero = JSON.parse(savedHero)
+        // in case we need to reset
+        window.defaultHero.id = savedHero.id
+    	} else {
+        window.defaultHero.id = 'hero-'+Date.now()
+    		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
+    		window.spawnHero()
+        localStorage.setItem('hero', JSON.stringify(window.hero));
+    	}
+    	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
+    	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
 
-  	// fuckin window.heros...
-  	window.heros = {
-  		[window.hero.id]:window.hero,
-  	}
-  }
+    	window.socket.emit('saveSocket', hero)
 
-  if(window.hero && window.host) {
-    physics.addObject(window.hero)
-  }
+    	// fuckin window.heros...
+    	window.heros = {
+    		[window.hero.id]:window.hero,
+    	}
+    }
+
+    if(window.hero && window.host) {
+      console.log('?')
+      physics.addObject(window.hero)
+    }
+  })
+}
+
+function loaded() {
+
 }
 
 window.spawnHero = function () {
@@ -270,4 +280,5 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
 export default {
   init,
   onCollide,
+  loaded,
 }
