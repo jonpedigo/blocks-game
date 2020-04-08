@@ -73,11 +73,15 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
   let alertAboutCollision
 
-  objects = objects.map((newObject) => {
+  objects = objects.map((newObject, i) => {
     newObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultObject)), newObject)
 
     if(!newObject.id){
-      newObject.id = 'object' + Date.now();
+      newObject.id = 'object' + Date.now() + '-' + i;
+    }
+
+    if(window.objectsById[newObject.id]) {
+      newObject.id += '-copy'
     }
 
     newObject.spawnPointX = newObject.x

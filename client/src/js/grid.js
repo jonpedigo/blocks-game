@@ -160,6 +160,11 @@ function snapDragToGrid(object) {
   if(diffX + diffWidth > window.grid.nodeSize) {
     object.width += window.grid.nodeSize
   }
+
+  object.gridX = object.x/window.grid.nodeSize
+  object.gridY = object.y/window.grid.nodeSize
+  object.gridWidth = object.width/window.grid.nodeSize
+  object.gridHeight = object.height/window.grid.nodeSize
 }
 
 window.snapAllObjectsToGrid = function() {
@@ -283,27 +288,27 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    const {gridX, y, width, height } = convertToGridXY(window.world.gameBoundaries)
-    if(attemptingX > gridX + width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+    const {gridX, gridY, width, height } = convertToGridXY(window.world.gameBoundaries)
+    if(attemptingX > gridX + width - (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingX < gridX - 1 + (window.CONSTANTS.PLAYER_CAMERA_WIDTH)/window.grid.nodeSize) {
+    } else if(attemptingX < gridX + (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
       return false
-    } else if(attemptingY > y + height - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT)/window.grid.nodeSize) {
+    } else if(attemptingY > gridY + height - (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingY < y - 1 + (window.CONSTANTS.PLAYER_CAMERA_HEIGHT)/window.grid.nodeSize) {
+    } else if(attemptingY < gridY + (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
       return false
     }
   }
 
   const pathfindingLimit = options.pathfindingLimit
   if(pathfindingLimit){
-    if(attemptingX > pathfindingLimit.x + pathfindingLimit.width - 1) {
+    if(attemptingX > pathfindingLimit.gridX + pathfindingLimit.width - 1) {
       return false
-    } else if(attemptingX < pathfindingLimit.x - 1) {
+    } else if(attemptingX < pathfindingLimit.gridX - 1) {
       return false
-    } else if(attemptingY > pathfindingLimit.y + pathfindingLimit.height - 1) {
+    } else if(attemptingY > pathfindingLimit.gridY + pathfindingLimit.height - 1) {
       return false
-    } else if(attemptingY < pathfindingLimit.y - 1) {
+    } else if(attemptingY < pathfindingLimit.gridY - 1) {
       return false
     }
   }

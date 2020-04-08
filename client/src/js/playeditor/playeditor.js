@@ -39,7 +39,6 @@ window.TOOLS = {
   GAME_MANAGER: 'gameManager',
   CUSTOM_GAME: 'codeEditor',
 }
-window.currentTool = TOOLS.ADD_OBJECT;
 
 //tool select functionality
 let toolSelectEl = document.getElementById("tool-select")
@@ -77,6 +76,13 @@ window.onChangeTool = function(toolName) {
     // document.getElementById('game-canvas').style="left: 0px;"
   }
 
+  if(toolName === window.TOOLS.ADD_OBJECT) {
+    window.editingObject.i = null
+    window.editingObject.id = null
+    window.objecteditor.live = false
+    window.updateObjectEditor()
+  }
+
   let x=document.getElementById("objectjsoneditor");  // Find the elements
   if(toolName === window.TOOLS.ADD_OBJECT || toolName === window.TOOLS.SIMPLE_EDITOR) {
     x.style ='display:block'
@@ -109,7 +115,6 @@ function init(ctx, objects) {
   customGame.init()
 
   window.onChangeTool(window.TOOLS.WORLD_EDITOR)
-
 
   /////////////////////
   // PROCEDURAL BUTTONS
@@ -204,6 +209,7 @@ function createArena(boundaries) {
 function loaded() {
   window.setEditorToAnyHero()
   objectEditor.loaded()
+  addObject.loaded()
 }
 
 function update(delta) {

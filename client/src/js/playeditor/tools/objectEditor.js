@@ -17,6 +17,7 @@ function init() {
   document.body.appendChild(objectjsoneditor);
   window.objecteditor = new JSONEditor(objectjsoneditor, {
     modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
+    console.log(objectEdited)
     if(objectEdited.id) {
       let object = window.objects[window.editingObject.i]
 
@@ -87,14 +88,14 @@ function init() {
 
   var sendObjectPos = document.getElementById("send-object-pos");
   sendObjectPos.addEventListener('click', () => {
-    let editingObj = window.objecteditor.get();
-    window.sendObjectUpdate({ x: editingObj.x, y: editingObj.y })
+    let editingObject = window.objecteditor.get();
+    window.sendObjectUpdate({ x: editingObject.x, y: editingObject.y })
   })
 
   var sendObjectOther = document.getElementById("send-object-other");
   sendObjectOther.addEventListener('click', () => {
-    let editingObj = window.objecteditor.get();
-    window.sendObjectUpdateOther(editingObj)
+    let editingObject = window.objecteditor.get();
+    window.sendObjectUpdateOther(editingObject)
   })
 
   var removeObjectButton = document.getElementById("remove-object");
@@ -124,9 +125,16 @@ window.updateEditorState = function() {
 
 window.sendObjectUpdate = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
-  window.mergeDeep(window.editingObject, objectCopy)
-  window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
-  window.socket.emit('editObjects', window.objects)
+
+  if(window.objecteditor.live) {
+    window.mergeDeep(window.editingObject, objectCopy)
+    window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
+    window.socket.emit('editObjects', window.objects)
+  } else {
+    window.mergeDeep(window.editingObject, objectCopy)
+    window.objecteditor.update(window.editingObject)
+  }
+
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
@@ -145,17 +153,23 @@ window.findObject = function() {
 }
 
 function loaded() {
+  window.editingObject = window.defaultObject
   window.objecteditor.set(window.defaultObject)
   window.objecteditor.expandAll()
+  window.objecteditor.live = false
 }
 
 window.updateObjectEditor = function() {
   let x=document.getElementsByClassName("is-edit-live");  // Find the elements
   for(var i = 0; i < x.length; i++){
     if(window.objecteditor.live) {
-      x[i].style = 'display:inline-block'
+      x[i].style.display = 'inline-block'
+      x[i].style.backgroundColor = 'red'
+    } else if (window.editingObject.compendiumId && !window.id) {
+      x[i].style.display = 'inline-block'
+      x[i].style.backgroundColor = 'grey'
     } else {
-      x[i].style = 'display:none'
+      x[i].style.display = 'none'
     }
   }
   window.objecteditor.expandAll()

@@ -69,12 +69,13 @@ function init() {
       objects: window.objects,
       world: window.world,
       grid: window.grid,
-      id: document.getElementById('game-name').value
+      id: document.getElementById('game-id').value,
+      compendium: window.compendium,
     }
     window.socket.emit('saveGame', window.game)
   }
   window.setGame = function() {
-    window.socket.emit('setGame', document.getElementById('game-name').value)
+    window.socket.emit('setGame', document.getElementById('game-id').value)
   }
   window.startGame = function() {
     window.socket.emit('startGame')

@@ -4,6 +4,8 @@ import collisions from './collisions';
 import hero from './hero';
 
 const physicsObjects = {}
+window.physicsObjects = physicsObjects
+
 // Create the collision system
 const system = new Collisions()
 
@@ -80,51 +82,76 @@ function containObjectWithinGridBoundaries(object) {
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
     if(object.tags.fresh) {
-      objectToEdit = {...object}
+      objectToEdit = JSON.parse(JSON.stringify(object))
     }
 
-    if(gameBoundaries.behavior === 'pacmanFlip' || gameBoundaries.behavior === 'purgatory') {
-      let legal = false
+    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1) {
+      let legal = true
+      if(objectToEdit.x + objectToEdit.width/2 > gameBoundaries.x + gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2 )) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width/2 - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2
+        legal = false
+      }
+      if(objectToEdit.y + objectToEdit.height/2> gameBoundaries.y + gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height/2 - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )
+        legal = false
+      }
+      if(objectToEdit.x < gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)) {
+        objectToEdit.x = gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)
+        legal = false
+      }
+      if(objectToEdit.y < gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)) {
+        objectToEdit.y = gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)
+        legal = false
+      }
+      if(legal && object.tags.fresh){
+        object.tags.fresh = false
+        object.path = null
+      }
+    } else if(gameBoundaries.behavior === 'pacmanFlip' || (gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') > -1)) {
+      let legal = true
       if(objectToEdit.x < gameBoundaries.x - objectToEdit.width) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width
-        legal = true
+        legal = false
       }
       if (objectToEdit.x > gameBoundaries.x + gameBoundaries.width) {
         objectToEdit.x = gameBoundaries.x - objectToEdit.width
-        legal = true
+        legal = false
       }
       if(objectToEdit.y < gameBoundaries.y - objectToEdit.height) {
         objectToEdit.y = gameBoundaries.y + gameBoundaries.height
-        legal = true
+        legal = false
       }
       if (objectToEdit.y > gameBoundaries.y + gameBoundaries.height) {
         objectToEdit.y = gameBoundaries.y - objectToEdit.height
-        legal = true
+        legal = false
       }
-      if(legal){
+      if(legal && object.tags.fresh){
         object.tags.fresh = false
+        object.path = null
       }
     } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
-      let legal = false
+      let legal = true
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
-        legal = true
+        legal = false
       }
       if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
         objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
-        legal = true
+        legal = false
       }
       if(objectToEdit.x < gameBoundaries.x) {
         objectToEdit.x = gameBoundaries.x
-        legal = true
+        legal = false
       }
       if(objectToEdit.y < gameBoundaries.y) {
         objectToEdit.y = gameBoundaries.y
-        legal = true
+        legal = false
       }
-      if(legal){
+
+      if(legal && object.tags.fresh){
         object.tags.fresh = false
+        object.path = null
       }
     }
   }

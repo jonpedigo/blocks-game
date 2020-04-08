@@ -6,6 +6,7 @@ let justChangedHerosRight = false
 function init(hero){
   window.addEventListener("keydown", function (e) {
     delete keysDown['83']
+    delete keysDown['67']
     keysDown[e.keyCode] = true
 
     //if you press escape, cancel a drag
@@ -23,10 +24,27 @@ function init(hero){
       return
     }
 
-    if(keysDown['91'] && keysDown['83']){
-      window.saveCodeEditor()
-      document.getElementById("is-code-editor-saved").innerHTML = "Saved"
-      e.preventDefault()
+    if(keysDown['91']) {
+      //s
+      if(keysDown['83']){
+        if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
+          window.saveCodeEditor()
+          document.getElementById("is-code-editor-saved").innerHTML = "Saved"
+        } else if(window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+          window.objecteditor.live = false
+          window.saveCompendiumObject(window.objecteditor.get())
+        }
+        e.preventDefault()
+      }
+
+      //c
+      if(keysDown['67']){
+        if(window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+          window.objecteditor.live = false
+          window.addToCompendium(window.objecteditor.get())
+          window.updateObjectEditor()
+        }
+      }
     }
 
 

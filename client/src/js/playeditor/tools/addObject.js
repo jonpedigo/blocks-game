@@ -20,8 +20,42 @@ function init() {
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.instantAddToggle = document.getElementById("instant-add")
   window.gridNodeAddToggle.checked = true;
+
+  window.compendium = {}
+
+  window.addToCompendium = function(object) {
+    object = JSON.parse(JSON.stringify(object))
+    if(object.i >= 0) delete object.i
+    if(object.id) delete object.id
+    object.compendiumId = 'compendium-' + Date.now()
+
+    window.compendium[object.compendiumId] = object
+    console.log('added: ' + object.compendiumId + ' to compendium')
+
+    window.mergeDeep(window.editingObject, object)
+    window.objecteditor.set(object)
+    window.objecteditor.expandAll()
+  }
+
+  window.saveCompendiumObject = function(object) {
+    if(!window.compendium[object.compendiumId]) alert('trying to save to compendium with no compendium Id, create one first')
+    object = JSON.parse(JSON.stringify(object))
+    if(object.i >= 0) delete object.i
+    if(object.id) delete object.id
+
+    window.mergeDeep(window.compendium[object.compendiumId], object)
+
+    window.mergeDeep(window.editingObject, object)
+    window.objecteditor.set(object)
+    window.objecteditor.expandAll()
+  }
+}
+
+function loaded() {
+  if(window.game.compendium) window.compendium = game.compendium
 }
 
 export default {
-  init
+  init,
+  loaded,
 }

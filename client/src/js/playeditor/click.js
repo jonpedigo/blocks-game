@@ -101,8 +101,8 @@ function init() {
         }
 
         if(window.setObjectPathfindingLimitToggle.checked) {
-          const {gridX, gridY, width, height} = gridTool.convertToGridXY(value);
-          window.sendObjectUpdate({ pathfindingLimit: { gridX, gridY , width, height }})
+          gridTool.snapDragToGrid(value, {dragging: true})
+          window.sendObjectUpdate({ pathfindingLimit: value})
         }
       }
     },
@@ -169,13 +169,10 @@ function init() {
           }
 
           let editorObject = window.objecteditor.get()
-          console.log(editorObject.tags.stationary)
 
           let newObject = JSON.parse(JSON.stringify(editorObject))
 
           Object.assign(newObject, location)
-
-          console.log(location, newObject.tags.stationary, editorObject.tags.stationary)
 
           window.addObjects(newObject)
         }

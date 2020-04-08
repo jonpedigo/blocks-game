@@ -139,7 +139,9 @@ function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfind
     if(!window.pfgrid.nodes[y][x]) return false
     if(!window.pfgrid.nodes[y][x].walkable) return false
     return true
-  } else return false
+  } else {
+    return false
+  }
 }
 
 function walkIntoWall(object) {
@@ -181,8 +183,8 @@ function walkIntoWall(object) {
   ].filter((dir) => dir !== object.direction)
   object.direction = directions[Math.floor(Math.random() * 3)]
 
-  console.log('found nowhere to move')
-  return { gridX, gridY }
+  // console.log('found nowhere to move')
+  return { x: gridX, y: gridY }
 }
 
 function walkWithPurpose(object) {
@@ -230,10 +232,10 @@ function walkWithPurpose(object) {
   object.direction = ''
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
-    { x, y: y-1},
-    { x: x+1, y},
-    { x: x, y: y+1},
-    { x: x-1, y},
+    { x: gridX, y: gridY-1},
+    { x: gridX+1, y: gridY},
+    { x: gridX, y: gridY+1},
+    { x: gridX-1, y: gridY},
   ])
 
   for (let i = 0; i < nearbyGrids.length; i++) {
@@ -242,8 +244,8 @@ function walkWithPurpose(object) {
     }
   }
 
-  console.log('found nowhere to move')
-  return { x, y }
+  // console.log('found nowhere to move')
+  return { x: gridX, y: gridY }
 
 }
 
@@ -309,7 +311,7 @@ function walkAround(object) {
   }
 
   // console.log('found nowhere to move')
-  return { gridX, gridY }
+  return { x: gridX, y: gridY }
 }
 
 function shuffle(a) {

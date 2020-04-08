@@ -159,17 +159,17 @@ function render(ctx, hero, objects) {
   // EDITING OBJECT SETTINGS
   ////////////////
   ////////////////
-  if(window.editingObject.id) {
+  if(window.editingObject && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
     let object = window.editingObject
 
     // if(object.gridX) {
     //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.grid.nodeSize) + window.grid.startX, y: (object.gridY * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize})
     // }
 
-    drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
+    if(window.editingObject.id) drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
 
     if(window.editingObject.pathfindingLimit) {
-      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.x * window.grid.nodeSize) + window.grid.startX, y: (window.editingObject.pathfindingLimit.y * window.grid.nodeSize) + window.grid.startY, width: window.editingObject.pathfindingLimit.width * window.grid.nodeSize, height: window.editingObject.pathfindingLimit.height * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
+      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.gridX * window.grid.nodeSize) + window.grid.startX, y: (window.editingObject.pathfindingLimit.gridY * window.grid.nodeSize) + window.grid.startY, width: window.editingObject.pathfindingLimit.gridWidth * window.grid.nodeSize, height: window.editingObject.pathfindingLimit.gridHeight * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
     }
 
     if(window.editingObject.path && window.editingObject.path.length) {
@@ -310,10 +310,10 @@ function render(ctx, hero, objects) {
       drawBorder(ctx, valueRed);
       ctx.strokeStyle='white';
       let valueWhite = {
-        x: window.world.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - window.grid.nodeSize,
-        y: window.world.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - window.grid.nodeSize,
-        width: ((window.world.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)) + (2 * window.grid.nodeSize),
-        height: ((window.world.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)) + (2 * window.grid.nodeSize)
+        x: window.world.gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2),
+        y: window.world.gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2),
+        width: window.world.gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)),
+        height: window.world.gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier))
       }
       drawBorder(ctx, valueWhite);
     } else {
@@ -357,7 +357,7 @@ function render(ctx, hero, objects) {
     drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
   }
 
-  if(window.editingObject.spawnPointX && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+  if(window.editingObject.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
     drawObject(ctx, {x: window.editingObject.spawnPointX, y: window.editingObject.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
     drawObject(ctx, {x: window.editingObject.spawnPointX - 205, y: window.editingObject.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
   }

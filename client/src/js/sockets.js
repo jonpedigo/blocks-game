@@ -234,6 +234,7 @@ function init() {
         id: null,
         i: null,
       }
+      window.objecteditor.live = false
       window.objecteditor.set({})
     }
 
@@ -294,6 +295,11 @@ function init() {
     // world
     window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
     handleWorldUpdate(window.world)
+
+    //hero
+    if(window.isPlayer && window.hero.currentGameId !== game.id) {
+      findHeroInNewWorld(game)
+    }
 
     // gameState
     // if game state is on the object it very likely means it has already been loaded..
@@ -392,6 +398,7 @@ function init() {
       physics.removeObject(window.hero)
       findHeroInNewWorld(game)
       physics.addObject(window.hero)
+      window.hero.currentGameId = game.id
     }
     if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
 
