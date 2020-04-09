@@ -131,6 +131,9 @@ function init() {
   })
 }
 
+
+/// TURN THIS INTO HOST EVENT -- ON RESET OBJECT STATE
+
 // client uses this sometimes
 window.resetSpawnAreasAndObjects = function() {
   window.objects.forEach((object) => {

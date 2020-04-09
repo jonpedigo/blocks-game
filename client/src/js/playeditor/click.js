@@ -111,7 +111,8 @@ function init() {
 
         if(window.setObjectSpawnToggle.checked) {
           let spawnPoints = {spawnPointX: click.x, spawnPointY: click.y}
-          window.sendObjectUpdate(spawnPoints)
+          // window.sendObjectUpdate(spawnPoints)
+          window.objecteditor.saved = false
           window.objecteditor.update({...window.objecteditor.get(), ...spawnPoints})
         } else if(window.setObjectPathfindingLimitToggle.checked) {
           defaultFirstClick(e)
@@ -120,6 +121,7 @@ function init() {
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
               object.i = i
+              window.objecteditor.saved = true
               window.objecteditor.update(object)
               window.updateObjectEditorNotifier()
             })
@@ -136,7 +138,8 @@ function init() {
 
         if(window.setObjectPathfindingLimitToggle.checked) {
           gridTool.snapDragToGrid(value, {dragging: true})
-          window.sendObjectUpdate({ pathfindingLimit: value})
+          window.objecteditor.saved = false
+          // window.sendObjectUpdate({ pathfindingLimit: value})
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
           window.setObjectPathfindingLimitToggle.checked = false
           window.selectorObjectToggle.checked = true

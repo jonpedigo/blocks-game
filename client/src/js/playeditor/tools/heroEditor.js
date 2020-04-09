@@ -16,14 +16,25 @@ function init() {
     sendHeroUpdate({ tags: object.tags, flags: object.flags })
   }});
 
-  let heroModSelectEl = document.getElementById("hero-modifier-select")
-  for(let modifierName in heroModifiers) {
-    let modEl = document.createElement('button')
-    modEl.innerHTML = 'apply mod - ' + modifierName
-    modEl.onclick= function() {
-      sendHeroUpdate(heroModifiers[modifierName])
+  let el =document.getElementsByClassName("hero-modifier-select");  // Find the elements
+  for(var i = 0; i < el.length; i++){
+    for(let modifierName in heroModifiers) {
+      let modEl = document.createElement('button')
+      modEl.innerHTML = modifierName
+      modEl.onclick= function() {
+        if(window.currentTool === window.TOOLS.HERO_EDITOR) {
+          let editorState = window.objecteditor.get()
+          window.objecteditor.update( window.mergeDeep( editorState, JSON.parse(JSON.stringify(heroModifiers[modifierName])) ) )
+          sendHeroUpdate(heroModifiers[modifierName])
+        } else {
+          let editorState = window.objecteditor.get()
+          window.objecteditor.saved = false
+          window.objecteditor.update( window.mergeDeep( editorState, { tags: { heroUpdate: true }}, { heroUpdate: JSON.parse(JSON.stringify(heroModifiers[modifierName])) } ) )
+          window.updateObjectEditorNotifier()
+        }
+      }
+      el[i].appendChild(modEl)
     }
-    heroModSelectEl.appendChild(modEl)
   }
 
   var sendHeroButton = document.getElementById("send-hero")

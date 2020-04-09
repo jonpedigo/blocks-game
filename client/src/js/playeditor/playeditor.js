@@ -85,7 +85,7 @@ window.onChangeTool = function(toolName) {
       delete editorState.id
     }
     editorState.i = null
-
+    window.objecteditor.saved = true
     window.objecteditor.update(editorState)
     window.updateObjectEditorNotifier()
   }

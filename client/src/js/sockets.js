@@ -241,6 +241,7 @@ function init() {
   window.socket.on('onDeleteObject', (object) => {
     if(window.usePlayEditor && window.objecteditor.get().id === object.id) {
       window.objecteditor.set({})
+      window.objecteditor.saved = true
       window.updateObjectEditorNotifier()
     }
 
@@ -368,6 +369,7 @@ function init() {
           id: null,
           i: null,
         }
+        window.objecteditor.saved = true
         window.objecteditor.set({})
       } else {
         window.objects.forEach((object) => {

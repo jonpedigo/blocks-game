@@ -34,8 +34,15 @@ function init(hero){
         if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
           window.saveCodeEditor()
           document.getElementById("is-code-editor-saved").innerHTML = "Saved"
-        } else if((window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) && !window.objecteditor.live) {
-          window.saveCompendiumObject(window.objecteditor.get())
+        } else if((window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR)) {
+          if(window.objecteditor.get().id) {
+            let update = window.objecteditor.get()
+            window.removeObjectState(update)
+            window.sendObjectUpdateOther(update)
+          } else {
+            window.saveCompendiumObject(window.objecteditor.get())
+          }
+
         }
         e.preventDefault()
       }
@@ -120,6 +127,7 @@ function init(hero){
         }
         let editingObject = window.objects[newI]
         editingObject.i = newI
+        window.objecteditor.saved = true
         window.objecteditor.set(editingObject)
         window.updateObjectEditorNotifier()
         window.findObject(editingObject)
@@ -137,6 +145,7 @@ function init(hero){
         }
         let editingObject = window.objects[newI]
         editingObject.i = newI
+        window.objecteditor.saved = true
         window.objecteditor.set(editingObject)
         window.updateObjectEditorNotifier()
         window.findObject(editingObject)

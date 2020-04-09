@@ -48,7 +48,7 @@ function init() {
       if(id) {
         window.compendium[id] = object
         object.compendiumId = id
-      }
+      } else return
     } else {
       window.compendium[object.compendiumId] = object
     }
@@ -65,21 +65,28 @@ function clickOnCompendium(rightClick, compendium) {
   // right click
   if(rightClick) {
     if(window.objecteditor.live) {
-      if(confirm('this will live-update this object to adopt all properties of ' + compendium.compendiumId)) {
+      if(confirm('this will merge this object to adopt all properties of ' + compendium.compendiumId)) {
         let editorState = window.objecteditor.get()
         let objectById = window.objectsById[editorState.id]
-        let updated = window.mergeDeep(objectById, JSON.parse(JSON.stringify(compendium)))
+        let compendiumCopy = JSON.parse(JSON.stringify(compendium))
+        delete compendiumCopy.compendiumId
+        let updated = window.mergeDeep(objectById, compendiumCopy)
         window.objecteditor.update(updated)
-        sendObjectUpdate(compendium)
+        window.objecteditor.saved = false
+        window.updateObjectEditorNotifier()
       }
     } else {
       if(confirm('this will merge compendium ' + compendium.compendiumId + ' into editor')) {
         let editorState = window.objecteditor.get()
-        window.objecteditor.update(window.mergeDeep(editorState, JSON.parse(JSON.stringify(compendium))))
+        let compendiumCopy = JSON.parse(JSON.stringify(compendium))
+        delete compendiumCopy.compendiumId
+        window.objecteditor.update(window.mergeDeep(editorState, compendiumCopy))
+        window.objecteditor.saved = false
         window.updateObjectEditorNotifier()
       }
     }
   } else {
+    window.objecteditor.saved = true
     window.objecteditor.update(compendium)
     window.updateObjectEditorNotifier()
   }
@@ -151,18 +158,22 @@ window.updateObjectEditorNotifier = function() {
   let x=document.getElementsByClassName("is-edit-live");  // Find the elements
   for(var i = 0; i < x.length; i++){
     if(window.objecteditor.live) {
-      window.objecteditor.saved = true
       x[i].style.display = 'inline-block'
       x[i].style.backgroundColor = 'red'
+      if(window.objecteditor.saved) {
+        x[i].style.opacity = '0.3'
+      } else {
+        x[i].style.opacity = '1'
+      }
     } else if (editorState.compendiumId && !window.objecteditor.defaultCompendium) {
       x[i].style.display = 'inline-block'
+      x[i].style.backgroundColor = 'white'
       if(window.objecteditor.saved) {
-        x[i].style.backgroundColor = 'grey'
+        x[i].style.opacity = '0.3'
       } else {
-        x[i].style.backgroundColor = 'white'
+        x[i].style.opacity = '1'
       }
     } else {
-      window.objecteditor.saved = true
       x[i].style.display = 'none'
     }
   }

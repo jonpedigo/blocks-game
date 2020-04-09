@@ -23,7 +23,8 @@ function init() {
         gridTool.addObstacle({...object, tags: objectEdited.tags})
       }
 
-      window.sendObjectUpdateOther({ tags: objectEdited.tags, color: objectEdited.color })
+      window.objecteditor.saved = false
+      window.updateObjectEditorNotifier()
     } else {
       window.objecteditor.saved = false
       window.updateObjectEditorNotifier()
@@ -82,6 +83,8 @@ window.sendObjectUpdateOther = function(objectUpdate) {
   let editorState = window.objecteditor.get()
   window.mergeDeep(window.objectsById[editorState.id], objectCopy)
   window.emitEditObjectsOther()
+  window.objecteditor.saved = true
+  window.updateObjectEditorNotifier()
 }
 
 window.emitEditObjectsOther = function() {
@@ -100,6 +103,7 @@ window.findObject = function() {
 }
 
 function loaded() {
+  window.objecteditor.saved = true
   window.objecteditor.update(window.defaultObject)
   window.updateObjectEditorNotifier()
   window.objecteditor.expandAll()

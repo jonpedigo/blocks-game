@@ -1,3 +1,11 @@
+// CURRENT PRIORITY
+// Zoom out area, zoom in area
+// Zoom out hero and areas
+//
+// ( Force anticipated add )
+
+////////////////////////////////////////////////////
+
 // attack button ( like papa bear spears!! )
 // set game boundaries to delete objects
 // make it easier for admin to move objects
@@ -29,10 +37,8 @@
 
 
 ///////
-// Debounce editors so they submit save after a couple seconds wait or when you navigate away
 // EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
 // editor gridsnap toggle in world editorPref
-
 
 ////
 // (Snap to grid Toggle)
@@ -47,15 +53,17 @@
 // Set Both camera and game boundaries ( perhaps check boxes )
 // START THEM OFF CHECKED..
 //
-// Zoom out area, zoom in area
-// Zoom out hero and areas
-//
-// ( Force anticipated add )
 //
 // Follow whatever you are editing
 // editor preferences - zoom, editing object, editing hero, current menu, etc..
 // I already have world MODIFIERS, those are the worlds I have just created. Make them world modifiers instead of loaded world?
 // Switch tools based on actions!
+
+// HOST EVENT FOR RESET OBJECT STATE AKA CLEANUP? Delete objects, reset values to their initial state values
+// its very possible that iniital state could work where we just copy window.objects upon starting the game, when the game
+// wants to be restarted, we just set the objects back to that initial value...
+// the complicated thing is deciding where to add the objects that are being added during 'play'
+// having an indicator notifying if we are adding an object during play and therefore just part of game state vs actually adding to the world...?
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
