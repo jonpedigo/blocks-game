@@ -51,7 +51,14 @@ function init() {
         if(window.objectsById[obj.id].tags.gravity && !obj.tags.gravity) {
           obj.velocityY = 0
         }
-        window.mergeDeep(window.objectsById[obj.id], obj)
+        let objectById = window.objectsById[obj.id]
+        if(!obj.x) {
+          obj.x = objectById.x
+        }
+        if(!obj.y) {
+          obj.y = objectById.y
+        }
+        window.mergeDeep(objectById, obj)
       })
       if(!window.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()

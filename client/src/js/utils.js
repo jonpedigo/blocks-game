@@ -43,3 +43,17 @@ function getParameterByName(name, url) {
 }
 
 window.getParameterByName = getParameterByName
+
+window.copyToClipBoard = function(copyText) {
+  navigator.permissions.query({name: "clipboard-write"}).then(result => {
+    if (result.state == "granted" || result.state == "prompt") {
+      /* write to the clipboard now */
+      navigator.clipboard.writeText(copyText).then(function() {
+        console.log('copied', window.game.id, 'to clipboard')
+      }, function() {
+        console.log('copy failed')
+        /* clipboard write failed */
+      });
+    }
+  });
+}

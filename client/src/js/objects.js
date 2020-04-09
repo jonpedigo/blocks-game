@@ -169,6 +169,11 @@ function removeObjectState(object) {
   delete object.target
   delete object.path
   delete object.removed
+  delete object.lastPowerUpId
+  delete object.direction
+  delete object.gridX
+  delete object.gridY
+  delete object.spawnPool
 }
 window.removeObjectState = removeObjectState
 

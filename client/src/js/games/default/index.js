@@ -149,6 +149,10 @@ function intelligence(object, delta) {
       } else return false
     })
 
+    if(object.initialSpawnPool && (object.spawnPool === undefined || object.spawnPool === null)) {
+      object.spawnPool = object.initialSpawnPool
+    }
+
     if(object.spawnedIds.length < object.spawnTotal && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0)) {
       let newObject = {
         x: object.x,

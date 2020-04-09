@@ -53,7 +53,9 @@
 // ( Force anticipated add )
 //
 // Follow whatever you are editing
-
+// editor preferences - zoom, editing object, editing hero, current menu, etc..
+// I already have world MODIFIERS, those are the worlds I have just created. Make them world modifiers instead of loaded world?
+// Switch tools based on actions!
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'

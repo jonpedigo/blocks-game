@@ -57,6 +57,11 @@ function init() {
     window.copyToClipBoard(copyText)
   })
 
+  var resetAllObjectStateButton = document.getElementById("reset-all-objects-state");
+  resetAllObjectStateButton.addEventListener('click', () => {
+    window.resetAllObjectState()
+  })
+
 
   window.syncGameStateToggle = document.getElementById('sync-game-state')
 
@@ -83,20 +88,6 @@ function init() {
 
   function emitEditorGameState (gameStateUpdate) {
     window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
-  }
-
-  window.copyToClipBoard = function(copyText) {
-    navigator.permissions.query({name: "clipboard-write"}).then(result => {
-      if (result.state == "granted" || result.state == "prompt") {
-        /* write to the clipboard now */
-        navigator.clipboard.writeText(copyText).then(function() {
-          console.log('copied', window.game.id, 'to clipboard')
-        }, function() {
-          console.log('copy failed')
-          /* clipboard write failed */
-        });
-      }
-    });
   }
 
   function resetDefaults() {
@@ -144,27 +135,38 @@ function init() {
 window.resetSpawnAreasAndObjects = function() {
   window.objects.forEach((object) => {
     if(object.removed) return
+    if(object.spawned) {
+      window.socket.emit('deleteObject', object)
+    }
     if(object.tags.spawnZone) {
-      object.spawnedIds.forEach((id) => {
-        if(!window.objectsById[id]) return
-        window.socket.emit('deleteObject', window.objectsById[id])
-      })
-      object.spawnedIds = []
-      object.spawnPool = object.initialSpawnPool
-      object.spawnWait = false
+      resetSpawnZone(object)
     }
   })
+  window.emitEditObjectsOther()
+}
+
+function resetSpawnZone(object) {
+  object.spawnedIds = []
+  object.spawnPool = object.initialSpawnPool
+  object.spawnWait = false
 }
 
 // client uses this sometimes
-window.resetSpawnAreasAndObjects = function() {
+window.resetAllObjectState = function() {
   window.objects.forEach((object) => {
-    if(object.spawned || (!object.spawnPointX && object.spawnPointX !== 0) || (!object.spawnPointY && object.spawnPointY !== 0) ){
+    if(object.spawned) {
+      window.socket.emit('deleteObject', object)
+    }
+    if(object.tags.spawnZone) {
+      resetSpawnZone(object)
+    }
+    if((!object.spawnPointX && object.spawnPointX !== 0) || (!object.spawnPointY && object.spawnPointY !== 0) ){
       window.socket.emit('deleteObject', object)
     }
     window.removeObjectState(object)
     window.respawnObject(object)
   })
+  window.socket.emit('editObjects', window.objects)
 }
 
 export default {

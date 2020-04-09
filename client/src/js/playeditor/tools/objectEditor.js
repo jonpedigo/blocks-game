@@ -81,6 +81,10 @@ window.sendObjectUpdateOther = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
   window.mergeDeep(window.objectsById[editorState.id], objectCopy)
+  window.emitEditObjectsOther()
+}
+
+window.emitEditObjectsOther = function() {
   window.socket.emit('editObjects', JSON.parse(JSON.stringify(window.objects)).map((obj) => {
     delete obj.x
     delete obj.y
