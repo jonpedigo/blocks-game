@@ -84,6 +84,10 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       newObject.id += '-copy'
     }
 
+    if(newObject.compendiumId) {
+      delete newObject.compendiumId
+    }
+
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
@@ -153,6 +157,26 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   return objects
 }
 
+function removeObjectState(object) {
+  delete object.x
+  delete object.y
+  delete object._initialY
+  delete object._initialX
+  delete object.velocityY
+  delete object.velocityX
+  delete object.spawnedIds
+  delete object.spawnWait
+  delete object.target
+  delete object.path
+  delete object.removed
+}
+window.removeObjectState = removeObjectState
+
+
+window.respawnObject = function(object) {
+  object.x = object.spawnPointX
+  object.y = object.spawnPointY
+}
 
 export default {
   init,

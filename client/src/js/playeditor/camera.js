@@ -162,20 +162,20 @@ function render(ctx, hero, objects) {
   ////////////////
   ////////////////
   if(objectEditorState && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
-    let object = objectEditorState
+    let objectById = window.objectsById[objectEditorState.id]
 
     // if(object.gridX) {
     //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.grid.nodeSize) + window.grid.startX, y: (object.gridY * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize})
     // }
 
-    if(objectEditorState.id) drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
+    if(objectById) drawObject(ctx, {...objectById, color: 'rgba(0,0,255, 1)'})
 
     if(objectEditorState.pathfindingLimit) {
-      drawObject(ctx, {x: (objectEditorState.pathfindingLimit.gridX * window.grid.nodeSize) + window.grid.startX, y: (objectEditorState.pathfindingLimit.gridY * window.grid.nodeSize) + window.grid.startY, width: objectEditorState.pathfindingLimit.gridWidth * window.grid.nodeSize, height: objectEditorState.pathfindingLimit.gridHeight * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
+      drawObject(ctx, {x: (objectEditorState.pathfindingLimit.gridX * window.grid.nodeSize) + window.grid.startX, y: (objectEditorState.pathfindingLimit.gridY * window.grid.nodeSize) + window.grid.startY, width: objectEditorState.pathfindingLimit.gridWidth * window.grid.nodeSize, height: objectEditorState.pathfindingLimit.gridHeight * window.grid.nodeSize, color: 'rgba(255,255,0, .2)'})
     }
 
-    if(objectEditorState.path && objectEditorState.path.length) {
-      objectEditorState.path.forEach((path) => {
+    if(objectById && objectById.path && objectById.path.length) {
+      objectById.path.forEach((path) => {
         drawObject(ctx, {x: (path.x * window.grid.nodeSize) + window.grid.startX, y: (path.y * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
       })
     }

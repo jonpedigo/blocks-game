@@ -47,6 +47,10 @@ function init() {
     // EDITOR CALLS THIS
   	window.socket.on('onEditObjects', (editedObjects) => {
       editedObjects.forEach((obj) => {
+        // slow down that gravity boi!
+        if(window.objectsById[obj.id].tags.gravity && !obj.tags.gravity) {
+          obj.velocityY = 0
+        }
         window.mergeDeep(window.objectsById[obj.id], obj)
       })
       if(!window.world.globalTags.calculatePathCollisions) {
@@ -113,6 +117,7 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onResetObjects', () => {
       window.objects = []
+      window.objectsById = {}
     })
 
     // client host calls this

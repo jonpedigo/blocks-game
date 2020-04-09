@@ -18,11 +18,11 @@
       <div class='is-edit-live'></div>
 
       <div><input type='radio' name="add-object" checked id='add-object-grid-node'>grid node add</input></div>
-      <div><input type='radio' name="add-object" checked id='add-object-dot'>little dot</input></div>
+      <div><input type='radio' name="add-object" checked id='add-object-dot'>specified pixel range</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-drag'>drag</input></div>
       <div><input type='radio' name="add-object" checked id='add-object-editor'>use editor size</input></div>
       <hr>
-      <input value="5" id='add-dot-size'></input>Little dot size (px)
+      <input value="5" id='add-dot-size'></input>Specified pixel range
       <hr>
       <div><input type='checkbox' checked id='instant-add'>send immediately when created</input></div>
       <button id='save-factory'>save factory</button>
@@ -48,7 +48,7 @@
       <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
       <div><input type='radio' name='object-selector' id='set-object-parent'>Select Parent of Object</input></div>
       <hr>
-      <strong>Compendium Transform</strong>
+      <strong>Compendium Select</strong>
       <div class="compendium-select">
       </div>
     </div>
@@ -121,6 +121,7 @@
       <button id='reset-objects'>Reset Objects</button>
       <button id='reset-game-state'>Reset game state</button>
       <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
+      <button id='reset-objects-state'>Reset All Object State</button>
       <hr>
       <button class='new-game'>New game - default</button>
       <button class='load-game-purgatory'>New game - purgatory</button>

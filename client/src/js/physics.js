@@ -480,10 +480,10 @@ function update (delta) {
     if(gameObject.id.indexOf('hero') > -1) {
       window.respawnHero()
     } else if(gameObject.spawnPointX >= 0){
-      gameObject.x = gameObject.spawnPointX
-      gameObject.y = gameObject.spawnPointY
+      window.respawnObject(gameObject)
+    } else {
+      window.socket.emit('deleteObject', gameObject)
     }
-
   })
 
 

@@ -302,13 +302,13 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
 
   const pathfindingLimit = options.pathfindingLimit
   if(pathfindingLimit){
-    if(attemptingX > pathfindingLimit.gridX + pathfindingLimit.width - 1) {
+    if(attemptingX > pathfindingLimit.gridX + pathfindingLimit.gridWidth - 1) {
       return false
-    } else if(attemptingX < pathfindingLimit.gridX - 1) {
+    } else if(attemptingX < pathfindingLimit.gridX) {
       return false
-    } else if(attemptingY > pathfindingLimit.gridY + pathfindingLimit.height - 1) {
+    } else if(attemptingY > pathfindingLimit.gridY + pathfindingLimit.gridHeight - 1) {
       return false
-    } else if(attemptingY < pathfindingLimit.gridY - 1) {
+    } else if(attemptingY < pathfindingLimit.gridY) {
       return false
     }
   }

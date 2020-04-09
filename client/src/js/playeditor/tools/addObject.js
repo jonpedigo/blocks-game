@@ -26,33 +26,62 @@ function init() {
 
   window.addToCompendium = function(object) {
     object = JSON.parse(JSON.stringify(object))
-    if(object.i >= 0) delete object.i
-    if(object.id) delete object.id
+    delete object.i
+    delete object.id
     object.compendiumId = 'compendium-' + Date.now()
 
-    window.compendium[object.compendiumId] = object
-
+    window.removeObjectState(object)
     console.log('added: ' + object.compendiumId + ' to compendium')
-
-    window.objecteditor.live = false
+    window.objecteditor.saved = false
     window.objecteditor.update(object)
-    window.updateObjectEditorNotifier()
     updateCompendium()
+    window.updateObjectEditorNotifier()
   }
 
   window.saveCompendiumObject = function(object) {
-    if(!object.compendiumId) alert('trying to save to compendium with no compendium Id, create one first')
     object = JSON.parse(JSON.stringify(object))
-    if(object.i >= 0) delete object.i
-    if(object.id) delete object.id
+    delete object.i
+    delete object.id
 
-    if(!window.compendium[object.compendiumId]) window.compendium[object.compendiumId] = object
-    window.compendium[object.compendiumId] = object
+    if(!window.compendium[object.compendiumId]) {
+      var id = prompt("Give this compendium item an id", object.compendiumId);
+      if(id) {
+        window.compendium[id] = object
+        object.compendiumId = id
+      }
+    } else {
+      window.compendium[object.compendiumId] = object
+    }
 
+    window.removeObjectState(object)
     window.objecteditor.update(object)
     window.objecteditor.saved = true
-    window.updateObjectEditorNotifier()
     updateCompendium()
+    window.updateObjectEditorNotifier()
+  }
+}
+
+function clickOnCompendium(rightClick, compendium) {
+  // right click
+  if(rightClick) {
+    if(window.objecteditor.live) {
+      if(confirm('this will live-update this object to adopt all properties of ' + compendium.compendiumId)) {
+        let editorState = window.objecteditor.get()
+        let objectById = window.objectsById[editorState.id]
+        let updated = window.mergeDeep(objectById, JSON.parse(JSON.stringify(compendium)))
+        window.objecteditor.update(updated)
+        sendObjectUpdate(compendium)
+      }
+    } else {
+      if(confirm('this will merge compendium ' + compendium.compendiumId + ' into editor')) {
+        let editorState = window.objecteditor.get()
+        window.objecteditor.update(window.mergeDeep(editorState, JSON.parse(JSON.stringify(compendium))))
+        window.updateObjectEditorNotifier()
+      }
+    }
+  } else {
+    window.objecteditor.update(compendium)
+    window.updateObjectEditorNotifier()
   }
 }
 
@@ -60,19 +89,88 @@ function updateCompendium() {
   let e=document.getElementsByClassName("compendium-select");  // Find the elements
   for(var i = 0; i < e.length; i++){
     e[i].innerHTML = '';
+
+    let defaultEl = document.createElement('button')
+    defaultEl.innerHTML = 'Default Object'
+    defaultEl.onclick= function(e) {
+      window.objecteditor.defaultCompendium = false
+      clickOnCompendium(false, window.defaultObject)
+    }
+    defaultEl.oncontextmenu = function(e) {
+      e.preventDefault()
+      clickOnCompendium(true, window.defaultObject)
+    }
+    e[i].appendChild(defaultEl)
+
+    for(let id in window.defaultCompendium.object) {
+      let comEl = document.createElement('button')
+      comEl.innerHTML = id
+      comEl.onclick= function(e) {
+        window.objecteditor.defaultCompendium = true
+        clickOnCompendium(false, window.defaultCompendium.object[id])
+      }
+      comEl.oncontextmenu = function(e) {
+        e.preventDefault()
+        clickOnCompendium(true, window.defaultCompendium.object[id])
+      }
+      e[i].appendChild(comEl)
+    }
+
+
     for(let id in window.compendium) {
       let comEl = document.createElement('button')
       comEl.innerHTML = id
-      comEl.onclick= function() {
-        sendObjectUpdate(window.compendium[id])
+      comEl.className='live-compendium-select button'
+      comEl.id = id
+      comEl.onclick= function(e) {
+        window.objecteditor.defaultCompendium = false
+        clickOnCompendium(false, window.compendium[id])
+      }
+      comEl.oncontextmenu = function(e) {
+        e.preventDefault()
+        clickOnCompendium(true, window.compendium[id])
       }
       e[i].appendChild(comEl)
     }
   }
 }
 
+window.updateObjectEditorNotifier = function() {
+  let editorState = window.objecteditor.get()
+  if(editorState.id) window.objecteditor.live = true
+  else window.objecteditor.live = false
+
+  let els=document.getElementsByClassName("live-compendium-select");  // Find the elements
+  for(var i = 0; i < els.length; i++){
+    els[i].className='live-compendium-select button'
+    if(els[i].id === editorState.compendiumId) {
+      els[i].className='live-compendium-select selected button'
+    }
+  }
+
+  let x=document.getElementsByClassName("is-edit-live");  // Find the elements
+  for(var i = 0; i < x.length; i++){
+    if(window.objecteditor.live) {
+      window.objecteditor.saved = true
+      x[i].style.display = 'inline-block'
+      x[i].style.backgroundColor = 'red'
+    } else if (editorState.compendiumId && !window.objecteditor.defaultCompendium) {
+      x[i].style.display = 'inline-block'
+      if(window.objecteditor.saved) {
+        x[i].style.backgroundColor = 'grey'
+      } else {
+        x[i].style.backgroundColor = 'white'
+      }
+    } else {
+      window.objecteditor.saved = true
+      x[i].style.display = 'none'
+    }
+  }
+}
+
 function loaded() {
   if(window.game.compendium) window.compendium = game.compendium
+  updateCompendium()
 }
 
 export default {

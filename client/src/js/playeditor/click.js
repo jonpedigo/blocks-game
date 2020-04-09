@@ -42,8 +42,8 @@ function init() {
 
       if(window.useEditorSizeAddToggle.checked) {
         let oe = window.objecteditor.get()
-        location.width = oe.width
-        location.height = oe.height
+        location.width = oe.width || window.grid.nodeSize
+        location.height = oe.height || window.grid.nodeSize
       }
 
       window.gridHighlight = location
@@ -110,7 +110,9 @@ function init() {
         }
 
         if(window.setObjectSpawnToggle.checked) {
-          window.sendObjectUpdate({spawnPointX: click.x, spawnPointY: click.y})
+          let spawnPoints = {spawnPointX: click.x, spawnPointY: click.y}
+          window.sendObjectUpdate(spawnPoints)
+          window.objecteditor.update({...window.objecteditor.get(), ...spawnPoints})
         } else if(window.setObjectPathfindingLimitToggle.checked) {
           defaultFirstClick(e)
         } else if(window.selectorObjectToggle.checked){
@@ -135,6 +137,9 @@ function init() {
         if(window.setObjectPathfindingLimitToggle.checked) {
           gridTool.snapDragToGrid(value, {dragging: true})
           window.sendObjectUpdate({ pathfindingLimit: value})
+          window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
+          window.setObjectPathfindingLimitToggle.checked = false
+          window.selectorObjectToggle.checked = true
         }
       }
     },
@@ -203,6 +208,11 @@ function init() {
           let editorObject = window.objecteditor.get()
 
           let newObject = JSON.parse(JSON.stringify(editorObject))
+
+          if(window.useEditorSizeAddToggle.checked) {
+            location.width = editorObject.width || window.grid.nodeSize
+            location.height = editorObject.height || window.grid.nodeSize
+          }
 
           Object.assign(newObject, location)
 

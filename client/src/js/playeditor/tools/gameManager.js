@@ -156,6 +156,17 @@ window.resetSpawnAreasAndObjects = function() {
   })
 }
 
+// client uses this sometimes
+window.resetSpawnAreasAndObjects = function() {
+  window.objects.forEach((object) => {
+    if(object.spawned || (!object.spawnPointX && object.spawnPointX !== 0) || (!object.spawnPointY && object.spawnPointY !== 0) ){
+      window.socket.emit('deleteObject', object)
+    }
+    window.removeObjectState(object)
+    window.respawnObject(object)
+  })
+}
+
 export default {
   init
 }

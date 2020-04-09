@@ -33,6 +33,28 @@
 // EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
 // editor gridsnap toggle in world editorPref
 
+
+////
+// (Snap to grid Toggle)
+//
+// — bring velocity to zero for hero
+// — speed up hero
+// — slow down hero
+// — increase speed parameter
+// — decrease speed parameter
+// — set Zoom to all heros
+// add grid to world editor
+// Set Both camera and game boundaries ( perhaps check boxes )
+// START THEM OFF CHECKED..
+//
+// Zoom out area, zoom in area
+// Zoom out hero and areas
+//
+// ( Force anticipated add )
+//
+// Follow whatever you are editing
+
+
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 import chat from './js/chat.js'

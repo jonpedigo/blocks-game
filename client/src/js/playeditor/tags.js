@@ -13,7 +13,7 @@ window.defaultTags = {
   // PHYSICS
   gravity: false,
   movingPlatform: false,
-  child: false,
+  // child: false,
   onlyHeroAllowed: false,
   noHeroAllowed: false,
 
@@ -22,9 +22,7 @@ window.defaultTags = {
 
   // GRAPHICAL
   glowing: false,
-  flashing: false,
   filled: false,
-  jittery: false,
   invisible: false,
 
   // MOVEMENT
@@ -47,7 +45,7 @@ window.defaultTags = {
 window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
 function init() {
-  
+
 }
 
 export default {

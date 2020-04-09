@@ -66,7 +66,7 @@ function intelligence(object, delta) {
       }, {
         x: window.hero.gridX,
         y: window.hero.gridY,
-      }, object.pathfindingLimit)
+      }, { pathfindingLimit: object.pathfindingLimit })
     }
   }
 
@@ -157,6 +157,7 @@ function intelligence(object, delta) {
         height: object.height,
         id: 'spawned-' + object.spawnedIds.length + object.id + Date.now(),
         ...object.spawnObject,
+        spawned: true,
       }
       // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
       // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)

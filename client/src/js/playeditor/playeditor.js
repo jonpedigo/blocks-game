@@ -2,9 +2,6 @@ import JSONEditor from 'jsoneditor'
 import collisions from '../collisions'
 import gridTool from '../grid.js'
 import procedural from './procedural.js'
-import heroModifiers from './modifiers/heroModifiers.js'
-import worldModifiers from './modifiers/worldModifiers.js'
-import objectModifiers from './modifiers/objectModifiers.js'
 import camera from './camera.js'
 import click from './click.js'
 import tags from './tags.js'
@@ -84,8 +81,8 @@ window.onChangeTool = function(toolName) {
   if(toolName === window.TOOLS.ADD_OBJECT) {
     let editorState = window.objecteditor.get()
     if(editorState.id) {
-      editorState.compendiumId = null
-      editorState.id = null
+      if(editorState.compendiumId) delete editorState.compendiumId
+      delete editorState.id
     }
     editorState.i = null
 
