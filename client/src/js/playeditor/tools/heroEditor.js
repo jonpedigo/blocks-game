@@ -18,8 +18,7 @@ function init() {
 
   let heroModSelectEl = document.getElementById("hero-modifier-select")
   for(let modifierName in heroModifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
+    let modEl = document.createElement('button')
     modEl.innerHTML = 'apply mod - ' + modifierName
     modEl.onclick= function() {
       sendHeroUpdate(heroModifiers[modifierName])

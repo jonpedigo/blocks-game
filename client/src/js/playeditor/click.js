@@ -14,6 +14,41 @@ function init() {
   window.document.getElementById('game-canvas').addEventListener("mousemove", function(e) {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
+
+    if(window.currentTool === window.TOOLS.ADD_OBJECT) {
+      const { x,y } = gridTool.createGridNodeAt(window.mousePos.x, window.mousePos.y)
+
+      let location = {
+        x,
+        y,
+      }
+
+      if(window.dotAddToggle.checked) {
+        location.width = Number(document.getElementById('add-dot-size').value)
+        location.height = Number(document.getElementById('add-dot-size').value)
+        location.x += (window.grid.nodeSize/2 - location.width/2)
+        location.y += (window.grid.nodeSize/2 - location.height/2)
+      }
+
+      if(window.gridNodeAddToggle.checked) {
+        location.width = window.grid.nodeSize
+        location.height = window.grid.nodeSize
+      }
+
+      if(window.dragAddToggle.checked) {
+        location.width = window.grid.nodeSize
+        location.height = window.grid.nodeSize
+      }
+
+      if(window.useEditorSizeAddToggle.checked) {
+        let oe = window.objecteditor.get()
+        location.width = oe.width
+        location.height = oe.height
+      }
+
+      window.gridHighlight = location
+    } else window.gridHighlight = null
+
   })
 
   window.document.getElementById('game-canvas').addEventListener('click',function(e){
@@ -82,12 +117,9 @@ function init() {
           window.objects
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
-              window.objecteditor.set(Object.assign({}, object))
-              window.objecteditor.expandAll()
-              window.objecteditor.live = true
-              window.updateObjectEditor()
-              window.editingObject = object
-              window.editingObject.i = i
+              object.i = i
+              window.objecteditor.update(object)
+              window.updateObjectEditorNotifier()
             })
           })
         }

@@ -30,8 +30,7 @@ function init(hero){
         if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
           window.saveCodeEditor()
           document.getElementById("is-code-editor-saved").innerHTML = "Saved"
-        } else if(window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
-          window.objecteditor.live = false
+        } else if((window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) && !window.objecteditor.live) {
           window.saveCompendiumObject(window.objecteditor.get())
         }
         e.preventDefault()
@@ -40,9 +39,7 @@ function init(hero){
       //c
       if(keysDown['67']){
         if(window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
-          window.objecteditor.live = false
           window.addToCompendium(window.objecteditor.get())
-          window.updateObjectEditor()
         }
       }
     }
@@ -108,36 +105,37 @@ function init(hero){
 
       // right
       if(keysDown['222']){
+        let editorState = window.objecteditor.get()
+
         if(window.objects.length == 0) return
-        let newI = window.editingObject.i
-        if(window.editingObject.i === window.objects.length -1 || window.editingObject.i == null) {
+        let newI = editorState.i
+        if(editorState.i === window.objects.length -1 || editorState.i == null) {
           newI = 0
         } else {
           newI += 1
         }
-        window.editingObject = window.objects[newI]
-        window.editingObject.i = newI
-        window.objecteditor.set(window.editingObject)
-        window.editingObject.live = true
-        window.updateObjectEditor()
-        window.findObject()
+        let editingObject = window.objects[newI]
+        editingObject.i = newI
+        window.objecteditor.set(editingObject)
+        window.updateObjectEditorNotifier()
+        window.findObject(editingObject)
       }
 
       //left
       if(keysDown['186']){
+        let editorState = window.objecteditor.get()
         if(window.objects.length == 0) return
-        let newI = window.editingObject.i
-        if(!window.editingObject.i) {
+        let newI = editorState.i
+        if(!editorState.i) {
           newI = window.objects.length - 1
         } else {
           newI -= 1
         }
-        window.editingObject = window.objects[newI]
-        window.editingObject.i = newI
-        window.objecteditor.live = true
-        window.objecteditor.set(window.editingObject)
-        window.updateObjectEditor()
-        window.findObject()
+        let editingObject = window.objects[newI]
+        editingObject.i = newI
+        window.objecteditor.set(editingObject)
+        window.updateObjectEditorNotifier()
+        window.findObject(editingObject)
       }
     }
 

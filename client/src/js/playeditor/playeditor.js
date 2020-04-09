@@ -44,9 +44,10 @@ window.TOOLS = {
 let toolSelectEl = document.getElementById("tool-select")
 for(var tool in TOOLS) {
   let toolName = TOOLS[tool];
-  let toolEl = document.createElement('div')
-  toolEl.className = 'button';
+  let toolEl = document.createElement('button')
+  toolEl.className = 'button tool-selectors';
   toolEl.innerHTML = toolName
+  toolEl.id = toolName + '-selector'
   toolEl.onclick=function() {
     window.onChangeTool(toolName)
   }
@@ -54,12 +55,16 @@ for(var tool in TOOLS) {
 }
 
 window.onChangeTool = function(toolName) {
-  console.log('current tool changed to ' + toolName)
+  // console.log('current tool changed to ' + toolName)
   window.currentTool = toolName
   Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
     e.className = "tool-feature invisible"
   })
-  document.getElementById("tool-"+toolName).className='tool-feature visible'
+  Array.from(document.getElementsByClassName("tool-selectors")).forEach(e => {
+    e.className = "button  tool-selectors"
+  })
+  document.getElementById("tool-"+toolName).className='tool-feature visible tool-selectors'
+  document.getElementById(toolName + '-selector').className='button selected tool-selectors'
 
   // if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
   //   // document.getElementById('game-canvas').style="left: 400px;"
@@ -77,10 +82,15 @@ window.onChangeTool = function(toolName) {
   }
 
   if(toolName === window.TOOLS.ADD_OBJECT) {
-    window.editingObject.i = null
-    window.editingObject.id = null
-    window.objecteditor.live = false
-    window.updateObjectEditor()
+    let editorState = window.objecteditor.get()
+    if(editorState.id) {
+      editorState.compendiumId = null
+      editorState.id = null
+    }
+    editorState.i = null
+
+    window.objecteditor.update(editorState)
+    window.updateObjectEditorNotifier()
   }
 
   let x=document.getElementById("objectjsoneditor");  // Find the elements
@@ -210,6 +220,10 @@ function loaded() {
   window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
+  let initialGameId = window.getParameterByName('initialGameId')
+  if(initialGameId && window.game.id !== initialGameId) {
+    window.socket.emit('setGame', initialGameId)
+  }
 }
 
 function update(delta) {

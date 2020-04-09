@@ -15,7 +15,11 @@ function init() {
 
 window.changeGame = function(id) {
   window.customGame = customGames[id]
-  if(window.usePlayEditor) document.getElementById('current-game-id').innerHTML = id
+  console.log(id)
+  if(window.usePlayEditor){
+    document.getElementById('current-game-id').innerHTML = id
+    document.getElementById('game-id').value = id
+  }
 }
 
 export default {

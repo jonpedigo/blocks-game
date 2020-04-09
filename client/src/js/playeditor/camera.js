@@ -116,6 +116,8 @@ function drawVertice(ctx, vertice) {
 }
 
 function render(ctx, hero, objects) {
+  let objectEditorState = window.objecteditor.get()
+
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -159,21 +161,21 @@ function render(ctx, hero, objects) {
   // EDITING OBJECT SETTINGS
   ////////////////
   ////////////////
-  if(window.editingObject && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
-    let object = window.editingObject
+  if(objectEditorState && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
+    let object = objectEditorState
 
     // if(object.gridX) {
     //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * window.grid.nodeSize) + window.grid.startX, y: (object.gridY * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize})
     // }
 
-    if(window.editingObject.id) drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
+    if(objectEditorState.id) drawObject(ctx, {...object, color: 'rgba(0,0,255, 1)'})
 
-    if(window.editingObject.pathfindingLimit) {
-      drawObject(ctx, {x: (window.editingObject.pathfindingLimit.gridX * window.grid.nodeSize) + window.grid.startX, y: (window.editingObject.pathfindingLimit.gridY * window.grid.nodeSize) + window.grid.startY, width: window.editingObject.pathfindingLimit.gridWidth * window.grid.nodeSize, height: window.editingObject.pathfindingLimit.gridHeight * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
+    if(objectEditorState.pathfindingLimit) {
+      drawObject(ctx, {x: (objectEditorState.pathfindingLimit.gridX * window.grid.nodeSize) + window.grid.startX, y: (objectEditorState.pathfindingLimit.gridY * window.grid.nodeSize) + window.grid.startY, width: objectEditorState.pathfindingLimit.gridWidth * window.grid.nodeSize, height: objectEditorState.pathfindingLimit.gridHeight * window.grid.nodeSize, color: 'rgba(255,255,0, .5)'})
     }
 
-    if(window.editingObject.path && window.editingObject.path.length) {
-      window.editingObject.path.forEach((path) => {
+    if(objectEditorState.path && objectEditorState.path.length) {
+      objectEditorState.path.forEach((path) => {
         drawObject(ctx, {x: (path.x * window.grid.nodeSize) + window.grid.startX, y: (path.y * window.grid.nodeSize) + window.grid.startY, width: window.grid.nodeSize, height: window.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
       })
     }
@@ -357,9 +359,13 @@ function render(ctx, hero, objects) {
     drawObject(ctx, {x: window.editingHero.spawnPointX - 205, y: window.editingHero.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
   }
 
-  if(window.editingObject.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
-    drawObject(ctx, {x: window.editingObject.spawnPointX, y: window.editingObject.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
-    drawObject(ctx, {x: window.editingObject.spawnPointX - 205, y: window.editingObject.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
+  if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
+    drawObject(ctx, {x: objectEditorState.spawnPointX, y: objectEditorState.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
+    drawObject(ctx, {x: objectEditorState.spawnPointX - 205, y: objectEditorState.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
+  }
+
+  if(window.gridHighlight) {
+    drawObject(ctx, {...window.gridHighlight, color: 'rgba(255,255,255,0.6)'})
   }
 
   ctx.font =`24pt Arial`

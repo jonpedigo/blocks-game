@@ -133,11 +133,9 @@ function init() {
         return prev
       }, {})
 
-      if(window.usePlayEditor && window.editingObject.i >= 0) {
-        window.mergeDeep(window.editingObject, objectsUpdated[window.editingObject.i])
+      if(window.usePlayEditor && window.objecteditor.get().id) {
         if(window.syncObjectsToggle.checked) {
-          window.objecteditor.set(window.editingObject)
-          window.objecteditor.expandAll()
+          window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
         }
       }
     })
@@ -229,13 +227,9 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
-    if(window.usePlayEditor && window.editingObject.id === object.id) {
-      window.editingObject = {
-        id: null,
-        i: null,
-      }
-      window.objecteditor.live = false
+    if(window.usePlayEditor && window.objecteditor.get().id === object.id) {
       window.objecteditor.set({})
+      window.updateObjectEditorNotifier()
     }
 
     if(!window.world.globalTags.calculatePathCollisions) {
@@ -518,7 +512,7 @@ function handleWorldUpdate(updatedWorld) {
 
 function findHeroInNewWorld(game) {
   // if we have decided to restore position, find hero in hero list
-  if(game.world.globalTags.shouldRestoreHero) {
+  if(game.world.globalTags.shouldRestoreHero && window.hero && window.hero.id && game.heros) {
     for(var heroId in game.heros) {
       let currentHero = game.heros[heroId]
       if(currentHero.id == window.hero.id) {
@@ -529,10 +523,11 @@ function findHeroInNewWorld(game) {
     console.log('failed to find hero with id' + window.hero.id)
   }
 
-  if(!game.world.globalTags.isAsymmetric) {
+  if(!game.world.globalTags.isAsymmetric && game.hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    game.hero.id = window.hero.id
+    if(window.hero && window.hero.id) game.hero.id = window.hero.id
     window.hero = game.hero
+    if(!window.hero.id) window.hero.id = 'hero-'+Date.now()
     // but then also respawn the hero
     window.respawnHero()
     return
@@ -540,8 +535,7 @@ function findHeroInNewWorld(game) {
 
   // other random bullshit if theres two different versions of the hero
   if(!Object.keys(game.heros).length) {
-    window.hero.x = window.world.worldSpawnPointX
-    window.hero.y = window.world.worldSpawnPointY
+    window.resetHero()
   }
   for(var heroId in game.heros) {
     let currentHero = game.heros[heroId]
@@ -558,5 +552,5 @@ function findHeroInNewWorld(game) {
     }
   }
 
-  window.hero = game.heros[heroId]
+  window.resetHero()
 }

@@ -87,12 +87,12 @@ function containObjectWithinGridBoundaries(object) {
 
     if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1) {
       let legal = true
-      if(objectToEdit.x + objectToEdit.width/2 > gameBoundaries.x + gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2 )) {
-        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width/2 - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2
+      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2 )) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2
         legal = false
       }
-      if(objectToEdit.y + objectToEdit.height/2> gameBoundaries.y + gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )) {
-        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height/2 - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )
+      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )
         legal = false
       }
       if(objectToEdit.x < gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)) {

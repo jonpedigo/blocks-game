@@ -7,19 +7,14 @@ import JSONEditor from 'jsoneditor'
 import camera from '../camera.js'
 
 function init() {
-  window.editingObject = {
-    i: null,
-    id: null,
-  }
-
   var objectjsoneditor = document.createElement("div")
   objectjsoneditor.id = 'objectjsoneditor'
   document.body.appendChild(objectjsoneditor);
   window.objecteditor = new JSONEditor(objectjsoneditor, {
     modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
-    console.log(objectEdited)
-    if(objectEdited.id) {
-      let object = window.objects[window.editingObject.i]
+
+    if(window.objecteditor.live && objectEdited.id) {
+      let object = window.objectsById[objectEdited.id]
 
       if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
         gridTool.removeObstacle({...object, tags: objectEdited.tags})
@@ -31,60 +26,10 @@ function init() {
 
       window.sendObjectUpdateOther({ tags: objectEdited.tags, color: objectEdited.color })
     } else {
-      // window.updateCompendiumObject(objectEdited)
+      window.objecteditor.saved = false
+      window.updateObjectEditorNotifier()
     }
   }});
-
-  let applyObjectModEl = document.getElementById("apply-object-mod")
-  for(let modifierName in objectModifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
-    modEl.innerHTML = modifierName
-    modEl.onclick=function() {
-      window.sendObjectUpdate(objectModifiers[modifierName])
-      window.updateEditorState()
-    }
-    applyObjectModEl.appendChild(modEl)
-  }
-
-  //mod select functionality
-  let modSelectHerosEl = document.getElementById("modifier-select-heros")
-  for(let modifierName in heroModifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
-    modEl.innerHTML = modifierName
-    modEl.onclick=function() {
-      window.sendObjectUpdate({ heroUpdate : heroModifiers[modifierName]})
-      window.updateEditorState()
-    }
-    modSelectHerosEl.appendChild(modEl)
-  }
-
-  //mod select functionality
-  let modSelectObjectsEl = document.getElementById("modifier-select-objects")
-  for(let modifierName in objectModifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
-    modEl.innerHTML =  modifierName
-    modEl.onclick=function() {
-      window.sendObjectUpdate({ objectUpdate : objectModifiers[modifierName]})
-      window.updateEditorState()
-    }
-    modSelectObjectsEl.appendChild(modEl)
-  }
-
-  //mod select functionality
-  let modSelectWorldEl = document.getElementById("modifier-select-world")
-  for(let modifierName in worldModifiers) {
-    let modEl = document.createElement('div')
-    modEl.className = 'button';
-    modEl.innerHTML = modifierName
-    modEl.onclick=function() {
-      window.sendObjectUpdate({ worldUpdate : worldModifiers[modifierName]})
-      window.updateEditorState()
-    }
-    modSelectWorldEl.appendChild(modEl)
-  }
 
   var sendObjectPos = document.getElementById("send-object-pos");
   sendObjectPos.addEventListener('click', () => {
@@ -99,9 +44,9 @@ function init() {
   })
 
   var removeObjectButton = document.getElementById("remove-object");
-  removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.editingObject))
+  removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.objecteditor.get()))
   var deleteObjectButton = document.getElementById("delete-object");
-  deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.editingObject))
+  deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.objecteditor.get()))
   window.syncObjectsToggle = document.getElementById('sync-objects')
   window.syncObjectsToggle.onclick = (e) => {
     if(e.srcElement.checked) {
@@ -119,28 +64,25 @@ function init() {
 }
 
 window.updateEditorState = function() {
-  window.objecteditor.set(window.objects[window.editingObject.i])
-  window.objecteditor.expandAll()
+  window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
 }
 
 window.sendObjectUpdate = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
-
-  if(window.objecteditor.live) {
-    window.mergeDeep(window.editingObject, objectCopy)
-    window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
+  let editorState = window.objecteditor.get()
+  let updatedObject = JSON.parse(JSON.stringify(window.objectsById[editorState.id]))
+  if(window.objecteditor.live && editorState.id) {
+    let updatedObject = window.objectsById[editorState.id]
+    window.mergeDeep(updatedObject, objectUpdate)
     window.socket.emit('editObjects', window.objects)
-  } else {
-    window.mergeDeep(window.editingObject, objectCopy)
-    window.objecteditor.update(window.editingObject)
   }
-
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
-  window.mergeDeep(window.editingObject, objectCopy)
-  window.mergeDeep(window.objects[window.editingObject.i], objectCopy)
+  let editorState = window.objecteditor.get()
+  let updatedObject = JSON.parse(JSON.stringify(window.objectsById[editorState.id]))
+  window.mergeDeep(updatedObject, objectUpdate)
   window.socket.emit('editObjects', JSON.parse(JSON.stringify(window.objects)).map((obj) => {
     delete obj.x
     delete obj.y
@@ -149,30 +91,40 @@ window.sendObjectUpdateOther = function(objectUpdate) {
 }
 
 window.findObject = function() {
-  camera.setCamera(ctx, window.editingObject)
+  let editorState = window.objecteditor.get()
+  if(editorState.id) {
+    camera.setCamera(ctx, editorState)
+  }
 }
 
-function loaded() {
-  window.editingObject = window.defaultObject
-  window.objecteditor.set(window.defaultObject)
-  window.objecteditor.expandAll()
-  window.objecteditor.live = false
-}
+window.updateObjectEditorNotifier = function() {
+  let editorState = window.objecteditor.get()
+  if(editorState.id) window.objecteditor.live = true
+  else window.objecteditor.live = false
 
-window.updateObjectEditor = function() {
   let x=document.getElementsByClassName("is-edit-live");  // Find the elements
   for(var i = 0; i < x.length; i++){
     if(window.objecteditor.live) {
+      window.objecteditor.saved = true
       x[i].style.display = 'inline-block'
       x[i].style.backgroundColor = 'red'
-    } else if (window.editingObject.compendiumId && !window.id) {
+    } else if (editorState.compendiumId) {
       x[i].style.display = 'inline-block'
-      x[i].style.backgroundColor = 'grey'
+      if(window.objecteditor.saved) {
+        x[i].style.backgroundColor = 'grey'
+      } else {
+        x[i].style.backgroundColor = 'white'
+      }
     } else {
+      window.objecteditor.saved = true
       x[i].style.display = 'none'
     }
   }
-  window.objecteditor.expandAll()
+}
+
+function loaded() {
+  window.objecteditor.update(window.defaultObject)
+  window.updateObjectEditorNotifier()
 }
 
 export default {

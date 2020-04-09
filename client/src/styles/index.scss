@@ -38,6 +38,32 @@ body {
   left: 405px;
   top:10px;
 }
+.tool-feature.visible {
+  display: initial;
+}
+
+.tool-feature.invisible {
+  display:none;
+}
+
+button {
+  border: 1px solid black;
+  background: white;
+  width: 100%;
+  color: black;
+  padding:5px;
+}
+
+button.button {
+  border: 1px solid black;
+  background: grey;
+  color: black;
+  padding:5px;
+}
+
+button.selected{
+  background: white;
+}
 
 #editor {
   position: fixed;
@@ -118,20 +144,4 @@ body {
   left:0;
   width:400px;
   height: 100%;
-}
-
-
-.tool-feature.visible {
-  display: initial;
-}
-
-.tool-feature.invisible {
-  display:none;
-}
-
-.button {
-  border: 1px solid black;
-  background: white;
-  color: black;
-  padding:5px;
 }
