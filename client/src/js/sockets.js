@@ -133,9 +133,7 @@ function init() {
         window.gamestateeditor.set(gameState)
       }
     })
-  }
 
-  if(window.editorPlayer || window.usePlayEditor) {
     // CLIENT HOST CALLS THIS
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
@@ -169,11 +167,11 @@ function init() {
 
   // CLIENT HOST CALLS THIS
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-    if(!window.heros) {
-      window.heros = {}
-    }
     if(!window.heros[heroUpdated.id]) {
       window.heros[heroUpdated.id] = {}
+      if(window.host) {
+        physics.addObject(heroUpdated)
+      }
     }
 
     if(window.pageState.gameLoaded) {
@@ -213,7 +211,10 @@ function init() {
 
   // CLIENT HOST AND EDITOR CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
-  	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
+  	if(!window.heros[updatedHero.id]) {
+      window.heros[updatedHero.id] = {}
+      physics.addObject(updatedHero)
+    }
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
   		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.heros[updatedHero.id])
   	}
@@ -271,6 +272,9 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
+    if(window.host) {
+      physics.removeObjectById(id)
+    }
     delete window.heros[id]
     if(window.usePlayEditor && window.editingHero.id == id) {
       window.setEditingHero({})
@@ -292,14 +296,18 @@ function init() {
         }
         window.objecteditor.saved = true
         window.objecteditor.set({})
-      } else {
+      }
+      if(window.host){
         window.objects.forEach((object) => {
           physics.removeObjectById(object.id)
         })
+        let allHeros = Object.keys(window.heros).map((id) => {
+          return window.heros[id]
+        })
+        allHeros.forEach((hero) => {
+          physics.removeObject(allHeros)
+        })
       }
-    }
-    if(window.hero) {
-      physics.removeObject(window.hero)
     }
 
     // objects
@@ -325,9 +333,9 @@ function init() {
 
     // heros
     // reset to initial positions and state
-    if(window.host && window.isPlayer) {
+    if(window.isPlayer) {
       window.findHeroInNewWorld(game)
-      physics.addObject(window.hero)
+      if(window.host) physics.addObject(window.hero)
       window.hero.currentGameId = game.id
     }
     if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}

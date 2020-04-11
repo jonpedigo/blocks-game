@@ -119,25 +119,16 @@ window.onPageLoad = function() {
   document.body.appendChild(window.canvas);
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-  window.host = true
+  window.host = false
   window.isPlayer = true
 
   if(window.usePlayEditor) {
-    window.host = false
-    window.isPlayer = false
-  }
-
-  if(window.getParameterByName('editorPlayer')) {
-    window.usePlayEditor = false
-    // the only reason this editorPlayer flag exists is to handle the half host who only updates their own hero..
-    window.editorPlayer = true
-    window.isPlayer = true
     window.host = true
+    window.isPlayer = false
   }
 
   if(window.getParameterByName('ghost')) {
     window.usePlayEditor = false
-    window.editorPlayer = true
     window.isPlayer = false
     window.host = false
     window.ghost = true
@@ -150,10 +141,15 @@ window.onPageLoad = function() {
 
   if(window.host) {
     console.log('host')
-  } else if(window.usePlayEditor) {
-    console.log('editor')
   } else {
     console.log('non host')
+  }
+
+  if(window.usePlayEditor) {
+    console.log('editor')
+  }
+  if(window.isPlayer) {
+    console.log('player')
   }
 
   // SOCKET START
@@ -190,7 +186,7 @@ window.initializeGame = function (initialGameId) {
     ghost.init()
   }
 
-  if(window.isPlayer || window.editorPlayer){
+  if(window.isPlayer){
     feedback.init()
     constellation.init(ctx)
     camera.init()
@@ -202,10 +198,21 @@ window.initializeGame = function (initialGameId) {
   window.socket.emit('askRestoreCurrentGame')
   window.socket.on('onAskRestoreCurrentGame', (game) => {
     let currentGameExists = game && game.id
-    if(currentGameExists) {
-      window.loadGame(game)
+
+    if(window.isPlayer) {
+      if(currentGameExists) {
+        // window.socket.emit('askJoinCurrentGame')
+        // window.socket.on('onJoinCurrentGame', () => {
+          window.loadGame(game)
+        // })
+      }
+      // } else {
+      //   // player wait state
+      // }
     } else if(window.usePlayEditor) {
-      if(confirm('Press Ok To Load Game, Cancel to Create New')) {
+      if(currentGameExists) {
+        window.loadGame(game)
+      } else if(confirm('Press Ok To Load Game, Cancel to Create New')) {
         let id = prompt('Enter game id to load')
         window.socket.emit('setAndLoadCurrentGame', id)
         window.socket.on('onLoadGame', (game) => {
@@ -222,8 +229,6 @@ window.initializeGame = function (initialGameId) {
         }
         window.loadGame(game)
       }
-    } else {
-      // client loading state
     }
   })
 };
@@ -325,65 +330,25 @@ window.onGameLoaded = function() {
   // begin main loop
   mainLoop()
 
-  if(window.host) {
-    function emitGameToEditor() {
-      if(!window.editorPlayer) {
-        window.socket.emit('updateObjects', window.objects)
-        window.socket.emit('updateGameState', window.gameState)
-      }
+  function networkLoop() {
+    if(window.host) {
+      window.socket.emit('updateObjects', window.objects)
+      window.socket.emit('updateGameState', window.gameState)
+    }
+    if(window.isPlayer) {
       window.socket.emit('updateHeroPos', window.hero)
       localStorage.setItem('hero', JSON.stringify(window.hero));
-      let timeout = window.lastDelta * 7
-      if(timeout > 250) {
-        timeout = 250
-      }
-      setTimeout(emitGameToEditor, timeout)
     }
 
-    setTimeout(emitGameToEditor, 100)
+    let timeout = window.lastDelta * 7
+    if(timeout > 250) {
+      timeout = 250
+    }
+    setTimeout(networkLoop, timeout)
   }
+
+  setTimeout(networkLoop, 100)
 }
-
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////
-/////// UPDATE GAME OBJECTS AND RENDER
-///////////////////////////////
-///////////////////////////////
-var update = function (delta) {
-  if(!window.gameState.paused) {
-
-    // non hosts will have to submit some sort of input, but not run the physics or ai sim
-    input.update(delta)
-
-    if(window.host) {
-      intelligence.update(window.hero, window.objects, delta)
-      physics.update(delta)
-
-      /// DEFAULT GAME FX
-      if(window.defaultGame) {
-        window.defaultGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.update(delta)
-      }
-
-      if(window.anticipatedObject) {
-        window.anticipateObjectAdd()
-      }
-    }
-
-    if(window.ghost) {
-      ghost.update()
-    }
-  }
-};
-
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -403,10 +368,12 @@ var mainLoop = function () {
 	if(window.usePlayEditor) {
 		playEditor.update(delta)
     playEditor.render(ctx, window.hero, window.objects);
-  }else {
-		update(delta / 1000);
-    render.update(ctx, delta / 1000);
+  }
 
+	update(delta / 1000);
+
+  if(window.isPlayer) {
+    render.update(ctx, delta / 1000);
     /// DEFAULT GAME FX
     if(window.defaultGame) {
       window.defaultGame.render(ctx, delta / 1000)
@@ -440,6 +407,53 @@ var mainLoop = function () {
 
 	// Request to do this again ASAP
 	requestAnimationFrame(mainLoop);
+};
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// UPDATE GAME OBJECTS AND RENDER
+///////////////////////////////
+///////////////////////////////
+var update = function (delta) {
+  if(!window.gameState.paused) {
+
+    if(window.isPlayer) {
+      physics.updatePosition(window.hero, delta)
+      // non hosts will have to submit some sort of input, but not run the physics or ai sim
+      input.update(delta)
+    }
+
+    if(window.host) {
+      window.objects.forEach((object) => {
+        physics.updatePosition(object, delta)
+      })
+
+      intelligence.update(window.hero, window.objects, delta)
+      physics.update(delta)
+
+      /// DEFAULT GAME FX
+      if(window.defaultGame) {
+        window.defaultGame.update(delta)
+      }
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.update(delta)
+      }
+      /// CUSTOM GAME FX
+      if(window.liveCustomGame) {
+        window.liveCustomGame.update(delta)
+      }
+
+      if(window.anticipatedObject) {
+        window.anticipateObjectAdd()
+      }
+    }
+
+    if(window.ghost) {
+      ghost.update()
+    }
+  }
 };
 
 window.onPageLoad()

@@ -25,7 +25,6 @@ import 'ace-builds/src-noconflict/mode-json';
 /////////////////////
 /////////////////////
 window.objectFactory = []
-window.heros = {}
 
 window.TOOLS = {
   ADD_OBJECT: 'addObject',

@@ -1,7 +1,7 @@
 import { Collisions, Polygon } from 'collisions';
 import intelligence from './intelligence'
 import collisions from './collisions';
-import hero from './hero';
+import heroTool from './hero';
 
 const physicsObjects = {}
 window.physicsObjects = physicsObjects
@@ -77,6 +77,11 @@ function updatePosition(object, delta) {
 
 function containObjectWithinGridBoundaries(object) {
 
+  let hero = window.hero
+  if(window.usePlayEditor) {
+    hero = window.editingHero
+  }
+
   //DO THE PACMAN FLIP!!
   let gameBoundaries = window.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
@@ -85,22 +90,22 @@ function containObjectWithinGridBoundaries(object) {
       objectToEdit = JSON.parse(JSON.stringify(object))
     }
 
-    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1) {
+    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (hero && hero.id)) {
       let legal = true
-      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2 )) {
-        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2
+      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2 )) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2
         legal = false
       }
-      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )) {
-        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2 )
+      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2 )) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2 )
         legal = false
       }
-      if(objectToEdit.x < gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)) {
-        objectToEdit.x = gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)
+      if(objectToEdit.x < gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)) {
+        objectToEdit.x = gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)
         legal = false
       }
-      if(objectToEdit.y < gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)) {
-        objectToEdit.y = gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)
+      if(objectToEdit.y < gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)) {
+        objectToEdit.y = gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)
         legal = false
       }
       if(legal && object.tags.fresh){
@@ -173,9 +178,13 @@ function containObjectWithinGridBoundaries(object) {
 
 function update (delta) {
   // set objects new position and widths
-  [...window.objects, window.hero].forEach((object, i) => {
-    updatePosition(object, delta)
+  let everything = [...window.objects]
+  let allHeros = Object.keys(window.heros).map((id) => {
+    return window.heros[id]
+  })
+  everything.push(...allHeros)
 
+  everything.forEach((object, i) => {
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
       return
@@ -216,7 +225,7 @@ function update (delta) {
   let removeObjects = []
   let respawnObjects = []
 
-  function heroCollisions() {
+  function heroCollisions(hero) {
     /////////////////////////////////////////////////////
     /////////////////////////////////////////////////////
     /////////////////////////////////////////////////////
@@ -224,22 +233,22 @@ function update (delta) {
     /////////////////////////////////////////////////////
     // OBJECTS COLLIDING WITH HERO
     /////////////////////////////////////////////////////
-    const result = physicsObjects[window.hero.id].createResult()
-    const potentials = physicsObjects[window.hero.id].potentials()
+    const result = physicsObjects[hero.id].createResult()
+    const potentials = physicsObjects[hero.id].potentials()
     let illegal = false
-    let correction = {x: window.hero.x, y: window.hero.y}
-    let heroPO = physicsObjects[window.hero.id]
+    let correction = {x: hero.x, y: hero.y}
+    let heroPO = physicsObjects[hero.id]
     for(const body of potentials) {
       if(body.gameObject.removed) continue
       if(heroPO.collides(body, result)) {
-        hero.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+        heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
       }
     }
 
-    heroPO.x = window.hero.x
-    heroPO.y = window.hero.y
+    heroPO.x = hero.x
+    heroPO.y = hero.y
 
-    window.hero.onGround = false
+    hero.onGround = false
 
     system.update()
     heroCorrectionPhase(false, 1)
@@ -250,15 +259,15 @@ function update (delta) {
     system.update()
 
     function heroCorrectionPhase(final = false, round) {
-      const potentials = physicsObjects[window.hero.id].potentials()
+      const potentials = physicsObjects[hero.id].potentials()
       let illegal = false
       let landingObject = null
-      let heroPO = physicsObjects[window.hero.id]
+      let heroPO = physicsObjects[hero.id]
       let corrections = []
       // console.log('round' + round, heroPO.x, heroPO.y)
       for(const body of potentials) {
         if(body.gameObject.removed) continue
-        let result = physicsObjects[window.hero.id].createResult()
+        let result = physicsObjects[hero.id].createResult()
         if(heroPO.collides(body, result)) {
           if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
             illegal = true
@@ -269,7 +278,7 @@ function update (delta) {
                 landingObject = body.gameObject
               }
             }
-            // console.log('collided' + body.gameObject.id, window.hero.x - correction.x, window.hero.y - correction.y)
+            // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
           }
         }
       }
@@ -287,23 +296,23 @@ function update (delta) {
 
         function correctHeroY() {
           if(result.overlap_y > 0) {
-            window.hero.velocityY = 0
-            window.hero.onGround = true
+            hero.velocityY = 0
+            hero.onGround = true
             if(landingObject && landingObject.tags['movingPlatform']) {
               let diffX = landingObject._initialX - landingObject.x
               heroPO.x -= diffX
             }
           } else if(result.overlap_y < 0){
-            window.hero.velocityY = 0
+            hero.velocityY = 0
           }
           heroPO.y -= result.overlap_y
         }
 
         function correctHeroX() {
           if(result.overlap_x > 0) {
-            window.hero.velocityX = 0
+            hero.velocityX = 0
           } else if(result.overlap_x < 0){
-            window.hero.velocityX = 0
+            hero.velocityX = 0
           }
           heroPO.x -= result.overlap_x
         }
@@ -314,9 +323,9 @@ function update (delta) {
         // it was hard to tell which correction to prioritize. Basically now
         // I prioritize the correction that DOES NOT IMPEDE the heros current direction
         if(round === 1) {
-          if(window.hero.directions.up || window.hero.directions.down) {
+          if(hero.directions.up || hero.directions.down) {
             correctHeroX()
-          } else if(window.hero.directions.left || window.hero.directions.right) {
+          } else if(hero.directions.left || hero.directions.right) {
             correctHeroY()
           }
         } else {
@@ -326,31 +335,38 @@ function update (delta) {
       }
 
       if(final) {
-        window.hero.directions = {...window.defaultHero.directions}
+        hero.directions = {...window.defaultHero.directions}
         // just give up correction and prevent any movement from these mother fuckers
         if(illegal) {
-          window.hero.x = window.hero._initialX
-          window.hero.y = window.hero._initialY
+          hero.x = hero._initialX
+          hero.y = hero._initialY
         } else {
-          if(heroPO.x > window.hero._initialX) {
-            window.hero.directions.right = true
-          } else if(heroPO.x < window.hero._initialX) {
-            window.hero.directions.left = true
+          if(heroPO.x > hero._initialX) {
+            hero.directions.right = true
+          } else if(heroPO.x < hero._initialX) {
+            hero.directions.left = true
           }
-          if(heroPO.y > window.hero._initialY) {
-            window.hero.directions.down = true
-          } else if(heroPO.y < window.hero._initialY) {
-            window.hero.directions.up = true
+          if(heroPO.y > hero._initialY) {
+            hero.directions.down = true
+          } else if(heroPO.y < hero._initialY) {
+            hero.directions.up = true
           }
 
-          window.hero.x = heroPO.x
-          window.hero.y = heroPO.y
+          hero.x = heroPO.x
+          hero.y = heroPO.y
         }
       }
     }
   }
 
-  heroCollisions()
+  if(window.isPlayer) {
+    heroCollisions(window.hero)
+  }
+  if(window.usePlayEditor && window.editingHero.id) {
+    allHeros.forEach((hero) => {
+      heroCollisions(hero)
+    })
+  }
 
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
@@ -489,11 +505,17 @@ function update (delta) {
 
   window.objects.forEach((object, i) => {
     if(object.removed) return
-
     containObjectWithinGridBoundaries(object)
   })
-  containObjectWithinGridBoundaries(window.hero)
 
+  if(window.isPlayer) {
+    containObjectWithinGridBoundaries(window.hero)
+  }
+  if(window.usePlayEditor && window.editingHero.id) {
+    allHeros.forEach((hero) => {
+      containObjectWithinGridBoundaries(hero)
+    })
+  }
 }
 
 
@@ -543,12 +565,12 @@ function removeObjectById(id) {
   }
 }
 
-
 export default {
   addObject,
   drawObject,
   drawSystem,
   removeObject,
   removeObjectById,
-  update
+  updatePosition,
+  update,
 }
