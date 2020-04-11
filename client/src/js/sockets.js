@@ -310,10 +310,13 @@ function init() {
 
     // gameState
     // if game state is on the object it very likely means it has already been loaded..
-    if(game.gameState) {
-      window.gameState = game.gameState
-    } else {
-      window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+    if(window.host) {
+      if(game.gameState) {
+        window.gameState = game.gameState
+      } else {
+        window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      }
+
     }
 
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))
@@ -414,8 +417,8 @@ function init() {
     // reset tags to default
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))
     // reset game state
-    window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     if(window.host){
+      window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
@@ -445,6 +448,7 @@ function init() {
     window.changeGame(null)
     window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   })
+  
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)
   })

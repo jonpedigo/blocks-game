@@ -151,6 +151,7 @@ window.init = function () {
   world.init()
 	grid.init()
   sockets.init()
+  gameState.init()
 
   if(usePlayEditor) {
 		playEditor.init(ctx)
@@ -161,7 +162,6 @@ window.init = function () {
     camera.init()
 		input.init()
 		chat.init()
-    gameState.init()
 	}
 
   /// DEFAULT GAME FX
