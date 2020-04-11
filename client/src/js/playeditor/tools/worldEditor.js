@@ -1,4 +1,3 @@
-import worldModifiers from '../modifiers/worldModifiers.js'
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import JSONEditor from 'jsoneditor'
