@@ -122,23 +122,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     return newObject
   }).filter(obj => !!obj)
 
-  if(window.host){
-    window.objects.push(...objects)
-    objects.forEach((object) => {
-      if(object.removed) return
-      window.objectsById[object.id] = object
-      physics.addObject(object)
-    })
-
-    if(!window.world.globalTags.calculatePathCollisions) {
-      grid.updateGridObstacles()
-      window.resetPaths = true
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    }
-    return objects
-  }
-
-  if(alertAboutCollision) {
+  if(window.usePlayEditor && alertAboutCollision) {
     if(confirm('already an object on this grid node..confirm to add anyways')) {
       emitNewObjects()
     }
@@ -147,7 +131,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   }
 
   function emitNewObjects() {
-    if(window.instantAddToggle.checked || options.instantAddToggle) {
+    if(window.isPlayer || window.instantAddToggle.checked || options.instantAddToggle) {
       // need to do a local add first
       window.objects.push(...objects)
       window.socket.emit('addObjects', objects)

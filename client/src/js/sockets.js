@@ -6,43 +6,12 @@ import collisions from './collisions.js'
 import particles from './particles.js'
 
 function init() {
-
   ///////////////////////////////
   ///////////////////////////////
   // just for host
   ///////////////////////////////
+
   if(window.host) {
-    // EDITOR CALLS THIS
-  	window.socket.on('onAddObjects', (objectsAdded) => {
-  		window.objects.push(...objectsAdded)
-  		objectsAdded.forEach((object) => {
-  			physics.addObject(object)
-        window.objectsById[object.id] = object
-  		})
-
-      if(window.grid.nodes && !window.world.globalTags.calculatePathCollisions) {
-        gridTool.updateGridObstacles()
-        window.resetPaths = true
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-      }
-  	})
-
-    // EDITOR CALLS THIS
-  	window.socket.on('onResetObjects', (updatedObjects) => {
-  		window.objects.forEach((object) => {
-        if(object.removed) return
-
-  			physics.removeObject(object)
-  		})
-  		window.objects = []
-      window.objectsById = {}
-
-      if(!window.world.globalTags.calculatePathCollisions) {
-        gridTool.updateGridObstacles()
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-      }
-  	})
-
     // EDITOR CALLS THIS
   	window.socket.on('onEditObjects', (editedObjects) => {
       editedObjects.forEach((obj) => {
@@ -100,11 +69,8 @@ function init() {
   /// for players
   ///////////////////////////////
   // EDITOR CALLS THIS
-  if(window.isPlayer) {
     window.socket.on('onResetHeroToDefault', (hero) => {
-      if(hero.id === window.hero.id) {
-        window.resetHeroToDefault()
-      }
+      window.resetHeroToDefault(hero)
     })
 
     // EDITOR CALLS THIS
@@ -113,20 +79,13 @@ function init() {
         window.respawnHero()
       }
     })
-  }
 
   ///////////////////////////////
   ///////////////////////////////
   /// only events for non hosts
   ///////////////////////////////
   if(!window.host) {
-    // EDITOR CALLS THIS
-    window.socket.on('onResetObjects', () => {
-      window.objects = []
-      window.objectsById = {}
-    })
-
-    // client host calls this
+    // host calls this
     window.socket.on('onUpdateGameState', (gameState) => {
       window.gameState = gameState
       if(window.usePlayEditor && window.syncGameStateToggle.checked) {
@@ -134,7 +93,7 @@ function init() {
       }
     })
 
-    // CLIENT HOST CALLS THIS
+    // host CALLS THIS
     window.socket.on('onUpdateObjects', (objectsUpdated) => {
       window.objects = objectsUpdated
       window.objectsById = window.objects.reduce((prev, next) => {
@@ -155,6 +114,37 @@ function init() {
   //shared events
   ///////////////////////////////
 
+  // EVERYONE CALLS THIS
+  window.socket.on('onAddObjects', (objectsAdded) => {
+    window.objects.push(...objectsAdded)
+    objectsAdded.forEach((object) => {
+      physics.addObject(object)
+      window.objectsById[object.id] = object
+    })
+
+    if(window.grid.nodes && !window.world.globalTags.calculatePathCollisions) {
+      gridTool.updateGridObstacles()
+      window.resetPaths = true
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+  })
+
+  // EDITOR CALLS THIS
+  window.socket.on('onResetObjects', (updatedObjects) => {
+    window.objects.forEach((object) => {
+      if(object.removed) return
+
+      physics.removeObject(object)
+    })
+    window.objects = []
+    window.objectsById = {}
+
+    if(!window.world.globalTags.calculatePathCollisions) {
+      gridTool.updateGridObstacles()
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+  })
+
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
     window.world = JSON.parse(JSON.stringify(window.defaultWorld))
@@ -168,10 +158,8 @@ function init() {
   // CLIENT HOST CALLS THIS
   window.socket.on('onHeroPosUpdate', (heroUpdated) => {
     if(!window.heros[heroUpdated.id]) {
-      window.heros[heroUpdated.id] = {}
-      if(window.host) {
-        physics.addObject(heroUpdated)
-      }
+      window.heros[heroUpdated.id] = heroUpdated
+      physics.addObject(heroUpdated)
     }
 
     if(window.pageState.gameLoaded) {
@@ -212,7 +200,7 @@ function init() {
   // CLIENT HOST AND EDITOR CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
   	if(!window.heros[updatedHero.id]) {
-      window.heros[updatedHero.id] = {}
+      window.heros[updatedHero.id] = updatedHero
       physics.addObject(updatedHero)
     }
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
@@ -297,25 +285,23 @@ function init() {
         window.objecteditor.saved = true
         window.objecteditor.set({})
       }
-      if(window.host){
-        window.objects.forEach((object) => {
-          physics.removeObjectById(object.id)
-        })
-        let allHeros = Object.keys(window.heros).map((id) => {
-          return window.heros[id]
-        })
-        allHeros.forEach((hero) => {
-          physics.removeObject(allHeros)
-        })
-      }
+      window.objects.forEach((object) => {
+        physics.removeObjectById(object.id)
+      })
     }
+    let allHeros = Object.keys(window.heros).map((id) => {
+      return window.heros[id]
+    })
+    allHeros.forEach((hero) => {
+      physics.removeObject(allHeros)
+    })
 
     // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}
     window.objects.forEach((object) => {
       window.objectsById[object.id] = object
-      if(window.host) physics.addObject(object)
+      physics.addObject(object)
     })
 
     // world
@@ -335,7 +321,7 @@ function init() {
     // reset to initial positions and state
     if(window.isPlayer) {
       window.findHeroInNewWorld(game)
-      if(window.host) physics.addObject(window.hero)
+      physics.addObject(window.hero)
       window.hero.currentGameId = game.id
     }
     if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}

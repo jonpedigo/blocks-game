@@ -73,7 +73,7 @@ function loaded() {
   window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
   // fuckin window.heros...
   window.heros[window.hero.id] = window.hero
-  if(window.host) physics.addObject(window.hero)
+  physics.addObject(window.hero)
   window.socket.emit('saveSocket', hero)
 }
 
@@ -100,14 +100,14 @@ window.respawnHero = function () {
 }
 
 window.resetHeroToDefault = function(updatedHero) {
-	if(window.host) physics.removeObject(window.hero)
+	physics.removeObject(window.hero)
   let newHero = {}
   window.defaultHero.id = window.hero.id
 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
   window.hero = newHero
   window.heros[window.hero.id] = window.hero
 	localStorage.setItem('hero', JSON.stringify(window.hero));
-	if(window.host) physics.addObject(window.hero)
+	physics.addObject(window.hero)
 }
 
 window.updateHero = function(updatedHero) {

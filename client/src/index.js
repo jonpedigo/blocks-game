@@ -365,12 +365,12 @@ var mainLoop = function () {
   window.lastDelta = delta;
 	if(delta > 23) delta = 23
 
+  update(delta / 1000);
+
 	if(window.usePlayEditor) {
-		playEditor.update(delta)
+		playEditor.update(delta / 1000)
     playEditor.render(ctx, window.hero, window.objects);
   }
-
-	update(delta / 1000);
 
   if(window.isPlayer) {
     render.update(ctx, delta / 1000);
@@ -419,9 +419,11 @@ var update = function (delta) {
   if(!window.gameState.paused) {
 
     if(window.isPlayer) {
-      physics.updatePosition(window.hero, delta)
-      // non hosts will have to submit some sort of input, but not run the physics or ai sim
+      // non hosts will have to submit some sort of input and then they run basic collisions on their end
       input.update(delta)
+      physics.updatePosition(window.hero, delta)
+      physics.prepareObjectsAndHerosForPhysicsPhase()
+      physics.heroCorrection(window.hero)
     }
 
     if(window.host) {

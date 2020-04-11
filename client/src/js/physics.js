@@ -75,8 +75,153 @@ function updatePosition(object, delta) {
   }
 }
 
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// HERO CORRECTIONS
+/////////////////////////////////////////////////////
+function heroCorrection(hero) {
+  hero.onGround = false
+
+  system.update()
+  heroCorrectionPhase(false, 1)
+  system.update()
+  heroCorrectionPhase(false, 2)
+  system.update()
+  heroCorrectionPhase(true, 3)
+  system.update()
+
+  function heroCorrectionPhase(final = false, round) {
+    const potentials = physicsObjects[hero.id].potentials()
+    let illegal = false
+    let landingObject = null
+    let heroPO = physicsObjects[hero.id]
+    let corrections = []
+    for(const body of potentials) {
+      if(body.gameObject.removed) continue
+      let result = physicsObjects[hero.id].createResult()
+      if(heroPO.collides(body, result)) {
+        if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
+          illegal = true
+          // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
+          corrections.push(result)
+          if(result.overlap_y === 1) {
+            if(body.gameObject.tags.movingPlatform) {
+              landingObject = body.gameObject
+            }
+          }
+          // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
+        }
+      }
+    }
+
+    if(illegal) {
+      let result = corrections.reduce((acc, next) => {
+        if(Math.abs(next.overlap_y) !== 0 && acc.overlap_y == 0) {
+          acc.overlap_y = next.overlap * next.overlap_y
+        }
+        if(Math.abs(next.overlap_x) !== 0 && acc.overlap_x == 0) {
+          acc.overlap_x = next.overlap * next.overlap_x
+        }
+        return acc
+      }, { overlap_y: 0, overlap_x: 0 })
+
+      function correctHeroY() {
+        if(result.overlap_y > 0) {
+          hero.velocityY = 0
+          hero.onGround = true
+          if(landingObject && landingObject.tags['movingPlatform']) {
+            let diffX = landingObject._initialX - landingObject.x
+            heroPO.x -= diffX
+          }
+        } else if(result.overlap_y < 0){
+          hero.velocityY = 0
+        }
+        heroPO.y -= result.overlap_y
+      }
+
+      function correctHeroX() {
+        if(result.overlap_x > 0) {
+          hero.velocityX = 0
+        } else if(result.overlap_x < 0){
+          hero.velocityX = 0
+        }
+        heroPO.x -= result.overlap_x
+      }
+
+      // there was a problem with a double object collision. One Would
+      // collide with X, one would collide with Y but both corrections were made,
+      // even though one correction would have concelled out the other..
+      // it was hard to tell which correction to prioritize. Basically now
+      // I prioritize the correction that DOES NOT IMPEDE the heros current direction
+      if(round === 1) {
+        if(hero.directions.up || hero.directions.down) {
+          correctHeroX()
+        } else if(hero.directions.left || hero.directions.right) {
+          correctHeroY()
+        }
+      } else {
+        correctHeroX()
+        correctHeroY()
+      }
+    }
+
+    if(final) {
+
+      hero.directions = {...window.defaultHero.directions}
+      // just give up correction and prevent any movement from these mother fuckers
+      if(illegal) {
+        hero.x = hero._initialX
+        hero.y = hero._initialY
+      } else {
+        if(heroPO.x > hero._initialX) {
+          hero.directions.right = true
+        } else if(heroPO.x < hero._initialX) {
+          hero.directions.left = true
+        }
+        if(heroPO.y > hero._initialY) {
+          hero.directions.down = true
+        } else if(heroPO.y < hero._initialY) {
+          hero.directions.up = true
+        }
+
+        hero.x = heroPO.x
+        hero.y = heroPO.y
+      }
+    }
+  }
+}
+
+function heroCollisionEffects(hero) {
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
+  // HERO EFFECTS ON COLLISION
+  /////////////////////////////////////////////////////
+  const result = physicsObjects[hero.id].createResult()
+  const potentials = physicsObjects[hero.id].potentials()
+  let illegal = false
+  let correction = {x: hero.x, y: hero.y}
+  let heroPO = physicsObjects[hero.id]
+  for(const body of potentials) {
+    if(body.gameObject.removed) continue
+    if(heroPO.collides(body, result)) {
+      heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+    }
+  }
+
+  heroPO.x = hero.x
+  heroPO.y = hero.y
+}
+
+
 function containObjectWithinGridBoundaries(object) {
 
+  // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
   let hero = window.hero
   if(window.usePlayEditor) {
     hero = window.editingHero
@@ -176,7 +321,7 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
-function update (delta) {
+function prepareObjectsAndHerosForPhysicsPhase() {
   // set objects new position and widths
   let everything = [...window.objects]
   let allHeros = Object.keys(window.heros).map((id) => {
@@ -204,6 +349,10 @@ function update (delta) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
   })
+}
+
+function update (delta) {
+  prepareObjectsAndHerosForPhysicsPhase()
 
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
@@ -225,148 +374,13 @@ function update (delta) {
   let removeObjects = []
   let respawnObjects = []
 
-  function heroCollisions(hero) {
-    /////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////
-    // OBJECTS COLLIDING WITH HERO
-    /////////////////////////////////////////////////////
-    const result = physicsObjects[hero.id].createResult()
-    const potentials = physicsObjects[hero.id].potentials()
-    let illegal = false
-    let correction = {x: hero.x, y: hero.y}
-    let heroPO = physicsObjects[hero.id]
-    for(const body of potentials) {
-      if(body.gameObject.removed) continue
-      if(heroPO.collides(body, result)) {
-        heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
-    }
-
-    heroPO.x = hero.x
-    heroPO.y = hero.y
-
-    hero.onGround = false
-
-    system.update()
-    heroCorrectionPhase(false, 1)
-    system.update()
-    heroCorrectionPhase(false, 2)
-    system.update()
-    heroCorrectionPhase(true, 3)
-    system.update()
-
-    function heroCorrectionPhase(final = false, round) {
-      const potentials = physicsObjects[hero.id].potentials()
-      let illegal = false
-      let landingObject = null
-      let heroPO = physicsObjects[hero.id]
-      let corrections = []
-      // console.log('round' + round, heroPO.x, heroPO.y)
-      for(const body of potentials) {
-        if(body.gameObject.removed) continue
-        let result = physicsObjects[hero.id].createResult()
-        if(heroPO.collides(body, result)) {
-          if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
-            illegal = true
-            // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
-            corrections.push(result)
-            if(result.overlap_y === 1) {
-              if(body.gameObject.tags.movingPlatform) {
-                landingObject = body.gameObject
-              }
-            }
-            // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
-          }
-        }
-      }
-
-      if(illegal) {
-        let result = corrections.reduce((acc, next) => {
-          if(Math.abs(next.overlap_y) !== 0 && acc.overlap_y == 0) {
-            acc.overlap_y = next.overlap * next.overlap_y
-          }
-          if(Math.abs(next.overlap_x) !== 0 && acc.overlap_x == 0) {
-            acc.overlap_x = next.overlap * next.overlap_x
-          }
-          return acc
-        }, { overlap_y: 0, overlap_x: 0 })
-
-        function correctHeroY() {
-          if(result.overlap_y > 0) {
-            hero.velocityY = 0
-            hero.onGround = true
-            if(landingObject && landingObject.tags['movingPlatform']) {
-              let diffX = landingObject._initialX - landingObject.x
-              heroPO.x -= diffX
-            }
-          } else if(result.overlap_y < 0){
-            hero.velocityY = 0
-          }
-          heroPO.y -= result.overlap_y
-        }
-
-        function correctHeroX() {
-          if(result.overlap_x > 0) {
-            hero.velocityX = 0
-          } else if(result.overlap_x < 0){
-            hero.velocityX = 0
-          }
-          heroPO.x -= result.overlap_x
-        }
-
-        // there was a problem with a double object collision. One Would
-        // collide with X, one would collide with Y but both corrections were made,
-        // even though one correction would have concelled out the other..
-        // it was hard to tell which correction to prioritize. Basically now
-        // I prioritize the correction that DOES NOT IMPEDE the heros current direction
-        if(round === 1) {
-          if(hero.directions.up || hero.directions.down) {
-            correctHeroX()
-          } else if(hero.directions.left || hero.directions.right) {
-            correctHeroY()
-          }
-        } else {
-          correctHeroX()
-          correctHeroY()
-        }
-      }
-
-      if(final) {
-        hero.directions = {...window.defaultHero.directions}
-        // just give up correction and prevent any movement from these mother fuckers
-        if(illegal) {
-          hero.x = hero._initialX
-          hero.y = hero._initialY
-        } else {
-          if(heroPO.x > hero._initialX) {
-            hero.directions.right = true
-          } else if(heroPO.x < hero._initialX) {
-            hero.directions.left = true
-          }
-          if(heroPO.y > hero._initialY) {
-            hero.directions.down = true
-          } else if(heroPO.y < hero._initialY) {
-            hero.directions.up = true
-          }
-
-          hero.x = heroPO.x
-          hero.y = heroPO.y
-        }
-      }
-    }
-  }
-
-  if(window.isPlayer) {
-    heroCollisions(window.hero)
-  }
-  if(window.usePlayEditor && window.editingHero.id) {
-    allHeros.forEach((hero) => {
-      heroCollisions(hero)
-    })
-  }
+  let allHeros = Object.keys(window.heros).map((id) => {
+    return window.heros[id]
+  })
+  allHeros.forEach((hero) => {
+    heroCollisionEffects(hero)
+    heroCorrection(hero)
+  })
 
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
@@ -508,14 +522,9 @@ function update (delta) {
     containObjectWithinGridBoundaries(object)
   })
 
-  if(window.isPlayer) {
-    containObjectWithinGridBoundaries(window.hero)
-  }
-  if(window.usePlayEditor && window.editingHero.id) {
-    allHeros.forEach((hero) => {
-      containObjectWithinGridBoundaries(hero)
-    })
-  }
+  allHeros.forEach((hero) => {
+    containObjectWithinGridBoundaries(hero)
+  })
 }
 
 
@@ -573,4 +582,6 @@ export default {
   removeObjectById,
   updatePosition,
   update,
+  heroCorrection,
+  prepareObjectsAndHerosForPhysicsPhase,
 }
