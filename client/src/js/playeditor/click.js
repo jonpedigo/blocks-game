@@ -44,6 +44,8 @@ function init() {
         let oe = window.objecteditor.get()
         location.width = oe.width || window.grid.nodeSize
         location.height = oe.height || window.grid.nodeSize
+        location.x += (window.grid.nodeSize/2 - location.width/2)
+        location.y += (window.grid.nodeSize/2 - location.height/2)
       }
 
       window.gridHighlight = location
@@ -215,6 +217,8 @@ function init() {
           if(window.useEditorSizeAddToggle.checked) {
             location.width = editorObject.width || window.grid.nodeSize
             location.height = editorObject.height || window.grid.nodeSize
+            location.x += (window.grid.nodeSize/2 - location.width/2)
+            location.y += (window.grid.nodeSize/2 - location.height/2)
           }
 
           Object.assign(newObject, location)

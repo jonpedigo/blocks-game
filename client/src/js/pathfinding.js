@@ -187,6 +187,75 @@ function walkIntoWall(object) {
   return { x: gridX, y: gridY }
 }
 
+
+function exploreCave(object) {
+  const { gridX, gridY } = gridTool.convertToGridXY(object)
+
+  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+
+  // console.log('couldnt find directional movement, finding random space')
+  let nearbyGrids = [
+    { x: gridX, y: gridY-1, direction: 'up'},
+    { x: gridX+1, y: gridY, direction: 'right'},
+    { x: gridX, y: gridY+1, direction: 'down'},
+    { x: gridX-1, y: gridY, direction: 'left'},
+  ]
+
+  let availableGrids = []
+  for (let i = 0; i < nearbyGrids.length; i++) {
+    if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, options)) {
+      availableGrids.push(nearbyGrids[i]);
+    }
+  }
+
+  if(availableGrids.length === 1) {
+    object.direction = availableGrids[0].direction
+    return availableGrids[0]
+  } else if(availableGrids.length === 2) {
+    if(object.direction === 'right'){
+      if ( isGridWalkable(gridX + 1, gridY, options) ){
+        return { x: gridX + 1, y: gridY}
+      }
+    }
+
+    if(object.direction === 'left') {
+      if ( isGridWalkable(gridX - 1, gridY, options) ) {
+        return { x: gridX - 1, y: gridY}
+      }
+    }
+
+    if(object.direction === 'up') {
+      if ( isGridWalkable(gridX, gridY - 1, options) ){
+        return { x: gridX, y: gridY - 1}
+      }
+    }
+
+    if(object.direction === 'down') {
+      if ( isGridWalkable(gridX, gridY + 1, options) ) {
+        return { x: gridX, y: gridY + 1}
+      }
+    }
+
+    console.log('going my own way!')
+
+    let directions = [
+      'left',
+      'right',
+      'up',
+      'down',
+    ].filter((dir) => dir !== object.direction)
+    object.direction = directions[Math.floor(Math.random() * (object.direction ? 3 : 4))]
+  } else {
+    let grid = shuffle(availableGrids)[0]
+    object.direction = grid.direction
+    return grid
+  }
+
+  // console.log('found nowhere to move')
+  return { x: gridX, y: gridY }
+}
+
+
 function walkWithPurpose(object) {
   const { gridX, gridY } = gridTool.convertToGridXY(object)
 
@@ -344,6 +413,7 @@ export default {
   walkAround,
   walkWithPurpose,
   walkIntoWall,
+  exploreCave,
 }
 
 

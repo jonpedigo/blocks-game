@@ -88,6 +88,15 @@ function intelligence(object, delta) {
     }
   }
 
+  if(object.tags && object.tags['spelunker']) {
+    if(!object.path || (object.path && !object.path.length)) {
+      object.path = [pathfinding.exploreCave(object)]
+      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      object.gridX = gridX
+      object.gridY = gridY
+    }
+  }
+
   if(object.tags && object.tags['lemmings']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkIntoWall(object)]

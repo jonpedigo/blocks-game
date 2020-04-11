@@ -85,6 +85,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     }
 
     if(newObject.compendiumId) {
+      newObject.fromCompendiumId = newObject.compendiumId
       delete newObject.compendiumId
     }
 

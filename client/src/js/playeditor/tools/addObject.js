@@ -20,7 +20,6 @@ function init() {
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.useEditorSizeAddToggle = document.getElementById("add-object-editor")
   window.instantAddToggle = document.getElementById("instant-add")
-  window.gridNodeAddToggle.checked = true;
 
   window.compendium = {}
 

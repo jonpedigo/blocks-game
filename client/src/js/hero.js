@@ -224,55 +224,83 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
   }
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
-    if(collider.id !== window.hero.lastPowerUpId) {
-      if(!window.hero.updateHistory) {
-        window.hero.updateHistory = []
-      }
-
-      // only have 4 edits in the history at a time
-      if(window.hero.updateHistory.length >= 4) {
-        window.hero.updateHistory.shift()
-      }
-
-      let heroUpdate = collider.heroUpdate
-      let update = {
-        update: heroUpdate,
-        prev: {},
-        id: collider.id,
-      }
-      for(var prop in heroUpdate) {
-        if(prop == 'flags' || prop == 'tags') {
-          let ags = heroUpdate[prop]
-          update.prev[prop] = {}
-          for(let ag in ags) {
-            update.prev[prop][ag] = window.hero[prop][ag]
-          }
-        } else {
-          update.prev[prop] = window.hero[prop]
-        }
-      }
-      window.hero.updateHistory.push(update)
-      window.mergeDeep(window.hero, {...collider.heroUpdate})
-      window.hero.lastPowerUpId = collider.id
-
-      if(collider.tags['revertAfterTimeout']) {
-        window.setTimeout(() => {
-          window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
-            if(collider.id === update.id) {
-              window.mergeDeep(window.hero, {...update.prev})
-              return false
-            }
-            return true
-          })
-        }, collider.powerUpTimer || 30000)
-      }
-    }
+    heroUpdate(collider)
   } else {
     window.hero.lastPowerUpId = null
   }
 
   if(collider.tags && collider.tags.deleteAfter) {
     removeObjects.push(collider)
+  }
+}
+
+function heroUpdate (collider) {
+  if(collider.id !== window.hero.lastPowerUpId) {
+    if(!window.hero.timeouts) window.hero.timeouts = {}
+    if(!window.hero.updateHistory) {
+      window.hero.updateHistory = []
+    }
+
+    if(window.hero.timeouts[collider.fromCompendiumId] && collider.tags['revertAfterTimeout']) {
+      clearTimeout(window.hero.timeouts[collider.fromCompendiumId])
+      delete window.hero.timeouts[collider.fromCompendiumId]
+      setRevertUpdateTimeout(collider)
+      return
+    }
+
+    // only have 4 edits in the history at a time
+    if(window.hero.updateHistory.length >= 4) {
+      window.hero.updateHistory.shift()
+    }
+
+    let heroUpdate = collider.heroUpdate
+    let update = {
+      update: heroUpdate,
+      prev: {},
+      id: collider.fromCompendiumId || collider.id,
+    }
+    for(var prop in heroUpdate) {
+      if(prop == 'flags' || prop == 'tags') {
+        let ags = heroUpdate[prop]
+        update.prev[prop] = {}
+        for(let ag in ags) {
+          update.prev[prop][ag] = window.hero[prop][ag]
+        }
+      } else {
+        update.prev[prop] = window.hero[prop]
+      }
+    }
+    window.hero.updateHistory.push(update)
+    window.mergeDeep(window.hero, {...collider.heroUpdate})
+    window.hero.lastPowerUpId = collider.id
+
+    if(collider.tags['revertAfterTimeout']) {
+      setRevertUpdateTimeout(collider)
+    }
+  }
+}
+
+function setRevertUpdateTimeout(collider) {
+  let timeout = window.setTimeout(() => {
+    window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
+      if(collider.fromCompendiumId) {
+        delete window.hero.timeouts[collider.fromCompendiumId]
+        if(collider.fromCompendiumId === update.id) {
+          window.mergeDeep(window.hero, {...update.prev})
+          return false
+        }
+      }
+
+      if(collider.id === update.id) {
+        window.mergeDeep(window.hero, {...update.prev})
+        return false
+      }
+
+      return true
+    })
+  }, collider.powerUpTimer || 10000)
+  if(collider.fromCompendiumId) {
+    window.hero.timeouts[collider.fromCompendiumId] = timeout
   }
 }
 

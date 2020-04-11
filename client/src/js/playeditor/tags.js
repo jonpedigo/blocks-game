@@ -27,6 +27,7 @@ window.defaultTags = {
 
   // MOVEMENT
   pacer: false,
+  spelunker: false,
   lemmings: false,
   wander: false,
   goomba: false,
