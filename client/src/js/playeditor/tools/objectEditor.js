@@ -52,9 +52,6 @@ function init() {
       window.socket.emit('updateWorld', { syncObjects: false })
     }
   }
-  if(window.world.syncObjects) {
-    syncObjectsToggle.checked = true;
-  }
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
@@ -104,6 +101,10 @@ function loaded() {
   window.objecteditor.update(window.defaultObject)
   window.updateObjectEditorNotifier()
   window.objecteditor.expandAll()
+
+  if(window.world.syncObjects) {
+    syncObjectsToggle.checked = true;
+  }
 }
 
 export default {

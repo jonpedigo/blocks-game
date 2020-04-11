@@ -207,10 +207,10 @@ function init() {
         window.world[key] = value
       }
     }
-  	handleWorldUpdate(updatedWorld)
+  	window.handleWorldUpdate(updatedWorld)
   })
 
-  // CLIENT HOST CALLS THIS
+  // CLIENT HOST AND EDITOR CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
   	if(!window.heros[updatedHero.id]) window.heros[updatedHero.id] = {}
   	if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
@@ -276,94 +276,11 @@ function init() {
     }
   })
 
-  // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
-  window.socket.emit('askRestoreCurrentGame')
-  window.socket.on('onAskRestoreCurrentGame', (game) => {
-    window.game = game
-    window.grid = game.grid
-    window.client.emit('onGridLoaded')
-
-    // objects
-    window.objects = game.objects
-    if(!window.objectsById) window.objectsById = {}
-    window.objects.forEach((object) => {
-      window.objectsById[object.id] = object
-      physics.addObject(object)
-    })
-
-    // grid
-    window.grid = game.grid
-    window.grid.nodes = gridTool.generateGridNodes(grid)
-    gridTool.updateGridObstacles()
-    if(window.host) {
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    }
-
-    // world
-    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-    handleWorldUpdate(window.world)
-
-    //hero
-    if(window.isPlayer && window.hero.currentGameId !== game.id) {
-      findHeroInNewWorld(game)
-    }
-
-    // gameState
-    // if game state is on the object it very likely means it has already been loaded..
-    if(window.host) {
-      if(game.gameState) {
-        window.gameState = game.gameState
-      } else {
-        window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      }
-
-    }
-
-    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
-
-    window.changeGame(game.id)
-
-    /// didnt get to init because it wasnt set yet
-    if(window.customGame) {
-      window.customGame.init()
-    }
-
-    if(window.liveCustomGame) {
-      window.liveCustomGame.init()
-    }
-
-    if(!window.gameState.loaded && window.host) {
-      /// DEFAULT GAME FX
-      if(window.defaultGame) {
-        window.defaultGame.loaded()
-      }
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.loaded()
-      }
-
-      if(window.liveCustomGame) {
-        window.liveCustomGame.init()
-      }
-
-      window.gameState.loaded = true
-    }
-
-    window.onGameLoaded()
-
-
-    if(window.host) {
-      console.log('host')
-    } else if(window.usePlayEditor) {
-      console.log('editor')
-    } else {
-      console.log('non host')
-    }
-  })
-
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
     window.game = game
+    window.game.grid = game.grid
+    window.client.emit('onGridLoaded')
 
     // if theres already a game going on, need to unload it
     if(window.objects.length) {
@@ -401,7 +318,7 @@ function init() {
 
     // world
     window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-    handleWorldUpdate(window.world)
+    window.handleWorldUpdate(window.world)
 
     // heros
     // reset to initial positions and state
@@ -413,12 +330,8 @@ function init() {
     }
     if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
 
-
-    // reset tags to default
-    window.tags = JSON.parse(JSON.stringify(window.defaultTags))
     // reset game state
     if(window.host){
-      window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
@@ -442,13 +355,15 @@ function init() {
       }
     }
     window.gameState.loaded = true
+
+    window.loadGame(game)
   })
 
   window.socket.on('onNewGame', () => {
     window.changeGame(null)
     window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   })
-  
+
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)
   })
@@ -482,93 +397,4 @@ function init() {
 
 export default {
   init
-}
-
-
-function handleWorldUpdate(updatedWorld) {
-  for(let key in updatedWorld) {
-    const value = updatedWorld[key]
-
-    if(key === 'lockCamera' && !window.usePlayEditor) {
-      if(value && value.limitX) {
-        camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-      } else {
-        camera.clearLimit();
-      }
-    }
-
-    if(key === 'gameBoundaries') {
-      gridTool.updateGridObstacles()
-      if(window.host) window.resetPaths = true
-      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    }
-
-    if(key === 'globalTags' || key === 'editorTags') {
-      for(let tag in updatedWorld.globalTags) {
-        if(tag === 'calculatePathCollisions' && window.grid.nodes) {
-          gridTool.updateGridObstacles()
-          if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-        }
-      }
-      if(key === 'syncHero' && window.usePlayEditor) {
-        window.syncHeroToggle.checked = value
-      }
-      if(key === 'syncObjects' && window.usePlayEditor) {
-        window.syncObjectsToggle.checked = value
-      }
-      if(key === 'syncGameState' && window.usePlayEditor) {
-        window.syncGameStateToggle.checked = value
-      }
-    }
-  }
-
-  if(window.usePlayEditor) {
-    window.worldeditor.set(window.world)
-    window.worldeditor.expandAll()
-  }
-}
-
-function findHeroInNewWorld(game) {
-  // if we have decided to restore position, find hero in hero list
-  if(game.world.globalTags.shouldRestoreHero && window.hero && window.hero.id && game.heros) {
-    for(var heroId in game.heros) {
-      let currentHero = game.heros[heroId]
-      if(currentHero.id == window.hero.id) {
-        window.hero = currentHero
-        return
-      }
-    }
-    console.log('failed to find hero with id' + window.hero.id)
-  }
-
-  if(!game.world.globalTags.isAsymmetric && game.hero) {
-    // save current users id to the world.hero object and then store all other variables as the new hero
-    if(window.hero && window.hero.id) game.hero.id = window.hero.id
-    window.hero = game.hero
-    if(!window.hero.id) window.hero.id = 'hero-'+Date.now()
-    // but then also respawn the hero
-    window.respawnHero()
-    return
-  }
-
-  // other random bullshit if theres two different versions of the hero
-  if(!Object.keys(game.heros).length) {
-    window.resetHero()
-  }
-  for(var heroId in game.heros) {
-    let currentHero = game.heros[heroId]
-    if(currentHero.id == window.hero.id) {
-      window.hero = currentHero
-      return
-    }
-  }
-  for(var heroId in game.heros) {
-    let currentHero = game.heros[heroId]
-    if(currentHero.tags.isPlayer) {
-      window.hero = currentHero
-      return
-    }
-  }
-
-  window.resetHero()
 }

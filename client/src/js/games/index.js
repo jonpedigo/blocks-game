@@ -18,6 +18,11 @@ function init() {
 
   window.customCompendium = null
   window.defaultCompendium = defaultCompendium
+
+  /// didnt get to init because it wasnt set yet
+  if(window.defaultGame) {
+    window.defaultGame.init()
+  }
 }
 
 window.changeGame = function(id) {

@@ -91,20 +91,18 @@ import './js/events.js'
 import games from './js/games/index'
 import ghost from './js/ghost.js'
 
-window.init = function () {
-  // SOCKET START
-  if (window.location.origin.indexOf('localhost') > 0) {
-    window.socket = io.connect('http://localhost:4000');
-  } else {
-    window.socket = io.connect();
-  }
-  window.socket = socket
-
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// ON PAGE LOAD
+///////////////////////////////
+///////////////////////////////
+window.onPageLoad = function() {
   // DOM
   window.canvasMultiplier = 1;
   window.CONSTANTS = {
-  	PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
-  	PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
+    PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
+    PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
     PLAYER_CAMERA_WIDTH: 640,
     PLAYER_CAMERA_HEIGHT: 320,
   }
@@ -146,17 +144,49 @@ window.init = function () {
     editor.style = 'display:none';
   }
 
+  if(window.host) {
+    console.log('host')
+  } else if(window.usePlayEditor) {
+    console.log('editor')
+  } else {
+    console.log('non host')
+  }
+
+  // SOCKET START
+  if (window.location.origin.indexOf('localhost') > 0) {
+    window.socket = io.connect('http://localhost:4000');
+  } else {
+    window.socket = io.connect();
+  }
+  window.socket = socket
+
+  window.init()
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// ON INITIALIZE
+///////////////////////////////
+///////////////////////////////
+window.init = function (initialGameId) {
   games.init()
   objects.init()
   world.init()
 	grid.init()
   sockets.init()
   gameState.init()
+  hero.init()
 
-  if(usePlayEditor) {
+  if(window.usePlayEditor) {
 		playEditor.init(ctx)
-	} else {
-    hero.init()
+	}
+
+  if(window.ghost) {
+    ghost.init()
+  }
+
+  if(window.isPlayer || window.editorPlayer){
     feedback.init()
     constellation.init(ctx)
     camera.init()
@@ -164,13 +194,154 @@ window.init = function () {
 		chat.init()
 	}
 
-  /// DEFAULT GAME FX
-  if(window.defaultGame) {
-    window.defaultGame.init()
-  }
+  // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
+  window.socket.emit('askRestoreCurrentGame')
+  window.socket.on('onAskRestoreCurrentGame', (game) => {
+    let currentGameExists = game && game.id
+    if(currentGameExists) {
+      window.loadGame(game)
+    } else if(window.usePlayEditor) {
+      if(confirm('Press Ok To Load Game, Cancel to Create New')) {
+        let id = prompt('Enter game id to load')
+        window.socket.emit('setAndLoadCurrentGame', id)
+        window.socket.on('onLoadGame', (game) => {
+          window.loadGame(game)
+        })
+      } else {
+        let id = prompt('Id for your new game')
+        let game = {
+          id,
+          gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
+          world: JSON.parse(JSON.stringify(window.defaultWorld)),
+          hero: JSON.parse(JSON.stringify(window.defaultHero)),
+          objects: JSON.parse(JSON.stringify(window.defaultObject)),
+        }
+        window.loadGame(game)
+      }
+    } else {
+      // client loading state
+    }
+  })
 };
 
-// Update game objects
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// LOAD GAME
+///////////////////////////////
+///////////////////////////////
+window.loadGame = function(game) {
+  window.game = game
+
+  window.changeGame(game.id)
+  /// didnt get to init because game.id wasnt set yet
+  if(window.customGame) {
+    window.customGame.init()
+  }
+
+  /// didnt get to init because game.id wasnt set yet
+  if(window.liveCustomGame) {
+    window.liveCustomGame.init()
+  }
+
+  window.grid = game.grid
+  window.client.emit('onGridLoaded')
+
+  // objects
+  window.objects = game.objects
+  if(!window.objectsById) window.objectsById = {}
+  window.objects.forEach((object) => {
+    window.objectsById[object.id] = object
+    physics.addObject(object)
+  })
+
+  // grid
+  window.grid = game.grid
+  window.grid.nodes = grid.generateGridNodes(window.grid)
+  grid.updateGridObstacles()
+  if(window.host) {
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+  }
+
+  // world
+  window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+  handleWorldUpdate(window.world)
+
+  // gameState
+  if(game.gameState) window.gameState = game.gameState
+  else window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+
+  if(!window.gameState.loaded && window.host) {
+    /// DEFAULT GAME FX
+    if(window.defaultGame) {
+      window.defaultGame.loaded()
+    }
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.loaded()
+    }
+
+    window.gameState.loaded = true
+  }
+
+  window.onGameLoaded()
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// ON GAME LOAD
+///////////////////////////////
+///////////////////////////////
+var then;
+window.onGameLoaded = function() {
+  then = Date.now()
+
+  objects.loaded()
+  if(window.ghost) ghost.loaded()
+  if(window.isPlayer || window.editorPlayer) {
+    hero.loaded()
+    input.loaded()
+  }
+  if(window.usePlayEditor) {
+    playEditor.loaded()
+  } else {
+    camera.loaded()
+  }
+
+  if(!window.objects || !window.world || !window.grid.nodes || !window.heros || (window.isPlayer && !window.hero)) {
+    console.log('game loaded without critical data, aborting')
+    return
+  }
+
+  // begin main loop
+  mainLoop()
+
+  if(window.host) {
+    function emitGameToEditor() {
+      if(!window.editorPlayer) {
+        window.socket.emit('updateObjects', window.objects)
+        window.socket.emit('updateGameState', window.gameState)
+      }
+      window.socket.emit('updateHeroPos', window.hero)
+      localStorage.setItem('hero', JSON.stringify(window.hero));
+      let timeout = window.lastDelta * 7
+      if(timeout > 250) {
+        timeout = 250
+      }
+      setTimeout(emitGameToEditor, timeout)
+    }
+
+    setTimeout(emitGameToEditor, 100)
+  }
+}
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// UPDATE GAME OBJECTS AND RENDER
+///////////////////////////////
+///////////////////////////////
 var update = function (delta) {
   if(!window.gameState.paused) {
 
@@ -205,10 +376,15 @@ var update = function (delta) {
   }
 };
 
-// Cross-browser support for requestAnimationFrame
+
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+/////// CORE LOOP
+///////////////////////////////
+///////////////////////////////
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
-// The main game loop
 var mainLoop = function () {
 	var now = Date.now();
 	var delta = now - then;
@@ -258,45 +434,4 @@ var mainLoop = function () {
 	requestAnimationFrame(mainLoop);
 };
 
-var then;
-window.onGameLoaded = function() {
-  then = Date.now()
-  if(!window.objects || !window.world || !window.grid.nodes || !window.heros || (window.isPlayer && !window.hero)) {
-    console.log('game loaded without critical data, aborting')
-    return
-  }
-
-  objects.loaded()
-  if(window.isPlayer || window.editorPlayer) {
-    hero.loaded()
-    input.loaded()
-  }
-  if(window.usePlayEditor) {
-    playEditor.loaded()
-  } else {
-    camera.loaded()
-  }
-
-  // begin main loop
-  mainLoop()
-
-
-  if(window.host) {
-    function emitGameToEditor() {
-      if(!window.editorPlayer) {
-        window.socket.emit('updateObjects', window.objects)
-        window.socket.emit('updateGameState', window.gameState)
-      }
-      window.socket.emit('updateHeroPos', window.hero)
-      localStorage.setItem('hero', JSON.stringify(window.hero));
-      let timeout = window.lastDelta * 7
-      if(timeout > 250) {
-        timeout = 250
-      }
-      setTimeout(emitGameToEditor, timeout)
-    }
-
-    setTimeout(emitGameToEditor, 100)
-  }
-}
-window.init()
+window.onPageLoad()

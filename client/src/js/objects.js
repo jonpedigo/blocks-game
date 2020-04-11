@@ -12,6 +12,7 @@ function init() {
     color: '#999',
     // cant put objects in it cuz of some pass by reference BS...
   }
+  window.defaultObjects = []
 }
 
 function loaded() {

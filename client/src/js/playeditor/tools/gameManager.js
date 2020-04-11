@@ -40,17 +40,6 @@ function init() {
     window.socket.emit('resetGameState')
   })
 
-  var startGameButton = document.getElementById("start-game");
-  startGameButton.addEventListener('click', () => {
-    window.startGame()
-  })
-
-
-  var pauseResumeGameToggle = document.getElementById("pause-resume-game");
-  pauseResumeGameToggle.addEventListener('click', () => {
-    emitEditorGameState({ paused: !window.gameState.paused })
-  })
-
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
     var copyText = JSON.stringify(window.game);

@@ -121,7 +121,7 @@ function init(ctx, objects) {
   addObject.init()
   customGame.init()
 
-  window.onChangeTool(window.TOOLS.WORLD_EDITOR)
+  window.onChangeTool(window.TOOLS.ADD_OBJECT)
 
   /////////////////////
   // PROCEDURAL BUTTONS
@@ -214,13 +214,9 @@ function createArena(boundaries) {
 }
 
 function loaded() {
-  window.setEditorToAnyHero()
+  // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
-  let initialGameId = window.getParameterByName('initialGameId')
-  if(initialGameId && window.game.id !== initialGameId) {
-    window.socket.emit('setGame', initialGameId)
-  }
 }
 
 function update(delta) {

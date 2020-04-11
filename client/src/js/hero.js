@@ -29,8 +29,8 @@ function init() {
       gravity: false,
     },
   	zoomMultiplier: 1.875,
-    x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
-    y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
+    // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
+    // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
     lives: 10,
     score: 0,
     chat: [],
@@ -51,41 +51,27 @@ function init() {
   window.client.on('onGridLoaded', () => {
     window.defaultHero.x = window.grid.startX + (window.grid.width * window.grid.nodeSize)/2
     window.defaultHero.y = window.grid.startY + (window.grid.height * window.grid.nodeSize)/2
-
-    if(window.ghost) {
-      ghost.init()
-    }
-    if(window.isPlayer) {
-    	let savedHero = localStorage.getItem('hero');
-    	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
-    		window.hero = JSON.parse(savedHero)
-        // in case we need to reset
-        window.defaultHero.id = savedHero.id
-    	} else {
-        window.defaultHero.id = 'hero-'+Date.now()
-    		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    		window.spawnHero()
-        localStorage.setItem('hero', JSON.stringify(window.hero));
-    	}
-    	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
-    	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
-
-    	window.socket.emit('saveSocket', hero)
-
-    	// fuckin window.heros...
-    	window.heros = {
-    		[window.hero.id]:window.hero,
-    	}
-    }
-
-    if(window.hero && window.host) {
-      physics.addObject(window.hero)
-    }
   })
 }
 
 function loaded() {
-
+  //hero
+  let savedHero = localStorage.getItem('hero');
+  if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
+    // in case we need to reset
+    window.hero = JSON.parse(savedHero)
+    window.defaultHero.id = window.hero.id
+  } else {
+    window.defaultHero.id = 'hero-'+Date.now()
+    findHeroInNewWorld(window.game)
+    localStorage.setItem('hero', JSON.stringify(window.hero));
+  }
+  window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
+  window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
+  // fuckin window.heros...
+  window.heros[window.hero.id] = window.hero
+  if(window.host) physics.addObject(window.hero)
+  window.socket.emit('saveSocket', hero)
 }
 
 window.spawnHero = function () {
@@ -302,6 +288,51 @@ function setRevertUpdateTimeout(collider) {
   if(collider.fromCompendiumId) {
     window.hero.timeouts[collider.fromCompendiumId] = timeout
   }
+}
+
+window.findHeroInNewWorld = function(game) {
+  // if we have decided to restore position, find hero in hero list
+  if(game.world.globalTags.shouldRestoreHero && window.hero && window.hero.id && game.heros) {
+    for(var heroId in game.heros) {
+      let currentHero = game.heros[heroId]
+      if(currentHero.id == window.hero.id) {
+        window.hero = currentHero
+        return
+      }
+    }
+    console.log('failed to find hero with id' + window.hero.id)
+  }
+
+  if(!game.world.globalTags.isAsymmetric && game.hero) {
+    // save current users id to the world.hero object and then store all other variables as the new hero
+    if(window.hero && window.hero.id) game.hero.id = window.hero.id
+    window.hero = game.hero
+    if(!window.hero.id) window.hero.id = 'hero-'+Date.now()
+    // but then also respawn the hero
+    window.respawnHero()
+    return
+  }
+
+  // other random bullshit if theres two different versions of the hero
+  if(!Object.keys(game.heros).length) {
+    window.resetHero()
+  }
+  for(var heroId in game.heros) {
+    let currentHero = game.heros[heroId]
+    if(currentHero.id == window.hero.id) {
+      window.hero = currentHero
+      return
+    }
+  }
+  for(var heroId in game.heros) {
+    let currentHero = game.heros[heroId]
+    if(currentHero.tags.isPlayer) {
+      window.hero = currentHero
+      return
+    }
+  }
+
+  window.resetHero()
 }
 
 export default {

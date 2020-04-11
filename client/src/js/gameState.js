@@ -1,8 +1,9 @@
 function init() {
   window.defaultGameState = {
-    paused : false,
+    paused : true,
+    started: false,
+    loaded: false,
   }
-  window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
 }
 
 export default {

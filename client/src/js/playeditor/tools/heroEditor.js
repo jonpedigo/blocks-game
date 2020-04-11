@@ -63,9 +63,6 @@ function init() {
       window.socket.emit('updateWorld', { syncHero: false })
     }
   }
-  if(window.world.syncHero) {
-    window.syncHeroToggle.checked = true;
-  }
   var zoomOutButton = document.getElementById("hero-zoomOut");
   zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .0625 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
@@ -137,7 +134,11 @@ function init() {
 
 }
 
-
+function loaded() {
+  if(window.world.syncHero) {
+    window.syncHeroToggle.checked = true;
+  }
+}
 
 export default {
   init

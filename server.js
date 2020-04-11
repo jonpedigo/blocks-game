@@ -15,10 +15,19 @@ let herosockets = {
 
 }
 
-let initialGameId = 'default'
-setGame(initialGameId, (game) => {
-  console.log('initial game set to ' + initialGameId)
-})
+// let initialGameId = 'default'
+// setGame(initialGameId, (game) => {
+//   console.log('initial game set to ' + initialGameId)
+// })
+let currentGame = {
+  heros: {},
+  hero: {},
+  grid: {
+
+  },
+  objects: [],
+  world: {},
+}
 
 function setGame(id, cb) {
   fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
@@ -81,7 +90,7 @@ io.on('connection', function(socket){
           console.log(err);
       } else {
       let obj = JSON.parse(data); //now it an object
-      socket.emit('onSetGame', obj)
+      socket.emit('onGetGame', obj)
     }});
   })
 
@@ -90,6 +99,20 @@ io.on('connection', function(socket){
     setGame(id, (game) => {
       io.emit('onSetGame', game)
     })
+  })
+
+
+
+  // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
+  socket.on('setAndLoadCurrentGame', (id) => {
+    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+      let obj = JSON.parse(data); //now it an object
+      currentGame = obj
+      socket.emit('onLoadGame', currentGame)
+    }});
   })
 
   // this is really only for the live editing shit when im reloading their page all the time

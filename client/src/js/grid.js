@@ -8,7 +8,6 @@ function init() {
     startX: 0,
     startY: 0,
   }
-  window.grid = JSON.parse(JSON.stringify(window.defaultGrid))
 }
 
 function convertToGridXY(object, options = {}) {
