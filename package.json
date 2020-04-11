@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Webpack 4 Boilerplate",
   "main": "index.js",
+  "engines": {
+    "node": "12.16.x"
+  }
   "scripts": {
     "start-dev": "cross-env NODE_ENV=production webpack-dev-server --config client/config/webpack.dev.js",
     "start": "node server.js",
