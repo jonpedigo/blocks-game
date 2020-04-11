@@ -3,7 +3,7 @@ const keysDown = {}
 function init(){
 
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
-  if(ghostData.selectedHeroId) {
+  if(ghostData && ghostData.selectedHeroId) {
     window.hero = JSON.parse(JSON.stringify(window.defaultHero))
     window.hero.id = ghostData.selectedHeroId
     if(ghostData.selectedHeroId == 'ghost') {
