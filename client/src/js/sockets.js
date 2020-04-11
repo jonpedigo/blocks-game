@@ -12,7 +12,6 @@ function init() {
   // just for host
   ///////////////////////////////
   if(window.host) {
-
     // EDITOR CALLS THIS
   	window.socket.on('onAddObjects', (objectsAdded) => {
   		window.objects.push(...objectsAdded)
@@ -102,9 +101,9 @@ function init() {
   ///////////////////////////////
   // EDITOR CALLS THIS
   if(window.isPlayer) {
-    window.socket.on('onResetHero', (hero) => {
+    window.socket.on('onResetHeroToDefault', (hero) => {
       if(hero.id === window.hero.id) {
-        window.resetHero()
+        window.resetHeroToDefault()
       }
     })
 
@@ -177,20 +176,22 @@ function init() {
       window.heros[heroUpdated.id] = {}
     }
 
-    if(window.usePlayEditor) {
-      window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
-      if(window.editingHero.id === heroUpdated.id) {
-        window.editingHero = heroUpdated
-        if(window.world.syncHero) {
-          window.setEditingHero(heroUpdated)
-        }
-      }
-      if(!window.editingHero.id) {
-        window.setEditorToAnyHero()
-      }
-    } else {
-      if(window.hero.id !== heroUpdated.id || window.ghost) {
+    if(window.pageState.gameLoaded) {
+      if(window.usePlayEditor) {
         window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
+        if(window.editingHero.id === heroUpdated.id) {
+          window.editingHero = heroUpdated
+          if(window.world.syncHero) {
+            window.setEditingHero(heroUpdated)
+          }
+        }
+        if(!window.editingHero.id) {
+          window.setEditorToAnyHero()
+        }
+      } else {
+        if(window.hero.id !== heroUpdated.id || window.ghost) {
+          window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
+        }
       }
     }
   })
@@ -223,7 +224,7 @@ function init() {
     window.mergeDeep(window.heros[updatedHero.id], updatedHero)
 
   	if(window.hero && updatedHero.id === window.hero.id){
-  		window.resetHero(updatedHero)
+  		window.updateHero(updatedHero)
   	}
   })
 
@@ -297,16 +298,20 @@ function init() {
         })
       }
     }
+    if(window.hero) {
+      physics.removeObject(window.hero)
+    }
 
     // objects
     window.objects = game.objects
     if(!window.objectsById) window.objectsById = {}
     window.objects.forEach((object) => {
       window.objectsById[object.id] = object
-      physics.addObject(object)
+      if(window.host) physics.addObject(object)
     })
 
-
+    // world
+    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
 
     // grid
     window.grid = game.grid
@@ -316,15 +321,12 @@ function init() {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
     }
 
-    // world
-    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
     window.handleWorldUpdate(window.world)
 
     // heros
     // reset to initial positions and state
     if(window.host && window.isPlayer) {
-      physics.removeObject(window.hero)
-      findHeroInNewWorld(game)
+      window.findHeroInNewWorld(game)
       physics.addObject(window.hero)
       window.hero.currentGameId = game.id
     }
@@ -355,8 +357,6 @@ function init() {
       }
     }
     window.gameState.loaded = true
-
-    window.loadGame(game)
   })
 
   window.socket.on('onNewGame', () => {

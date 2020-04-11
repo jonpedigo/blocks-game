@@ -98,6 +98,10 @@ import ghost from './js/ghost.js'
 ///////////////////////////////
 ///////////////////////////////
 window.onPageLoad = function() {
+  window.pageState = {
+    gameLoaded: false
+  }
+
   // DOM
   window.canvasMultiplier = 1;
   window.CONSTANTS = {
@@ -160,7 +164,7 @@ window.onPageLoad = function() {
   }
   window.socket = socket
 
-  window.init()
+  window.initializeGame()
 }
 
 //////////////////////////////////////////////////////////////
@@ -169,7 +173,7 @@ window.onPageLoad = function() {
 /////// ON INITIALIZE
 ///////////////////////////////
 ///////////////////////////////
-window.init = function (initialGameId) {
+window.initializeGame = function (initialGameId) {
   games.init()
   objects.init()
   world.init()
@@ -255,6 +259,9 @@ window.loadGame = function(game) {
     physics.addObject(object)
   })
 
+  // world
+  window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+
   // grid
   window.grid = game.grid
   window.grid.nodes = grid.generateGridNodes(window.grid)
@@ -263,8 +270,6 @@ window.loadGame = function(game) {
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
   }
 
-  // world
-  window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
   handleWorldUpdate(window.world)
 
   // gameState
@@ -295,14 +300,17 @@ window.loadGame = function(game) {
 ///////////////////////////////
 var then;
 window.onGameLoaded = function() {
+  window.pageState.gameLoaded = true
+
   then = Date.now()
 
   objects.loaded()
   if(window.ghost) ghost.loaded()
-  if(window.isPlayer || window.editorPlayer) {
+  if(window.isPlayer) {
     hero.loaded()
     input.loaded()
   }
+
   if(window.usePlayEditor) {
     playEditor.loaded()
   } else {

@@ -48,7 +48,7 @@ function init() {
   var respawnHeroButton = document.getElementById("respawn-hero");
   respawnHeroButton.addEventListener('click', respawnHero)
   var resetHeroButton = document.getElementById("reset-hero");
-  resetHeroButton.addEventListener('click', resetHero)
+  resetHeroButton.addEventListener('click', resetHeroToDefault)
   var deleteButton = document.getElementById("delete-hero");
   deleteButton.addEventListener('click', () => {
     window.socket.emit('deleteHero', window.editingHero.id)
@@ -93,8 +93,8 @@ function init() {
     // let hero = heroeditor.get()
     // window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
-  function resetHero() {
-    window.socket.emit('resetHero', editingHero)
+  function resetHeroToDefault() {
+    window.socket.emit('resetHeroToDefault', editingHero)
   }
 
   window.setEditingHero = function(hero) {

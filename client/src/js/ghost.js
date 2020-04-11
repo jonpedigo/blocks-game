@@ -53,8 +53,9 @@ function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
     window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    window.hero.id = ghostData.selectedHeroId
-    if(ghostData.selectedHeroId == 'ghost') {
+    if(window.heros[ghostData.selectedHeroId]) window.hero.id = ghostData.selectedHeroId
+    else window.hero.id = 'ghost'
+    if(window.hero.id == 'ghost') {
       window.hero.color = 'rgba(255,255,255,0.1)'
       window.heros.ghost = window.hero
     } else {

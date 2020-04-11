@@ -221,8 +221,8 @@ io.on('connection', function(socket){
     currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
   })
-  socket.on('resetHero', (hero) => {
-    io.emit('onResetHero', hero)
+  socket.on('resetHeroToDefault', (hero) => {
+    io.emit('onResetHeroToDefault', hero)
   })
   socket.on('respawnHero', (hero) => {
     io.emit('onRespawnHero', hero)

@@ -94,8 +94,8 @@ function init() {
        //when the document body is clicked
 
     if (e.target.className && e.target.className.indexOf('new-game') != -1) {
-     resetDefaults()
-     window.socket.emit('setGame', 'default')
+      resetDefaults()
+      window.socket.emit('setGame', 'default')
     }
     if (e.target.className && e.target.className.indexOf('load-game-purgatory') != -1) {
       resetDefaults()

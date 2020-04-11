@@ -58,14 +58,15 @@ function loaded() {
   //hero
   let savedHero = localStorage.getItem('hero');
   if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
-    // in case we need to reset
     window.hero = JSON.parse(savedHero)
+    // in case we need to reset
     window.defaultHero.id = window.hero.id
   } else {
     window.defaultHero.id = 'hero-'+Date.now()
-    findHeroInNewWorld(window.game)
+    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
     localStorage.setItem('hero', JSON.stringify(window.hero));
   }
+  findHeroInNewWorld(window.game)
   window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
   window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
   // fuckin window.heros...
@@ -96,19 +97,19 @@ window.respawnHero = function () {
   window.spawnHero()
 }
 
-window.resetHero = function(updatedHero) {
+window.resetHeroToDefault = function(updatedHero) {
 	physics.removeObject(window.hero)
-	if(updatedHero) {
-		window.mergeDeep(window.hero, updatedHero)
-	} else {
-    let newHero = {}
-    window.defaultHero.id = window.hero.id
-		Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-    window.hero = newHero
-    window.heros[window.hero.id] = window.hero
-	}
+  let newHero = {}
+  window.defaultHero.id = window.hero.id
+	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
+  window.hero = newHero
+  window.heros[window.hero.id] = window.hero
 	localStorage.setItem('hero', JSON.stringify(window.hero));
 	physics.addObject(window.hero)
+}
+
+window.updateHero = function(updatedHero) {
+  window.mergeDeep(window.hero, updatedHero)
 }
 
 window.heroZoomAnimation = function() {
@@ -315,7 +316,7 @@ window.findHeroInNewWorld = function(game) {
 
   // other random bullshit if theres two different versions of the hero
   if(!Object.keys(game.heros).length) {
-    window.resetHero()
+    window.resetHeroToDefault()
   }
   for(var heroId in game.heros) {
     let currentHero = game.heros[heroId]
@@ -332,7 +333,7 @@ window.findHeroInNewWorld = function(game) {
     }
   }
 
-  window.resetHero()
+  window.resetHeroToDefault()
 }
 
 export default {

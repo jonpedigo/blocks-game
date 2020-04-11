@@ -518,6 +518,7 @@ function drawSystem(ctx) {
 }
 
 function addObject(object, moving = false) {
+  if(physicsObjects[object.id]) return console.log("we already have added a physics object with id " + object.id)
   const physicsObject = new Polygon(object.x, object.y, [ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
   system.insert(physicsObject)
   physicsObjects[object.id] = physicsObject
