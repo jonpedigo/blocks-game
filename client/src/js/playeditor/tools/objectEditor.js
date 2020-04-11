@@ -1,6 +1,3 @@
-import objectModifiers from '../modifiers/objectModifiers.js'
-import heroModifiers from '../modifiers/heroModifiers.js'
-import worldModifiers from '../modifiers/worldModifiers.js'
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import JSONEditor from 'jsoneditor'
