@@ -313,7 +313,7 @@ function init() {
     if(game.gameState) {
       window.gameState = game.gameState
     } else {
-      window.gameState = {}
+      window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
 
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))
@@ -414,7 +414,7 @@ function init() {
     // reset tags to default
     window.tags = JSON.parse(JSON.stringify(window.defaultTags))
     // reset game state
-    window.gameState = {}
+    window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     if(window.host){
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
@@ -443,7 +443,7 @@ function init() {
 
   window.socket.on('onNewGame', () => {
     window.changeGame(null)
-    window.gameState = {}
+    window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   })
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)
