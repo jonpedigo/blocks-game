@@ -64,13 +64,13 @@ function init() {
     }
   }
   var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .0625 }))
+  zoomOutButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .0625 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('updateHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .0625 }))
+  zoomInButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .0625 }))
 
   function sendHeroUpdate(update) {
     window.mergeDeep(window.editingHero, update)
-    window.socket.emit('updateHero', window.editingHero)
+    window.socket.emit('editHero', window.editingHero)
   }
   window.sendHeroUpdate = sendHeroUpdate
 
@@ -80,12 +80,12 @@ function init() {
     const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
     delete heroCopy.y
-    window.socket.emit('updateHero', heroCopy)
+    window.socket.emit('editHero', heroCopy)
   }
 
   function sendEditorHeroPos() {
     let hero = window.heroeditor.get()
-    window.socket.emit('updateHero', { id: hero.id, x: hero.x, y: hero.y })
+    window.socket.emit('editHero', { id: hero.id, x: hero.x, y: hero.y })
   }
 
   function respawnHero() {

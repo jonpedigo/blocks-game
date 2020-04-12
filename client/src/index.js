@@ -119,11 +119,11 @@ window.onPageLoad = function() {
   document.body.appendChild(window.canvas);
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-  window.host = false
+  window.host = true
   window.isPlayer = true
 
   if(window.usePlayEditor) {
-    window.host = true
+    window.host = false
     window.isPlayer = false
   }
 
@@ -280,6 +280,9 @@ window.loadGame = function(game) {
   // gameState
   if(game.gameState) window.gameState = game.gameState
   else window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  if(window.usePlayEditor) {
+    window.gamestateeditor.set(window.gameState)
+  }
 
   if(!window.gameState.loaded && window.host) {
     /// DEFAULT GAME FX
@@ -334,13 +337,11 @@ window.onGameLoaded = function() {
     if(window.host) {
       window.socket.emit('updateObjects', window.objects)
       window.socket.emit('updateGameState', window.gameState)
+      Object.keys(window.heros).forEach((id) => {
+        window.socket.emit('updateHero', window.heros[id])
+      })
     }
-    if(window.isPlayer) {
-      window.socket.emit('updateHeroPos', window.hero)
-      localStorage.setItem('hero', JSON.stringify(window.hero));
-    }
-
-    let timeout = window.lastDelta * 7
+    let timeout = window.lastDelta * 3
     if(timeout > 250) {
       timeout = 250
     }
@@ -416,23 +417,33 @@ var mainLoop = function () {
 ///////////////////////////////
 ///////////////////////////////
 var update = function (delta) {
-  if(!window.gameState.paused) {
+  if(window.isPlayer) {
+    // if(!window.gameState.paused) {
+    //   input.update(delta)
+    //   physics.updatePosition(heroCopy, delta)
+    //   physics.prepareObjectsAndHerosForCollisionsPhase()
+    //   physics.heroCorrection(heroCopy)
+    //   physics.containObjectWithinGridBoundaries(heroCopy)
+    // }
+    window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero)
+  }
 
-    if(window.isPlayer) {
-      // non hosts will have to submit some sort of input and then they run basic collisions on their end
-      input.update(delta)
-      physics.updatePosition(window.hero, delta)
-      physics.prepareObjectsAndHerosForPhysicsPhase()
-      physics.heroCorrection(window.hero)
-    }
+  if(window.ghost) {
+    ghost.update()
+  }
 
-    if(window.host) {
+  if(window.host) {
+    if(!window.gameState.paused) {
+      Object.keys(window.heros).forEach((id) => {
+        if(window.heroInput[id]) input.update(window.heros[id], window.heroInput[id], delta)
+        physics.updatePosition(window.heros[id], delta)
+      })
       window.objects.forEach((object) => {
         physics.updatePosition(object, delta)
       })
-
-      intelligence.update(window.hero, window.objects, delta)
+      physics.prepareObjectsAndHerosForCollisionsPhase()
       physics.update(delta)
+      intelligence.update(window.objects, delta)
 
       /// DEFAULT GAME FX
       if(window.defaultGame) {
@@ -450,10 +461,6 @@ var update = function (delta) {
       if(window.anticipatedObject) {
         window.anticipateObjectAdd()
       }
-    }
-
-    if(window.ghost) {
-      ghost.update()
     }
   }
 };

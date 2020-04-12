@@ -25,23 +25,18 @@ function start() {
 
 }
 
+
 // only on client
-function onKeyDown(keysDown) {
+function input(hero, keysDown, delta) {
+  if(hero.flags.paused || window.gameState.paused) return
   if(90 in keysDown) {
     if(window.hero.actionButtonBehavior === 'shootBullet') {
       action.shootBullet()
     }
-
     if(window.hero.actionButtonBehavior === 'dropWall') {
       action.dropWall()
     }
   }
-}
-
-// only on client
-function input(keysDown, delta) {
-  if(window.hero.flags.paused || window.gameState.paused) return
-
 }
 
 // only on client
@@ -284,7 +279,6 @@ export default {
   init,
   loaded,
   start,
-  onKeyDown,
   input,
   update,
   intelligence,

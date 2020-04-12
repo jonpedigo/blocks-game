@@ -12,6 +12,33 @@ function init() {
   ///////////////////////////////
 
   if(window.host) {
+    // PLAYERS CALL THIS
+    window.socket.on('onSendHeroInput', (heroInput, hero) => {
+      if(!window.heros[hero.id]) {
+        window.heros[hero.id] = hero
+        physics.addObject(hero)
+      }
+      window.heroInput[hero.id] = heroInput
+    })
+
+    // EDITOR CALLS THIS
+    window.socket.on('onResetHeroToDefault', (hero) => {
+      Object.keys(window.heros).forEach((id) => {
+        if(id === hero.id) {
+          window.heros[id] = window.resetHeroToDefault(hero)
+        }
+      })
+    })
+
+    // EDITOR CALLS THIS
+    window.socket.on('onRespawnHero', (hero) => {
+      Object.keys(window.heros).forEach((id) => {
+        if(id === hero.id) {
+          window.respawnHero(hero)
+        }
+      })
+    })
+
     // EDITOR CALLS THIS
   	window.socket.on('onEditObjects', (editedObjects) => {
       editedObjects.forEach((obj) => {
@@ -68,24 +95,13 @@ function init() {
   ///////////////////////////////
   /// for players
   ///////////////////////////////
-  // EDITOR CALLS THIS
-    window.socket.on('onResetHeroToDefault', (hero) => {
-      window.resetHeroToDefault(hero)
-    })
-
-    // EDITOR CALLS THIS
-    window.socket.on('onRespawnHero', (hero) => {
-      if(hero.id === window.hero.id) {
-        window.respawnHero()
-      }
-    })
 
   ///////////////////////////////
   ///////////////////////////////
   /// only events for non hosts
   ///////////////////////////////
   if(!window.host) {
-    // host calls this
+    // HOST CALLS THIS
     window.socket.on('onUpdateGameState', (gameState) => {
       window.gameState = gameState
       if(window.usePlayEditor && window.syncGameStateToggle.checked) {
@@ -104,6 +120,34 @@ function init() {
       if(window.usePlayEditor && window.objecteditor.get().id) {
         if(window.syncObjectsToggle.checked) {
           window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
+        }
+      }
+    })
+
+    // HOST CALLS THIS
+    window.socket.on('onUpdateHero', (updatedHero) => {
+      if(!window.heros[updatedHero.id]) {
+        window.heros[updatedHero.id] = updatedHero
+        physics.addObject(updatedHero)
+      }
+      if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
+        updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.heros[updatedHero.id])
+      }
+      if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
+        updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
+      }
+
+      window.mergeDeep(window.heros[updatedHero.id], updatedHero)
+
+      if(window.pageState.gameLoaded && window.usePlayEditor) {
+        if(window.editingHero.id === updatedHero.id) {
+          window.editingHero = updatedHero
+          if(window.world.syncHero) {
+            window.setEditingHero(updatedHero)
+          }
+        }
+        if(!window.editingHero.id) {
+          window.setEditorToAnyHero()
         }
       }
     })
@@ -155,33 +199,6 @@ function init() {
     handleWorldUpdate(window.world)
   })
 
-  // CLIENT HOST CALLS THIS
-  window.socket.on('onHeroPosUpdate', (heroUpdated) => {
-    if(!window.heros[heroUpdated.id]) {
-      window.heros[heroUpdated.id] = heroUpdated
-      physics.addObject(heroUpdated)
-    }
-
-    if(window.pageState.gameLoaded) {
-      if(window.usePlayEditor) {
-        window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
-        if(window.editingHero.id === heroUpdated.id) {
-          window.editingHero = heroUpdated
-          if(window.world.syncHero) {
-            window.setEditingHero(heroUpdated)
-          }
-        }
-        if(!window.editingHero.id) {
-          window.setEditorToAnyHero()
-        }
-      } else {
-        if(window.hero.id !== heroUpdated.id || window.ghost) {
-          window.mergeDeep(window.heros[heroUpdated.id], heroUpdated)
-        }
-      }
-    }
-  })
-
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
     for(let key in updatedWorld) {
@@ -197,9 +214,9 @@ function init() {
   	window.handleWorldUpdate(updatedWorld)
   })
 
-  // CLIENT HOST AND EDITOR CALLS THIS
-  window.socket.on('onUpdateHero', (updatedHero) => {
-  	if(!window.heros[updatedHero.id]) {
+  // EDITORS and PLAYERS call this
+  window.socket.on('onEditHero', (updatedHero) => {
+    if(!window.heros[updatedHero.id]) {
       window.heros[updatedHero.id] = updatedHero
       physics.addObject(updatedHero)
     }
@@ -212,9 +229,17 @@ function init() {
 
     window.mergeDeep(window.heros[updatedHero.id], updatedHero)
 
-  	if(window.hero && updatedHero.id === window.hero.id){
-  		window.updateHero(updatedHero)
-  	}
+    if(window.pageState.gameLoaded && window.usePlayEditor) {
+      if(window.editingHero.id === updatedHero.id) {
+        window.editingHero = updatedHero
+        if(window.world.syncHero) {
+          window.setEditingHero(updatedHero)
+        }
+      }
+      if(!window.editingHero.id) {
+        window.setEditorToAnyHero()
+      }
+    }
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
@@ -292,9 +317,6 @@ function init() {
     let allHeros = Object.keys(window.heros).map((id) => {
       return window.heros[id]
     })
-    allHeros.forEach((hero) => {
-      physics.removeObject(allHeros)
-    })
 
     // objects
     window.objects = game.objects
@@ -317,17 +339,18 @@ function init() {
 
     window.handleWorldUpdate(window.world)
 
-    // heros
-    // reset to initial positions and state
-    if(window.isPlayer) {
-      window.findHeroInNewWorld(game)
-      physics.addObject(window.hero)
-      window.hero.currentGameId = game.id
+    // gameState
+    if(game.gameState) window.gameState = game.gameState
+    else window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+    if(window.usePlayEditor) {
+      window.gamestateeditor.set(window.gameState)
     }
-    if(window.isPlayer) window.heros = {[window.hero.id] : window.hero}
 
     // reset game state
     if(window.host){
+      allHeros.forEach((hero) => {
+        window.heros[hero.id] = window.findHeroInNewGame(game, hero)
+      })
       // by default we reset all spawned objects
       window.resetSpawnAreasAndObjects()
     }
@@ -353,10 +376,10 @@ function init() {
     window.gameState.loaded = true
   })
 
-  window.socket.on('onNewGame', () => {
-    window.changeGame(null)
-    window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-  })
+  // window.socket.on('onNewGame', () => {
+  //   window.changeGame(null)
+  //   window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  // })
 
   window.socket.on('onGameSaved', (id) => {
     window.changeGame(id)
@@ -368,7 +391,7 @@ function init() {
       try {
         customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles) {
           const w = window
-          ${customFx} return { init, loaded, start, onKeyDown, input, onCollide, intelligence, update, render } })`)
+          ${customFx} return { init, loaded, start, input, onCollide, intelligence, update, render } })`)
         customFx = customFx(pathfinding, gridTool, camera, collisions, particles)
         window.liveCustomGame = customFx
       } catch (e) {

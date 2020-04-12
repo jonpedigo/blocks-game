@@ -273,6 +273,11 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+  let hero = window.hero
+  if(window.usePlayEditor) {
+    hero = window.editingHero
+  }
+
   if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(window.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
@@ -288,13 +293,13 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
 
   if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(window.world.gameBoundaries)
-    if(attemptingX > gridX + width - (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
+    if(attemptingX > gridX + width - (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingX < gridX + (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
+    } else if(attemptingX < gridX + (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
       return false
-    } else if(attemptingY > gridY + height - (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
+    } else if(attemptingY > gridY + height - (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)/window.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingY < gridY + (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
+    } else if(attemptingY < gridY + (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)/window.grid.nodeSize)) {
       return false
     }
   }

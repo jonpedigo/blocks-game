@@ -100,6 +100,10 @@ function heroCorrection(hero) {
     let heroPO = physicsObjects[hero.id]
     let corrections = []
     for(const body of potentials) {
+      if(!body.gameObject) {
+        console.log('missing game object on body', body)
+        continue
+      }
       if(body.gameObject.removed) continue
       let result = physicsObjects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
@@ -194,7 +198,7 @@ function heroCorrection(hero) {
   }
 }
 
-function heroCollisionEffects(hero) {
+function heroCollisionEffects(hero, removeObjects, respawnObjects) {
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
@@ -208,6 +212,10 @@ function heroCollisionEffects(hero) {
   let correction = {x: hero.x, y: hero.y}
   let heroPO = physicsObjects[hero.id]
   for(const body of potentials) {
+    if(!body.gameObject) {
+      console.log('missing game object on body', body)
+      continue
+    }
     if(body.gameObject.removed) continue
     if(heroPO.collides(body, result)) {
       heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
@@ -321,7 +329,7 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
-function prepareObjectsAndHerosForPhysicsPhase() {
+function prepareObjectsAndHerosForCollisionsPhase() {
   // set objects new position and widths
   let everything = [...window.objects]
   let allHeros = Object.keys(window.heros).map((id) => {
@@ -352,8 +360,6 @@ function prepareObjectsAndHerosForPhysicsPhase() {
 }
 
 function update (delta) {
-  prepareObjectsAndHerosForPhysicsPhase()
-
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
   // // update physics system
@@ -378,8 +384,8 @@ function update (delta) {
     return window.heros[id]
   })
   allHeros.forEach((hero) => {
-    heroCollisionEffects(hero)
     heroCorrection(hero)
+    heroCollisionEffects(hero, removeObjects, respawnObjects)
   })
 
   /////////////////////////////////////////////////////
@@ -397,6 +403,10 @@ function update (delta) {
     let potentials = po.potentials()
     let result = po.createResult()
     for(const body of potentials) {
+      if(!body.gameObject) {
+        console.log('missing game object on body', body)
+        continue
+      }
       if(body.gameObject.removed) continue
       if(po.collides(body, result)) {
         if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && collisions.shouldEffect(po.gameObject, body.gameObject)) {
@@ -442,6 +452,10 @@ function update (delta) {
       let potentials = po.potentials()
       let illegal = false
       for(const body of potentials) {
+        if(!body.gameObject) {
+          console.log('missing game object on body', body)
+          continue
+        }
         if(body.gameObject.removed) continue
         if(po.collides(body, result)) {
           if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
@@ -508,14 +522,14 @@ function update (delta) {
 
   respawnObjects.forEach((gameObject) => {
     if(gameObject.id.indexOf('hero') > -1) {
-      window.respawnHero()
+      window.respawnHero(gameObject)
+      window.socket.emit('updateHeroPos', gameObject)
     } else if(gameObject.spawnPointX >= 0){
       window.respawnObject(gameObject)
     } else {
       window.socket.emit('deleteObject', gameObject)
     }
   })
-
 
   window.objects.forEach((object, i) => {
     if(object.removed) return
@@ -583,5 +597,6 @@ export default {
   updatePosition,
   update,
   heroCorrection,
-  prepareObjectsAndHerosForPhysicsPhase,
+  containObjectWithinGridBoundaries,
+  prepareObjectsAndHerosForCollisionsPhase,
 }

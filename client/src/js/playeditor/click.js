@@ -89,7 +89,7 @@ function init() {
         }
 
         if(window.clickToSetHeroSpawnToggle.checked) {
-          window.socket.emit('updateHero', {id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+          window.socket.emit('editHero', {id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
         } else {
           Object.keys(window.heros).map((key) => window.heros[key])
           .forEach((hero, i) => {

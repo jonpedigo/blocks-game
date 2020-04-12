@@ -11,11 +11,11 @@ function init() {
 
   var zoomToUniverseButton = document.getElementById("zoom-out-to-universe");
   zoomToUniverseButton.addEventListener('click', () => {
-    window.socket.emit('updateHero', { id: window.editingHero.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: window.editingHero.zoomMultiplier, endAnimation: false })
+    window.socket.emit('editHero', { id: window.editingHero.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: window.editingHero.zoomMultiplier, endAnimation: false })
   })
   var zoomToWorldButton = document.getElementById("zoom-in-to-world");
   zoomToWorldButton.addEventListener('click', () => {
-    window.socket.emit('updateHero', { id: window.editingHero.id, animationZoomTarget: window.editingHero.zoomMultiplier, endAnimation: true, })
+    window.socket.emit('editHero', { id: window.editingHero.id, animationZoomTarget: window.editingHero.zoomMultiplier, endAnimation: true, })
   })
   var saveGameButton = document.getElementById("save-game")
   saveGameButton.addEventListener('click', () => {

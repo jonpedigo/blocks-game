@@ -209,17 +209,16 @@ io.on('connection', function(socket){
   ///////////////////////////
   //HERO
   ///////////////////////////
-  socket.on('updateHeroPos', (hero) => {
-    if(!currentGame.heros[hero.id]) {
-      currentGame.heros[hero.id] = hero
-    } else {
-      currentGame.heros[hero.id] = hero
-    }
-    io.emit('onHeroPosUpdate', hero)
+  socket.on('sendHeroInput', (input, hero) => {
+    io.emit('onSendHeroInput', input, hero)
   })
   socket.on('updateHero', (hero) => {
     currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
+  })
+  socket.on('editHero', (hero) => {
+    currentGame.heros[hero.id] = hero
+    io.emit('onEditHero', hero)
   })
   socket.on('resetHeroToDefault', (hero) => {
     io.emit('onResetHeroToDefault', hero)

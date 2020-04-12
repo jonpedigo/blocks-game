@@ -57,62 +57,67 @@ function init() {
 }
 
 function loaded() {
-  //hero
   let savedHero = localStorage.getItem('hero');
   if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
     window.hero = JSON.parse(savedHero)
-    // in case we need to reset
-    window.defaultHero.id = window.hero.id
   } else {
-    window.defaultHero.id = 'hero-'+Date.now()
     window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    localStorage.setItem('hero', JSON.stringify(window.hero));
+    window.hero.id = 'hero-'+Date.now()
   }
-  findHeroInNewWorld(window.game)
-  window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
-  window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
-  // fuckin window.heros...
+  window.hero = window.findHeroInNewGame(window.game, window.hero)
   window.heros[window.hero.id] = window.hero
   physics.addObject(window.hero)
-  window.socket.emit('saveSocket', hero)
+  // window.socket.emit('saveSocket', hero)
 }
 
-window.spawnHero = function () {
+window.spawnHero = function (hero) {
   // hero spawn point takes precedence
-  if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
-    window.hero.x = window.hero.spawnPointX;
-    window.hero.y = window.hero.spawnPointY;
+  if(hero.spawnPointX && hero.spawnPointX >= 0) {
+    hero.x = hero.spawnPointX;
+    hero.y = hero.spawnPointY;
   } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
-    window.hero.x = window.world.worldSpawnPointX
-    window.hero.y = window.world.worldSpawnPointY
+    hero.x = window.world.worldSpawnPointX
+    hero.y = window.world.worldSpawnPointY
   } else {
     // default pos
-    window.hero.x = 960;
-    window.hero.y = 960;
+    hero.x = 960;
+    hero.y = 960;
   }
 }
 
-window.respawnHero = function () {
-  window.hero.velocityX = 0
-  window.hero.velocityY = 0
-  window.client.emit('onRespawnHero')
-  window.spawnHero()
+window.respawnHero = function (hero) {
+  hero.velocityX = 0
+  hero.velocityY = 0
+  window.client.emit('onRespawnHero', hero)
+  window.spawnHero(hero)
 }
 
-window.resetHeroToDefault = function(updatedHero) {
-	physics.removeObject(window.hero)
-  let newHero = {}
-  window.defaultHero.id = window.hero.id
-	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-  window.hero = newHero
-  window.heros[window.hero.id] = window.hero
-	localStorage.setItem('hero', JSON.stringify(window.hero));
-	physics.addObject(window.hero)
+window.respawnHeros = function (hero) {
+  Object.keys(window.heros).forEach((id) => {
+    window.respawnHero(window.heros[id])
+  })
 }
 
-window.updateHero = function(updatedHero) {
-  window.mergeDeep(window.hero, updatedHero)
+window.updateAllHeros = function(update) {
+  Object.keys(window.heros).forEach((id) => {
+    window.mergeDeep(window.heros[id], update)
+  })
 }
+
+window.resetHeroToDefault = function(hero) {
+  let newHero = JSON.parse(JSON.stringify(window.defaultHero))
+  newHero.id = hero.id
+  return newHero
+}
+// window.resetHeroToDefault = function(hero) {
+// 	physics.removeObject(hero)
+//   let newHero = {}
+//   window.defaultHero.id = window.hero.id
+// 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
+//   window.heros[window.hero.id] = window.hero
+// 	localStorage.setItem('hero', JSON.stringify(window.hero));
+// 	physics.addObject(hero)
+// }
 
 window.heroZoomAnimation = function() {
   if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
@@ -122,7 +127,7 @@ window.heroZoomAnimation = function() {
       else {
         window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
       }
-      window.socket.emit('updateHero', window.hero)
+      window.socket.emit('editHero', window.hero)
     }
   }
 
@@ -133,7 +138,7 @@ window.heroZoomAnimation = function() {
       else {
         window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
       }
-      window.socket.emit('updateHero', window.hero)
+      window.socket.emit('editHero', window.hero)
     }
   }
 }
@@ -260,7 +265,7 @@ function heroUpdate (hero, collider) {
       }
     }
     hero.updateHistory.push(update)
-    window.mergeDeep(window.hero, {...collider.heroUpdate})
+    window.mergeDeep(hero, {...collider.heroUpdate})
     hero.lastPowerUpId = collider.id
 
     if(collider.tags['revertAfterTimeout']) {
@@ -293,14 +298,13 @@ function setRevertUpdateTimeout(hero, collider) {
   }
 }
 
-window.findHeroInNewWorld = function(game) {
+window.findHeroInNewGame = function(game, hero) {
   // if we have decided to restore position, find hero in hero list
-  if(game.world.globalTags.shouldRestoreHero && window.hero && window.hero.id && game.heros) {
+  if(game.world.globalTags.shouldRestoreHero && game.heros) {
     for(var heroId in game.heros) {
       let currentHero = game.heros[heroId]
-      if(currentHero.id == window.hero.id) {
-        window.hero = currentHero
-        return
+      if(currentHero.id == hero.id) {
+        return currentHero
       }
     }
     console.log('failed to find hero with id' + window.hero.id)
@@ -308,34 +312,15 @@ window.findHeroInNewWorld = function(game) {
 
   if(!game.world.globalTags.isAsymmetric && game.hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    if(window.hero && window.hero.id) game.hero.id = window.hero.id
-    window.hero = game.hero
-    if(!window.hero.id) window.hero.id = 'hero-'+Date.now()
+    if(hero && hero.id) game.hero.id = hero.id
+    hero = game.hero
+    if(!hero.id) hero.id = 'hero-'+Date.now()
     // but then also respawn the hero
-    window.respawnHero()
-    return
+    window.respawnHero(hero)
+    return hero
   }
 
-  // other random bullshit if theres two different versions of the hero
-  if(!Object.keys(game.heros).length) {
-    window.resetHeroToDefault()
-  }
-  for(var heroId in game.heros) {
-    let currentHero = game.heros[heroId]
-    if(currentHero.id == window.hero.id) {
-      window.hero = currentHero
-      return
-    }
-  }
-  for(var heroId in game.heros) {
-    let currentHero = game.heros[heroId]
-    if(currentHero.tags.isPlayer) {
-      window.hero = currentHero
-      return
-    }
-  }
-
-  window.resetHeroToDefault()
+  return window.resetHeroToDefault(hero)
 }
 
 export default {

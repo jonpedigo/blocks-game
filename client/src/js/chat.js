@@ -1,24 +1,12 @@
 const keysDown = {}
 function init() {
-	window.addEventListener("keydown", function (e) {
-		if(e.keyCode == '32'){
-			window.hero.chat.shift()
-			if(!window.hero.chat.length) {
-				if(window.hero.chat.onChatEnd) window.hero.chat.onChatEnd()
-				window.hero.flags.showChat = false
-				window.hero.flags.paused = false
-			}
-		}
-  }, false)
+
 }
 
 function render(ctx){
 	if(window.hero.flags.showChat){
 		if(window.hero.chat.length) {
 			drawChat(ctx, window.hero.chat)
-		} else {
-			window.hero.flags.showChat = false
-			window.hero.flags.paused = false
 		}
 	}
 }

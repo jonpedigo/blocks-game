@@ -132,8 +132,6 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
 
   function emitNewObjects() {
     if(window.isPlayer || window.instantAddToggle.checked || options.instantAddToggle) {
-      // need to do a local add first
-      window.objects.push(...objects)
       window.socket.emit('addObjects', objects)
     } else {
       window.objectFactory.push(...objects)

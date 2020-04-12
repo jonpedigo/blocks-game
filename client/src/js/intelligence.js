@@ -57,7 +57,7 @@ function moveOnPath(object) {
   }
 }
 
-function update(hero, objects, delta) {
+function update(objects, delta) {
   objects.forEach((object) => {
     if(object.removed) return
     //////////////////////////////////////////

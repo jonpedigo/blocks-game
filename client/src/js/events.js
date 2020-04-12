@@ -31,8 +31,8 @@ class EventEmitter {
 window.client = new EventEmitter()
 
 
-window.client.on('onRespawnHero', () => {
-  if(window.world.globalTags.noCamping) {
+window.client.on('onRespawnHero', (hero) => {
+  if(window.world.globalTags.noCamping && window.host) {
     window.objects.forEach((obj) => {
       if(obj.removed) return
 

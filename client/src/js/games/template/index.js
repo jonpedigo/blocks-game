@@ -25,14 +25,8 @@ function start() {
 }
 
 // only on client
-function onKeyDown(keysDown) {
-  if(window.hero.flags.paused || window.gameState.paused) return
-
-}
-
-// only on client
-function input(keysDown, delta) {
-  if(window.hero.flags.paused || window.gameState.paused) return
+function input(hero, keysDown, delta) {
+  if(hero.flags.paused || window.gameState.paused) return
 
 }
 
@@ -60,7 +54,6 @@ export default {
   init,
   loaded,
   start,
-  onKeyDown,
   input,
   update,
   intelligence,
@@ -89,14 +82,8 @@ function start() {
 }
 
 // only on client
-function onKeyDown(keysDown) {
-  if(window.hero.flags.paused || window.gameState.paused) return
-
-}
-
-// only on client
-function input(keysDown, delta) {
-  if(window.hero.flags.paused || window.gameState.paused) return
+function input(hero, keysDown, delta) {
+  if(hero.flags.paused || window.gameState.paused) return
 
 }
 

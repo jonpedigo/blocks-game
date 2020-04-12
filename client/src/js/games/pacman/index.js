@@ -20,23 +20,20 @@ function start() {
   window.gameState.started = true
   window.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
-  window.respawnHero()
+  window.respawnHeros()
   window.hero.lives = 3
 }
 
-function onKeyDown(keysDown) {
+function input(hero, keysDown, delta) {
   if(window.gameState.paused) {
     if(32 in keysDown) {
       window.socket.emit('startGame')
     }
   }
 
-  if(window.hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || window.gameState.paused) return
 }
 
-function input(keysDown, delta) {
-
-}
 
 function intelligence(object, delta) {
 
@@ -97,7 +94,6 @@ export default {
   init,
   loaded,
   start,
-  onKeyDown,
   input,
   update,
   intelligence,
