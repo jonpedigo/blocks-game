@@ -119,11 +119,11 @@ window.onPageLoad = function() {
   document.body.appendChild(window.canvas);
 
   window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
-  window.host = true
+  window.host = false
   window.isPlayer = true
 
   if(window.usePlayEditor) {
-    window.host = false
+    window.host = true
     window.isPlayer = false
   }
 

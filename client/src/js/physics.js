@@ -384,8 +384,8 @@ function update (delta) {
     return window.heros[id]
   })
   allHeros.forEach((hero) => {
-    heroCorrection(hero)
     heroCollisionEffects(hero, removeObjects, respawnObjects)
+    heroCorrection(hero)
   })
 
   /////////////////////////////////////////////////////

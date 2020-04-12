@@ -258,10 +258,10 @@ function heroUpdate (hero, collider) {
         let ags = heroUpdate[prop]
         update.prev[prop] = {}
         for(let ag in ags) {
-          update.prev[prop][ag] = window.hero[prop][ag]
+          update.prev[prop][ag] = hero[prop][ag]
         }
       } else {
-        update.prev[prop] = window.hero[prop]
+        update.prev[prop] = hero[prop]
       }
     }
     hero.updateHistory.push(update)
