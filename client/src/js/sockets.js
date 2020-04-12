@@ -79,6 +79,11 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onStartGame', () => {
+      // window.initialGameObjects = JSON.parse(JSON.stringify(window.objects))
+      // window.initialHeros = JSON.parse(JSON.stringify(window.heros))
+      // window.initialGameState = JSON.parse(JSON.stringify(window.gameState))
+      // window.initialWorld = JSON.parse(JSON.stringify(window.world))
+
       if(window.defaultGame) {
         window.defaultGame.start()
       }
@@ -90,11 +95,6 @@ function init() {
       }
     })
   }
-
-  ///////////////////////////////
-  ///////////////////////////////
-  /// for players
-  ///////////////////////////////
 
   ///////////////////////////////
   ///////////////////////////////
@@ -145,9 +145,6 @@ function init() {
           if(window.world.syncHero) {
             window.setEditingHero(updatedHero)
           }
-        }
-        if(!window.editingHero.id) {
-          window.setEditorToAnyHero()
         }
       }
     })
@@ -231,9 +228,9 @@ function init() {
 
     if(window.pageState.gameLoaded && window.usePlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
-        window.editingHero = updatedHero
+        window.editingHero = window.heros[updatedHero.id]
         if(window.world.syncHero) {
-          window.setEditingHero(updatedHero)
+          window.setEditingHero(window.heros[updatedHero.id])
         }
       }
       if(!window.editingHero.id) {
@@ -266,11 +263,8 @@ function init() {
     }
 
     window.objects = window.objects.filter((obj) => obj.id !== object.id)
+    physics.removeObjectById(object.id)
     delete window.objectsById[object.id]
-
-    if(window.host) {
-      physics.removeObjectById(object.id)
-    }
   })
 
   // EDITOR CALLS THIS
@@ -299,6 +293,8 @@ function init() {
     window.game = game
     window.game.grid = game.grid
     window.client.emit('onGridLoaded')
+
+    if(game.compendium) window.compendium = game.compendium
 
     // if theres already a game going on, need to unload it
     if(window.objects.length) {

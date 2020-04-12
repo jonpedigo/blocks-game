@@ -220,6 +220,9 @@ function loaded() {
 
 function update(delta) {
   input.update(delta)
+  if(!window.editingHero.id) {
+    window.setEditorToAnyHero()
+  }
 }
 
 function render(ctx) {

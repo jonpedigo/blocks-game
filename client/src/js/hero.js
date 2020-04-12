@@ -119,26 +119,24 @@ window.resetHeroToDefault = function(hero) {
 // 	physics.addObject(hero)
 // }
 
-window.heroZoomAnimation = function() {
-  if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-    window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.97
-    if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-      if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
+window.heroZoomAnimation = function(hero) {
+  if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
+    hero.animationZoomMultiplier = hero.animationZoomMultiplier/.97
+    if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
+      if(hero.endAnimation) hero.animationZoomMultiplier = null
       else {
-        window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+        hero.animationZoomMultiplier = hero.animationZoomTarget
       }
-      window.socket.emit('editHero', window.hero)
     }
   }
 
-  if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-    window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.03
-    if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-      if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
+  if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
+    hero.animationZoomMultiplier = hero.animationZoomMultiplier/1.03
+    if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
+      if(hero.endAnimation) hero.animationZoomMultiplier = null
       else {
-        window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+        hero.animationZoomMultiplier = hero.animationZoomTarget
       }
-      window.socket.emit('editHero', window.hero)
     }
   }
 }
@@ -269,7 +267,7 @@ function heroUpdate (hero, collider) {
     hero.lastPowerUpId = collider.id
 
     if(collider.tags['revertAfterTimeout']) {
-      setRevertUpdateTimeout(collider)
+      setRevertUpdateTimeout(hero, collider)
     }
   }
 }

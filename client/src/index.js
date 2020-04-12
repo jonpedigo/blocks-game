@@ -390,10 +390,6 @@ var mainLoop = function () {
       window.liveCustomGame.render(ctx, delta / 1000)
     }
 
-    if(window.hero.animationZoomTarget) {
-      window.heroZoomAnimation()
-    }
-
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
     }
@@ -435,8 +431,12 @@ var update = function (delta) {
   if(window.host) {
     if(!window.gameState.paused) {
       Object.keys(window.heros).forEach((id) => {
-        if(window.heroInput[id]) input.update(window.heros[id], window.heroInput[id], delta)
-        physics.updatePosition(window.heros[id], delta)
+        let hero = window.heros[id]
+        if(hero.animationZoomTarget) {
+          window.heroZoomAnimation(hero)
+        }
+        if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
+        physics.updatePosition(hero, delta)
       })
       window.objects.forEach((object) => {
         physics.updatePosition(object, delta)
@@ -459,7 +459,11 @@ var update = function (delta) {
       }
 
       if(window.anticipatedObject) {
-        window.anticipateObjectAdd()
+        let hero = window.hero
+        if(window.usePlayEditor) {
+          hero = window.editingHero
+        }
+        window.anticipateObjectAdd(window.editingHero)
       }
     }
   }

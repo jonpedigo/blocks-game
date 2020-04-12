@@ -19,12 +19,12 @@ function loaded() {
   window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
 }
 
-window.anticipateObjectAdd = function() {
-  const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
+window.anticipateObjectAdd = function(hero) {
+  const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = window.getViewBoundaries(hero)
 
   let isWall = window.anticipatedObject.wall
 
-  if (leftDiff < 1 && window.hero.directions.left) {
+  if (leftDiff < 1 && hero.directions.left) {
     let newObject = {
       x: minX - window.grid.nodeSize,
       y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
@@ -32,7 +32,7 @@ window.anticipateObjectAdd = function() {
       height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 3) : window.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (topDiff < 1 && window.hero.directions.up) {
+  } else if (topDiff < 1 && hero.directions.up) {
     let newObject = {
       x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: minY - window.grid.nodeSize,
@@ -40,7 +40,7 @@ window.anticipateObjectAdd = function() {
       height: window.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (rightDiff > window.grid.nodeSize - 1 && window.hero.directions.right) {
+  } else if (rightDiff > window.grid.nodeSize - 1 && hero.directions.right) {
     let newObject = {
       x: maxX + window.grid.nodeSize,
       y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
@@ -48,7 +48,7 @@ window.anticipateObjectAdd = function() {
       height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (bottomDiff > window.grid.nodeSize - 1 && window.hero.directions.down) {
+  } else if (bottomDiff > window.grid.nodeSize - 1 && hero.directions.down) {
     let newObject = {
       x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: maxY + window.grid.nodeSize,
