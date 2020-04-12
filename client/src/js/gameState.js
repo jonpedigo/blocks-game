@@ -1,6 +1,6 @@
 function init() {
   window.defaultGameState = {
-    paused : false,
+    paused : true,
     started: false,
     loaded: false,
   }

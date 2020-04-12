@@ -76,6 +76,7 @@ function init() {
   }
 
   function emitEditorGameState (gameStateUpdate) {
+    console.log(gameStateUpdate)
     window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
   }
 

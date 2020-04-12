@@ -55,13 +55,15 @@ io.on('connection', function(socket){
   ///////////////////////////
   ///////////////////////////
   socket.on('saveGame', (game) => {
-    if(!game.world.globalTags.shouldRestoreHero && !game.world.globalTags.isAsymmetric) {
+    if(!game.world.globalTags.shouldRestoreHero && !game.world.globalTags.isAsymmetric && game.heros) {
       if(Object.keys(game.heros).length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
-      for(var heroId in game.heros) {
+      if(Object.keys(game.heros).length == 1) {
+        for(var heroId in game.heros) {
+        }
+        game.hero = game.heros[heroId]
       }
-      game.hero = game.heros[heroId]
     }
 
     if(!game.id) {

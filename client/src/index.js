@@ -225,8 +225,11 @@ window.initializeGame = function (initialGameId) {
           gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
           world: JSON.parse(JSON.stringify(window.defaultWorld)),
           hero: JSON.parse(JSON.stringify(window.defaultHero)),
-          objects: JSON.parse(JSON.stringify(window.defaultObject)),
+          objects: [],
+          grid: JSON.parse(JSON.stringify(window.defaultGrid)),
+          heros: {},
         }
+        window.socket.emit('saveGame', game)
         window.loadGame(game)
       }
     }
@@ -280,6 +283,7 @@ window.loadGame = function(game) {
   // gameState
   if(game.gameState) window.gameState = game.gameState
   else window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+
   if(window.usePlayEditor) {
     window.gamestateeditor.set(window.gameState)
   }
@@ -293,9 +297,8 @@ window.loadGame = function(game) {
     if(window.customGame) {
       window.customGame.loaded()
     }
-
-    window.gameState.loaded = true
   }
+  window.gameState.loaded = true
 
   window.onGameLoaded()
 }
