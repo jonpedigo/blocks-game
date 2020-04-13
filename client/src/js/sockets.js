@@ -65,6 +65,9 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
       window.gameState = gameState
+      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+        window.gamestateeditor.update(gameState)
+      }
     })
 
     // EDITOR CALLS THIS
@@ -78,14 +81,46 @@ function init() {
   	})
 
     // EDITOR CALLS THIS
-    window.socket.on('onStartGame', () => {
-      // window.initialGameObjects = JSON.parse(JSON.stringify(window.objects))
-      // window.initialHeros = JSON.parse(JSON.stringify(window.heros))
-      // window.initialGameState = JSON.parse(JSON.stringify(window.gameState))
-      // window.initialWorld = JSON.parse(JSON.stringify(window.world))
+    window.socket.on('onStopGame', () => {
+      if(!window.gameState.started) {
+        return console.log('trying to stop game that aint even started yet')
+      }
 
-      if(window.defaultGame) {
-        window.defaultGame.start()
+      let initialGameState = localStorage.getItem('initialGameState')
+      if(!initialGameState) {
+        console.log('game stopped, but no initial game state set')
+      }
+
+      if(initialGameState) {
+        initialGameState = JSON.parse(initialGameState)
+        window.objects = initialGameState.objects
+        window.heros = initialGameState.heros
+        window.world = initialGameState.world
+        window.gameState = initialGameState.gameState
+        window.grid = initialGameState.grid
+        window.grid.nodes = gridTool.generateGridNodes(window.grid)
+        gridTool.updateGridObstacles()
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+      }
+
+      // window.gameState.paused = true
+      window.gameState.started = false
+      window.gameState.loaded = true
+    })
+
+    // EDITOR CALLS THIS
+    window.socket.on('onStartGame', () => {
+      if(window.gameState.started) {
+        return console.log('trying to start game that has already started')
+      }
+
+      // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
+      localStorage.setItem('initialGameState', JSON.stringify({...window.game, grid: {...window.game.grid, nodes: null }}))
+      window.gameState.paused = false
+      window.gameState.started = true
+
+      if(window.defaultCustomGame) {
+        window.defaultCustomGame.start()
       }
       if(window.customGame) {
         window.customGame.start()
@@ -96,59 +131,66 @@ function init() {
     })
   }
 
-  ///////////////////////////////
-  ///////////////////////////////
-  /// only events for non hosts
-  ///////////////////////////////
-  if(!window.host) {
-    // HOST CALLS THIS
-    window.socket.on('onUpdateGameState', (gameState) => {
-      window.gameState = gameState
-      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
-        window.gamestateeditor.set(gameState)
-      }
-    })
 
-    // host CALLS THIS
-    window.socket.on('onUpdateObjects', (objectsUpdated) => {
+  ///////////////////////////////
+  ///////////////////////////////
+  // UPDATING GAME STATE EVENTS, EDITOR UPDATES ITS OWN STATE IF SYNCED
+  ///////////////////////////////
+  // HOST CALLS THIS
+  window.socket.on('onUpdateGameState', (gameState) => {
+    if(!window.host) window.gameState = gameState
+    if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+      window.gamestateeditor.update(gameState)
+    }
+  })
+
+  // host CALLS THIS
+  window.socket.on('onUpdateObjects', (objectsUpdated) => {
+    if(!window.host){
       window.objects = objectsUpdated
       window.objectsById = window.objects.reduce((prev, next) => {
         prev[next.id] = next
         return prev
       }, {})
+    }
 
-      if(window.usePlayEditor && window.objecteditor.get().id) {
-        if(window.syncObjectsToggle.checked) {
-          window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
-        }
+    if(window.usePlayEditor && window.objecteditor.get().id) {
+      if(window.syncObjectsToggle.checked) {
+        window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
       }
-    })
+    }
+  })
 
-    // HOST CALLS THIS
-    window.socket.on('onUpdateHero', (updatedHero) => {
+  // HOST CALLS THIS
+  window.socket.on('onUpdateHero', (updatedHero) => {
+    if(window.isPlayer && window.hero && updatedHero.id == window.hero.id) {
+      window.mergeDeep(window.hero, updatedHero)
+    }
+
+    if(!window.host) {
       if(!window.heros[updatedHero.id]) {
         window.heros[updatedHero.id] = updatedHero
         physics.addObject(updatedHero)
       }
-      if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
-        updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.heros[updatedHero.id])
-      }
-      if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
-        updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
-      }
-
       window.mergeDeep(window.heros[updatedHero.id], updatedHero)
+    }
 
-      if(window.pageState.gameLoaded && window.usePlayEditor) {
-        if(window.editingHero.id === updatedHero.id) {
-          window.editingHero = updatedHero
-          if(window.world.syncHero) {
-            window.setEditingHero(updatedHero)
-          }
+    if(window.pageState.gameLoaded && window.usePlayEditor) {
+      if(window.editingHero.id === updatedHero.id) {
+        if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity) {
+          updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.heros[updatedHero.id])
+        }
+        if(updatedHero.jumpVelocity !== window.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== window.heros[updatedHero.id].speed) {
+          updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.heros[updatedHero.id])
+        }
+
+        window.editingHero = updatedHero
+        if(window.world.syncHero) {
+          window.setEditingHero(updatedHero)
         }
       }
-    })
-  }
+    }
+  })
 
   ///////////////////////////////
   ///////////////////////////////
@@ -177,7 +219,7 @@ function init() {
 
       physics.removeObject(object)
     })
-    window.objects = []
+    window.objects.length = 0
     window.objectsById = {}
 
     if(!window.world.globalTags.calculatePathCollisions) {
@@ -198,17 +240,19 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
-    for(let key in updatedWorld) {
-  		const value = updatedWorld[key]
+    if(window.host) {
+      for(let key in updatedWorld) {
+        const value = updatedWorld[key]
 
-      if(value instanceof Object) {
-        window.world[key] = {}
-        window.mergeDeep(window.world[key], value)
-      } else {
-        window.world[key] = value
+        if(value instanceof Object) {
+          window.world[key] = {}
+          window.mergeDeep(window.world[key], value)
+        } else {
+          window.world[key] = value
+        }
       }
+      window.handleWorldUpdate(updatedWorld)
     }
-  	window.handleWorldUpdate(updatedWorld)
   })
 
   // EDITORS and PLAYERS call this
@@ -252,7 +296,7 @@ function init() {
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
     if(window.usePlayEditor && window.objecteditor.get().id === object.id) {
-      window.objecteditor.set({})
+      window.objecteditor.update({})
       window.objecteditor.saved = true
       window.updateObjectEditorNotifier()
     }
@@ -260,6 +304,17 @@ function init() {
     if(!window.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
       if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+    }
+
+    let spliceIndex
+    window.objects.forEach((obj, i) => {
+      if(obj.id == object.id) {
+        spliceIndex
+      }
+    })
+
+    if(spliceIndex >= 0) {
+      window.objects.splice(spliceIndex, 1)
     }
 
     window.objects = window.objects.filter((obj) => obj.id !== object.id)
@@ -289,13 +344,7 @@ function init() {
   })
 
   // this is switching between games
-  window.socket.on('onSetGame', (game) => {
-    window.game = game
-    window.game.grid = game.grid
-    window.client.emit('onGridLoaded')
-
-    if(game.compendium) window.compendium = game.compendium
-
+  window.socket.on('onCopyGame', (game) => {
     // if theres already a game going on, need to unload it
     if(window.objects.length) {
       if(window.usePlayEditor) {
@@ -304,72 +353,15 @@ function init() {
           i: null,
         }
         window.objecteditor.saved = true
-        window.objecteditor.set({})
+        window.objecteditor.update({})
       }
       window.objects.forEach((object) => {
         physics.removeObjectById(object.id)
       })
     }
-    let allHeros = Object.keys(window.heros).map((id) => {
-      return window.heros[id]
-    })
 
-    // objects
-    window.objects = game.objects
-    if(!window.objectsById) window.objectsById = {}
-    window.objects.forEach((object) => {
-      window.objectsById[object.id] = object
-      physics.addObject(object)
-    })
-
-    // world
-    window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-
-    // grid
-    window.grid = game.grid
-    window.grid.nodes = gridTool.generateGridNodes(grid)
-    gridTool.updateGridObstacles()
-    if(window.host) {
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    }
-
-    window.handleWorldUpdate(window.world)
-
-    // gameState
-    if(game.gameState) window.gameState = game.gameState
-    else window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-    if(window.usePlayEditor) {
-      window.gamestateeditor.set(window.gameState)
-    }
-
-    // reset game state
-    if(window.host){
-      allHeros.forEach((hero) => {
-        window.heros[hero.id] = window.findHeroInNewGame(game, hero)
-      })
-      // by default we reset all spawned objects
-      window.resetSpawnAreasAndObjects()
-    }
-
-    /// CUSTOM GAME FX
-    window.changeGame(game.id)
-    if(window.customGame) {
-      // if we've set the game it means it didnt happen on page load.
-      // so we need to init it as well..
-      window.customGame.init()
-      if(window.host) {
-        window.customGame.loaded()
-      }
-    }
-    if(window.liveCustomGame) {
-      // if we've set the game it means it didnt happen on page load.
-      // so we need to init it as well..
-      window.liveCustomGame.init()
-      if(window.host) {
-        window.liveCustomGame.loaded()
-      }
-    }
-    window.gameState.loaded = true
+    if(window.host || window.usePlayEditor) window.loadGame(game)
+    else window.loadGameNonHost(game)
   })
 
   // window.socket.on('onNewGame', () => {

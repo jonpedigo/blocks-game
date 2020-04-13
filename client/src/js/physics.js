@@ -418,19 +418,21 @@ function update (delta) {
           po.gameObject.lastPowerUpId = null
         }
 
+        let hero = window.hero
+        if(window.usePlayEditor) hero = window.editingHero
         /// DEFAULT GAME FX
-        if(window.defaultGame) {
-          window.defaultGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+        if(window.defaultCustomGame) {
+          window.defaultCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects, hero)
         }
 
         /// CUSTOM GAME FX
         if(window.customGame) {
-          window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+          window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects, hero)
         }
 
         /// LIVE CUSTOM GAME FX
         if(window.liveCustomGame) {
-          window.liveCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+          window.liveCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects, hero)
         }
       }
     }

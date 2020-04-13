@@ -16,7 +16,8 @@ function init() {
       targetOnSight: false,
       isAsymmetric: false,
       shouldRestoreHero: false,
-    }
+    },
+    storeEntireGameState: false,
   }
 
   window.client.on('onGridLoaded', () => {
@@ -64,7 +65,7 @@ window.handleWorldUpdate = function(updatedWorld) {
   }
 
   if(window.usePlayEditor) {
-    window.worldeditor.set(window.world)
+    window.worldeditor.update(window.world)
     window.worldeditor.expandAll()
   }
 }

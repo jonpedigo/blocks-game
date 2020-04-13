@@ -32,7 +32,7 @@ window.client = new EventEmitter()
 
 
 window.client.on('onRespawnHero', (hero) => {
-  if(window.world.globalTags.noCamping && window.host) {
+  if(window.host && window.world.globalTags.noCamping) {
     window.objects.forEach((obj) => {
       if(obj.removed) return
 

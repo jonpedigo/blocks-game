@@ -2,7 +2,7 @@ import camera from './camera';
 
 window.heroKeysDown = {}
 let keysDown = window.heroKeysDown
-// this is the one for the 
+// this is the one for the
 window.heroInput = {}
 
 let lastJump = 0
@@ -86,8 +86,8 @@ function update(hero, keysDown, delta) {
     d 68
   */
   /// DEFAULT GAME FX
-  if(window.defaultGame) {
-    window.defaultGame.input(hero, keysDown, delta)
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.input(hero, keysDown, delta)
   }
 
   /// CUSTOM GAME FX

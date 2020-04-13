@@ -7,7 +7,7 @@ function init() {
   window.gamestateeditor = new JSONEditor(gamestateeditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (gameState) => {
     emitEditorGameState(gameState)
   }});
-  window.gamestateeditor.set(window.gameState)
+  window.gamestateeditor.update(window.defaultGameState)
 
   var zoomToUniverseButton = document.getElementById("zoom-out-to-universe");
   zoomToUniverseButton.addEventListener('click', () => {
@@ -74,9 +74,26 @@ function init() {
   window.startGame = function() {
     window.socket.emit('startGame')
   }
+  window.stopGame = function() {
+    window.socket.emit('stopGame')
+  }
+
+  var pauseResumeGameToggle = document.getElementById("pause-resume-game");
+  pauseResumeGameToggle.addEventListener('click', () => {
+    emitEditorGameState({ paused: !window.gameState.paused })
+  })
+
+  var startGameButton = document.getElementById("start-game");
+  startGameButton.addEventListener('click', () => {
+    window.startGame()
+  })
+
+  var startGameButton = document.getElementById("stop-game");
+  startGameButton.addEventListener('click', () => {
+    window.stopGame()
+  })
 
   function emitEditorGameState (gameStateUpdate) {
-    console.log(gameStateUpdate)
     window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
   }
 
@@ -85,7 +102,7 @@ function init() {
     window.socket.emit('resetWorld')
     window.socket.emit('updateGrid', window.defaultGrid)
     for(var heroId in window.heros) {
-      window.socket.emit('resetHero', window.heros[heroId])
+      window.socket.emit('resetHeroToDefault', window.heros[heroId])
     }
     window.socket.emit('resetGameState')
   }
@@ -95,28 +112,22 @@ function init() {
        //when the document body is clicked
 
     if (e.target.className && e.target.className.indexOf('new-game') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'default')
+      window.socket.emit('copyGame', 'default')
     }
     if (e.target.className && e.target.className.indexOf('load-game-purgatory') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'purgatory')
+      window.socket.emit('copyGame', 'purgatory')
     }
     if (e.target.className && e.target.className.indexOf('load-game-smasharena') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'smasharena')
+      window.socket.emit('copyGame', 'smasharena')
     }
     if (e.target.className && e.target.className.indexOf('load-game-fliparena') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'fliparena')
+      window.socket.emit('copyGame', 'fliparena')
     }
     if (e.target.className && e.target.className.indexOf('load-game-adventure') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'adventure')
+      window.socket.emit('copyGame', 'adventure')
     }
     if (e.target.className && e.target.className.indexOf('load-game-platformer') != -1) {
-      resetDefaults()
-      window.socket.emit('setGame', 'platformer')
+      window.socket.emit('copyGame', 'platformer')
     }
   })
 }

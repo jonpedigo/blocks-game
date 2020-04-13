@@ -80,19 +80,22 @@ function update(objects, delta) {
       moveTowardsTarget(object, delta)
     }
 
+
+    let hero = window.hero
+    if(window.usePlayEditor) hero = window.editingHero
     /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.intelligence(object, delta)
+    if(window.defaultCustomGame) {
+      window.defaultCustomGame.intelligence(object, hero, delta)
     }
 
     /// CUSTOM GAME FX
     if(window.customGame) {
-      window.customGame.intelligence(object, delta)
+      window.customGame.intelligence(object, hero, delta)
     }
 
     /// LIVE CUSTOM GAME FX
     if(window.liveCustomGame) {
-      window.liveCustomGame.intelligence(object, delta)
+      window.liveCustomGame.intelligence(object, hero, delta)
     }
 
     if(object.tags && object.tags['stationary']) {

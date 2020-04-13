@@ -58,15 +58,13 @@ function init() {
 
 function loaded() {
   let savedHero = localStorage.getItem('hero');
-  if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
-    window.hero = JSON.parse(savedHero)
+  if(savedHero && JSON.parse(savedHero).id){
+    window.defaultHero.id = JSON.parse(savedHero).id
   } else {
-    window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    window.hero.id = 'hero-'+Date.now()
+    window.defaultHero.id = 'hero-'+Date.now()
   }
-  window.hero = window.findHeroInNewGame(window.game, window.hero)
-  window.heros[window.hero.id] = window.hero
-  physics.addObject(window.hero)
+  window.hero = JSON.parse(JSON.stringify(window.defaultHero))
+  // physics.addObject(window.hero)
   // window.socket.emit('saveSocket', hero)
 }
 

@@ -10,7 +10,7 @@ function init() {
     // this is what sync should mean. Does every edit send immediately?
     window.socket.emit('updateWorld', { globalTags: world.globalTags });
   }});
-  window.worldeditor.set(window.world)
+  window.worldeditor.update(window.world)
   window.worldeditor.expandAll()
 
   window.selectorGameToggle = document.getElementById('set-game-boundaries')

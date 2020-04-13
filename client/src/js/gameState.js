@@ -1,8 +1,11 @@
 function init() {
   window.defaultGameState = {
-    paused : true,
+    paused : false,
     started: false,
     loaded: false,
+  }
+  if(!localStorage.getItem('gameStates')) {
+    localStorage.setItem('gameStates', JSON.stringify({}))
   }
 }
 

@@ -128,7 +128,7 @@ function init(hero){
         let editingObject = window.objects[newI]
         editingObject.i = newI
         window.objecteditor.saved = true
-        window.objecteditor.set(editingObject)
+        window.objecteditor.update(editingObject)
         window.updateObjectEditorNotifier()
         window.findObject(editingObject)
       }
@@ -146,7 +146,7 @@ function init(hero){
         let editingObject = window.objects[newI]
         editingObject.i = newI
         window.objecteditor.saved = true
-        window.objecteditor.set(editingObject)
+        window.objecteditor.update(editingObject)
         window.updateObjectEditorNotifier()
         window.findObject(editingObject)
       }

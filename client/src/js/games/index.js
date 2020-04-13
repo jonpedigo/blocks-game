@@ -1,10 +1,10 @@
-import defaultGame from './default'
+import defaultCustomGame from './default'
 import defaultCompendium from './default/compendium'
 import pacmanGame from './pacman'
 import templateGame from './template'
 
 let customGames = {
-  default: defaultGame,
+  default: defaultCustomGame,
   pacman: pacmanGame,
 }
 
@@ -14,14 +14,14 @@ let customCompendiums = {
 
 function init() {
   window.customGame = null
-  window.defaultGame = defaultGame
+  window.defaultCustomGame = defaultCustomGame
 
   window.customCompendium = null
   window.defaultCompendium = defaultCompendium
 
   /// didnt get to init because it wasnt set yet
-  if(window.defaultGame) {
-    window.defaultGame.init()
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.init()
   }
 }
 

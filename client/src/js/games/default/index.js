@@ -30,19 +30,19 @@ function start() {
 function input(hero, keysDown, delta) {
   if(hero.flags.paused || window.gameState.paused) return
   if(90 in keysDown) {
-    if(window.hero.actionButtonBehavior === 'shootBullet') {
+    if(hero.actionButtonBehavior === 'shootBullet') {
       action.shootBullet()
     }
-    if(window.hero.actionButtonBehavior === 'dropWall') {
+    if(hero.actionButtonBehavior === 'dropWall') {
       action.dropWall()
     }
   }
 }
 
 // only on client
-function intelligence(object, delta) {
+function intelligence(object, hero, delta) {
   if(object.tags && object.tags['zombie']) {
-    object.target = { x: window.hero.x, y: window.hero.y }
+    object.target = { x: hero.x, y: hero.y }
   }
 
   if(object.tags && object.tags['homing']) {
@@ -51,16 +51,16 @@ function intelligence(object, delta) {
       object.gridX = gridX
       object.gridY = gridY
 
-      const heroGridPos = gridTool.convertToGridXY(window.hero)
-      window.hero.gridX = heroGridPos.gridX
-      window.hero.gridY = heroGridPos.gridY
+      const heroGridPos = gridTool.convertToGridXY(hero)
+      hero.gridX = heroGridPos.gridX
+      hero.gridY = heroGridPos.gridY
 
       object.path = pathfinding.findPath({
         x: gridX,
         y: gridY,
       }, {
-        x: window.hero.gridX,
-        y: window.hero.gridY,
+        x: hero.gridX,
+        y: hero.gridY,
       }, { pathfindingLimit: object.pathfindingLimit })
     }
   }
@@ -183,10 +183,10 @@ function intelligence(object, delta) {
 }
 
 // only on client
-function onCollide(agent, collider, result, removeObjects) {
+function onCollide(agent, collider, result, removeObjects, respawnObjects, hero) {
   if(collider.tags && agent.tags && collider.tags['bullet'] && agent.tags['monster']) {
     removeObjects.push(agent)
-    window.hero.score++
+    hero.score++
   }
 
   if(agent.tags && agent.tags['goomba'] && collider.tags && collider.tags['obstacle']) {

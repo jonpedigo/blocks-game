@@ -29,13 +29,12 @@ let currentGame = {
   world: {},
 }
 
-function setGame(id, cb) {
+function getGame(id, cb) {
   fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
     if (err){
         console.log(err);
     } else {
     let game = JSON.parse(data); //now it an gameect
-    currentGame = game
     return cb(game)
   }});
 }
@@ -98,14 +97,20 @@ io.on('connection', function(socket){
 
   // this is for when we are editing and we want to send this world to all people
   socket.on('setGame', (id) => {
-    setGame(id, (game) => {
+    getGame(id, (game) => {
+      currentGame = game
       io.emit('onSetGame', game)
     })
   })
 
+  // this is for when we are editing and we want to send this world to all people
+  socket.on('copyGame', (id) => {
+    getGame(id, (game) => {
+      io.emit('onCopyGame', game)
+    })
+  })
 
-
-  // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
+  // this is when the editor asks to load up a game
   socket.on('setAndLoadCurrentGame', (id) => {
     fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
@@ -129,7 +134,6 @@ io.on('connection', function(socket){
   })
 
   socket.on('resetGameState', (gameState) => {
-    currentGame.gameState = {}
     io.emit('onResetGameState', gameState)
   })
 
@@ -140,6 +144,10 @@ io.on('connection', function(socket){
 
   socket.on('startGame', () => {
     io.emit('onStartGame')
+  })
+
+  socket.on('stopGame', () => {
+    io.emit('onStopGame')
   })
 
   ///////////////////////////
@@ -162,19 +170,18 @@ io.on('connection', function(socket){
     io.emit('onEditObjects', currentGame.objects)
   })
   socket.on('resetObjects', (objects) => {
-    currentGame.objects = []
     io.emit('onResetObjects')
   })
   socket.on('removeObject', (object) => {
     io.emit('onRemoveObject', object)
   })
   socket.on('deleteObject', (object) => {
-    for(let i = 0; i < currentGame.objects.length; i++) {
-  		if(currentGame.objects[i].id === object.id){
-  			currentGame.objects.splice(i, 1)
-  			break;
-  		}
-  	}
+    // for(let i = 0; i < currentGame.objects.length; i++) {
+  	// 	if(currentGame.objects[i].id === object.id){
+  	// 		currentGame.objects.splice(i, 1)
+  	// 		break;
+  	// 	}
+  	// }
     io.emit('onDeleteObject', object)
   })
   socket.on('askObjects', () => {
@@ -200,8 +207,10 @@ io.on('connection', function(socket){
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', () => {
-    currentGame.world = {}
     io.emit('onResetWorld')
+  })
+  socket.on('updateWorldOnServerOnly', (updatedWorld) => {
+    mergeDeep(currentGame.world, updatedWorld)
   })
 
 
@@ -217,6 +226,12 @@ io.on('connection', function(socket){
   socket.on('updateHero', (hero) => {
     currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
+  })
+  socket.on('updateHeros', (heros) => {
+    currentGame.heros = heros
+    Object.keys(currentGame.heros).forEach((id) => {
+      io.emit('onUpdateHero', currentGame.heros[id])
+    })
   })
   socket.on('editHero', (hero) => {
     currentGame.heros[hero.id] = hero

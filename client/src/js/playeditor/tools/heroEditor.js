@@ -99,12 +99,12 @@ function init() {
 
   window.setEditingHero = function(hero) {
     window.editingHero = hero
-    window.heroeditor.set(window.editingHero)
+    window.heroeditor.update(window.editingHero)
     window.heroeditor.expandAll()
   }
 
   window.getEditingHero = function() {
-    window.heroeditor.set(window.heros[window.editingHero.id])
+    window.heroeditor.update(window.heros[window.editingHero.id])
     window.heroeditor.expandAll()
   }
 
