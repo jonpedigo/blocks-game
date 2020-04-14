@@ -133,8 +133,9 @@ function drawVertice(ctx, vertice) {
 function init() {
 
 }
+
 function loaded() {
-  camera.multiplier = window.hero.zoomMultiplier / window.canvasMultiplier
+
 }
 
 export default {

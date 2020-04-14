@@ -54,18 +54,20 @@ function init() {
     window.defaultHero.x = window.grid.startX + (window.grid.width * window.grid.nodeSize)/2
     window.defaultHero.y = window.grid.startY + (window.grid.height * window.grid.nodeSize)/2
   })
+
+  let savedHero = localStorage.getItem('hero');
+  if(savedHero && JSON.parse(savedHero).id){
+    window.heroId = JSON.parse(savedHero).id
+  } else {
+    window.heroId = 'hero-'+Date.now()
+  }
 }
 
 function loaded() {
-  let savedHero = localStorage.getItem('hero');
-  if(savedHero && JSON.parse(savedHero).id){
-    window.defaultHero.id = JSON.parse(savedHero).id
-  } else {
-    window.defaultHero.id = 'hero-'+Date.now()
+  if(window.host) {
+    window.hero = window.findHeroInNewGame(window.game)
+    window.hero.id = window.heroId
   }
-  window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  // physics.addObject(window.hero)
-  // window.socket.emit('saveSocket', hero)
 }
 
 window.spawnHero = function (hero) {
@@ -296,7 +298,7 @@ function setRevertUpdateTimeout(hero, collider) {
 
 window.findHeroInNewGame = function(game, hero) {
   // if we have decided to restore position, find hero in hero list
-  if(game.world.globalTags.shouldRestoreHero && game.heros) {
+  if(game.world.globalTags.shouldRestoreHero && game.heros && hero) {
     for(var heroId in game.heros) {
       let currentHero = game.heros[heroId]
       if(currentHero.id == hero.id) {

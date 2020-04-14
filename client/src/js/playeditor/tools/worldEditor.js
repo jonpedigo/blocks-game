@@ -17,6 +17,7 @@ function init() {
   window.selectorCameraToggle = document.getElementById('set-camera')
   window.selectorSpawnToggle = document.getElementById('set-spawn')
   window.selectorProceduralToggle = document.getElementById('set-procedural')
+  window.selectorHeroZoomToggle = document.getElementById('set-hero-zooms')
 
   var cleararea = document.getElementById("clear-area-selected")
   cleararea.addEventListener('click', (e) => {
@@ -169,6 +170,60 @@ function init() {
     if(window.selectorProceduralToggle.checked) {
       let zoomMultiplier = window.world.proceduralBoundaries.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
       window.sendHeroUpdate({ zoomMultiplier })
+    }
+  })
+
+  var zoomOutSelected = document.getElementById("zoom-out-selected");
+  zoomOutSelected.addEventListener('click', function(){
+    if(window.selectorProceduralToggle.checked && window.world.proceduralBoundaries) {
+      let procedural = window.world.proceduralBoundaries
+      window.socket.emit('updateWorld', { proceduralBoundaries: { ...procedural, width: (procedural.width + (window.grid.nodeSize * 2)), height: (procedural.height + (window.grid.nodeSize)), x:  procedural.x -  window.grid.nodeSize, y: procedural.y  - (window.grid.nodeSize/2) } })
+    }
+    if(selectorCameraToggle.checked) {
+      let lockCamera = window.world.lockCamera
+      lockCamera.x -= window.grid.nodeSize
+      lockCamera.y -= window.grid.nodeSize/2
+      lockCamera.width += (window.grid.nodeSize * 2)
+      lockCamera.height += (window.grid.nodeSize)
+      lockCamera = { ...lockCamera, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+      window.socket.emit('updateWorld', { lockCamera })
+    }
+    if(selectorGameToggle.checked) {
+      let game = window.world.gameBoundaries
+      window.socket.emit('updateWorld', { gameBoundaries: { ...game, width: (game.width + (window.grid.nodeSize * 2)), height: (game.height + (window.grid.nodeSize)), x:  game.x -  window.grid.nodeSize, y: game.y  - (window.grid.nodeSize/2) } })
+    }
+    if(window.selectorHeroZoomToggle.checked) {
+      Object.keys(window.heros).forEach((id) => {
+        let hero = window.heros[id]
+        window.socket.emit('editHero', { id: hero.id, zoomMultiplier: hero.zoomMultiplier + .1250 })
+      })
+    }
+  })
+
+  var zoomInSelected = document.getElementById("zoom-in-selected");
+  zoomInSelected.addEventListener('click', function(){
+    if(window.selectorProceduralToggle.checked && window.world.proceduralBoundaries) {
+      let procedural = window.world.proceduralBoundaries
+      window.socket.emit('updateWorld', { proceduralBoundaries: { ...procedural, width: (procedural.width - (window.grid.nodeSize * 2)), height: (procedural.height - (window.grid.nodeSize)), x:  procedural.x +  window.grid.nodeSize, y: procedural.y  + (window.grid.nodeSize/2) } })
+    }
+    if(selectorCameraToggle.checked) {
+      let lockCamera = window.world.lockCamera
+      lockCamera.x -= window.grid.nodeSize
+      lockCamera.y -= window.grid.nodeSize/2
+      lockCamera.width += (window.grid.nodeSize * 2)
+      lockCamera.height += (window.grid.nodeSize)
+      lockCamera = { ...lockCamera, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+      window.socket.emit('updateWorld', { lockCamera })
+    }
+    if(selectorGameToggle.checked) {
+      let game = window.world.gameBoundaries
+      window.socket.emit('updateWorld', { gameBoundaries: { ...game, width: (game.width - (window.grid.nodeSize * 2)), height: (game.height - (window.grid.nodeSize)), x:  game.x +  window.grid.nodeSize, y: game.y  + (window.grid.nodeSize/2) } })
+    }
+    if(window.selectorHeroZoomToggle.checked) {
+      Object.keys(window.heros).forEach((id) => {
+        let hero = window.heros[id]
+        window.socket.emit('editHero', { id: hero.id, zoomMultiplier: hero.zoomMultiplier - .1250 })
+      })
     }
   })
 }

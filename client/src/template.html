@@ -57,17 +57,21 @@
     </div>
 
     <div id='tool-worldEditor' class="tool-feature invisible">
-      <div><input type='radio' name='selector' checked id='set-game-boundaries'>game</input></div>
-      <div><input type='radio' name='selector' id='set-camera'>camera</input></div>
-      <div><input type='radio' name='selector' id='set-spawn'>spawn</input></div>
-      <div><input type='radio' name='selector' id='set-procedural'>procedural</input></div>
+      <div><input type='checkbox' checked id='set-game-boundaries'>game</input></div>
+      <div><input type='checkbox' id='set-camera'>camera</input></div>
+      <div><input type='checkbox' id='set-spawn'>spawn</input></div>
+      <div><input type='checkbox' id='set-procedural'>procedural</input></div>
+      <div><input type='checkbox' id='set-hero-zooms'>hero zooms</input></div>
       <hr/>
-      <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
       <button id='set-selected-to-grid'>set selected to grid</button>
       <button id='set-selected-to-grid-minus-1'>set selected to grid minus 1 ( for flips)</button>
       <button id='set-selected-to-game-boundary'>set selected to gameboundary</button>
       <button id='match-game-boundary-to-selected'>set gameboundary to selected</button>
+      <hr/>
+      <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
       <button id='set-zoom-to-selected'>set zoomMultiplier to selected</button>
+      <button id='zoom-in-selected'>zoom selected in</button>
+      <button id='zoom-out-selected'>zoom selected out</button>
       <hr/>
       <button id='clear-area-selected'>clear selected preference</button>
       <hr/>
@@ -115,6 +119,7 @@
       <button id='save-game'>Save game</button>
       <button id='set-game'>Load game</button>
       <button id='copy-game-to-clipboard'>Copy Game to Clipboard</button>
+      <button id='copy-compendium-to-clipboard'>Copy Compendium to Clipboard</button>
       <div id='game-dom-elem' style="display:none;">test</div>
       <hr>
       <div><input type='checkbox' checked id='sync-game-state'>Sync Game State</input></div>

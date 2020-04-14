@@ -46,6 +46,12 @@ function init() {
     window.copyToClipBoard(copyText)
   })
 
+  var copyCompendiumToClipBoard = document.getElementById("copy-compendium-to-clipboard");
+  copyCompendiumToClipBoard.addEventListener('click', () => {
+    var copyText = JSON.stringify(window.compendium);
+    window.copyToClipBoard(copyText)
+  })
+
   var resetAllObjectStateButton = document.getElementById("reset-all-objects-state");
   resetAllObjectStateButton.addEventListener('click', () => {
     window.resetAllObjectState()

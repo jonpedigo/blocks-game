@@ -4,6 +4,10 @@
 //
 // ( Force anticipated add )
 
+// branch edit
+// set live branch to editing branch
+// merge live branch with editing branch
+
 ////////////////////////////////////////////////////
 
 // attack button ( like papa bear spears!! )
@@ -194,6 +198,8 @@ window.initializeGame = function (initialGameId) {
 		chat.init()
 	}
 
+  // window.socket.emit('saveSocket', window.heroId)
+
   // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
   window.socket.emit('askRestoreCurrentGame')
   window.socket.on('onAskRestoreCurrentGame', (game) => {
@@ -203,11 +209,19 @@ window.initializeGame = function (initialGameId) {
       window.changeGame(game.id)
       if(window.host || window.usePlayEditor) {
         window.loadGame(game)
-      } else {
-        window.loadGameNonHost(game)
+        window.onGameLoaded()
+        startGameLoop()
+      } else if(window.isPlayer) {
+        window.socket.emit('askJoinGame', window.heroId)
+        window.socket.on('onJoinGame', (hero) => {
+          if(hero.id == window.heroId) {
+            window.hero = hero
+            window.loadGameNonHost(game)
+            window.onGameLoaded()
+            startGameLoop()
+          }
+        })
       }
-      window.onGameLoaded()
-      startGameLoop()
     } else {
 
       // right now I only have something for the play editor to do if there is no current game
@@ -253,10 +267,9 @@ window.loadGameNonHost = function (game) {
   window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
   window.grid = game.grid
   window.client.emit('onGridLoaded')
-
-  if(window.usePlayEditor) {
-    window.grid.nodes = grid.generateGridNodes(window.grid)
-  }
+  window.objects = game.objects
+  window.grid.nodes = grid.generateGridNodes(window.grid)
+  window.handleWorldUpdate(window.world)
 }
 
 //////////////////////////////////////////////////////////////
@@ -415,8 +428,8 @@ var update = function (delta) {
     //   physics.heroCorrection(heroCopy)
     //   physics.containObjectWithinGridBoundaries(heroCopy)
     // }
-    localStorage.setItem('hero', JSON.stringify(window.hero))
-    window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero)
+    if(window.hero) localStorage.setItem('hero', JSON.stringify(window.hero))
+    window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
   }
 
   if(window.ghost) {

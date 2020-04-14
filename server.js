@@ -41,10 +41,9 @@ function getGame(id, cb) {
 
 
 io.on('connection', function(socket){
-  socket.on('saveSocket', (hero) => {
-    herosockets[hero.id] = socket
-    currentGame.heros[hero.id] = hero
-  })
+  // socket.on('saveSocket', (heroId) => {
+  //   herosockets[heroId] = socket
+  // })
 
   ///////////////////////////
   ///////////////////////////
@@ -64,6 +63,8 @@ io.on('connection', function(socket){
         game.hero = game.heros[heroId]
       }
     }
+
+    if(game.heros) delete game.heros
 
     if(!game.id) {
       game.id = Date.now()
@@ -120,6 +121,14 @@ io.on('connection', function(socket){
       currentGame = obj
       socket.emit('onLoadGame', currentGame)
     }});
+  })
+
+  socket.on('askJoinGame', (heroId) => {
+    io.emit('onAskJoinGame', heroId)
+  })
+
+  socket.on('addHeroToGame', (hero) => {
+    io.emit('onJoinGame', hero)
   })
 
   // this is really only for the live editing shit when im reloading their page all the time

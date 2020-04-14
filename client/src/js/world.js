@@ -7,7 +7,7 @@ function init() {
     id: 'world-' + Date.now(),
   	lockCamera: null,
   	gameBoundaries: null,
-    procedural: null,
+    proceduralBoundaries: null,
     worldSpawnPointX: null,
     worldSpawnPointY: null,
     globalTags: {

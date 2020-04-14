@@ -157,9 +157,9 @@ function init() {
           }
 
           window.socket.emit('updateWorld', {worldSpawnPointX: click.x, worldSpawnPointY: click.y})
-        } else {
-          defaultFirstClick(e)
         }
+
+        defaultFirstClick(e)
       },
       onSecondClick: (e) => {
         //translate
@@ -176,12 +176,21 @@ function init() {
         if(window.currentTool === TOOLS.PROCEDURAL || selectorProceduralToggle.checked) {
           const proceduralBoundaries = { x, y, width, height };
           window.socket.emit('updateWorld', { proceduralBoundaries })
-        } else if(selectorCameraToggle.checked) {
+        }
+        if(selectorCameraToggle.checked) {
           const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
           window.socket.emit('updateWorld', { lockCamera })
-        } else if(selectorGameToggle.checked) {
+        }
+        if(selectorGameToggle.checked) {
           const gameBoundaries = { x, y, width, height };
           window.socket.emit('updateWorld', { gameBoundaries })
+        }
+        if(window.selectorHeroZoomToggle.checked) {
+          let gridWidth = value.width/window.grid.nodeSize
+          Object.keys(window.heros).forEach((id) => {
+            let hero = window.heros[id]
+            window.socket.emit('editHero', {id, zoomMultiplier: gridWidth/16})
+          })
         }
       },
     },

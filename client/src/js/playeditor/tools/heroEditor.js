@@ -64,9 +64,9 @@ function init() {
     }
   }
   var zoomOutButton = document.getElementById("hero-zoomOut");
-  zoomOutButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .0625 }))
+  zoomOutButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier + .1250 }))
   var zoomInButton = document.getElementById("hero-zoomIn");
-  zoomInButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .0625 }))
+  zoomInButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .1250 }))
 
   function sendHeroUpdate(update) {
     window.mergeDeep(window.editingHero, update)

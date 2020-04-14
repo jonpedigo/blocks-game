@@ -12,20 +12,29 @@ function init() {
   ///////////////////////////////
 
   if(window.host) {
-    // PLAYERS CALL THIS
-    window.socket.on('onSendHeroInput', (heroInput, hero) => {
-      if(!window.heros[hero.id]) {
-        window.heros[hero.id] = hero
+    window.socket.on('onAskJoinGame', (heroId) => {
+      if(window.gameState && window.gameState.loaded) {
+        let hero = window.heros[heroId]
+        if(!hero) {
+          hero = window.findHeroInNewGame(window.game)
+          window.heros[heroId] = hero
+        }
         physics.addObject(hero)
+        hero.id = heroId
+        window.socket.emit('addHeroToGame', hero)
       }
-      window.heroInput[hero.id] = heroInput
+    })
+
+    // PLAYERS CALL THIS
+    window.socket.on('onSendHeroInput', (heroInput, heroId) => {
+      window.heroInput[heroId] = heroInput
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
       Object.keys(window.heros).forEach((id) => {
         if(id === hero.id) {
-          window.heros[id] = window.resetHeroToDefault(hero)
+          window.heros[id] = window.resetHeroToDefault(window.heros[id])
         }
       })
     })
@@ -34,7 +43,7 @@ function init() {
     window.socket.on('onRespawnHero', (hero) => {
       Object.keys(window.heros).forEach((id) => {
         if(id === hero.id) {
-          window.respawnHero(hero)
+          window.respawnHero(window.heros[id])
         }
       })
     })
@@ -170,7 +179,6 @@ function init() {
     if(!window.host) {
       if(!window.heros[updatedHero.id]) {
         window.heros[updatedHero.id] = updatedHero
-        physics.addObject(updatedHero)
       }
       window.mergeDeep(window.heros[updatedHero.id], updatedHero)
     }
@@ -235,12 +243,12 @@ function init() {
     gridTool.updateGridObstacles()
     if(window.host) window.resetPaths = true
     if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-    handleWorldUpdate(window.world)
+    window.handleWorldUpdate(window.world)
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
-    if(window.host) {
+    if(window.world) {
       for(let key in updatedWorld) {
         const value = updatedWorld[key]
 
@@ -343,7 +351,6 @@ function init() {
     }
   })
 
-  // this is switching between games
   window.socket.on('onCopyGame', (game) => {
     // if theres already a game going on, need to unload it
     if(window.objects.length) {
@@ -362,6 +369,29 @@ function init() {
 
     if(window.host || window.usePlayEditor) window.loadGame(game)
     else window.loadGameNonHost(game)
+  })
+
+
+  // this is switching between games
+  window.socket.on('onSetGame', (game) => {
+    // if theres already a game going on, need to unload it
+    if(window.objects.length) {
+      if(window.usePlayEditor) {
+        window.editingObject = {
+          id: null,
+          i: null,
+        }
+        window.objecteditor.saved = true
+        window.objecteditor.update({})
+      }
+      window.objects.forEach((object) => {
+        physics.removeObjectById(object.id)
+      })
+    }
+
+    if(window.host || window.usePlayEditor) window.loadGame(game)
+    else window.loadGameNonHost(game)
+    window.changeGame(game.id)
   })
 
   // window.socket.on('onNewGame', () => {
