@@ -19,8 +19,9 @@ function init() {
           hero = window.findHeroInNewGame(window.game)
           window.heros[heroId] = hero
         }
-        physics.addObject(hero)
         hero.id = heroId
+        physics.addObject(hero)
+        console.log('?')
         window.socket.emit('addHeroToGame', hero)
       }
     })

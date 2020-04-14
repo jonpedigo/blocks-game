@@ -208,7 +208,7 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
   }
 
   if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat) {
-    if(colliderid !== hero.lastChatId) {
+    if(collider.id !== hero.lastChatId) {
       hero.chat = collider.heroUpdate.chat.slice()
       // hero.chat.name = body.id
       hero.lastChatId = collider.id

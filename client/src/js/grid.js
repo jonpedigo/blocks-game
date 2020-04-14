@@ -278,7 +278,7 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     hero = window.editingHero
   }
 
-  if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && window.world.gameBoundaries.behavior === 'boundaryAll' && !options.bypassGameBoundaries) {
+  if(window.world.gameBoundaries && window.world.gameBoundaries.x >= 0 && (window.world.gameBoundaries.behavior === 'boundaryAll' || window.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(window.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
       return false

@@ -2,8 +2,8 @@ import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import pathfinding from '../../pathfinding.js'
 
-function shootBullet() {
-  let direction = window.hero.inputDirection
+function shootBullet(hero) {
+  let directions = window.hero.directions
   let shooted = {
     id: 'bullet-' + Date.now(),
     width: 4,
@@ -13,28 +13,28 @@ function shootBullet() {
     },
   }
 
-  if(direction === 'up') {
+  if(directions.up) {
     Object.assign(shooted, {
       x: window.hero.x + (window.hero.width/2),
       y: window.hero.y,
     })
   }
 
-  if(direction === 'down') {
+  if(direction.down) {
     Object.assign(shooted, {
       x: window.hero.x + (window.hero.width/2),
       y: window.hero.y + window.hero.height,
     })
   }
 
-  if(direction === 'right') {
+  if(direction.right) {
     Object.assign(shooted, {
       x: window.hero.x + window.hero.width,
       y: window.hero.y + (window.hero.height/2),
     })
   }
 
-  if(direction === 'left') {
+  if(direction.left) {
     Object.assign(shooted, {
       x: window.hero.x,
       y: window.hero.y + (window.hero.height/2),
@@ -44,8 +44,8 @@ function shootBullet() {
   addObjects([shooted])
 }
 
-function dropWall() {
-  let direction = window.hero.inputDirection
+function dropWall(hero) {
+  let directions = hero.directions
   let wall = {
     id: 'wall-' + Date.now(),
     width: window.grid.nodeSize,
@@ -56,28 +56,28 @@ function dropWall() {
     },
   }
 
-  if(direction === 'up') {
+  if(directions.up) {
     Object.assign(wall, {
       x: window.hero.x,
       y: window.hero.y - window.hero.height,
     })
   }
 
-  if(direction === 'down') {
+  if(directions.down) {
     Object.assign(wall, {
       x: window.hero.x,
       y: window.hero.y + window.hero.height,
     })
   }
 
-  if(direction === 'right') {
+  if(directions.right) {
     Object.assign(wall, {
       x: window.hero.x + window.hero.width,
       y: window.hero.y,
     })
   }
 
-  if(direction === 'left') {
+  if(direction.left) {
     Object.assign(wall, {
       x: window.hero.x - window.hero.width,
       y: window.hero.y,

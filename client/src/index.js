@@ -1,12 +1,10 @@
-// CURRENT PRIORITY
-// Zoom out area, zoom in area
-// Zoom out hero and areas
-//
 // ( Force anticipated add )
-
 // branch edit
-// set live branch to editing branch
+// reset live branch to editing branch
 // merge live branch with editing branch
+// save editing branch as default state
+// local client events
+// interpolation
 
 ////////////////////////////////////////////////////
 
@@ -38,15 +36,16 @@
 // INSTEAD allow for stationary objects that are touching eachother to all be combined! This helps with physics and performance
 // Maybe make a diagonal wall..
 // path goals AKA patrol
-
+// path 1, path 2, path 3 with conditions
+// 'take it easy' tag AKA pathfind less often
+// 'dont backtrack' tag where they remember where they went
 
 ///////
 // EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
-// editor gridsnap toggle in world editorPref
-
+// HOST EVENT FOR RESET OBJECT STATE AKA CLEANUP? Delete objects, reset values to their initial state values
+// BETTER RELATIONSHIP BETWEEN DEFAULT STATE AND initialize/load
 ////
 // (Snap to grid Toggle)
-//
 // — bring velocity to zero for hero
 // — speed up hero
 // — slow down hero
@@ -54,20 +53,49 @@
 // — decrease speed parameter
 // — set Zoom to all heros
 // add grid to world editor
-// Set Both camera and game boundaries ( perhaps check boxes )
-// START THEM OFF CHECKED..
-//
 //
 // Follow whatever you are editing
 // editor preferences - zoom, editing object, editing hero, current menu, etc..
 // I already have world MODIFIERS, those are the worlds I have just created. Make them world modifiers instead of loaded world?
 // Switch tools based on actions!
+// Make default clicking actions on the canvas universal regardless of tool.
+// right click -> edit object
+// set editor to recently added object
+// only if user has clicked a special action on the right tool bar will the map clicking behavior change
 
-// HOST EVENT FOR RESET OBJECT STATE AKA CLEANUP? Delete objects, reset values to their initial state values
-// its very possible that iniital state could work where we just copy window.objects upon starting the game, when the game
-// wants to be restarted, we just set the objects back to that initial value...
-// the complicated thing is deciding where to add the objects that are being added during 'play'
-// having an indicator notifying if we are adding an object during play and therefore just part of game state vs actually adding to the world...?
+// Take up more horizontal space on the editor because right now the dimensions are just not right!
+// TOP BAR
+
+// confirmation on leaving back without saving or copying. HAve copy option
+
+// editor UI needs to prioritize most time sensitive, most common, most SERIOUS/DANGEROUS options
+
+// have the zoom of the editor get set to the gameBoundaries
+// a button for 'zoom to where most objects are' THING WOULD BE GREAT
+
+// JUICE IDEAS
+/*Trails,
+	long trail
+	leaving trail ( drops )
+
+Shakes
+	Object Shakes
+	Camera Shakes
+
+FLASHES
+
+Glow
+
+NEON vibe?
+
+Dust particles
+
+Particles being sucked into the player ( POWER!!! )
+
+Splatter
+
+Engine trail on a car u know what I mean?
+*/
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
@@ -133,7 +161,7 @@ window.onPageLoad = function() {
 
   if(window.getParameterByName('ghost')) {
     window.usePlayEditor = false
-    window.isPlayer = false
+    window.isPlayer = true
     window.host = false
     window.ghost = true
   }
@@ -204,14 +232,18 @@ window.initializeGame = function (initialGameId) {
   window.socket.emit('askRestoreCurrentGame')
   window.socket.on('onAskRestoreCurrentGame', (game) => {
     let currentGameExists = game && game.id
-
     if(currentGameExists) {
       window.changeGame(game.id)
-      if(window.host || window.usePlayEditor) {
+      if(window.ghost) {
+        window.loadGameNonHost(game)
+        window.onGameLoaded()
+        startGameLoop()
+      } else if(window.host || window.usePlayEditor) {
         window.loadGame(game)
         window.onGameLoaded()
         startGameLoop()
       } else if(window.isPlayer) {
+        console.trace('askingToJoin?')
         window.socket.emit('askJoinGame', window.heroId)
         window.socket.on('onJoinGame', (hero) => {
           if(hero.id == window.heroId) {
@@ -363,11 +395,11 @@ window.onGameLoaded = function() {
   then = Date.now()
 
   objects.loaded()
-  if(window.ghost) ghost.loaded()
   if(window.isPlayer) {
     hero.loaded()
     input.loaded()
   }
+  if(window.ghost) ghost.loaded()
 
   if(window.usePlayEditor) {
     playEditor.loaded()
@@ -420,7 +452,7 @@ var mainLoop = function () {
 ///////////////////////////////
 ///////////////////////////////
 var update = function (delta) {
-  if(window.isPlayer) {
+  if(window.isPlayer && !window.ghost) {
     // if(!window.gameState.paused) {
     //   input.update(delta)
     //   physics.updatePosition(heroCopy, delta)

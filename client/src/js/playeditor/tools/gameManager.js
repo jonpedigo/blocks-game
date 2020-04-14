@@ -42,6 +42,7 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
+    if(window.game.grid && window.game.grid.nodes) delete window.game.grid.nodes
     var copyText = JSON.stringify(window.game);
     window.copyToClipBoard(copyText)
   })
