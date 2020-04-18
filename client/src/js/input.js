@@ -42,7 +42,7 @@ function update(hero, keysDown, delta) {
     }
   }
 
-  if(hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
 
   if(32 in keysDown) {
     if(hero.onGround && hero.tags.gravity) {
@@ -53,13 +53,13 @@ function update(hero, keysDown, delta) {
 
   if(hero.arrowKeysBehavior === 'grid') {
     if (38 in keysDown) { // Player holding up
-      hero.y -= window.grid.nodeSize
+      hero.y -= w.game.grid.nodeSize
     } else if (40 in keysDown) { // Player holding down
-      hero.y += window.grid.nodeSize
+      hero.y += w.game.grid.nodeSize
     } else if (37 in keysDown) { // Player holding left
-      hero.x -= window.grid.nodeSize
+      hero.x -= w.game.grid.nodeSize
     } else if (39 in keysDown) { // Player holding right
-      hero.x += window.grid.nodeSize
+      hero.x += w.game.grid.nodeSize
     }
   }
 
@@ -100,7 +100,7 @@ function update(hero, keysDown, delta) {
     window.liveCustomGame.input(hero, keysDown, delta)
   }
 
-  if(hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
 
   hero._initialX = hero.x
   hero._initialY = hero.y

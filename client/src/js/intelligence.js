@@ -36,8 +36,8 @@ function moveOnPath(object) {
     return
   }
 
-  let pathX = (object.path[0].x * window.grid.nodeSize) + window.grid.nodes[0][0].x
-  let pathY = (object.path[0].y * window.grid.nodeSize) + window.grid.nodes[0][0].y
+  let pathX = (object.path[0].x * w.game.grid.nodeSize) + w.game.grid.nodes[0][0].x
+  let pathY = (object.path[0].y * w.game.grid.nodeSize) + w.game.grid.nodes[0][0].y
   if(object.gridX == object.path[0].x && diffX <= 2) {
     object.x = x
     object.velocityX = 0

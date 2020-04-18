@@ -104,29 +104,29 @@ function init() {
   }
 
   window.getEditingHero = function() {
-    window.heroeditor.update(window.heros[window.editingHero.id])
+    window.heroeditor.update(w.game.heros[window.editingHero.id])
     window.heroeditor.expandAll()
   }
 
   window.findHero = function() {
-    camera.setCamera(ctx, window.heros[window.editingHero.id])
+    camera.setCamera(ctx, w.game.heros[window.editingHero.id])
   }
 
   window.setEditorToAnyHero = function () {
     // init to any hero
-    if(window.heros.undefined) {
+    if(w.game.heros.undefined) {
       window.socket.emit('deleteHero', 'undefined')
-      delete window.heros.undefined
+      delete w.game.heros.undefined
     }
 
-    if(window.heros.null) {
+    if(w.game.heros.null) {
       window.socket.emit('deleteHero', 'null')
-      delete window.heros.null
+      delete w.game.heros.null
     }
 
-    for(var heroId in window.heros) {
-      if(window.heros[heroId].tags && window.heros[heroId].tags.isPlayer) {
-        window.setEditingHero(window.heros[heroId])
+    for(var heroId in w.game.heros) {
+      if(w.game.heros[heroId].tags && w.game.heros[heroId].tags.isPlayer) {
+        window.setEditingHero(w.game.heros[heroId])
         break;
       }
     }
@@ -135,7 +135,7 @@ function init() {
 }
 
 function loaded() {
-  if(window.world.syncHero) {
+  if(w.game.world.syncHero) {
     window.syncHeroToggle.checked = true;
   }
 }

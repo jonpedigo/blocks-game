@@ -48,8 +48,8 @@ function dropWall(hero) {
   let directions = hero.directions
   let wall = {
     id: 'wall-' + Date.now(),
-    width: window.grid.nodeSize,
-    height: window.grid.nodeSize,
+    width: w.game.grid.nodeSize,
+    height: w.game.grid.nodeSize,
     tags: {
       obstacle: true,
       stationary: true,

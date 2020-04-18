@@ -122,6 +122,7 @@ import gameState from './js/gameState.js'
 import './js/events.js'
 import games from './js/games/index'
 import ghost from './js/ghost.js'
+window.w = window;
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -202,6 +203,7 @@ window.onPageLoad = function() {
 ///////////////////////////////
 ///////////////////////////////
 window.initializeGame = function (initialGameId) {
+  window.game = {}
   games.init()
   objects.init()
   world.init()
@@ -243,7 +245,6 @@ window.initializeGame = function (initialGameId) {
         window.onGameLoaded()
         startGameLoop()
       } else if(window.isPlayer) {
-        console.trace('askingToJoin?')
         window.socket.emit('askJoinGame', window.heroId)
         window.socket.on('onJoinGame', (hero) => {
           if(hero.id == window.heroId) {
@@ -291,17 +292,17 @@ window.initializeGame = function (initialGameId) {
 };
 
 window.loadGameNonHost = function (game) {
-  window.game = game
-
   window.changeGame(game.id)
 
   // world
-  window.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-  window.grid = game.grid
+  w.game.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
+  w.game.grid = game.grid
   window.client.emit('onGridLoaded')
-  window.objects = game.objects
-  window.grid.nodes = grid.generateGridNodes(window.grid)
-  window.handleWorldUpdate(window.world)
+  w.game.objects = game.objects
+  w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
+  w.game.heros = {}
+  window.handleWorldUpdate(w.game.world)
+  console.log(w.game.heros)
 }
 
 //////////////////////////////////////////////////////////////
@@ -311,8 +312,7 @@ window.loadGameNonHost = function (game) {
 ///////////////////////////////
 ///////////////////////////////
 window.loadGame = function(game) {
-  window.game = game
-  window.grid = game.grid
+  window.game.grid = game.grid
   window.client.emit('onGridLoaded')
 
   /// didnt get to init because game.id wasnt set yet
@@ -330,44 +330,46 @@ window.loadGame = function(game) {
   let storedGameState = localStorage.getItem('gameStates')
   if(storedGameState) storedGameState = storedGameState[game.id]
   if(game.world.storeGameState && storedGameState) {
-    window.objects = storedGameState.objects
-    window.world = storedGameState.world
-    window.gameState = storedGameState.gameState
+    w.game.objects = storedGameState.objects
+    w.game.world = storedGameState.world
+    w.game.gameState = storedGameState.gameState
   } else {
-    window.objects = game.objects
-    window.world = game.world
+    w.game.objects = game.objects
+    w.game.world = game.world
     if(game.gameState && game.gameState.loaded) {
-      window.heros = game.heros
-      window.gameState = game.gameState
+      if(!w.game.heros) w.game.heros = {}
+      w.game.heros = game.heros
+      w.game.gameState = game.gameState
     } else {
-      window.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      Object.keys(window.heros).forEach((id) => {
-        window.heros[id] = window.findHeroInNewGame(game, window.heros[id])
+      w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      if(!w.game.heros) w.game.heros = {}
+      Object.keys(w.game.heros).forEach((id) => {
+        w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
       })
     }
   }
 
-  Object.keys(window.heros).forEach((id) => {
-    physics.addObject(window.heros[id])
+  Object.keys(w.game.heros).forEach((id) => {
+    physics.addObject(w.game.heros[id])
   })
 
-  if(!window.objectsById) window.objectsById = {}
-  window.objects.forEach((object) => {
-    window.objectsById[object.id] = object
+  if(!w.game.objectsById) w.game.objectsById = {}
+  w.game.objects.forEach((object) => {
+    w.game.objectsById[object.id] = object
     physics.addObject(object)
   })
 
   // grid
-  window.grid.nodes = grid.generateGridNodes(window.grid)
+  w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
   grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
-  handleWorldUpdate(window.world)
+  window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+  handleWorldUpdate(w.game.world)
 
   if(window.usePlayEditor) {
-    window.gamestateeditor.update(window.gameState)
+    window.gamestateeditor.update(w.game.gameState)
   }
 
-  if(!window.gameState.loaded) {
+  if(!w.game.gameState.loaded) {
     /// DEFAULT GAME FX
     if(window.defaultCustomGame) {
       window.defaultCustomGame.loaded()
@@ -378,7 +380,7 @@ window.loadGame = function(game) {
     }
   }
 
-  window.gameState.loaded = true
+  w.game.gameState.loaded = true
   window.onGameLoaded()
 }
 
@@ -390,6 +392,10 @@ window.loadGame = function(game) {
 ///////////////////////////////
 var then;
 window.onGameLoaded = function() {
+  if(window.usePlayEditor) {
+    window.editingGame = window.game
+  }
+
   window.pageState.gameLoaded = true
 
   then = Date.now()
@@ -415,8 +421,8 @@ window.onGameLoaded = function() {
 ///////////////////////////////
 ///////////////////////////////
 function startGameLoop() {
-  if(!window.objects || !window.world || !window.grid || !window.heros || (window.isPlayer && !window.hero)) {
-    console.log('game loaded without critical data, trying again soon', !window.objects, !window.world, !window.grid, !window.heros, (window.isPlayer && !window.hero))
+  if(!w.game.objects || !w.game.world || !w.game.grid || !w.game.heros || (window.isPlayer && !window.hero)) {
+    console.log('game loaded without critical data, trying again soon', !w.game.objects, !w.game.world, !w.game.grid, !w.game.heros, (window.isPlayer && !window.hero))
     setTimeout(startGameLoop, 1000)
     return
   }
@@ -426,7 +432,6 @@ function startGameLoop() {
   setTimeout(networkLoop, 100)
 }
 
-var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 var mainLoop = function () {
 	var now = Date.now();
@@ -453,7 +458,7 @@ var mainLoop = function () {
 ///////////////////////////////
 var update = function (delta) {
   if(window.isPlayer && !window.ghost) {
-    // if(!window.gameState.paused) {
+    // if(!w.game.gameState.paused) {
     //   input.update(delta)
     //   physics.updatePosition(heroCopy, delta)
     //   physics.prepareObjectsAndHerosForCollisionsPhase()
@@ -469,9 +474,9 @@ var update = function (delta) {
   }
 
   if(window.host) {
-    if(!window.gameState.paused) {
-      Object.keys(window.heros).forEach((id) => {
-        let hero = window.heros[id]
+    if(!w.game.gameState.paused) {
+      Object.keys(w.game.heros).forEach((id) => {
+        let hero = w.game.heros[id]
         if(hero.animationZoomTarget) {
           window.heroZoomAnimation(hero)
         }
@@ -479,12 +484,12 @@ var update = function (delta) {
         physics.updatePosition(hero, delta)
         window.heroInput[id] = {}
       })
-      window.objects.forEach((object) => {
+      w.game.objects.forEach((object) => {
         physics.updatePosition(object, delta)
       })
       physics.prepareObjectsAndHerosForCollisionsPhase()
       physics.update(delta)
-      intelligence.update(window.objects, delta)
+      intelligence.update(w.game.objects, delta)
 
       /// DEFAULT GAME FX
       if(window.defaultCustomGame) {
@@ -507,9 +512,9 @@ var update = function (delta) {
         window.anticipateObjectAdd(window.editingHero)
       }
 
-      if(window.host && window.world.globalTags.calculatePathCollisions) {
+      if(window.host && w.game.world.globalTags.calculatePathCollisions) {
         grid.updateGridObstacles()
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(window.grid.nodes)
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
       }
     }
   }
@@ -519,7 +524,7 @@ var update = function (delta) {
 function renderGame(delta) {
   if(window.usePlayEditor) {
     playEditor.update(delta)
-    playEditor.render(ctx, window.hero, window.objects);
+    playEditor.render(ctx, window.hero, w.game.objects);
   }
 
   if(window.isPlayer) {
@@ -548,13 +553,13 @@ function renderGame(delta) {
 
 function networkLoop() {
   if(window.host) {
-    window.socket.emit('updateObjects', window.objects)
-    window.socket.emit('updateGameState', window.gameState)
-    window.socket.emit('updateWorldOnServerOnly', window.world)
-    window.socket.emit('updateHeros', window.heros)
-    if(window.gameState.started && window.world.storeEntireGameState) {
+    window.socket.emit('updateObjects', w.game.objects)
+    window.socket.emit('updateGameState', w.game.gameState)
+    window.socket.emit('updateWorldOnServerOnly', w.game.world)
+    window.socket.emit('updateHeros', w.game.heros)
+    if(w.game.gameState.started && w.game.world.storeEntireGameState) {
       let storedGameState = localStorage.getItem('gameStates')
-      localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [window.game.id]: {...window.game, grid: {...window.game.grid, nodes: null }}}))
+      localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
     }
   }
   let timeout = window.lastDelta * 3

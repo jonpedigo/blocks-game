@@ -43,7 +43,7 @@ function init() {
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
     if(window.game.grid && window.game.grid.nodes) delete window.game.grid.nodes
-    var copyText = JSON.stringify(window.game);
+    var copyText = JSON.stringify(window.editingGame);
     window.copyToClipBoard(copyText)
   })
 
@@ -66,10 +66,10 @@ function init() {
   }
   window.saveGame = function() {
     window.game = {
-      heros: window.heros,
-      objects: window.objects,
-      world: window.world,
-      grid: window.grid,
+      heros: w.game.heros,
+      objects: w.game.objects,
+      world: w.game.world,
+      grid: w.game.grid,
       id: document.getElementById('game-id').value,
       compendium: window.compendium,
     }
@@ -87,7 +87,7 @@ function init() {
 
   var pauseResumeGameToggle = document.getElementById("pause-resume-game");
   pauseResumeGameToggle.addEventListener('click', () => {
-    emitEditorGameState({ paused: !window.gameState.paused })
+    emitEditorGameState({ paused: !w.game.gameState.paused })
   })
 
   var startGameButton = document.getElementById("start-game");
@@ -95,21 +95,41 @@ function init() {
     window.startGame()
   })
 
-  var startGameButton = document.getElementById("stop-game");
-  startGameButton.addEventListener('click', () => {
+  var stopGameButton = document.getElementById("stop-game");
+  stopGameButton.addEventListener('click', () => {
     window.stopGame()
   })
 
+  document.getElementById("branch-edit").addEventListener('click', () => {
+    window.branch = JSON.parse(JSON.stringify(window.game))
+    window.editingGame = window.branch
+  })
+
+  document.getElementById("merge-branch").addEventListener('click', () => {
+    window.mergeDeep(window.game, window.branch)
+    window.socket.emit('setGameJSON', window.game)
+  })
+
+  document.getElementById("reset-to-branch").addEventListener('click', () => {
+    window.socket.emit('setGameJSON', window.branch)
+  })
+
+  document.getElementById("clear-branch").addEventListener('click', () => {
+    window.unloadGame()
+    window.branch = null
+    window.loadGame(window.game)
+  })
+
   function emitEditorGameState (gameStateUpdate) {
-    window.socket.emit('editGameState', {...window.gameState, ...gameStateUpdate})
+    window.socket.emit('editGameState', {...w.game.gameState, ...gameStateUpdate})
   }
 
   function resetDefaults() {
     window.resetObjects()
     window.socket.emit('resetWorld')
     window.socket.emit('updateGrid', window.defaultGrid)
-    for(var heroId in window.heros) {
-      window.socket.emit('resetHeroToDefault', window.heros[heroId])
+    for(var heroId in w.game.heros) {
+      window.socket.emit('resetHeroToDefault', w.game.heros[heroId])
     }
     window.socket.emit('resetGameState')
   }
@@ -144,7 +164,7 @@ function init() {
 
 // client uses this sometimes
 window.resetSpawnAreasAndObjects = function() {
-  window.objects.forEach((object) => {
+  w.game.objects.forEach((object) => {
     if(object.removed) return
     if(object.spawned) {
       window.socket.emit('deleteObject', object)
@@ -164,7 +184,7 @@ function resetSpawnZone(object) {
 
 // client uses this sometimes
 window.resetAllObjectState = function() {
-  window.objects.forEach((object) => {
+  w.game.objects.forEach((object) => {
     if(object.spawned) {
       window.socket.emit('deleteObject', object)
     }
@@ -177,7 +197,7 @@ window.resetAllObjectState = function() {
     window.removeObjectState(object)
     window.respawnObject(object)
   })
-  window.socket.emit('editObjects', window.objects)
+  window.socket.emit('editObjects', w.game.objects)
 }
 
 export default {

@@ -1,10 +1,4 @@
 function init() {
-  var saveObjects = document.getElementById("save-factory");
-  saveObjects.addEventListener('click', function(e){
-    window.socket.emit('addObjects', window.objectFactory)
-    window.objectFactory = []
-  })
-
   var anticipatedObjectAdd = document.getElementById("anticipated-object-add");
   anticipatedObjectAdd.addEventListener('click', function(e){
     window.socket.emit('anticipateObject', window.objecteditor.get());
@@ -19,7 +13,6 @@ function init() {
   window.dragAddToggle = document.getElementById("add-object-drag")
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.useEditorSizeAddToggle = document.getElementById("add-object-editor")
-  window.instantAddToggle = document.getElementById("instant-add")
 
   window.compendium = {}
 
@@ -66,7 +59,7 @@ function clickOnCompendium(rightClick, compendium) {
     if(window.objecteditor.live) {
       if(confirm('this will merge this object to adopt all properties of ' + compendium.compendiumId)) {
         let editorState = window.objecteditor.get()
-        let objectById = window.objectsById[editorState.id]
+        let objectById = w.game.objectsById[editorState.id]
         let compendiumCopy = JSON.parse(JSON.stringify(compendium))
         delete compendiumCopy.compendiumId
         let updated = window.mergeDeep(objectById, compendiumCopy)

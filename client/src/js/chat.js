@@ -3,7 +3,7 @@ function init() {
 
 }
 
-function render(ctx){
+function render(ctx, hero){
 	if(window.hero.flags.showChat){
 		if(window.hero.chat.length) {
 			drawChat(ctx, window.hero.chat)

@@ -236,7 +236,7 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //DO THE PACMAN FLIP!!
-  let gameBoundaries = window.world.gameBoundaries
+  let gameBoundaries = w.game.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
     if(object.tags.fresh) {
@@ -315,25 +315,25 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
-    object.x = (window.grid.nodeSize * window.grid.width) + window.grid.startX - object.width
+  if(object.x + object.width > (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX) {
+    object.x = (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX - object.width
   }
-  if(object.y + object.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
-    object.y = (window.grid.nodeSize * window.grid.height) + window.grid.startY - object.height
+  if(object.y + object.height > (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY) {
+    object.y = (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY - object.height
   }
-  if(object.x < window.grid.startX) {
-    object.x = window.grid.startX
+  if(object.x < w.game.grid.startX) {
+    object.x = w.game.grid.startX
   }
-  if(object.y < window.grid.startY) {
-    object.y = window.grid.startY
+  if(object.y < w.game.grid.startY) {
+    object.y = w.game.grid.startY
   }
 }
 
 function prepareObjectsAndHerosForCollisionsPhase() {
   // set objects new position and widths
-  let everything = [...window.objects]
-  let allHeros = Object.keys(window.heros).map((id) => {
-    return window.heros[id]
+  let everything = [...w.game.objects]
+  let allHeros = Object.keys(w.game.heros).map((id) => {
+    return w.game.heros[id]
   })
   everything.push(...allHeros)
 
@@ -380,8 +380,8 @@ function update (delta) {
   let removeObjects = []
   let respawnObjects = []
 
-  let allHeros = Object.keys(window.heros).map((id) => {
-    return window.heros[id]
+  let allHeros = Object.keys(w.game.heros).map((id) => {
+    return w.game.heros[id]
   })
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero, removeObjects, respawnObjects)
@@ -533,7 +533,7 @@ function update (delta) {
     }
   })
 
-  window.objects.forEach((object, i) => {
+  w.game.objects.forEach((object, i) => {
     if(object.removed) return
     containObjectWithinGridBoundaries(object)
   })

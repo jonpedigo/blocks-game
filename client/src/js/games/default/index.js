@@ -28,7 +28,7 @@ function start() {
 
 // only on client
 function input(hero, keysDown, delta) {
-  if(hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
   if(90 in keysDown) {
     if(hero.actionButtonBehavior === 'shootBullet') {
       action.shootBullet()
@@ -148,7 +148,7 @@ function intelligence(object, hero, delta) {
     if(!object.spawnedIds) object.spawnedIds = []
 
     object.spawnedIds = object.spawnedIds.filter((id) => {
-      if(window.objectsById[id] && !window.objectsById[id].removed) {
+      if(w.game.objectsById[id] && !w.game.objectsById[id].removed) {
         return true
       } else return false
     })

@@ -48,11 +48,9 @@ function init() {
     }
   }
 
-  window.heros = {}
-
   window.client.on('onGridLoaded', () => {
-    window.defaultHero.x = window.grid.startX + (window.grid.width * window.grid.nodeSize)/2
-    window.defaultHero.y = window.grid.startY + (window.grid.height * window.grid.nodeSize)/2
+    window.defaultHero.x = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
+    window.defaultHero.y = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
   })
 
   let savedHero = localStorage.getItem('hero');
@@ -75,9 +73,9 @@ window.spawnHero = function (hero) {
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
     hero.x = hero.spawnPointX;
     hero.y = hero.spawnPointY;
-  } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
-    hero.x = window.world.worldSpawnPointX
-    hero.y = window.world.worldSpawnPointY
+  } else if(w.game.world.worldSpawnPointX && w.game.world.worldSpawnPointX >= 0) {
+    hero.x = w.game.world.worldSpawnPointX
+    hero.y = w.game.world.worldSpawnPointY
   } else {
     // default pos
     hero.x = 960;
@@ -93,20 +91,22 @@ window.respawnHero = function (hero) {
 }
 
 window.respawnHeros = function (hero) {
-  Object.keys(window.heros).forEach((id) => {
-    window.respawnHero(window.heros[id])
+  Object.keys(w.game.heros).forEach((id) => {
+    window.respawnHero(w.game.heros[id])
   })
 }
 
 window.updateAllHeros = function(update) {
-  Object.keys(window.heros).forEach((id) => {
-    window.mergeDeep(window.heros[id], update)
+  Object.keys(w.game.heros).forEach((id) => {
+    window.mergeDeep(w.game.heros[id], update)
   })
 }
 
 window.resetHeroToDefault = function(hero) {
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-  newHero.id = hero.id
+  if(hero && hero.id) {
+    newHero.id = hero.id
+  }
   return newHero
 }
 // window.resetHeroToDefault = function(hero) {
@@ -114,7 +114,7 @@ window.resetHeroToDefault = function(hero) {
 //   let newHero = {}
 //   window.defaultHero.id = window.hero.id
 // 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-//   window.heros[window.hero.id] = window.hero
+//   w.game.heros[window.hero.id] = window.hero
 // 	localStorage.setItem('hero', JSON.stringify(window.hero));
 // 	physics.addObject(hero)
 // }

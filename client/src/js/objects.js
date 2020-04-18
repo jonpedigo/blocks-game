@@ -26,48 +26,48 @@ window.anticipateObjectAdd = function(hero) {
 
   if (leftDiff < 1 && hero.directions.left) {
     let newObject = {
-      x: minX - window.grid.nodeSize,
-      y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-      width: window.grid.nodeSize,
-      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 3) : window.grid.nodeSize,
+      x: minX - w.game.grid.nodeSize,
+      y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+      width: w.game.grid.nodeSize,
+      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (w.game.grid.nodeSize * 3) : w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (topDiff < 1 && hero.directions.up) {
     let newObject = {
-      x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-      y: minY - window.grid.nodeSize,
-      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
-      height: window.grid.nodeSize,
+      x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+      y: minY - w.game.grid.nodeSize,
+      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      height: w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (rightDiff > window.grid.nodeSize - 1 && hero.directions.right) {
+  } else if (rightDiff > w.game.grid.nodeSize - 1 && hero.directions.right) {
     let newObject = {
-      x: maxX + window.grid.nodeSize,
-      y: isWall ? minY + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-      width: window.grid.nodeSize,
-      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
+      x: maxX + w.game.grid.nodeSize,
+      y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+      width: w.game.grid.nodeSize,
+      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (bottomDiff > window.grid.nodeSize - 1 && hero.directions.down) {
+  } else if (bottomDiff > w.game.grid.nodeSize - 1 && hero.directions.down) {
     let newObject = {
-      x: isWall ? minX + ( window.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-      y: maxY + window.grid.nodeSize,
-      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (window.grid.nodeSize * 4) : window.grid.nodeSize,
-      height: window.grid.nodeSize,
+      x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+      y: maxY + w.game.grid.nodeSize,
+      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      height: w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   }
 
   function addAnticipatedObject(newObject) {
     let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
-    if(grid.keepGridXYWithinBoundaries(x/window.grid.nodeSize, y/window.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/window.grid.nodeSize, (y + newObject.height)/window.grid.nodeSize)) {
+    if(grid.keepGridXYWithinBoundaries(x/w.game.grid.nodeSize, y/w.game.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/w.game.grid.nodeSize, (y + newObject.height)/w.game.grid.nodeSize)) {
       window.addObjects([{...newObject, ...window.anticipatedObject}])
       window.anticipatedObject = null
     }
   }
 }
 
-window.addObjects = function(objects, options = { bypassCollisions: false, instantAdd: true }) {
+window.addObjects = function(objects, options = { bypassCollisions: false }) {
   if(!objects.length) {
     objects = [objects]
   }
@@ -81,7 +81,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
       newObject.id = 'object' + Date.now() + '-' + i;
     }
 
-    if(window.objectsById[newObject.id]) {
+    if(w.game.objectsById[newObject.id]) {
       newObject.id += '-copy'
     }
 
@@ -93,28 +93,28 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
-    if(!window.world.globalTags.calculatePathCollisions) {
+    if(!w.game.world.globalTags.calculatePathCollisions) {
       grid.addObstacle(newObject)
     }
 
-    if(newObject.tags.obstacle && collisions.check(newObject, window.objects) && !options.bypassCollisions) {
+    if(newObject.tags.obstacle && collisions.check(newObject, w.game.objects) && !options.bypassCollisions) {
       alertAboutCollision = true
     }
 
     //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-    if(newObject.x + newObject.width > (window.grid.nodeSize * window.grid.width) + window.grid.startX) {
+    if(newObject.x + newObject.width > (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX) {
       if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.y + newObject.height > (window.grid.nodeSize * window.grid.height) + window.grid.startY) {
+    if(newObject.y + newObject.height > (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY) {
       if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.x < window.grid.startX) {
+    if(newObject.x < w.game.grid.startX) {
       if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.y < window.grid.startY) {
+    if(newObject.y < w.game.grid.startY) {
       if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
@@ -131,10 +131,10 @@ window.addObjects = function(objects, options = { bypassCollisions: false, insta
   }
 
   function emitNewObjects() {
-    if(window.isPlayer || window.instantAddToggle.checked || options.instantAddToggle) {
-      window.socket.emit('addObjects', objects)
+    if(window.branch) {
+      window.branch.objects.push(...objects)
     } else {
-      window.objectFactory.push(...objects)
+      window.socket.emit('addObjects', objects)
     }
   }
 

@@ -104,6 +104,11 @@ io.on('connection', function(socket){
     })
   })
 
+  socket.on('setGameJSON', (game) => {
+    currentGame = game
+    io.emit('onSetGame', game)
+  })
+
   // this is for when we are editing and we want to send this world to all people
   socket.on('copyGame', (id) => {
     getGame(id, (game) => {
@@ -299,6 +304,11 @@ io.on('connection', function(socket){
 http.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
 });
+
+
+
+
+
 
 
 /**

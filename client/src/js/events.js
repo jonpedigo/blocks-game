@@ -32,8 +32,8 @@ window.client = new EventEmitter()
 
 
 window.client.on('onRespawnHero', (hero) => {
-  if(window.host && window.world.globalTags.noCamping) {
-    window.objects.forEach((obj) => {
+  if(window.host && w.game.world.globalTags.noCamping) {
+    window.game.objects.forEach((obj) => {
       if(obj.removed) return
 
       if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {

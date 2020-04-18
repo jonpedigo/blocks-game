@@ -6,13 +6,13 @@ function init(){
 
     //select left
     if(keysDown['188']){
-      let heroNames = Object.keys(window.heros)
+      let heroNames = Object.keys(window.game.heros)
       for(let i = 0; i < heroNames.length; i++) {
-        if(window.heros[heroNames[i]].id === window.hero.id) {
+        if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === 0) {
-            window.hero = window.heros[heroNames[heroNames.length-1]]
+            window.hero = window.game.heros[heroNames[heroNames.length-1]]
           } else {
-            window.hero = window.heros[heroNames[i-1]]
+            window.hero = window.game.heros[heroNames[i-1]]
           }
           break;
         }
@@ -22,13 +22,13 @@ function init(){
 
     //select right
     if(keysDown['190']){
-      let heroNames = Object.keys(window.heros)
+      let heroNames = Object.keys(window.game.heros)
       for(let i = 0; i < heroNames.length; i++) {
-        if(window.heros[heroNames[i]].id === window.hero.id) {
+        if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === heroNames.length - 1) {
-            window.hero = window.heros[heroNames[0]]
+            window.hero = window.game.heros[heroNames[0]]
           } else {
-            window.hero = window.heros[heroNames[i+1]]
+            window.hero = window.game.heros[heroNames[i+1]]
           }
           break;
         }
@@ -46,26 +46,26 @@ function init(){
 }
 
 function update(delta) {
-  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: window.heros.ghost}))
+  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: window.game.heros.ghost}))
 }
 
 function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
     window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    if(window.heros[ghostData.selectedHeroId]) window.hero.id = ghostData.selectedHeroId
+    if(window.game.heros[ghostData.selectedHeroId]) window.hero.id = ghostData.selectedHeroId
     else window.hero.id = 'ghost'
     if(window.hero.id == 'ghost') {
       window.hero.color = 'rgba(255,255,255,0.1)'
-      window.heros.ghost = window.hero
+      window.game.heros.ghost = window.hero
     } else {
-      window.heros = {'ghost': ghostData.ghost}
+      window.game.heros = {'ghost': ghostData.ghost}
     }
   } else {
     window.hero = JSON.parse(JSON.stringify(window.defaultHero))
     window.hero.color = 'rgba(255,255,255,0.1)'
     window.hero.id = 'ghost'
-    window.heros.ghost = window.hero
+    window.game.heros.ghost = window.hero
   }
 }
 

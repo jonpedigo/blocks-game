@@ -136,28 +136,28 @@ function init(ctx, objects) {
   }
   var createArenaButton = document.getElementById("create-arena");
   createArenaButton.onclick = (e) => {
-    createArena(window.world.proceduralBoundaries)
+    createArena(w.game.world.proceduralBoundaries)
   }
 }
 
 function createGrid() {
-  const { width, height } = window.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (window.grid.nodeSize))
-  let h = Math.floor(height / (window.grid.nodeSize))
-  window.grid.width = w
-  window.grid.height = h
-  window.grid.startX = x
-  window.grid.startY = y
-  window.socket.emit('updateGrid', {...window.grid, nodes: null})
-  window.grid.nodes = gridTool.generateGridNodes(window.grid)
+  const { width, height } = w.game.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.game.world.proceduralBoundaries.x, w.game.world.proceduralBoundaries.y);
+  let w = Math.floor(width / (w.game.grid.nodeSize))
+  let h = Math.floor(height / (w.game.grid.nodeSize))
+  w.game.grid.width = w
+  w.game.grid.height = h
+  w.game.grid.startX = x
+  w.game.grid.startY = y
+  window.socket.emit('updateGrid', {...w.game.grid, nodes: null})
+  w.game.grid.nodes = gridTool.generateGridNodes(w.game.grid)
 }
 
 function createMaze() {
-  const { width, height } = window.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
-  let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  const { width, height } = w.game.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.game.world.proceduralBoundaries.x, w.game.world.proceduralBoundaries.y);
+  let w = Math.floor(width / (w.game.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  let h = Math.floor(height / (w.game.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
   let maze = procedural.genMaze(w, h, x, y).map((o) => {
     o.tags.stationary = true
@@ -216,6 +216,7 @@ function loaded() {
   // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
+  worldEditor.loaded()
 }
 
 function update(delta) {

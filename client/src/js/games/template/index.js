@@ -26,7 +26,7 @@ function start() {
 
 // only on client
 function input(hero, keysDown, delta) {
-  if(hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
 
 }
 
@@ -83,7 +83,7 @@ function start() {
 
 // only on client
 function input(hero, keysDown, delta) {
-  if(hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
 
 }
 
