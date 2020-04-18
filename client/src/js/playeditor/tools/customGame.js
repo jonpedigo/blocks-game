@@ -32,7 +32,7 @@ function init() {
   window.saveCodeEditor = function() {
     try {
       let customFx = window.customGameEditor.getValue()
-      eval('(function a() {' + customFx + ' return { init, loaded, start, input, onCollide, intelligence, update, render } })')
+      eval('(function a() {' + customFx + ' return { init, loaded, start, keyDown, input, onCollide, intelligence, update, render } })')
       window.liveCustomGame = customFx
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)

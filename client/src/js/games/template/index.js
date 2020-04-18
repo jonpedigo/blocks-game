@@ -25,6 +25,12 @@ function start() {
 }
 
 // only on client
+function keyDown(keyCode, hero) {
+  if(hero.flags.paused || w.game.gameState.paused) return
+
+}
+
+// only on client
 function input(hero, keysDown, delta) {
   if(hero.flags.paused || w.game.gameState.paused) return
 
@@ -80,6 +86,13 @@ function loaded() {
 function start() {
 
 }
+
+// only on client
+function keyDown(keyCode, hero) {
+  if(hero.flags.paused || w.game.gameState.paused) return
+
+}
+
 
 // only on client
 function input(hero, keysDown, delta) {

@@ -59,7 +59,7 @@ function clickOnCompendium(rightClick, compendium) {
     if(window.objecteditor.live) {
       if(confirm('this will merge this object to adopt all properties of ' + compendium.compendiumId)) {
         let editorState = window.objecteditor.get()
-        let objectById = w.game.objectsById[editorState.id]
+        let objectById = w.editingGame.objectsById[editorState.id]
         let compendiumCopy = JSON.parse(JSON.stringify(compendium))
         delete compendiumCopy.compendiumId
         let updated = window.mergeDeep(objectById, compendiumCopy)

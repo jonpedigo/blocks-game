@@ -11,16 +11,9 @@ function init(){
   window.addEventListener("keydown", function (e) {
     keysDown[e.keyCode] = true
 
-    // console.log(keysDown, e.keyCode, hero.wallJumpLeft)
-    // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpLeft) {
-    //   console.log('wall jump left')
-    //   hero.velocityX = -200
-    //   hero.velocityY = -400
-    // }
-    // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpRight) {
-    //   hero.velocityX = 200
-    //   hero.velocityY = -400
-    // }
+    if(window.isPlayer) {
+      window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
+    }
   }, false)
 
   window.addEventListener("keyup", function (e) {
@@ -223,9 +216,14 @@ function getDirection() {
   return inputDirection
 }
 
+function keyDown() {
+
+}
+
 export default {
   init,
   loaded,
   update,
+  keyDown,
   getDirection,
 }

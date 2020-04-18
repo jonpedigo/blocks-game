@@ -25,18 +25,24 @@ function start() {
 
 }
 
+// only on client
+function keyDown(keyCode, hero) {
+  console.log('?', keyCode)
+  if(hero.flags.paused || w.game.gameState.paused) return
+
+  if(keyCode === 90) {
+    if(hero.actionButtonBehavior === 'shootBullet') {
+      action.shootBullet(hero)
+    }
+    if(hero.actionButtonBehavior === 'dropWall') {
+      action.dropWall(hero)
+    }
+  }
+}
 
 // only on client
 function input(hero, keysDown, delta) {
   if(hero.flags.paused || w.game.gameState.paused) return
-  if(90 in keysDown) {
-    if(hero.actionButtonBehavior === 'shootBullet') {
-      action.shootBullet()
-    }
-    if(hero.actionButtonBehavior === 'dropWall') {
-      action.dropWall()
-    }
-  }
 }
 
 // only on client
@@ -279,6 +285,7 @@ export default {
   init,
   loaded,
   start,
+  keyDown,
   input,
   update,
   intelligence,

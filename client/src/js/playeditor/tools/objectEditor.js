@@ -10,7 +10,7 @@ function init() {
   window.objecteditor = new JSONEditor(objectjsoneditor, {
     modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
     if(objectEdited.id) {
-      let object = w.game.objectsById[objectEdited.id]
+      let object = w.editingGame.objectsById[objectEdited.id]
 
       if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
         gridTool.removeObstacle({...object, tags: objectEdited.tags})
@@ -58,31 +58,31 @@ function init() {
 }
 
 window.updateEditorState = function() {
-  window.objecteditor.update(w.game.objectsById[window.objecteditor.get().id])
+  window.objecteditor.update(w.editingGame.objectsById[window.objecteditor.get().id])
 }
 
 window.sendObjectUpdate = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  let updatedObject = JSON.parse(JSON.stringify(w.game.objectsById[editorState.id]))
+  let updatedObject = JSON.parse(JSON.stringify(w.editingGame.objectsById[editorState.id]))
   if(window.objecteditor.live && editorState.id) {
-    let updatedObject = w.game.objectsById[editorState.id]
+    let updatedObject = w.editingGame.objectsById[editorState.id]
     window.mergeDeep(updatedObject, objectUpdate)
-    window.socket.emit('editObjects', w.game.objects)
+    window.socket.emit('editObjects', w.editingGame.objects)
   }
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
   let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  window.mergeDeep(w.game.objectsById[editorState.id], objectCopy)
+  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectCopy)
   window.emitEditObjectsOther()
   window.objecteditor.saved = true
   window.updateObjectEditorNotifier()
 }
 
 window.emitEditObjectsOther = function() {
-  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.game.objects)).map((obj) => {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)).map((obj) => {
     delete obj.x
     delete obj.y
     return obj
@@ -102,7 +102,7 @@ function loaded() {
   window.updateObjectEditorNotifier()
   window.objecteditor.expandAll()
 
-  if(w.game.world.syncObjects) {
+  if(w.editingGame.world.syncObjects) {
     syncObjectsToggle.checked = true;
   }
 }

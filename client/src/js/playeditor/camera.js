@@ -14,8 +14,8 @@ function init() {
 }
 
 function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, specialLineWidth = .6, color = 'white'}) {
-  let height = w.game.grid.nodeSize * gridHeight
-  let width = w.game.grid.nodeSize * gridWidth
+  let height = w.editingGame.grid.nodeSize * gridHeight
+  let width = w.editingGame.grid.nodeSize * gridWidth
 
   ctx.strokeStyle = "#999";
   if(color) {
@@ -27,11 +27,11 @@ function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, 
       ctx.lineWidth = specialLineWidth
     }
     drawVertice(ctx, {a: {
-      x: startX + (x * w.game.grid.nodeSize),
+      x: startX + (x * w.editingGame.grid.nodeSize),
       y: startY,
     },
     b: {
-      x: startX + (x * w.game.grid.nodeSize),
+      x: startX + (x * w.editingGame.grid.nodeSize),
       y: startY + height,
     }})
   }
@@ -42,11 +42,11 @@ function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, 
     }
     drawVertice(ctx, {a: {
       x: startX,
-      y: startY + (y * w.game.grid.nodeSize),
+      y: startY + (y * w.editingGame.grid.nodeSize),
     },
     b: {
       x: startX + width,
-      y: startY + (y * w.game.grid.nodeSize),
+      y: startY + (y * w.editingGame.grid.nodeSize),
     }})
   }
 }
@@ -70,7 +70,7 @@ function drawObject(ctx, object, withNames = false) {
 
 // function drawGrid(ctx, object) {
 //   let thickness = .3
-//   if(object.x % (w.game.grid.nodeSize * 10) === 0 && object.y % (w.game.grid.nodeSize * 10) === 0) {
+//   if(object.x % (w.editingGame.grid.nodeSize * 10) === 0 && object.y % (w.editingGame.grid.nodeSize * 10) === 0) {
 //     thickness = .8
 //   }
 //   ctx.strokeStyle = "#999";
@@ -128,29 +128,29 @@ function render(ctx, hero, objects, grid) {
   // GRID
   ////////////////
   ////////////////
-  if(w.game.grid && w.game.grid.nodes) {
-    drawGrid({startX: w.game.grid.startX, startY: w.game.grid.startY, gridWidth: w.game.grid.width, gridHeight: w.game.grid.height, normalLineWidth: .2, specialLineWidth: .5, color: 'white'})
-    if(w.game.world && w.game.world.gameBoundaries && w.game.world.gameBoundaries.behavior == 'purgatory') {
+  if(w.editingGame.grid && w.editingGame.grid.nodes) {
+    drawGrid({startX: w.editingGame.grid.startX, startY: w.editingGame.grid.startY, gridWidth: w.editingGame.grid.width, gridHeight: w.editingGame.grid.height, normalLineWidth: .2, specialLineWidth: .5, color: 'white'})
+    if(w.editingGame.world && w.editingGame.world.gameBoundaries && w.editingGame.world.gameBoundaries.behavior == 'purgatory') {
       // let value = {
-      //   startX: w.game.world.gameBoundaries.x,
-      //   startY: w.game.world.gameBoundaries.y,
-      //   gridWidth: w.game.world.gameBoundaries.width/w.game.grid.nodeSize,
-      //   gridHeight: w.game.world.gameBoundaries.height/w.game.grid.nodeSize
+      //   startX: w.editingGame.world.gameBoundaries.x,
+      //   startY: w.editingGame.world.gameBoundaries.y,
+      //   gridWidth: w.editingGame.world.gameBoundaries.width/w.editingGame.grid.nodeSize,
+      //   gridHeight: w.editingGame.world.gameBoundaries.height/w.editingGame.grid.nodeSize
       // }
       // drawGrid({...value, normalLineWidth: .2, specialLineWidth: 0, color: 'red'})
       // let value2 = {
-      //   startX: w.game.world.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - w.game.grid.nodeSize,
-      //   startY: w.game.world.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - w.game.grid.nodeSize,
-      //   gridWidth: ((w.game.world.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)/w.game.grid.nodeSize) + 2,
-      //   gridHeight: ((w.game.world.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)/w.game.grid.nodeSize) + 2
+      //   startX: w.editingGame.world.gameBoundaries.x + window.CONSTANTS.PLAYER_CAMERA_WIDTH - w.editingGame.grid.nodeSize,
+      //   startY: w.editingGame.world.gameBoundaries.y + window.CONSTANTS.PLAYER_CAMERA_HEIGHT - w.editingGame.grid.nodeSize,
+      //   gridWidth: ((w.editingGame.world.gameBoundaries.width - window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2)/w.editingGame.grid.nodeSize) + 2,
+      //   gridHeight: ((w.editingGame.world.gameBoundaries.height - window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2)/w.editingGame.grid.nodeSize) + 2
       // }
       // drawGrid({...value2, normalLineWidth: .3})
-    } else if(w.game.world && w.game.world.gameBoundaries) {
+    } else if(w.editingGame.world && w.editingGame.world.gameBoundaries) {
       // let value = {
-      //   startX: w.game.world.gameBoundaries.x,
-      //   startY: w.game.world.gameBoundaries.y,
-      //   gridWidth: w.game.world.gameBoundaries.width/w.game.grid.nodeSize,
-      //   gridHeight: w.game.world.gameBoundaries.height/w.game.grid.nodeSize
+      //   startX: w.editingGame.world.gameBoundaries.x,
+      //   startY: w.editingGame.world.gameBoundaries.y,
+      //   gridWidth: w.editingGame.world.gameBoundaries.width/w.editingGame.grid.nodeSize,
+      //   gridHeight: w.editingGame.world.gameBoundaries.height/w.editingGame.grid.nodeSize
       // }
       // drawGrid({...value, normalLineWidth: .4})
     }
@@ -162,21 +162,21 @@ function render(ctx, hero, objects, grid) {
   ////////////////
   ////////////////
   if(objectEditorState && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
-    let objectById = w.game.objectsById[objectEditorState.id]
+    let objectById = w.editingGame.objectsById[objectEditorState.id]
 
     // if(object.gridX) {
-    //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * w.game.grid.nodeSize) + w.game.grid.startX, y: (object.gridY * w.game.grid.nodeSize) + w.game.grid.startY, width: w.game.grid.nodeSize, height: w.game.grid.nodeSize})
+    //   drawObject(ctx, {color: 'rgba(100,100,200, 1)', x: (object.gridX * w.editingGame.grid.nodeSize) + w.editingGame.grid.startX, y: (object.gridY * w.editingGame.grid.nodeSize) + w.editingGame.grid.startY, width: w.editingGame.grid.nodeSize, height: w.editingGame.grid.nodeSize})
     // }
 
     if(objectById) drawObject(ctx, {...objectById, color: 'rgba(0,0,255, 1)'})
 
     if(objectEditorState.pathfindingLimit) {
-      drawObject(ctx, {x: (objectEditorState.pathfindingLimit.gridX * w.game.grid.nodeSize) + w.game.grid.startX, y: (objectEditorState.pathfindingLimit.gridY * w.game.grid.nodeSize) + w.game.grid.startY, width: objectEditorState.pathfindingLimit.gridWidth * w.game.grid.nodeSize, height: objectEditorState.pathfindingLimit.gridHeight * w.game.grid.nodeSize, color: 'rgba(255,255,0, .2)'})
+      drawObject(ctx, {x: (objectEditorState.pathfindingLimit.gridX * w.editingGame.grid.nodeSize) + w.editingGame.grid.startX, y: (objectEditorState.pathfindingLimit.gridY * w.editingGame.grid.nodeSize) + w.editingGame.grid.startY, width: objectEditorState.pathfindingLimit.gridWidth * w.editingGame.grid.nodeSize, height: objectEditorState.pathfindingLimit.gridHeight * w.editingGame.grid.nodeSize, color: 'rgba(255,255,0, .2)'})
     }
 
     if(objectById && objectById.path && objectById.path.length) {
       objectById.path.forEach((path) => {
-        drawObject(ctx, {x: (path.x * w.game.grid.nodeSize) + w.game.grid.startX, y: (path.y * w.game.grid.nodeSize) + w.game.grid.startY, width: w.game.grid.nodeSize, height: w.game.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
+        drawObject(ctx, {x: (path.x * w.editingGame.grid.nodeSize) + w.editingGame.grid.startX, y: (path.y * w.editingGame.grid.nodeSize) + w.editingGame.grid.startY, width: w.editingGame.grid.nodeSize, height: w.editingGame.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
       })
     }
   }
@@ -189,15 +189,15 @@ function render(ctx, hero, objects, grid) {
   drawObject(ctx, {x: 0, y: 0, width: 2, height: 2000, color: 'white'})
   drawObject(ctx, {x: 0, y: 0, width: 2000, height: 2, color: 'white'})
 
-  drawObject(ctx, {x: w.game.world.worldSpawnPointX, y: w.game.world.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
-  drawObject(ctx, {x: w.game.world.worldSpawnPointX - 205, y: w.game.world.worldSpawnPointY, width: 400, height: 5, color: 'white'})
+  drawObject(ctx, {x: w.editingGame.world.worldSpawnPointX, y: w.editingGame.world.worldSpawnPointY - 205, width: 5, height: 400, color: 'white'})
+  drawObject(ctx, {x: w.editingGame.world.worldSpawnPointX - 205, y: w.editingGame.world.worldSpawnPointY, width: 400, height: 5, color: 'white'})
 
   ////////////////
   ////////////////
   // OBJECTS
   ////////////////
   ////////////////
-  let vertices = [...w.game.objects].reduce((prev, object) => {
+  let vertices = [...w.editingGame.objects].reduce((prev, object) => {
     if(object.removed) return prev
 
     const extraProps = {}
@@ -234,11 +234,11 @@ function render(ctx, hero, objects, grid) {
   ////////////////
   ////////////////
   ctx.fillStyle = 'white';
-  for(var heroId in w.game.heros) {
+  for(var heroId in w.editingGame.heros) {
     if(heroId === window.editingHero.id) {
-      drawObject(ctx, {...w.game.heros[heroId], color: '#0A0'});
+      drawObject(ctx, {...w.editingGame.heros[heroId], color: '#0A0'});
     } else {
-      drawObject(ctx, {...w.game.heros[heroId], color: 'white'});
+      drawObject(ctx, {...w.editingGame.heros[heroId], color: 'white'});
     }
   }
 
@@ -246,18 +246,18 @@ function render(ctx, hero, objects, grid) {
   /// PATHFINDING OBSTACLES
   ////////////////
   ////////////////
-  if(w.game.grid) {
+  if(w.editingGame.grid) {
     ctx.lineWidth = 1
-    w.game.grid.nodes.forEach((nodeRow) => {
+    w.editingGame.grid.nodes.forEach((nodeRow) => {
       nodeRow.forEach((node) => {
         if(node.hasObstacle == true) {
           drawVertice(ctx, {a: {
-            x: node.gridX * w.game.grid.nodeSize + w.game.grid.startX,
-            y: node.gridY * w.game.grid.nodeSize + w.game.grid.startY,
+            x: node.gridX * w.editingGame.grid.nodeSize + w.editingGame.grid.startX,
+            y: node.gridY * w.editingGame.grid.nodeSize + w.editingGame.grid.startY,
           },
           b: {
-            x: (node.gridX + 1) * w.game.grid.nodeSize + w.game.grid.startX,
-            y: (node.gridY + 1) * w.game.grid.nodeSize + w.game.grid.startY,
+            x: (node.gridX + 1) * w.editingGame.grid.nodeSize + w.editingGame.grid.startX,
+            y: (node.gridY + 1) * w.editingGame.grid.nodeSize + w.editingGame.grid.startY,
           }, color: 'red'})
         }
       })
@@ -288,43 +288,43 @@ function render(ctx, hero, objects, grid) {
   // GAME
   ////////////////
   ////////////////
-  if((currentTool == TOOLS.WORLD_EDITOR || currentTool == TOOLS.PROCEDURAL) && w.game.world.proceduralBoundaries) {
+  if((currentTool == TOOLS.WORLD_EDITOR || currentTool == TOOLS.PROCEDURAL) && w.editingGame.world.proceduralBoundaries) {
     ctx.fillStyle='yellow';
     ctx.globalAlpha = 0.2;
-    drawObject(ctx, w.game.world.proceduralBoundaries);
+    drawObject(ctx, w.editingGame.world.proceduralBoundaries);
     ctx.globalAlpha = 1.0;
   }
 
-  if(w.game.world.lockCamera) {
+  if(w.editingGame.world.lockCamera) {
     ctx.strokeStyle='#0A0';
-    drawBorder(ctx, w.game.world.lockCamera);
+    drawBorder(ctx, w.editingGame.world.lockCamera);
   }
 
-  if(w.game.world && w.game.world.gameBoundaries) {
-    if(w.game.world.gameBoundaries.behavior == 'purgatory') {
+  if(w.editingGame.world && w.editingGame.world.gameBoundaries) {
+    if(w.editingGame.world.gameBoundaries.behavior == 'purgatory') {
       ctx.strokeStyle='red';
       let valueRed = {
-        x: w.game.world.gameBoundaries.x-1,
-        y: w.game.world.gameBoundaries.y-1,
-        width: w.game.world.gameBoundaries.width+1,
-        height: w.game.world.gameBoundaries.height+1
+        x: w.editingGame.world.gameBoundaries.x-1,
+        y: w.editingGame.world.gameBoundaries.y-1,
+        width: w.editingGame.world.gameBoundaries.width+1,
+        height: w.editingGame.world.gameBoundaries.height+1
       }
       drawBorder(ctx, valueRed);
       ctx.strokeStyle='white';
       let valueWhite = {
-        x: w.game.world.gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2),
-        y: w.game.world.gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2),
-        width: w.game.world.gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)),
-        height: w.game.world.gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier))
+        x: w.editingGame.world.gameBoundaries.x + ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2),
+        y: w.editingGame.world.gameBoundaries.y + ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2),
+        width: w.editingGame.world.gameBoundaries.width - ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)),
+        height: w.editingGame.world.gameBoundaries.height - ((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier))
       }
       drawBorder(ctx, valueWhite);
     } else {
       ctx.strokeStyle='white';
       let value = {
-        x: w.game.world.gameBoundaries.x-1,
-        y: w.game.world.gameBoundaries.y-1,
-        width: w.game.world.gameBoundaries.width+1,
-        height: w.game.world.gameBoundaries.height+1
+        x: w.editingGame.world.gameBoundaries.x-1,
+        y: w.editingGame.world.gameBoundaries.y-1,
+        width: w.editingGame.world.gameBoundaries.width+1,
+        height: w.editingGame.world.gameBoundaries.height+1
       }
       drawBorder(ctx, value);
     }
@@ -336,10 +336,10 @@ function render(ctx, hero, objects, grid) {
   // HEROS SETTINGS
   ////////////////
   ////////////////
-  for(var heroId in w.game.heros) {
-    let currentHero = w.game.heros[heroId];
+  for(var heroId in w.editingGame.heros) {
+    let currentHero = w.editingGame.heros[heroId];
 
-    if(!w.game.world.lockCamera || !w.game.world.lockCamera.x || ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)) < w.game.world.lockCamera.width) {
+    if(!w.editingGame.world.lockCamera || !w.editingGame.world.lockCamera.x || ((window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)) < w.editingGame.world.lockCamera.width) {
       ctx.strokeStyle='#0A0';
       drawBorder(ctx, {x: currentHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * currentHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * currentHero.zoomMultiplier)})
     }

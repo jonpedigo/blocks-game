@@ -299,10 +299,14 @@ window.loadGameNonHost = function (game) {
   w.game.grid = game.grid
   window.client.emit('onGridLoaded')
   w.game.objects = game.objects
+  w.game.objectsById = {}
+  w.game.objects.forEach((object) => {
+    w.game.objectsById[object.id] = object
+    physics.addObject(object)
+  })
   w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
   w.game.heros = {}
   window.handleWorldUpdate(w.game.world)
-  console.log(w.game.heros)
 }
 
 //////////////////////////////////////////////////////////////
@@ -312,7 +316,7 @@ window.loadGameNonHost = function (game) {
 ///////////////////////////////
 ///////////////////////////////
 window.loadGame = function(game) {
-  window.game.grid = game.grid
+  w.game.grid = game.grid
   window.client.emit('onGridLoaded')
 
   /// didnt get to init because game.id wasnt set yet

@@ -24,6 +24,10 @@ function start() {
   window.hero.lives = 3
 }
 
+function keyDown(keyCode, hero) {
+  if(hero.flags.paused || w.game.gameState.paused) return
+}
+
 function input(hero, keysDown, delta) {
   if(w.game.gameState.paused) {
     if(32 in keysDown) {
@@ -94,6 +98,7 @@ export default {
   init,
   loaded,
   start,
+  keyDown,
   input,
   update,
   intelligence,

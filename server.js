@@ -237,6 +237,9 @@ io.on('connection', function(socket){
   socket.on('sendHeroInput', (input, hero) => {
     io.emit('onSendHeroInput', input, hero)
   })
+  socket.on('sendHeroKeyDown', (keyCode, hero) => {
+    io.emit('onSendHeroKeyDown', keyCode, hero)
+  })
   socket.on('updateHero', (hero) => {
     currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)

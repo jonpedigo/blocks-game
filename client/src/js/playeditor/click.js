@@ -26,26 +26,26 @@ function init() {
       if(window.dotAddToggle.checked) {
         location.width = Number(document.getElementById('add-dot-size').value)
         location.height = Number(document.getElementById('add-dot-size').value)
-        location.x += (w.game.grid.nodeSize/2 - location.width/2)
-        location.y += (w.game.grid.nodeSize/2 - location.height/2)
+        location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+        location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
       }
 
       if(window.gridNodeAddToggle.checked) {
-        location.width = w.game.grid.nodeSize
-        location.height = w.game.grid.nodeSize
+        location.width = w.editingGame.grid.nodeSize
+        location.height = w.editingGame.grid.nodeSize
       }
 
       if(window.dragAddToggle.checked) {
-        location.width = w.game.grid.nodeSize
-        location.height = w.game.grid.nodeSize
+        location.width = w.editingGame.grid.nodeSize
+        location.height = w.editingGame.grid.nodeSize
       }
 
       if(window.useEditorSizeAddToggle.checked) {
         let oe = window.objecteditor.get()
-        location.width = oe.width || w.game.grid.nodeSize
-        location.height = oe.height || w.game.grid.nodeSize
-        location.x += (w.game.grid.nodeSize/2 - location.width/2)
-        location.y += (w.game.grid.nodeSize/2 - location.height/2)
+        location.width = oe.width || w.editingGame.grid.nodeSize
+        location.height = oe.height || w.editingGame.grid.nodeSize
+        location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+        location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
       }
 
       window.gridHighlight = location
@@ -91,11 +91,11 @@ function init() {
         if(window.clickToSetHeroSpawnToggle.checked) {
           window.socket.emit('editHero', {id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
         } else {
-          Object.keys(w.game.heros).map((key) => w.game.heros[key])
+          Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
           .forEach((hero, i) => {
             collisions.checkObject(click, hero, () => {
               window.editingHero = hero
-              window.heroeditor.update(w.game.heros[window.editingHero.id])
+              window.heroeditor.update(w.editingGame.heros[window.editingHero.id])
               window.heroeditor.expandAll()
             })
           })
@@ -119,7 +119,7 @@ function init() {
         } else if(window.setObjectPathfindingLimitToggle.checked) {
           defaultFirstClick(e)
         } else if(window.selectorObjectToggle.checked){
-          w.game.objects
+          w.editingGame.objects
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
               object.i = i
@@ -186,9 +186,9 @@ function init() {
           window.socket.emit('updateWorld', { gameBoundaries })
         }
         if(window.selectorHeroZoomToggle.checked) {
-          let gridWidth = value.width/w.game.grid.nodeSize
-          Object.keys(w.game.heros).forEach((id) => {
-            let hero = w.game.heros[id]
+          let gridWidth = value.width/w.editingGame.grid.nodeSize
+          Object.keys(w.editingGame.heros).forEach((id) => {
+            let hero = w.editingGame.heros[id]
             window.socket.emit('editHero', {id, zoomMultiplier: gridWidth/16})
           })
         }
@@ -206,8 +206,8 @@ function init() {
 
           const { x, y } = gridTool.createGridNodeAt(click.x, click.y)
           let location = {
-            width: w.game.grid.nodeSize,
-            height: w.game.grid.nodeSize,
+            width: w.editingGame.grid.nodeSize,
+            height: w.editingGame.grid.nodeSize,
             x: x,
             y: y,
           }
@@ -215,8 +215,8 @@ function init() {
           if(window.dotAddToggle.checked) {
             location.width = Number(document.getElementById('add-dot-size').value)
             location.height = Number(document.getElementById('add-dot-size').value)
-            location.x += (w.game.grid.nodeSize/2 - location.width/2)
-            location.y += (w.game.grid.nodeSize/2 - location.height/2)
+            location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+            location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
           }
 
           let editorObject = window.objecteditor.get()
@@ -224,10 +224,10 @@ function init() {
           let newObject = JSON.parse(JSON.stringify(editorObject))
 
           if(window.useEditorSizeAddToggle.checked) {
-            location.width = editorObject.width || w.game.grid.nodeSize
-            location.height = editorObject.height || w.game.grid.nodeSize
-            location.x += (w.game.grid.nodeSize/2 - location.width/2)
-            location.y += (w.game.grid.nodeSize/2 - location.height/2)
+            location.width = editorObject.width || w.editingGame.grid.nodeSize
+            location.height = editorObject.height || w.editingGame.grid.nodeSize
+            location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+            location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
           }
 
           Object.assign(newObject, location)

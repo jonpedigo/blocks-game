@@ -42,8 +42,8 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
-    if(window.game.grid && window.game.grid.nodes) delete window.game.grid.nodes
-    var copyText = JSON.stringify(window.editingGame);
+    if(w.editingGame.grid && w.editingGame.grid.nodes) delete w.editingGame.grid.nodes
+    var copyText = JSON.stringify(w.editingGame);
     window.copyToClipBoard(copyText)
   })
 
@@ -65,15 +65,8 @@ function init() {
     window.socket.emit('resetObjects')
   }
   window.saveGame = function() {
-    window.game = {
-      heros: w.game.heros,
-      objects: w.game.objects,
-      world: w.game.world,
-      grid: w.game.grid,
-      id: document.getElementById('game-id').value,
-      compendium: window.compendium,
-    }
-    window.socket.emit('saveGame', window.game)
+    window.socket.emit('saveGame', {...window.editingGame, id: document.getElementById('game-id').value,
+          compendium: window.compendium })
   }
   window.setGame = function() {
     window.socket.emit('setGame', document.getElementById('game-id').value)
@@ -87,7 +80,7 @@ function init() {
 
   var pauseResumeGameToggle = document.getElementById("pause-resume-game");
   pauseResumeGameToggle.addEventListener('click', () => {
-    emitEditorGameState({ paused: !w.game.gameState.paused })
+    emitEditorGameState({ paused: !w.editingGame.gameState.paused })
   })
 
   var startGameButton = document.getElementById("start-game");
@@ -117,19 +110,20 @@ function init() {
   document.getElementById("clear-branch").addEventListener('click', () => {
     window.unloadGame()
     window.branch = null
+    window.editingGame = window.game
     window.loadGame(window.game)
   })
 
   function emitEditorGameState (gameStateUpdate) {
-    window.socket.emit('editGameState', {...w.game.gameState, ...gameStateUpdate})
+    window.socket.emit('editGameState', {...w.editingGame.gameState, ...gameStateUpdate})
   }
 
   function resetDefaults() {
     window.resetObjects()
     window.socket.emit('resetWorld')
     window.socket.emit('updateGrid', window.defaultGrid)
-    for(var heroId in w.game.heros) {
-      window.socket.emit('resetHeroToDefault', w.game.heros[heroId])
+    for(var heroId in w.editingGame.heros) {
+      window.socket.emit('resetHeroToDefault', w.editingGame.heros[heroId])
     }
     window.socket.emit('resetGameState')
   }
@@ -164,7 +158,7 @@ function init() {
 
 // client uses this sometimes
 window.resetSpawnAreasAndObjects = function() {
-  w.game.objects.forEach((object) => {
+  w.editingGame.objects.forEach((object) => {
     if(object.removed) return
     if(object.spawned) {
       window.socket.emit('deleteObject', object)
@@ -184,7 +178,7 @@ function resetSpawnZone(object) {
 
 // client uses this sometimes
 window.resetAllObjectState = function() {
-  w.game.objects.forEach((object) => {
+  w.editingGame.objects.forEach((object) => {
     if(object.spawned) {
       window.socket.emit('deleteObject', object)
     }
@@ -197,7 +191,7 @@ window.resetAllObjectState = function() {
     window.removeObjectState(object)
     window.respawnObject(object)
   })
-  window.socket.emit('editObjects', w.game.objects)
+  window.socket.emit('editObjects', w.editingGame.objects)
 }
 
 export default {

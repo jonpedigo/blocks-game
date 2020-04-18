@@ -3,7 +3,7 @@ import gridTool from '../../grid.js'
 import pathfinding from '../../pathfinding.js'
 
 function shootBullet(hero) {
-  let directions = window.hero.directions
+  let directions = hero.directions
   let shooted = {
     id: 'bullet-' + Date.now(),
     width: 4,
@@ -15,33 +15,33 @@ function shootBullet(hero) {
 
   if(directions.up) {
     Object.assign(shooted, {
-      x: window.hero.x + (window.hero.width/2),
-      y: window.hero.y,
+      x: hero.x + (hero.width/2),
+      y: hero.y,
     })
   }
 
-  if(direction.down) {
+  if(directions.down) {
     Object.assign(shooted, {
-      x: window.hero.x + (window.hero.width/2),
-      y: window.hero.y + window.hero.height,
+      x: hero.x + (hero.width/2),
+      y: hero.y + hero.height,
     })
   }
 
-  if(direction.right) {
+  if(directions.right) {
     Object.assign(shooted, {
-      x: window.hero.x + window.hero.width,
-      y: window.hero.y + (window.hero.height/2),
+      x: hero.x + hero.width,
+      y: hero.y + (hero.height/2),
     })
   }
 
-  if(direction.left) {
+  if(directions.left) {
     Object.assign(shooted, {
-      x: window.hero.x,
-      y: window.hero.y + (window.hero.height/2),
+      x: hero.x,
+      y: hero.y + (hero.height/2),
     })
   }
 
-  addObjects([shooted])
+  addObjects([shooted], { bypassCollisions: true })
 }
 
 function dropWall(hero) {
@@ -58,33 +58,33 @@ function dropWall(hero) {
 
   if(directions.up) {
     Object.assign(wall, {
-      x: window.hero.x,
-      y: window.hero.y - window.hero.height,
+      x: hero.x,
+      y: hero.y - hero.height,
     })
   }
 
   if(directions.down) {
     Object.assign(wall, {
-      x: window.hero.x,
-      y: window.hero.y + window.hero.height,
+      x: hero.x,
+      y: hero.y + hero.height,
     })
   }
 
   if(directions.right) {
     Object.assign(wall, {
-      x: window.hero.x + window.hero.width,
-      y: window.hero.y,
+      x: hero.x + hero.width,
+      y: hero.y,
     })
   }
 
-  if(direction.left) {
+  if(directions.left) {
     Object.assign(wall, {
-      x: window.hero.x - window.hero.width,
-      y: window.hero.y,
+      x: hero.x - hero.width,
+      y: hero.y,
     })
   }
 
-  addObjects([wall])
+  addObjects([wall], { bypassCollisions: true })
 }
 
 export default {

@@ -136,28 +136,28 @@ function init(ctx, objects) {
   }
   var createArenaButton = document.getElementById("create-arena");
   createArenaButton.onclick = (e) => {
-    createArena(w.game.world.proceduralBoundaries)
+    createArena(w.editingGame.world.proceduralBoundaries)
   }
 }
 
 function createGrid() {
-  const { width, height } = w.game.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(w.game.world.proceduralBoundaries.x, w.game.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (w.game.grid.nodeSize))
-  let h = Math.floor(height / (w.game.grid.nodeSize))
-  w.game.grid.width = w
-  w.game.grid.height = h
-  w.game.grid.startX = x
-  w.game.grid.startY = y
-  window.socket.emit('updateGrid', {...w.game.grid, nodes: null})
-  w.game.grid.nodes = gridTool.generateGridNodes(w.game.grid)
+  const { width, height } = w.editingGame.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  let w = Math.floor(width / (w.editingGame.grid.nodeSize))
+  let h = Math.floor(height / (w.editingGame.grid.nodeSize))
+  w.editingGame.grid.width = w
+  w.editingGame.grid.height = h
+  w.editingGame.grid.startX = x
+  w.editingGame.grid.startY = y
+  window.socket.emit('updateGrid', {...w.editingGame.grid, nodes: null})
+  w.editingGame.grid.nodes = gridTool.generateGridNodes(w.editingGame.grid)
 }
 
 function createMaze() {
-  const { width, height } = w.game.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(w.game.world.proceduralBoundaries.x, w.game.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (w.game.grid.nodeSize * window.mazeWidthMultiplier)/2)
-  let h = Math.floor(height / (w.game.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  const { width, height } = w.editingGame.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  let w = Math.floor(width / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  let h = Math.floor(height / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
   let maze = procedural.genMaze(w, h, x, y).map((o) => {
     o.tags.stationary = true

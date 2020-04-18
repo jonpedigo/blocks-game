@@ -69,9 +69,9 @@ function init(hero){
 
       //, .
       if(keysDown['188'] || keysDown['190']){
-        if(Object.keys(w.game.heros).length === 1 || !window.editingHero.id) {
-          for(var heroId in w.game.heros) {
-            window.setEditingHero(w.game.heros[heroId])
+        if(Object.keys(w.editingGame.heros).length === 1 || !window.editingHero.id) {
+          for(var heroId in w.editingGame.heros) {
+            window.setEditingHero(w.editingGame.heros[heroId])
             window.findHero()
           }
           return
@@ -80,13 +80,13 @@ function init(hero){
 
       //select left
       if(keysDown['188']){
-        let heroNames = Object.keys(w.game.heros)
+        let heroNames = Object.keys(w.editingGame.heros)
         for(let i = 0; i < heroNames.length; i++) {
-          if(w.game.heros[heroNames[i]].id === window.editingHero.id) {
+          if(w.editingGame.heros[heroNames[i]].id === window.editingHero.id) {
             if(i === 0) {
-              window.setEditingHero(w.game.heros[heroNames[heroNames.length-1]])
+              window.setEditingHero(w.editingGame.heros[heroNames[heroNames.length-1]])
             } else {
-              window.setEditingHero(w.game.heros[heroNames[i-1]])
+              window.setEditingHero(w.editingGame.heros[heroNames[i-1]])
             }
             window.findHero()
 
@@ -98,13 +98,13 @@ function init(hero){
 
       //select right
       if(keysDown['190']){
-        let heroNames = Object.keys(w.game.heros)
+        let heroNames = Object.keys(w.editingGame.heros)
         for(let i = 0; i < heroNames.length; i++) {
-          if(w.game.heros[heroNames[i]].id === window.editingHero.id) {
+          if(w.editingGame.heros[heroNames[i]].id === window.editingHero.id) {
             if(i === heroNames.length - 1) {
-              window.setEditingHero(w.game.heros[heroNames[0]])
+              window.setEditingHero(w.editingGame.heros[heroNames[0]])
             } else {
-              window.setEditingHero(w.game.heros[heroNames[i+1]])
+              window.setEditingHero(w.editingGame.heros[heroNames[i+1]])
             }
             window.findHero()
 
@@ -118,14 +118,14 @@ function init(hero){
       if(keysDown['222']){
         let editorState = window.objecteditor.get()
 
-        if(w.game.objects.length == 0) return
+        if(w.editingGame.objects.length == 0) return
         let newI = editorState.i
-        if(editorState.i === w.game.objects.length -1 || editorState.i == null) {
+        if(editorState.i === w.editingGame.objects.length -1 || editorState.i == null) {
           newI = 0
         } else {
           newI += 1
         }
-        let editingObject = w.game.objects[newI]
+        let editingObject = w.editingGame.objects[newI]
         editingObject.i = newI
         window.objecteditor.saved = true
         window.objecteditor.update(editingObject)
@@ -136,14 +136,14 @@ function init(hero){
       //left
       if(keysDown['186']){
         let editorState = window.objecteditor.get()
-        if(w.game.objects.length == 0) return
+        if(w.editingGame.objects.length == 0) return
         let newI = editorState.i
         if(!editorState.i) {
-          newI = w.game.objects.length - 1
+          newI = w.editingGame.objects.length - 1
         } else {
           newI -= 1
         }
-        let editingObject = w.game.objects[newI]
+        let editingObject = w.editingGame.objects[newI]
         editingObject.i = newI
         window.objecteditor.saved = true
         window.objecteditor.update(editingObject)

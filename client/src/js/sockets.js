@@ -4,6 +4,7 @@ import camera from './camera.js'
 import pathfinding from './pathfinding.js'
 import collisions from './collisions.js'
 import particles from './particles.js'
+import input from './input.js'
 
 function init() {
   ///////////////////////////////
@@ -28,6 +29,25 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
       window.heroInput[heroId] = heroInput
+    })
+
+    // PLAYERS CALL THIS
+    window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
+      let hero = w.game.heros[heroId]
+      console.log(heroId)
+      input.keyDown(keyCode, hero)
+      /// DEFAULT GAME FX
+      if(window.defaultCustomGame) {
+        window.defaultCustomGame.keyDown(keyCode, hero)
+      }
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.keyDown(keyCode, hero)
+      }
+      /// CUSTOM GAME FX
+      if(window.liveCustomGame) {
+        window.liveCustomGame.keyDown(keyCode, hero)
+      }
     })
 
     // EDITOR CALLS THIS
@@ -147,7 +167,7 @@ function init() {
   ///////////////////////////////
   // HOST CALLS THIS
   window.socket.on('onUpdateGameState', (gameState) => {
-    if(!window.pageState.loaded) return
+    if(!window.pageState.gameLoaded) return
     if(!window.host) w.game.gameState = gameState
     if(window.usePlayEditor && window.syncGameStateToggle.checked) {
       window.gamestateeditor.update(gameState)
@@ -156,7 +176,7 @@ function init() {
 
   // host CALLS THIS
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    if(!window.pageState.loaded) return
+    if(!window.pageState.gameLoaded) return
     if(!window.host){
       w.game.objects = objectsUpdated
       w.game.objectsById = w.game.objects.reduce((prev, next) => {
@@ -174,7 +194,7 @@ function init() {
 
   // HOST CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
-    if(!window.pageState.loaded) return
+    if(!window.pageState.gameLoaded) return
     if(window.isPlayer && window.hero && updatedHero.id == window.hero.id) {
       window.mergeDeep(window.hero, updatedHero)
     }
