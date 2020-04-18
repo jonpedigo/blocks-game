@@ -19,8 +19,6 @@ function init(){
   window.addEventListener("keyup", function (e) {
 	   delete keysDown[e.keyCode]
   }, false)
-
-
 }
 
 function update(hero, keysDown, delta) {

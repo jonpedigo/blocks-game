@@ -67,7 +67,7 @@ window.anticipateObjectAdd = function(hero) {
   }
 }
 
-window.addObjects = function(objects, options = { bypassCollisions: false }) {
+window.addObjects = function(objects, options = { bypassCollisions: false }, game) {
   if(!objects.length) {
     objects = [objects]
   }

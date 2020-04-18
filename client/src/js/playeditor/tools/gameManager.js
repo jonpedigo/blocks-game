@@ -96,15 +96,23 @@ function init() {
   document.getElementById("branch-edit").addEventListener('click', () => {
     window.branch = JSON.parse(JSON.stringify(window.game))
     window.editingGame = window.branch
+    window.updateBranchToggleStyle()
+    branchViewToggle.checked = false
   })
 
   document.getElementById("merge-branch").addEventListener('click', () => {
     window.mergeDeep(window.game, window.branch)
     window.socket.emit('setGameJSON', window.game)
+    window.branch = null
+    window.updateBranchToggleStyle()
+    branchViewToggle.checked = true
   })
 
   document.getElementById("reset-to-branch").addEventListener('click', () => {
     window.socket.emit('setGameJSON', window.branch)
+    window.branch = null
+    window.updateBranchToggleStyle()
+    branchViewToggle.checked = true
   })
 
   document.getElementById("clear-branch").addEventListener('click', () => {
@@ -112,6 +120,17 @@ function init() {
     window.branch = null
     window.editingGame = window.game
     window.loadGame(window.game)
+    window.updateBranchToggleStyle()
+    branchViewToggle.checked = true
+  })
+
+  const branchViewToggle = document.getElementById("myonoffswitch")
+  branchViewToggle.addEventListener('change', (el) => {
+    if(branchViewToggle.checked) {
+      window.editingGame = window.game
+    } else {
+      window.editingGame = window.branch
+    }
   })
 
   function emitEditorGameState (gameStateUpdate) {
@@ -192,6 +211,14 @@ window.resetAllObjectState = function() {
     window.respawnObject(object)
   })
   window.socket.emit('editObjects', w.editingGame.objects)
+}
+
+window.updateBranchToggleStyle = function() {
+  if(window.branch) {
+    document.getElementById('branch-on-off').style = 'opacity: 1;'
+  } else {
+    document.getElementById('branch-on-off').style = 'opacity: 0;'
+  }
 }
 
 export default {

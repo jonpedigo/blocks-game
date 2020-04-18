@@ -27,7 +27,6 @@ function start() {
 
 // only on client
 function keyDown(keyCode, hero) {
-  console.log('?', keyCode)
   if(hero.flags.paused || w.game.gameState.paused) return
 
   if(keyCode === 90) {

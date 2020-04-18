@@ -34,7 +34,6 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
       let hero = w.game.heros[heroId]
-      console.log(heroId)
       input.keyDown(keyCode, hero)
       /// DEFAULT GAME FX
       if(window.defaultCustomGame) {
@@ -375,21 +374,7 @@ function init() {
   })
 
   window.socket.on('onCopyGame', (game) => {
-    // if theres already a game going on, need to unload it
-    if(w.game.objects.length) {
-      if(window.usePlayEditor) {
-        window.editingObject = {
-          id: null,
-          i: null,
-        }
-        window.objecteditor.saved = true
-        window.objecteditor.update({})
-      }
-      w.game.objects.forEach((object) => {
-        physics.removeObjectById(object.id)
-      })
-    }
-
+    window.unloadGame()
     if(window.host || window.usePlayEditor) window.loadGame(game)
     else window.loadGameNonHost(game)
   })

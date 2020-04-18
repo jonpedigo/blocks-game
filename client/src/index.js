@@ -399,7 +399,6 @@ window.onGameLoaded = function() {
   if(window.usePlayEditor) {
     window.editingGame = window.game
   }
-
   window.pageState.gameLoaded = true
 
   then = Date.now()
