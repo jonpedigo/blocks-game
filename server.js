@@ -112,6 +112,8 @@ io.on('connection', function(socket){
   // this is for when we are editing and we want to send this world to all people
   socket.on('copyGame', (id) => {
     getGame(id, (game) => {
+      game.id = currentGame.id
+      currentGame = game
       io.emit('onCopyGame', game)
     })
   })

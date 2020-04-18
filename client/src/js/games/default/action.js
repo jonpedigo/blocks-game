@@ -41,7 +41,7 @@ function shootBullet(hero) {
     })
   }
 
-  addObjects([shooted], { bypassCollisions: true })
+  addObjects([shooted], { fromLiveGame: true })
 }
 
 function dropWall(hero) {
@@ -84,7 +84,7 @@ function dropWall(hero) {
     })
   }
 
-  addObjects([wall], { bypassCollisions: true })
+  addObjects([wall], { fromLiveGame: true })
 }
 
 export default {

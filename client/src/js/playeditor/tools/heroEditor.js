@@ -12,8 +12,11 @@ function init() {
   herojsoneditor.id = 'herojsoneditor'
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
   window.heroeditor = new JSONEditor(herojsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (object) => {
-    // this is what sync should mean. Does every edit send immediately?
-    sendHeroUpdate({ tags: object.tags, flags: object.flags })
+    if(window.editingGame.branch) {
+      w.editingGame.hero = object
+    } else {
+      sendHeroUpdate({ tags: object.tags, flags: object.flags })
+    }
   }});
 
   let el =document.getElementsByClassName("hero-modifier-select");  // Find the elements

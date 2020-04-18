@@ -67,7 +67,7 @@ window.anticipateObjectAdd = function(hero) {
   }
 }
 
-window.addObjects = function(objects, options = { bypassCollisions: false }, game) {
+window.addObjects = function(objects, options = { bypassCollisions: false, fromLiveGame: false }, game) {
   if(!objects.length) {
     objects = [objects]
   }
@@ -122,7 +122,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false }, gam
     return newObject
   }).filter(obj => !!obj)
 
-  if(window.usePlayEditor && alertAboutCollision) {
+  if(window.usePlayEditor && alertAboutCollision && !options.fromLiveGame) {
     if(confirm('already an object on this grid node..confirm to add anyways')) {
       emitNewObjects()
     }
@@ -131,7 +131,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false }, gam
   }
 
   function emitNewObjects() {
-    if(window.branch) {
+    if(window.editingGame.branch && !options.fromLiveGame) {
       window.branch.objects.push(...objects)
     } else {
       window.socket.emit('addObjects', objects)

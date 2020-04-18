@@ -175,7 +175,7 @@ function intelligence(object, hero, delta) {
       // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
       // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
 
-      let createdObject = window.addObjects([newObject])
+      let createdObject = window.addObjects([newObject], { fromLiveGame: true })
       object.spawnedIds.push(createdObject[0].id)
       if(object.spawnPool) object.spawnPool--
 

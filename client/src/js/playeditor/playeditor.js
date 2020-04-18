@@ -221,6 +221,11 @@ function loaded() {
 
 function update(delta) {
   input.update(delta)
+  if(window.editingGame.branch) {
+    w.editingGame.objects.forEach((object) => {
+      w.editingGame.objectsById[object.id] = object
+    })
+  }
   if(!window.editingHero.id) {
     window.setEditorToAnyHero()
   }

@@ -168,7 +168,7 @@ function init() {
   window.socket.on('onUpdateGameState', (gameState) => {
     if(!window.pageState.gameLoaded) return
     if(!window.host) w.game.gameState = gameState
-    if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+    if(window.usePlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
       window.gamestateeditor.update(gameState)
     }
   })

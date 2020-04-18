@@ -42,8 +42,7 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
-    if(w.editingGame.grid && w.editingGame.grid.nodes) delete w.editingGame.grid.nodes
-    var copyText = JSON.stringify(w.editingGame);
+    var copyText = JSON.stringify({...w.editingGame, grid: {...w.editingGame.grid, nodes: null}});
     window.copyToClipBoard(copyText)
   })
 
@@ -58,14 +57,13 @@ function init() {
     window.resetAllObjectState()
   })
 
-
   window.syncGameStateToggle = document.getElementById('sync-game-state')
 
   window.resetObjects = function() {
     window.socket.emit('resetObjects')
   }
   window.saveGame = function() {
-    window.socket.emit('saveGame', {...window.editingGame, id: document.getElementById('game-id').value,
+    window.socket.emit('saveGame', {...window.editingGame, branch: null, id: document.getElementById('game-id').value,
           compendium: window.compendium })
   }
   window.setGame = function() {
@@ -96,12 +94,28 @@ function init() {
   document.getElementById("branch-edit").addEventListener('click', () => {
     window.branch = JSON.parse(JSON.stringify(window.game))
     window.editingGame = window.branch
+    window.editingGame.branch = true
     window.updateBranchToggleStyle()
     branchViewToggle.checked = false
   })
 
   document.getElementById("merge-branch").addEventListener('click', () => {
-    window.mergeDeep(window.game, window.branch)
+    Object.keys(w.branch.heros).forEach((id) => {
+      let hero = w.branch.heros[id]
+      delete hero.x
+      delete hero.y
+      delete hero.velocityY
+      delete hero.velocityX
+    })
+    window.branch.objects.forEach((obj) => {
+      if(!window.game.objectsById[obj.id]) window.game.objects.push(obj)
+      else window.removeObjectState(obj)
+    })
+    window.mergeDeep(window.game.objects, window.branch.objects)
+    window.mergeDeep(window.game.heros, window.branch.heros)
+    window.mergeDeep(window.game.world, window.branch.world)
+    window.mergeDeep(window.game.gameState, window.branch.gameState)
+    window.game.grid = window.branch.grid
     window.socket.emit('setGameJSON', window.game)
     window.branch = null
     window.updateBranchToggleStyle()
@@ -134,18 +148,22 @@ function init() {
   })
 
   function emitEditorGameState (gameStateUpdate) {
-    window.socket.emit('editGameState', {...w.editingGame.gameState, ...gameStateUpdate})
+    if(window.editingGame.branch) {
+      window.mergeDeep(window.editingGame.gameState, gameStateUpdate)
+    } else {
+      window.socket.emit('editGameState', {...w.editingGame.gameState, ...gameStateUpdate})
+    }
   }
 
-  function resetDefaults() {
-    window.resetObjects()
-    window.socket.emit('resetWorld')
-    window.socket.emit('updateGrid', window.defaultGrid)
-    for(var heroId in w.editingGame.heros) {
-      window.socket.emit('resetHeroToDefault', w.editingGame.heros[heroId])
-    }
-    window.socket.emit('resetGameState')
-  }
+  // function resetDefaults() {
+  //   window.resetObjects()
+  //   window.socket.emit('resetWorld')
+  //   window.socket.emit('updateGrid', window.defaultGrid)
+  //   for(var heroId in w.editingGame.heros) {
+  //     window.socket.emit('resetHeroToDefault', w.editingGame.heros[heroId])
+  //   }
+  //   window.socket.emit('resetGameState')
+  // }
 
   document.body.addEventListener('click', function(e) {
     if(!e.target) return
@@ -177,16 +195,19 @@ function init() {
 
 // client uses this sometimes
 window.resetSpawnAreasAndObjects = function() {
-  w.editingGame.objects.forEach((object) => {
-    if(object.removed) return
+  w.editingGame.objects = w.editingGame.objects.reduce((arr, object, i) => {
     if(object.spawned) {
+      // just remove it from the array if it was spawned from a spawn point
+      if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
     }
     if(object.tags.spawnZone) {
       resetSpawnZone(object)
     }
-  })
-  window.emitEditObjectsOther()
+    arr.push(object)
+    return arr
+  }, [])
+  if(!w.editingGame.branch) window.emitEditObjectsOther()
 }
 
 function resetSpawnZone(object) {
@@ -197,20 +218,24 @@ function resetSpawnZone(object) {
 
 // client uses this sometimes
 window.resetAllObjectState = function() {
-  w.editingGame.objects.forEach((object) => {
+  w.editingGame.objects = w.editingGame.objects.reduce((arr, object) => {
     if(object.spawned) {
+      if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
     }
     if(object.tags.spawnZone) {
       resetSpawnZone(object)
     }
     if((!object.spawnPointX && object.spawnPointX !== 0) || (!object.spawnPointY && object.spawnPointY !== 0) ){
+      if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
     }
     window.removeObjectState(object)
     window.respawnObject(object)
-  })
-  window.socket.emit('editObjects', w.editingGame.objects)
+    arr.push(object)
+    return arr
+  }, [])
+  if(!w.editingGame.branch) window.socket.emit('editObjects', w.editingGame.objects)
 }
 
 window.updateBranchToggleStyle = function() {
