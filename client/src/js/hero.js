@@ -23,6 +23,7 @@ function init() {
   	// spawnPointX: (40) * 20,
   	// spawnPointY: (40) * 20,
   	tags: {
+      obstacle: true,
       hero: true,
       isPlayer: true,
       monsterDestroyer: false,

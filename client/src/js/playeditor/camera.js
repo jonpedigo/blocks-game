@@ -362,16 +362,16 @@ function render(ctx, hero, objects, grid) {
   if(window.editingHero.parentId && window.currentTool == window.TOOLS.HERO_EDITOR) {
     drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.parentId], color: 'rgba(255, 0,0,1)'})
   }
-  if(window.editingHero.relativeId && window.currentTool == window.TOOLS.HERO_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.relativeId], color: 'rgba(255, 0,0,1)'})
-  }
+  // if(window.editingHero.relativeId && window.currentTool == window.TOOLS.HERO_EDITOR) {
+  //   drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.relativeId], color: 'rgba(255, 0,0,1)'})
+  // }
 
-  if(window.editingObject && window.editingObject.relativeId && window.currentTool == window.TOOLS.OBJECT_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[window.editingObject.relativeId], color: 'rgba(255, 0,0,1)'})
-  }
+  // if(window.editingObject && window.editingObject.relativeId && window.currentTool == window.TOOLS.OBJECT_EDITOR) {
+  //   drawObject(ctx, {...w.editingGame.objectsById[window.editingObject.relativeId], color: 'rgba(255, 0,0,1)'})
+  // }
 
-  if(window.editingObject && window.editingObject.parentId && window.currentTool == window.TOOLS.OBJECT_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[window.editingObject.parentId], color: 'rgba(255, 0,0,1)'})
+  if(objectEditorState && objectEditorState.parentId && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+    drawObject(ctx, {...w.editingGame.objectsById[objectEditorState.parentId], color: 'rgba(255, 0,0,1)'})
   }
 
   if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {

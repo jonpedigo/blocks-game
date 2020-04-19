@@ -16,6 +16,7 @@ window.defaultTags = {
   // child: false,
   onlyHeroAllowed: false,
   noHeroAllowed: false,
+  heroPushable: false,
 
   // UI
   chatter: false,

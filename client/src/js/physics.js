@@ -110,7 +110,7 @@ function heroCorrection(hero) {
       if(body.gameObject.removed) continue
       let result = physicsObjects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
-        if(body.gameObject.tags['obstacle'] || body.gameObject.tags['noHeroAllowed']) {
+        if((hero.tags['obstacle'] && body.gameObject.tags['obstacle'] && !body.gameObject.tags['heroPushable']) || body.gameObject.tags['noHeroAllowed']) {
           illegal = true
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
@@ -398,7 +398,7 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
         break;
       }
 
-      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'] || po.gameObject.tags['goombaSideways'])) {
+      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (!po.gameObject.path)) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -469,7 +469,7 @@ function update (delta) {
   })
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero, removeObjects, respawnObjects)
-    if(hero.parentId) return
+    // if(hero.parentId) return
     heroCorrection(hero)
   })
 
@@ -531,7 +531,7 @@ function update (delta) {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       let po = physicsObjects[id]
-      if(po.gameObject.parentId) continue
+      // if(po.gameObject.parentId) continue
       if(po.gameObject.removed) continue
       if(id.indexOf('hero') > -1) continue
       objectCorrections(po, final)
@@ -557,21 +557,23 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    if(object.parentId || object._parentId || object.relativeId || object._relativeId) {
-      attachToParentAndRelative(object)
+    // || object.relativeId || object._relativeId
+    if(object.parentId || object._parentId) {
+      attachToParent(object)
     }
     containObjectWithinGridBoundaries(object)
   })
 
   allHeros.forEach((hero) => {
-    if(hero.parentId || hero._parentId || hero.relativeId || hero._relativeId) {
-      attachToParentAndRelative(hero)
+    //     || hero.relativeId || hero._relativeId
+    if(hero.parentId || hero._parentId ) {
+      attachToParent(hero)
     }
     containObjectWithinGridBoundaries(hero)
   })
 }
 
-function attachToParentAndRelative(object) {
+function attachToParent(object) {
   let parent = w.game.objectsById[object.parentId] || w.game.heros[object.parentId]
 
   if(parent) {
@@ -587,19 +589,19 @@ function attachToParentAndRelative(object) {
   } else delete object._parentId
 
 
-  let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
+  // let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
 
-  if(relative) {
-    object.x += relative._deltaX
-    object.y += relative._deltaY
-  } else delete object.relativeId
-
-  //// idk temporary relativeId
-  relative = w.game.objectsById[object._relativeId] || w.game.heros[object._relativeId]
-  if(parent) {
-    object.x += parent._deltaX
-    object.y += parent._deltaY
-  } else delete object._relativeId
+  // if(relative) {
+  //   object.x += relative._deltaX
+  //   object.y += relative._deltaY
+  // } else delete object.relativeId
+  //
+  // //// idk temporary relativeId
+  // relative = w.game.objectsById[object._relativeId] || w.game.heros[object._relativeId]
+  // if(parent) {
+  //   object.x += parent._deltaX
+  //   object.y += parent._deltaY
+  // } else delete object._relativeId
 }
 
 

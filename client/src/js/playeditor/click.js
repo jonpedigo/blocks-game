@@ -97,9 +97,9 @@ function init() {
               if(window.clickToSetHeroParentToggle.checked) {
                 window.sendHeroUpdate({id: window.editingHero.id, parentId: object.id})
               }
-              if(window.clickToSetHeroRelativeToggle.checked) {
-                window.sendHeroUpdate({id: window.editingHero.id, relativeId: object.id})
-              }
+              // if(window.clickToSetHeroRelativeToggle.checked) {
+              //   window.sendHeroUpdate({id: window.editingHero.id, relativeId: object.id})
+              // }
             })
           })
         } else {
@@ -142,9 +142,10 @@ function init() {
                 window.updateObjectEditorNotifier()
               } else if(window.selectorParentToggle.checked) {
                 window.sendObjectUpdate({parentId: object.id})
-              } else if(window.selectorRelativeToggle.checked) {
-                window.sendObjectUpdate({relativeId: object.id})
               }
+              // if(window.selectorRelativeToggle.checked) {
+              //   window.sendObjectUpdate({relativeId: object.id})
+              // }
             })
           })
           Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])

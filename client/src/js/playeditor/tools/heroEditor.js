@@ -59,7 +59,7 @@ function init() {
 
   window.clickToSetHeroSpawnToggle = document.getElementById('click-to-set-spawn-hero')
   window.clickToSetHeroParentToggle = document.getElementById('click-to-set-parent-hero')
-  window.clickToSetHeroRelativeToggle = document.getElementById('click-to-set-relative-hero')
+  // window.clickToSetHeroRelativeToggle = document.getElementById('click-to-set-relative-hero')
 
   window.syncHeroToggle = document.getElementById('sync-hero')
   window.syncHeroToggle.onclick = (e) => {
