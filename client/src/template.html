@@ -56,7 +56,7 @@
       <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
       <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
       <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
-      <div><input type='radio' name='object-selector' id='set-object-parent'>Select Parent of Object</input></div>
+      <div><input type='radio' name='object-selector' id='set-parent-object'>Select Parent of Object</input></div>
       <hr>
       <strong>Compendium Select</strong>
       <div class="compendium-select">
@@ -107,7 +107,9 @@
       <hr>
       <button id='delete-hero'>Delete Hero</button>
       <hr>
-      <div><input type='checkbox' id='click-to-set-spawn-hero'>Click to set spawn</input></div>
+      <div><input type='radio' name='hero-selector' id='click-to-set-parent-hero'>Set parent</input></div>
+      <div><input type='radio' name='hero-selector' id='click-to-set-spawn-hero'>Set spawn</input></div>
+      <hr>
       <div><input type='checkbox' id='sync-hero'>Sync Hero</input></div>
       <hr>
       <strong>Apply Hero Modifier</strong>
@@ -139,8 +141,10 @@
       <hr>
       <button id='reset-objects'>Reset Objects</button>
       <button id='reset-game-state'>Reset game state</button>
-      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
-      <button id='reset-all-objects-state'>Reset All Object State</button>
+      <button id='reset-spawn-and-objects'>Reset Spawn Areas and their Spawnlings</button>
+      <button id='reset-all-objects-state'>Respawn and Reset State for All Objects</button>
+      <button id='reset-heros-state'>Reset All Heros to default</button>
+      <button id='respawn-heros'>Respawn All Heros</button>
       <hr>
       <button id='branch-edit'>Branch Edit</button>
       <button id='merge-branch'>Merge Branch</button>

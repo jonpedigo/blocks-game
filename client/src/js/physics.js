@@ -19,6 +19,8 @@ function updatePosition(object, delta) {
     object._initialX = object.x
     object._initialY = object.y
   }
+  object._deltaX = 0
+  object._deltaY = 0
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -113,7 +115,7 @@ function heroCorrection(hero) {
           corrections.push(result)
           if(result.overlap_y === 1) {
             if(body.gameObject.tags.movingPlatform) {
-              landingObject = body.gameObject
+              landingObject = body
             }
           }
           // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
@@ -134,11 +136,15 @@ function heroCorrection(hero) {
 
       function correctHeroY() {
         if(result.overlap_y > 0) {
-          hero.velocityY = 0
           hero.onGround = true
-          if(landingObject && landingObject.tags['movingPlatform']) {
-            let diffX = landingObject._initialX - landingObject.x
+          hero.velocityY = 0
+          if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
+            objectCorrections(landingObject, false, { bypassHero: true })
+            let diffX = landingObject.gameObject._initialX - landingObject.gameObject.x
             heroPO.x -= diffX
+            let diffY = landingObject.gameObject._initialY - landingObject.gameObject.y
+            heroPO.y -= diffY
+            result.overlap_y = 0
           }
         } else if(result.overlap_y < 0){
           hero.velocityY = 0
@@ -191,6 +197,8 @@ function heroCorrection(hero) {
           hero.directions.up = true
         }
 
+        hero._deltaX = heroPO.x - hero._initialX
+        hero._deltaY = heroPO.y - hero._initialY
         hero.x = heroPO.x
         hero.y = heroPO.y
       }
@@ -359,6 +367,78 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   })
 }
 
+
+function objectCorrections(po, final, options = { bypassHero: false }) {
+  // if you are creating a result up here youll only be able to correct for one obj at a time
+  // if you are accumulating the result like for the hero
+  let result = po.createResult()
+  let correction = {x: po.x, y: po.y}
+  let potentials = po.potentials()
+  let illegal = false
+  for(const body of potentials) {
+    if(!body.gameObject) {
+      console.log('missing game object on body', body)
+      continue
+    }
+    if(body.gameObject.removed || (options.bypassHero && body.gameObject.id.indexOf('hero') >= 0)) continue
+    if(po.collides(body, result)) {
+      if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
+
+      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'] || po.gameObject.tags['goombaSideways'])) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
+    }
+  }
+
+  if(illegal) {
+    if(result.overlap_y === 1) {
+      po.gameObject.velocityY = 0
+      po.gameObject.onGround = true
+    } else if(result.overlap_y === -1){
+      po.gameObject.velocityY = 0
+    }
+    if(result.overlap_x === 1) {
+      po.gameObject.velocityX = 0
+    } else if(result.overlap_x === -1){
+      po.gameObject.velocityX = 0
+    }
+
+    po.x = correction.x
+    po.y = correction.y
+  }
+
+  if(final) {
+    // just give up correction and prevent any movement from these mother fuckers
+    if(illegal) {
+      po.gameObject.x = po.gameObject._initialX
+      po.gameObject.y = po.gameObject._initialY
+    } else {
+      po.gameObject._deltaX = po.x - po.gameObject._initialX
+      po.gameObject._deltaY = po.y - po.gameObject._initialY
+      po.gameObject.x = po.x
+      po.gameObject.y = po.y
+    }
+  }
+}
+
 function update (delta) {
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
@@ -444,75 +524,10 @@ function update (delta) {
 
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
-      if(id.indexOf('hero') > -1) continue
       let po = physicsObjects[id]
       if(po.gameObject.removed) continue
-      // if you are creating a result up here youll only be able to correct for one obj at a time
-      // if you are accumulating the result like for the hero
-      let result = po.createResult()
-      let correction = {x: po.x, y: po.y}
-      let potentials = po.potentials()
-      let illegal = false
-      for(const body of potentials) {
-        if(!body.gameObject) {
-          console.log('missing game object on body', body)
-          continue
-        }
-        if(body.gameObject.removed) continue
-        if(po.collides(body, result)) {
-          if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
-            if(Math.abs(result.overlap_x) !== 0) {
-              illegal = true
-              correction.x -= result.overlap * result.overlap_x
-            }
-            if(Math.abs(result.overlap_y) !== 0) {
-              illegal = true
-              correction.y -= result.overlap * result.overlap_y
-            }
-            break;
-          }
-
-          if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (po.gameObject.tags['zombie'] || po.gameObject.tags['goomba'] || po.gameObject.tags['goombaSideways'])) {
-            if(Math.abs(result.overlap_x) !== 0) {
-              illegal = true
-              correction.x -= result.overlap * result.overlap_x
-            }
-            if(Math.abs(result.overlap_y) !== 0) {
-              illegal = true
-              correction.y -= result.overlap * result.overlap_y
-            }
-            break;
-          }
-        }
-      }
-
-      if(illegal) {
-        if(result.overlap_y === 1) {
-          po.gameObject.velocityY = 0
-          po.gameObject.onGround = true
-        } else if(result.overlap_y === -1){
-          po.gameObject.velocityY = 0
-        }
-        if(result.overlap_x === 1) {
-          po.gameObject.velocityX = 0
-        } else if(result.overlap_x === -1){
-          po.gameObject.velocityX = 0
-        }
-
-        po.x = correction.x
-        po.y = correction.y
-      }
-
-      if(final) {
-        // just give up correction and prevent any movement from these mother fuckers
-        if(illegal) {
-          po.gameObject.x = po.gameObject._initialX
-          po.gameObject.y = po.gameObject._initialY
-        } else {
-          po.gameObject.x = po.x
-          po.gameObject.y = po.y
-        }
-      }
+      if(id.indexOf('hero') > -1) continue
+      objectCorrections(po, final)
     }
   }
 
@@ -535,12 +550,32 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
+    if(object.parentId || object._parentId) {
+      attachToParent(object)
+    }
     containObjectWithinGridBoundaries(object)
   })
 
   allHeros.forEach((hero) => {
+    if(hero.parentId || hero._parentId) {
+      attachToParent(hero)
+    }
     containObjectWithinGridBoundaries(hero)
   })
+}
+
+function attachToParent(object) {
+  let parent = w.game.objectsById[object.parentId]
+  if(parent) {
+    object.x += parent._deltaX
+    object.y += parent._deltaY
+  } else delete object.parentId
+
+  parent = w.game.objectsById[object._parentId]
+  if(parent) {
+    object.x += parent._deltaX
+    object.y += parent._deltaY
+  } else delete object._parentId
 }
 
 

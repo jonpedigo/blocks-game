@@ -58,6 +58,8 @@ function init() {
   })
 
   window.clickToSetHeroSpawnToggle = document.getElementById('click-to-set-spawn-hero')
+  window.clickToSetHeroParentToggle = document.getElementById('click-to-set-parent-hero')
+
   window.syncHeroToggle = document.getElementById('sync-hero')
   window.syncHeroToggle.onclick = (e) => {
     if(e.srcElement.checked) {
@@ -76,7 +78,7 @@ function init() {
       window.mergeDeep(window.editingHero, update)
       window.mergeDeep(w.editingGame.heros[window.editingHero.id], update)
     } else {
-      window.socket.emit('editHero', update)
+      window.socket.emit('editHero', { id: window.editingHero.id, ...update})
     }
   }
   window.sendHeroUpdate = sendHeroUpdate

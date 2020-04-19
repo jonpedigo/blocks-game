@@ -90,6 +90,13 @@ function init() {
 
         if(window.clickToSetHeroSpawnToggle.checked) {
           window.sendHeroUpdate({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+        } else if(window.clickToSetHeroParentToggle.checked){
+          w.editingGame.objects
+          .forEach((object, i) => {
+            collisions.checkObject(click, object, () => {
+              window.sendHeroUpdate({id: window.editingHero.id, parentId: object.id})
+            })
+          })
         } else {
           Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
           .forEach((hero, i) => {
@@ -100,6 +107,7 @@ function init() {
             })
           })
         }
+
       }
     },
     [TOOLS.SIMPLE_EDITOR]: {
@@ -118,14 +126,20 @@ function init() {
           window.objecteditor.update({...window.objecteditor.get(), ...spawnPoints})
         } else if(window.setObjectPathfindingLimitToggle.checked) {
           defaultFirstClick(e)
-        } else if(window.selectorObjectToggle.checked){
+        } else {
           w.editingGame.objects
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
-              object.i = i
-              window.objecteditor.saved = true
-              window.objecteditor.update(object)
-              window.updateObjectEditorNotifier()
+              if(window.selectorObjectToggle.checked) {
+                object.i = i
+                window.objecteditor.saved = true
+                window.objecteditor.update(object)
+                window.updateObjectEditorNotifier()
+              } else if(window.selectorParentToggle.checked) {
+                collisions.checkObject(click, object, () => {
+                  window.sendObjectUpdate({parentId: object.id})
+                })
+              }
             })
           })
         }
