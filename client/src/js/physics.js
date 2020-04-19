@@ -22,6 +22,7 @@ function updatePosition(object, delta) {
   object._deltaX = 0
   object._deltaY = 0
   object._illegalChild = false
+  object._parentId = null
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -72,7 +73,9 @@ function updatePosition(object, delta) {
       object.velocityY = object.velocityMax * -1
     }
 
-    if(object.tags && !object.tags.gravity) {
+    if(object._skipNextGravity) {
+      object._skipNextGravity = false
+    } else if(object.tags && !object.tags.gravity) {
       object.y += object.velocityY * delta
     }
   }
@@ -110,7 +113,7 @@ function heroCorrection(hero) {
       if(body.gameObject.removed) continue
       let result = physicsObjects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
-        if((hero.tags['obstacle'] && body.gameObject.tags['obstacle'] && !body.gameObject.tags['heroPushable']) || body.gameObject.tags['noHeroAllowed']) {
+        if((body.gameObject.tags['obstacle'] && !body.gameObject.tags['heroPushable']) || body.gameObject.tags['noHeroAllowed']) {
           illegal = true
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
@@ -138,14 +141,11 @@ function heroCorrection(hero) {
       function correctHeroY() {
         if(result.overlap_y > 0) {
           hero.onGround = true
-          hero.velocityY = 0
           if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
-            objectCorrections(landingObject, false, { bypassHero: true })
-            let diffX = landingObject.gameObject._initialX - landingObject.gameObject.x
-            heroPO.x -= diffX
-            let diffY = landingObject.gameObject._initialY - landingObject.gameObject.y
-            heroPO.y -= diffY
-            result.overlap_y = 0
+            hero._parentId = landingObject.gameObject.id
+            hero._skipNextGravity = true
+          } else {
+            hero.velocityY = 0
           }
         } else if(result.overlap_y < 0){
           hero.velocityY = 0
@@ -396,9 +396,7 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
           correction.y -= result.overlap * result.overlap_y
         }
         break;
-      }
-
-      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (!po.gameObject.path)) {
+      } else if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (!po.gameObject.path)) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -409,6 +407,19 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
         }
         break;
       }
+
+      if(po.gameObject.tags && po.gameObject.tags['heroPushable'] && body.gameObject.tags && body.gameObject.tags['hero'] && !po.gameObject.tags['stationary']) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
+
     }
   }
 
