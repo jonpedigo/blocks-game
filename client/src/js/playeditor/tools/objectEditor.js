@@ -64,21 +64,23 @@ window.updateEditorState = function() {
 }
 
 window.sendObjectUpdate = function(objectUpdate) {
-  let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  let updatedObject = JSON.parse(JSON.stringify(w.editingGame.objectsById[editorState.id]))
-  if(window.objecteditor.live && editorState.id) {
-    let updatedObject = w.editingGame.objectsById[editorState.id]
-    window.mergeDeep(updatedObject, objectUpdate)
+  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(window.editingGame.branch) {
+
+  } else if(window.objecteditor.live && editorState.id) {
     window.socket.emit('editObjects', w.editingGame.objects)
   }
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
-  let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectCopy)
-  window.emitEditObjectsOther()
+  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(window.editingGame.branch) {
+    
+  } else {
+    window.emitEditObjectsOther()
+  }
   window.objecteditor.saved = true
   window.updateObjectEditorNotifier()
 }
@@ -88,6 +90,12 @@ window.emitEditObjectsOther = function() {
     delete obj.x
     delete obj.y
     return obj
+  }))
+}
+
+window.emitEditObjectsPos = function() {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)).map((obj) => {
+    return {id: obj.id, x: obj.x, y: obj.y}
   }))
 }
 

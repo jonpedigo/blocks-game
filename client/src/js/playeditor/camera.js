@@ -228,6 +228,17 @@ function render(ctx, hero, objects, grid) {
     drawVertice(ctx, vertices[i])
   }
 
+  if(objectEditorState && objectEditorState.parentId && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+    drawObject(ctx, {...w.editingGame.objectsById[objectEditorState.parentId], color: 'rgba(255, 0,0,.2)'})
+  }
+
+  if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
+    drawObject(ctx, {x: objectEditorState.spawnPointX, y: objectEditorState.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
+    drawObject(ctx, {x: objectEditorState.spawnPointX - 205, y: objectEditorState.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
+  }
+
+
+
   ////////////////
   ////////////////
   // HEROS
@@ -269,7 +280,7 @@ function render(ctx, hero, objects, grid) {
 
   ////////////////
   ////////////////
-  // DRAGGING UI BOXES
+  // MAP/DRAGGING UI BOXES
   ////////////////
   ////////////////
   if(window.clickStart.x && (currentTool === TOOLS.ADD_OBJECT || currentTool === TOOLS.SIMPLE_EDITOR)) {
@@ -281,6 +292,16 @@ function render(ctx, hero, objects, grid) {
     if(Math.abs(possibleBox.width) >= (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier) && Math.abs(possibleBox.height) >= window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier) ctx.strokeStyle = '#FFF'
     else ctx.strokeStyle = 'red'
     drawBorder(ctx, possibleBox)
+  }
+
+  if(w.gridHighlight) {
+    drawObject(ctx, {...w.gridHighlight, color: 'rgba(255,255,255,0.6)'})
+  }
+
+  if(window.childObjectGroup && window.childObjectGroup.length) {
+    window.childObjectGroup.forEach((object) => {
+      drawObject(ctx, {...object, color: 'rgba(255,0,0,0.6)'})
+    })
   }
 
   ////////////////
@@ -360,29 +381,10 @@ function render(ctx, hero, objects, grid) {
   }
 
   if(window.editingHero.parentId && window.currentTool == window.TOOLS.HERO_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.parentId], color: 'rgba(255, 0,0,1)'})
-  }
-  // if(window.editingHero.relativeId && window.currentTool == window.TOOLS.HERO_EDITOR) {
-  //   drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.relativeId], color: 'rgba(255, 0,0,1)'})
-  // }
-
-  // if(window.editingObject && window.editingObject.relativeId && window.currentTool == window.TOOLS.OBJECT_EDITOR) {
-  //   drawObject(ctx, {...w.editingGame.objectsById[window.editingObject.relativeId], color: 'rgba(255, 0,0,1)'})
-  // }
-
-  if(objectEditorState && objectEditorState.parentId && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[objectEditorState.parentId], color: 'rgba(255, 0,0,1)'})
+    drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.parentId], color: 'rgba(255, 0,0,.2)'})
   }
 
-  if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
-    drawObject(ctx, {x: objectEditorState.spawnPointX, y: objectEditorState.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
-    drawObject(ctx, {x: objectEditorState.spawnPointX - 205, y: objectEditorState.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
-  }
-
-  if(w.gridHighlight) {
-    drawObject(ctx, {...w.gridHighlight, color: 'rgba(255,255,255,0.6)'})
-  }
-
+  /// FRAMES PER SECOND
   ctx.font =`24pt Arial`
   ctx.fillStyle="rgba(255,255,255,0.3)"
   ctx.fillText(Math.ceil(window.fps), window.innerWidth - 240, 40)

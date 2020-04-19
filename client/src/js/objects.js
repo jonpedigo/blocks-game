@@ -148,8 +148,8 @@ function removeObjectState(object) {
   delete object._initialX
   delete object._deltaY
   delete object._deltaX
-  delete object.velocityY
-  delete object.velocityX
+  object.velocityY = 0
+  object.velocityX = 0
   delete object.spawnedIds
   delete object.spawnWait
   delete object.target
@@ -161,6 +161,8 @@ function removeObjectState(object) {
   delete object.gridY
   delete object.spawnPool
   delete object._parentId
+  delete object._skipNextGravity
+  delete object.fresh
 }
 window.removeObjectState = removeObjectState
 

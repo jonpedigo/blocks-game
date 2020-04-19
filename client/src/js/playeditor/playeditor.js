@@ -52,7 +52,6 @@ for(var tool in TOOLS) {
 
 window.onChangeTool = function(toolName) {
   // console.log('current tool changed to ' + toolName)
-  window.currentTool = toolName
   Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
     e.className = "tool-feature invisible"
   })
@@ -77,13 +76,14 @@ window.onChangeTool = function(toolName) {
     // document.getElementById('game-canvas').style="left: 0px;"
   }
 
-  if(toolName === window.TOOLS.ADD_OBJECT) {
+  if(window.currentTool && window.currentTool === window.TOOLS.SIMPLE_EDITOR && toolName === window.TOOLS.ADD_OBJECT) {
     let editorState = window.objecteditor.get()
     if(editorState.id) {
       if(editorState.compendiumId) delete editorState.compendiumId
       delete editorState.id
     }
     editorState.i = null
+    window.removeObjectState(editorState)
     window.objecteditor.saved = true
     window.objecteditor.update(editorState)
     window.updateObjectEditorNotifier()
@@ -95,6 +95,8 @@ window.onChangeTool = function(toolName) {
   } else {
     x.style ='display:none'
   }
+
+  window.currentTool = toolName
 }
 
 

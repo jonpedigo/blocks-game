@@ -15,42 +15,62 @@ function init() {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
 
-    if(window.currentTool === window.TOOLS.ADD_OBJECT) {
-      const { x,y } = gridTool.createGridNodeAt(window.mousePos.x, window.mousePos.y)
+    const { x,y } = gridTool.createGridNodeAt(window.mousePos.x, window.mousePos.y)
 
-      let location = {
-        x,
-        y,
+    let location = {
+      x,
+      y,
+    }
+
+    if(window.dotAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) {
+      location.width = Number(document.getElementById('add-dot-size').value)
+      location.height = Number(document.getElementById('add-dot-size').value)
+      location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+      location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
+    }
+
+    if(window.gridNodeAddToggle.checked  && window.currentTool === window.TOOLS.ADD_OBJECT) {
+      location.width = w.editingGame.grid.nodeSize
+      location.height = w.editingGame.grid.nodeSize
+    }
+
+    // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.dragAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
+    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.dragAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+      location = {
+        width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
+        height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
+        x: window.clickStart.x/window.scaleMultiplier,
+        y: window.clickStart.y/window.scaleMultiplier,
+      }
+      gridTool.snapDragToGrid(location, {dragging: true})
+    }
+
+    if(window.useEditorSizeAddToggle.checked  && window.currentTool === window.TOOLS.ADD_OBJECT) {
+      let oe = window.objecteditor.get()
+      location.width = oe.width || w.editingGame.grid.nodeSize
+      location.height = oe.height || w.editingGame.grid.nodeSize
+      location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
+      location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
+    }
+
+    if(window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked && !!(window.clickStart.x || window.clickStart.x === 0)) {
+      location = {
+        width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
+        height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
+        x: window.clickStart.x/window.scaleMultiplier,
+        y: window.clickStart.y/window.scaleMultiplier,
       }
 
-      if(window.dotAddToggle.checked) {
-        location.width = Number(document.getElementById('add-dot-size').value)
-        location.height = Number(document.getElementById('add-dot-size').value)
-        location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
-        location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
-      }
+      window.childObjectGroup = []
+      w.editingGame.objects
+      .forEach((object, i) => {
+        collisions.checkObject(location, object, () => {
+          window.childObjectGroup.push(object)
+        })
+      })
+    }
 
-      if(window.gridNodeAddToggle.checked) {
-        location.width = w.editingGame.grid.nodeSize
-        location.height = w.editingGame.grid.nodeSize
-      }
-
-      if(window.dragAddToggle.checked) {
-        location.width = w.editingGame.grid.nodeSize
-        location.height = w.editingGame.grid.nodeSize
-      }
-
-      if(window.useEditorSizeAddToggle.checked) {
-        let oe = window.objecteditor.get()
-        location.width = oe.width || w.editingGame.grid.nodeSize
-        location.height = oe.height || w.editingGame.grid.nodeSize
-        location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
-        location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
-      }
-
-      window.gridHighlight = location
-    } else window.gridHighlight = null
-
+    window.gridHighlight = location
   })
 
   window.document.getElementById('game-canvas').addEventListener('click',function(e){
@@ -132,30 +152,38 @@ function init() {
         } else if(window.setObjectPathfindingLimitToggle.checked) {
           defaultFirstClick(e)
         } else {
-          w.editingGame.objects
-          .forEach((object, i) => {
-            collisions.checkObject(click, object, () => {
+          for(let i = 0; i < w.editingGame.objects.length; i++) {
+            let object = w.editingGame.objects[i]
+            if(window.objecteditor && object.id === window.objecteditor.get().id){
+              continue
+            }
+            if(collisions.checkObject(click, object, () => {
               if(window.selectorObjectToggle.checked) {
                 object.i = i
                 window.objecteditor.saved = true
                 window.objecteditor.update(object)
                 window.updateObjectEditorNotifier()
               } else if(window.selectorParentToggle.checked) {
-                window.sendObjectUpdate({parentId: object.id})
+                window.objecteditor.saved = false
+                window.objecteditor.update({...window.objecteditor.get(), parentId: object.id})
+                // window.sendObjectUpdate({parentId: object.id})
               }
               // if(window.selectorRelativeToggle.checked) {
               //   window.sendObjectUpdate({relativeId: object.id})
               // }
-            })
-          })
+            })) break
+          }
           Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
           .forEach((hero, i) => {
             collisions.checkObject(click, hero, () => {
               if(window.selectorParentToggle.checked) {
-                window.sendObjectUpdate({parentId: hero.id})
-              } else if(window.selectorRelativeToggle.checked) {
-                window.sendObjectUpdate({relativeId: object.id})
+                window.objecteditor.saved = false
+                window.objecteditor.update({...window.objecteditor.get(), parentId: hero.id})
+                // window.sendObjectUpdate({parentId: hero.id})
               }
+              // else if(window.selectorRelativeToggle.checked) {
+              //  window.sendObjectUpdate({relativeId: object.id})
+              // }
             })
           })
         }
@@ -173,8 +201,8 @@ function init() {
           window.objecteditor.saved = false
           // window.sendObjectUpdate({ pathfindingLimit: value})
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
-          window.setObjectPathfindingLimitToggle.checked = false
-          window.selectorObjectToggle.checked = true
+          // window.setObjectPathfindingLimitToggle.checked = false
+          // window.selectorObjectToggle.checked = true
         }
       }
     },
@@ -212,8 +240,8 @@ function init() {
           window.sendWorldUpdate({ lockCamera })
         }
         if(selectorGameToggle.checked) {
-          const gameBoundaries = { x, y, width, height };
-          window.sendWorldUpdate({ gameBoundaries })
+          const gameBoundaries = { x, y, width, height, behavior: w.game.world.gameBoundaries.behavior };
+          window.sendWorldUpdate({ gameBoundaries } )
         }
         if(window.selectorHeroZoomToggle.checked) {
           let gridWidth = value.width/w.editingGame.grid.nodeSize
@@ -226,7 +254,7 @@ function init() {
     },
     [TOOLS.ADD_OBJECT] : {
       onFirstClick: (e) => {
-        if(window.dragAddToggle.checked) {
+        if(window.dragAddToggle.checked || window.addParentToggle.checked) {
           defaultFirstClick(e)
         } else {
           const click = {
@@ -277,10 +305,25 @@ function init() {
         let editorObject = window.objecteditor.get()
 
         let newObject = JSON.parse(JSON.stringify(editorObject))
-
+        if(window.addParentToggle.checked) {
+          newObject = {}
+          newObject.id = 'parent-'+Date.now()
+          newObject.tags = window.tags
+          newObject.tags.invisible = true
+          newObject.tags.obstacle = false
+        }
         Object.assign(newObject, location)
 
         window.addObjects(newObject)
+
+        if(window.addParentToggle.checked) {
+          window.childObjectGroup.forEach((object) => {
+            object.parentId = newObject.id
+            console.log(object.parentId)
+          })
+          console.log(w.editingGame.objectsById[window.childObjectGroup[0].id])
+          window.emitEditObjectsOther()
+        }
       },
     }
   }

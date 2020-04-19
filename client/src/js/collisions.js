@@ -22,6 +22,7 @@ function checkObject(agent, object, onCollide) {
     && object.y < (agent.y + agent.height)
   ) {
     onCollide()
+    return true
   }
 }
 

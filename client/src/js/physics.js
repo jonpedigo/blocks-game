@@ -21,7 +21,6 @@ function updatePosition(object, delta) {
   }
   object._deltaX = 0
   object._deltaY = 0
-  object._illegalChild = false
   object._parentId = null
 
   // if(object.accX) {

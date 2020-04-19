@@ -1,8 +1,4 @@
 // ( Force anticipated add )
-// branch edit
-// reset live branch to editing branch
-// merge live branch with editing branch
-// save editing branch as default state
 // local client events
 // interpolation
 
@@ -19,19 +15,20 @@
 
 // satisfying death animations? satisfing death states or idk.. things?
 
+// switch tag fresh to an _fresh ( actually just go through all object state and make sure its consistent, there are others such as !!!target!!!<---( please make _ ) that could be an underscore property )
+// lastPowerUpId, velocity? , i gridX, width, etc
 //--------
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
-// push block
 // Smarter rendering
 // INVERT GAME, for example, when you get pacman powers
 // planet gravity! Would be cool to have..
 // Send player to... x, y ( have them like start to move really fast and possibly pathfind)
 // stop player (velocity)
-// objects that are children of other objects and therefore follow them??
 // controlling X or Y scroll. For example. allow X croll, but not Y scroll
 // lazy scroll that is not not immediate! Smoother...
 // leveling up
 // optimize shadow feature, not all vertices!
+// striped object!
 // Instead of creating one big block, create a bunch of small blocks, OPTION. NO DDO NOT DDO THIS. MAybe make it a design...
 // INSTEAD allow for stationary objects that are touching eachother to all be combined! This helps with physics and performance
 // Maybe make a diagonal wall..
@@ -51,7 +48,6 @@
 // — slow down hero
 // — increase speed parameter
 // — decrease speed parameter
-// — set Zoom to all heros
 // add grid to world editor
 //
 // Follow whatever you are editing
@@ -72,6 +68,9 @@
 
 // have the zoom of the editor get set to the gameBoundaries
 // a button for 'zoom to where most objects are' THING WOULD BE GREAT
+// CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
+// a try catch that if theres an error, the editor asks for a version of the game from like 1 minute ago
+// everytime I switch out of a menu, I want the selected radio buttons to be reset to default
 
 // JUICE IDEAS
 /*Trails,

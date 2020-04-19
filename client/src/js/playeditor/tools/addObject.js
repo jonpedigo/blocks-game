@@ -13,6 +13,7 @@ function init() {
   window.dragAddToggle = document.getElementById("add-object-drag")
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.useEditorSizeAddToggle = document.getElementById("add-object-editor")
+  window.addParentToggle = document.getElementById("add-parent-drag")
 
   window.compendium = {}
 
@@ -25,6 +26,7 @@ function init() {
     window.removeObjectState(object)
     console.log('added: ' + object.compendiumId + ' to compendium')
     window.objecteditor.saved = false
+    window.objecteditor.defaultCompendium = false
     window.objecteditor.update(object)
     updateCompendium()
     window.updateObjectEditorNotifier()
