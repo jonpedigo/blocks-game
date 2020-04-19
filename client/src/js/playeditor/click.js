@@ -90,11 +90,16 @@ function init() {
 
         if(window.clickToSetHeroSpawnToggle.checked) {
           window.sendHeroUpdate({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
-        } else if(window.clickToSetHeroParentToggle.checked){
+        } else if(window.clickToSetHeroParentToggle.checked || window.clickToSetHeroRelativeToggle.checked){
           w.editingGame.objects
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
-              window.sendHeroUpdate({id: window.editingHero.id, parentId: object.id})
+              if(window.clickToSetHeroParentToggle.checked) {
+                window.sendHeroUpdate({id: window.editingHero.id, parentId: object.id})
+              }
+              if(window.clickToSetHeroRelativeToggle.checked) {
+                window.sendHeroUpdate({id: window.editingHero.id, relativeId: object.id})
+              }
             })
           })
         } else {
@@ -136,9 +141,19 @@ function init() {
                 window.objecteditor.update(object)
                 window.updateObjectEditorNotifier()
               } else if(window.selectorParentToggle.checked) {
-                collisions.checkObject(click, object, () => {
-                  window.sendObjectUpdate({parentId: object.id})
-                })
+                window.sendObjectUpdate({parentId: object.id})
+              } else if(window.selectorRelativeToggle.checked) {
+                window.sendObjectUpdate({relativeId: object.id})
+              }
+            })
+          })
+          Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
+          .forEach((hero, i) => {
+            collisions.checkObject(click, hero, () => {
+              if(window.selectorParentToggle.checked) {
+                window.sendObjectUpdate({parentId: hero.id})
+              } else if(window.selectorRelativeToggle.checked) {
+                window.sendObjectUpdate({relativeId: object.id})
               }
             })
           })

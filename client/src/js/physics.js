@@ -21,6 +21,7 @@ function updatePosition(object, delta) {
   }
   object._deltaX = 0
   object._deltaY = 0
+  object._illegalChild = false
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -185,6 +186,8 @@ function heroCorrection(hero) {
       if(illegal) {
         hero.x = hero._initialX
         hero.y = hero._initialY
+        heroPO.x = hero._initialX
+        heroPO.y = hero._initialY
       } else {
         if(heroPO.x > hero._initialX) {
           hero.directions.right = true
@@ -230,6 +233,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
     }
   }
 
+  // in case there was respawns or something
   heroPO.x = hero.x
   heroPO.y = hero.y
 }
@@ -465,6 +469,7 @@ function update (delta) {
   })
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero, removeObjects, respawnObjects)
+    if(hero.parentId) return
     heroCorrection(hero)
   })
 
@@ -482,6 +487,7 @@ function update (delta) {
     if(po.gameObject.removed) continue
     let potentials = po.potentials()
     let result = po.createResult()
+    // po VS body. the po is the one you should EFFECT
     for(const body of potentials) {
       if(!body.gameObject) {
         console.log('missing game object on body', body)
@@ -525,6 +531,7 @@ function update (delta) {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       let po = physicsObjects[id]
+      if(po.gameObject.parentId) continue
       if(po.gameObject.removed) continue
       if(id.indexOf('hero') > -1) continue
       objectCorrections(po, final)
@@ -550,32 +557,49 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    if(object.parentId || object._parentId) {
-      attachToParent(object)
+    if(object.parentId || object._parentId || object.relativeId || object._relativeId) {
+      attachToParentAndRelative(object)
     }
     containObjectWithinGridBoundaries(object)
   })
 
   allHeros.forEach((hero) => {
-    if(hero.parentId || hero._parentId) {
-      attachToParent(hero)
+    if(hero.parentId || hero._parentId || hero.relativeId || hero._relativeId) {
+      attachToParentAndRelative(hero)
     }
     containObjectWithinGridBoundaries(hero)
   })
 }
 
-function attachToParent(object) {
-  let parent = w.game.objectsById[object.parentId]
+function attachToParentAndRelative(object) {
+  let parent = w.game.objectsById[object.parentId] || w.game.heros[object.parentId]
+
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
   } else delete object.parentId
 
-  parent = w.game.objectsById[object._parentId]
+  //// idk temporary parentId
+  parent = w.game.objectsById[object._parentId] || w.game.heros[object._parentId]
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
   } else delete object._parentId
+
+
+  let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
+
+  if(relative) {
+    object.x += relative._deltaX
+    object.y += relative._deltaY
+  } else delete object.relativeId
+
+  //// idk temporary relativeId
+  relative = w.game.objectsById[object._relativeId] || w.game.heros[object._relativeId]
+  if(parent) {
+    object.x += parent._deltaX
+    object.y += parent._deltaY
+  } else delete object._relativeId
 }
 
 

@@ -56,6 +56,7 @@ function init() {
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
   window.selectorParentToggle = document.getElementById('set-parent-object')
+  window.selectorRelativeToggle = document.getElementById('set-relative-object')
 }
 
 window.updateEditorState = function() {
