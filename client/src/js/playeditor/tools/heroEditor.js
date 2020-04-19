@@ -72,8 +72,12 @@ function init() {
   zoomInButton.addEventListener('click', () => window.socket.emit('editHero', { id: window.editingHero.id, zoomMultiplier: window.editingHero.zoomMultiplier - .1250 }))
 
   function sendHeroUpdate(update) {
-    window.mergeDeep(window.editingHero, update)
-    window.socket.emit('editHero', window.editingHero)
+    if(window.editingGame.branch) {
+      window.mergeDeep(window.editingHero, update)
+      window.mergeDeep(w.editingGame.heros[window.editingHero.id], update)
+    } else {
+      window.socket.emit('editHero', update)
+    }
   }
   window.sendHeroUpdate = sendHeroUpdate
 
@@ -83,21 +87,37 @@ function init() {
     const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
     delete heroCopy.y
-    window.socket.emit('editHero', heroCopy)
+    if(window.editingGame.branch) {
+      window.mergeDeep(w.editingGame.heros[heroCopy.id], heroCopy)
+    } else {
+      window.socket.emit('editHero', heroCopy)
+    }
   }
 
   function sendEditorHeroPos() {
     let hero = window.heroeditor.get()
-    window.socket.emit('editHero', { id: hero.id, x: hero.x, y: hero.y })
+    if(window.editingGame.branch) {
+      window.mergeDeep(w.editingGame.heros[hero.id], { id: hero.id, x: hero.x, y: hero.y })
+    } else {
+      window.socket.emit('editHero', { id: hero.id, x: hero.x, y: hero.y })
+    }
   }
 
   function respawnHero() {
-    window.socket.emit('respawnHero', editingHero)
+    if(window.editingGame.branch) {
+      window.respawnHero(window.editingHero)
+    } else {
+      window.socket.emit('respawnHero', window.editingHero)
+    }
     // let hero = heroeditor.get()
     // window.socket.emit('updateHero', { id: hero.id, x: hero.spawnPointX, y: hero.spawnPointY })
   }
   function resetHeroToDefault() {
-    window.socket.emit('resetHeroToDefault', editingHero)
+    if(window.editingGame.branch) {
+      window.resetHeroToDefault(window.editingHero)
+    } else {
+      window.socket.emit('resetHeroToDefault', window.editingHero)
+    }
   }
 
   window.setEditingHero = function(hero) {

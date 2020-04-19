@@ -89,7 +89,7 @@ function init() {
         }
 
         if(window.clickToSetHeroSpawnToggle.checked) {
-          window.socket.emit('editHero', {id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
+          window.sendHeroUpdate({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
         } else {
           Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
           .forEach((hero, i) => {
@@ -156,7 +156,7 @@ function init() {
             y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
           }
 
-          window.socket.emit('updateWorld', {worldSpawnPointX: click.x, worldSpawnPointY: click.y})
+          window.sendWorldUpdate({worldSpawnPointX: click.x, worldSpawnPointY: click.y})
         }
 
         defaultFirstClick(e)
@@ -175,21 +175,21 @@ function init() {
         const {x, y, width, height} = value;
         if(window.currentTool === TOOLS.PROCEDURAL || selectorProceduralToggle.checked) {
           const proceduralBoundaries = { x, y, width, height };
-          window.socket.emit('updateWorld', { proceduralBoundaries })
+          window.sendWorldUpdate({ proceduralBoundaries })
         }
         if(selectorCameraToggle.checked) {
           const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
-          window.socket.emit('updateWorld', { lockCamera })
+          window.sendWorldUpdate({ lockCamera })
         }
         if(selectorGameToggle.checked) {
           const gameBoundaries = { x, y, width, height };
-          window.socket.emit('updateWorld', { gameBoundaries })
+          window.sendWorldUpdate({ gameBoundaries })
         }
         if(window.selectorHeroZoomToggle.checked) {
           let gridWidth = value.width/w.editingGame.grid.nodeSize
           Object.keys(w.editingGame.heros).forEach((id) => {
             let hero = w.editingGame.heros[id]
-            window.socket.emit('editHero', {id, zoomMultiplier: gridWidth/16})
+            window.sendHeroUpdate({id, zoomMultiplier: gridWidth/16})
           })
         }
       },
