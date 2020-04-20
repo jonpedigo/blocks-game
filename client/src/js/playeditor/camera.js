@@ -326,7 +326,7 @@ function render(ctx, hero, objects, grid) {
 
   if(window.draggingObject && window.draggingObject.parent) {
     // if its not a parent-child relatiooon
-    if(!window.draggingObject.dontSaveParent) {
+    if(!window.draggingObject.forSelectionOnly) {
       getObjectVertices(window.draggingObject.parent).forEach((vertice) => {
         drawVertice(ctx, vertice)
       })

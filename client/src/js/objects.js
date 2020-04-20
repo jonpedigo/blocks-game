@@ -122,8 +122,37 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
     return newObject
   }).filter(obj => !!obj)
 
-  if(window.usePlayEditor && alertAboutCollision && !options.fromLiveGame) {
-    if(confirm('already an object on this grid node..confirm to add anyways')) {
+  if(window.usePlayEditor && !options.fromLiveGame) {
+    if(alertAboutCollision) {
+      if(!confirm('already an object on this grid node..confirm to add anyways')) return
+    }
+
+    let warnings = ""
+    let sampleObject = objects[0]
+    if(!sampleObject.tags.obstacle) {
+      warnings+= 'NOT obstacle\n\n'
+    }
+    if(!sampleObject.tags.stationary) {
+      warnings+= 'NOT stationary - does NOT effect pathfinding\n\n'
+    }
+
+    warnings+= "TAGS:\n"
+    Object.keys(sampleObject.tags).forEach((tagName) => {
+      if(sampleObject.tags[tagName] === true) {
+        warnings+= tagName+'\n'
+      }
+    })
+    if(sampleObject.velocityX || sampleObject.velocityY) {
+      warnings += 'has VELOCITY'
+    }
+    if(sampleObject.heroUpdate) {
+      warnings += 'has HERO UPDATE'
+    }
+    if(sampleObject.heroUpdate) {
+      warnings += 'has OBJECT UPDATE'
+    }
+
+    if(confirm(warnings)) {
       emitNewObjects()
     }
   } else {

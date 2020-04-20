@@ -67,7 +67,7 @@ function init() {
       const { x,y } = gridTool.createGridNodeAt(dragEndX, dragEndY)
       if(window.draggingObject.parent) {
         let parentGameObject
-        if(window.draggingObject.dontSaveParent) {
+        if(window.draggingObject.forSelectionOnly) {
           let editorState = window.objecteditor.get()
           parentGameObject = editorState.parent
         } else if(window.draggingObject.parent.id){
@@ -113,7 +113,7 @@ function init() {
         window.draggingObject.parent.y = y
 
         let parentGameObject
-        if(window.draggingObject.dontSaveParent) {
+        if(window.draggingObject.forSelectionOnly) {
           let editorState = window.objecteditor.get()
           parentGameObject = editorState.parent
         } else if(window.draggingObject.parent.id){
@@ -330,9 +330,10 @@ function init() {
         } else if(window.selectObjectDragToggle.checked) {
           window.objecteditor.update({
             parent: value,
-            children: window.highlightedObjectGroup,
-            dontSaveParent: true,
+            children: JSON.parse(JSON.stringify(window.highlightedObjectGroup)),
+            forSelectionOnly: true,
           })
+          window.highlightedObjectGroup = []
         }
       }
     },
@@ -411,9 +412,9 @@ function init() {
               child.y = parent.y + child.__relativeToParentY
               delete child.__relativeToParentX
               delete child.__relativeToParentY
-              if(editorObject.dontSaveParent) delete child.parentId
+              if(editorObject.forSelectionOnly) delete child.parentId
             })
-            if(editorObject.dontSaveParent) {
+            if(editorObject.forSelectionOnly) {
               window.addObjects(children)
             } else {
               window.addObjects([parent, ...children])
