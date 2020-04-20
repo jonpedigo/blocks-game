@@ -6,7 +6,6 @@
 
 // attack button ( like papa bear spears!! )
 // set game boundaries to delete objects
-// make it easier for admin to move objects
 // TRUE zelda camera work
 // death by jump
 

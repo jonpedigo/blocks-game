@@ -28,6 +28,14 @@ function init() {
       height:1,
     }
 
+    let editorState = window.objecteditor.get()
+    if(editorState.parent) {
+      window.dragTimeout = setTimeout(() => {
+        window.draggingObject = editorState
+      }, 118)
+      return
+    }
+
     for(let i = 0; i < w.editingGame.objects.length; i++) {
       let object = w.editingGame.objects[i]
       // if(window.objecteditor && object.id === window.objecteditor.get().id){
@@ -58,7 +66,13 @@ function init() {
     } else if(window.draggingObject) {
       const { x,y } = gridTool.createGridNodeAt(dragEndX, dragEndY)
       if(window.draggingObject.parent) {
-        let parentGameObject = w.editingGame.objectsById[window.draggingObject.parent.id]
+        let parentGameObject
+        if(window.draggingObject.dontSaveParent) {
+          let editorState = window.objecteditor.get()
+          parentGameObject = editorState.parent
+        } else if(window.draggingObject.parent.id){
+          parentGameObject = w.editingGame.objectsById[window.draggingObject.parent.id]
+        }
         let diffX = parentGameObject.x - x
         let diffY = parentGameObject.y - y
         parentGameObject.x = x
@@ -73,6 +87,8 @@ function init() {
         w.editingGame.objectsById[window.draggingObject.id].y = y
       }
 
+      window.emitEditObjectsPos()
+      window.objecteditor.update({})
       //end the drag
     }
 
@@ -95,8 +111,16 @@ function init() {
       if(window.draggingObject.parent) {
         window.draggingObject.parent.x = x
         window.draggingObject.parent.y = y
-        let diffX = w.editingGame.objectsById[window.draggingObject.parent.id].x - x
-        let diffY = w.editingGame.objectsById[window.draggingObject.parent.id].y - y
+
+        let parentGameObject
+        if(window.draggingObject.dontSaveParent) {
+          let editorState = window.objecteditor.get()
+          parentGameObject = editorState.parent
+        } else if(window.draggingObject.parent.id){
+          parentGameObject = w.editingGame.objectsById[window.draggingObject.parent.id]
+        }
+        let diffX = parentGameObject.x - x
+        let diffY = parentGameObject.y - y
 
         window.draggingObject.children.forEach((obj) => {
           obj.x = w.editingGame.objectsById[obj.id].x - diffX

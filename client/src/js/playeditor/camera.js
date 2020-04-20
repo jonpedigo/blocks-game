@@ -325,9 +325,12 @@ function render(ctx, hero, objects, grid) {
   }
 
   if(window.draggingObject && window.draggingObject.parent) {
-    getObjectVertices(window.draggingObject.parent).forEach((vertice) => {
-      drawVertice(ctx, vertice)
-    })
+    // if its not a parent-child relatiooon
+    if(!window.draggingObject.dontSaveParent) {
+      getObjectVertices(window.draggingObject.parent).forEach((vertice) => {
+        drawVertice(ctx, vertice)
+      })
+    }
     window.draggingObject.children.forEach((object) => {
       drawObject(ctx, {...object, color: 'rgba(255,0,0,1)'})
     })
