@@ -123,9 +123,10 @@ import hero from './js/hero.js'
 import world from './js/world.js'
 import render from './js/render.js'
 import gameState from './js/gameState.js'
-import './js/events.js'
+import events from './js/events.js'
 import games from './js/games/index'
 import ghost from './js/ghost.js'
+import testArcade from './js/games/arcade/platformer'
 window.w = window;
 
 //////////////////////////////////////////////////////////////
@@ -166,8 +167,11 @@ window.onPageLoad = function() {
   if(window.getParameterByName('host')) {
     window.host = true
   }
+
   if(window.getParameterByName('arcadeMode')) {
+    window.host = true
     window.arcadeMode = true
+    window.isPlayer = true
   }
 
   if(window.getParameterByName('ghost')) {
@@ -182,13 +186,10 @@ window.onPageLoad = function() {
   }
 
   if(window.host) {
-    console.log('host')
+    if(window.arcadeMode) console.log('host-local')
+    else console.log('host')
   } else {
     console.log('non host')
-  }
-
-  if(window.hostLocal) {
-    console.log('hosting locally')
   }
 
   if(window.usePlayEditor) {
@@ -199,12 +200,13 @@ window.onPageLoad = function() {
   }
 
   // SOCKET START
-  if (window.location.origin.indexOf('localhost') > 0) {
+  if(window.arcadeMode) {
+    window.socket = window.local
+  } else if (window.location.origin.indexOf('localhost') > 0) {
     window.socket = io.connect('http://localhost:4000');
   } else {
     window.socket = io.connect();
   }
-  window.socket = socket
 
   window.initializeGame()
 }
@@ -221,6 +223,7 @@ window.initializeGame = function (initialGameId) {
   objects.init()
   world.init()
 	grid.init()
+  events.init()
   sockets.init()
   gameState.init()
   hero.init()
@@ -243,66 +246,74 @@ window.initializeGame = function (initialGameId) {
 
   // window.socket.emit('saveSocket', window.heroId)
 
-  // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
-  window.socket.emit('askRestoreCurrentGame')
-  window.socket.on('onAskRestoreCurrentGame', (game) => {
-    let currentGameExists = game && game.id
-    if(currentGameExists) {
-      window.changeGame(game.id)
-      if(window.ghost) {
-        window.loadGameNonHost(game)
-        window.onGameLoaded()
-        startGameLoop()
-      } else if(window.host || window.usePlayEditor) {
-        window.loadGame(game)
-        window.onGameLoaded()
-        startGameLoop()
-      } else if(window.isPlayer) {
-        window.socket.emit('askJoinGame', window.heroId)
-        window.socket.on('onJoinGame', (hero) => {
-          if(hero.id == window.heroId) {
-            window.hero = hero
-            physics.addObject(hero)
-            window.loadGameNonHost(game)
-            window.onGameLoaded()
-            startGameLoop()
-          }
-        })
-      }
-    } else {
+  if(window.arcadeMode) {
+    let game = testArcade
+    w.game = game
+    window.hero = window.findHeroInNewGame(game, { id: window.heroId })
+    window.loadGame(game)
+    window.onGameLoaded()
+    startGameLoop()
+  } else {
+    // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
+    window.socket.emit('askRestoreCurrentGame')
+    window.socket.on('onAskRestoreCurrentGame', (game) => {
+      let currentGameExists = game && game.id
+      if(currentGameExists) {
+        window.changeGame(game.id)
+        if(window.ghost) {
+          window.loadGameNonHost(game)
+          window.onGameLoaded()
+          startGameLoop()
+        } else if(window.host || window.usePlayEditor) {
+          window.loadGame(game)
+          window.onGameLoaded()
+          startGameLoop()
+        } else if(window.isPlayer) {
+          window.socket.on('onJoinGame', (hero) => {
+            if(hero.id == window.heroId) {
+              window.hero = hero
+              window.loadGameNonHost(game)
+              window.onGameLoaded()
+              startGameLoop()
+            }
+          })
+          window.socket.emit('askJoinGame', window.heroId)
+        }
+      } else {
 
-      // right now I only have something for the play editor to do if there is no current game
-      if(window.usePlayEditor) {
-        if(confirm('Press Ok To Load Game, Cancel to Create New')) {
-          let id = prompt('Enter game id to load')
-          window.socket.emit('setAndLoadCurrentGame', id)
-          window.socket.on('onLoadGame', (game) => {
+        // right now I only have something for the play editor to do if there is no current game
+        if(window.usePlayEditor) {
+          if(confirm('Press Ok To Load Game, Cancel to Create New')) {
+            let id = prompt('Enter game id to load')
+            window.socket.emit('setAndLoadCurrentGame', id)
+            window.socket.on('onLoadGame', (game) => {
+              window.changeGame(game.id)
+              window.loadGame(game)
+              window.onGameLoaded()
+              startGameLoop()
+            })
+          } else {
+            let id = prompt('Id for your new game')
+            if(!id) return alert('ok aborting')
+            let game = {
+              id,
+              gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
+              world: JSON.parse(JSON.stringify(window.defaultWorld)),
+              hero: JSON.parse(JSON.stringify(window.defaultHero)),
+              objects: [],
+              grid: JSON.parse(JSON.stringify(window.defaultGrid)),
+              heros: {},
+            }
+            window.socket.emit('saveGame', game)
             window.changeGame(game.id)
             window.loadGame(game)
             window.onGameLoaded()
             startGameLoop()
-          })
-        } else {
-          let id = prompt('Id for your new game')
-          if(!id) return alert('ok aborting')
-          let game = {
-            id,
-            gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
-            world: JSON.parse(JSON.stringify(window.defaultWorld)),
-            hero: JSON.parse(JSON.stringify(window.defaultHero)),
-            objects: [],
-            grid: JSON.parse(JSON.stringify(window.defaultGrid)),
-            heros: {},
           }
-          window.socket.emit('saveGame', game)
-          window.changeGame(game.id)
-          window.loadGame(game)
-          window.onGameLoaded()
-          startGameLoop()
         }
       }
-    }
-  })
+    })
+  }
 };
 
 window.loadGameNonHost = function (game) {
@@ -321,7 +332,10 @@ window.loadGameNonHost = function (game) {
   w.game.gameState = game.gameState
   w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
   w.game.heros = {}
-  if(window.hero) w.game.heros[window.hero.id] = window.hero
+  if(window.isPlayer) {
+    w.game.heros[window.hero.id] = window.hero
+    physics.addObject(window.hero)
+  }
   window.handleWorldUpdate(w.game.world)
 }
 
@@ -362,14 +376,19 @@ window.loadGame = function(game) {
       w.game.gameState = game.gameState
     } else {
       w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      if(!w.game.heros) w.game.heros = {}
+      w.game.heros = {}
       Object.keys(w.game.heros).forEach((id) => {
         w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
       })
     }
   }
 
+  if(window.isPlayer) {
+    w.game.heros[window.hero.id] = window.hero
+  }
+
   Object.keys(w.game.heros).forEach((id) => {
+    console.log('adding', id)
     physics.addObject(w.game.heros[id])
   })
 

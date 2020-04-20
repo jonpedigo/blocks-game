@@ -1,16 +1,18 @@
 import pathfinding from './pathfinding'
 import gridTool from './grid'
+import mockServer from '../../../sockets'
 
 class EventEmitter {
   constructor() {
     this.events = {};
   }
 
-  emit(eventName, data) {
+  emit(eventName, arg1, arg2, arg3, arg4, arg5) {
+    var args = new Array(arguments.length);
     const event = this.events[eventName];
     if( event ) {
       event.forEach(fn => {
-         fn.call(null, data);
+         fn.call(null, arg1, arg2, arg3, arg4, arg5);
        });
      }
   }
@@ -29,3 +31,13 @@ class EventEmitter {
 }
 
 window.local = new EventEmitter()
+
+function init() {
+  if(window.arcadeMode) {
+    mockServer(null, window.local, window.local, { arcadeMode: true })
+  }
+}
+
+export default {
+  init
+}
