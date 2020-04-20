@@ -4,7 +4,7 @@ import pathfinding from './pathfinding.js'
 
 function init() {
   window.defaultWorld = {
-    id: 'world-' + Date.now(),
+    id: 'world-' + window.uniqueID(),
   	lockCamera: null,
   	gameBoundaries: null,
     proceduralBoundaries: null,

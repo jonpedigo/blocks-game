@@ -172,7 +172,7 @@ function createArena(boundaries) {
   // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)}
 
   let wallLeft = {
-    id: 'wall-l' + Date.now(),
+    id: 'wall-l' + window.uniqueID(),
     width: 5,
     height: boundaries.height,
     x: boundaries.x,
@@ -182,7 +182,7 @@ function createArena(boundaries) {
   }
 
   let wallTop = {
-    id: 'wall-t' + Date.now(),
+    id: 'wall-t' + window.uniqueID(),
     width: boundaries.width,
     height: 5,
     x: boundaries.x,
@@ -192,7 +192,7 @@ function createArena(boundaries) {
   }
 
   let wallRight = {
-    id: 'wall-r' + Date.now(),
+    id: 'wall-r' + window.uniqueID(),
     width: 5,
     height: boundaries.height,
     x: boundaries.x + (boundaries.width) - 5,
@@ -202,7 +202,7 @@ function createArena(boundaries) {
   }
 
   let wallBottom = {
-    id: 'wall-b' + Date.now(),
+    id: 'wall-b' + window.uniqueID(),
     width: boundaries.width,
     height: 5,
     x: boundaries.x,

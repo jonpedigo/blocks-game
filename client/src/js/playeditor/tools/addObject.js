@@ -21,7 +21,7 @@ function init() {
     object = JSON.parse(JSON.stringify(object))
     delete object.i
     delete object.id
-    object.compendiumId = 'compendium-' + Date.now()
+    object.compendiumId = 'compendium-' + window.uniqueID()
 
     window.removeObjectState(object)
     console.log('added: ' + object.compendiumId + ' to compendium')
@@ -138,11 +138,11 @@ function updateCompendium() {
 
 window.updateObjectEditorNotifier = function() {
   let editorState = window.objecteditor.get()
-  if(editorState.id) window.objecteditor.live = true
+  if(editorState.id && !editorState.parent) window.objecteditor.live = true
   else window.objecteditor.live = false
 
   let els=document.getElementsByClassName("live-compendium-select");  // Find the elements
-  for(var i = 0; i < els.length; i++){
+  for(var i = 0; i < els.length; i++) {
     els[i].className='live-compendium-select button'
     if(els[i].id === editorState.compendiumId) {
       els[i].className='live-compendium-select selected button'
@@ -171,6 +171,32 @@ window.updateObjectEditorNotifier = function() {
       x[i].style.display = 'none'
     }
   }
+}
+
+window.getAllChildren = function(parent) {
+  let children = []
+  w.editingGame.objects.forEach((obj) => {
+    if(obj.parentId === parent.id) {
+      children.push(obj)
+    }
+  })
+  return children
+}
+
+window.copyParentAndChild = function(parent, children) {
+  let parentCopy = JSON.parse(JSON.stringify(parent))
+  parentCopy.id = 'parent-'+window.uniqueID()
+  children = children.map((obj) => {
+    let objCopy = JSON.parse(JSON.stringify(obj))
+    objCopy.id = 'object'+window.uniqueID()
+    objCopy.parentId = parentCopy.id
+    objCopy.__relativeToParentX = objCopy.x - parentCopy.x
+    objCopy.__relativeToParentY = objCopy.y - parentCopy.y
+    window.removeObjectState(objCopy)
+    return objCopy
+  })
+  window.removeObjectState(parentCopy)
+  return { parent: parentCopy, children }
 }
 
 function loaded() {

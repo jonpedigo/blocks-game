@@ -168,7 +168,7 @@ function intelligence(object, hero, delta) {
         y: object.y,
         width: object.width,
         height: object.height,
-        id: 'spawned-' + object.spawnedIds.length + object.id + Date.now(),
+        id: 'spawned-' + window.uniqueID(),
         ...object.spawnObject,
         spawned: true,
       }

@@ -11,6 +11,75 @@ function init() {
     y: null,
   }
 
+  window.dragStart = {
+    x: null,
+    y: null,
+  }
+
+  window.document.getElementById('game-canvas').addEventListener("mousedown", function(e) {
+    if(window.currentTool !== window.TOOLS.SIMPLE_EDITOR) return
+    window.dragStart.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
+    window.dragStart.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
+    const { x,y } = gridTool.createGridNodeAt(window.dragStart.x, window.dragStart.y)
+    let click = {
+      x,
+      y,
+      width:1,
+      height:1,
+    }
+
+    for(let i = 0; i < w.editingGame.objects.length; i++) {
+      let object = w.editingGame.objects[i]
+      // if(window.objecteditor && object.id === window.objecteditor.get().id){
+      //   continue
+      // }
+      if(collisions.checkObject(click, object, () => {
+        window.dragTimeout = setTimeout(() => {
+          window.draggingObject = JSON.parse(JSON.stringify(object))
+          let children = window.getAllChildren(window.draggingObject)
+          if(children.length) {
+            window.draggingObject = {
+              parent: window.draggingObject,
+              children: children.map(obj => JSON.parse(JSON.stringify(obj))),
+            }
+          }
+        }, 118)
+        return
+      })) return
+    }
+  })
+
+  window.document.getElementById('game-canvas').addEventListener("mouseup", function(e) {
+    let dragEndX = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
+    let dragEndY = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
+
+    if(!window.draggingObject && window.dragTimeout) {
+      window.clearTimeout(window.dragTimeout)
+    } else if(window.draggingObject) {
+      const { x,y } = gridTool.createGridNodeAt(dragEndX, dragEndY)
+      if(window.draggingObject.parent) {
+        let parentGameObject = w.editingGame.objectsById[window.draggingObject.parent.id]
+        let diffX = parentGameObject.x - x
+        let diffY = parentGameObject.y - y
+        parentGameObject.x = x
+        parentGameObject.y = y
+
+        window.draggingObject.children.forEach((obj) => {
+          w.editingGame.objectsById[obj.id].x -= diffX
+          w.editingGame.objectsById[obj.id].y -= diffY
+        })
+      } else {
+        w.editingGame.objectsById[window.draggingObject.id].x = x
+        w.editingGame.objectsById[window.draggingObject.id].y = y
+      }
+
+      //end the drag
+    }
+
+    window.draggingObject = null
+    window.dragTimeout = null
+  })
+
   window.document.getElementById('game-canvas').addEventListener("mousemove", function(e) {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
@@ -20,6 +89,24 @@ function init() {
     let location = {
       x,
       y,
+    }
+
+    if(window.draggingObject) {
+      if(window.draggingObject.parent) {
+        window.draggingObject.parent.x = x
+        window.draggingObject.parent.y = y
+        let diffX = w.editingGame.objectsById[window.draggingObject.parent.id].x - x
+        let diffY = w.editingGame.objectsById[window.draggingObject.parent.id].y - y
+
+        window.draggingObject.children.forEach((obj) => {
+          obj.x = w.editingGame.objectsById[obj.id].x - diffX
+          obj.y = w.editingGame.objectsById[obj.id].y - diffY
+        })
+      } else {
+        window.draggingObject.x = x
+        window.draggingObject.y = y
+      }
+      return
     }
 
     if(window.dotAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) {
@@ -53,7 +140,7 @@ function init() {
       location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
     }
 
-    if(window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectDragToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -61,16 +148,29 @@ function init() {
         y: window.clickStart.y/window.scaleMultiplier,
       }
 
-      window.childObjectGroup = []
+      window.highlightedObjectGroup = []
       w.editingGame.objects
       .forEach((object, i) => {
         collisions.checkObject(location, object, () => {
-          window.childObjectGroup.push(object)
+          window.highlightedObjectGroup.push(object)
         })
       })
     }
-
     window.gridHighlight = location
+
+    let oe = window.objecteditor.get()
+    if(oe.parent && window.currentTool === window.TOOLS.ADD_OBJECT) {
+      const {parent, children} = window.copyParentAndChild(oe.parent, oe.children)
+      parent.x = location.x
+      parent.y = location.y
+      children.forEach((child) => {
+        child.x = parent.x + child.__relativeToParentX
+        child.y = parent.y + child.__relativeToParentY
+        delete child.__relativeToParentX
+        delete child.__relativeToParentY
+      })
+      window.gridHighlight = { parent, children }
+    }
   })
 
   window.document.getElementById('game-canvas').addEventListener('click',function(e){
@@ -149,7 +249,7 @@ function init() {
           // window.sendObjectUpdate(spawnPoints)
           window.objecteditor.saved = false
           window.objecteditor.update({...window.objecteditor.get(), ...spawnPoints})
-        } else if(window.setObjectPathfindingLimitToggle.checked) {
+        } else if(window.setObjectPathfindingLimitToggle.checked || window.selectObjectDragToggle.checked) {
           defaultFirstClick(e)
         } else {
           for(let i = 0; i < w.editingGame.objects.length; i++) {
@@ -203,6 +303,12 @@ function init() {
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
           // window.setObjectPathfindingLimitToggle.checked = false
           // window.selectorObjectToggle.checked = true
+        } else if(window.selectObjectDragToggle.checked) {
+          window.objecteditor.update({
+            parent: value,
+            children: window.highlightedObjectGroup,
+            dontSaveParent: true,
+          })
         }
       }
     },
@@ -254,7 +360,9 @@ function init() {
     },
     [TOOLS.ADD_OBJECT] : {
       onFirstClick: (e) => {
-        if(window.dragAddToggle.checked || window.addParentToggle.checked) {
+        let editorObject = window.objecteditor.get()
+
+        if((window.dragAddToggle.checked || window.addParentToggle.checked) && !editorObject.parent) {
           defaultFirstClick(e)
         } else {
           const click = {
@@ -270,14 +378,31 @@ function init() {
             y: y,
           }
 
+          if(editorObject.parent) {
+            const { parent, children } = window.copyParentAndChild(editorObject.parent, editorObject.children)
+            parent.x = location.x
+            parent.y = location.y
+            children.forEach((child) => {
+              child.x = parent.x + child.__relativeToParentX
+              child.y = parent.y + child.__relativeToParentY
+              delete child.__relativeToParentX
+              delete child.__relativeToParentY
+              if(editorObject.dontSaveParent) delete child.parentId
+            })
+            if(editorObject.dontSaveParent) {
+              window.addObjects(children)
+            } else {
+              window.addObjects([parent, ...children])
+            }
+            return
+          }
+
           if(window.dotAddToggle.checked) {
             location.width = Number(document.getElementById('add-dot-size').value)
             location.height = Number(document.getElementById('add-dot-size').value)
             location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
             location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
           }
-
-          let editorObject = window.objecteditor.get()
 
           let newObject = JSON.parse(JSON.stringify(editorObject))
 
@@ -307,7 +432,7 @@ function init() {
         let newObject = JSON.parse(JSON.stringify(editorObject))
         if(window.addParentToggle.checked) {
           newObject = {}
-          newObject.id = 'parent-'+Date.now()
+          newObject.id = 'parent-'+window.uniqueID()
           newObject.tags = window.tags
           newObject.tags.invisible = true
           newObject.tags.obstacle = false
@@ -317,12 +442,11 @@ function init() {
         window.addObjects(newObject)
 
         if(window.addParentToggle.checked) {
-          window.childObjectGroup.forEach((object) => {
+          window.highlightedObjectGroup.forEach((object) => {
             object.parentId = newObject.id
-            console.log(object.parentId)
           })
-          console.log(w.editingGame.objectsById[window.childObjectGroup[0].id])
           window.emitEditObjectsOther()
+          window.highlightedObjectGroup = []
         }
       },
     }

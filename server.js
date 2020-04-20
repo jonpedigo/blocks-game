@@ -67,7 +67,7 @@ io.on('connection', function(socket){
     if(game.heros) delete game.heros
 
     if(!game.id) {
-      game.id = Date.now()
+      game.id = window.uniqueID()
     }
 
     if(game.grid && game.grid.nodes) {

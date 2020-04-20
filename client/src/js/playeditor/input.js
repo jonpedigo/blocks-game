@@ -17,6 +17,8 @@ function init(hero){
     if(e.keyCode === 27) {
       window.clickStart.x = null
       window.clickStart.y = null
+      window.gridHighlight = null
+      window.childObjectGroup = null
 
       if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
         window.onChangeTool(window.TOOLS.ADD_OBJECT)
@@ -35,11 +37,12 @@ function init(hero){
           window.saveCodeEditor()
           document.getElementById("is-code-editor-saved").innerHTML = "Saved"
         } else if((window.currentTool === window.TOOLS.ADD_OBJECT || window.currentTool == window.TOOLS.SIMPLE_EDITOR)) {
-          if(window.objecteditor.get().id) {
-            let update = window.objecteditor.get()
+          let editorState = window.objecteditor.get()
+          if(editorState.id && !editorState.parent) {
+            let update = editorState
             window.removeObjectState(update)
             window.sendObjectUpdateOther(update)
-          } else {
+          } else if(editorState.compendiumId){
             window.saveCompendiumObject(window.objecteditor.get())
           }
 

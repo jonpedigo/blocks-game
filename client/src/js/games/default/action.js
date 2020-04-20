@@ -5,7 +5,7 @@ import pathfinding from '../../pathfinding.js'
 function shootBullet(hero) {
   let directions = hero.directions
   let shooted = {
-    id: 'bullet-' + Date.now(),
+    id: 'bullet-' + window.uniqueID(),
     width: 4,
     height: 4,
     tags: {
@@ -47,7 +47,7 @@ function shootBullet(hero) {
 function dropWall(hero) {
   let directions = hero.directions
   let wall = {
-    id: 'wall-' + Date.now(),
+    id: 'wall-' + window.uniqueID(),
     width: w.game.grid.nodeSize,
     height: w.game.grid.nodeSize,
     tags: {

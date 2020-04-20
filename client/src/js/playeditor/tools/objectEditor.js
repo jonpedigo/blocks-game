@@ -8,16 +8,15 @@ function init() {
   objectjsoneditor.id = 'objectjsoneditor'
   document.body.appendChild(objectjsoneditor);
   window.objecteditor = new JSONEditor(objectjsoneditor, {
-    modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
-    if(objectEdited.id) {
-      let object = w.editingGame.objectsById[objectEdited.id]
+    modes: ['tree', 'code'], search: false, onChangeJSON: (editorState) => {
+    if(editorState.id && !editorState.parent) {
+      let object = w.editingGame.objectsById[editorState.id]
 
-      if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
-        gridTool.removeObstacle({...object, tags: objectEdited.tags})
+      if((object.tags.obstacle == true && editorState.tags.obstacle == false) || (object.tags.stationary == true && editorState.tags.stationary == false)) {
+        gridTool.removeObstacle({...object, tags: editorState.tags})
       }
-
-      if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && objectEdited.tags.onlyHeroAllowed == true)) {
-        gridTool.addObstacle({...object, tags: objectEdited.tags})
+      if((object.tags.obstacle == false && editorState.tags.obstacle == true) || (object.tags.stationary == false && editorState.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && editorState.tags.onlyHeroAllowed == true)) {
+        gridTool.addObstacle({...object, tags: editorState.tags})
       }
 
       window.objecteditor.saved = false
@@ -40,6 +39,30 @@ function init() {
     window.sendObjectUpdateOther(editingObject)
   })
 
+  var getObjectParentChildren = document.getElementById("get-object-parentchildren");
+  getObjectParentChildren.addEventListener('click', () => {
+    let object = window.objecteditor.get()
+
+    let parent = object
+    if(object.parentId) {
+      parent = w.editingGame.objectsById[object.parentId]
+    }
+
+    let children = window.getAllChildren(parent)
+
+    if(!object.id || !parent || children.length === 0) {
+      alert('no parent/child relationship')
+      return
+    }
+
+    window.objecteditor.update({
+      parent,
+      children
+    })
+    window.objecteditor.saved = true
+    window.updateObjectEditorNotifier()
+  })
+
   var removeObjectButton = document.getElementById("remove-object");
   removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.objecteditor.get()))
   var deleteObjectButton = document.getElementById("delete-object");
@@ -56,6 +79,8 @@ function init() {
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
   window.selectorParentToggle = document.getElementById('set-parent-object')
+  window.selectObjectDragToggle = document.getElementById("select-object-drag");
+
   // window.selectorRelativeToggle = document.getElementById('set-relative-object')
 }
 
@@ -77,7 +102,7 @@ window.sendObjectUpdateOther = function(objectUpdate) {
   let editorState = window.objecteditor.get()
   window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
   if(window.editingGame.branch) {
-    
+
   } else {
     window.emitEditObjectsOther()
   }

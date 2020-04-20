@@ -58,7 +58,7 @@ function init() {
   if(savedHero && JSON.parse(savedHero).id){
     window.heroId = JSON.parse(savedHero).id
   } else {
-    window.heroId = 'hero-'+Date.now()
+    window.heroId = 'hero-'+window.uniqueID()
   }
 }
 
@@ -313,7 +313,7 @@ window.findHeroInNewGame = function(game, hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
     if(hero && hero.id) game.hero.id = hero.id
     hero = game.hero
-    if(!hero.id) hero.id = 'hero-'+Date.now()
+    if(!hero.id) hero.id = 'hero-'+window.uniqueID()
     // but then also respawn the hero
     window.respawnHero(hero)
     return hero

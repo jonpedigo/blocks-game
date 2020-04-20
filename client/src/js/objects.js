@@ -78,7 +78,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
     newObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultObject)), newObject)
 
     if(!newObject.id){
-      newObject.id = 'object' + Date.now() + '-' + i;
+      newObject.id = 'object-' + window.uniqueID() + '-' + i;
     }
 
     if(w.game.objectsById[newObject.id]) {

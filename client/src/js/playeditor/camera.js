@@ -115,6 +115,32 @@ function drawVertice(ctx, vertice) {
   }
 }
 
+function getObjectVertices(object) {
+  let prev = []
+  if(object.removed) return prev
+
+  const extraProps = {}
+  if(object.tags.invisible) {
+    ctx.fillStyle='red';
+    ctx.globalAlpha = 0.2;
+    drawObject(ctx, object);
+    ctx.globalAlpha = 1.0;
+    return prev
+  }
+  if(object.tags && object.tags.glowing) {
+    extraProps.glow = 3
+    extraProps.thickness = 2
+    extraProps.color = 'white'
+  }
+
+  if(object.color) extraProps.color = object.color
+  prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
+  prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
+  prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
+  prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
+  return prev
+}
+
 function render(ctx, hero, objects, grid) {
   let objectEditorState = window.objecteditor.get()
 
@@ -179,6 +205,25 @@ function render(ctx, hero, objects, grid) {
         drawObject(ctx, {x: (path.x * w.editingGame.grid.nodeSize) + w.editingGame.grid.startX, y: (path.y * w.editingGame.grid.nodeSize) + w.editingGame.grid.startY, width: w.editingGame.grid.nodeSize, height: w.editingGame.grid.nodeSize, color: 'rgba(0,255,255, .5)'})
       })
     }
+
+
+    if(objectEditorState && objectEditorState.parentId && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+      drawObject(ctx, {...w.editingGame.objectsById[objectEditorState.parentId], color: 'rgba(255, 0,0,.2)'})
+    }
+
+    if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
+      drawObject(ctx, {x: objectEditorState.spawnPointX, y: objectEditorState.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
+      drawObject(ctx, {x: objectEditorState.spawnPointX - 205, y: objectEditorState.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
+    }
+
+    if(objectEditorState && objectEditorState.parent  && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+      drawObject(ctx, {...objectEditorState.parent, color: 'rgba(0,0,255, 1)'})
+    }
+    if(objectEditorState && objectEditorState.children && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
+      objectEditorState.children.forEach((object) => {
+        drawObject(ctx, {...object, color: 'rgba(255,0,0,0.6)'})
+      })
+    }
   }
 
   ////////////////
@@ -198,28 +243,8 @@ function render(ctx, hero, objects, grid) {
   ////////////////
   ////////////////
   let vertices = [...w.editingGame.objects].reduce((prev, object) => {
-    if(object.removed) return prev
-
-    const extraProps = {}
-    if(object.tags.invisible) {
-      ctx.fillStyle='red';
-      ctx.globalAlpha = 0.2;
-      drawObject(ctx, object);
-      ctx.globalAlpha = 1.0;
-      return prev
-    }
-    if(object.tags && object.tags.glowing) {
-      extraProps.glow = 3
-      extraProps.thickness = 2
-      extraProps.color = 'white'
-    }
-
-    if(object.color) extraProps.color = object.color
- 		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
-		return prev
+    prev.push(...getObjectVertices(object))
+    return prev
 	}, [])
 
   ctx.strokeStyle = '#999'
@@ -227,16 +252,6 @@ function render(ctx, hero, objects, grid) {
   for(let i = 0; i < vertices.length; i++) {
     drawVertice(ctx, vertices[i])
   }
-
-  if(objectEditorState && objectEditorState.parentId && window.currentTool == window.TOOLS.SIMPLE_EDITOR) {
-    drawObject(ctx, {...w.editingGame.objectsById[objectEditorState.parentId], color: 'rgba(255, 0,0,.2)'})
-  }
-
-  if(objectEditorState.spawnPointX && (window.currentTool == window.TOOLS.SIMPLE_EDITOR || window.currentTool == window.TOOLS.ADD_OBJECT)) {
-    drawObject(ctx, {x: objectEditorState.spawnPointX, y: objectEditorState.spawnPointY - 205, width: 5, height: 400, color: 'rgba(255, 0,0,1)'})
-    drawObject(ctx, {x: objectEditorState.spawnPointX - 205, y: objectEditorState.spawnPointY, width: 400, height: 5, color: 'rgba(255, 0,0,1)'})
-  }
-
 
 
   ////////////////
@@ -294,13 +309,31 @@ function render(ctx, hero, objects, grid) {
     drawBorder(ctx, possibleBox)
   }
 
-  if(w.gridHighlight) {
+  if(w.gridHighlight && w.gridHighlight.parent) {
+    drawObject(ctx, {...w.gridHighlight.parent, color: 'rgba(255,255,255, .3)'})
+    w.gridHighlight.children.forEach((object) => {
+      drawObject(ctx, {...object, color: 'rgba(255,255,255,0.7)'})
+    })
+  } else if(w.gridHighlight) {
     drawObject(ctx, {...w.gridHighlight, color: 'rgba(255,255,255,0.6)'})
   }
 
-  if(window.childObjectGroup && window.childObjectGroup.length) {
-    window.childObjectGroup.forEach((object) => {
+  if(window.highlightedObjectGroup && window.highlightedObjectGroup.length) {
+    window.highlightedObjectGroup.forEach((object) => {
       drawObject(ctx, {...object, color: 'rgba(255,0,0,0.6)'})
+    })
+  }
+
+  if(window.draggingObject && window.draggingObject.parent) {
+    getObjectVertices(window.draggingObject.parent).forEach((vertice) => {
+      drawVertice(ctx, vertice)
+    })
+    window.draggingObject.children.forEach((object) => {
+      drawObject(ctx, {...object, color: 'rgba(255,0,0,1)'})
+    })
+  } else if(window.draggingObject){
+    getObjectVertices(window.draggingObject).forEach((vertice) => {
+      drawVertice(ctx, vertice)
     })
   }
 
@@ -386,8 +419,8 @@ function render(ctx, hero, objects, grid) {
 
   /// FRAMES PER SECOND
   ctx.font =`24pt Arial`
-  ctx.fillStyle="rgba(255,255,255,0.3)"
-  ctx.fillText(Math.ceil(window.fps), window.innerWidth - 240, 40)
+  ctx.fillStyle="rgba(255,255,255,.3)"
+  ctx.fillText(Math.ceil(window.fps), 20, 40)
 }
 
 function setCameraHeroX(ctx, hero) {
