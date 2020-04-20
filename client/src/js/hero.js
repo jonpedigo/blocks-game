@@ -49,7 +49,7 @@ function init() {
     }
   }
 
-  window.client.on('onGridLoaded', () => {
+  window.local.on('onGridLoaded', () => {
     window.defaultHero.x = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
     window.defaultHero.y = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
   })
@@ -87,7 +87,30 @@ window.spawnHero = function (hero) {
 window.respawnHero = function (hero) {
   hero.velocityX = 0
   hero.velocityY = 0
-  window.client.emit('onRespawnHero', hero)
+
+  /// send objects that are possibly camping at their spawn point back to their spawn point
+  if(window.host && w.game.world.globalTags.noCamping) {
+    window.game.objects.forEach((obj) => {
+      if(obj.removed) return
+
+      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
+        const { gridX, gridY } = gridTool.convertToGridXY(obj)
+        obj.gridX = gridX
+        obj.gridY = gridY
+
+        const spawnGridPos = gridTool.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
+
+        obj.path = pathfinding.findPath({
+          x: gridX,
+          y: gridY,
+        }, {
+          x: spawnGridPos.gridX,
+          y: spawnGridPos.gridY,
+        }, obj.pathfindingLimit)
+      }
+    })
+  }
+
   window.spawnHero(hero)
 }
 
@@ -196,7 +219,7 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
       }
     } else {
       if(hero.lives == 0) {
-        window.client.emit('gameOver')
+        window.local.emit('gameOver')
       }
       hero.lives--
       respawnObjects.push(hero)

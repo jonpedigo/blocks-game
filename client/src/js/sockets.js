@@ -207,6 +207,14 @@ function init() {
   window.socket.on('onUpdateHero', (updatedHero) => {
     if(!window.pageState.gameLoaded) return
 
+    if(window.host) {
+      // if you are the host believe it or not you still need to update your own hero, there will be no other way your browser will get this info!
+      if(window.hero && window.hero.id === updatedHero.id) {
+        window.mergeDeep(window.hero, updatedHero)
+        w.game.heros[window.hero.id] = updatedHero
+      }
+    }
+
     if(!window.host) {
       if(!w.game.heros[updatedHero.id]) {
         w.game.heros[updatedHero.id] = updatedHero

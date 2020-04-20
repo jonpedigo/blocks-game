@@ -28,29 +28,4 @@ class EventEmitter {
   }
 }
 
-window.client = new EventEmitter()
-
-
-window.client.on('onRespawnHero', (hero) => {
-  if(window.host && w.game.world.globalTags.noCamping) {
-    window.game.objects.forEach((obj) => {
-      if(obj.removed) return
-
-      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
-        const { gridX, gridY } = gridTool.convertToGridXY(obj)
-        obj.gridX = gridX
-        obj.gridY = gridY
-
-        const spawnGridPos = gridTool.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
-
-        obj.path = pathfinding.findPath({
-          x: gridX,
-          y: gridY,
-        }, {
-          x: spawnGridPos.gridX,
-          y: spawnGridPos.gridY,
-        }, obj.pathfindingLimit)
-      }
-    })
-  }
-})
+window.local = new EventEmitter()

@@ -20,7 +20,7 @@ function init() {
     storeEntireGameState: false,
   }
 
-  window.client.on('onGridLoaded', () => {
+  window.local.on('onGridLoaded', () => {
     window.defaultWorld.worldSpawnPointX = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
     window.defaultWorld.worldSpawnPointY = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
   })
