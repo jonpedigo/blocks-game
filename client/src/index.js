@@ -160,14 +160,16 @@ window.onPageLoad = function() {
   window.isPlayer = true
 
   if(window.usePlayEditor) {
-    window.host = true
     window.isPlayer = false
+  }
+
+  if(window.getParameterByName('host')) {
+    window.host = true
   }
 
   if(window.getParameterByName('ghost')) {
     window.usePlayEditor = false
     window.isPlayer = true
-    window.host = false
     window.ghost = true
   }
 
@@ -253,6 +255,7 @@ window.initializeGame = function (initialGameId) {
         window.socket.on('onJoinGame', (hero) => {
           if(hero.id == window.heroId) {
             window.hero = hero
+            physics.addObject(hero)
             window.loadGameNonHost(game)
             window.onGameLoaded()
             startGameLoop()
@@ -308,8 +311,10 @@ window.loadGameNonHost = function (game) {
     w.game.objectsById[object.id] = object
     physics.addObject(object)
   })
+  w.game.gameState = game.gameState
   w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
   w.game.heros = {}
+  if(window.hero) w.game.heros[window.hero.id] = window.hero
   window.handleWorldUpdate(w.game.world)
 }
 
@@ -464,16 +469,25 @@ var mainLoop = function () {
 ///////////////////////////////
 ///////////////////////////////
 var update = function (delta) {
-  if(window.isPlayer && !window.ghost) {
-    // if(!w.game.gameState.paused) {
-    //   input.update(delta)
-    //   physics.updatePosition(heroCopy, delta)
-    //   physics.prepareObjectsAndHerosForCollisionsPhase()
-    //   physics.heroCorrection(heroCopy)
-    //   physics.containObjectWithinGridBoundaries(heroCopy)
-    // }
-    if(window.hero) localStorage.setItem('hero', JSON.stringify(window.hero))
-    window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
+  if(window.isPlayer) {
+    if(w.game.gameState && !w.game.gameState.paused) {
+      input.update(window.hero, window.heroKeysDown, delta)
+      Object.keys(w.game.heros).forEach((id) => {
+        let hero = w.game.heros[id]
+        physics.updatePosition(hero, delta)
+        physics.lerpObject(hero, delta)
+      })
+      w.game.objects.forEach((object) => {
+        physics.updatePosition(object, delta)
+        physics.lerpObject(object, delta)
+      })
+      physics.prepareObjectsAndHerosForCollisionsPhase()
+      physics.updateCorrections(delta)
+    }
+    if(window.hero && !window.ghost) {
+      localStorage.setItem('hero', JSON.stringify(window.hero))
+      window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
+    }
   }
 
   if(window.ghost) {

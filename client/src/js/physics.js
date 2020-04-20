@@ -12,6 +12,36 @@ const system = new Collisions()
 // Create a Result object for collecting information about the collisions
 let result = system.createResult()
 
+function lerpObject(object, delta) {
+  if(object._lerpX) {
+    let diffX = Math.abs(object.x - object._lerpX)
+    let speed = diffX * 10
+    if(speed < 100) speed = 100
+    if(diffX < 2) {
+      object.x = object._lerpX
+      delete object._lerpX
+    } else if(object.x > object._lerpX) {
+      object.x -= speed * delta
+    } else if(object.x < object._lerpX) {
+      object.x += speed * delta
+    }
+  }
+
+  if(object._lerpY) {
+    let diffY = Math.abs(object.y - object._lerpY)
+    let speed = diffY * 10
+    if(speed < 20) speed = 20
+    if(diffY < 2) {
+      object.y = object._lerpY
+      delete object._lerpY
+    } if(object.y > object._lerpY) {
+      object.y -= speed * delta
+    } else if(object.y < object._lerpY) {
+      object.y += speed * delta
+    }
+  }
+}
+
 function updatePosition(object, delta) {
   if(object.removed) return
 
@@ -453,6 +483,46 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
   }
 }
 
+function updateCorrections() {
+  system.update()
+  // heros
+  let allHeros = Object.keys(w.game.heros).map((id) => {
+    return w.game.heros[id]
+  })
+  allHeros.forEach((hero) => {
+    heroCorrection(hero)
+  })
+
+  // objects
+  correctionPhase()
+  system.update()
+  correctionPhase(true)
+  function correctionPhase(final = false) {
+    for(let id in physicsObjects){
+      let po = physicsObjects[id]
+      if(po.gameObject.removed) continue
+      if(id.indexOf('hero') > -1) continue
+      objectCorrections(po, final)
+    }
+  }
+
+  // parents and boundaries
+  w.game.objects.forEach((object, i) => {
+    if(object.removed) return
+    if(object.parentId || object._parentId) {
+      attachToParent(object)
+    }
+    containObjectWithinGridBoundaries(object)
+  })
+
+  allHeros.forEach((hero) => {
+    if(hero.parentId || hero._parentId ) {
+      attachToParent(hero)
+    }
+    containObjectWithinGridBoundaries(hero)
+  })
+}
+
 function update (delta) {
   // let raycast = new Polygon(prevX, prevY, [ [ 0, 0], [hero.x, hero.y] ])
   // system.insert(raycast)
@@ -669,7 +739,9 @@ export default {
   removeObjectById,
   updatePosition,
   update,
+  updateCorrections,
   heroCorrection,
   containObjectWithinGridBoundaries,
   prepareObjectsAndHerosForCollisionsPhase,
+  lerpObject,
 }

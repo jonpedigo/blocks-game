@@ -191,6 +191,8 @@ function removeObjectState(object) {
   delete object.spawnPool
   delete object._parentId
   delete object._skipNextGravity
+  delete object._lerpX
+  delete object._lerpY
   delete object.fresh
 }
 window.removeObjectState = removeObjectState

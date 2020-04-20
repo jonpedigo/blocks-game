@@ -177,11 +177,23 @@ function init() {
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
     if(!window.pageState.gameLoaded) return
     if(!window.host){
-      w.game.objects = objectsUpdated
-      w.game.objectsById = w.game.objects.reduce((prev, next) => {
-        prev[next.id] = next
-        return prev
-      }, {})
+      if(window.isPlayer) {
+        objectsUpdated.forEach((obj) => {
+          let go = w.game.objectsById[obj.id]
+          if(!go) w.game.objectsById[obj.id] = obj
+          go._lerpX = obj.x
+          go._lerpY = obj.y
+          delete obj.x
+          delete obj.y
+          window.mergeDeep(go, obj)
+        })
+      } else if(window.usePlayEditor) {
+        w.game.objects = objectsUpdated
+        w.game.objectsById = w.game.objects.reduce((list, obj) => {
+          prev[next.id] = next
+          return prev
+        }, {})
+      }
     }
 
     if(window.usePlayEditor && window.objecteditor.get().id) {
@@ -194,15 +206,22 @@ function init() {
   // HOST CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
     if(!window.pageState.gameLoaded) return
-    if(window.isPlayer && window.hero && updatedHero.id == window.hero.id) {
-      window.mergeDeep(window.hero, updatedHero)
-    }
 
     if(!window.host) {
       if(!w.game.heros[updatedHero.id]) {
         w.game.heros[updatedHero.id] = updatedHero
+        physics.addObject(updatedHero)
+      } else if(window.usePlayEditor) {
+        window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
+      } else if(window.isPlayer) {
+        let hero = w.game.heros[updatedHero.id]
+        if(!hero) w.game.heros[updatedHero.id] = updatedHero
+        hero._lerpX = updatedHero.x
+        hero._lerpY = updatedHero.y
+        delete updatedHero.x
+        delete updatedHero.y
+        window.mergeDeep(hero, updatedHero)
       }
-      window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
     }
 
     if(window.pageState.gameLoaded && window.usePlayEditor) {
