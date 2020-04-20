@@ -370,12 +370,18 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
+function getAllHeros() {
+  let allHeros = Object.keys(w.game.heros).reduce((prev, id) => {
+    if(id === 'ghost') return prev
+    prev.push(w.game.heros[id])
+    return prev
+  }, [])
+  return allHeros
+}
 function prepareObjectsAndHerosForCollisionsPhase() {
   // set objects new position and widths
   let everything = [...w.game.objects]
-  let allHeros = Object.keys(w.game.heros).map((id) => {
-    return w.game.heros[id]
-  })
+  let allHeros = getAllHeros()
   everything.push(...allHeros)
 
   everything.forEach((object, i) => {
@@ -486,9 +492,7 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
 function updateCorrections() {
   system.update()
   // heros
-  let allHeros = Object.keys(w.game.heros).map((id) => {
-    return w.game.heros[id]
-  })
+  let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
     heroCorrection(hero)
   })
