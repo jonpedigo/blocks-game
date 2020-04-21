@@ -385,9 +385,13 @@ window.loadGame = function(game) {
 
   if(window.isPlayer && !window.ghost) {
     if(window.host && !window.arcadeMode) {
-      // host doesnt load the normal way so you need to give it a hero LATER
-      window.hero = window.findHeroInNewGame(window.game)
-      window.hero.id = window.heroId
+      if(w.game.heros[window.heroId]) {
+        window.hero = w.game.heros[window.heroId]
+      } else {
+        // host doesnt load the normal way so you need to give it a hero LATER
+        window.hero = window.findHeroInNewGame(window.game)
+        window.hero.id = window.heroId
+      }
     }
     w.game.heros[window.hero.id] = window.hero
   }
@@ -517,17 +521,14 @@ var update = function (delta) {
         // physics.updateCorrections(delta)
       }
     }
-    if(window.ghost && window.host) {
-      if(window.hero.id === 'ghost') {
-        input.update(window.hero, window.keysDown, delta)
-        // if your going to add all this, might as well just add it to the heros on the server! I mean...
-        // physics.updatePosition(window.hero, delta)
-        // physics.heroCorrection(window.hero)
-        // physics.cleanUp(window.hero)
-      }
-    } else if(!window.ghost){
+    if(window.ghost && window.hero.id === 'ghost') {
+      input.update(window.hero, window.keysDown, delta)
+    }
+
+    if(!window.ghost){
       localStorage.setItem('hero', JSON.stringify(window.hero))
-      window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
+      // we are locally updating the hero input as host
+      if(!window.host) window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
     }
   }
 
@@ -544,7 +545,7 @@ var update = function (delta) {
         }
         if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
         physics.updatePosition(hero, delta)
-        window.heroInput[id] = {}
+        // window.heroInput[id] = {}
       })
       w.game.objects.forEach((object) => {
         physics.updatePosition(object, delta)

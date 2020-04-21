@@ -28,25 +28,17 @@ function init() {
 
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
+      // dont update input for hosts hero since we've already locally updated
+      if(window.isPlayer && heroId == window.hero.id) return
       window.heroInput[heroId] = heroInput
     })
 
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
+      // dont do keydown event for hosts hero since we've already done locally
+      if(window.isPlayer && heroId == window.hero.id) return
       let hero = w.game.heros[heroId]
       input.keyDown(keyCode, hero)
-      /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.keyDown(keyCode, hero)
-      }
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.keyDown(keyCode, hero)
-      }
-      /// CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.keyDown(keyCode, hero)
-      }
     })
 
     // EDITOR CALLS THIS
@@ -54,6 +46,7 @@ function init() {
       Object.keys(w.game.heros).forEach((id) => {
         if(id === hero.id) {
           w.game.heros[id] = window.resetHeroToDefault(w.game.heros[id])
+          if(window.isPlayer && window.hero.id === hero.id) window.hero = w.game.heros[id]
         }
       })
     })
@@ -221,6 +214,8 @@ function init() {
       if(!w.game.heros[updatedHero.id]) {
         w.game.heros[updatedHero.id] = updatedHero
         physics.addObject(updatedHero)
+        // you need to reset the reference... really just for ghost mode ( because it loads non host )
+        if(window.hero.id === updatedHero.id) window.hero = updatedHero
       }
       window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
       // old interpolation code
@@ -407,7 +402,9 @@ function init() {
   window.socket.on('onCopyGame', (game) => {
     window.unloadGame()
     if(window.host || window.usePlayEditor) window.loadGame(game)
-    else window.loadGameNonHost(game)
+    else {
+      window.loadGameNonHost(game)
+    }
   })
 
 
@@ -415,7 +412,9 @@ function init() {
   window.socket.on('onSetGame', (game) => {
     window.unloadGame()
     if(window.host || window.usePlayEditor) window.loadGame(game)
-    else window.loadGameNonHost(game)
+    else {
+      window.loadGameNonHost(game)
+    }
     window.changeGame(game.id)
   })
 

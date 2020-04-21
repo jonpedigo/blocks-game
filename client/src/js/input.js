@@ -14,7 +14,13 @@ function init(){
     if(window.ghost) {
       if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
     } else if(window.isPlayer) {
-      window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
+      //locally update the host input! ( teehee this is the magic! )
+      if(window.host) {
+        keyDown(e.keyCode, window.hero)
+        window.heroInput[window.hero.id] = window.keysDown
+      } else {
+        window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
+      }
     }
   }, false)
 
@@ -217,6 +223,19 @@ function keyDown(keyCode, hero) {
   if (39 === keyCode) { // Player holding right
     hero.inputDirection = 'right'
   }
+
+  // /// DEFAULT GAME FX
+  // if(window.defaultCustomGame) {
+  //   window.defaultCustomGame.keyDown(keyCode, hero)
+  // }
+  // /// CUSTOM GAME FX
+  // if(window.customGame) {
+  //   window.customGame.keyDown(keyCode, hero)
+  // }
+  // /// CUSTOM GAME FX
+  // if(window.liveCustomGame) {
+  //   window.liveCustomGame.keyDown(keyCode, hero)
+  // }
 }
 
 export default {
