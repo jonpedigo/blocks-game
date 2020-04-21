@@ -91,11 +91,11 @@ window.respawnHero = function (hero) {
       if(obj.removed) return
 
       if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
-        const { gridX, gridY } = gridTool.convertToGridXY(obj)
+        const { gridX, gridY } = grid.convertToGridXY(obj)
         obj.gridX = gridX
         obj.gridY = gridY
 
-        const spawnGridPos = gridTool.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
+        const spawnGridPos = grid.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
 
         obj.path = pathfinding.findPath({
           x: gridX,
