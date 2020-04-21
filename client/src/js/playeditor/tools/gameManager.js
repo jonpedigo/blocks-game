@@ -42,7 +42,36 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
-    var copyText = JSON.stringify({...w.editingGame, grid: {...w.editingGame.grid, nodes: null}});
+    let gameCopy = JSON.parse(JSON.stringify(window.editingGame))
+    if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && gameCopy.heros) {
+      if(Object.keys(gameCopy.heros).length > 1) {
+        console.log("ERROR, two heros sent to a non asymettric, non restoring world")
+      }
+      if(Object.keys(gameCopy.heros).length == 1) {
+        for(var heroId in gameCopy.heros) {
+        }
+        gameCopy.hero = gameCopy.heros[heroId]
+      }
+
+      // never save gameState or heros, this is generated don the fly
+      delete gameCopy.heros
+    }
+    
+    // never save gameState or heros, this is generated don the fly
+    if(gameCopy.gameState) {
+      delete gameCopy.gameState
+    }
+
+    if(!gameCopy.id) {
+      gameCopy.id = window.uniqueID()
+    }
+
+    if(gameCopy.grid && gameCopy.grid.nodes) {
+      delete gameCopy.grid.nodes
+    }
+
+
+    var copyText = JSON.stringify(gameCopy);
     window.copyToClipBoard(copyText)
   })
 

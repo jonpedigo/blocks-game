@@ -356,6 +356,7 @@ window.loadGame = function(game) {
   }
 
   if(game.compendium) window.compendium = game.compendium
+  window.game.hero = game.hero
 
   let storedGameState = localStorage.getItem('gameStates')
   if(storedGameState) storedGameState = storedGameState[game.id]
@@ -390,7 +391,6 @@ window.loadGame = function(game) {
     }
     w.game.heros[window.hero.id] = window.hero
   }
-  window.game.hero = game.hero
 
   Object.keys(w.game.heros).forEach((id) => {
     physics.addObject(w.game.heros[id])

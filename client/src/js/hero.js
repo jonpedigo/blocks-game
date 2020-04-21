@@ -90,7 +90,7 @@ window.respawnHero = function (hero) {
     window.game.objects.forEach((obj) => {
       if(obj.removed) return
 
-      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
+      if(obj.tags.zombie || obj.tags.homing) {
         const { gridX, gridY } = grid.convertToGridXY(obj)
         obj.gridX = gridX
         obj.gridY = gridY
