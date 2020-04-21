@@ -77,6 +77,17 @@ function drawObject(ctx, object, withNames = false) {
 //   drawBorder(ctx, object, thickness)
 // }
 
+function drawNameCenter(ctx, object) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 8
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = object.width/4
+  // NEED TO REVISE THIS WHOLE GOD DAMN THING
+  window.wrapText(ctx, object.name, ((object.x+(object.width/2))*window.scaleMultiplier - camera.x), ((object.y+(object.height/2))*window.scaleMultiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
+}
+
 function drawBorder(ctx, object, thickness = 2) {
   // ctx.fillRect(((object.x * window.scaleMultiplier) - window.camera.x) - (xBorderThickness), ((object.y * window.scaleMultiplier) - window.camera.y) - (yBorderThickness), (object.width * window.scaleMultiplier) + (xBorderThickness * 2), (object.height * window.scaleMultiplier) + (yBorderThickness * 2));
   [({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, thickness}),
@@ -419,6 +430,11 @@ function render(ctx, hero, objects, grid) {
   if(window.editingHero.parentId && window.currentTool == window.TOOLS.HERO_EDITOR) {
     drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.parentId], color: 'rgba(255, 0,0,.2)'})
   }
+
+  /// names?
+  w.game.objects.forEach((obj) => {
+    if(obj.name) drawNameCenter(ctx, obj)
+  })
 
   /// FRAMES PER SECOND
   ctx.font =`24pt Arial`
