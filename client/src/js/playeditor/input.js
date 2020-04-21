@@ -5,7 +5,7 @@ let justChangedHerosRight = false
 
 function init(hero){
   window.addEventListener("keydown", function (e) {
-    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
       e.preventDefault();
     }
 
@@ -56,11 +56,21 @@ function init(hero){
           window.addToCompendium(window.objecteditor.get())
         }
       }
-    }
 
+    }
 
     // if shift +
     if(keysDown['16']) {
+      //n
+      if(keysDown['78']){
+        let oe = window.objecteditor.get()
+        let name = prompt('give a name to object-id:' + oe.id)
+        if(name) {
+          oe.name = name
+          window.objecteditor.update(oe)
+        }
+        e.preventDefault()
+      }
 
       // q and a zoom in and out
       if(e.keyCode === 81) {

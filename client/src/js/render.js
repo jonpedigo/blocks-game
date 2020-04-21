@@ -68,6 +68,10 @@ function update() {
     shadow.draw(ctx, vertices, hero)
   }
 
+  w.game.objects.forEach((obj) => {
+    if(obj.name) camera.drawNameCenter(ctx, obj)
+  })
+
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
   ctx.fillText(Math.ceil(window.fps), window.CONSTANTS.PLAYER_CANVAS_WIDTH - 50, 40)

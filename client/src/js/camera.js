@@ -78,6 +78,17 @@ function drawName(ctx, object){
 	ctx.fillText(object.name ? object.name : '', object.x - camera.x, object.y - camera.y);
 }
 
+function drawNameCenter(ctx, object) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = object.width/4
+  // NEED TO REVISE THIS WHOLE GOD DAMN THING
+  window.wrapText(ctx, object.name, ((object.x+(object.width/2))/camera.multiplier - camera.x), ((object.y+(object.height/2))/camera.multiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
+}
+
 function drawObject(ctx, object, withNames = false) {
   if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
@@ -145,6 +156,7 @@ export default {
   get,
 	drawObject,
   drawVertice,
+  drawNameCenter,
   clearLimit,
   setLimit,
 }
