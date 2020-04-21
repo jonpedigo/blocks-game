@@ -214,8 +214,8 @@ function init() {
       if(!w.game.heros[updatedHero.id]) {
         w.game.heros[updatedHero.id] = updatedHero
         physics.addObject(updatedHero)
-        // you need to reset the reference... really just for ghost mode ( because it loads non host )
-        if(window.hero.id === updatedHero.id) window.hero = updatedHero
+        // you need to reset the reference... really just for NON HOST PLAYER MODE ( because it loads non host )
+        if(window.isPlayer && window.hero.id === updatedHero.id) window.hero = updatedHero
       }
       window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
       // old interpolation code

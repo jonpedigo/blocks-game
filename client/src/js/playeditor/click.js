@@ -17,7 +17,7 @@ function init() {
   }
 
   window.document.getElementById('game-canvas').addEventListener("mousedown", function(e) {
-    if(window.currentTool !== window.TOOLS.SIMPLE_EDITOR) return
+    if(window.currentTool !== window.TOOLS.SIMPLE_EDITOR || !window.dragObjectPosToggle.checked) return
     window.dragStart.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.dragStart.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
     const { x,y } = gridTool.createGridNodeAt(window.dragStart.x, window.dragStart.y)
@@ -145,8 +145,8 @@ function init() {
       location.height = w.editingGame.grid.nodeSize
     }
 
-    // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.dragAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
-    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.dragAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
+    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -164,7 +164,7 @@ function init() {
       location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
     }
 
-    if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectDragToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectGroupToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -273,7 +273,7 @@ function init() {
           // window.sendObjectUpdate(spawnPoints)
           window.objecteditor.saved = false
           window.objecteditor.update({...window.objecteditor.get(), ...spawnPoints})
-        } else if(window.setObjectPathfindingLimitToggle.checked || window.selectObjectDragToggle.checked) {
+        } else if(window.setObjectPathfindingLimitToggle.checked || window.selectObjectGroupToggle.checked) {
           defaultFirstClick(e)
         } else {
           for(let i = 0; i < w.editingGame.objects.length; i++) {
@@ -327,7 +327,7 @@ function init() {
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
           // window.setObjectPathfindingLimitToggle.checked = false
           // window.selectorObjectToggle.checked = true
-        } else if(window.selectObjectDragToggle.checked) {
+        } else if(window.selectObjectGroupToggle.checked) {
           window.objecteditor.update({
             parent: value,
             children: JSON.parse(JSON.stringify(window.highlightedObjectGroup)),
@@ -387,7 +387,7 @@ function init() {
       onFirstClick: (e) => {
         let editorObject = window.objecteditor.get()
 
-        if((window.dragAddToggle.checked || window.addParentToggle.checked) && !editorObject.parent) {
+        if((window.groupAddToggle.checked || window.addParentToggle.checked) && !editorObject.parent) {
           defaultFirstClick(e)
         } else {
           const click = {

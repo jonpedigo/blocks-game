@@ -30,9 +30,14 @@ function init() {
           window.objecteditor.update( window.mergeDeep( editorState, JSON.parse(JSON.stringify(heroModifiers[modifierName])) ) )
           sendHeroUpdate(heroModifiers[modifierName])
         } else {
+          let heroMod = heroModifiers[modifierName]
           let editorState = window.objecteditor.get()
           window.objecteditor.saved = false
-          window.objecteditor.update( window.mergeDeep( editorState, { tags: { heroUpdate: true }}, { heroUpdate: JSON.parse(JSON.stringify(heroModifiers[modifierName])) } ) )
+          if(heroMod.objectMod) {
+            window.objecteditor.update( window.mergeDeep( editorState, heroMod.objectMod, { heroUpdate: JSON.parse(JSON.stringify(heroMod.update)) } ) )
+          } else {
+            window.objecteditor.update( window.mergeDeep( editorState, { tags: { heroUpdate: true }}, { heroUpdate: JSON.parse(JSON.stringify(heroMod)) } ) )
+          }
           window.updateObjectEditorNotifier()
         }
       }

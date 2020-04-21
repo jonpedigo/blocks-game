@@ -143,13 +143,13 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
       }
     })
     if(sampleObject.velocityX || sampleObject.velocityY) {
-      warnings += 'has VELOCITY'
+      warnings += 'has VELOCITY\n'
     }
     if(sampleObject.heroUpdate) {
-      warnings += 'has HERO UPDATE'
+      warnings += 'has HERO UPDATE\n'
     }
-    if(sampleObject.heroUpdate) {
-      warnings += 'has OBJECT UPDATE'
+    if(sampleObject.objectUpdate) {
+      warnings += 'has OBJECT UPDATE\n'
     }
 
     if(confirm(warnings)) {

@@ -174,10 +174,10 @@ function heroCorrection(hero) {
             hero._parentId = landingObject.gameObject.id
             hero._skipNextGravity = true
           } else {
-            hero.velocityY = 0
+            if(hero.velocityY > 0) hero.velocityY = 0
           }
         } else if(result.overlap_y < 0){
-          hero.velocityY = 0
+          if(hero.velocityY < 0) hero.velocityY = 0
         }
         heroPO.y -= result.overlap_y
       }
@@ -419,9 +419,11 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
       console.log('missing game object on body', body)
       continue
     }
+
     if(body.gameObject.removed || (options.bypassHero && body.gameObject.id.indexOf('hero') >= 0)) continue
     if(po.collides(body, result)) {
-      if(body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
+      // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
+      if(po.gameObject.tags['monster'] && body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -431,7 +433,10 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
           correction.y -= result.overlap * result.overlap_y
         }
         break;
-      } else if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && (!po.gameObject.path)) {
+      }
+
+      // objects with NO path but SOME velocity get corrections
+      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && !po.gameObject.path && (po.gameObject.velocityY > 0 || po.gameObject.velocityX > 0)) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x

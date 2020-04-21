@@ -156,11 +156,11 @@ window.onPageLoad = function() {
   window.canvas.id = 'game-canvas'
   document.body.appendChild(window.canvas);
 
-  window.usePlayEditor = localStorage.getItem('useMapEditor') === 'true'
   window.host = false
   window.isPlayer = true
 
-  if(window.usePlayEditor) {
+  if(window.getParameterByName('playEditor')) {
+    window.usePlayEditor = true
     window.isPlayer = false
   }
 
@@ -196,8 +196,11 @@ window.onPageLoad = function() {
     console.log('editor')
   }
   if(window.isPlayer) {
-    console.log('player')
+    if(window.ghost){
+      console.log('player-ghost')
+    } else console.log('player')
   }
+
 
   // SOCKET START
   if(window.arcadeMode) {
@@ -437,14 +440,11 @@ window.loadGame = function(game) {
 /////// ON GAME LOAD
 ///////////////////////////////
 ///////////////////////////////
-var then;
 window.onGameLoaded = function() {
   if(window.usePlayEditor) {
     window.editingGame = window.game
   }
   window.pageState.gameLoaded = true
-
-  then = Date.now()
 
   objects.loaded()
   if(window.isPlayer) {
@@ -466,6 +466,10 @@ window.onGameLoaded = function() {
 /////// CORE LOOP
 ///////////////////////////////
 ///////////////////////////////
+let fpsInterval = 1000/24
+var frameCount = 0;
+var fps, startTime, now, then, delta;
+requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 function startGameLoop() {
   if(!w.game.objects || !w.game.world || !w.game.grid || !w.game.heros || (window.isPlayer && !window.hero)) {
     console.log('game loaded without critical data, trying again soon', !w.game.objects, !w.game.world, !w.game.grid, !w.game.heros, (window.isPlayer && !window.hero))
@@ -473,27 +477,40 @@ function startGameLoop() {
     return
   }
 
+  then = Date.now();
+  startTime = then;
+
   // begin main loop
   mainLoop()
-  setTimeout(networkLoop, 100)
+  if(window.host) setTimeout(networkLoop, 100)
 }
 
-requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 var mainLoop = function () {
-	var now = Date.now();
-	var delta = now - then;
-  window.fps = 1000 / delta;
-  window.lastDelta = delta;
-	if(delta > 23) delta = 23
+  // Request to do this again ASAP
+  requestAnimationFrame(mainLoop);
 
-  update(delta / 1000);
+  // calc elapsed time since last loop
+  now = Date.now();
+  delta = now - then;
 
-  renderGame(delta / 1000)
+  // if enough time has delta, draw the next frame
+  if (delta > fpsInterval) {
+      // Get ready for next frame by setting then=now, but...
+      // Also, adjust for fpsInterval not being multiple of 16.67
+      then = now - (delta % fpsInterval);
+      window.fps = 1000 / delta;
+      window.lastDelta = delta;
 
-	then = now;
+      update(delta / 1000);
 
-	// Request to do this again ASAP
-	requestAnimationFrame(mainLoop);
+      renderGame(delta / 1000)
+
+      // TESTING...Report #seconds since start and achieved fps.
+      var sinceStart = now - startTime;
+      var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
+      window.fps = currentFps;
+      // $results.text("Elapsed time= " + Math.round(sinceStart / 1000 * 100) / 100 + " secs @ " + currentFps + " fps.");
+  }
 };
 
 //////////////////////////////////////////////////////////////
@@ -615,15 +632,13 @@ function renderGame(delta) {
 }
 
 function networkLoop() {
-  if(window.host) {
-    window.socket.emit('updateObjects', w.game.objects)
-    window.socket.emit('updateGameState', w.game.gameState)
-    window.socket.emit('updateWorldOnServerOnly', w.game.world)
-    window.socket.emit('updateHeros', w.game.heros)
-    if(w.game.gameState.started && w.game.world.storeEntireGameState) {
-      let storedGameState = localStorage.getItem('gameStates')
-      localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
-    }
+  window.socket.emit('updateObjects', w.game.objects)
+  window.socket.emit('updateGameState', w.game.gameState)
+  window.socket.emit('updateWorldOnServerOnly', w.game.world)
+  window.socket.emit('updateHeros', w.game.heros)
+  if(w.game.gameState.started && w.game.world.storeEntireGameState) {
+    let storedGameState = localStorage.getItem('gameStates')
+    localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
   }
   let timeout = window.lastDelta * 3
   if(timeout > 250) {

@@ -232,9 +232,9 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
     hero.score++
   }
 
-  if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat) {
+  if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat && collider.heroUpdate.chat.length) {
     if(collider.id !== hero.lastChatId) {
-      hero.chat = collider.heroUpdate.chat.slice()
+      hero.chat = JSON.parse(JSON.stringify(collider.heroUpdate.chat))
       // hero.chat.name = body.id
       hero.lastChatId = collider.id
     }
@@ -288,7 +288,7 @@ function heroUpdate (hero, collider) {
       }
     }
     hero.updateHistory.push(update)
-    window.mergeDeep(hero, {...collider.heroUpdate})
+    window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
     hero.lastPowerUpId = collider.id
 
     if(collider.tags['revertAfterTimeout']) {

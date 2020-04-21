@@ -192,6 +192,8 @@ function keyDown(keyCode, hero) {
     }
   }
 
+  if(hero.flags.paused || w.game.gameState.paused) return
+
   if(32 === keyCode) {
     if(hero.onGround && hero.tags.gravity) {
       hero.velocityY = hero.jumpVelocity
@@ -224,18 +226,18 @@ function keyDown(keyCode, hero) {
     hero.inputDirection = 'right'
   }
 
-  // /// DEFAULT GAME FX
-  // if(window.defaultCustomGame) {
-  //   window.defaultCustomGame.keyDown(keyCode, hero)
-  // }
-  // /// CUSTOM GAME FX
-  // if(window.customGame) {
-  //   window.customGame.keyDown(keyCode, hero)
-  // }
-  // /// CUSTOM GAME FX
-  // if(window.liveCustomGame) {
-  //   window.liveCustomGame.keyDown(keyCode, hero)
-  // }
+  /// DEFAULT GAME FX
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.keyDown(keyCode, hero)
+  }
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.keyDown(keyCode, hero)
+  }
+  /// CUSTOM GAME FX
+  if(window.liveCustomGame) {
+    window.liveCustomGame.keyDown(keyCode, hero)
+  }
 }
 
 export default {
