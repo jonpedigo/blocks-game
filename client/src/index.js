@@ -623,7 +623,7 @@ function networkLoop() {
       localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
     }
   }
-  let timeout = window.lastDelta * 3
+  let timeout = window.lastDelta * 300
   if(timeout > 250) {
     timeout = 250
   }
