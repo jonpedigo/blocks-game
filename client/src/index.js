@@ -502,18 +502,19 @@ var update = function (delta) {
   if(window.isPlayer) {
     if(w.game.gameState && !w.game.gameState.paused) {
       if(!window.host) {
-        input.update(window.hero, window.keysDown, delta)
-        Object.keys(w.game.heros).forEach((id) => {
-          let hero = w.game.heros[id]
-          physics.updatePosition(hero, delta)
-          physics.lerpObject(hero, delta)
-        })
-        w.game.objects.forEach((object) => {
-          physics.updatePosition(object, delta)
-          physics.lerpObject(object, delta)
-        })
-        physics.prepareObjectsAndHerosForCollisionsPhase()
-        physics.updateCorrections(delta)
+        // old interpolation code
+        // input.update(window.hero, window.keysDown, delta)
+        // Object.keys(w.game.heros).forEach((id) => {
+        //   let hero = w.game.heros[id]
+        //   physics.updatePosition(hero, delta)
+        //   physics.lerpObject(hero, delta)
+        // })
+        // w.game.objects.forEach((object) => {
+        //   physics.updatePosition(object, delta)
+        //   physics.lerpObject(object, delta)
+        // })
+        // physics.prepareObjectsAndHerosForCollisionsPhase()
+        // physics.updateCorrections(delta)
       }
     }
     if(window.ghost && window.host) {
@@ -623,7 +624,7 @@ function networkLoop() {
       localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
     }
   }
-  let timeout = window.lastDelta * 300
+  let timeout = window.lastDelta * 3
   if(timeout > 250) {
     timeout = 250
   }
