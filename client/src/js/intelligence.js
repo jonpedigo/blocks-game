@@ -1,33 +1,119 @@
 import pathfinding from './pathfinding.js'
 import collision from './collisions'
 import gridTool from './grid.js'
+import physics from './physics.js'
 
 function init(){
 
 }
 
-function moveTowardsTarget(object, delta) {
-  if(object.x > object.target.x) {
-    object.velocityX -= (object.speed || 100) * delta
-  } else if(object.x < object.target.x) {
-    object.velocityX += (object.speed || 100) * delta
-  } else {
+// function moveTowardsTarget(object, target, delta) {
+//   if(object.x > target.x) {
+//     object.velocityX -= (object.speed || 100) * delta
+//   } else if(object.x < target.x) {
+//     object.velocityX += (object.speed || 100) * delta
+//   } else {
+//     object.velocityX = 0
+//   }
+//
+//   if(object.y > target.y) {
+//     object.velocityY -= (object.speed || 100) * delta
+//   } else if(object.y < target.y) {
+//     object.velocityY += (object.speed || 100) * delta
+//   } else {
+//     object.velocityY = 0
+//   }
+// }
+
+function checkIfWillCrossTarget(object, target, delta) {
+  // let objectCopy = JSON.parse(JSON.stringify(object))
+  // physics.updatePosition(objectCopy, delta)
+  //
+  // let greaterX = false
+  // let lesserX = false
+  // if(objectCopy.x > target.x) {
+  //   greaterX = true
+  // }
+  //
+  // let objectCopy = JSON.parse(JSON.stringify(object))
+  // physics.updatePosition(objectCopy, delta)
+  //
+  // if(lesserX && greaterX) {
+  //   objectCopy.x = target.x
+  // }
+  //
+  // if(objectCopy.x > )
+}
+
+function moveTowardsTarget(object, target, delta, options = { flat: false}) {
+  object._initialX = object.x
+  object._initialY = object.y
+
+  let oldX = object.x
+  let oldY = object.y
+
+  if(object.x > target.x) {
+    if(options.flat) object.velocityX = -((object.speed || 100) * delta) * 10
+    else {
+      object.velocityX -= (object.speed || 100) * delta
+    }
+  }
+  if(object.x < target.x) {
+    if(options.flat) object.velocityX = ((object.speed || 100) * delta) * 10
+    else object.velocityX += (object.speed || 100) * delta
+  }
+  let newX = object.x + object.velocityX * delta
+
+  if(object.y > target.y) {
+    if(options.flat) object.velocityY = -((object.speed || 100) * delta) * 10
+    else object.velocityY -= (object.speed || 100) * delta
+  }
+  if(object.y < target.y) {
+    if(options.flat) object.velocityY = ((object.speed || 100) * delta) * 10
+    else object.velocityY += (object.speed || 100) * delta
+  }
+  let newY = object.y + object.velocityY * delta
+
+  if(target.x < oldX && target.x > newX || target.x > oldX && target.x < newX) {
+    object.x = target.x
     object.velocityX = 0
   }
-
-  if(object.y > object.target.y) {
-    object.velocityY -= (object.speed || 100) * delta
-  } else if(object.y < object.target.y) {
-    object.velocityY += (object.speed || 100) * delta
-  } else {
+  if(target.y < oldY && target.y > newY || target.y > oldY && target.y < newY) {
+    object.y = target.y
     object.velocityY = 0
   }
 }
 
-function moveOnPath(object) {
-  const { gridX, gridY, x, y, diffX, diffY } = gridTool.convertToGridXY(object)
+function moveOnPath(object, delta) {
+  const { gridX, gridY, x, y } = gridTool.convertToGridXY(object)
   object.gridX = gridX
   object.gridY = gridY
+
+  let pathX = (object.path[0].x * w.game.grid.nodeSize) + w.game.grid.startX
+  let pathY = (object.path[0].y * w.game.grid.nodeSize) + w.game.grid.startY
+
+  let pathSpeedX = object.speed || -100
+  let pathSpeedY = object.speed || -100
+  // if(diffX < 5 && diffX >= 1) {
+  //   pathSpeedX = pathSpeedX * (1 - (1/diffX))
+  // }
+  // if(diffY < 5 && diffY >= 1) {
+  //   pathSpeedY = pathSpeedY * (1 - (1/diffY))
+  // }
+
+  moveTowardsTarget(object, {x: pathX, y: pathY }, delta, { flat: true })
+  let diffX = Math.abs(object.x - pathX)
+  let diffY = Math.abs(object.y - pathY)
+
+  if(object.gridX == object.path[0].x && diffX <= 2) {
+    object.x = pathX
+    object.velocityX = 0
+  }
+
+  if(object.gridY == object.path[0].y && diffY <= 2) {
+    object.y = pathY
+    object.velocityY = 0
+  }
 
   if(object.gridY == object.path[0].y && object.gridX == object.path[0].x && diffX <= 2 && diffY <= 2) {
     object.velocityX = 0
@@ -36,25 +122,17 @@ function moveOnPath(object) {
     return
   }
 
-  let pathX = (object.path[0].x * w.game.grid.nodeSize) + w.game.grid.nodes[0][0].x
-  let pathY = (object.path[0].y * w.game.grid.nodeSize) + w.game.grid.nodes[0][0].y
-  if(object.gridX == object.path[0].x && diffX <= 2) {
-    object.x = x
-    object.velocityX = 0
-  } else if(object.x > pathX) {
-    object.velocityX = -object.speed || -100
-  } else if(object.x < pathX) {
-    object.velocityX = object.speed || 100
-  }
+  //  else if(object.x > pathX) {
+  //   object.velocityX = -pathSpeedX
+  // } else if(object.x < pathX) {
+  //   object.velocityX = pathSpeedX
+  // }
 
-  if(object.gridY == object.path[0].y && diffY <= 2) {
-    object.y = y
-    object.velocityY = 0
-  } else if(object.y > pathY) {
-    object.velocityY = -object.speed || -100
-  } else if(object.y < pathY) {
-    object.velocityY = object.speed || 100
-  }
+  // else if(object.y > pathY) {
+  //   object.velocityY = -pathSpeedY
+  // } else if(object.y < pathY) {
+  //   object.velocityY = pathSpeedY
+  // }
 }
 
 function update(objects, delta) {
@@ -75,9 +153,9 @@ function update(objects, delta) {
         object.path = []
         object.velocityX = 0
         object.velocityY = 0
-      } else moveOnPath(object)
+      } else moveOnPath(object, delta)
     } else if(object.target) {
-      moveTowardsTarget(object, delta)
+      moveTowardsTarget(object, object.target, delta)
     }
 
 

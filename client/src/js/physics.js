@@ -12,43 +12,47 @@ const system = new Collisions()
 // Create a Result object for collecting information about the collisions
 let result = system.createResult()
 
-function lerpObject(object, delta) {
-  if(object._lerpX) {
-    let diffX = Math.abs(object.x - object._lerpX)
-    let speed = diffX * 10
-    if(speed < 100) speed = 100
-    if(diffX < 2) {
-      object.x = object._lerpX
-      delete object._lerpX
-    } else if(object.x > object._lerpX) {
-      object.x -= speed * delta
-    } else if(object.x < object._lerpX) {
-      object.x += speed * delta
-    }
-  }
-
-  if(object._lerpY) {
-    let diffY = Math.abs(object.y - object._lerpY)
-    let speed = diffY * 10
-    if(speed < 20) speed = 20
-    if(diffY < 2) {
-      object.y = object._lerpY
-      delete object._lerpY
-    } if(object.y > object._lerpY) {
-      object.y -= speed * delta
-    } else if(object.y < object._lerpY) {
-      object.y += speed * delta
-    }
-  }
-}
+// function lerpObject(object, delta) {
+//   if(object._lerpX) {
+//     let diffX = Math.abs(object.x - object._lerpX)
+//     let speed = diffX * 10
+//     if(speed < 100) speed = 100
+//     if(diffX < 2) {
+//       object.x = object._lerpX
+//       delete object._lerpX
+//     } else if(object.x > object._lerpX) {
+//       object.x -= speed * delta
+//     } else if(object.x < object._lerpX) {
+//       object.x += speed * delta
+//     }
+//   }
+//
+//   if(object._lerpY) {
+//     let diffY = Math.abs(object.y - object._lerpY)
+//     let speed = diffY * 10
+//     if(speed < 20) speed = 20
+//     if(diffY < 2) {
+//       object.y = object._lerpY
+//       delete object._lerpY
+//     } if(object.y > object._lerpY) {
+//       object.y -= speed * delta
+//     } else if(object.y < object._lerpY) {
+//       object.y += speed * delta
+//     }
+//   }
+// }
 
 function updatePosition(object, delta) {
   if(object.removed) return
 
-  if(object.id.indexOf('hero') === -1) {
+  if(!object._initialX) {
     object._initialX = object.x
+  }
+
+  if(!object._initialY){
     object._initialY = object.y
   }
+
   object._deltaX = 0
   object._deltaY = 0
   object._parentId = null
@@ -660,6 +664,8 @@ function cleanUp(object) {
     attachToParent(object)
   }
   containObjectWithinGridBoundaries(object)
+  delete object._initialX
+  delete object._initialY
 }
 
 function attachToParent(object) {
@@ -753,5 +759,5 @@ export default {
   heroCorrection,
   containObjectWithinGridBoundaries,
   prepareObjectsAndHerosForCollisionsPhase,
-  lerpObject,
+  // lerpObject,
 }

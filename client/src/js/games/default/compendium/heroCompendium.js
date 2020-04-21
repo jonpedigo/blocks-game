@@ -29,10 +29,17 @@ const heroCompendium = {
      velocityMax: 480,
    },
    chatter: {
-     chat: ['Hello'],
-     flags : {
-       showChat: true,
-       paused: true,
+     update: {
+       chat: ['Hello'],
+       flags : {
+         showChat: true,
+         paused: true,
+       }
+     },
+     objectMod: {
+       tags: {
+         chatter: true,
+       }
      }
    },
    bobthebuilder: {

@@ -498,7 +498,7 @@ var mainLoop = function () {
       // Get ready for next frame by setting then=now, but...
       // Also, adjust for fpsInterval not being multiple of 16.67
       then = now - (delta % fpsInterval);
-      window.fps = 1000 / delta;
+      if(delta > 60) delta = 60
       window.lastDelta = delta;
 
       update(delta / 1000);
