@@ -185,7 +185,6 @@ function keyDown(keyCode, hero) {
       }
     }
   }
-  console.log(keyCode, hero)
 
   if(32 === keyCode) {
     if(hero.onGround && hero.tags.gravity) {

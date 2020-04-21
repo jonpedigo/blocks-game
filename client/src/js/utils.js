@@ -64,5 +64,6 @@ window.uniqueID = function uniqueID() {
 
 window.resetStorage = function() {
   localStorage.removeItem('hero')
+  localStorage.removeItem('ghostData')
   window.location.reload()
 }

@@ -262,18 +262,15 @@ window.initializeGame = function (initialGameId) {
         window.changeGame(game.id)
         if(window.host || window.usePlayEditor) {
           window.loadGame(game)
-          window.onGameLoaded()
           startGameLoop()
         } else if(window.ghost) {
           window.loadGameNonHost(game)
-          window.onGameLoaded()
           startGameLoop()
         } else if(window.isPlayer) {
           window.socket.on('onJoinGame', (hero) => {
             if(hero.id == window.heroId) {
               window.hero = hero
               window.loadGameNonHost(game)
-              window.onGameLoaded()
               startGameLoop()
             }
           })
@@ -289,7 +286,6 @@ window.initializeGame = function (initialGameId) {
             window.socket.on('onLoadGame', (game) => {
               window.changeGame(game.id)
               window.loadGame(game)
-              window.onGameLoaded()
               startGameLoop()
             })
           } else {
@@ -307,7 +303,6 @@ window.initializeGame = function (initialGameId) {
             window.socket.emit('saveGame', game)
             window.changeGame(game.id)
             window.loadGame(game)
-            window.onGameLoaded()
             startGameLoop()
           }
         }
@@ -337,6 +332,7 @@ window.loadGameNonHost = function (game) {
     physics.addObject(window.hero)
   }
   window.handleWorldUpdate(w.game.world)
+  window.onGameLoaded()
 }
 
 //////////////////////////////////////////////////////////////
@@ -394,9 +390,9 @@ window.loadGame = function(game) {
     }
     w.game.heros[window.hero.id] = window.hero
   }
+  window.game.hero = game.hero
 
   Object.keys(w.game.heros).forEach((id) => {
-    console.log('adding', id)
     physics.addObject(w.game.heros[id])
   })
 
@@ -521,7 +517,13 @@ var update = function (delta) {
       }
     }
     if(window.ghost && window.host) {
-      if(window.hero.id === 'ghost') input.update(window.hero, window.keysDown, delta)
+      if(window.hero.id === 'ghost') {
+        input.update(window.hero, window.keysDown, delta)
+        // if your going to add all this, might as well just add it to the heros on the server! I mean...
+        // physics.updatePosition(window.hero, delta)
+        // physics.heroCorrection(window.hero)
+        // physics.cleanUp(window.hero)
+      }
     } else if(!window.ghost){
       localStorage.setItem('hero', JSON.stringify(window.hero))
       window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)

@@ -1,4 +1,6 @@
 const keysDown = {}
+import physics from './physics.js'
+import gridTool from './grid.js'
 
 function init(){
   window.addEventListener("keydown", function (e) {
@@ -53,9 +55,7 @@ function init(){
 
   window.heroId = 'ghost'
   window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  window.hero.color = 'rgba(255,255,255,0.1)'
   window.hero.id = window.heroId
-  window.ghostHero = window.hero
 }
 
 function update(delta) {
@@ -66,11 +66,16 @@ function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
     window.ghostHero = ghostData.ghost
-    if(window.game.heros[ghostData.selectedHeroId]) window.heroId = ghostData.selectedHeroId
-    else {
-      window.hero = window.ghostHero
-    }
+    if(window.game.heros[ghostData.selectedHeroId]) window.hero = window.game.heros[ghostData.selectedHeroId]
   }
+
+  if(!window.ghostHero) window.ghostHero = window.resetHeroToDefault(window.ghostHero)
+  window.ghostHero.color = 'rgba(255,255,255,0.1)'
+  window.ghostHero.arrowKeysBehavior = 'grid'
+  window.ghostHero.id = 'ghost'
+  gridTool.snapObjectToGrid(window.ghostHero)
+  if(window.hero.id === 'ghost') window.hero = window.ghostHero
+  // physics.addObject(window.ghostHero)
 }
 
 export default {

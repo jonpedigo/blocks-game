@@ -641,20 +641,20 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    // || object.relativeId || object._relativeId
-    if(object.parentId || object._parentId) {
-      attachToParent(object)
-    }
-    containObjectWithinGridBoundaries(object)
+    cleanUp(object)
   })
 
   allHeros.forEach((hero) => {
-    //     || hero.relativeId || hero._relativeId
-    if(hero.parentId || hero._parentId ) {
-      attachToParent(hero)
-    }
-    containObjectWithinGridBoundaries(hero)
+    cleanUp(hero)
   })
+}
+
+function cleanUp(object) {
+  //     || hero.relativeId || hero._relativeId
+  if(object.parentId || object._parentId ) {
+    attachToParent(object)
+  }
+  containObjectWithinGridBoundaries(object)
 }
 
 function attachToParent(object) {
@@ -737,6 +737,7 @@ function removeObjectById(id) {
 
 export default {
   addObject,
+  cleanUp,
   drawObject,
   drawSystem,
   removeObject,

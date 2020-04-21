@@ -63,7 +63,7 @@ function init() {
 }
 
 function loaded() {
-  
+
 }
 
 window.spawnHero = function (hero) {
@@ -125,9 +125,13 @@ window.updateAllHeros = function(update) {
 
 window.resetHeroToDefault = function(hero) {
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
+  if(window.game.hero) {
+    newHero = JSON.parse(JSON.stringify(window.game.hero))
+  }
   if(hero && hero.id) {
     newHero.id = hero.id
   }
+  window.spawnHero(newHero)
   return newHero
 }
 // window.resetHeroToDefault = function(hero) {
