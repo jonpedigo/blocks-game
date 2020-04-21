@@ -63,10 +63,7 @@ function init() {
 }
 
 function loaded() {
-  if(window.host) {
-    window.hero = window.findHeroInNewGame(window.game)
-    window.hero.id = window.heroId
-  }
+  
 }
 
 window.spawnHero = function (hero) {

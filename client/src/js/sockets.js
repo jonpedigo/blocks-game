@@ -180,7 +180,10 @@ function init() {
       if(window.isPlayer) {
         objectsUpdated.forEach((obj) => {
           let go = w.game.objectsById[obj.id]
-          if(!go) w.game.objectsById[obj.id] = obj
+          if(!go) {
+            w.game.objectsById[obj.id] = obj
+            go = obj
+          }
           go._lerpX = obj.x
           go._lerpY = obj.y
           delete obj.x
@@ -189,7 +192,7 @@ function init() {
         })
       } else if(window.usePlayEditor) {
         w.game.objects = objectsUpdated
-        w.game.objectsById = w.game.objects.reduce((list, obj) => {
+        w.game.objectsById = w.game.objects.reduce((prev, next) => {
           prev[next.id] = next
           return prev
         }, {})

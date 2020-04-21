@@ -1,7 +1,7 @@
 import camera from './camera';
 
 window.heroKeysDown = {}
-let keysDown = window.heroKeysDown
+window.keysDown = window.heroKeysDown
 // this is the one for the
 window.heroInput = {}
 
@@ -9,15 +9,17 @@ let lastJump = 0
 
 function init(){
   window.addEventListener("keydown", function (e) {
-    keysDown[e.keyCode] = true
+    window.keysDown[e.keyCode] = true
 
-    if(window.isPlayer) {
+    if(window.ghost) {
+      if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
+    } else if(window.isPlayer) {
       window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
     }
   }, false)
 
   window.addEventListener("keyup", function (e) {
-	   delete keysDown[e.keyCode]
+	   delete window.keysDown[e.keyCode]
   }, false)
 }
 
@@ -173,7 +175,7 @@ function getDirection() {
 }
 
 function keyDown(keyCode, hero) {
-  if(32 in keysDown) {
+  if(32 === keyCode) {
     if(hero.chat.length) {
       hero.chat.shift()
       if(!hero.chat.length) {
@@ -183,8 +185,9 @@ function keyDown(keyCode, hero) {
       }
     }
   }
+  console.log(keyCode, hero)
 
-  if(32 in keysDown) {
+  if(32 === keyCode) {
     if(hero.onGround && hero.tags.gravity) {
       hero.velocityY = hero.jumpVelocity
       lastJump = Date.now();
@@ -192,27 +195,27 @@ function keyDown(keyCode, hero) {
   }
 
   if(hero.arrowKeysBehavior === 'grid') {
-    if (38 in keysDown) { // Player holding up
+    if (38 === keyCode) { // Player holding up
       hero.y -= w.game.grid.nodeSize
-    } else if (40 in keysDown) { // Player holding down
+    } else if (40 === keyCode) { // Player holding down
       hero.y += w.game.grid.nodeSize
-    } else if (37 in keysDown) { // Player holding left
+    } else if (37 === keyCode) { // Player holding left
       hero.x -= w.game.grid.nodeSize
-    } else if (39 in keysDown) { // Player holding right
+    } else if (39 === keyCode) { // Player holding right
       hero.x += w.game.grid.nodeSize
     }
   }
 
-  if (38 in keysDown) { // Player holding up
+  if (38 === keyCode) { // Player holding up
     hero.inputDirection = 'up'
   }
-  if (40 in keysDown) { // Player holding down
+  if (40 === keyCode) { // Player holding down
     hero.inputDirection = 'down'
   }
-  if (37 in keysDown) { // Player holding left
+  if (37 === keyCode) { // Player holding left
     hero.inputDirection = 'left'
   }
-  if (39 in keysDown) { // Player holding right
+  if (39 === keyCode) { // Player holding right
     hero.inputDirection = 'right'
   }
 }

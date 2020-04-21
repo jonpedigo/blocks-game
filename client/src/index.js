@@ -260,12 +260,12 @@ window.initializeGame = function (initialGameId) {
       let currentGameExists = game && game.id
       if(currentGameExists) {
         window.changeGame(game.id)
-        if(window.ghost) {
-          window.loadGameNonHost(game)
+        if(window.host || window.usePlayEditor) {
+          window.loadGame(game)
           window.onGameLoaded()
           startGameLoop()
-        } else if(window.host || window.usePlayEditor) {
-          window.loadGame(game)
+        } else if(window.ghost) {
+          window.loadGameNonHost(game)
           window.onGameLoaded()
           startGameLoop()
         } else if(window.isPlayer) {
@@ -277,7 +277,7 @@ window.initializeGame = function (initialGameId) {
               startGameLoop()
             }
           })
-          window.socket.emit('askJoinGame', window.heroId)
+          setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
         }
       } else {
 
@@ -332,7 +332,7 @@ window.loadGameNonHost = function (game) {
   w.game.gameState = game.gameState
   w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
   w.game.heros = {}
-  if(window.isPlayer) {
+  if(window.isPlayer && !window.ghost) {
     w.game.heros[window.hero.id] = window.hero
     physics.addObject(window.hero)
   }
@@ -374,16 +374,24 @@ window.loadGame = function(game) {
       if(!w.game.heros) w.game.heros = {}
       w.game.heros = game.heros
       w.game.gameState = game.gameState
+      if(!w.game.gameState) w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     } else {
       w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      w.game.heros = {}
+      // you need to keep the heros from last time in this scenario ( you just loaded A WHOLE NEW GAME)
+      // w.game.heros = {}
+      if(!w.game.heros) w.game.heros = {}
       Object.keys(w.game.heros).forEach((id) => {
         w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
       })
     }
   }
 
-  if(window.isPlayer) {
+  if(window.isPlayer && !window.ghost) {
+    if(window.host && !window.arcadeMode) {
+      // host doesnt load the normal way so you need to give it a hero LATER
+      window.hero = window.findHeroInNewGame(window.game)
+      window.hero.id = window.heroId
+    }
     w.game.heros[window.hero.id] = window.hero
   }
 
@@ -498,7 +506,7 @@ var update = function (delta) {
   if(window.isPlayer) {
     if(w.game.gameState && !w.game.gameState.paused) {
       if(!window.host) {
-        input.update(window.hero, window.heroKeysDown, delta)
+        input.update(window.hero, window.keysDown, delta)
         Object.keys(w.game.heros).forEach((id) => {
           let hero = w.game.heros[id]
           physics.updatePosition(hero, delta)
@@ -512,7 +520,9 @@ var update = function (delta) {
         physics.updateCorrections(delta)
       }
     }
-    if(!window.ghost) {
+    if(window.ghost && window.host) {
+      if(window.hero.id === 'ghost') input.update(window.hero, window.keysDown, delta)
+    } else if(!window.ghost){
       localStorage.setItem('hero', JSON.stringify(window.hero))
       window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
     }

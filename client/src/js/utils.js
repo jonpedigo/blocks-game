@@ -61,3 +61,8 @@ window.copyToClipBoard = function(copyText) {
 window.uniqueID = function uniqueID() {
   return Math.floor(Math.random() * Date.now())
 }
+
+window.resetStorage = function() {
+  localStorage.removeItem('hero')
+  window.location.reload()
+}

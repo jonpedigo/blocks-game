@@ -160,7 +160,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
   }
 
   function emitNewObjects() {
-    if(window.editingGame.branch && !options.fromLiveGame) {
+    if(window.editingGame && window.editingGame.branch && !options.fromLiveGame) {
       window.branch.objects.push(...objects)
     } else {
       window.socket.emit('addObjects', objects)

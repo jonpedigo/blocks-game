@@ -16,20 +16,20 @@ let currentGame = {
   world: {},
 }
 
-function getGame(id, cb) {
-  fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
-    if (err){
-        console.log(err);
-    } else {
-    let game = JSON.parse(data); //now it an gameect
-    return cb(game)
-  }});
-}
-
 function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   // socket.on('saveSocket', (heroId) => {
   //   herosockets[heroId] = socket
   // })
+
+  function getGame(id, cb) {
+    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+      let game = JSON.parse(data); //now it an gameect
+      return cb(game)
+    }});
+  }
 
   ///////////////////////////
   ///////////////////////////
