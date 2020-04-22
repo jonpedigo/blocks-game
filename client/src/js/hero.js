@@ -335,9 +335,9 @@ window.findHeroInNewGame = function(game, hero) {
 
   if(!game.world.globalTags.isAsymmetric && game.hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    if(hero && hero.id) game.hero.id = hero.id
+    // if(hero && hero.id) game.hero.id = hero.id
     hero = game.hero
-    if(!hero.id) hero.id = 'hero-'+window.uniqueID()
+    // if(!hero.id) hero.id = 'hero-'+window.uniqueID()
     // but then also respawn the hero
     window.respawnHero(hero)
     return hero

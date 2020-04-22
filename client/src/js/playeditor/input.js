@@ -26,8 +26,6 @@ function init(hero){
       }
     }
 
-
-
     if(keysDown['18']) {
       if(keysDown['32']){
         console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
@@ -120,8 +118,11 @@ function init(hero){
       if(keysDown['188']){
         let heroNames = Object.keys(w.editingGame.heros)
         for(let i = 0; i < heroNames.length; i++) {
+          // console.log(w.editingGame.heros[heroNames[i]].id, window.editingHero.id, i)
           if(w.editingGame.heros[heroNames[i]].id === window.editingHero.id) {
             if(i === 0) {
+              console.log(i, heroNames.length-1)
+              console.log(w.editingGame.heros[heroNames[heroNames.length-1]])
               window.setEditingHero(w.editingGame.heros[heroNames[heroNames.length-1]])
             } else {
               window.setEditingHero(w.editingGame.heros[heroNames[i-1]])

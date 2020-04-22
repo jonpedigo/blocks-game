@@ -627,12 +627,12 @@ var update = function (delta) {
         }
         window.anticipateObjectAdd(window.editingHero)
       }
-
-      if(window.host && w.game.world.globalTags.calculatePathCollisions) {
-        grid.updateGridObstacles()
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
-      }
     }
+  }
+
+  if((window.host || window.usePlayEditor) && w.game.world.globalTags.calculatePathCollisions) {
+    grid.updateGridObstacles()
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
   }
 };
 

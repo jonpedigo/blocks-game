@@ -234,7 +234,7 @@ function init() {
 
         if(window.clickToSetHeroSpawnToggle.checked) {
           window.sendHeroUpdate({id: window.editingHero.id, spawnPointX: click.x, spawnPointY: click.y})
-        } else if(window.clickToSetHeroParentToggle.checked || window.clickToSetHeroRelativeToggle.checked){
+        } else if(window.clickToSetHeroParentToggle.checked){
           w.editingGame.objects
           .forEach((object, i) => {
             collisions.checkObject(click, object, () => {
@@ -371,7 +371,7 @@ function init() {
           window.sendWorldUpdate({ lockCamera })
         }
         if(selectorGameToggle.checked) {
-          const gameBoundaries = { x, y, width, height, behavior: w.game.world.gameBoundaries.behavior };
+          const gameBoundaries = { x, y, width, height, behavior: w.editingGame.world.gameBoundaries.behavior };
           window.sendWorldUpdate({ gameBoundaries } )
         }
         if(window.selectorHeroZoomToggle.checked) {
@@ -455,7 +455,7 @@ function init() {
         let editorObject = window.objecteditor.get()
 
         if(window.addWallToggle.checked) {
-          location.thickness = editorObject.width || w.game.grid.nodeSize
+          location.thickness = Number(document.getElementById('add-dot-size').value) || w.editingGame.grid.nodeSize
           window.createArena(location)
           return
         }

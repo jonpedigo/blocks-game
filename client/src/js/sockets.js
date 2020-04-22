@@ -18,7 +18,7 @@ function init() {
         let hero = w.game.heros[heroId]
         if(!hero) {
           hero = window.findHeroInNewGame(window.game, {id: heroId})
-          w.game.heros[heroId] = hero
+          w.game.heros[hero.id] = hero
         }
         hero.id = heroId
         physics.addObject(hero)
@@ -480,15 +480,8 @@ function init() {
               paused: true,
             }
           }
-          console.log('?', object)
           window.socket.emit('editObjects', [object])
         }
-        // if(result.value[0] && result.value[0].length) {
-        //   object.name = result.value[0]
-        //   if(result.value[1]) object.nameCenter = true
-        //   if(result.value[2]) object.nameAbove = true
-        //   window.socket.emit('editObjects', [object])
-        // }
       })
     }
   })

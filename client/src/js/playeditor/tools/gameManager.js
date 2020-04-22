@@ -56,7 +56,7 @@ function init() {
       // never save gameState or heros, this is generated don the fly
       delete gameCopy.heros
     }
-    
+
     // never save gameState or heros, this is generated don the fly
     if(gameCopy.gameState) {
       delete gameCopy.gameState
@@ -85,6 +85,15 @@ function init() {
   resetAllObjectStateButton.addEventListener('click', () => {
     window.resetAllObjectState()
   })
+
+  var resetAllHeroStateButton = document.getElementById("reset-heros-state");
+  resetAllHeroStateButton.addEventListener('click', () => {
+    for(var heroId in w.editingGame.heros) {
+      window.socket.emit('resetHeroToDefault', w.editingGame.heros[heroId])
+    }
+  })
+
+
 
   window.syncGameStateToggle = document.getElementById('sync-game-state')
 
@@ -188,9 +197,7 @@ function init() {
   //   window.resetObjects()
   //   window.socket.emit('resetWorld')
   //   window.socket.emit('updateGrid', window.defaultGrid)
-  //   for(var heroId in w.editingGame.heros) {
-  //     window.socket.emit('resetHeroToDefault', w.editingGame.heros[heroId])
-  //   }
+
   //   window.socket.emit('resetGameState')
   // }
 
