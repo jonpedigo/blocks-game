@@ -451,6 +451,27 @@ function init() {
       window.liveCustomGame[event]()
     }
   })
+
+  window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
+    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+      window.openNameObjectModal(object, (result) => {
+        if(result.value[0] && result.value[0].length) {
+          object.name = result.value[0]
+          if(result.value[1]) object.nameCenter = true
+          if(result.value[2]) object.nameAbove = true
+          window.socket.emit('editObjects', [object])
+        }
+      })
+    }
+    // let ctx = document.getElementById('swal-canvas').getContext('2d')
+    // ctx.fillStyle = object.color
+    // ctx.fillRect(10, 10, object.width, object.height);
+  })
+
+  // window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
+  //
+  //
+  // })
 }
 
 window.unloadGame = function() {

@@ -290,6 +290,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('customFxEvent', (eventIn) => {
     io.emit('onCustomFxEvent', eventIn)
   })
+
+  socket.on('askHeroToNameObject', (object, heroId) => {
+    io.emit('onAskHeroToNameObject', object, heroId)
+  })
 }
 
 module.exports = socketEvents

@@ -51,7 +51,10 @@ function init() {
     let children = window.getAllChildren(parent)
 
     if(!object.id || !parent || children.length === 0) {
-      alert('no parent/child relationship')
+      Swal.fire({
+        title: 'No parent/child relationship',
+        icon: 'warning',
+      })
       return
     }
 
@@ -65,6 +68,10 @@ function init() {
 
   var removeObjectButton = document.getElementById("remove-object");
   removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.objecteditor.get()))
+
+  var askHeroToNameObject = document.getElementById("ask-hero-to-name-object");
+  askHeroToNameObject.addEventListener('click', () => window.socket.emit('askHeroToNameObject', window.objecteditor.get(), window.editingHero.id))
+
   var deleteObjectButton = document.getElementById("delete-object");
   deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.objecteditor.get()))
   window.syncObjectsToggle = document.getElementById('sync-objects')

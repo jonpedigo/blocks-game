@@ -78,15 +78,16 @@ window.onChangeTool = function(toolName) {
 
   if(window.currentTool && window.currentTool === window.TOOLS.SIMPLE_EDITOR && toolName === window.TOOLS.ADD_OBJECT) {
     let editorState = window.objecteditor.get()
+    // if we are switching from a live object to a dead object
     if(editorState.id) {
       if(editorState.compendiumId) delete editorState.compendiumId
       delete editorState.id
+      editorState.i = null
+      window.removeObjectState(editorState)
+      window.objecteditor.saved = true
+      window.objecteditor.update(editorState)
+      window.updateObjectEditorNotifier()
     }
-    editorState.i = null
-    window.removeObjectState(editorState)
-    window.objecteditor.saved = true
-    window.objecteditor.update(editorState)
-    window.updateObjectEditorNotifier()
   }
 
   let x=document.getElementById("objectjsoneditor");  // Find the elements

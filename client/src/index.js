@@ -259,7 +259,7 @@ window.initializeGame = function (initialGameId) {
   } else {
     // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
     window.socket.emit('askRestoreCurrentGame')
-    window.socket.on('onAskRestoreCurrentGame', (game) => {
+    window.socket.on('onAskRestoreCurrentGame', async (game) => {
       let currentGameExists = game && game.id
       if(currentGameExists) {
         window.changeGame(game.id)
@@ -283,30 +283,50 @@ window.initializeGame = function (initialGameId) {
 
         // right now I only have something for the play editor to do if there is no current game
         if(window.usePlayEditor) {
-          if(confirm('Press Ok To Load Game, Cancel to Create New')) {
-            let id = prompt('Enter game id to load')
-            window.socket.emit('setAndLoadCurrentGame', id)
+          const { value: loadGameId } = await Swal.fire({
+            title: 'Load Game',
+            text: "Enter id of game",
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Load Game',
+            cancelButtonText: 'New Game',
+          })
+          if(loadGameId) {
             window.socket.on('onLoadGame', (game) => {
               window.changeGame(game.id)
               window.loadGame(game)
               startGameLoop()
             })
+            window.socket.emit('setAndLoadCurrentGame', loadGameId)
           } else {
-            let id = prompt('Id for your new game')
-            if(!id) return alert('ok aborting')
-            let game = {
-              id,
-              gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
-              world: JSON.parse(JSON.stringify(window.defaultWorld)),
-              hero: JSON.parse(JSON.stringify(window.defaultHero)),
-              objects: [],
-              grid: JSON.parse(JSON.stringify(window.defaultGrid)),
-              heros: {},
+            const { value: newGameId } = await Swal.fire({
+              title: 'Create Game',
+              text: "Enter id you want for new game",
+              input: 'text',
+              inputAttributes: {
+                autocapitalize: 'off'
+              },
+              showCancelButton: true,
+              confirmButtonText: 'Create',
+            })
+            if(newGameId) {
+              let game = {
+                id: newGameId,
+                gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
+                world: JSON.parse(JSON.stringify(window.defaultWorld)),
+                hero: JSON.parse(JSON.stringify(window.defaultHero)),
+                objects: [],
+                grid: JSON.parse(JSON.stringify(window.defaultGrid)),
+                heros: {},
+              }
+              window.socket.emit('saveGame', game)
+              window.changeGame(game.id)
+              window.loadGame(game)
+              startGameLoop()
             }
-            window.socket.emit('saveGame', game)
-            window.changeGame(game.id)
-            window.loadGame(game)
-            startGameLoop()
           }
         }
       }
@@ -466,9 +486,10 @@ window.onGameLoaded = function() {
 /////// CORE LOOP
 ///////////////////////////////
 ///////////////////////////////
-let fpsInterval = 1000/24
+let gameInterval = 1000/24
+let networkInterval = 1000/8
 var frameCount = 0;
-var fps, startTime, now, then, delta;
+var fps, startTime, now, deltaGame, deltaNetwork, thenGame, thenNetwork;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 function startGameLoop() {
   if(!w.game.objects || !w.game.world || !w.game.grid || !w.game.heros || (window.isPlayer && !window.hero)) {
@@ -477,12 +498,12 @@ function startGameLoop() {
     return
   }
 
-  then = Date.now();
-  startTime = then;
+  thenGame = Date.now();
+  thenNetwork = thenGame;
+  startTime = thenGame;
 
   // begin main loop
   mainLoop()
-  if(window.host) setTimeout(networkLoop, 100)
 }
 
 var mainLoop = function () {
@@ -491,25 +512,29 @@ var mainLoop = function () {
 
   // calc elapsed time since last loop
   now = Date.now();
-  delta = now - then;
+  deltaGame = now - thenGame;
+  deltaNetwork = now - thenNetwork;
 
-  // if enough time has delta, draw the next frame
-  if (delta > fpsInterval) {
+  // if enough time has deltaGame, draw the next frame
+  if (deltaGame > gameInterval) {
       // Get ready for next frame by setting then=now, but...
-      // Also, adjust for fpsInterval not being multiple of 16.67
-      then = now - (delta % fpsInterval);
-      if(delta > 60) delta = 60
-      window.lastDelta = delta;
+      // Also, adjust for gameInterval not being multiple of 16.67
+      thenGame = now - (deltaGame % gameInterval);
+      if(deltaGame > 60) deltaGame = 60
+      update(deltaGame / 1000);
 
-      update(delta / 1000);
-
-      renderGame(delta / 1000)
+      renderGame(deltaGame / 1000)
 
       // TESTING...Report #seconds since start and achieved fps.
       var sinceStart = now - startTime;
       var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
       window.fps = currentFps;
       // $results.text("Elapsed time= " + Math.round(sinceStart / 1000 * 100) / 100 + " secs @ " + currentFps + " fps.");
+  }
+
+  if (window.host && deltaNetwork > networkInterval) {
+    thenNetwork = now - (deltaNetwork % networkInterval);
+    networkUpdate()
   }
 };
 
@@ -556,6 +581,7 @@ var update = function (delta) {
   if(window.host) {
     if(!w.game.gameState.paused) {
       Object.keys(w.game.heros).forEach((id) => {
+        if(window.hero.flags.paused) return
         let hero = w.game.heros[id]
         if(hero.animationZoomTarget) {
           window.heroZoomAnimation(hero)
@@ -631,7 +657,7 @@ function renderGame(delta) {
   }
 }
 
-function networkLoop() {
+function networkUpdate() {
   window.socket.emit('updateObjects', w.game.objects)
   window.socket.emit('updateGameState', w.game.gameState)
   window.socket.emit('updateWorldOnServerOnly', w.game.world)
@@ -644,7 +670,6 @@ function networkLoop() {
   if(timeout > 250) {
     timeout = 250
   }
-  setTimeout(networkLoop, timeout)
 }
 
 window.onPageLoad()

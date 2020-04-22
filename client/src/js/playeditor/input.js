@@ -25,12 +25,14 @@ function init(hero){
       }
     }
 
-    if(keysDown['32']){
-      console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
-      return
-    }
 
-    if(keysDown['91']) {
+
+    if(keysDown['18']) {
+      if(keysDown['32']){
+        console.log('x: ' + window.mousePos.x, ', y: ' + window.mousePos.y)
+        return
+      }
+
       //s
       if(keysDown['83']){
         if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
@@ -57,18 +59,17 @@ function init(hero){
         }
       }
 
-    }
-
-    // if shift +
-    if(keysDown['16']) {
       //n
       if(keysDown['78']){
         let oe = window.objecteditor.get()
-        let name = prompt('give a name to object-id:' + oe.id)
-        if(name) {
-          oe.name = name
-          window.objecteditor.update(oe)
-        }
+        window.openNameObjectModal(oe, (result) => {
+          if(result.value[0] && result.value[0].length) {
+            oe.name = result.value[0]
+            if(result.value[1]) oe.nameCenter = true
+            if(result.value[2]) oe.nameAbove = true
+            window.objecteditor.update(oe)
+          }
+        })
         e.preventDefault()
       }
 

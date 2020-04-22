@@ -203,6 +203,31 @@ window.respawnObject = function(object) {
   object.y = object.spawnPointY
 }
 
+window.openNameObjectModal = function(object, cb) {
+  Swal.fire({
+    title: 'Name object',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    // html:'<canvas id="swal-canvas" width="200" height="200"></canvas>',
+    html:"<input type='radio' name='name-where' checked id='center-name'>Center name within object</input><br><input type='radio' name='name-where' id='name-above'>Display name above object</input>",
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+    preConfirm: (result) => {
+      return [
+        result,
+        document.getElementById('center-name').checked,
+        document.getElementById('name-above').checked,
+      ]
+    }
+  }).then(cb)
+}
+
 export default {
   init,
   loaded,

@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@3/dark.css">
+  <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9/dist/sweetalert2.min.js"></script> -->
 </head>
 
 <body>
@@ -48,13 +51,6 @@
 
     <div id='tool-objectEditor' class="tool-feature invisible">
       <div class='is-edit-live'></div>
-      <button id='send-object-pos'>send editor object pos</button>
-      <button id='send-object-other'>send editor object other</button>
-      <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
-      <div><button id='remove-object'>Remove Object</button></div>
-      <div><button id='delete-object'>Delete Object</button></div>
-      <div><button id='get-object-parentchildren'>Get object parent/children</button></div>
-      <hr>
       <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
       <div><input type='radio' name='object-selector' id='select-object-group'>Select Objects ( group click )</input></div>
       <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
@@ -62,6 +58,15 @@
       <div><input type='radio' name='object-selector' id='set-parent-object'>Select Parent of Object</input></div>
       <div><input type='radio' name='object-selector' id='drag-object-pos'>Drag Object</input></div>
       <!-- <div><input type='radio' name='object-selector' id='set-relative-object'>Select Relative of Object</input></div> -->
+      <hr>
+      <button id='send-object-pos'>send editor object pos</button>
+      <button id='send-object-other'>send editor object other</button>
+      <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
+      <div><button id='remove-object'>Remove Object</button></div>
+      <div><button id='delete-object'>Delete Object</button></div>
+      <div><button id='get-object-parentchildren'>Get object parent/children</button></div>
+      <hr>
+      <div><button id='ask-hero-to-name-object'>Ask hero to name object</button></div>
       <hr>
       <strong>Compendium Select</strong>
       <div class="compendium-select">
@@ -101,6 +106,10 @@
 
 
     <div id='tool-heroEditor' class="tool-feature invisible">
+      <div><input type='radio' name='hero-selector' id='click-to-set-parent-hero'>Set parent</input></div>
+      <!-- <div><input type='radio' name='hero-selector' id='click-to-set-relative-hero'>Set relative</input></div> -->
+      <div><input type='radio' name='hero-selector' id='click-to-set-spawn-hero'>Set spawn</input></div>
+      <hr>
       <button id='send-hero-pos'>Send Editor Hero Pos</button>
       <button id='send-hero'>Send Editor Hero Other</button>
       <hr>
@@ -111,10 +120,6 @@
       <button id='hero-zoomOut'>Hero - Zoom Out</button>
       <hr>
       <button id='delete-hero'>Delete Hero</button>
-      <hr>
-      <div><input type='radio' name='hero-selector' id='click-to-set-parent-hero'>Set parent</input></div>
-      <!-- <div><input type='radio' name='hero-selector' id='click-to-set-relative-hero'>Set relative</input></div> -->
-      <div><input type='radio' name='hero-selector' id='click-to-set-spawn-hero'>Set spawn</input></div>
       <hr>
       <div><input type='checkbox' id='sync-hero'>Sync Hero</input></div>
       <hr>
