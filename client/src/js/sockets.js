@@ -468,10 +468,30 @@ function init() {
     // ctx.fillRect(10, 10, object.width, object.height);
   })
 
-  // window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
-  //
-  //
-  // })
+  window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
+    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+      window.openWriteChatModal(object, (result) => {
+        if(result.value && result.value.length) {
+          object.tags.chatter = true
+          object.heroUpdate = {
+            chat: [result.value],
+            flags : {
+              showChat: true,
+              paused: true,
+            }
+          }
+          console.log('?', object)
+          window.socket.emit('editObjects', [object])
+        }
+        // if(result.value[0] && result.value[0].length) {
+        //   object.name = result.value[0]
+        //   if(result.value[1]) object.nameCenter = true
+        //   if(result.value[2]) object.nameAbove = true
+        //   window.socket.emit('editObjects', [object])
+        // }
+      })
+    }
+  })
 }
 
 window.unloadGame = function() {

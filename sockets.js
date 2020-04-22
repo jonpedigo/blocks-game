@@ -294,6 +294,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('askHeroToNameObject', (object, heroId) => {
     io.emit('onAskHeroToNameObject', object, heroId)
   })
+  socket.on('askHeroToWriteChat', (object, heroId) => {
+    io.emit('onAskHeroToWriteChat', object, heroId)
+  })
 }
 
 module.exports = socketEvents

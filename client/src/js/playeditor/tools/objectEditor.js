@@ -71,6 +71,8 @@ function init() {
 
   var askHeroToNameObject = document.getElementById("ask-hero-to-name-object");
   askHeroToNameObject.addEventListener('click', () => window.socket.emit('askHeroToNameObject', window.objecteditor.get(), window.editingHero.id))
+  var askHeroToWriteChat = document.getElementById("ask-hero-to-write-chat");
+  askHeroToWriteChat.addEventListener('click', () => window.socket.emit('askHeroToWriteChat', window.objecteditor.get(), window.editingHero.id))
 
   var deleteObjectButton = document.getElementById("delete-object");
   deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.objecteditor.get()))

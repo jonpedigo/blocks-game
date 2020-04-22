@@ -228,6 +228,24 @@ window.openNameObjectModal = function(object, cb) {
   }).then(cb)
 }
 
+window.openWriteChatModal = function(object, cb) {
+  Swal.fire({
+    title: 'What does this object say?',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    // html:'<canvas id="swal-canvas" width="200" height="200"></canvas>',
+    // html:"<input type='radio' name='name-where' checked id='center-name'>Center name within object</input><br><input type='radio' name='name-where' id='name-above'>Display name above object</input>",
+    input: 'textarea',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+  }).then(cb)
+}
+
 export default {
   init,
   loaded,

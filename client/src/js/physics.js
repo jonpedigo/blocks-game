@@ -45,18 +45,6 @@ let result = system.createResult()
 function updatePosition(object, delta) {
   if(object.removed) return
 
-  if(!object._initialX) {
-    object._initialX = object.x
-  }
-
-  if(!object._initialY){
-    object._initialY = object.y
-  }
-
-  object._deltaX = 0
-  object._deltaY = 0
-  object._parentId = null
-
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
   //     if(object.accX > 0) {
@@ -382,6 +370,22 @@ function getAllHeros() {
   }, [])
   return allHeros
 }
+
+function prepareObjectsAndHerosForMovementPhase() {
+  // set objects new position and widths
+  let everything = [...w.game.objects]
+  let allHeros = getAllHeros()
+  everything.push(...allHeros)
+
+  everything.forEach((object, i) => {
+    object._deltaX = 0
+    object._deltaY = 0
+    object._parentId = null
+    object._initialX = object.x
+    object._initialY = object.y
+  })
+}
+
 function prepareObjectsAndHerosForCollisionsPhase() {
   // set objects new position and widths
   let everything = [...w.game.objects]
@@ -404,6 +408,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
     physicsObject.y = object.y
     physicsObject.id = object.id
     physicsObject.gameObject = object
+
     if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
@@ -759,5 +764,6 @@ export default {
   heroCorrection,
   containObjectWithinGridBoundaries,
   prepareObjectsAndHerosForCollisionsPhase,
+  prepareObjectsAndHerosForMovementPhase,
   // lerpObject,
 }

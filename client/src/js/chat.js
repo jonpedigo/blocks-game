@@ -33,7 +33,7 @@ window.wrapText = wrapText
 
 function drawChat(ctx, chat){
 	//textbox
-	ctx.fillStyle="rgba(255,255,255, 0.03)"
+	ctx.fillStyle="rgba(255,255,255, 0.1)"
 	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) , (420 * window.canvasMultiplier), 95 * window.canvasMultiplier)
 
 	// //portrait

@@ -584,6 +584,8 @@ var update = function (delta) {
 
   if(window.host) {
     if(!w.game.gameState.paused) {
+      // movement
+      physics.prepareObjectsAndHerosForMovementPhase()
       Object.keys(w.game.heros).forEach((id) => {
         if(window.hero.flags.paused) return
         let hero = w.game.heros[id]
@@ -597,9 +599,11 @@ var update = function (delta) {
       w.game.objects.forEach((object) => {
         physics.updatePosition(object, delta)
       })
+      intelligence.update(w.game.objects, delta)
+
+      /// physics and corrections
       physics.prepareObjectsAndHerosForCollisionsPhase()
       physics.update(delta)
-      intelligence.update(w.game.objects, delta)
 
       /// DEFAULT GAME FX
       if(window.defaultCustomGame) {
