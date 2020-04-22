@@ -172,48 +172,58 @@ function createMaze() {
 function createArena(boundaries) {
   // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)}
 
-  let wallLeft = {
-    id: 'wall-l' + window.uniqueID(),
-    width: 5,
+  let parent = {
+    id: 'parent-' + window.uniqueID(),
+    width: boundaries.width,
     height: boundaries.height,
     x: boundaries.x,
     y: boundaries.y,
-    color: 'white',
+    tags: {obstacle: false, invisible: true},
+  }
+
+  let wallLeft = {
+    id: 'wall-l-' + window.uniqueID(),
+    width: boundaries.thickness,
+    height: boundaries.height,
+    x: boundaries.x,
+    y: boundaries.y,
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallTop = {
-    id: 'wall-t' + window.uniqueID(),
+    id: 'wall-t-' + window.uniqueID(),
     width: boundaries.width,
-    height: 5,
+    height: boundaries.thickness,
     x: boundaries.x,
     y: boundaries.y,
-    color: 'white',
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallRight = {
-    id: 'wall-r' + window.uniqueID(),
-    width: 5,
+    id: 'wall-r-' + window.uniqueID(),
+    width: boundaries.thickness,
     height: boundaries.height,
-    x: boundaries.x + (boundaries.width) - 5,
+    x: boundaries.x + (boundaries.width) - boundaries.thickness,
     y: boundaries.y,
-    color: 'white',
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallBottom = {
-    id: 'wall-b' + window.uniqueID(),
+    id: 'wall-b-' + window.uniqueID(),
     width: boundaries.width,
-    height: 5,
+    height: boundaries.thickness,
     x: boundaries.x,
-    y: boundaries.y + (boundaries.height) - 5,
-    color: 'white',
+    y: boundaries.y + (boundaries.height) - boundaries.thickness,
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
-  window.addObjects([wallTop, wallRight, wallLeft, wallBottom])
+  window.addObjects([parent, wallTop, wallRight, wallLeft, wallBottom])
 }
+window.createArena = createArena
 
 function loaded() {
   // window.setEditorToAnyHero()

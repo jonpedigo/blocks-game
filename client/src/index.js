@@ -140,26 +140,8 @@ window.onPageLoad = function() {
     gameLoaded: false
   }
 
-  // DOM
-  window.canvas = document.createElement("canvas");
-  window.ctx = window.canvas.getContext("2d");
-  function onResize() {
-    window.canvasMultiplier = window.innerWidth/640;
-    window.CONSTANTS = {
-      PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
-      PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
-      PLAYER_CAMERA_WIDTH: 640,
-      PLAYER_CAMERA_HEIGHT: 320,
-    }
-    window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
-    window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
-  }
-  window.addEventListener("resize", onResize);
-  onResize()
 
-  window.canvas.id = 'game-canvas'
-  document.body.appendChild(window.canvas);
-
+  // ROLE SETUP
   window.host = false
   window.isPlayer = true
 
@@ -206,7 +188,7 @@ window.onPageLoad = function() {
   }
 
 
-  // SOCKET START
+  // EVENT SETUP
   if(window.arcadeMode) {
     window.socket = window.local
   } else if (window.location.origin.indexOf('localhost') > 0) {
@@ -214,6 +196,26 @@ window.onPageLoad = function() {
   } else {
     window.socket = io.connect();
   }
+
+  // DOM SETUP
+  window.canvas = document.createElement("canvas");
+  window.ctx = window.canvas.getContext("2d");
+  function onResize() {
+    window.canvasMultiplier = window.innerWidth/640;
+    window.CONSTANTS = {
+      PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
+      PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
+      PLAYER_CAMERA_WIDTH: 640,
+      PLAYER_CAMERA_HEIGHT: 320,
+    }
+    window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
+    window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
+  }
+  if(window.isPlayer) window.addEventListener("resize", onResize);
+  onResize()
+
+  window.canvas.id = 'game-canvas'
+  document.body.appendChild(window.canvas);
 
   window.initializeGame()
 }

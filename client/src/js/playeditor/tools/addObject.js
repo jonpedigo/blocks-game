@@ -14,6 +14,7 @@ function init() {
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.useEditorSizeAddToggle = document.getElementById("add-object-editor")
   window.addParentToggle = document.getElementById("add-parent-group")
+  window.addWallToggle = document.getElementById("add-wall")
 
   window.compendium = {}
 

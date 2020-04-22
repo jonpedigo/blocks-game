@@ -146,7 +146,7 @@ function init() {
     }
 
     // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
-    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) || (window.currentTool === window.TOOLS.ADD_OBJECT && window.addWallToggle.checked) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -387,7 +387,7 @@ function init() {
       onFirstClick: (e) => {
         let editorObject = window.objecteditor.get()
 
-        if((window.groupAddToggle.checked || window.addParentToggle.checked) && !editorObject.parent) {
+        if((window.groupAddToggle.checked || window.addParentToggle.checked || window.addWallToggle.checked) && !editorObject.parent) {
           defaultFirstClick(e)
         } else {
           const click = {
@@ -453,6 +453,12 @@ function init() {
         gridTool.snapDragToGrid(location, { dragging: true })
 
         let editorObject = window.objecteditor.get()
+
+        if(window.addWallToggle.checked) {
+          location.thickness = editorObject.width || w.game.grid.nodeSize
+          window.createArena(location)
+          return
+        }
 
         let newObject = JSON.parse(JSON.stringify(editorObject))
         if(window.addParentToggle.checked) {
