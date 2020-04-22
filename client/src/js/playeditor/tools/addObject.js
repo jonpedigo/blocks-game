@@ -51,6 +51,7 @@ function init() {
     window.removeObjectState(object)
     window.objecteditor.update(object)
     window.objecteditor.saved = true
+    w.game.compendium = window.compendium
     updateCompendium()
     window.updateObjectEditorNotifier()
   }

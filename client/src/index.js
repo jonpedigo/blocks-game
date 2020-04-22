@@ -269,22 +269,38 @@ window.initializeGame = function (initialGameId) {
       let currentGameExists = game && game.id
       if(currentGameExists) {
         window.changeGame(game.id)
-        if(window.host || window.usePlayEditor) {
+        if(window.host) {
+          // join game locally
+          if(window.isPlayer) {
+            if(game.heros && game.heros[window.heroId]) {
+              window.hero = game.heros[window.heroId]
+            } else {
+              window.hero = findHeroInNewGame(game, {id: window.heroId})
+              window.hero.id = window.heroId
+            }
+          }
+          // set hero reference, since we will be doing local updates on the host
           window.loadGame(game)
           startGameLoop()
-        } else if(window.ghost) {
-          window.loadGameNonHost(game)
+        } else if(window.usePlayEditor) {
+          window.loadGame(game)
           startGameLoop()
-        } else if(window.isPlayer) {
+        } else if(window.isPlayer && !window.ghost) {
           window.socket.on('onJoinGame', (hero) => {
             if(hero.id == window.heroId) {
               window.hero = hero
+            }
+            if(!window.host) {
               window.loadGameNonHost(game)
               startGameLoop()
             }
           })
           setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
+        } else {
+          window.loadGameNonHost(game)
+          startGameLoop()
         }
+
       } else {
 
         // right now I only have something for the play editor to do if there is no current game
@@ -412,17 +428,13 @@ window.loadGame = function(game) {
     }
   }
 
-  if(window.isPlayer && !window.ghost) {
-    if(window.host && !window.arcadeMode) {
-      if(w.game.heros[window.heroId]) {
-        window.hero = w.game.heros[window.heroId]
-      } else {
-        // host doesnt load the normal way so you need to give it a hero LATER
-        window.hero = window.findHeroInNewGame(window.game)
-        window.hero.id = window.heroId
-      }
+  if(window.host && window.isPlayer) {
+    // just gotta make sure when we reload all these crazy player bois that the reference for the host hero is reset because it doesnt get reset any other time for the host
+    if(w.game.heros[window.hero.id]) {
+      window.hero = w.game.heros[window.hero.id]
+    } else {
+      w.game.heros[window.hero.id] = window.hero
     }
-    w.game.heros[window.hero.id] = window.hero
   }
 
   Object.keys(w.game.heros).forEach((id) => {
@@ -625,7 +637,8 @@ var update = function (delta) {
         if(window.usePlayEditor) {
           hero = window.editingHero
         }
-        window.anticipateObjectAdd(window.editingHero)
+        if(window.isPlayer) window.anticipateObjectAdd(window.hero)
+        else if(window.usePlayEditor) window.anticipateObjectAdd(window.editingHero)
       }
     }
   }

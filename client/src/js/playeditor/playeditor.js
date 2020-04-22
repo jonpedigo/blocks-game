@@ -144,11 +144,11 @@ function init(ctx, objects) {
 }
 
 function createGrid() {
-  const { width, height } = w.editingGame.world.proceduralBoundaries
+  let { width, height } = w.editingGame.world.proceduralBoundaries
   const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (w.editingGame.grid.nodeSize))
+  width = Math.floor(width / (w.editingGame.grid.nodeSize))
   let h = Math.floor(height / (w.editingGame.grid.nodeSize))
-  w.editingGame.grid.width = w
+  w.editingGame.grid.width = width
   w.editingGame.grid.height = h
   w.editingGame.grid.startX = x
   w.editingGame.grid.startY = y
@@ -157,12 +157,12 @@ function createGrid() {
 }
 
 function createMaze() {
-  const { width, height } = w.editingGame.world.proceduralBoundaries
+  let { width, height } = w.editingGame.world.proceduralBoundaries
   const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  width = Math.floor(width / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
   let h = Math.floor(height / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
-  let maze = procedural.genMaze(w, h, x, y).map((o) => {
+  let maze = procedural.genMaze(width, h, x, y).map((o) => {
     o.tags.stationary = true
     return o
   })

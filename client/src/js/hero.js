@@ -66,14 +66,14 @@ function loaded() {
 
 }
 
-window.spawnHero = function (hero) {
+window.spawnHero = function (hero, game = w.game) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
     hero.x = hero.spawnPointX;
     hero.y = hero.spawnPointY;
-  } else if(w.game.world.worldSpawnPointX && w.game.world.worldSpawnPointX >= 0) {
-    hero.x = w.game.world.worldSpawnPointX
-    hero.y = w.game.world.worldSpawnPointY
+  } else if(game && game.world.worldSpawnPointX && game.world.worldSpawnPointX >= 0) {
+    hero.x = game.world.worldSpawnPointX
+    hero.y = game.world.worldSpawnPointY
   } else {
     // default pos
     hero.x = 960;
@@ -81,13 +81,13 @@ window.spawnHero = function (hero) {
   }
 }
 
-window.respawnHero = function (hero) {
+window.respawnHero = function (hero, game = w.game) {
   hero.velocityX = 0
   hero.velocityY = 0
 
   /// send objects that are possibly camping at their spawn point back to their spawn point
-  if(window.host && w.game.world.globalTags.noCamping) {
-    window.game.objects.forEach((obj) => {
+  if(window.host && game && game.world && game.world.globalTags.noCamping) {
+    game.objects.forEach((obj) => {
       if(obj.removed) return
 
       if(obj.tags.zombie || obj.tags.homing) {
@@ -108,7 +108,7 @@ window.respawnHero = function (hero) {
     })
   }
 
-  window.spawnHero(hero)
+  window.spawnHero(hero, game)
 }
 
 window.respawnHeros = function (hero) {
@@ -123,7 +123,7 @@ window.updateAllHeros = function(update) {
   })
 }
 
-window.resetHeroToDefault = function(hero) {
+window.resetHeroToDefault = function(hero, game = w.game) {
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
   if(window.game.hero) {
     newHero = JSON.parse(JSON.stringify(window.game.hero))
@@ -335,15 +335,15 @@ window.findHeroInNewGame = function(game, hero) {
 
   if(!game.world.globalTags.isAsymmetric && game.hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    // if(hero && hero.id) game.hero.id = hero.id
+    if(hero && hero.id) game.hero.id = hero.id
     hero = game.hero
     // if(!hero.id) hero.id = 'hero-'+window.uniqueID()
     // but then also respawn the hero
-    window.respawnHero(hero)
+    window.respawnHero(hero, game)
     return hero
   }
 
-  return window.resetHeroToDefault(hero)
+  return window.resetHeroToDefault(hero, game)
 }
 
 export default {

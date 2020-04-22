@@ -215,9 +215,11 @@ function init() {
         w.game.heros[updatedHero.id] = updatedHero
         physics.addObject(updatedHero)
         // you need to reset the reference... really just for NON HOST PLAYER MODE ( because it loads non host )
-        if(window.isPlayer && window.hero.id === updatedHero.id) window.hero = updatedHero
       }
       window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
+      if(window.isPlayer && window.hero.id === updatedHero.id) {
+        window.mergeDeep(window.hero, updatedHero)
+      }
       // old interpolation code
       // } else if(window.usePlayEditor) {
       //   window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)

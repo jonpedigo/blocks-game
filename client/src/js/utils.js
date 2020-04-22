@@ -45,6 +45,7 @@ function getParameterByName(name, url) {
 window.getParameterByName = getParameterByName
 
 window.copyToClipBoard = function(copyText) {
+  console.log('?', copyText)
   navigator.permissions.query({name: "clipboard-write"}).then(result => {
     if (result.state == "granted" || result.state == "prompt") {
       /* write to the clipboard now */
