@@ -75,6 +75,27 @@ function init(hero){
         e.preventDefault()
       }
 
+      //n
+      if(keysDown['66']){
+        let oe = window.objecteditor.get()
+        window.openWriteChatModal(oe, (result) => {
+          if(result.value && result.value.length) {
+            oe.tags.chatter = true
+            oe.heroUpdate = {
+              chat: [result.value],
+              flags : {
+                showChat: true,
+                paused: true,
+              }
+            }
+            window.objecteditor.saved = false
+            window.objecteditor.update(oe)
+            window.updateObjectEditorNotifier()
+          }
+        })
+        e.preventDefault()
+      }
+
       // q and a zoom in and out
       if(e.keyCode === 81) {
         window.scaleMultiplier = window.scaleMultiplier * 1.1
