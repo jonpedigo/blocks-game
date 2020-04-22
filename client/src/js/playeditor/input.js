@@ -67,7 +67,9 @@ function init(hero){
             oe.name = result.value[0]
             if(result.value[1]) oe.nameCenter = true
             if(result.value[2]) oe.nameAbove = true
+            window.objecteditor.saved = false
             window.objecteditor.update(oe)
+            window.updateObjectEditorNotifier()
           }
         })
         e.preventDefault()

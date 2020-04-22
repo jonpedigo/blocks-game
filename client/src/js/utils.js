@@ -68,6 +68,29 @@ window.resetStorage = function() {
   window.location.reload()
 }
 
+window.measureWrapText = function(ctx, text, x, y, maxWidth, lineHeight) {
+  var words = text.split(' ');
+  var line = '';
+
+  let maxMetricsWidth = 0
+  let lines = 1
+  for(var n = 0; n < words.length; n++) {
+    var testLine = line + words[n] + ' ';
+    var metrics = ctx.measureText(testLine);
+    if(metrics.width > maxMetricsWidth) maxMetricsWidth = metrics.width
+    var testWidth = metrics.width;
+    if (testWidth > maxWidth && n > 0) {
+      // ctx.fillText(line, x, y);
+      lines++
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  return { height: lineHeight * lines, width: maxMetricsWidth }
+}
+
 window.wrapText = function(ctx, text, x, y, maxWidth, lineHeight) {
   var words = text.split(' ');
   var line = '';

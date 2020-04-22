@@ -141,18 +141,22 @@ window.onPageLoad = function() {
   }
 
   // DOM
-  window.canvasMultiplier = 1;
-  window.CONSTANTS = {
-    PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
-    PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
-    PLAYER_CAMERA_WIDTH: 640,
-    PLAYER_CAMERA_HEIGHT: 320,
-  }
-
   window.canvas = document.createElement("canvas");
   window.ctx = window.canvas.getContext("2d");
-  window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
-  window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
+  function onResize() {
+    window.canvasMultiplier = window.innerWidth/640;
+    window.CONSTANTS = {
+      PLAYER_CANVAS_WIDTH: 640 * window.canvasMultiplier,
+      PLAYER_CANVAS_HEIGHT: 320 * window.canvasMultiplier,
+      PLAYER_CAMERA_WIDTH: 640,
+      PLAYER_CAMERA_HEIGHT: 320,
+    }
+    window.canvas.width = window.CONSTANTS.PLAYER_CANVAS_WIDTH;
+    window.canvas.height = window.CONSTANTS.PLAYER_CANVAS_HEIGHT;
+  }
+  window.addEventListener("resize", onResize);
+  onResize()
+
   window.canvas.id = 'game-canvas'
   document.body.appendChild(window.canvas);
 

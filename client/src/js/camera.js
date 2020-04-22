@@ -82,11 +82,27 @@ function drawNameCenter(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
   let fontSize = 12
   ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width/2)/camera.multiplier
+  // NEED TO REVISE THIS WHOLE GOD DAMN THING
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  // console.log(object.width, )
+  window.wrapText(ctx, object.name, (object.x+(object.width/2 - width/2))/camera.multiplier - camera.x, ((object.y+(object.height/2))/camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
+  // window.wrapText(ctx, object.name, ((object.x+(object.width/2))/camera.multiplier - camera.x), ((object.y+(object.height/2))/camera.multiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
+}
+
+function drawNameAbove(ctx, object) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  let lineWidth = object.width/4
+  let lineWidth = (object.width)/camera.multiplier
   // NEED TO REVISE THIS WHOLE GOD DAMN THING
-  window.wrapText(ctx, object.name, ((object.x+(object.width/2))/camera.multiplier - camera.x), ((object.y+(object.height/2))/camera.multiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  // console.log(object.width, )
+  window.wrapText(ctx, object.name, (object.x + (object.width/2))/camera.multiplier - camera.x, object.y/camera.multiplier - camera.y - height, lineWidth, fontSize)
 }
 
 function drawObject(ctx, object, withNames = false) {
@@ -157,6 +173,7 @@ export default {
 	drawObject,
   drawVertice,
   drawNameCenter,
+  drawNameAbove,
   clearLimit,
   setLimit,
 }

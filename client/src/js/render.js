@@ -69,7 +69,10 @@ function update() {
   }
 
   w.game.objects.forEach((obj) => {
-    if(obj.name) camera.drawNameCenter(ctx, obj)
+    if(obj.name) {
+      if(obj.nameCenter) camera.drawNameCenter(ctx, obj)
+      if(obj.nameAbove) camera.drawNameAbove(ctx, obj)
+    }
   })
 
   ctx.font =`24pt Arial`
