@@ -70,8 +70,8 @@ function update() {
 
   w.game.objects.forEach((obj) => {
     if(obj.name) {
-      if(obj.nameCenter) camera.drawNameCenter(ctx, obj)
-      if(obj.nameAbove) camera.drawNameAbove(ctx, obj)
+      if(obj.namePosition === "center") camera.drawNameCenter(ctx, obj)
+      if(obj.namePosition === "above") camera.drawNameAbove(ctx, obj)
     }
   })
 

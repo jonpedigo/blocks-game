@@ -146,7 +146,7 @@ function init() {
     }
 
     // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
-    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked)) || (window.currentTool === window.TOOLS.ADD_OBJECT && window.addWallToggle.checked) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) || (window.currentTool === window.TOOLS.ADD_OBJECT && window.addWallToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -179,6 +179,7 @@ function init() {
           window.highlightedObjectGroup.push(object)
         })
       })
+      gridTool.snapDragToGrid(location, {dragging: true})
     }
     window.gridHighlight = location
 
@@ -328,6 +329,7 @@ function init() {
           // window.setObjectPathfindingLimitToggle.checked = false
           // window.selectorObjectToggle.checked = true
         } else if(window.selectObjectGroupToggle.checked) {
+          gridTool.snapDragToGrid(value, {dragging: true})
           window.objecteditor.update({
             parent: value,
             children: JSON.parse(JSON.stringify(window.highlightedObjectGroup)),
@@ -474,8 +476,11 @@ function init() {
 
         if(window.addParentToggle.checked) {
           window.highlightedObjectGroup.forEach((object) => {
-            object.parentId = newObject.id
+            // console.log(object.id, newObject.id)
+            // object.parentId = newObject.id
+            w.game.objectsById[object.id].parentId = newObject.id
           })
+
           window.emitEditObjectsOther()
           window.highlightedObjectGroup = []
         }

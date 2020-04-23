@@ -597,7 +597,8 @@ var update = function (delta) {
   }
 
   if(window.host) {
-    if(!w.game.gameState.paused) {
+    // remove second part when a player can host a multiplayer game
+    if(!w.game.gameState.paused && (!window.isPlayer || !window.hero.flags.paused)) {
       // movement
       physics.prepareObjectsAndHerosForMovementPhase()
       Object.keys(w.game.heros).forEach((id) => {

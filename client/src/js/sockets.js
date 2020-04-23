@@ -459,8 +459,10 @@ function init() {
       window.openNameObjectModal(object, (result) => {
         if(result.value[0] && result.value[0].length) {
           object.name = result.value[0]
-          if(result.value[1]) object.nameCenter = true
-          if(result.value[2]) object.nameAbove = true
+          object.namePosition = "center"
+          if(result.value[1]) object.namePosition = "center"
+          if(result.value[2]) object.namePosition = "above"
+          window.removeObjectState(object)
           window.socket.emit('editObjects', [object])
         }
       })
@@ -474,7 +476,7 @@ function init() {
     if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
       window.openWriteChatModal(object, (result) => {
         if(result.value && result.value.length) {
-          object.tags.chatter = true
+          object.tags.heroUpdate = true
           object.heroUpdate = {
             chat: [result.value],
             flags : {
@@ -482,6 +484,7 @@ function init() {
               paused: true,
             }
           }
+          window.removeObjectState(object)
           window.socket.emit('editObjects', [object])
         }
       })

@@ -444,8 +444,8 @@ function render(ctx, hero, objects, grid) {
 
   w.game.objects.forEach((obj) => {
     if(obj.name) {
-      if(obj.nameCenter) drawNameCenter(ctx, obj)
-      if(obj.nameAbove) drawNameAbove(ctx, obj)
+      if(obj.namePosition === "center") drawNameCenter(ctx, obj)
+      if(obj.namePosition === "above") drawNameAbove(ctx, obj)
     }
   })
 

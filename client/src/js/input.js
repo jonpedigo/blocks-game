@@ -30,7 +30,7 @@ function init(){
 }
 
 function update(hero, keysDown, delta) {
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused) return
 
   hero._initialX = hero.x
   hero._initialY = hero.y

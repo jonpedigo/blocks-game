@@ -291,6 +291,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onCustomFxEvent', eventIn)
   })
 
+  socket.on('updateCompendium', (compendium) => {
+    currentGame.compendium = compendium
+    io.emit('onUpdateCompendium', compendium)
+  })
+
   socket.on('askHeroToNameObject', (object, heroId) => {
     io.emit('onAskHeroToNameObject', object, heroId)
   })

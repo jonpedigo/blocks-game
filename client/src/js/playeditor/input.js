@@ -19,7 +19,8 @@ function init(hero){
       window.clickStart.x = null
       window.clickStart.y = null
       window.gridHighlight = null
-      window.childObjectGroup = null
+      window.draggingObject = null
+      window.highlightedObjectGroup = null
 
       if(window.currentTool === window.TOOLS.CUSTOM_GAME) {
         window.onChangeTool(window.TOOLS.ADD_OBJECT)
@@ -64,8 +65,9 @@ function init(hero){
         window.openNameObjectModal(oe, (result) => {
           if(result.value[0] && result.value[0].length) {
             oe.name = result.value[0]
-            if(result.value[1]) oe.nameCenter = true
-            if(result.value[2]) oe.nameAbove = true
+            object.namePosition = "center"
+            if(result.value[1]) object.namePosition = "center"
+            if(result.value[2]) object.namePosition = "above"
             window.objecteditor.saved = false
             window.objecteditor.update(oe)
             window.updateObjectEditorNotifier()
@@ -79,7 +81,7 @@ function init(hero){
         let oe = window.objecteditor.get()
         window.openWriteChatModal(oe, (result) => {
           if(result.value && result.value.length) {
-            oe.tags.chatter = true
+            oe.tags.heroUpdate = true
             oe.heroUpdate = {
               chat: [result.value],
               flags : {

@@ -18,8 +18,8 @@ window.defaultTags = {
   noHeroAllowed: false,
   heroPushable: false,
 
-  // UI
-  chatter: false,
+  // // UI
+  // chatter: false,
 
   // GRAPHICAL
   glowing: false,

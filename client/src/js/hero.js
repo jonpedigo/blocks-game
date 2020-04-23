@@ -232,13 +232,15 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
     hero.score++
   }
 
-  if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat && collider.heroUpdate.chat.length) {
-    if(collider.id !== hero.lastChatId) {
-      hero.chat = JSON.parse(JSON.stringify(collider.heroUpdate.chat))
-      // hero.chat.name = body.id
-      hero.lastChatId = collider.id
-    }
-  }
+  // if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat && collider.heroUpdate.chat.length) {
+  //   if(collider.id !== hero.lastChatId) {
+  //     hero.chat = JSON.parse(JSON.stringify(collider.heroUpdate.chat))
+  //     // hero.chat.name = body.id
+  //     hero.lastChatId = collider.id
+  //   }
+  // } else {
+  //   hero.lastChatId = null
+  // }
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     heroUpdate(hero, collider)
