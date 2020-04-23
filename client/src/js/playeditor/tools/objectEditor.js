@@ -128,6 +128,10 @@ window.emitEditObjectsOther = function() {
   }))
 }
 
+window.emitEditObjectsAllProps = function() {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)))
+}
+
 window.emitEditObjectsPos = function() {
   window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)).map((obj) => {
     return {id: obj.id, x: obj.x, y: obj.y}

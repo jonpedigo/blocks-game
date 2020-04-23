@@ -177,8 +177,8 @@ function removeObjectState(object) {
   delete object._initialX
   delete object._deltaY
   delete object._deltaX
-  object.velocityY = 0
-  object.velocityX = 0
+  delete object.velocityY
+  delete object.velocityX
   delete object.spawnedIds
   delete object.spawnWait
   delete object.target

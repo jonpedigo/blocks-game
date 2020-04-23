@@ -83,22 +83,29 @@ function init() {
           gameObj.x -= diffX
           gameObj.y -= diffY
           if(gameObj.pathfindingLimit) {
-            gameObj.pathfindingLimit.x -= diffX
-            gameObj.pathfindingLimit.y -= diffY
+            // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
+            const { x, y } = gridTool.createGridNodeAt(diffX, diffY)
+            gameObj.pathfindingLimit.x -= x
+            gameObj.pathfindingLimit.y -= y
+            gridTool.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
           }
         })
       } else {
         let gameObj = w.editingGame.objectsById[window.draggingObject.id]
+        let diffX = gameObj.x - x
+        let diffY = gameObj.y - y
         gameObj.x = x
         gameObj.y = y
         if(gameObj.pathfindingLimit) {
-          gameObj.pathfindingLimit.x -= diffX
-          gameObj.pathfindingLimit.y -= diffY
+          const { x: x2, y: y2 } = gridTool.createGridNodeAt(diffX, diffY)
+          gameObj.pathfindingLimit.x -= x2
+          gameObj.pathfindingLimit.y -= y2
+          gridTool.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
         }
       }
 
-      window.emitEditObjectsPos()
-      window.objecteditor.update({})
+      window.emitEditObjectsAllProps()
+      // window.objecteditor.update({})
       //end the drag
     }
 
@@ -336,6 +343,7 @@ function init() {
           window.objecteditor.saved = false
           // window.sendObjectUpdate({ pathfindingLimit: value})
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
+          window.updateObjectEditorNotifier()
           // window.setObjectPathfindingLimitToggle.checked = false
           // window.selectorObjectToggle.checked = true
         } else if(window.selectObjectGroupToggle.checked) {
