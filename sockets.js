@@ -292,6 +292,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('updateCompendium', (compendium) => {
+    console.log(compendium)
     currentGame.compendium = compendium
     io.emit('onUpdateCompendium', compendium)
   })

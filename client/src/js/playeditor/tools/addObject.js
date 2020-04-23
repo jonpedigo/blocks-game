@@ -54,6 +54,7 @@ function init() {
     w.game.compendium = window.compendium
     updateCompendium()
     window.updateObjectEditorNotifier()
+    window.socket.emit('updateCompendium', window.compendium)
   }
 }
 

@@ -79,12 +79,22 @@ function init() {
         parentGameObject.y = y
 
         window.draggingObject.children.forEach((obj) => {
-          w.editingGame.objectsById[obj.id].x -= diffX
-          w.editingGame.objectsById[obj.id].y -= diffY
+          let gameObj = w.editingGame.objectsById[obj.id]
+          gameObj.x -= diffX
+          gameObj.y -= diffY
+          if(gameObj.pathfindingLimit) {
+            gameObj.pathfindingLimit.x -= diffX
+            gameObj.pathfindingLimit.y -= diffY
+          }
         })
       } else {
-        w.editingGame.objectsById[window.draggingObject.id].x = x
-        w.editingGame.objectsById[window.draggingObject.id].y = y
+        let gameObj = w.editingGame.objectsById[window.draggingObject.id]
+        gameObj.x = x
+        gameObj.y = y
+        if(gameObj.pathfindingLimit) {
+          gameObj.pathfindingLimit.x -= diffX
+          gameObj.pathfindingLimit.y -= diffY
+        }
       }
 
       window.emitEditObjectsPos()
