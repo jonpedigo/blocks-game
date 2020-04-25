@@ -504,10 +504,11 @@ window.onGameLoaded = function() {
 /////// CORE LOOP
 ///////////////////////////////
 ///////////////////////////////
-let gameInterval = 1000/24
+let updateInterval = 1000/60
+let renderInterval = 1000/24
 let networkInterval = 1000/8
 var frameCount = 0;
-var fps, startTime, now, deltaGame, deltaNetwork, thenGame, thenNetwork;
+var fps, startTime, now, deltaRender, deltaNetwork, thenRender, thenNetwork, thenUpdate, deltaUpdate;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 function startGameLoop() {
   if(!w.game.objects || !w.game.world || !w.game.grid || !w.game.heros || (window.isPlayer && !window.hero)) {
@@ -516,9 +517,10 @@ function startGameLoop() {
     return
   }
 
-  thenGame = Date.now();
-  thenNetwork = thenGame;
-  startTime = thenGame;
+  startTime = Date.now();
+  thenNetwork = startTime;
+  thenUpdate = startTime;
+  thenRender = startTime;
 
   // begin main loop
   mainLoop()
@@ -530,24 +532,31 @@ var mainLoop = function () {
 
   // calc elapsed time since last loop
   now = Date.now();
-  deltaGame = now - thenGame;
+  deltaRender = now - thenRender;
   deltaNetwork = now - thenNetwork;
+  deltaUpdate = now - thenUpdate;
 
-  // if enough time has deltaGame, draw the next frame
-  if (deltaGame > gameInterval) {
+  // if enough time has deltaRender, draw the next frame
+  if (deltaRender > renderInterval) {
       // Get ready for next frame by setting then=now, but...
       // Also, adjust for gameInterval not being multiple of 16.67
-      thenGame = now - (deltaGame % gameInterval);
-      if(deltaGame > 60) deltaGame = 60
-      update(deltaGame / 1000);
-
-      renderGame(deltaGame / 1000)
+      thenRender = now - (deltaRender % renderInterval);
+      renderGame(deltaRender / 1000)
 
       // TESTING...Report #seconds since start and achieved fps.
       var sinceStart = now - startTime;
       var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
       window.fps = currentFps;
-      // $results.text("Elapsed time= " + Math.round(sinceStart / 1000 * 100) / 100 + " secs @ " + currentFps + " fps.");
+      if(frameCount > 10000) {
+        frameCount = 0
+        startTime = Date.now()
+      }
+  }
+
+  if (deltaUpdate > updateInterval) {
+    if(deltaUpdate > 23) deltaUpdate = 23
+    thenUpdate = now - (deltaUpdate % updateInterval);
+    update(deltaUpdate / 1000);
   }
 
   if (window.host && deltaNetwork > networkInterval) {
