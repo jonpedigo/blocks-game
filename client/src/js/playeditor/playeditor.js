@@ -25,7 +25,6 @@ import 'ace-builds/src-noconflict/mode-json';
 /////////////////////
 /////////////////////
 window.objectFactory = []
-window.heros = {}
 
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
@@ -53,7 +52,6 @@ for(var tool in TOOLS) {
 
 window.onChangeTool = function(toolName) {
   // console.log('current tool changed to ' + toolName)
-  window.currentTool = toolName
   Array.from(document.getElementsByClassName("tool-feature")).forEach(e => {
     e.className = "tool-feature invisible"
   })
@@ -78,16 +76,18 @@ window.onChangeTool = function(toolName) {
     // document.getElementById('game-canvas').style="left: 0px;"
   }
 
-  if(toolName === window.TOOLS.ADD_OBJECT) {
+  if(window.currentTool && window.currentTool === window.TOOLS.SIMPLE_EDITOR && toolName === window.TOOLS.ADD_OBJECT) {
     let editorState = window.objecteditor.get()
+    // if we are switching from a live object to a dead object
     if(editorState.id) {
       if(editorState.compendiumId) delete editorState.compendiumId
       delete editorState.id
+      editorState.i = null
+      window.removeObjectState(editorState)
+      window.objecteditor.saved = true
+      window.objecteditor.update(editorState)
+      window.updateObjectEditorNotifier()
     }
-    editorState.i = null
-    window.objecteditor.saved = true
-    window.objecteditor.update(editorState)
-    window.updateObjectEditorNotifier()
   }
 
   let x=document.getElementById("objectjsoneditor");  // Find the elements
@@ -96,6 +96,8 @@ window.onChangeTool = function(toolName) {
   } else {
     x.style ='display:none'
   }
+
+  window.currentTool = toolName
 }
 
 
@@ -121,7 +123,7 @@ function init(ctx, objects) {
   addObject.init()
   customGame.init()
 
-  window.onChangeTool(window.TOOLS.WORLD_EDITOR)
+  window.onChangeTool(window.TOOLS.ADD_OBJECT)
 
   /////////////////////
   // PROCEDURAL BUTTONS
@@ -137,30 +139,30 @@ function init(ctx, objects) {
   }
   var createArenaButton = document.getElementById("create-arena");
   createArenaButton.onclick = (e) => {
-    createArena(window.world.proceduralBoundaries)
+    createArena(w.editingGame.world.proceduralBoundaries)
   }
 }
 
 function createGrid() {
-  const { width, height } = window.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (window.grid.nodeSize))
-  let h = Math.floor(height / (window.grid.nodeSize))
-  window.grid.width = w
-  window.grid.height = h
-  window.grid.startX = x
-  window.grid.startY = y
-  window.socket.emit('updateGrid', {...window.grid, nodes: null})
-  window.grid.nodes = gridTool.generateGridNodes(window.grid)
+  let { width, height } = w.editingGame.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  width = Math.floor(width / (w.editingGame.grid.nodeSize))
+  let h = Math.floor(height / (w.editingGame.grid.nodeSize))
+  w.editingGame.grid.width = width
+  w.editingGame.grid.height = h
+  w.editingGame.grid.startX = x
+  w.editingGame.grid.startY = y
+  window.socket.emit('updateGrid', {...w.editingGame.grid, nodes: null})
+  w.editingGame.grid.nodes = gridTool.generateGridNodes(w.editingGame.grid)
 }
 
 function createMaze() {
-  const { width, height } = window.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(window.world.proceduralBoundaries.x, window.world.proceduralBoundaries.y);
-  let w = Math.floor(width / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
-  let h = Math.floor(height / (window.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  let { width, height } = w.editingGame.world.proceduralBoundaries
+  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  width = Math.floor(width / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
+  let h = Math.floor(height / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
 
-  let maze = procedural.genMaze(w, h, x, y).map((o) => {
+  let maze = procedural.genMaze(width, h, x, y).map((o) => {
     o.tags.stationary = true
     return o
   })
@@ -170,61 +172,76 @@ function createMaze() {
 function createArena(boundaries) {
   // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)}
 
-  let wallLeft = {
-    id: 'wall-l' + Date.now(),
-    width: 5,
+  let parent = {
+    id: 'parent-' + window.uniqueID(),
+    width: boundaries.width,
     height: boundaries.height,
     x: boundaries.x,
     y: boundaries.y,
-    color: 'white',
+    tags: {obstacle: false, invisible: true},
+  }
+
+  let wallLeft = {
+    id: 'wall-l-' + window.uniqueID(),
+    width: boundaries.thickness,
+    height: boundaries.height,
+    x: boundaries.x,
+    y: boundaries.y,
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallTop = {
-    id: 'wall-t' + Date.now(),
+    id: 'wall-t-' + window.uniqueID(),
     width: boundaries.width,
-    height: 5,
+    height: boundaries.thickness,
     x: boundaries.x,
     y: boundaries.y,
-    color: 'white',
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallRight = {
-    id: 'wall-r' + Date.now(),
-    width: 5,
+    id: 'wall-r-' + window.uniqueID(),
+    width: boundaries.thickness,
     height: boundaries.height,
-    x: boundaries.x + (boundaries.width) - 5,
+    x: boundaries.x + (boundaries.width) - boundaries.thickness,
     y: boundaries.y,
-    color: 'white',
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
   let wallBottom = {
-    id: 'wall-b' + Date.now(),
+    id: 'wall-b-' + window.uniqueID(),
     width: boundaries.width,
-    height: 5,
+    height: boundaries.thickness,
     x: boundaries.x,
-    y: boundaries.y + (boundaries.height) - 5,
-    color: 'white',
+    y: boundaries.y + (boundaries.height) - boundaries.thickness,
     tags: {'obstacle':true, 'stationary': true},
+    parentId: parent.id,
   }
 
-  window.addObjects([wallTop, wallRight, wallLeft, wallBottom])
+  window.addObjects([parent, wallTop, wallRight, wallLeft, wallBottom])
 }
+window.createArena = createArena
 
 function loaded() {
-  window.setEditorToAnyHero()
+  // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
-  let initialGameId = window.getParameterByName('initialGameId')
-  if(initialGameId && window.game.id !== initialGameId) {
-    window.socket.emit('setGame', initialGameId)
-  }
+  worldEditor.loaded()
 }
 
 function update(delta) {
   input.update(delta)
+  if(window.editingGame.branch) {
+    w.editingGame.objects.forEach((object) => {
+      w.editingGame.objectsById[object.id] = object
+    })
+  }
+  if(!window.editingHero.id) {
+    window.setEditorToAnyHero()
+  }
 }
 
 function render(ctx) {

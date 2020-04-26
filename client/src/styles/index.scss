@@ -4,6 +4,7 @@
 }
 
 @import 'variables';
+@import 'animate';
 
 html {
   // font-size: $root-font-size;
@@ -21,6 +22,33 @@ body {
   margin: 0px;
   overflow-y: hidden;
   background: #0f0f0f;
+}
+
+.play-button {
+  position: fixed;
+  right: 200px;
+  box-sizing: border-box;
+  height: 38px;
+  top: 15px;
+
+  border-color: transparent transparent transparent #444;
+  transition: 100ms all ease;
+  will-change: border-width;
+  cursor: pointer;
+
+  // play state
+  border-style: solid;
+  border-width: 19px 0 19px 30px;
+
+  // paused state
+  &.pause {
+    border-style: double;
+    border-width: 0px 0 0px 30px;
+  }
+
+  &.start {
+    border-color: transparent transparent transparent white;
+  }
 }
 
 #game-canvas {
@@ -144,4 +172,57 @@ button.selected{
   left:0;
   width:400px;
   height: 100%;
+}
+
+#branch-on-off {
+  position: fixed;
+  right: 200px;
+  top: 10px;
+  opacity: 0;
+}
+
+.onoffswitch {
+    position: relative; width: 99px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 13px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 27px; padding: 0; line-height: 27px;
+    font-size: 13px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "LIVE";
+    padding-left: 10px;
+    background-color: #C23434; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "BRANCH";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 13px; margin: 7px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 68px;
+    border: 2px solid #999999; border-radius: 13px;
+    transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
 }

@@ -6,11 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@3/dark.css">
+  <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9/dist/sweetalert2.min.js"></script> -->
 </head>
 
 <body>
   <div id='play-editor'>
     <span>Current Game Id:<h3 style="padding:0px; margin:0px" id='current-game-id'></h3> </span>
+    <div id='branch-on-off'>
+      <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+        <label class="onoffswitch-label" for="myonoffswitch">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>
+      </div>
+    </div>
     <div id='tool-select'>
     </div>
     <hr>
@@ -19,7 +31,9 @@
       <div><input type='radio' name="add-object" checked id='add-object-editor'>use editor size</input></div>
       <div><input type='radio' name="add-object" id='add-object-grid-node'>grid node add</input></div>
       <div><input type='radio' name="add-object" id='add-object-dot'>specified pixel range</input></div>
-      <div><input type='radio' name="add-object" id='add-object-drag'>drag</input></div>
+      <div><input type='radio' name="add-object" id='add-object-group'>two click drag</input></div>
+      <div><input type='radio' name="add-object" id='add-parent-group'>add parent ( two click drag )</input></div>
+      <div><input type='radio' name="add-object" id='add-wall'>add wall ( two click drag )</input></div>
       <hr>
       <input value="5" id='add-dot-size'></input>Specified pixel range
       <hr>
@@ -38,16 +52,23 @@
 
     <div id='tool-objectEditor' class="tool-feature invisible">
       <div class='is-edit-live'></div>
+      <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
+      <div><input type='radio' name='object-selector' id='select-object-group'>Select Objects ( two click drag )</input></div>
+      <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
+      <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
+      <div><input type='radio' name='object-selector' id='set-parent-object'>Select Parent of Object</input></div>
+      <div><input type='radio' name='object-selector' id='drag-object-pos'>Drag Object</input></div>
+      <!-- <div><input type='radio' name='object-selector' id='set-relative-object'>Select Relative of Object</input></div> -->
+      <hr>
       <button id='send-object-pos'>send editor object pos</button>
       <button id='send-object-other'>send editor object other</button>
       <div><input type='checkbox' id='sync-objects'>Sync Objects</input></div>
       <div><button id='remove-object'>Remove Object</button></div>
       <div><button id='delete-object'>Delete Object</button></div>
+      <div><button id='get-object-parentchildren'>Get object parent/children</button></div>
       <hr>
-      <div><input type='radio' name='object-selector' checked id='select-object'>Select Object</input></div>
-      <div><input type='radio' name='object-selector' id='set-pathfinding-limit'>Pathfinding limit</input></div>
-      <div><input type='radio' name='object-selector' id='set-spawn-object'>Spawn</input></div>
-      <div><input type='radio' name='object-selector' id='set-object-parent'>Select Parent of Object</input></div>
+      <div><button id='ask-hero-to-name-object'>Ask hero to name object</button></div>
+      <div><button id='ask-hero-to-write-chat'>Ask hero to write chat</button></div>
       <hr>
       <strong>Compendium Select</strong>
       <div class="compendium-select">
@@ -57,17 +78,21 @@
     </div>
 
     <div id='tool-worldEditor' class="tool-feature invisible">
-      <div><input type='radio' name='selector' checked id='set-game-boundaries'>game</input></div>
-      <div><input type='radio' name='selector' id='set-camera'>camera</input></div>
-      <div><input type='radio' name='selector' id='set-spawn'>spawn</input></div>
-      <div><input type='radio' name='selector' id='set-procedural'>procedural</input></div>
+      <div><input type='checkbox' checked id='set-game-boundaries'>game</input></div>
+      <div><input type='checkbox' id='set-camera'>camera</input></div>
+      <div><input type='checkbox' id='set-spawn'>spawn</input></div>
+      <div><input type='checkbox' id='set-procedural'>procedural</input></div>
+      <div><input type='checkbox' id='set-hero-zooms'>hero zooms</input></div>
       <hr/>
-      <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
       <button id='set-selected-to-grid'>set selected to grid</button>
       <button id='set-selected-to-grid-minus-1'>set selected to grid minus 1 ( for flips)</button>
       <button id='set-selected-to-game-boundary'>set selected to gameboundary</button>
       <button id='match-game-boundary-to-selected'>set gameboundary to selected</button>
+      <hr/>
+      <button id='set-selected-to-hero-camera'>set selected to hero camera</button>
       <button id='set-zoom-to-selected'>set zoomMultiplier to selected</button>
+      <button id='zoom-in-selected'>zoom selected in</button>
+      <button id='zoom-out-selected'>zoom selected out</button>
       <hr/>
       <button id='clear-area-selected'>clear selected preference</button>
       <hr/>
@@ -83,6 +108,10 @@
 
 
     <div id='tool-heroEditor' class="tool-feature invisible">
+      <div><input type='radio' name='hero-selector' id='click-to-set-parent-hero'>Set parent</input></div>
+      <!-- <div><input type='radio' name='hero-selector' id='click-to-set-relative-hero'>Set relative</input></div> -->
+      <div><input type='radio' name='hero-selector' id='click-to-set-spawn-hero'>Set spawn</input></div>
+      <hr>
       <button id='send-hero-pos'>Send Editor Hero Pos</button>
       <button id='send-hero'>Send Editor Hero Other</button>
       <hr>
@@ -94,7 +123,6 @@
       <hr>
       <button id='delete-hero'>Delete Hero</button>
       <hr>
-      <div><input type='checkbox' id='click-to-set-spawn-hero'>Click to set spawn</input></div>
       <div><input type='checkbox' id='sync-hero'>Sync Hero</input></div>
       <hr>
       <strong>Apply Hero Modifier</strong>
@@ -115,17 +143,26 @@
       <button id='save-game'>Save game</button>
       <button id='set-game'>Load game</button>
       <button id='copy-game-to-clipboard'>Copy Game to Clipboard</button>
+      <button id='copy-compendium-to-clipboard'>Copy Compendium to Clipboard</button>
       <div id='game-dom-elem' style="display:none;">test</div>
       <hr>
       <div><input type='checkbox' checked id='sync-game-state'>Sync Game State</input></div>
       <hr>
       <button id='start-game'>Start game</button>
       <button id='pause-resume-game'>Pause/Resume game</button>
+      <button id='stop-game'>Stop Game</button>
       <hr>
       <button id='reset-objects'>Reset Objects</button>
       <button id='reset-game-state'>Reset game state</button>
-      <button id='reset-spawn-and-objects'>Reset Spawn Areas and Spawn Objects</button>
-      <button id='reset-all-objects-state'>Reset All Object State</button>
+      <button id='reset-spawn-and-objects'>Reset Spawn Areas and their Spawnlings</button>
+      <button id='reset-all-objects-state'>Respawn and Reset State for All Objects</button>
+      <button id='reset-heros-state'>Reset All Heros to default</button>
+      <button id='respawn-heros'>Respawn All Heros</button>
+      <hr>
+      <button id='branch-edit'>Branch Edit</button>
+      <button id='merge-branch'>Merge Branch</button>
+      <button id='reset-to-branch'>Reset to Branch</button>
+      <button id='clear-branch'>Clear Branch</button>
       <hr>
       <button class='new-game'>New game - default</button>
       <button class='load-game-purgatory'>New game - purgatory</button>

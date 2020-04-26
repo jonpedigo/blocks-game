@@ -8,16 +8,19 @@ function init() {
   objectjsoneditor.id = 'objectjsoneditor'
   document.body.appendChild(objectjsoneditor);
   window.objecteditor = new JSONEditor(objectjsoneditor, {
-    modes: ['tree', 'code'], search: false, onChangeJSON: (objectEdited) => {
-    if(objectEdited.id) {
-      let object = window.objectsById[objectEdited.id]
+    modes: ['tree', 'code'], search: false, onChangeJSON: (editorState) => {
+    if(editorState.id && !editorState.parent) {
+      let object = w.editingGame.objectsById[editorState.id]
 
-      if((object.tags.obstacle == true && objectEdited.tags.obstacle == false) || (object.tags.stationary == true && objectEdited.tags.stationary == false)) {
-        gridTool.removeObstacle({...object, tags: objectEdited.tags})
+      if((object.tags.obstacle == true && editorState.tags.obstacle == false) || (object.tags.stationary == true && editorState.tags.stationary == false)) {
+        gridTool.removeObstacle({...object, tags: editorState.tags})
+      }
+      if((object.tags.obstacle == false && editorState.tags.obstacle == true) || (object.tags.stationary == false && editorState.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && editorState.tags.onlyHeroAllowed == true)) {
+        gridTool.addObstacle({...object, tags: editorState.tags})
       }
 
-      if((object.tags.obstacle == false && objectEdited.tags.obstacle == true) || (object.tags.stationary == false && objectEdited.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && objectEdited.tags.onlyHeroAllowed == true)) {
-        gridTool.addObstacle({...object, tags: objectEdited.tags})
+      if((object.tags.requireActionButton == false && editorState.tags.requireActionButton == true) || (object.tags.stationary == false && editorState.tags.stationary == true)) {
+
       }
 
       window.objecteditor.saved = false
@@ -40,8 +43,41 @@ function init() {
     window.sendObjectUpdateOther(editingObject)
   })
 
+  var getObjectParentChildren = document.getElementById("get-object-parentchildren");
+  getObjectParentChildren.addEventListener('click', () => {
+    let object = window.objecteditor.get()
+
+    let parent = object
+    if(object.parentId) {
+      parent = w.editingGame.objectsById[object.parentId]
+    }
+
+    let children = window.getAllChildren(parent)
+
+    if(!object.id || !parent || children.length === 0) {
+      Swal.fire({
+        title: 'No parent/child relationship',
+        icon: 'warning',
+      })
+      return
+    }
+
+    window.objecteditor.update({
+      parent,
+      children
+    })
+    window.objecteditor.saved = true
+    window.updateObjectEditorNotifier()
+  })
+
   var removeObjectButton = document.getElementById("remove-object");
   removeObjectButton.addEventListener('click', () => window.socket.emit('removeObject', window.objecteditor.get()))
+
+  var askHeroToNameObject = document.getElementById("ask-hero-to-name-object");
+  askHeroToNameObject.addEventListener('click', () => window.socket.emit('askHeroToNameObject', window.objecteditor.get(), window.editingHero.id))
+  var askHeroToWriteChat = document.getElementById("ask-hero-to-write-chat");
+  askHeroToWriteChat.addEventListener('click', () => window.socket.emit('askHeroToWriteChat', window.objecteditor.get(), window.editingHero.id))
+
   var deleteObjectButton = document.getElementById("delete-object");
   deleteObjectButton.addEventListener('click', () => window.socket.emit('deleteObject', window.objecteditor.get()))
   window.syncObjectsToggle = document.getElementById('sync-objects')
@@ -52,43 +88,57 @@ function init() {
       window.socket.emit('updateWorld', { syncObjects: false })
     }
   }
-  if(window.world.syncObjects) {
-    syncObjectsToggle.checked = true;
-  }
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
+  window.selectorParentToggle = document.getElementById('set-parent-object')
+  window.dragObjectPosToggle = document.getElementById('drag-object-pos')
+  window.selectObjectGroupToggle = document.getElementById("select-object-group");
+
+  // window.selectorRelativeToggle = document.getElementById('set-relative-object')
 }
 
 window.updateEditorState = function() {
-  window.objecteditor.update(window.objectsById[window.objecteditor.get().id])
+  window.objecteditor.update(w.editingGame.objectsById[window.objecteditor.get().id])
 }
 
 window.sendObjectUpdate = function(objectUpdate) {
-  let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  let updatedObject = JSON.parse(JSON.stringify(window.objectsById[editorState.id]))
-  if(window.objecteditor.live && editorState.id) {
-    let updatedObject = window.objectsById[editorState.id]
-    window.mergeDeep(updatedObject, objectUpdate)
-    window.socket.emit('editObjects', window.objects)
+  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(window.editingGame.branch) {
+
+  } else if(window.objecteditor.live && editorState.id) {
+    window.socket.emit('editObjects', w.editingGame.objects)
   }
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
-  let objectCopy = { ...objectUpdate }
   let editorState = window.objecteditor.get()
-  window.mergeDeep(window.objectsById[editorState.id], objectCopy)
-  window.emitEditObjectsOther()
+  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(window.editingGame.branch) {
+
+  } else {
+    window.emitEditObjectsOther()
+  }
   window.objecteditor.saved = true
   window.updateObjectEditorNotifier()
 }
 
 window.emitEditObjectsOther = function() {
-  window.socket.emit('editObjects', JSON.parse(JSON.stringify(window.objects)).map((obj) => {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)).map((obj) => {
     delete obj.x
     delete obj.y
     return obj
+  }))
+}
+
+window.emitEditObjectsAllProps = function() {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)))
+}
+
+window.emitEditObjectsPos = function() {
+  window.socket.emit('editObjects', JSON.parse(JSON.stringify(w.editingGame.objects)).map((obj) => {
+    return {id: obj.id, x: obj.x, y: obj.y}
   }))
 }
 
@@ -104,6 +154,10 @@ function loaded() {
   window.objecteditor.update(window.defaultObject)
   window.updateObjectEditorNotifier()
   window.objecteditor.expandAll()
+
+  if(w.editingGame.world.syncObjects) {
+    syncObjectsToggle.checked = true;
+  }
 }
 
 export default {

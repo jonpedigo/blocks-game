@@ -1,24 +1,12 @@
 const keysDown = {}
 function init() {
-	window.addEventListener("keydown", function (e) {
-		if(e.keyCode == '32'){
-			window.hero.chat.shift()
-			if(!window.hero.chat.length) {
-				if(window.hero.chat.onChatEnd) window.hero.chat.onChatEnd()
-				window.hero.flags.showChat = false
-				window.hero.flags.paused = false
-			}
-		}
-  }, false)
+
 }
 
-function render(ctx){
+function render(ctx, hero){
 	if(window.hero.flags.showChat){
 		if(window.hero.chat.length) {
 			drawChat(ctx, window.hero.chat)
-		} else {
-			window.hero.flags.showChat = false
-			window.hero.flags.paused = false
 		}
 	}
 }
@@ -45,7 +33,7 @@ window.wrapText = wrapText
 
 function drawChat(ctx, chat){
 	//textbox
-	ctx.fillStyle="rgba(255,255,255, 0.03)"
+	ctx.fillStyle="rgba(255,255,255, 0.1)"
 	ctx.fillRect(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) , (420 * window.canvasMultiplier), 95 * window.canvasMultiplier)
 
 	// //portrait
@@ -61,7 +49,10 @@ function drawChat(ctx, chat){
 	// 	}
 	// }
 
-	ctx.font =`24pt Arial`
+	ctx.textAlign = 'start'
+	ctx.textBaseline = 'alphabetic'
+
+	ctx.font =`24pt Courier New`
 	ctx.fillStyle="white"
 	//portrait name
 	if(chat.name) {
@@ -71,7 +62,7 @@ function drawChat(ctx, chat){
 	//text
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	let text = chat[0]
-	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
+	ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
 	wrapText(ctx, text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier, 410 * window.canvasMultiplier, 25 * window.canvasMultiplier)
 
 	// more text icon

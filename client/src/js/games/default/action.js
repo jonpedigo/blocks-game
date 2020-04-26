@@ -2,10 +2,10 @@ import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import pathfinding from '../../pathfinding.js'
 
-function shootBullet() {
-  let direction = window.hero.inputDirection
+function shootBullet(hero) {
+  let directions = hero.directions
   let shooted = {
-    id: 'bullet-' + Date.now(),
+    id: 'bullet-' + window.uniqueID(),
     width: 4,
     height: 4,
     tags: {
@@ -13,78 +13,78 @@ function shootBullet() {
     },
   }
 
-  if(direction === 'up') {
+  if(directions.up) {
     Object.assign(shooted, {
-      x: window.hero.x + (window.hero.width/2),
-      y: window.hero.y,
+      x: hero.x + (hero.width/2),
+      y: hero.y,
     })
   }
 
-  if(direction === 'down') {
+  if(directions.down) {
     Object.assign(shooted, {
-      x: window.hero.x + (window.hero.width/2),
-      y: window.hero.y + window.hero.height,
+      x: hero.x + (hero.width/2),
+      y: hero.y + hero.height,
     })
   }
 
-  if(direction === 'right') {
+  if(directions.right) {
     Object.assign(shooted, {
-      x: window.hero.x + window.hero.width,
-      y: window.hero.y + (window.hero.height/2),
+      x: hero.x + hero.width,
+      y: hero.y + (hero.height/2),
     })
   }
 
-  if(direction === 'left') {
+  if(directions.left) {
     Object.assign(shooted, {
-      x: window.hero.x,
-      y: window.hero.y + (window.hero.height/2),
+      x: hero.x,
+      y: hero.y + (hero.height/2),
     })
   }
 
-  addObjects([shooted])
+  addObjects([shooted], { fromLiveGame: true })
 }
 
-function dropWall() {
-  let direction = window.hero.inputDirection
+function dropWall(hero) {
+  let directions = hero.directions
   let wall = {
-    id: 'wall-' + Date.now(),
-    width: window.grid.nodeSize,
-    height: window.grid.nodeSize,
+    id: 'wall-' + window.uniqueID(),
+    width: w.game.grid.nodeSize,
+    height: w.game.grid.nodeSize,
     tags: {
       obstacle: true,
       stationary: true,
     },
   }
 
-  if(direction === 'up') {
+  if(directions.up) {
     Object.assign(wall, {
-      x: window.hero.x,
-      y: window.hero.y - window.hero.height,
+      x: hero.x,
+      y: hero.y - hero.height,
     })
   }
 
-  if(direction === 'down') {
+  if(directions.down) {
     Object.assign(wall, {
-      x: window.hero.x,
-      y: window.hero.y + window.hero.height,
+      x: hero.x,
+      y: hero.y + hero.height,
     })
   }
 
-  if(direction === 'right') {
+  if(directions.right) {
     Object.assign(wall, {
-      x: window.hero.x + window.hero.width,
-      y: window.hero.y,
+      x: hero.x + hero.width,
+      y: hero.y,
     })
   }
 
-  if(direction === 'left') {
+  if(directions.left) {
     Object.assign(wall, {
-      x: window.hero.x - window.hero.width,
-      y: window.hero.y,
+      x: hero.x - hero.width,
+      y: hero.y,
     })
   }
 
-  addObjects([wall])
+  addObjects([wall], { fromLiveGame: true })
 }
 
 export default {

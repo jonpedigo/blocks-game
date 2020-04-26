@@ -26,28 +26,29 @@ function start() {
 }
 
 // only on client
-function onKeyDown(keysDown) {
-  if(90 in keysDown) {
-    if(window.hero.actionButtonBehavior === 'shootBullet') {
-      action.shootBullet()
-    }
+function keyDown(keyCode, hero) {
+  if(hero.flags.paused || w.game.gameState.paused) return
+  // for keyCode 88 ( x ) can conflict with interact engine - && !hero.flags._showInteract
 
-    if(window.hero.actionButtonBehavior === 'dropWall') {
-      action.dropWall()
+  if(keyCode === 90) {
+    if(hero.actionButtonBehavior === 'shootBullet') {
+      action.shootBullet(hero)
+    }
+    if(hero.actionButtonBehavior === 'dropWall') {
+      action.dropWall(hero)
     }
   }
 }
 
 // only on client
-function input(keysDown, delta) {
-  if(window.hero.flags.paused || window.gameState.paused) return
-
+function input(hero, keysDown, delta) {
+  if(hero.flags.paused || w.game.gameState.paused) return
 }
 
 // only on client
-function intelligence(object, delta) {
+function intelligence(object, hero, delta) {
   if(object.tags && object.tags['zombie']) {
-    object.target = { x: window.hero.x, y: window.hero.y }
+    object.target = { x: hero.x, y: hero.y }
   }
 
   if(object.tags && object.tags['homing']) {
@@ -56,16 +57,16 @@ function intelligence(object, delta) {
       object.gridX = gridX
       object.gridY = gridY
 
-      const heroGridPos = gridTool.convertToGridXY(window.hero)
-      window.hero.gridX = heroGridPos.gridX
-      window.hero.gridY = heroGridPos.gridY
+      const heroGridPos = gridTool.convertToGridXY(hero)
+      hero.gridX = heroGridPos.gridX
+      hero.gridY = heroGridPos.gridY
 
       object.path = pathfinding.findPath({
         x: gridX,
         y: gridY,
       }, {
-        x: window.hero.gridX,
-        y: window.hero.gridY,
+        x: hero.gridX,
+        y: hero.gridY,
       }, { pathfindingLimit: object.pathfindingLimit })
     }
   }
@@ -153,7 +154,7 @@ function intelligence(object, delta) {
     if(!object.spawnedIds) object.spawnedIds = []
 
     object.spawnedIds = object.spawnedIds.filter((id) => {
-      if(window.objectsById[id] && !window.objectsById[id].removed) {
+      if(w.game.objectsById[id] && !w.game.objectsById[id].removed) {
         return true
       } else return false
     })
@@ -168,14 +169,14 @@ function intelligence(object, delta) {
         y: object.y,
         width: object.width,
         height: object.height,
-        id: 'spawned-' + object.spawnedIds.length + object.id + Date.now(),
+        id: 'spawned-' + window.uniqueID(),
         ...object.spawnObject,
         spawned: true,
       }
       // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
       // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
 
-      let createdObject = window.addObjects([newObject])
+      let createdObject = window.addObjects([newObject], { fromLiveGame: true })
       object.spawnedIds.push(createdObject[0].id)
       if(object.spawnPool) object.spawnPool--
 
@@ -188,10 +189,10 @@ function intelligence(object, delta) {
 }
 
 // only on client
-function onCollide(agent, collider, result, removeObjects) {
+function onCollide(agent, collider, result, removeObjects, respawnObjects, hero) {
   if(collider.tags && agent.tags && collider.tags['bullet'] && agent.tags['monster']) {
     removeObjects.push(agent)
-    window.hero.score++
+    hero.score++
   }
 
   if(agent.tags && agent.tags['goomba'] && collider.tags && collider.tags['obstacle']) {
@@ -284,7 +285,7 @@ export default {
   init,
   loaded,
   start,
-  onKeyDown,
+  keyDown,
   input,
   update,
   intelligence,

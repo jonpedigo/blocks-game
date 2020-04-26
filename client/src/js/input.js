@@ -1,83 +1,40 @@
 import camera from './camera';
 
-const keysDown = {}
+window.heroKeysDown = {}
+window.keysDown = window.heroKeysDown
+// this is the one for the
+window.heroInput = {}
 
 let lastJump = 0
 
 function init(){
   window.addEventListener("keydown", function (e) {
-    keysDown[e.keyCode] = true
+    window.keysDown[e.keyCode] = true
 
-    /// DEFAULT GAME FX
-    if(window.defaultGame) {
-      window.defaultGame.onKeyDown(keysDown)
-    }
-
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.onKeyDown(keysDown)
-    }
-
-    /// CUSTOM GAME FX
-    if(window.liveCustomGame) {
-      window.liveCustomGame.onKeyDown(keysDown)
-    }
-
-    if(window.hero.flags.paused || window.gameState.paused) return
-
-
-    if(e.keyCode === 32 && window.hero.onGround && window.isPlayer && window.hero.tags.gravity) {
-      window.hero.velocityY = hero.jumpVelocity
-
-      lastJump = Date.now();
-    }
-
-    if(window.hero.arrowKeysBehavior === 'grid') {
-      if (38 in keysDown) { // Player holding up
-        window.hero.y -= window.grid.nodeSize
-      } else if (40 in keysDown) { // Player holding down
-        window.hero.y += window.grid.nodeSize
-      } else if (37 in keysDown) { // Player holding left
-        window.hero.x -= window.grid.nodeSize
-      } else if (39 in keysDown) { // Player holding right
-        window.hero.x += window.grid.nodeSize
+    if(window.ghost) {
+      if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
+    } else if(window.isPlayer) {
+      //locally update the host input! ( teehee this is the magic! )
+      if(window.host) {
+        keyDown(e.keyCode, window.hero)
+        window.heroInput[window.hero.id] = window.keysDown
+      } else {
+        window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
       }
     }
-
-    if (38 === e.keyCode) { // Player holding up
-      window.hero.inputDirection = 'up'
-    }
-    if (40 === e.keyCode) { // Player holding down
-      window.hero.inputDirection = 'down'
-    }
-    if (37 === e.keyCode) { // Player holding left
-      window.hero.inputDirection = 'left'
-    }
-    if (39 === e.keyCode) { // Player holding right
-      window.hero.inputDirection = 'right'
-    }
-
-
-    // console.log(keysDown, e.keyCode, hero.wallJumpLeft)
-    // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpLeft) {
-    //   console.log('wall jump left')
-    //   hero.velocityX = -200
-    //   hero.velocityY = -400
-    // }
-    // if(e.keyCode === 32 && !hero.onGround && hero.wallJumpRight) {
-    //   hero.velocityX = 200
-    //   hero.velocityY = -400
-    // }
   }, false)
 
   window.addEventListener("keyup", function (e) {
-	   delete keysDown[e.keyCode]
+	   delete window.keysDown[e.keyCode]
   }, false)
-
-
 }
 
-function update(delta) {
+function update(hero, keysDown, delta) {
+  if(hero.flags.paused || hero.flags.typingMode) return
+
+  hero._initialX = hero.x
+  hero._initialY = hero.y
+
   /*
     left arrow	37
     up arrow	38
@@ -89,128 +46,125 @@ function update(delta) {
     d 68
   */
   /// DEFAULT GAME FX
-  if(window.defaultGame) {
-    window.defaultGame.input(keysDown, delta)
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.input(hero, keysDown, delta)
   }
 
   /// CUSTOM GAME FX
   if(window.customGame) {
-    window.customGame.input(keysDown, delta)
+    window.customGame.input(hero, keysDown, delta)
   }
 
   /// LIVE CUSTOM GAME FX
   if(window.liveCustomGame) {
-    window.liveCustomGame.input(keysDown, delta)
+    window.liveCustomGame.input(hero, keysDown, delta)
   }
 
-  if(window.hero.flags.paused || window.gameState.paused) return
-
-  window.hero._initialX = window.hero.x
-  window.hero._initialY = window.hero.y
+  if(hero.flags.paused || w.game.gameState.paused) return
 
   if (38 in keysDown) { // Player holding up
-    if(window.hero.arrowKeysBehavior === 'acc' || window.hero.arrowKeysBehavior === 'acceleration') {
-      window.hero.accY -= (window.hero.speed) * delta;
-    } else if (window.hero.arrowKeysBehavior === 'velocity') {
-      window.hero.velocityY -= (window.hero.speed) * delta;
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accY -= (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityY -= (hero.speed) * delta;
     }
   }
   if (40 in keysDown) { // Player holding down
-    if(window.hero.arrowKeysBehavior === 'acc' || window.hero.arrowKeysBehavior === 'acceleration') {
-      window.hero.accY += (window.hero.speed) * delta;
-    } else if (window.hero.arrowKeysBehavior === 'velocity') {
-      window.hero.velocityY += (window.hero.speed) * delta;
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accY += (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityY += (hero.speed) * delta;
     }
   }
   if (37 in keysDown) { // Player holding left
-    if(window.hero.arrowKeysBehavior === 'acc' || window.hero.arrowKeysBehavior === 'acceleration') {
-      window.hero.accX -= (window.hero.speed) * delta;
-    } else if (window.hero.arrowKeysBehavior === 'velocity') {
-      window.hero.velocityX -= (window.hero.speed) * delta;
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accX -= (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityX -= (hero.speed) * delta;
     }
   }
   if (39 in keysDown) { // Player holding right
-    if(window.hero.arrowKeysBehavior === 'acc' || window.hero.arrowKeysBehavior === 'acceleration') {
-      window.hero.accX += (window.hero.speed) * delta;
-    } else if (window.hero.arrowKeysBehavior === 'velocity') {
-      window.hero.velocityX += (window.hero.speed) * delta;
+    if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
+      hero.accX += (hero.speed) * delta;
+    } else if (hero.arrowKeysBehavior === 'velocity') {
+      hero.velocityX += (hero.speed) * delta;
     }
   }
 
-  if(window.hero.arrowKeysBehavior === 'skating') {
-    if(window.window.hero.inputDirection === 'up') {
-      window.hero.y -= Math.ceil(window.hero.speed * delta);
-    } else if(window.window.hero.inputDirection === 'down') {
-      window.hero.y += Math.ceil(window.hero.speed * delta);
-    } else if(window.window.hero.inputDirection === 'left') {
-      window.hero.x -= Math.ceil(window.hero.speed * delta);
-    } else if(window.window.hero.inputDirection === 'right') {
-      window.hero.x += Math.ceil(window.hero.speed * delta);
+  if(hero.arrowKeysBehavior === 'skating') {
+    if(hero.inputDirection === 'up') {
+      hero.y -= Math.ceil(hero.speed * delta);
+    } else if(hero.inputDirection === 'down') {
+      hero.y += Math.ceil(hero.speed * delta);
+    } else if(hero.inputDirection === 'left') {
+      hero.x -= Math.ceil(hero.speed * delta);
+    } else if(hero.inputDirection === 'right') {
+      hero.x += Math.ceil(hero.speed * delta);
     }
   }
 
   function positionInput() {
 
-    if(window.hero.arrowKeysBehavior === 'flatDiagonal') {
-      if(!window.hero.tags.gravity) {
-        if (38 in keysDown && !window.hero.tags.gravity) { // Player holding up
-          window.hero.velocityY = -Math.ceil(window.hero.speed * delta) * 100
+    if(hero.arrowKeysBehavior === 'flatDiagonal') {
+      if(!hero.tags.gravity) {
+        if (38 in keysDown && !hero.tags.gravity) { // Player holding up
+          hero.velocityY = -Math.ceil(hero.speed * delta) * 100
         } else if (40 in keysDown) { // Player holding down
-          window.hero.velocityY = Math.ceil(window.hero.speed * delta) * 100
+          hero.velocityY = Math.ceil(hero.speed * delta) * 100
         } else {
-          window.hero.velocityY = 0
+          hero.velocityY = 0
         }
       }
 
       if (37 in keysDown) { // Player holding left
-        window.hero.velocityX = -Math.ceil(window.hero.speed * delta) * 100
+        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
       } else if (39 in keysDown) { // Player holding right
-        window.hero.velocityX = Math.ceil(window.hero.speed * delta) * 100
+        hero.velocityX = Math.ceil(hero.speed * delta) * 100
       } else {
-        window.hero.velocityX = 0
+        hero.velocityX = 0
       }
     }
 
-    if(window.hero.arrowKeysBehavior === 'flatRecent') {
-      window.hero.velocityX = 0
-      if(!window.hero.tags.gravity) {
-        window.hero.velocityY = 0
+    if(hero.arrowKeysBehavior === 'flatRecent') {
+      hero.velocityX = 0
+      if(!hero.tags.gravity) {
+        hero.velocityY = 0
       }
 
-      if (38 in keysDown && window.window.hero.inputDirection == 'up' && !window.hero.tags.gravity) { // Player holding up
-        window.hero.velocityY = -Math.ceil(window.hero.speed * delta) * 100
+      if (38 in keysDown && hero.inputDirection == 'up' && !hero.tags.gravity) { // Player holding up
+        hero.velocityY = -Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (40 in keysDown && window.window.hero.inputDirection == 'down') { // Player holding down
-        window.hero.velocityY = Math.ceil(window.hero.speed * delta) * 100
+      if (40 in keysDown && hero.inputDirection == 'down') { // Player holding down
+        hero.velocityY = Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (37 in keysDown && window.window.hero.inputDirection == 'left') { // Player holding left
-        window.hero.velocityX = -Math.ceil(window.hero.speed * delta) * 100
+      if (37 in keysDown && hero.inputDirection == 'left') { // Player holding left
+        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (39 in keysDown && window.window.hero.inputDirection == 'right') { // Player holding right
-        window.hero.velocityX = Math.ceil(window.hero.speed * delta) * 100
+      if (39 in keysDown && hero.inputDirection == 'right') { // Player holding right
+        hero.velocityX = Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (38 in keysDown && !window.hero.tags.gravity) { // Player holding up
-        window.hero.velocityY = -Math.ceil(window.hero.speed * delta) * 100
+      if (38 in keysDown && !hero.tags.gravity) { // Player holding up
+        hero.velocityY = -Math.ceil(hero.speed * delta) * 100
       }
 
       if (40 in keysDown) { // Player holding down
-        window.hero.velocityY = Math.ceil(window.hero.speed * delta) * 100
+        hero.velocityY = Math.ceil(hero.speed * delta) * 100
       }
 
       if (37 in keysDown) { // Player holding left
-        window.hero.velocityX = -Math.ceil(window.hero.speed * delta) * 100
+        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
       }
 
       if (39 in keysDown) { // Player holding right
-        window.hero.velocityX = Math.ceil(window.hero.speed * delta) * 100
+        hero.velocityX = Math.ceil(hero.speed * delta) * 100
       }
     }
   }
@@ -219,16 +173,79 @@ function update(delta) {
 }
 
 function loaded() {
-  window.hero.inputDirection = 'up'
+  // window.hero.inputDirection = 'up'
 }
 
 function getDirection() {
   return inputDirection
 }
 
+function keyDown(keyCode, hero) {
+  if(hero.flags.typingMode) return
+
+  if(32 === keyCode) {
+    if(hero.chat.length) {
+      hero.chat.shift()
+      if(!hero.chat.length) {
+        hero.flags.showChat = false
+        hero.flags.paused = false
+        hero.onGround = false
+      }
+    }
+  }
+
+  if(hero.flags.paused || w.game.gameState.paused) return
+
+  if(32 === keyCode) {
+    if(hero.onGround && hero.tags.gravity) {
+      hero.velocityY = hero.jumpVelocity
+      lastJump = Date.now();
+    }
+  }
+
+  if(hero.arrowKeysBehavior === 'grid') {
+    if (38 === keyCode) { // Player holding up
+      hero.y -= w.game.grid.nodeSize
+    } else if (40 === keyCode) { // Player holding down
+      hero.y += w.game.grid.nodeSize
+    } else if (37 === keyCode) { // Player holding left
+      hero.x -= w.game.grid.nodeSize
+    } else if (39 === keyCode) { // Player holding right
+      hero.x += w.game.grid.nodeSize
+    }
+  }
+
+  if (38 === keyCode) { // Player holding up
+    hero.inputDirection = 'up'
+  }
+  if (40 === keyCode) { // Player holding down
+    hero.inputDirection = 'down'
+  }
+  if (37 === keyCode) { // Player holding left
+    hero.inputDirection = 'left'
+  }
+  if (39 === keyCode) { // Player holding right
+    hero.inputDirection = 'right'
+  }
+
+  /// DEFAULT GAME FX
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.keyDown(keyCode, hero)
+  }
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.keyDown(keyCode, hero)
+  }
+  /// CUSTOM GAME FX
+  if(window.liveCustomGame) {
+    window.liveCustomGame.keyDown(keyCode, hero)
+  }
+}
+
 export default {
   init,
   loaded,
   update,
+  keyDown,
   getDirection,
 }

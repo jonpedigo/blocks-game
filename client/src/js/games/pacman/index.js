@@ -10,33 +10,34 @@ function init() {
 }
 
 function loaded() {
-  window.gameState.paused = true
+  w.game.gameState.paused = true
   window.hero.flags.showLives = true;
   window.hero.flags.showScore = true;
 }
 
 function start() {
-  window.gameState.paused = false
-  window.gameState.started = true
-  window.gameState.startTime = Date.now()
+  w.game.gameState.paused = false
+  w.game.gameState.started = true
+  w.game.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
-  window.respawnHero()
+  window.respawnHeros()
   window.hero.lives = 3
 }
 
-function onKeyDown(keysDown) {
-  if(window.gameState.paused) {
+function keyDown(keyCode, hero) {
+  if(hero.flags.paused || w.game.gameState.paused) return
+}
+
+function input(hero, keysDown, delta) {
+  if(w.game.gameState.paused) {
     if(32 in keysDown) {
       window.socket.emit('startGame')
     }
   }
 
-  if(window.hero.flags.paused || window.gameState.paused) return
+  if(hero.flags.paused || w.game.gameState.paused) return
 }
 
-function input(keysDown, delta) {
-
-}
 
 function intelligence(object, delta) {
 
@@ -48,8 +49,8 @@ function onCollide(agent, collider, result, removeObjects) {
 
 function update(delta) {
   if(window.hero.lives === 0) {
-    window.gameState.gameOver = true
-    window.gameState.paused = true
+    w.game.gameState.gameOver = true
+    w.game.gameState.paused = true
   }
 }
 
@@ -58,7 +59,7 @@ function render(ctx, delta) {
     particle.draw(ctx, delta)
   })
 
-  if(window.gameState.paused && window.gameState.started) {
+  if(w.game.gameState.paused && w.game.gameState.started) {
     const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
     // ctx.fillStyle = 'rgba(0,0,0,0.8)';
@@ -87,7 +88,7 @@ function render(ctx, delta) {
     ctx.fillRect(0, 0, window.CONSTANTS.PLAYER_CANVAS_WIDTH, window.CONSTANTS.PLAYER_CANVAS_HEIGHT);
     ctx.font =`20pt Courier New`
     ctx.fillStyle =`rgba(255,255,255, ${1 * multiplier})`;
-    let text = window.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
+    let text = w.game.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
     let metrics = ctx.measureText(text)
     ctx.fillText(text, (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2) - (metrics.width/2), (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2) + 10)
   }
@@ -97,7 +98,7 @@ export default {
   init,
   loaded,
   start,
-  onKeyDown,
+  keyDown,
   input,
   update,
   intelligence,

@@ -23,14 +23,15 @@ function init() {
   	// spawnPointX: (40) * 20,
   	// spawnPointY: (40) * 20,
   	tags: {
+      obstacle: true,
       hero: true,
       isPlayer: true,
       monsterDestroyer: false,
       gravity: false,
     },
   	zoomMultiplier: 1.875,
-    x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
-    y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
+    // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
+    // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
     lives: 10,
     score: 0,
     chat: [],
@@ -48,103 +49,117 @@ function init() {
     }
   }
 
-  window.client.on('onGridLoaded', () => {
-    window.defaultHero.x = window.grid.startX + (window.grid.width * window.grid.nodeSize)/2
-    window.defaultHero.y = window.grid.startY + (window.grid.height * window.grid.nodeSize)/2
-
-    if(window.ghost) {
-      ghost.init()
-    }
-    if(window.isPlayer) {
-    	let savedHero = localStorage.getItem('hero');
-    	if(savedHero !== 'undefined' && savedHero !== 'null' && savedHero && JSON.parse(savedHero).id){
-    		window.hero = JSON.parse(savedHero)
-        // in case we need to reset
-        window.defaultHero.id = savedHero.id
-    	} else {
-        window.defaultHero.id = 'hero-'+Date.now()
-    		window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-    		window.spawnHero()
-        localStorage.setItem('hero', JSON.stringify(window.hero));
-    	}
-    	window.hero.reachablePlatformHeight = window.resetReachablePlatformHeight(window.hero)
-    	window.hero.reachablePlatformWidth = window.resetReachablePlatformWidth(window.hero)
-
-    	window.socket.emit('saveSocket', hero)
-
-    	// fuckin window.heros...
-    	window.heros = {
-    		[window.hero.id]:window.hero,
-    	}
-    }
-
-    if(window.hero && window.host) {
-      physics.addObject(window.hero)
-    }
+  window.local.on('onGridLoaded', () => {
+    window.defaultHero.x = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
+    window.defaultHero.y = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
   })
+
+  let savedHero = localStorage.getItem('hero');
+  if(savedHero && JSON.parse(savedHero).id){
+    window.heroId = JSON.parse(savedHero).id
+  } else {
+    window.heroId = 'hero-'+window.uniqueID()
+  }
 }
 
 function loaded() {
 
 }
 
-window.spawnHero = function () {
+window.spawnHero = function (hero, game = w.game) {
   // hero spawn point takes precedence
-  if(window.hero.spawnPointX && window.hero.spawnPointX >= 0) {
-    window.hero.x = window.hero.spawnPointX;
-    window.hero.y = window.hero.spawnPointY;
-  } else if(window.world.worldSpawnPointX && window.world.worldSpawnPointX >= 0) {
-    window.hero.x = window.world.worldSpawnPointX
-    window.hero.y = window.world.worldSpawnPointY
+  if(hero.spawnPointX && hero.spawnPointX >= 0) {
+    window.updateObjectPos(hero, {x: hero.spawnPointX, y: hero.spawnPointY})
+  } else if(game && game.world.worldSpawnPointX && game.world.worldSpawnPointX >= 0) {
+    window.updateObjectPos(hero, {x: game.world.worldSpawnPointX, y:  game.world.worldSpawnPointY})
   } else {
-    // default pos
-    window.hero.x = 960;
-    window.hero.y = 960;
+    window.updateObjectPos(hero, {x: 960, y:  960})
   }
 }
 
-window.respawnHero = function () {
-  window.hero.velocityX = 0
-  window.hero.velocityY = 0
-  window.client.emit('onRespawnHero')
-  window.spawnHero()
-}
+window.respawnHero = function (hero, game = w.game) {
+  hero.velocityX = 0
+  hero.velocityY = 0
 
-window.resetHero = function(updatedHero) {
-	physics.removeObject(window.hero)
-	if(updatedHero) {
-		window.mergeDeep(window.hero, updatedHero)
-	} else {
-    let newHero = {}
-    window.defaultHero.id = window.hero.id
-		Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-    window.hero = newHero
-    window.heros[window.hero.id] = window.hero
-	}
-	localStorage.setItem('hero', JSON.stringify(window.hero));
-	physics.addObject(window.hero)
-}
+  /// send objects that are possibly camping at their spawn point back to their spawn point
+  if(window.host && game && game.world && game.world.globalTags.noCamping) {
+    game.objects.forEach((obj) => {
+      if(obj.removed) return
 
-window.heroZoomAnimation = function() {
-  if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-    window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/.97
-    if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-      if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
-      else {
-        window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+      if(obj.tags.zombie || obj.tags.homing) {
+        const { gridX, gridY } = grid.convertToGridXY(obj)
+        obj.gridX = gridX
+        obj.gridY = gridY
+
+        const spawnGridPos = grid.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
+
+        obj.path = pathfinding.findPath({
+          x: gridX,
+          y: gridY,
+        }, {
+          x: spawnGridPos.gridX,
+          y: spawnGridPos.gridY,
+        }, obj.pathfindingLimit)
       }
-      window.socket.emit('updateHero', window.hero)
+    })
+  }
+
+  window.spawnHero(hero, game)
+}
+
+window.respawnHeros = function (hero) {
+  Object.keys(w.game.heros).forEach((id) => {
+    window.respawnHero(w.game.heros[id])
+  })
+}
+
+window.updateAllHeros = function(update) {
+  Object.keys(w.game.heros).forEach((id) => {
+    window.mergeDeep(w.game.heros[id], update)
+  })
+}
+
+window.resetHeroToDefault = function(hero, game = w.game) {
+  window.removeHeroFromGame(hero)
+  let newHero = JSON.parse(JSON.stringify(window.defaultHero))
+  if(window.game.hero) {
+    newHero = JSON.parse(JSON.stringify(window.game.hero))
+  }
+  if(hero && hero.id) {
+    newHero.id = hero.id
+  }
+  window.spawnHero(newHero)
+  window.addHeroToGame(newHero)
+  return newHero
+}
+// window.resetHeroToDefault = function(hero) {
+// 	physics.removeObject(hero)
+//   let newHero = {}
+//   window.defaultHero.id = window.hero.id
+// 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
+//   w.game.heros[window.hero.id] = window.hero
+// 	localStorage.setItem('hero', JSON.stringify(window.hero));
+// 	physics.addObject(hero)
+// }
+
+window.heroZoomAnimation = function(hero) {
+  if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
+    hero.animationZoomMultiplier = hero.animationZoomMultiplier/.97
+    if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
+      if(hero.endAnimation) hero.animationZoomMultiplier = null
+      else {
+        hero.animationZoomMultiplier = hero.animationZoomTarget
+      }
     }
   }
 
-  if(window.hero.animationZoomTarget < window.hero.animationZoomMultiplier) {
-    window.hero.animationZoomMultiplier = window.hero.animationZoomMultiplier/1.03
-    if(window.hero.animationZoomTarget > window.hero.animationZoomMultiplier) {
-      if(window.hero.endAnimation) window.hero.animationZoomMultiplier = null
+  if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
+    hero.animationZoomMultiplier = hero.animationZoomMultiplier/1.03
+    if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
+      if(hero.endAnimation) hero.animationZoomMultiplier = null
       else {
-        window.hero.animationZoomMultiplier = window.hero.animationZoomTarget
+        hero.animationZoomMultiplier = hero.animationZoomTarget
       }
-      window.socket.emit('updateHero', window.hero)
     }
   }
 }
@@ -193,40 +208,43 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-function onCollide(hero, collider, result, removeObjects, respawnObjects) {
+function onCollide(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   if(collider.tags && collider.tags['monster']) {
-    if(window.hero.tags['monsterDestroyer']) {
+    if(hero.tags['monsterDestroyer']) {
       if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
         respawnObjects.push(collider)
       } else {
         removeObjects.push(collider)
       }
     } else {
-      if(window.hero.lives == 0) {
-        window.client.emit('gameOver')
+      if(hero.lives == 0) {
+        window.local.emit('gameOver')
       }
-      window.hero.lives--
+      hero.lives--
       respawnObjects.push(hero)
       return
     }
   }
 
   if(collider.tags && collider.tags['coin']) {
-    window.hero.score++
+    hero.score++
   }
 
-  if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat) {
-    if(colliderid !== window.hero.lastChatId) {
-      window.hero.chat = collider.heroUpdate.chat.slice()
-      // window.hero.chat.name = body.id
-      window.hero.lastChatId = collider.id
-    }
-  }
+  // if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat && collider.heroUpdate.chat.length) {
+  //   if(collider.id !== hero.lastChatId) {
+  //     hero.chat = JSON.parse(JSON.stringify(collider.heroUpdate.chat))
+  //     // hero.chat.name = body.id
+  //     hero.lastChatId = collider.id
+  //   }
+  // } else {
+  //   hero.lastChatId = null
+  // }
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
-    heroUpdate(collider)
-  } else {
-    window.hero.lastPowerUpId = null
+    heroUpdate(hero, collider)
+    if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
+  } else if(!options.fromInteractButton && collider.parentId !== hero.id){
+    hero.lastPowerUpId = null
   }
 
   if(collider.tags && collider.tags.deleteAfter) {
@@ -234,23 +252,23 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
   }
 }
 
-function heroUpdate (collider) {
-  if(collider.id !== window.hero.lastPowerUpId) {
-    if(!window.hero.timeouts) window.hero.timeouts = {}
-    if(!window.hero.updateHistory) {
-      window.hero.updateHistory = []
+function heroUpdate (hero, collider) {
+  if(collider.id !== hero.lastPowerUpId) {
+    if(!hero.timeouts) hero.timeouts = {}
+    if(!hero.updateHistory) {
+      hero.updateHistory = []
     }
 
-    if(window.hero.timeouts[collider.fromCompendiumId] && collider.tags['revertAfterTimeout']) {
-      clearTimeout(window.hero.timeouts[collider.fromCompendiumId])
-      delete window.hero.timeouts[collider.fromCompendiumId]
-      setRevertUpdateTimeout(collider)
+    if(hero.timeouts[collider.fromCompendiumId] && collider.tags['revertAfterTimeout']) {
+      clearTimeout(hero.timeouts[collider.fromCompendiumId])
+      delete hero.timeouts[collider.fromCompendiumId]
+      setRevertUpdateTimeout(hero, collider)
       return
     }
 
     // only have 4 edits in the history at a time
-    if(window.hero.updateHistory.length >= 4) {
-      window.hero.updateHistory.shift()
+    if(hero.updateHistory.length >= 4) {
+      hero.updateHistory.shift()
     }
 
     let heroUpdate = collider.heroUpdate
@@ -264,35 +282,34 @@ function heroUpdate (collider) {
         let ags = heroUpdate[prop]
         update.prev[prop] = {}
         for(let ag in ags) {
-          update.prev[prop][ag] = window.hero[prop][ag]
+          update.prev[prop][ag] = hero[prop][ag]
         }
       } else {
-        update.prev[prop] = window.hero[prop]
+        update.prev[prop] = hero[prop]
       }
     }
-    window.hero.updateHistory.push(update)
-    window.mergeDeep(window.hero, {...collider.heroUpdate})
-    window.hero.lastPowerUpId = collider.id
+    hero.updateHistory.push(update)
+    window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
 
     if(collider.tags['revertAfterTimeout']) {
-      setRevertUpdateTimeout(collider)
+      setRevertUpdateTimeout(hero, collider)
     }
   }
 }
 
-function setRevertUpdateTimeout(collider) {
+function setRevertUpdateTimeout(hero, collider) {
   let timeout = window.setTimeout(() => {
-    window.hero.updateHistory = window.hero.updateHistory.filter((update) => {
+    hero.updateHistory = hero.updateHistory.filter((update) => {
       if(collider.fromCompendiumId) {
-        delete window.hero.timeouts[collider.fromCompendiumId]
+        delete hero.timeouts[collider.fromCompendiumId]
         if(collider.fromCompendiumId === update.id) {
-          window.mergeDeep(window.hero, {...update.prev})
+          window.mergeDeep(hero, {...update.prev})
           return false
         }
       }
 
       if(collider.id === update.id) {
-        window.mergeDeep(window.hero, {...update.prev})
+        window.mergeDeep(hero, {...update.prev})
         return false
       }
 
@@ -300,8 +317,46 @@ function setRevertUpdateTimeout(collider) {
     })
   }, collider.powerUpTimer || 10000)
   if(collider.fromCompendiumId) {
-    window.hero.timeouts[collider.fromCompendiumId] = timeout
+    hero.timeouts[collider.fromCompendiumId] = timeout
   }
+}
+
+window.findHeroInNewGame = function(game, hero) {
+  // if we have decided to restore position, find hero in hero list
+  if(game.world.globalTags.shouldRestoreHero && game.heros && hero) {
+    for(var heroId in game.heros) {
+      let currentHero = game.heros[heroId]
+      if(currentHero.id == hero.id) {
+        return currentHero
+      }
+    }
+    console.log('failed to find hero with id' + window.hero.id)
+  }
+
+  if(!game.world.globalTags.isAsymmetric && game.hero) {
+    // save current users id to the world.hero object and then store all other variables as the new hero
+    if(hero && hero.id) game.hero.id = hero.id
+    hero = game.hero
+    // if(!hero.id) hero.id = 'hero-'+window.uniqueID()
+    // but then also respawn the hero
+    window.respawnHero(hero, game)
+    return hero
+  }
+
+  return window.resetHeroToDefault(hero, game)
+}
+
+window.addHeroToGame = function(hero) {
+  physics.addObject(hero)
+  window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
+}
+
+window.removeHeroFromGame = function(hero) {
+  physics.removeObject(hero)
+  w.game.objects.forEach((obj) => {
+    if(obj.parentId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
+  })
+  // window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
 }
 
 export default {

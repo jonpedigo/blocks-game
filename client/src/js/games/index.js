@@ -1,10 +1,10 @@
-import defaultGame from './default'
+import defaultCustomGame from './default'
 import defaultCompendium from './default/compendium'
 import pacmanGame from './pacman'
 import templateGame from './template'
 
 let customGames = {
-  default: defaultGame,
+  default: defaultCustomGame,
   pacman: pacmanGame,
 }
 
@@ -14,10 +14,15 @@ let customCompendiums = {
 
 function init() {
   window.customGame = null
-  window.defaultGame = defaultGame
+  window.defaultCustomGame = defaultCustomGame
 
   window.customCompendium = null
   window.defaultCompendium = defaultCompendium
+
+  /// didnt get to init because it wasnt set yet
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.init()
+  }
 }
 
 window.changeGame = function(id) {
@@ -27,6 +32,7 @@ window.changeGame = function(id) {
     document.getElementById('current-game-id').innerHTML = id
     document.getElementById('game-id').value = id
   }
+  window.game.id = id
 }
 
 export default {

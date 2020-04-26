@@ -10,15 +10,19 @@ window.defaultTags = {
   deleteAfter: false,
   revertAfterTimeout: false,
 
+  // BUTTONS
+  requireActionButton: false,
+
   // PHYSICS
   gravity: false,
   movingPlatform: false,
   // child: false,
   onlyHeroAllowed: false,
   noHeroAllowed: false,
+  heroPushable: false,
 
-  // UI
-  chatter: false,
+  // // UI
+  // chatter: false,
 
   // GRAPHICAL
   glowing: false,

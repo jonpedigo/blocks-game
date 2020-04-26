@@ -8,7 +8,7 @@ function update() {
 
   ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   ctx.filter = "none"
-  let vertices = [...window.objects].reduce((prev, object) => {
+  let vertices = [...w.game.objects].reduce((prev, object) => {
     if(object.removed) return prev
     if(object.tags.filled) return prev
     if(object.tags.invisible) return prev
@@ -33,40 +33,47 @@ function update() {
 	//set camera so we render everything in the right place
   camera.set(ctx, window.hero)
 
-	window.world.renderStyle = 'outlines'
- 	if (window.world.renderStyle === 'outlines') {
+	w.game.world.renderStyle = 'outlines'
+ 	if (w.game.world.renderStyle === 'outlines') {
 		ctx.strokeStyle = "#999";
 		for(var i=0;i<vertices.length;i++){
 			camera.drawVertice(ctx, vertices[i])
 		}
 		ctx.fillStyle = 'white';
 		camera.drawObject(ctx, window.hero)
-    for(let i = 0; i < window.objects.length; i++){
-      if(!window.objects[i].tags.filled) continue
-      if(window.objects[i].removed) continue
-      if(window.objects[i].tags.invisible) continue
-      camera.drawObject(ctx, window.objects[i])
+    for(let i = 0; i < w.game.objects.length; i++){
+      if(!w.game.objects[i].tags.filled) continue
+      if(w.game.objects[i].removed) continue
+      if(w.game.objects[i].tags.invisible) continue
+      camera.drawObject(ctx, w.game.objects[i])
     }
-	} else if(window.world.renderStyle === 'physics'){
+	} else if(w.game.world.renderStyle === 'physics'){
 		physics.drawSystem(ctx, vertices)
 	} else {
-		for(let i = 0; i < window.objects.length; i++){
-      if(window.objects[i].removed) continue
-      if(window.objects[i].tags.invisible) continue
-			camera.drawObject(ctx, window.objects[i])
+		for(let i = 0; i < w.game.objects.length; i++){
+      if(w.game.objects[i].removed) continue
+      if(w.game.objects[i].tags.invisible) continue
+			camera.drawObject(ctx, w.game.objects[i])
 		}
 	}
 
-  for(var heroId in window.heros) {
+  for(var heroId in w.game.heros) {
     if(heroId === window.hero.id) continue;
-    let currentHero = window.heros[heroId];
+    let currentHero = w.game.heros[heroId];
     camera.drawObject(ctx, currentHero);
   }
 
-  window.world.shadows = false
-  if(window.world.shadows === true) {
+  w.game.world.shadows = false
+  if(w.game.world.shadows === true) {
     shadow.draw(ctx, vertices, hero)
   }
+
+  w.game.objects.forEach((obj) => {
+    if(obj.name) {
+      if(obj.namePosition === "center") camera.drawNameCenter(ctx, obj)
+      if(obj.namePosition === "above") camera.drawNameAbove(ctx, obj)
+    }
+  })
 
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
@@ -80,6 +87,17 @@ function update() {
 
   chat.render(ctx);
 	feedback.draw(ctx);
+
+  if(window.hero && window.hero.flags._showInteract && !window.hero.flags.showChat) {
+    ctx.fillStyle = "rgb(255, 255, 255)";
+    let text = "Press X to interact"
+    ctx.textAlign = 'center'
+    // ctx.textBaseline = 'alphabetic'
+    ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
+    // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
+    ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
+  }
+
 }
 
 export default {

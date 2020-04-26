@@ -1,16 +1,18 @@
 import pathfinding from './pathfinding'
 import gridTool from './grid'
+import mockServer from '../../../sockets'
 
 class EventEmitter {
   constructor() {
     this.events = {};
   }
 
-  emit(eventName, data) {
+  emit(eventName, arg1, arg2, arg3, arg4, arg5) {
+    var args = new Array(arguments.length);
     const event = this.events[eventName];
     if( event ) {
       event.forEach(fn => {
-         fn.call(null, data);
+         fn.call(null, arg1, arg2, arg3, arg4, arg5);
        });
      }
   }
@@ -28,29 +30,14 @@ class EventEmitter {
   }
 }
 
-window.client = new EventEmitter()
+window.local = new EventEmitter()
 
-
-window.client.on('onRespawnHero', () => {
-  if(window.world.globalTags.noCamping) {
-    window.objects.forEach((obj) => {
-      if(obj.removed) return
-
-      if(obj.tags.zombie || obj.tags.homing || obj.tags.wander || obj.tags.pacer || obj.tags.lemmings) {
-        const { gridX, gridY } = gridTool.convertToGridXY(obj)
-        obj.gridX = gridX
-        obj.gridY = gridY
-
-        const spawnGridPos = gridTool.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
-
-        obj.path = pathfinding.findPath({
-          x: gridX,
-          y: gridY,
-        }, {
-          x: spawnGridPos.gridX,
-          y: spawnGridPos.gridY,
-        }, obj.pathfindingLimit)
-      }
-    })
+function init() {
+  if(window.arcadeMode) {
+    mockServer(null, window.local, window.local, { arcadeMode: true })
   }
-})
+}
+
+export default {
+  init
+}
