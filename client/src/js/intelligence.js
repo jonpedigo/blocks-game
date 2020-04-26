@@ -46,30 +46,27 @@ function checkIfWillCrossTarget(object, target, delta) {
 }
 
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
-  object._initialX = object.x
-  object._initialY = object.y
-
   let oldX = object.x
   let oldY = object.y
 
   if(object.x > target.x) {
-    if(options.flat) object.velocityX = -((object.speed || 100) * delta) * 10
+    if(options.flat) object.velocityX = -object.speed || -100
     else {
       object.velocityX -= (object.speed || 100) * delta
     }
   }
   if(object.x < target.x) {
-    if(options.flat) object.velocityX = ((object.speed || 100) * delta) * 10
+    if(options.flat) object.velocityX = object.speed || 100
     else object.velocityX += (object.speed || 100) * delta
   }
   let newX = object.x + object.velocityX * delta
 
   if(object.y > target.y) {
-    if(options.flat) object.velocityY = -((object.speed || 100) * delta) * 10
+    if(options.flat) object.velocityY = -object.speed || -100
     else object.velocityY -= (object.speed || 100) * delta
   }
   if(object.y < target.y) {
-    if(options.flat) object.velocityY = ((object.speed || 100) * delta) * 10
+    if(options.flat) object.velocityY = object.speed || 100
     else object.velocityY += (object.speed || 100) * delta
   }
   let newY = object.y + object.velocityY * delta
@@ -85,15 +82,13 @@ function moveTowardsTarget(object, target, delta, options = { flat: false}) {
 }
 
 function moveOnPath(object, delta) {
-  const { gridX, gridY, x, y } = gridTool.convertToGridXY(object)
-  object.gridX = gridX
-  object.gridY = gridY
-
   let pathX = (object.path[0].x * w.game.grid.nodeSize) + w.game.grid.startX
   let pathY = (object.path[0].y * w.game.grid.nodeSize) + w.game.grid.startY
 
   let pathSpeedX = object.speed || -100
   let pathSpeedY = object.speed || -100
+
+  // old lerp code
   // if(diffX < 5 && diffX >= 1) {
   //   pathSpeedX = pathSpeedX * (1 - (1/diffX))
   // }
@@ -104,6 +99,10 @@ function moveOnPath(object, delta) {
   moveTowardsTarget(object, {x: pathX, y: pathY }, delta, { flat: true })
   let diffX = Math.abs(object.x - pathX)
   let diffY = Math.abs(object.y - pathY)
+
+  const { gridX, gridY, x, y } = gridTool.convertToGridXY(object)
+  object.gridX = gridX
+  object.gridY = gridY
 
   if(object.gridX == object.path[0].x && diffX <= 2) {
     object.x = pathX

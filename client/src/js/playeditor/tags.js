@@ -10,6 +10,9 @@ window.defaultTags = {
   deleteAfter: false,
   revertAfterTimeout: false,
 
+  // BUTTONS
+  requireActionButton: false,
+
   // PHYSICS
   gravity: false,
   movingPlatform: false,

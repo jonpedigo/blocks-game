@@ -266,11 +266,17 @@ window.resetAllObjectState = function() {
       if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
     }
-    window.removeObjectState(object)
-    window.respawnObject(object)
+
+    window.removeObjectState(object, { skipPos: true })
+
     arr.push(object)
+
+    // do not respawn parent objects, theyll get their new coordinates from parents
+    if(object.parentId) return arr
+    window.respawnObject(object)
     return arr
   }, [])
+  console.log(w.editingGame.objects)
   if(!w.editingGame.branch) window.socket.emit('editObjects', w.editingGame.objects)
 }
 

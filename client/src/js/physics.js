@@ -221,8 +221,6 @@ function heroCorrection(hero) {
           hero.directions.up = true
         }
 
-        hero._deltaX = heroPO.x - hero._initialX
-        hero._deltaY = heroPO.y - hero._initialY
         hero.x = heroPO.x
         hero.y = heroPO.y
       }
@@ -495,8 +493,6 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
       po.gameObject.x = po.gameObject._initialX
       po.gameObject.y = po.gameObject._initialY
     } else {
-      po.gameObject._deltaX = po.x - po.gameObject._initialX
-      po.gameObject._deltaY = po.y - po.gameObject._initialY
       po.gameObject.x = po.x
       po.gameObject.y = po.y
     }
@@ -655,23 +651,33 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    cleanUp(object)
+    containObjectWithinGridBoundaries(object)
+    object._deltaX = object.x - object._initialX
+    object._deltaY = object.y - object._initialY
   })
 
   allHeros.forEach((hero) => {
-    cleanUp(hero)
+    if(hero.removed) return
+    containObjectWithinGridBoundaries(hero)
+    hero._deltaX = hero.x - hero._initialX
+    hero._deltaY = hero.y - hero._initialY
+  })
+
+  w.game.objects.forEach((object, i) => {
+    if(object.removed) return
+    if(object.parentId || object._parentId ) {
+      attachToParent(object)
+    }
+  })
+
+  allHeros.forEach((hero) => {
+    if(hero.removed) return
+    if(hero.parentId || hero._parentId ) {
+      attachToParent(hero)
+    }
   })
 }
 
-function cleanUp(object) {
-  //     || hero.relativeId || hero._relativeId
-  if(object.parentId || object._parentId ) {
-    attachToParent(object)
-  }
-  containObjectWithinGridBoundaries(object)
-  delete object._initialX
-  delete object._initialY
-}
 
 function attachToParent(object) {
   let parent = w.game.objectsById[object.parentId] || w.game.heros[object.parentId]
@@ -738,7 +744,7 @@ function removeObject(object) {
     system.remove(physicsObjects[object.id])
     delete physicsObjects[object.id];
   } catch(e) {
-
+    console.error(e)
   }
 }
 
@@ -747,13 +753,12 @@ function removeObjectById(id) {
     system.remove(physicsObjects[id])
     delete physicsObjects[id];
   } catch(e) {
-
+    console.error(e)
   }
 }
 
 export default {
   addObject,
-  cleanUp,
   drawObject,
   drawSystem,
   removeObject,

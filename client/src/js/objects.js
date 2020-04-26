@@ -170,9 +170,11 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
   return objects
 }
 
-function removeObjectState(object) {
-  delete object.x
-  delete object.y
+function removeObjectState(object, options = { skipPos : false }) {
+  if(!options.skipPos) {
+    delete object.x
+    delete object.y
+  }
   delete object._initialY
   delete object._initialX
   delete object._deltaY
@@ -199,8 +201,7 @@ window.removeObjectState = removeObjectState
 
 
 window.respawnObject = function(object) {
-  object.x = object.spawnPointX
-  object.y = object.spawnPointY
+  window.updateObjectPos(object, {x: object.spawnPointX, y: object.spawnPointY})
 }
 
 window.openNameObjectModal = function(object, cb) {
@@ -244,6 +245,23 @@ window.openWriteChatModal = function(object, cb) {
       autocapitalize: 'off'
     },
   }).then(cb)
+}
+
+window.updateObjectPos = function(object, newPos) {
+  let diffX = newPos.x - object.x
+  let diffY = newPos.y - object.y
+  //also update children
+  // console.log(diffX, diffY, newPos, object)
+
+  w.game.objects.forEach((obj) => {
+    if(obj.parentId === object.id) {
+      obj.x += diffX
+      obj.y += diffY
+    }
+  })
+
+  object.x = newPos.x
+  object.y = newPos.y
 }
 
 export default {
