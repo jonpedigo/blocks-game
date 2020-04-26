@@ -383,7 +383,7 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._initialX = object.x
     object._initialY = object.y
     if(object.flags) {
-      delete object.flags._showInteract 
+      delete object.flags._showInteract
     }
   })
 }
@@ -602,12 +602,12 @@ function update (delta) {
           po.gameObject.lastPowerUpId = null
         }
 
-        if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton'] && body.gameObject.tags['heroUpdate'] && body.gameObject.heroUpdate) {
+        if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton']) {
           let hero = w.game.heros[po.gameObject.parentId]
           hero.flags._showInteract = true
           let input = window.heroInput[hero.id]
-          if(input && 90 in input) {
-            heroTool.onCollide(hero, body.gameObject, result, removeObjects, respawnObjects)
+          if(input && 88 in input) {
+            heroTool.onCollide(hero, body.gameObject, result, removeObjects, respawnObjects, { fromInteractButton: true })
           }
         }
 

@@ -208,7 +208,7 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-function onCollide(hero, collider, result, removeObjects, respawnObjects) {
+function onCollide(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   if(collider.tags && collider.tags['monster']) {
     if(hero.tags['monsterDestroyer']) {
       if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
@@ -242,7 +242,8 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects) {
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     heroUpdate(hero, collider)
-  } else {
+    if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
+  } else if(!options.fromInteractButton && collider.parentId !== hero.id){
     hero.lastPowerUpId = null
   }
 
@@ -289,7 +290,6 @@ function heroUpdate (hero, collider) {
     }
     hero.updateHistory.push(update)
     window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
-    hero.lastPowerUpId = collider.id
 
     if(collider.tags['revertAfterTimeout']) {
       setRevertUpdateTimeout(hero, collider)

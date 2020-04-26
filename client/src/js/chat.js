@@ -52,7 +52,7 @@ function drawChat(ctx, chat){
 	ctx.textAlign = 'start'
 	ctx.textBaseline = 'alphabetic'
 
-	ctx.font =`24pt Arial`
+	ctx.font =`24pt Courier New`
 	ctx.fillStyle="white"
 	//portrait name
 	if(chat.name) {
@@ -62,7 +62,7 @@ function drawChat(ctx, chat){
 	//text
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	let text = chat[0]
-	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
+	ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
 	wrapText(ctx, text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier, 410 * window.canvasMultiplier, 25 * window.canvasMultiplier)
 
 	// more text icon

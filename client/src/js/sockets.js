@@ -462,39 +462,51 @@ function init() {
   })
 
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
-    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
-      window.openNameObjectModal(object, (result) => {
-        if(result.value[0] && result.value[0].length) {
-          object.name = result.value[0]
-          object.namePosition = "center"
-          if(result.value[1]) object.namePosition = "center"
-          if(result.value[2]) object.namePosition = "above"
-          window.removeObjectState(object)
-          window.socket.emit('editObjects', [object])
-        }
-      })
+    if(window.host) {
+      w.game.heros[heroId].flags.typingMode = true
+
+      if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+        window.openNameObjectModal(object, (result) => {
+          if(result.value[0] && result.value[0].length) {
+            object.name = result.value[0]
+            object.namePosition = "center"
+            if(result.value[1]) object.namePosition = "center"
+            if(result.value[2]) object.namePosition = "above"
+            window.removeObjectState(object)
+            window.socket.emit('editObjects', [object])
+            w.game.heros[heroId].flags.typingMode = false
+          }
+        })
+      }
     }
+
+
     // let ctx = document.getElementById('swal-canvas').getContext('2d')
     // ctx.fillStyle = object.color
     // ctx.fillRect(10, 10, object.width, object.height);
   })
 
   window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
-    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
-      window.openWriteChatModal(object, (result) => {
-        if(result.value && result.value.length) {
-          object.tags.heroUpdate = true
-          object.heroUpdate = {
-            chat: [result.value],
-            flags : {
-              showChat: true,
-              paused: true,
+    if(window.host) {
+      w.game.heros[heroId].flags.typingMode = true
+
+      if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+        window.openWriteChatModal(object, (result) => {
+          if(result.value && result.value.length) {
+            object.tags.heroUpdate = true
+            object.heroUpdate = {
+              chat: [result.value],
+              flags : {
+                showChat: true,
+                paused: true,
+              }
             }
+            window.removeObjectState(object)
+            window.socket.emit('editObjects', [object])
+            w.game.heros[heroId].flags.typingMode = false
           }
-          window.removeObjectState(object)
-          window.socket.emit('editObjects', [object])
-        }
-      })
+        })
+      }
     }
   })
 }

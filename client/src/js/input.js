@@ -30,7 +30,7 @@ function init(){
 }
 
 function update(hero, keysDown, delta) {
-  if(hero.flags.paused) return
+  if(hero.flags.paused || hero.flags.typingMode) return
 
   hero._initialX = hero.x
   hero._initialY = hero.y
@@ -181,6 +181,8 @@ function getDirection() {
 }
 
 function keyDown(keyCode, hero) {
+  if(hero.flags.typingMode) return
+
   if(32 === keyCode) {
     if(hero.chat.length) {
       hero.chat.shift()

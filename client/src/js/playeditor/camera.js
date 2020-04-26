@@ -84,8 +84,8 @@ function drawNameCenter(ctx, object) {
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   let lineWidth = object.width/4
-  // NEED TO REVISE THIS WHOLE GOD DAMN THING
-  window.wrapText(ctx, object.name, ((object.x+(object.width/2))*window.scaleMultiplier - camera.x), ((object.y+(object.height/2))*window.scaleMultiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, object.name, ((object.x+(object.width/2))*window.scaleMultiplier - camera.x), ((object.y+(object.height/2))*window.scaleMultiplier - camera.y - (height/2)), lineWidth, fontSize)
 }
 
 function drawNameAbove(ctx, object) {

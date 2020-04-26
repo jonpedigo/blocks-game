@@ -75,6 +75,7 @@ function drawName(ctx, object){
 	ctx.font = "12px Courier New";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
+
 	ctx.fillText(object.name ? object.name : '', object.x - camera.x, object.y - camera.y);
 }
 
@@ -82,13 +83,15 @@ function drawNameCenter(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
   let fontSize = 12
   ctx.font = `${fontSize}px Courier New`;
-  ctx.textAlign = "left";
+  ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  let lineWidth = (object.width/2)/camera.multiplier
+  // ctx.textAlign = 'start'
+  // ctx.textBaseline = 'alphabetic'
+  let lineWidth = (object.width - fontSize)/camera.multiplier
   // NEED TO REVISE THIS WHOLE GOD DAMN THING
   let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
   // console.log(object.width, )
-  window.wrapText(ctx, object.name, (object.x+(object.width/2 - width/2))/camera.multiplier - camera.x, ((object.y+(object.height/2))/camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
+  window.wrapText(ctx, object.name, (object.x+(object.width/2))/camera.multiplier - camera.x, ((object.y+(object.height/2))/camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
   // window.wrapText(ctx, object.name, ((object.x+(object.width/2))/camera.multiplier - camera.x), ((object.y+(object.height/2))/camera.multiplier - camera.y - (fontSize/2)), lineWidth, fontSize)
 }
 
@@ -98,7 +101,7 @@ function drawNameAbove(ctx, object) {
   ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  let lineWidth = (object.width)/camera.multiplier
+  let lineWidth = (object.width - fontSize)/camera.multiplier
   // NEED TO REVISE THIS WHOLE GOD DAMN THING
   let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
   // console.log(object.width, )

@@ -28,6 +28,7 @@ function start() {
 // only on client
 function keyDown(keyCode, hero) {
   if(hero.flags.paused || w.game.gameState.paused) return
+  // for keyCode 88 ( x ) can conflict with interact engine - && !hero.flags._showInteract
 
   if(keyCode === 90) {
     if(hero.actionButtonBehavior === 'shootBullet') {
