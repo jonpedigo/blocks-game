@@ -348,6 +348,11 @@ window.findHeroInNewGame = function(game, hero) {
   return window.resetHeroToDefault(hero, game)
 }
 
+window.addHeroToGame = function(hero) {
+  physics.addObject(hero)
+  window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
+}
+
 export default {
   init,
   onCollide,

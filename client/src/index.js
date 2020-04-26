@@ -424,6 +424,7 @@ window.loadGame = function(game) {
       if(!w.game.heros) w.game.heros = {}
       Object.keys(w.game.heros).forEach((id) => {
         w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
+        window.addHeroToGame(w.game.heros[id])
       })
     }
   }
@@ -436,15 +437,14 @@ window.loadGame = function(game) {
       w.game.heros[window.hero.id] = window.hero
     }
   }
-
-  Object.keys(w.game.heros).forEach((id) => {
-    physics.addObject(w.game.heros[id])
-  })
-
   if(!w.game.objectsById) w.game.objectsById = {}
   w.game.objects.forEach((object) => {
     w.game.objectsById[object.id] = object
     physics.addObject(object)
+  })
+
+  Object.keys(w.game.heros).forEach((id) => {
+    physics.addObject(w.game.heros[id])
   })
 
   // grid

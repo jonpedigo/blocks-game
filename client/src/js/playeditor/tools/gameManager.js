@@ -255,6 +255,7 @@ function resetSpawnZone(object) {
 // client uses this sometimes
 window.resetAllObjectState = function() {
   w.editingGame.objects = w.editingGame.objects.reduce((arr, object) => {
+    if(object.actionTriggerArea) return arr.push(object)
     if(object.spawned) {
       if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
@@ -276,7 +277,6 @@ window.resetAllObjectState = function() {
     window.respawnObject(object)
     return arr
   }, [])
-  console.log(w.editingGame.objects)
   if(!w.editingGame.branch) window.socket.emit('editObjects', w.editingGame.objects)
 }
 

@@ -21,7 +21,7 @@ function init() {
           w.game.heros[hero.id] = hero
         }
         hero.id = heroId
-        physics.addObject(hero)
+        window.addHeroToGame(hero)
         window.socket.emit('addHeroToGame', hero)
       }
     })
@@ -272,13 +272,20 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onResetObjects', (updatedObjects) => {
-    w.game.objects.forEach((object) => {
-      if(object.removed) return
-
+    w.game.objects = w.game.objects.reduce((arr, object) => {
+      if(object.removed) return arr
+      if(object.actionTriggerArea) {
+        arr.push(object)
+        return arr
+      }
       physics.removeObject(object)
-    })
-    w.game.objects.length = 0
-    w.game.objectsById = {}
+      return arr
+    }, [])
+
+    w.game.objectsById = w.game.objects.reduce((prev, next) => {
+      prev[next.id] = next
+      return prev
+    }, {})
 
     if(!w.game.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
@@ -505,6 +512,10 @@ window.unloadGame = function() {
     }
     w.game.objects.forEach((object) => {
       physics.removeObjectById(object.id)
+    })
+    Object.keys(w.game.heros).forEach((heroId) => {
+      let hero = w.game.heros[heroId]
+      physics.removeObjectById(hero.id)
     })
   }
 }

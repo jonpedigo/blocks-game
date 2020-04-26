@@ -651,7 +651,7 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    containObjectWithinGridBoundaries(object)
+    if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
     object._deltaX = object.x - object._initialX
     object._deltaY = object.y - object._initialY
   })

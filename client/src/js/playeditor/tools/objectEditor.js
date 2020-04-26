@@ -19,6 +19,10 @@ function init() {
         gridTool.addObstacle({...object, tags: editorState.tags})
       }
 
+      if((object.tags.requireActionButton == false && editorState.tags.requireActionButton == true) || (object.tags.stationary == false && editorState.tags.stationary == true)) {
+
+      }
+
       window.objecteditor.saved = false
       window.updateObjectEditorNotifier()
     } else {
