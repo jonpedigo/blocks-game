@@ -69,15 +69,11 @@ function loaded() {
 window.spawnHero = function (hero, game = w.game) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
-    hero.x = hero.spawnPointX;
-    hero.y = hero.spawnPointY;
+    window.updateObjectPos(hero, {x: hero.spawnPointX, y: hero.spawnPointY})
   } else if(game && game.world.worldSpawnPointX && game.world.worldSpawnPointX >= 0) {
-    hero.x = game.world.worldSpawnPointX
-    hero.y = game.world.worldSpawnPointY
+    window.updateObjectPos(hero, {x: game.world.worldSpawnPointX, y:  game.world.worldSpawnPointY})
   } else {
-    // default pos
-    hero.x = 960;
-    hero.y = 960;
+    window.updateObjectPos(hero, {x: 960, y:  960})
   }
 }
 
@@ -124,6 +120,7 @@ window.updateAllHeros = function(update) {
 }
 
 window.resetHeroToDefault = function(hero, game = w.game) {
+  window.removeHeroFromGame(hero)
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
   if(window.game.hero) {
     newHero = JSON.parse(JSON.stringify(window.game.hero))
@@ -132,6 +129,7 @@ window.resetHeroToDefault = function(hero, game = w.game) {
     newHero.id = hero.id
   }
   window.spawnHero(newHero)
+  window.addHeroToGame(newHero)
   return newHero
 }
 // window.resetHeroToDefault = function(hero) {
@@ -351,6 +349,14 @@ window.findHeroInNewGame = function(game, hero) {
 window.addHeroToGame = function(hero) {
   physics.addObject(hero)
   window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
+}
+
+window.removeHeroFromGame = function(hero) {
+  physics.removeObject(hero)
+  w.game.objects.forEach((obj) => {
+    if(obj.parentId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
+  })
+  // window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
 }
 
 export default {

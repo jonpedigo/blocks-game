@@ -67,7 +67,12 @@ function clickOnCompendium(rightClick, compendium) {
         let objectById = w.editingGame.objectsById[editorState.id]
         let compendiumCopy = JSON.parse(JSON.stringify(compendium))
         delete compendiumCopy.compendiumId
-        let updated = window.mergeDeep(objectById, compendiumCopy)
+        let updated
+        if(compendium.compendiumId === 'default') {
+          updated = window.mergeDeep(compendiumCopy, objectById)
+        } else {
+          updated = window.mergeDeep(objectById, compendiumCopy)
+        }
         window.objecteditor.update(updated)
         window.objecteditor.saved = false
         window.updateObjectEditorNotifier()
@@ -77,7 +82,13 @@ function clickOnCompendium(rightClick, compendium) {
         let editorState = window.objecteditor.get()
         let compendiumCopy = JSON.parse(JSON.stringify(compendium))
         delete compendiumCopy.compendiumId
-        window.objecteditor.update(window.mergeDeep(editorState, compendiumCopy))
+        let updated
+        if(compendium.compendiumId === 'default') {
+          updated = window.mergeDeep(compendiumCopy, editorState)
+        } else {
+          updated = window.mergeDeep(editorState, compendiumCopy)
+        }
+        window.objecteditor.update(updated)
         window.objecteditor.saved = false
         window.updateObjectEditorNotifier()
       }
@@ -98,11 +109,11 @@ function updateCompendium() {
     defaultEl.innerHTML = 'Default Object'
     defaultEl.onclick= function(e) {
       window.objecteditor.defaultCompendium = false
-      clickOnCompendium(false, window.defaultObject)
+      clickOnCompendium(false, {...window.defaultObject, compendiumId: 'default'})
     }
     defaultEl.oncontextmenu = function(e) {
       e.preventDefault()
-      clickOnCompendium(true, window.defaultObject)
+      clickOnCompendium(true, {...window.defaultObject, compendiumId: 'default'})
     }
     e[i].appendChild(defaultEl)
 

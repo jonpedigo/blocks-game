@@ -87,6 +87,17 @@ function update() {
 
   chat.render(ctx);
 	feedback.draw(ctx);
+
+  if(window.hero && window.hero.flags._showInteract) {
+    ctx.fillStyle = "rgb(255, 255, 255)";
+    let text = "Press Z to interact"
+    ctx.textAlign = 'center'
+    // ctx.textBaseline = 'alphabetic'
+    ctx.font =`${18 * window.canvasMultiplier}pt Arial`
+    // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
+    ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
+  }
+
 }
 
 export default {

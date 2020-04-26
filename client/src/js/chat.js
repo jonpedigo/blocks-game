@@ -49,6 +49,9 @@ function drawChat(ctx, chat){
 	// 	}
 	// }
 
+	ctx.textAlign = 'start'
+	ctx.textBaseline = 'alphabetic'
+
 	ctx.font =`24pt Arial`
 	ctx.fillStyle="white"
 	//portrait name

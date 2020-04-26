@@ -247,6 +247,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
       continue
     }
     if(body.gameObject.removed) continue
+    if(body.gameObject.tags['requireActionButton']) continue
     if(heroPO.collides(body, result)) {
       heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
     }
@@ -381,6 +382,9 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
+    if(object.flags) {
+      delete object.flags._showInteract 
+    }
   })
 }
 
@@ -596,6 +600,15 @@ function update (delta) {
           }
         } else {
           po.gameObject.lastPowerUpId = null
+        }
+
+        if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton'] && body.gameObject.tags['heroUpdate'] && body.gameObject.heroUpdate) {
+          let hero = w.game.heros[po.gameObject.parentId]
+          hero.flags._showInteract = true
+          let input = window.heroInput[hero.id]
+          if(input && 90 in input) {
+            heroTool.onCollide(hero, body.gameObject, result, removeObjects, respawnObjects)
+          }
         }
 
         let hero = window.hero
