@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
+import modals from './modals.js'
 
 class contextMenuEl extends React.Component{
   constructor(props) {
@@ -12,52 +13,65 @@ class contextMenuEl extends React.Component{
         left: e.pageX,
         top: e.pageY
       };
-      this.setContextMenuPosition(origin);
+      this._setContextMenuPosition(origin);
       return false;
     });
 
     window.addEventListener("click", e => {
-      this.toggleContextMenu("hide");
+      this._toggleContextMenu("hide");
     });
 
     this.state = {
       hide: true
     }
+
+    this._handleClick = ({ key }) => {
+      const { editor } = this.props;
+
+      if(key === "name-object") {
+        modals.nameObject(editor.objectHighlighted)
+      }
+
+      if(key === "write-dialogue") {
+        modals.writeDialogue(editor.objectHighlighted)
+      }
+    }
   }
 
-  setContextMenuPosition({ top, left }) {
+  _setContextMenuPosition({ top, left }) {
     const { editor } = this.props;
-
     editor.contextMenu.style.left = `${left}px`;
     editor.contextMenu.style.top = `${top}px`;
-    this.toggleContextMenu('show');
+    this._toggleContextMenu('show');
   };
 
-  toggleContextMenu(command) {
-    const { editor } = this.props;
-
+  _toggleContextMenu(command) {
     if(command === "show") {
       this.setState({ hide: false })
     } else {
       this.setState({ hide: true })
     }
-
-    // editor.contextMenu.style.display = command === "show" ? "block" : "none";
   };
 
   render() {
     const { editor } = this.props;
 
-    if(this.state.hide || !editor.gridHighlight.id) {
+    if(this.state.hide || !editor.objectHighlighted.id) {
       editor.contextMenuVisible = false
       return null
     }
 
     editor.contextMenuVisible = true
-    return <Menu>
-      <MenuItem>1</MenuItem>
-      <SubMenu title="2">
-        <MenuItem>2-1</MenuItem>
+    return <Menu onClick={this._handleClick}>
+      <MenuItem>Drag</MenuItem>
+      <MenuItem>Resize</MenuItem>
+      <MenuItem>Delete</MenuItem>
+      <MenuItem>Copy</MenuItem>
+      <MenuItem key="write-dialogue">Dialogue</MenuItem>
+      <SubMenu title="Name">
+        <MenuItem key="name-object">Give Name</MenuItem>
+        <MenuItem>Position Name in Center</MenuItem>
+        <MenuItem>Position Name above</MenuItem>
       </SubMenu>
     </Menu>
   }
@@ -72,8 +86,6 @@ function init(editor, options) {
     React.createElement(contextMenuEl, { editor }),
     editor.contextMenu
   )
-
-  editor.contextMenuVisible = false;
 }
 
 export default {

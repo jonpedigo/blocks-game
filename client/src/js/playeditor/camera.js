@@ -79,7 +79,7 @@ function drawObject(ctx, object, withNames = false) {
 
 function drawNameCenter(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 8
+  let fontSize = 8 * (window.scaleMultiplier)
   ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
@@ -90,7 +90,7 @@ function drawNameCenter(ctx, object) {
 
 function drawNameAbove(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 8
+  let fontSize = 8 * (window.scaleMultiplier)
   ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";

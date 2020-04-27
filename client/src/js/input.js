@@ -18,7 +18,7 @@ function init(){
       if(window.host) {
         keyDown(e.keyCode, window.hero)
         window.heroInput[window.hero.id] = window.keysDown
-      } else {
+      } else if(!window.pageState.typingMode){
         window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
       }
     }
@@ -30,7 +30,7 @@ function init(){
 }
 
 function update(hero, keysDown, delta) {
-  if(hero.flags.paused || hero.flags.typingMode) return
+  if(hero.flags.paused) return
 
   hero._initialX = hero.x
   hero._initialY = hero.y

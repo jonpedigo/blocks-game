@@ -6,16 +6,25 @@
   font-style: normal;
 }
 
+#context-menu {
+  /* width: 120px; */
+  position: fixed;
+  background: #222;
+  color: white;
+  z-index: 1;
+  box-shadow: 0 0 4px #222;
+}
+
 .rc-menu {
   outline: none;
-  margin-bottom: 0;
+  margin: 0;
   padding-left: 0;
   padding-right: 0;
   list-style: none;
-  border: 1px solid #d9d9d9;
-  box-shadow: 0 0 4px #d9d9d9;
-  border-radius: 3px;
-  color: #666;
+  font-family: Courier new;
+}
+.rc-menu-item {
+  color: white;
 }
 .rc-menu-rtl {
   direction: rtl;
@@ -32,21 +41,20 @@
   padding: 0;
 }
 .rc-menu-item-group-title {
-  color: #999;
+  color: white;
   line-height: 1.5;
   padding: 8px 10px;
-  border-bottom: 1px solid #dedede;
 }
 .rc-menu-item-active,
 .rc-menu-submenu-active > .rc-menu-submenu-title {
-  background-color: #eaf8fe;
+  background-color: #222;
 }
 .rc-menu-item-selected {
-  background-color: #eaf8fe;
+  background-color: #222;
   transform: translateZ(0);
 }
 .rc-menu-submenu-selected {
-  background-color: #eaf8fe;
+  background-color: #222;
 }
 .rc-menu > li.rc-menu-submenu {
   padding: 0;
@@ -74,7 +82,7 @@
 .rc-menu-submenu-title.rc-menu-item-disabled,
 .rc-menu-item.rc-menu-submenu-disabled,
 .rc-menu-submenu-title.rc-menu-submenu-disabled {
-  color: #777 !important;
+  color: white;
 }
 .rc-menu > .rc-menu-item-divider {
   height: 1px;
@@ -96,7 +104,7 @@
   padding-left: 20px;
 }
 .rc-menu-submenu > .rc-menu {
-  background-color: #fff;
+  background-color: #222;
 }
 .rc-menu .rc-menu-submenu-title .anticon,
 .rc-menu .rc-menu-item .anticon {
@@ -111,9 +119,8 @@
   margin-left: 8px;
 }
 .rc-menu-horizontal {
-  background-color: #f3f5f7;
+  background-color: #222;
   border: none;
-  border-bottom: 1px solid #d9d9d9;
   box-shadow: none;
   white-space: nowrap;
   overflow: hidden;
@@ -124,15 +131,13 @@
 }
 .rc-menu-horizontal > .rc-menu-submenu,
 .rc-menu-horizontal > .rc-menu-item {
-  border-bottom: 2px solid transparent;
   display: inline-block;
   vertical-align: bottom;
 }
 .rc-menu-horizontal > .rc-menu-submenu-active,
 .rc-menu-horizontal > .rc-menu-item-active {
-  border-bottom: 2px solid #2db7f5;
-  background-color: #f3f5f7;
-  color: #2baee9;
+  background-color: #222;
+  color: white;
 }
 .rc-menu-horizontal:after {
   content: '\20';
@@ -154,7 +159,7 @@
 .rc-menu-vertical-left > .rc-menu-submenu > .rc-menu-submenu-title,
 .rc-menu-vertical-right > .rc-menu-submenu > .rc-menu-submenu-title,
 .rc-menu-inline > .rc-menu-submenu > .rc-menu-submenu-title {
-  padding: 12px 8px 12px 24px;
+  padding: 12px 24px 12px 24px;
 }
 .rc-menu-rtl.rc-menu-vertical > .rc-menu-item,
 .rc-menu-rtl.rc-menu-vertical-left > .rc-menu-item,

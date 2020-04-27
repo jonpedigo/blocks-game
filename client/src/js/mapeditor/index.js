@@ -15,7 +15,7 @@ window.mapEditor = {
     x: null,
     y: null,
   },
-  gridHighlight: null
+  objectHighlighted: null
 }
 
 function updateGridHighlight(location, game, camera) {
@@ -30,20 +30,19 @@ function updateGridHighlight(location, game, camera) {
     height: w.game.grid.nodeSize
   }
 
-  mapEditor.gridHighlight = mouseLocation
+  mapEditor.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
   let smallestObject = findSmallestObjectInArea(mouseLocation, game.objects)
-  if(smallestObject) mapEditor.gridHighlight = smallestObject
+  if(smallestObject) mapEditor.objectHighlighted = smallestObject
 
-  if(mapEditor.gridHighlight.id) {
+  mapEditor.objectHighlightedChildren = []
+  if(mapEditor.objectHighlighted.id) {
     // see if grid high light has children or is child
-    const { parent, children } = getObjectRelations(mapEditor.gridHighlight, game)
-    if(children.length && parent.id === mapEditor.gridHighlight.id) {
-      mapEditor.gridHighlight = {
-        parent,
-        children
-      }
+    const { parent, children } = getObjectRelations(mapEditor.objectHighlighted, game)
+    if(children.length && parent.id === mapEditor.objectHighlighted.id) {
+      mapEditor.objectHighlighted = parent
+      mapEditor.objectHighlightedChildren = children
     }
   }
 }
@@ -139,7 +138,7 @@ function handleMouseMove(event, game, camera) {
   //     delete child.__relativeToParentX
   //     delete child.__relativeToParentY
   //   })
-  //   gridHighlight = { parent, children }
+  //   objectHighlighted = { parent, children }
   // }
 }
 
@@ -150,7 +149,7 @@ function handleMouseUp(e, camera) {
   let deltaY = clickEndY - mapEditor.clickStart.y
 
   if(deltaX > 10 && deltaY > 10) {
-    // startDrag(gridHighlight)
+    // startDrag(objectHighlighted)
   }
 }
 
@@ -211,15 +210,16 @@ function getObjectRelations(object, game) {
 }
 
 function render(ctx, game, camera) {
-  const { gridHighlight } = mapEditor
+  const { objectHighlighted, objectHighlightedChildren } = mapEditor
 
-  if(gridHighlight && gridHighlight.parent) {
-    camera.drawObject(ctx, {...gridHighlight.parent, color: 'rgba(255,255,255, .1)'})
-    gridHighlight.children.forEach((object) => {
-      camera.drawObject(ctx, {...object, color: 'rgba(255,255,255,0.2)'})
+  if(objectHighlighted) {
+    camera.drawObject(ctx, {...objectHighlighted, color: 'rgba(255,255,255,0.2)'})
+  }
+
+  if(objectHighlightedChildren) {
+    objectHighlightedChildren.forEach((object) => {
+      camera.drawObject(ctx, {...object, color: 'rgba(255,255,255,0.1)'})
     })
-  } else if(gridHighlight) {
-    camera.drawObject(ctx, {...gridHighlight, color: 'rgba(255,255,255,0.2)'})
   }
 }
 

@@ -81,7 +81,8 @@ function drawName(ctx, object){
 
 function drawNameCenter(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 12
+  let fontSize = 20/(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
   ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
@@ -97,7 +98,8 @@ function drawNameCenter(ctx, object) {
 
 function drawNameAbove(ctx, object) {
   ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 12
+  let fontSize = 20/(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
   ctx.font = `${fontSize}px Courier New`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";

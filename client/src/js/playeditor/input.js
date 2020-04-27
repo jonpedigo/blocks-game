@@ -1,3 +1,5 @@
+import modals from '../mapeditor/modals.js'
+
 const keysDown = {}
 window.keysDown = {}
 
@@ -62,37 +64,21 @@ function init(hero){
       //n
       if(keysDown['78']){
         let oe = window.objecteditor.get()
-        window.openNameObjectModal(oe, (result) => {
-          if(result.value[0] && result.value[0].length) {
-            oe.name = result.value[0]
-            object.namePosition = "center"
-            if(result.value[1]) object.namePosition = "center"
-            if(result.value[2]) object.namePosition = "above"
-            window.objecteditor.saved = false
-            window.objecteditor.update(oe)
-            window.updateObjectEditorNotifier()
-          }
+        modals.nameObject(oe, (object) => {
+          window.objecteditor.saved = false
+          window.objecteditor.update(object)
+          window.updateObjectEditorNotifier()
         })
         e.preventDefault()
       }
 
-      //n
+      //b
       if(keysDown['66']){
         let oe = window.objecteditor.get()
-        window.openWriteChatModal(oe, (result) => {
-          if(result.value && result.value.length) {
-            oe.tags.heroUpdate = true
-            oe.heroUpdate = {
-              chat: [result.value],
-              flags : {
-                showChat: true,
-                paused: true,
-              }
-            }
-            window.objecteditor.saved = false
-            window.objecteditor.update(oe)
-            window.updateObjectEditorNotifier()
-          }
+        modals.writeDialogue(oe, (object) => {
+          window.objecteditor.saved = false
+          window.objecteditor.update(object)
+          window.updateObjectEditorNotifier()
         })
         e.preventDefault()
       }
