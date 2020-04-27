@@ -382,9 +382,7 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
-    if(object.flags) {
-      delete object.flags._showInteract
-    }
+    object._interactableObject = null
   })
 }
 
@@ -603,11 +601,13 @@ function update (delta) {
         }
 
         if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton']) {
-          let hero = w.game.heros[po.gameObject.parentId]
-          hero.flags._showInteract = true
-          let input = window.heroInput[hero.id]
-          if(input && 88 in input) {
-            heroTool.onCollide(hero, body.gameObject, result, removeObjects, respawnObjects, { fromInteractButton: true })
+          let hero = w.game.heros[po.gameObject.relativeId]
+          if(!hero._interactableObject) {
+            hero._interactableObject = body.gameObject
+            hero._interactableObjectResult = result
+          } else if(body.gameObject.width < hero._interactableObject.width || body.gameObject.height < hero._interactableObject.height) {
+            hero._interactableObject = body.gameObject
+            hero._interactableObjectResult = result
           }
         }
 
@@ -645,6 +645,29 @@ function update (delta) {
     }
   }
 
+  w.game.objects.forEach((object, i) => {
+    if(object.removed || object.relativeId) return
+    if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
+    object._deltaX = object.x - object._initialX
+    object._deltaY = object.y - object._initialY
+  })
+
+  allHeros.forEach((hero) => {
+    if(hero.removed) return
+    containObjectWithinGridBoundaries(hero)
+    hero._deltaX = hero.x - hero._initialX
+    hero._deltaY = hero.y - hero._initialY
+    if(hero._interactableObject) {
+      let input = window.heroInput[hero.id]
+      // INTERACT WITH SMALLEST OBJECT
+      if(input && 88 in input) {
+        heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
+      }
+      // bad for JSON
+      delete hero._interactableObjectResult
+    }
+  })
+
   removeObjects.forEach((gameObject) => {
     // remove locally first
     gameObject.removed = true
@@ -660,20 +683,6 @@ function update (delta) {
     } else {
       window.socket.emit('deleteObject', gameObject)
     }
-  })
-
-  w.game.objects.forEach((object, i) => {
-    if(object.removed || object.relativeId) return
-    if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
-    object._deltaX = object.x - object._initialX
-    object._deltaY = object.y - object._initialY
-  })
-
-  allHeros.forEach((hero) => {
-    if(hero.removed) return
-    containObjectWithinGridBoundaries(hero)
-    hero._deltaX = hero.x - hero._initialX
-    hero._deltaY = hero.y - hero._initialY
   })
 
   w.game.objects.forEach((object, i) => {

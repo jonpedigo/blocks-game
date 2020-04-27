@@ -51,15 +51,17 @@ function drawChat(ctx, chat){
 
 	ctx.textAlign = 'start'
 	ctx.textBaseline = 'alphabetic'
-
-	ctx.font =`24pt Courier New`
+	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
 	ctx.fillStyle="white"
 	//portrait name
 	if(chat.name) {
-		ctx.fillText(chat.name ? chat.name : '???', window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - 110, 205)
+		ctx.fontWeight = "normal"
+		let x = window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
+		ctx.fillText(chat.name, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) )
 	}
 
 	//text
+	ctx.fontWeight = "normal"
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	let text = chat[0]
 	ctx.font =`${18 * window.canvasMultiplier}pt Courier New`

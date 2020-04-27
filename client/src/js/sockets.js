@@ -69,12 +69,13 @@ function init() {
           obj.velocityY = 0
         }
         let objectById = w.game.objectsById[obj.id]
-        if(!obj.x) {
-          obj.x = objectById.x
-        }
-        if(!obj.y) {
-          obj.y = objectById.y
-        }
+        // if(!obj.x) {
+        //   obj.x = objectById.x
+        // }
+        // if(!obj.y) {
+        //   obj.y = objectById.y
+        // }
+        obj.path = null
         window.mergeDeep(objectById, obj)
       })
       if(!w.game.world.globalTags.calculatePathCollisions) {

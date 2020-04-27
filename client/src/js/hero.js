@@ -289,7 +289,11 @@ function heroUpdate (hero, collider) {
       }
     }
     hero.updateHistory.push(update)
+
     window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
+    if(heroUpdate.chat && collider.name) {
+      hero.chat.name = collider.name
+    }
 
     if(collider.tags['revertAfterTimeout']) {
       setRevertUpdateTimeout(hero, collider)

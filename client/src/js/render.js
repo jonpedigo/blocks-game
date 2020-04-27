@@ -88,7 +88,7 @@ function update() {
   chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(window.hero && window.hero.flags._showInteract && !window.hero.flags.showChat) {
+  if(window.hero && window.hero._interactableObject && !window.hero.flags.showChat) {
     ctx.fillStyle = "rgb(255, 255, 255)";
     let text = "Press X to interact"
     ctx.textAlign = 'center'
