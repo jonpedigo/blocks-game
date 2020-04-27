@@ -112,7 +112,6 @@ function drawObject(ctx, object, withNames = false) {
   if(object.color) ctx.fillStyle = object.color
   ctx.fillRect((object.x/camera.multiplier - camera.x), (object.y/camera.multiplier - camera.y), (object.width/camera.multiplier), (object.height/camera.multiplier));
   // ctx.fillStyle = 'white';
-
   if(withNames) {
     drawName(ctx, object)
   }

@@ -123,6 +123,13 @@ module.exports = {
           context: 'src', // prevent display of src/ in filename
         },
       },
+
+      // react
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      }
     ],
   },
 }

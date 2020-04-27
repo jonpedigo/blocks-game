@@ -109,6 +109,7 @@ import input from './js/input.js'
 import camera from './js/camera.js'
 import collisions from './js/collisions.js'
 import playEditor from './js/playeditor/playeditor.js'
+import mapEditor from './js/mapeditor/index.js'
 import shadow from './js/shadow.js'
 import intelligence from './js/intelligence.js'
 import grid from './js/grid.js'
@@ -152,6 +153,10 @@ window.onPageLoad = function() {
 
   if(window.getParameterByName('host')) {
     window.host = true
+  }
+
+  if(window.getParameterByName('mapEditor')) {
+    window.isMapEditor = true
   }
 
   if(window.getParameterByName('arcadeMode')) {
@@ -236,6 +241,10 @@ window.initializeGame = function (initialGameId) {
   sockets.init()
   gameState.init()
   hero.init()
+
+  if(window.isMapEditor) {
+    mapEditor.init(ctx, w.game, camera.get())
+  }
 
   if(window.usePlayEditor) {
 		playEditor.init(ctx)
@@ -666,6 +675,8 @@ function renderGame(delta) {
     playEditor.render(ctx, window.hero, w.game.objects);
   }
 
+
+
   if(window.isPlayer) {
     render.update(ctx, delta);
     /// DEFAULT GAME FX
@@ -687,6 +698,10 @@ function renderGame(delta) {
     if(window.hero.animationZoomMultiplier) {
       constellation.animate()
     }
+  }
+
+  if(window.isMapEditor) {
+    mapEditor.render(ctx, w.game, camera)
   }
 }
 

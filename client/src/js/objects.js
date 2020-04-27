@@ -247,13 +247,13 @@ window.openWriteChatModal = function(object, cb) {
   }).then(cb)
 }
 
-window.updateObjectPos = function(object, newPos) {
+window.updateObjectPos = function(object, newPos, game = w.game) {
   let diffX = newPos.x - object.x
   let diffY = newPos.y - object.y
   //also update children
   // console.log(diffX, diffY, newPos, object)
 
-  w.game.objects.forEach((obj) => {
+  game.objects.forEach((obj) => {
     if(obj.parentId === object.id) {
       obj.x += diffX
       obj.y += diffY
