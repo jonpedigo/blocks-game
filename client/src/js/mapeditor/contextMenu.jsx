@@ -13,7 +13,7 @@ class contextMenuEl extends React.Component{
         left: e.pageX,
         top: e.pageY
       };
-      this._setContextMenuPosition(origin);
+      this.setContextMenuPosition(origin);
       return false;
     });
 
@@ -28,6 +28,10 @@ class contextMenuEl extends React.Component{
     this._handleClick = ({ key }) => {
       const { editor } = this.props;
 
+      if(key === 'add-object') {
+        window.addObjects(editor.objectHighlighted)
+      }
+
       if(key === "name-object") {
         modals.nameObject(editor.objectHighlighted)
       }
@@ -38,13 +42,6 @@ class contextMenuEl extends React.Component{
     }
   }
 
-  _setContextMenuPosition({ top, left }) {
-    const { editor } = this.props;
-    editor.contextMenu.style.left = `${left}px`;
-    editor.contextMenu.style.top = `${top}px`;
-    this._toggleContextMenu('show');
-  };
-
   _toggleContextMenu(command) {
     if(command === "show") {
       this.setState({ hide: false })
@@ -53,15 +50,28 @@ class contextMenuEl extends React.Component{
     }
   };
 
+  setContextMenuPosition({ top, left }) {
+    const { editor } = this.props;
+    editor.contextMenu.style.left = `${left}px`;
+    editor.contextMenu.style.top = `${top}px`;
+    this.toggleContextMenu('show');
+  };
+
   render() {
     const { editor } = this.props;
 
-    if(this.state.hide || !editor.objectHighlighted.id) {
+    if(this.state.hide) {
       editor.contextMenuVisible = false
       return null
     }
 
     editor.contextMenuVisible = true
+    if(!editor.objectHighlighted.id) {
+      return <Menu onClick={this._handleClick}>
+        <MenuItem key='add-object'>Add</MenuItem>
+      </Menu>
+    }
+
     return <Menu onClick={this._handleClick}>
       <MenuItem>Drag</MenuItem>
       <MenuItem>Resize</MenuItem>
@@ -78,15 +88,15 @@ class contextMenuEl extends React.Component{
 }
 
 function init(editor, options) {
-  // CONTEXT MENU
   editor.contextMenu = document.getElementById('context-menu')
 
   // Mount React App
   ReactDOM.render(
-    React.createElement(contextMenuEl, { editor }),
+    React.createElement(contextMenuEl, { editor, ref: ref => editor.contextMenuRef = ref }),
     editor.contextMenu
   )
 }
+
 
 export default {
   init

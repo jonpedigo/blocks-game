@@ -50,6 +50,16 @@ function updateGridHighlight(location, game, camera) {
 function handleMouseMove(event, game, camera) {
   mapEditor.mousePos.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.mousePos.y = ((event.offsetY + camera.y) * camera.multiplier)
+
+  let deltaX = mapEditor.mousePos.x - mapEditor.clickStart.x
+  let deltaY = mapEditor.mousePos.y - mapEditor.clickStart.y
+  // if(deltaX > 10 && deltaY > 10) {
+  //   onSizeObjectStart(objectHighlighted)
+  // }
+
+
+
+  
   //
   // if(draggingObject) {
   //   if(window.draggingObject.parent) {
@@ -148,9 +158,25 @@ function handleMouseUp(e, camera) {
   let deltaX = clickEndX - mapEditor.clickStart.x
   let deltaY = clickEndY - mapEditor.clickStart.y
 
-  if(deltaX > 10 && deltaY > 10) {
-    // startDrag(objectHighlighted)
+  if(mapEditor.draggingObject) {
+    onSizeObjectEnd(objectHighlighted)
   }
+
+  // else {
+  //   if(deltaX > 10 && deltaY > 10) {
+  //     onDragStart(objectHighlighted)
+  //   }
+  // }
+}
+
+function onSizeObjectStart() {
+  grid.snapDragToGrid(location, {dragging: true})
+
+}
+
+function onSizeObjectEnd() {
+  grid.snapDragToGrid(location, {dragging: true})
+
 }
 
 function handleMouseDown(e, camera) {
