@@ -59,7 +59,7 @@ function handleMouseMove(event, game, camera) {
 
 
 
-  
+
   //
   // if(draggingObject) {
   //   if(window.draggingObject.parent) {
@@ -239,12 +239,20 @@ function render(ctx, game, camera) {
   const { objectHighlighted, objectHighlightedChildren } = mapEditor
 
   if(objectHighlighted) {
-    camera.drawObject(ctx, {...objectHighlighted, color: 'rgba(255,255,255,0.2)'})
+    let color = 'rgba(255,255,255,0.2)'
+    if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0) {
+      color = 'rgba(255,255,255,0.6)'
+    }
+    camera.drawObject(ctx, {...objectHighlighted, color})
   }
 
   if(objectHighlightedChildren) {
+    let color = 'rgba(255,255,255,0.1)'
     objectHighlightedChildren.forEach((object) => {
-      camera.drawObject(ctx, {...object, color: 'rgba(255,255,255,0.1)'})
+      if(object.tags && object.tags.invisible) {
+        color = 'rgba(255,255,255,0.4)'
+      }
+      camera.drawObject(ctx, {...object, color})
     })
   }
 }

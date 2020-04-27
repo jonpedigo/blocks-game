@@ -43,7 +43,7 @@ let result = system.createResult()
 // }
 
 function updatePosition(object, delta) {
-  if(object.removed) return
+  if(object.removed || object.relativeId) return
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -567,7 +567,7 @@ function update (delta) {
   })
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero, removeObjects, respawnObjects)
-    // if(hero.parentId) return
+    if(hero.relativeId) return
     heroCorrection(hero)
   })
 
@@ -638,7 +638,7 @@ function update (delta) {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       let po = physicsObjects[id]
-      // if(po.gameObject.parentId) continue
+      if(po.gameObject.relativeId) continue
       if(po.gameObject.removed) continue
       if(id.indexOf('hero') > -1) continue
       objectCorrections(po, final)
@@ -663,7 +663,7 @@ function update (delta) {
   })
 
   w.game.objects.forEach((object, i) => {
-    if(object.removed) return
+    if(object.removed || object.relativeId) return
     if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
     object._deltaX = object.x - object._initialX
     object._deltaY = object.y - object._initialY
@@ -681,12 +681,18 @@ function update (delta) {
     if(object.parentId || object._parentId ) {
       attachToParent(object)
     }
+    if(object.relativeId) {
+      attachToRelative(object)
+    }
   })
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(hero.parentId || hero._parentId ) {
       attachToParent(hero)
+    }
+    if(hero.relativeId) {
+      attachToRelative(hero)
     }
   })
 }
@@ -706,16 +712,17 @@ function attachToParent(object) {
     object.x += parent._deltaX
     object.y += parent._deltaY
   } else delete object._parentId
+}
 
+function attachToRelative(object) {
+  let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
 
-  // let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
+  if(relative) {
+    object.x = relative.x + object.relativeX
+    object.y = relative.y + object.relativeY
+  } else delete object.relativeId
 
-  // if(relative) {
-  //   object.x += relative._deltaX
-  //   object.y += relative._deltaY
-  // } else delete object.relativeId
-  //
-  // //// idk temporary relativeId
+  //// idk temporary relativeId
   // relative = w.game.objectsById[object._relativeId] || w.game.heros[object._relativeId]
   // if(parent) {
   //   object.x += parent._deltaX

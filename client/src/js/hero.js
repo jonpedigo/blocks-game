@@ -348,13 +348,13 @@ window.findHeroInNewGame = function(game, hero) {
 
 window.addHeroToGame = function(hero) {
   physics.addObject(hero)
-  window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
+  window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, relativeId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize, relativeX: -w.game.grid.nodeSize, relativeY: -w.game.grid.nodeSize}], { fromLiveGame: true })
 }
 
 window.removeHeroFromGame = function(hero) {
   physics.removeObject(hero)
   w.game.objects.forEach((obj) => {
-    if(obj.parentId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
+    if(obj.relativeId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
   })
   // window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
 }

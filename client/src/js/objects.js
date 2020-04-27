@@ -81,10 +81,6 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
       newObject.id = 'object-' + window.uniqueID() + '-' + i;
     }
 
-    if(w.game.objectsById[newObject.id]) {
-      newObject.id += '-copy'
-    }
-
     if(newObject.compendiumId) {
       newObject.fromCompendiumId = newObject.compendiumId
       delete newObject.compendiumId

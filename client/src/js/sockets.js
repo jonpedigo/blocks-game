@@ -323,10 +323,6 @@ function init() {
 
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
-    if(!w.game.heros[updatedHero.id]) {
-      w.game.heros[updatedHero.id] = updatedHero
-      physics.addObject(updatedHero)
-    }
   	if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity) {
   		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(w.game.heros[updatedHero.id])
   	}

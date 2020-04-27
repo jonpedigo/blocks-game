@@ -444,16 +444,18 @@ window.loadGame = function(game) {
       window.hero = w.game.heros[window.hero.id]
     } else {
       w.game.heros[window.hero.id] = window.hero
+      window.addHeroToGame(window.hero)
     }
   }
+
+  Object.keys(w.game.heros).forEach((id) => {
+    physics.addObject(w.game.heros[id])
+  })
+
   if(!w.game.objectsById) w.game.objectsById = {}
   w.game.objects.forEach((object) => {
     w.game.objectsById[object.id] = object
     physics.addObject(object)
-  })
-
-  Object.keys(w.game.heros).forEach((id) => {
-    physics.addObject(w.game.heros[id])
   })
 
   // grid
