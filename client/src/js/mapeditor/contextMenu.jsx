@@ -54,7 +54,7 @@ class contextMenuEl extends React.Component{
     const { editor } = this.props;
     editor.contextMenu.style.left = `${left}px`;
     editor.contextMenu.style.top = `${top}px`;
-    this.toggleContextMenu('show');
+    this._toggleContextMenu('show');
   };
 
   render() {
