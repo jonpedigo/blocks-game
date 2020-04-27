@@ -69,7 +69,7 @@ function loaded() {
     if(window.game.heros[ghostData.selectedHeroId]) window.hero = window.game.heros[ghostData.selectedHeroId]
   }
 
-  if(!window.ghostHero) window.ghostHero = window.resetHeroToDefault(window.ghostHero)
+  if(!window.ghostHero) window.ghostHero = JSON.parse(JSON.stringify(window.defaultHero))
   window.ghostHero.color = 'rgba(255,255,255,0.1)'
   window.ghostHero.arrowKeysBehavior = 'grid'
   window.ghostHero.id = 'ghost'
