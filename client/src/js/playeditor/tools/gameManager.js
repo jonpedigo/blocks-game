@@ -86,6 +86,12 @@ function init() {
     window.resetAllObjectState()
   })
 
+
+    var resetAllObjectStateButton = document.getElementById("set-spawn-point-all");
+    resetAllObjectStateButton.addEventListener('click', () => {
+      window.setAllObjectSpawnPointToCurrent()
+    })
+
   var resetAllHeroStateButton = document.getElementById("reset-heros-state");
   resetAllHeroStateButton.addEventListener('click', () => {
     for(var heroId in w.editingGame.heros) {
@@ -246,6 +252,15 @@ window.resetSpawnAreasAndObjects = function() {
   if(!w.editingGame.branch) window.emitEditObjectsOther()
 }
 
+window.setAllObjectSpawnPointToCurrent = function() {
+  w.editingGame.objects.forEach((object) => {
+    object.spawnPointX = object.x
+    object.spawnPointY = object.y
+  })
+  if(!w.editingGame.branch) window.emitEditObjectsOther()
+}
+
+
 function resetSpawnZone(object) {
   object.spawnedIds = []
   object.spawnPool = object.initialSpawnPool
@@ -255,8 +270,9 @@ function resetSpawnZone(object) {
 // client uses this sometimes
 window.resetAllObjectState = function() {
   w.editingGame.objects = w.editingGame.objects.reduce((arr, object) => {
-    if(object.actionTriggerArea) return arr.push(object)
-    if(object.spawned) {
+    if(object.actionTriggerArea) {
+      return arr
+    } else if(object.spawned) {
       if(w.editingGame.branch) return arr
       window.socket.emit('deleteObject', object)
     }
@@ -269,12 +285,9 @@ window.resetAllObjectState = function() {
     }
 
     window.removeObjectState(object, { skipPos: true })
+    window.respawnObject(object)
 
     arr.push(object)
-
-    // do not respawn parent objects, theyll get their new coordinates from parents
-    if(object.parentId) return arr
-    window.respawnObject(object)
     return arr
   }, [])
   if(!w.editingGame.branch) window.socket.emit('editObjects', w.editingGame.objects)

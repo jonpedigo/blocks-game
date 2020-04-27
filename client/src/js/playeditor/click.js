@@ -64,6 +64,9 @@ function init() {
     if(!window.draggingObject && window.dragTimeout) {
       window.clearTimeout(window.dragTimeout)
     } else if(window.draggingObject) {
+
+      // SO BASICALLY HERE WE DRAG PARENTS AND THIER CHILDREN BOTH, IN THE GAME CHILDREN ARE SEPERATE THAN THEIR PARENTS
+      // BUT THIS DOESNT CARE, ITS AN EDITOR CHEAT CODE. THIS ALLOWS US TO DRAG A BUNCH OF OBJECTS AT ONCE USING THE PARENT/CHILD DRAG TOGETHER METHOD
       const { x,y } = gridTool.createGridNodeAt(dragEndX, dragEndY)
       if(window.draggingObject.parent) {
         let parentGameObject
@@ -105,7 +108,7 @@ function init() {
       }
 
       window.emitEditObjectsAllProps()
-      // window.objecteditor.update({})
+      window.objecteditor.update(window.draggingObject)
       //end the drag
     }
 

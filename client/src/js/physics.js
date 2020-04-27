@@ -660,7 +660,9 @@ function update (delta) {
     if(hero._interactableObject) {
       let input = window.heroInput[hero.id]
       // INTERACT WITH SMALLEST OBJECT
+      window.local.emit('onObjectInteractable', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {
+        window.local.emit('onHeroInteract', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
         heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
       }
       // bad for JSON
@@ -671,6 +673,7 @@ function update (delta) {
   removeObjects.forEach((gameObject) => {
     // remove locally first
     gameObject.removed = true
+    window.local.emit('onRemoveObject', gameObject)
     window.socket.emit('removeObject', gameObject)
   })
 
@@ -678,9 +681,12 @@ function update (delta) {
     if(gameObject.id.indexOf('hero') > -1) {
       window.respawnHero(gameObject)
       window.socket.emit('updateHeroPos', gameObject)
+      window.local.emit('onRespawnHero', gameObject)
     } else if(gameObject.spawnPointX >= 0){
       window.respawnObject(gameObject)
+      window.local.emit('onRespawnObject', gameObject)
     } else {
+      window.local.emit('onDeleteObject', gameObject)
       window.socket.emit('deleteObject', gameObject)
     }
   })

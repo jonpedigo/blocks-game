@@ -69,11 +69,14 @@ function loaded() {
 window.spawnHero = function (hero, game = w.game) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
-    window.updateObjectPos(hero, {x: hero.spawnPointX, y: hero.spawnPointY}, game)
+    hero.x = hero.spawnPointX
+    hero.y = hero.spawnPointY
   } else if(game && game.world.worldSpawnPointX && game.world.worldSpawnPointX >= 0) {
-    window.updateObjectPos(hero, {x: game.world.worldSpawnPointX, y:  game.world.worldSpawnPointY}, game)
+    hero.x = game.world.worldSpawnPointX
+    hero.y = game.world.worldSpawnPointY
   } else {
-    window.updateObjectPos(hero, {x: 960, y:  960}, game)
+    hero.x = 960
+    hero.y = 960
   }
 }
 

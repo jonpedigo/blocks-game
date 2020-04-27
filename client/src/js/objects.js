@@ -195,24 +195,33 @@ function removeObjectState(object, options = { skipPos : false }) {
 }
 window.removeObjectState = removeObjectState
 
-
 window.respawnObject = function(object) {
-  window.updateObjectPos(object, {x: object.spawnPointX, y: object.spawnPointY})
+  object.x = object.spawnPointX
+  object.y = object.spawnPointY
 }
 
-window.updateObjectPos = function(object, newPos, game = w.game) {
+window.moveObjectPos = function(object, newPos, game = w.game) {
   let diffX = newPos.x - object.x
   let diffY = newPos.y - object.y
   //also update children
   // console.log(diffX, diffY, newPos, object)
 
-  game.objects.forEach((obj) => {
-    if(obj.parentId === object.id) {
-      obj.x += diffX
-      obj.y += diffY
-    }
-  })
+  // game.objects.forEach((childObject) => {
+  //   if(childObject.parentId === object.id) {
+  //     window.setObjectPos(childObject, {x: childObject.x + diffX, y: childObject.y + diffY}, game)
+  //   }
+  // })
 
+  if(object.pathfindingLimit) {
+    // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
+    const { x, y } = grid.snapXYToGrid(diffX, diffY)
+    object.pathfindingLimit.x += x
+    object.pathfindingLimit.y += y
+    // grid.snapDragToGrid(object.pathfindingLimit, {dragging: true})
+  }
+
+  object.spawnPointX += diffX
+  object.spawnPointY += diffY
   object.x = newPos.x
   object.y = newPos.y
 }
