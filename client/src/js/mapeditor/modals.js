@@ -3,13 +3,10 @@ function writeDialogue(object, cb) {
   openWriteDialogueModal(object, (result) => {
     if(result.value[0] && result.value[0].length) {
       object.tags.heroUpdate = true
-      object.heroUpdate = {
-        chat: [result.value[0]],
-        flags : {
-          showChat: true,
-          paused: true,
-        }
-      }
+      object.heroUpdate.chat = [result.value[0]]
+      if(!object.heroUpdate.flags) object.heroUpdate.flags = {}
+      object.heroUpdate.flags.showChat = true
+      object.heroUpdate.flags.paused = true
       if(result.value[1]) {
         object.tags.requireActionButton = true
       } else {
