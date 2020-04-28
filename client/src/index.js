@@ -703,7 +703,7 @@ function renderGame(delta) {
   }
 
   if(window.isMapEditor) {
-    mapEditor.render(ctx, w.game, camera)
+    mapEditor.render(ctx, w.game, camera.get())
   }
 }
 

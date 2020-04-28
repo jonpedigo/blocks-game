@@ -31,7 +31,7 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
       // dont update input for hosts hero since we've already locally updated
-      if(window.isPlayer && heroId == window.hero.id) return
+      if(window.isPlayer && window.hero && heroId == window.hero.id) return
       window.heroInput[heroId] = heroInput
     })
 

@@ -13,7 +13,7 @@ class contextMenuEl extends React.Component{
         left: e.pageX,
         top: e.pageY
       };
-      this.setContextMenuPosition(origin);
+      this._setContextMenuPosition(origin);
       return false;
     });
 
@@ -26,7 +26,7 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleClick = ({ key }) => {
-      const { editor } = this.props;
+      const { editor, onResize } = this.props;
 
       if(key === 'add-object') {
         window.addObjects(editor.objectHighlighted)
@@ -39,6 +39,10 @@ class contextMenuEl extends React.Component{
       if(key === "write-dialogue") {
         modals.writeDialogue(editor.objectHighlighted)
       }
+
+      if(key === 'resize') {
+        onResize(editor.objectHighlighted)
+      }
     }
   }
 
@@ -50,7 +54,7 @@ class contextMenuEl extends React.Component{
     }
   };
 
-  setContextMenuPosition({ top, left }) {
+  _setContextMenuPosition({ top, left }) {
     const { editor } = this.props;
     editor.contextMenu.style.left = `${left}px`;
     editor.contextMenu.style.top = `${top}px`;
@@ -74,7 +78,7 @@ class contextMenuEl extends React.Component{
 
     return <Menu onClick={this._handleClick}>
       <MenuItem>Drag</MenuItem>
-      <MenuItem>Resize</MenuItem>
+      <MenuItem key="resize">Resize</MenuItem>
       <MenuItem>Delete</MenuItem>
       <MenuItem>Copy</MenuItem>
       <MenuItem key="write-dialogue">Dialogue</MenuItem>
@@ -92,7 +96,7 @@ function init(editor, options) {
 
   // Mount React App
   ReactDOM.render(
-    React.createElement(contextMenuEl, { editor, ref: ref => editor.contextMenuRef = ref }),
+    React.createElement(contextMenuEl, { editor, onResize: options.onResize, ref: ref => editor.contextMenuRef = ref }),
     editor.contextMenu
   )
 }

@@ -1,6 +1,7 @@
 import grid from '../grid.js'
 import collisions from '../collisions'
 import contextMenu from './contextMenu.jsx'
+import drawTools from './drawTools.js';
 
 window.mapEditor = {
   clickStart: {
@@ -21,7 +22,7 @@ window.mapEditor = {
 function updateGridHighlight(location, game, camera) {
   if(mapEditor.contextMenuVisible) return
 
-  const { x,y } = grid.createGridNodeAt(location.x, location.y)
+  const { x,y } = grid.snapXYToGrid(location.x, location.y)
 
   let mouseLocation = {
     x,
@@ -51,138 +52,40 @@ function handleMouseMove(event, game, camera) {
   mapEditor.mousePos.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.mousePos.y = ((event.offsetY + camera.y) * camera.multiplier)
 
-  let deltaX = mapEditor.mousePos.x - mapEditor.clickStart.x
-  let deltaY = mapEditor.mousePos.y - mapEditor.clickStart.y
-  // if(deltaX > 10 && deltaY > 10) {
-  //   onSizeObjectStart(objectHighlighted)
-  // }
+  if(mapEditor.resizingObject) updateResizingObject(mapEditor.resizingObject)
+  else updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
 
-
-
-
-  //
-  // if(draggingObject) {
-  //   if(window.draggingObject.parent) {
-  //     window.draggingObject.parent.x = x
-  //     window.draggingObject.parent.y = y
-  //
-  //     let parentGameObject
-  //     if(window.draggingObject.forSelectionOnly) {
-  //       let editorState = window.objecteditor.get()
-  //       parentGameObject = editorState.parent
-  //     } else if(window.draggingObject.parent.id){
-  //       parentGameObject = w.editingGame.objectsById[window.draggingObject.parent.id]
-  //     }
-  //     let diffX = parentGameObject.x - x
-  //     let diffY = parentGameObject.y - y
-  //
-  //     window.draggingObject.children.forEach((obj) => {
-  //       obj.x = w.editingGame.objectsById[obj.id].x - diffX
-  //       obj.y = w.editingGame.objectsById[obj.id].y - diffY
-  //     })
-  //   } else {
-  //     window.draggingObject.x = x
-  //     window.draggingObject.y = y
-  //   }
-  //   return
-  // }
-  //
-  // if(window.dotAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) {
-  //   location.width = Number(document.getElementById('add-dot-size').value)
-  //   location.height = Number(document.getElementById('add-dot-size').value)
-  //   location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
-  //   location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
-  // }
-  //
-  // if(window.gridNodeAddToggle.checked  && window.currentTool === window.TOOLS.ADD_OBJECT) {
-  //   location.width = w.editingGame.grid.nodeSize
-  //   location.height = w.editingGame.grid.nodeSize
-  // }
-  //
-  // // console.log((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) , (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) , (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) , !!(window.clickStart.x || window.clickStart.x === 0))
-  // if(((window.setObjectPathfindingLimitToggle.checked && window.currentTool === window.TOOLS.SIMPLE_EDITOR) || (window.groupAddToggle.checked && window.currentTool === window.TOOLS.ADD_OBJECT) || (window.currentTool === window.TOOLS.WORLD_EDITOR && !window.selectorSpawnToggle.checked) || (window.currentTool === window.TOOLS.ADD_OBJECT && window.addWallToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
-  //   location = {
-  //     width: (event.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
-  //     height: (event.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
-  //     x: window.clickStart.x/window.scaleMultiplier,
-  //     y: window.clickStart.y/window.scaleMultiplier,
-  //   }
-  //   gridTool.snapDragToGrid(location, {dragging: true})
-  // }
-  //
-  // if(window.useEditorSizeAddToggle.checked  && window.currentTool === window.TOOLS.ADD_OBJECT) {
-  //   let oe = window.objecteditor.get()
-  //   location.width = oe.width || w.editingGame.grid.nodeSize
-  //   location.height = oe.height || w.editingGame.grid.nodeSize
-  //   location.x += (w.editingGame.grid.nodeSize/2 - location.width/2)
-  //   location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
-  // }
-  //
-  // if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectGroupToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
-  //   location = {
-  //     width: (event.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
-  //     height: (event.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
-  //     x: window.clickStart.x/window.scaleMultiplier,
-  //     y: window.clickStart.y/window.scaleMultiplier,
-  //   }
-  //
-  //   window.highlightedObjectGroup = []
-  //   w.editingGame.objects
-  //   .forEach((object, i) => {
-  //     collisions.checkObject(location, object, () => {
-  //       window.highlightedObjectGroup.push(object)
-  //     })
-  //   })
-  //   gridTool.snapDragToGrid(location, {dragging: true})
-  // }
-
-
-  // let oe = window.objecteditor.get()
-  // if(oe.parent && window.currentTool === window.TOOLS.ADD_OBJECT) {
-  //   const {parent, children} = window.copyParentAndChild(oe.parent, oe.children)
-  //   parent.x = location.x
-  //   parent.y = location.y
-  //   children.forEach((child) => {
-  //     child.x = parent.x + child.__relativeToParentX
-  //     child.y = parent.y + child.__relativeToParentY
-  //     delete child.__relativeToParentX
-  //     delete child.__relativeToParentY
-  //   })
-  //   objectHighlighted = { parent, children }
-  // }
 }
 
 function handleMouseUp(e, camera) {
   let clickEndX = ((event.offsetX + camera.x) * camera.multiplier)
   let clickEndY = ((event.offsetY + camera.y) * camera.multiplier)
-  let deltaX = clickEndX - mapEditor.clickStart.x
-  let deltaY = clickEndY - mapEditor.clickStart.y
-
-  if(mapEditor.draggingObject) {
-    onSizeObjectEnd(objectHighlighted)
-  }
-
-  // else {
-  //   if(deltaX > 10 && deltaY > 10) {
-  //     onDragStart(objectHighlighted)
-  //   }
-  // }
-}
-
-function onSizeObjectStart() {
-  grid.snapDragToGrid(location, {dragging: true})
-
-}
-
-function onSizeObjectEnd() {
-  grid.snapDragToGrid(location, {dragging: true})
-
 }
 
 function handleMouseDown(e, camera) {
   mapEditor.clickStart.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.clickStart.y = ((event.offsetY + camera.y) * camera.multiplier)
 
+  if(mapEditor.resizingObject) {
+    delete mapEditor.resizingObject.x
+    delete mapEditor.resizingObject.y
+    window.socket.emit('editObjects', [mapEditor.resizingObject])
+    mapEditor.resizingObject = null
+  }
+}
+
+function onResize(object) {
+  mapEditor.resizingObject = JSON.parse(JSON.stringify(object))
+}
+
+function updateResizingObject(object) {
+  const { mousePos } = mapEditor
+  if(mousePos.x < object.x || mousePos.y < object.y) {
+    return
+  }
+  object.width = mousePos.x - object.x
+  object.height = mousePos.y - object.y
+  grid.snapDragToGrid(object, {dragging: true})
 }
 
 function init(ctx, game, camera) {
@@ -191,14 +94,14 @@ function init(ctx, game, camera) {
   })
   window.document.getElementById('game-canvas').addEventListener("mousemove", (e) => {
     handleMouseMove(event, game, camera)
-    updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
-
   })
   window.document.getElementById('game-canvas').addEventListener("mouseup", (e) => {
     handleMouseUp(event, game, camera)
   })
 
-  contextMenu.init(mapEditor)
+  contextMenu.init(mapEditor, {
+    onResize
+  })
 }
 
 function findSmallestObjectInArea(area, objects) {
@@ -236,14 +139,17 @@ function getObjectRelations(object, game) {
 }
 
 function render(ctx, game, camera) {
-  const { objectHighlighted, objectHighlightedChildren } = mapEditor
+  let tempCamera = JSON.parse(JSON.stringify(camera))
+  tempCamera.multiplier = 1/tempCamera.multiplier
+
+  const { objectHighlighted, objectHighlightedChildren, resizingObject } = mapEditor
 
   if(objectHighlighted) {
     let color = 'rgba(255,255,255,0.2)'
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0) {
       color = 'rgba(255,255,255,0.6)'
     }
-    camera.drawObject(ctx, {...objectHighlighted, color})
+    drawTools.drawObject(ctx, {...objectHighlighted, color}, tempCamera)
   }
 
   if(objectHighlightedChildren) {
@@ -252,9 +158,17 @@ function render(ctx, game, camera) {
       if(object.tags && object.tags.invisible) {
         color = 'rgba(255,255,255,0.4)'
       }
-      camera.drawObject(ctx, {...object, color})
+      drawTools.drawObject(ctx, {...object, color}, tempCamera)
     })
   }
+
+  if(resizingObject) {
+    drawTools.getObjectVertices(ctx, resizingObject, tempCamera).forEach((vertice) => {
+      drawTools.drawVertice(ctx, vertice, tempCamera)
+    })
+  }
+
+
 }
 
 export default {
