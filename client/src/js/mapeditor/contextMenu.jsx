@@ -95,6 +95,14 @@ class contextMenuEl extends React.Component{
         window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }}])
       }
 
+      if(key === 'toggle-visible') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { invisible: false, obstacle: true }}])
+      }
+      if(key === 'toggle-invisible') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { invisible: true, obstacle: false }}])
+      }
+
+
       if(key === 'set-pathfinding-limit') {
         onStartSetPathfindingLimit(objectHighlighted)
       }
@@ -176,6 +184,7 @@ class contextMenuEl extends React.Component{
         <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
+        {objectHighlighted.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <SubMenu title="Trigger">
           <MenuItem key="trigger-collision">When collided</MenuItem>

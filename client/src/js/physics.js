@@ -619,6 +619,15 @@ function update (delta) {
           }
         }
 
+        if(po.gameObject.tags['victim'] && body.gameObject.tags['monster']) {
+          window.local.emit('onMonsterDestroyVictim', po.gameObject, body.gameObject)
+          if(po.gameObject.spawnPointX >= 0 && po.gameObject.tags['respawn']) {
+            respawnObjects.push(po.gameObject)
+          } else {
+            removeObjects.push(po.gameObject)
+          }
+        }
+
         let hero = window.hero
         if(window.usePlayEditor) hero = window.editingHero
         /// DEFAULT GAME FX

@@ -121,7 +121,7 @@ function updateCompendium() {
     let defaultEl = document.createElement('button')
     defaultEl.innerHTML = 'Default Object'
     defaultEl.onclick= function(e) {
-      window.objecteditor.defaultCompendium = false
+      window.objecteditor.defaultCompendium = true
       clickOnCompendium(false, {...window.defaultObject, compendiumId: 'default'})
     }
     defaultEl.oncontextmenu = function(e) {

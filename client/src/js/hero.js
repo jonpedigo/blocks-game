@@ -367,7 +367,7 @@ window.findHeroInNewGame = function(game, hero) {
 }
 
 window.addHeroToGame = function(hero) {
-  console.log('ADDDING HERO', hero.id)
+  console.log('ADDDING HERO', hero)
   window.local.emit('onHeroAdded', hero)
   physics.addObject(hero)
   window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, relativeId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize, relativeX: -w.game.grid.nodeSize, relativeY: -w.game.grid.nodeSize}], { fromLiveGame: true })
