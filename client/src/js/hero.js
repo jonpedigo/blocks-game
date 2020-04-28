@@ -128,9 +128,10 @@ window.resetHeroToDefault = function(hero, game = w.game) {
   if(window.game.hero) {
     newHero = JSON.parse(JSON.stringify(window.game.hero))
   }
-  if(hero && hero.id) {
-    newHero.id = hero.id
+  if(!hero.id) {
+    alert('hero getting reset without id')
   }
+  newHero.id = hero.id
   window.spawnHero(newHero)
   window.addHeroToGame(newHero)
   return newHero
@@ -245,10 +246,15 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects, option
   // }
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
-    heroUpdate(hero, collider)
-    window.local.emit('onHeroUpdate', hero, collider, result, removeObjects, respawnObjects, options)
-    if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
-  } else if(!options.fromInteractButton && collider.parentId !== hero.id){
+    if(collider.id !== hero.lastPowerUpId) {
+      heroUpdate(hero, collider)
+      window.local.emit('onHeroUpdate', hero, collider, result, removeObjects, respawnObjects, options)
+      if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
+      window.addOrResetTimeout(hero.id+'.lastPowerUpId', 3, () => {
+        hero.lastPowerUpId = null
+      })
+    }
+  } else {
     hero.lastPowerUpId = null
   }
 
@@ -258,61 +264,69 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects, option
 }
 
 function heroUpdate (hero, collider) {
-  if(collider.id !== hero.lastPowerUpId) {
-    if(!hero.timeouts) hero.timeouts = {}
-    if(!hero.updateHistory) {
-      hero.updateHistory = []
-    }
+  if(!hero.timeouts) hero.timeouts = {}
+  if(!hero.updateHistory) {
+    hero.updateHistory = []
+  }
+  let timeoutId = hero.id+collider.id
+  if(collider.fromCompendiumId) {
+    timeoutId = hero.id+collider.fromCompendiumId
+  }
 
-    if(hero.timeouts[collider.fromCompendiumId] && collider.tags['revertAfterTimeout']) {
-      clearTimeout(hero.timeouts[collider.fromCompendiumId])
-      delete hero.timeouts[collider.fromCompendiumId]
-      setRevertUpdateTimeout(hero, collider)
-      return
+  if(collider.tags['revertAfterTimeout'] && window.timeoutsById[timeoutId] && window.timeoutsById[timeoutId].timeRemaining > 0) {
+    if(collider.tags['incrementRevertTimeout']) {
+      window.incrementTimeout(timeoutId, collider.powerUpTimer || 3)
+    } else {
+      window.resetTimeout(timeoutId, collider.powerUpTimer || 3)
     }
+    return
+  }
 
-    // only have 30 edits in the history at a time
-    if(hero.updateHistory.length >= 30) {
-      hero.updateHistory.shift()
-    }
+  // only have 5 edits in the history at a time
+  if(hero.updateHistory.length >= 5) {
+    hero.updateHistory.shift()
+  }
 
-    let heroUpdate = collider.heroUpdate
-    let update = {
-      update: heroUpdate,
-      prev: {},
-      id: collider.fromCompendiumId || collider.id,
-    }
-    for(var prop in heroUpdate) {
-      if(prop == 'flags' || prop == 'tags') {
-        let ags = heroUpdate[prop]
-        update.prev[prop] = {}
-        for(let ag in ags) {
-          update.prev[prop][ag] = hero[prop][ag]
-        }
-      } else {
-        update.prev[prop] = hero[prop]
+  let heroUpdate = collider.heroUpdate
+  let update = {
+    update: heroUpdate,
+    prev: {},
+    id: collider.fromCompendiumId || collider.id,
+  }
+  for(var prop in heroUpdate) {
+    if(prop == 'flags' || prop == 'tags') {
+      let ags = heroUpdate[prop]
+      update.prev[prop] = {}
+      for(let ag in ags) {
+        update.prev[prop][ag] = hero[prop][ag]
       }
+    } else {
+      update.prev[prop] = hero[prop]
     }
-    hero.updateHistory.push(update)
+  }
+  hero.updateHistory.push(update)
 
-    window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
-    if(heroUpdate.chat && collider.name) {
-      hero.chatName = collider.name
-    }
+  window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
+  if(heroUpdate.chat && collider.name) {
+    hero.chatName = collider.name
+  } else {
+    hero.chatName = null
+  }
 
-    if(collider.tags['revertAfterTimeout']) {
-      setRevertUpdateTimeout(hero, collider)
-    }
+  if(collider.tags['revertAfterTimeout']) {
+    setRevertUpdateTimeout(timeoutId, hero, collider)
   }
 }
 
-function setRevertUpdateTimeout(hero, collider) {
-  let timeout = window.setTimeout(() => {
+function setRevertUpdateTimeout(id, hero, collider) {
+  let timeoutFx = () => {
     hero.updateHistory = hero.updateHistory.filter((update) => {
       window.local.emit('onHeroUpdateReverted', hero, update)
+      console.log(collider.id, collider.fromCompendiumId, update.id)
+
       if(collider.fromCompendiumId) {
-        delete hero.timeouts[collider.fromCompendiumId]
         if(collider.fromCompendiumId === update.id) {
+          console.log(update.prev)
           window.mergeDeep(hero, {...update.prev})
           return false
         }
@@ -325,10 +339,9 @@ function setRevertUpdateTimeout(hero, collider) {
 
       return true
     })
-  }, collider.powerUpTimer || 10000)
-  if(collider.fromCompendiumId) {
-    hero.timeouts[collider.fromCompendiumId] = timeout
   }
+
+  window.addOrResetTimeout(id, collider.powerUpTimer || 3, timeoutFx)
 }
 
 window.findHeroInNewGame = function(game, hero) {
@@ -362,7 +375,9 @@ window.addHeroToGame = function(hero) {
 }
 
 window.removeHeroFromGame = function(hero) {
-  physics.removeObject(hero)
+  if(window.physicsObjects[hero.id]) {
+    physics.removeObject(hero)
+  }
   w.game.objects.forEach((obj) => {
     if(obj.relativeId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
   })

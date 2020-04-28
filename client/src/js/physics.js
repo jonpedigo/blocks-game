@@ -248,7 +248,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
       continue
     }
     if(body.gameObject.removed) continue
-    if(body.gameObject.tags['requireActionButton']) continue
+    if(body.gameObject.tags['requireActionButton'] || body.gameObject.actionTriggerArea) continue
     if(heroPO.collides(body, result)) {
       window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
       heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)

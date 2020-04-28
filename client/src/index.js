@@ -128,6 +128,7 @@ import events from './js/events.js'
 import games from './js/games/index'
 import ghost from './js/ghost.js'
 import testArcade from './js/games/arcade/platformer'
+import timeouts from './js/timeouts'
 window.w = window;
 
 //////////////////////////////////////////////////////////////
@@ -241,6 +242,7 @@ window.initializeGame = function (initialGameId) {
   sockets.init()
   gameState.init()
   hero.init()
+  timeouts.init()
 
   if(window.isMapEditor) {
     mapEditor.init(ctx, w.game, camera.get())
@@ -283,6 +285,7 @@ window.initializeGame = function (initialGameId) {
           if(window.isPlayer) {
             if(game.heros && game.heros[window.heroId]) {
               window.hero = game.heros[window.heroId]
+              window.hero.id = window.heroId
             } else {
               window.hero = findHeroInNewGame(game, {id: window.heroId})
               window.hero.id = window.heroId
@@ -424,6 +427,11 @@ window.loadGame = function(game) {
     if(game.gameState && game.gameState.loaded) {
       if(!w.game.heros) w.game.heros = {}
       w.game.heros = game.heros
+      // if(window.host) {
+      //   Object.keys(w.game.heros).forEach((id) => {
+      //     window.resetHeroToDefault(w.game.heros[id])
+      //   })
+      // }
       w.game.gameState = game.gameState
       if(!w.game.gameState) w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     } else {
@@ -433,6 +441,7 @@ window.loadGame = function(game) {
       if(!w.game.heros) w.game.heros = {}
       Object.keys(w.game.heros).forEach((id) => {
         w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
+        w.game.heros[id].id = id
         window.addHeroToGame(w.game.heros[id])
       })
     }
@@ -619,6 +628,8 @@ var update = function (delta) {
   if(window.host) {
     // remove second part when a player can host a multiplayer game
     if(!w.game.gameState.paused && (!window.isPlayer || !window.hero.flags.paused)) {
+      timeouts.update(delta)
+
       // movement
       physics.prepareObjectsAndHerosForMovementPhase()
       Object.keys(w.game.heros).forEach((id) => {

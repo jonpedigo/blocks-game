@@ -10,7 +10,7 @@ function init() {
   }
 }
 
-function convertToGridXY(object, options = {}) {
+function convertToGridXY(object, options = { }) {
   // pretend we are dealing with a 0,0 plane
   let x = object.x - w.game.grid.nodes[0][0].x
   let y = object.y - w.game.grid.nodes[0][0].y
@@ -50,16 +50,16 @@ function forEach(fx) {
   }
 }
 
-function snapXYToGrid(x, y) {
+function snapXYToGrid(x, y, options = { closest: true }) {
   let diffX = x % w.game.grid.nodeSize;
-  if(diffX > w.game.grid.nodeSize/2) {
+  if(diffX > w.game.grid.nodeSize/2 && options.closest) {
     x += (w.game.grid.nodeSize - diffX)
   } else {
     x -= diffX
   }
 
   let diffY = y % w.game.grid.nodeSize;
-  if(diffY > w.game.grid.nodeSize/2) {
+  if(diffY > w.game.grid.nodeSize/2 && options.closest) {
     y += (w.game.grid.nodeSize - diffY)
   } else {
     y -= diffY

@@ -5,6 +5,7 @@ import modals from './modals.js'
 
 function init(editor, props) {
   editor.contextMenu = document.getElementById('context-menu')
+  editor.contextMenuVisible = false
 
   // Mount React App
   ReactDOM.render(
@@ -36,26 +37,48 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleClick = ({ key }) => {
-      const { editor, onResize, onDrag } = this.props;
+      const { editor, onResize, onDrag, onDelete, onCopy } = this.props;
+      const { objectHighlighted } = editor
 
       if(key === 'add-object') {
-        window.addObjects(editor.objectHighlighted)
+        window.addObjects(objectHighlighted)
       }
 
       if(key === "name-object") {
-        modals.nameObject(editor.objectHighlighted)
+        modals.nameObject(objectHighlighted)
+      }
+      if(key === 'name-position-center') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: 'center'}])
+      }
+      if(key === 'name-position-above') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: 'above'}])
+      }
+
+      if(key === 'trigger-collision') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: false }}])
+      }
+      if(key === 'trigger-interact') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: true }}])
       }
 
       if(key === "write-dialogue") {
-        modals.writeDialogue(editor.objectHighlighted)
+        modals.writeDialogue(objectHighlighted)
       }
 
       if(key === 'resize') {
-        onResize(editor.objectHighlighted)
+        onResize(objectHighlighted)
       }
 
       if(key === 'drag') {
-        onDrag(editor.objectHighlighted)
+        onDrag(objectHighlighted)
+      }
+
+      if(key === 'delete') {
+        onDelete(objectHighlighted)
+      }
+
+      if(key === 'copy') {
+        onCopy(objectHighlighted)
       }
     }
   }
@@ -76,15 +99,17 @@ class contextMenuEl extends React.Component{
   };
 
   render() {
+    const { hide } = this.state;
     const { editor } = this.props;
+    const { objectHighlighted } = editor
 
-    if(this.state.hide) {
+    if(hide) {
       editor.contextMenuVisible = false
       return null
     }
 
     editor.contextMenuVisible = true
-    if(!editor.objectHighlighted.id) {
+    if(!objectHighlighted.id) {
       return <Menu onClick={this._handleClick}>
         <MenuItem key='add-object'>Add</MenuItem>
       </Menu>
@@ -97,6 +122,10 @@ class contextMenuEl extends React.Component{
       <MenuItem key="copy">Copy</MenuItem>
       <MenuItem key="color">Select Color</MenuItem>
       <MenuItem key="write-dialogue">Dialogue</MenuItem>
+      <SubMenu title="Trigger">
+        <MenuItem key="trigger-collision">When collided</MenuItem>
+        <MenuItem key="trigger-interact">When X is pressed</MenuItem>
+      </SubMenu>
       <SubMenu title="Name">
         <MenuItem key="name-object">Give Name</MenuItem>
         <MenuItem key="name-position-center">Position Name in Center</MenuItem>

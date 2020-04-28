@@ -21,7 +21,6 @@ window.mapEditor = {
   objectHighlighted: null,
   resizingObject: null,
   draggingObject: null,
-  contextMenuVisible: false,
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
@@ -39,6 +38,7 @@ function init(ctx, game, camera) {
   contextMenu.init(mapEditor, {
     onResize,
     onDrag,
+    onDelete,
   })
   keyInput.init()
 }
@@ -74,11 +74,10 @@ function handleMouseMove(event, game, camera) {
   else updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
 }
 
-
 function updateGridHighlight(location, game, camera) {
   if(mapEditor.contextMenuVisible) return
 
-  const { x,y } = grid.snapXYToGrid(location.x, location.y)
+  const { x,y } = grid.snapXYToGrid(location.x, location.y, { closest: false })
 
   let mouseLocation = {
     x,
@@ -90,7 +89,7 @@ function updateGridHighlight(location, game, camera) {
   mapEditor.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
-  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, game.objects)
+  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, game.objects.filter((object) => !object.actionTriggerArea))
   if(smallestObject) mapEditor.objectHighlighted = smallestObject
 
   mapEditor.objectHighlightedChildren = []
@@ -111,6 +110,16 @@ function onResize(object) {
 function onDrag(object) {
   mapEditor.draggingObject = JSON.parse(JSON.stringify(object))
 }
+
+function onDelete(object) {
+  if(object.id) {
+    window.socket.emit('deleteObject', object)
+    window.objectHighlighted = null
+  } else {
+    console.error('trying to delete object without id')
+  }
+}
+
 
 function updateResizingObject(object) {
   const { mousePos } = mapEditor

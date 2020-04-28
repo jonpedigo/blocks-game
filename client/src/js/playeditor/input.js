@@ -109,8 +109,6 @@ function init(hero){
           // console.log(w.editingGame.heros[heroNames[i]].id, window.editingHero.id, i)
           if(w.editingGame.heros[heroNames[i]].id === window.editingHero.id) {
             if(i === 0) {
-              console.log(i, heroNames.length-1)
-              console.log(w.editingGame.heros[heroNames[heroNames.length-1]])
               window.setEditingHero(w.editingGame.heros[heroNames[heroNames.length-1]])
             } else {
               window.setEditingHero(w.editingGame.heros[heroNames[i-1]])
