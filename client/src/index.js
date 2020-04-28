@@ -608,7 +608,7 @@ var update = function (delta) {
     if(!window.ghost){
       localStorage.setItem('hero', JSON.stringify(window.hero))
       // we are locally updating the hero input as host
-      if(!window.host && !window.pageState.typingMode) window.socket.emit('sendHeroInput', window.heroKeysDown, window.hero.id)
+      if(!window.host && !window.pageState.typingMode) window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
     }
   }
 

@@ -14,6 +14,7 @@ function init() {
   window.dotAddToggle = document.getElementById("add-object-dot")
   window.useEditorSizeAddToggle = document.getElementById("add-object-editor")
   window.addParentToggle = document.getElementById("add-parent-group")
+  window.addRelativeToggle = document.getElementById("add-relative-group")
   window.addWallToggle = document.getElementById("add-wall")
 
   window.compendium = {}
@@ -22,6 +23,12 @@ function init() {
     object = JSON.parse(JSON.stringify(object))
     delete object.i
     delete object.id
+    if(object.parent) {
+      delete object.parent.id
+      object.children.forEach((child) => {
+        delete child.id
+      })
+    }
     object.compendiumId = 'compendium-' + window.uniqueID()
 
     window.removeObjectState(object)
@@ -37,6 +44,12 @@ function init() {
     object = JSON.parse(JSON.stringify(object))
     delete object.i
     delete object.id
+    if(object.parent) {
+      delete object.parent.id
+      object.children.forEach((child) => {
+        delete child.id
+      })
+    }
 
     if(!window.compendium[object.compendiumId]) {
       var id = prompt("Give this compendium item an id", object.compendiumId);
@@ -187,23 +200,27 @@ window.updateObjectEditorNotifier = function() {
   }
 }
 
-window.getAllChildren = function(parent) {
+window.getAllChildrenAndRelatives = function(parent) {
   let children = []
   w.editingGame.objects.forEach((obj) => {
-    if(obj.parentId === parent.id) {
+    if(obj.parentId === parent.id || obj.relativeId === parent.id || obj._parentId === parent.id) {
       children.push(obj)
     }
   })
   return children
 }
 
-window.copyParentAndChild = function(parent, children) {
+window.copyParentAndChildOrRelatives = function(parent, children) {
   let parentCopy = JSON.parse(JSON.stringify(parent))
   parentCopy.id = 'parent-'+window.uniqueID()
   children = children.map((obj) => {
     let objCopy = JSON.parse(JSON.stringify(obj))
     objCopy.id = 'object'+window.uniqueID()
-    objCopy.parentId = parentCopy.id
+    if(objCopy.parentId) {
+      objCopy.parentId = parentCopy.id
+    } else if(objCopy.relativeId) {
+      objCopy.relativeId = parentCopy.id
+    }
     objCopy.__relativeToParentX = objCopy.x - parentCopy.x
     objCopy.__relativeToParentY = objCopy.y - parentCopy.y
     window.removeObjectState(objCopy)

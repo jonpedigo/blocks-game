@@ -1,24 +1,25 @@
 import camera from './camera';
 
-window.heroKeysDown = {}
-window.keysDown = window.heroKeysDown
-// this is the one for the
+window.keysDown = {}
+// this is the one for the host
 window.heroInput = {}
 
 let lastJump = 0
 
 function init(){
   window.addEventListener("keydown", function (e) {
-    window.keysDown[e.keyCode] = true
 
     if(window.ghost) {
       if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
     } else if(window.isPlayer) {
+      if(!window.pageState.typingMode) {
+        window.keysDown[e.keyCode] = true
+      }
       //locally update the host input! ( teehee this is the magic! )
       if(window.host) {
-        keyDown(e.keyCode, window.hero)
         window.heroInput[window.hero.id] = window.keysDown
-      } else if(!window.pageState.typingMode){
+        keyDown(e.keyCode, window.hero)
+      } else {
         window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
       }
     }

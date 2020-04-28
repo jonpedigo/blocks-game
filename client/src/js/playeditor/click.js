@@ -28,14 +28,6 @@ function init() {
       height:1,
     }
 
-    let editorState = window.objecteditor.get()
-    if(editorState.parent) {
-      window.dragTimeout = setTimeout(() => {
-        window.draggingObject = editorState
-      }, 118)
-      return
-    }
-
     for(let i = 0; i < w.editingGame.objects.length; i++) {
       let object = w.editingGame.objects[i]
       // if(window.objecteditor && object.id === window.objecteditor.get().id){
@@ -44,13 +36,14 @@ function init() {
       if(collisions.checkObject(click, object, () => {
         window.dragTimeout = setTimeout(() => {
           window.draggingObject = JSON.parse(JSON.stringify(object))
-          let children = window.getAllChildren(window.draggingObject)
+          let children = window.getAllChildrenAndRelatives(window.draggingObject)
           if(children.length) {
             window.draggingObject = {
               parent: window.draggingObject,
               children: children.map(obj => JSON.parse(JSON.stringify(obj))),
             }
           }
+          window.objecteditor.set(draggingObject)
         }, 118)
         return
       })) return
@@ -184,7 +177,7 @@ function init() {
       location.y += (w.editingGame.grid.nodeSize/2 - location.height/2)
     }
 
-    if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectGroupToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
+    if(((window.currentTool === window.TOOLS.ADD_OBJECT && window.addParentToggle.checked) || (window.currentTool === window.TOOLS.ADD_OBJECT && window.addRelativeToggle.checked) || (window.currentTool === window.TOOLS.SIMPLE_EDITOR && window.selectObjectGroupToggle.checked)) && !!(window.clickStart.x || window.clickStart.x === 0)) {
       location = {
         width: (e.offsetX - window.clickStart.x + window.camera.x)/window.scaleMultiplier,
         height: (e.offsetY - window.clickStart.y + window.camera.y)/window.scaleMultiplier,
@@ -205,7 +198,7 @@ function init() {
 
     let oe = window.objecteditor.get()
     if(oe.parent && window.currentTool === window.TOOLS.ADD_OBJECT) {
-      const {parent, children} = window.copyParentAndChild(oe.parent, oe.children)
+      const {parent, children} = window.copyParentAndChildOrRelatives(oe.parent, oe.children)
       parent.x = location.x
       parent.y = location.y
       children.forEach((child) => {
@@ -262,9 +255,9 @@ function init() {
               if(window.clickToSetHeroParentToggle.checked) {
                 window.sendHeroUpdate({id: window.editingHero.id, parentId: object.id})
               }
-              // if(window.clickToSetHeroRelativeToggle.checked) {
-              //   window.sendHeroUpdate({id: window.editingHero.id, relativeId: object.id})
-              // }
+              if(window.clickToSetHeroRelativeToggle.checked) {
+                window.sendHeroUpdate({id: window.editingHero.id, relativeId: object.id, relativeX: object.x - window.editingHero.x, relativeY: object.y - window.editingHero.y})
+              }
             })
           })
         } else {
@@ -312,10 +305,14 @@ function init() {
                 window.objecteditor.saved = false
                 window.objecteditor.update({...window.objecteditor.get(), parentId: object.id})
                 // window.sendObjectUpdate({parentId: object.id})
+                window.updateObjectEditorNotifier()
+              } else if(window.selectorRelativeToggle.checked) {
+                let oe = window.objecteditor.get()
+                if(!oe.x) return alert('you need an x, y to set relativeX and relativeY like this...')
+                window.objecteditor.saved = false
+                window.objecteditor.update({...oe, relativeX: oe.x - object.x, relativeY: oe.y - object.y, relativeId: object.id})
+                window.updateObjectEditorNotifier()
               }
-              // if(window.selectorRelativeToggle.checked) {
-              //   window.sendObjectUpdate({relativeId: object.id})
-              // }
             })) break
           }
           Object.keys(w.editingGame.heros).map((key) => w.editingGame.heros[key])
@@ -325,10 +322,12 @@ function init() {
                 window.objecteditor.saved = false
                 window.objecteditor.update({...window.objecteditor.get(), parentId: hero.id})
                 // window.sendObjectUpdate({parentId: hero.id})
+              } else if(window.selectorRelativeToggle.checked) {
+                let oe = window.objecteditor.get()
+                if(!oe.x) return alert('you need an x, y to set relativeX and relativeY like this...')
+                window.objecteditor.saved = false
+                window.objecteditor.update({...oe, relativeX: oe.x - object.x, relativeY: oe.y - object.y, relativeId: object.id})
               }
-              // else if(window.selectorRelativeToggle.checked) {
-              //  window.sendObjectUpdate({relativeId: object.id})
-              // }
             })
           })
         }
@@ -410,7 +409,7 @@ function init() {
       onFirstClick: (e) => {
         let editorObject = window.objecteditor.get()
 
-        if((window.groupAddToggle.checked || window.addParentToggle.checked || window.addWallToggle.checked) && !editorObject.parent) {
+        if((window.groupAddToggle.checked || window.addRelativeToggle.checked || window.addParentToggle.checked || window.addWallToggle.checked) && !editorObject.parent) {
           defaultFirstClick(e)
         } else {
           const click = {
@@ -427,7 +426,7 @@ function init() {
           }
 
           if(editorObject.parent) {
-            const { parent, children } = window.copyParentAndChild(editorObject.parent, editorObject.children)
+            const { parent, children } = window.copyParentAndChildOrRelatives(editorObject.parent, editorObject.children)
             parent.x = location.x
             parent.y = location.y
             children.forEach((child) => {
@@ -491,6 +490,13 @@ function init() {
           newObject.tags.invisible = true
           newObject.tags.obstacle = false
         }
+        if(window.addRelativeToggle.checked) {
+          newObject = {}
+          newObject.id = 'relative-'+window.uniqueID()
+          newObject.tags = window.tags
+          newObject.tags.invisible = true
+          newObject.tags.obstacle = false
+        }
         Object.assign(newObject, location)
 
         window.addObjects(newObject)
@@ -500,6 +506,18 @@ function init() {
             // console.log(object.id, newObject.id)
             // object.parentId = newObject.id
             w.game.objectsById[object.id].parentId = newObject.id
+          })
+
+          window.emitEditObjectsOther()
+          window.highlightedObjectGroup = []
+        } else if(window.addRelativeToggle.checked) {
+          window.highlightedObjectGroup.forEach((object) => {
+            // console.log(object.id, newObject.id)
+            // object.parentId = newObject.id
+            let gameObject = w.game.objectsById[object.id]
+            gameObject.relativeId = newObject.id
+            gameObject.relativeX = gameObject.x - newObject.x
+            gameObject.relativeY = gameObject.y - newObject.y
           })
 
           window.emitEditObjectsOther()

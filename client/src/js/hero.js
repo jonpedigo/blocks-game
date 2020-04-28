@@ -295,7 +295,7 @@ function heroUpdate (hero, collider) {
 
     window.mergeDeep(hero, JSON.parse(JSON.stringify(collider.heroUpdate)))
     if(heroUpdate.chat && collider.name) {
-      hero.chat.name = collider.name
+      hero.chatName = collider.name
     }
 
     if(collider.tags['revertAfterTimeout']) {

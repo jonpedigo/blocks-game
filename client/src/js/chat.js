@@ -54,10 +54,10 @@ function drawChat(ctx, chat){
 	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
 	ctx.fillStyle="white"
 	//portrait name
-	if(chat.name) {
+	if(window.hero.chatName) {
 		ctx.fontWeight = "normal"
 		let x = window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
-		ctx.fillText(chat.name, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) )
+		ctx.fillText(window.hero.chatName, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) )
 	}
 
 	//text

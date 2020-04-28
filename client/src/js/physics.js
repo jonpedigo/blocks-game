@@ -506,6 +506,7 @@ function updateCorrections() {
   // heros
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
+    if(hero.relativeId) return
     heroCorrection(hero)
   })
 
@@ -516,7 +517,7 @@ function updateCorrections() {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       let po = physicsObjects[id]
-      if(po.gameObject.removed) continue
+      if(po.gameObject.removed || po.gameObject.relativeId) continue
       if(id.indexOf('hero') > -1) continue
       objectCorrections(po, final)
     }
@@ -646,7 +647,10 @@ function update (delta) {
   }
 
   w.game.objects.forEach((object, i) => {
-    if(object.removed || object.relativeId) return
+    if(object.removed) return
+    if(object.parentId || object._parentId ) {
+      attachToParent(object)
+    }
     if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
     object._deltaX = object.x - object._initialX
     object._deltaY = object.y - object._initialY
@@ -654,6 +658,9 @@ function update (delta) {
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
+    if(hero.parentId || hero._parentId ) {
+      attachToParent(hero)
+    }
     containObjectWithinGridBoundaries(hero)
     hero._deltaX = hero.x - hero._initialX
     hero._deltaY = hero.y - hero._initialY
@@ -693,9 +700,6 @@ function update (delta) {
 
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
-    if(object.parentId || object._parentId ) {
-      attachToParent(object)
-    }
     if(object.relativeId) {
       attachToRelative(object)
     }
@@ -703,9 +707,6 @@ function update (delta) {
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
-    if(hero.parentId || hero._parentId ) {
-      attachToParent(hero)
-    }
     if(hero.relativeId) {
       attachToRelative(hero)
     }

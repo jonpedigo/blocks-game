@@ -50,9 +50,18 @@ function init() {
     let parent = object
     if(object.parentId) {
       parent = w.editingGame.objectsById[object.parentId]
+      if(!parent) {
+        parent = w.editingGame.heros[object.parentId]
+      }
+    }
+    if(object.relativeId) {
+      parent = w.editingGame.objectsById[object.relativeId]
+      if(!parent) {
+        parent = w.editingGame.heros[object.relativeId]
+      }
     }
 
-    let children = window.getAllChildren(parent)
+    let children = window.getAllChildrenAndRelatives(parent)
 
     if(!object.id || !parent || children.length === 0) {
       Swal.fire({
@@ -94,8 +103,7 @@ function init() {
   window.selectorParentToggle = document.getElementById('set-parent-object')
   window.dragObjectPosToggle = document.getElementById('drag-object-pos')
   window.selectObjectGroupToggle = document.getElementById("select-object-group");
-
-  // window.selectorRelativeToggle = document.getElementById('set-relative-object')
+  window.selectorRelativeToggle = document.getElementById('set-relative-object')
 }
 
 window.updateEditorState = function() {
