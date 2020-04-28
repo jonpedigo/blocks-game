@@ -37,6 +37,10 @@ function init(ctx, game, camera) {
   window.document.getElementById('game-canvas').addEventListener("mouseup", (e) => {
     handleMouseUp(event, game, camera)
   })
+  window.document.getElementById('game-canvas').addEventListener("mouseout", (e) => {
+    handleMouseOut(event, game, camera)
+  })
+
 
   contextMenu.init(mapEditor, {
     onStartResize,
@@ -75,7 +79,7 @@ function handleMouseDown(event, game, camera) {
     }
   } else if(mapEditor.resizingObject) {
     const { resizingObject } = mapEditor
-    window.socket.emit('editObjects', [{id: resizingObject.id, width: resizingObject.width, height: resizingObject.height}])
+    window.socket.emit('editObjects', [{id: resizingObject.id, x: resizingObject.x, y: resizingObject.y, width: resizingObject.width, height: resizingObject.height}])
     mapEditor.resizingObject = null
   } else if(mapEditor.draggingObject) {
     const { draggingObject } = mapEditor
@@ -84,7 +88,17 @@ function handleMouseDown(event, game, camera) {
   }
 }
 
+
+function handleMouseOut(event) {
+  if(window.ghost) {
+    mapEditor.skipRemoteStateUpdate = false
+  }
+}
 function handleMouseMove(event, game, camera) {
+  if(window.ghost) {
+    mapEditor.skipRemoteStateUpdate = true
+  }
+
   mapEditor.mousePos.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.mousePos.y = ((event.offsetY + camera.y) * camera.multiplier)
 
@@ -92,7 +106,7 @@ function handleMouseMove(event, game, camera) {
     updateDraggingObject(mapEditor.copiedObject)
   } else if(mapEditor.isSettingPathfindingLimit) {
     if(mapEditor.pathfindingLimit) {
-      updateResizingObject(mapEditor.pathfindingLimit)
+      updateResizingObject(mapEditor.pathfindingLimit, { allowTiny: false })
     }
   } else if(mapEditor.resizingObject) {
     updateResizingObject(mapEditor.resizingObject)
@@ -159,14 +173,25 @@ function onDelete(object) {
   }
 }
 
-function updateResizingObject(object) {
+function updateResizingObject(object, options = { allowTiny : true }) {
   const { mousePos } = mapEditor
   if(mousePos.x < object.x || mousePos.y < object.y) {
     return
   }
   object.width = mousePos.x - object.x
   object.height = mousePos.y - object.y
-  gridTool.snapDragToGrid(object, {dragging: true})
+
+  let tinySize
+  if(object.width < game.grid.nodeSize - 4 && object.height < game.grid.nodeSize - 4 && options.allowTiny) {
+    tinySize = object.width
+  }
+
+  if(tinySize) {
+    gridTool.snapTinyObjectToGrid(object, tinySize)
+  } else {
+    gridTool.snapDragToGrid(object)
+  }
+
 }
 
 function updateDraggingObject(object) {
@@ -206,7 +231,18 @@ function render(ctx, game, camera) {
   }
 }
 
+function update(delta, game, camera, remoteState) {
+  if(remoteState && !window.mapEditor.skipRemoteStateUpdate) {
+    updateGridHighlight(remoteState.mousePos, game, camera)
+  }
+
+  if(!window.ghost && window.isPlayer && window.hero) {
+    window.socket.emit('sendHeroMapEditor', { mousePos: mapEditor.mousePos } , window.hero.id)
+  }
+}
+
 export default {
   init,
   render,
+  update,
 }

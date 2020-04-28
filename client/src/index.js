@@ -91,6 +91,8 @@
 // a try catch that if theres an error, the editor asks for a version of the game from like 1 minute ago
 // everytime I switch out of a menu, I want the selected radio buttons to be reset to default
 
+// refactor camera for multipliers to work best.... ( mainly on map Editor )
+
 // JUICE IDEAS
 /*Trails,
 	long trail
@@ -626,14 +628,26 @@ var update = function (delta) {
         // physics.updateCorrections(delta)
       }
     }
-    if(window.ghost && window.hero.id === 'ghost') {
-      input.update(window.hero, window.keysDown, delta)
+    if(window.ghost) {
+      if(window.hero.id === 'ghost') {
+        input.update(window.hero, window.keysDown, delta)
+      }
+    }
+
+    if(window.isMapEditor) {
+      if(window.remoteHeroMapEditorState) {
+        mapEditor.update(delta, w.game, camera.get(), window.remoteHeroMapEditorState)
+      } else {
+        mapEditor.update(delta, w.game, camera.get())
+      }
     }
 
     if(!window.ghost){
       localStorage.setItem('hero', JSON.stringify(window.hero))
       // we are locally updating the hero input as host
-      if(!window.host && !window.pageState.typingMode) window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
+      if(!window.host && !window.pageState.typingMode) {
+        window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
+      }
     }
   }
 

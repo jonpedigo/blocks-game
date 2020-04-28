@@ -60,6 +60,24 @@ function init(){
 
 function update(delta) {
   localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: window.ghostHero}))
+
+  if(window.hero.id === 'ghost' && 16 in keysDown) {
+    if (38 in keysDown) { // Player holding up
+      hero.y -= w.game.grid.nodeSize
+    }
+    if (40 in keysDown) { // Player holding down
+      hero.y += w.game.grid.nodeSize
+    }
+
+    if (37 in keysDown) { // Player holding left
+      hero.x -= w.game.grid.nodeSize
+    }
+
+    if (39 in keysDown) { // Player holding right
+      hero.x += w.game.grid.nodeSize
+    }
+  }
+
 }
 
 function loaded() {

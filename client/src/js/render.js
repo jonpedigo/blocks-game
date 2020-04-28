@@ -94,18 +94,22 @@ function update() {
 	feedback.draw(ctx);
 
   if(window.hero && window.hero._interactableObject && !window.hero.flags.showChat) {
-    ctx.fillStyle = "rgb(255, 255, 255)";
-    let text = "Press X to interact"
-    ctx.textAlign = 'center'
-    // ctx.textBaseline = 'alphabetic'
-    ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
-    // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
-    ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
     const { _interactableObject } = window.hero
-    let thickness = 3
-    drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, tempCamera, { thickness })
-  }
 
+    if(_interactableObject.tags.invisible) {
+      ctx.fillStyle = "rgb(255, 255, 255)";
+      let text = "Press X to interact"
+      ctx.textAlign = 'center'
+      // ctx.textBaseline = 'alphabetic'
+      ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
+      // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
+      ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
+
+    } else {
+      let thickness = 3
+      drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, tempCamera, { thickness })
+    }
+  }
 }
 
 export default {

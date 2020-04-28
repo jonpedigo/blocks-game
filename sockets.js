@@ -291,6 +291,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onCustomFxEvent', eventIn)
   })
 
+  socket.on('sendHeroMapEditor', (mapEditor, heroId) => {
+    io.emit('onSendHeroMapEditor', mapEditor, heroId)
+  })
+
   socket.on('updateCompendium', (compendium) => {
     currentGame.compendium = compendium
     io.emit('onUpdateCompendium', compendium)

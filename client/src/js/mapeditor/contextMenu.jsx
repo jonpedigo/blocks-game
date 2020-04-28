@@ -56,6 +56,9 @@ class contextMenuEl extends React.Component{
       if(key === 'name-position-above') {
         window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: 'above'}])
       }
+      if(key === 'name-position-none') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: null}])
+      }
 
       if(key === 'trigger-collision') {
         window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: false }}])
@@ -167,9 +170,10 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-object">Give Name</MenuItem>
         <MenuItem key="name-position-center">Position Name in Center</MenuItem>
         <MenuItem key="name-position-above">Position Name above</MenuItem>
+        <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
       <SubMenu title="Advanced">
-        <MenuItem key="set-pathfinding-limit">Set exploration area</MenuItem>
+        <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>

@@ -34,7 +34,9 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
       // dont update input for hosts hero since we've already locally updated
-      if(window.isPlayer && window.hero && heroId == window.hero.id) return
+      if(window.isPlayer && window.hero && heroId == window.hero.id) {
+        return
+      }
       window.heroInput[heroId] = heroInput
     })
 
@@ -158,6 +160,13 @@ function init() {
     })
   }
 
+  if(window.ghost) {
+    window.socket.on('onSendHeroMapEditor', (mapEditor, heroId) => {
+      if(window.hero.id === heroId) {
+        window.remoteHeroMapEditorState = mapEditor
+      }
+    })
+  }
 
   ///////////////////////////////
   ///////////////////////////////

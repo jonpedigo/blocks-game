@@ -111,6 +111,16 @@ function snapObjectToGrid(object) {
   }
 }
 
+
+function snapTinyObjectToGrid(object, tinySize) {
+  let medium = w.game.grid.nodeSize - tinySize
+  const { x, y } = snapXYToGrid(object.x, object.y)
+  object.y = y + medium/2
+  object.x = x + medium/2
+  object.width = tinySize
+  object.height = tinySize
+}
+
 function snapDragToGrid(object) {
   // if negative width
   if(object.width < 0) {
@@ -333,6 +343,7 @@ export default {
   update,
   snapObjectToGrid,
   snapDragToGrid,
+  snapTinyObjectToGrid,
   createGridNodeAt,
   generateGridNodes,
   snapXYToGrid,
