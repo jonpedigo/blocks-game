@@ -447,7 +447,9 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
       }
 
       // objects with NO path but SOME velocity get corrections
-      if(po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle'] && !po.gameObject.tags['stationary'] && !po.gameObject.path && (po.gameObject.velocityY > 0 || po.gameObject.velocityX > 0)) {
+      let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY > 0 || po.gameObject.velocityX > 0))
+      let bothAreObstacles = po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle']
+      if(!po.gameObject.tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.tags['heroPushable'])) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x

@@ -26,7 +26,7 @@ function init() {
           physics.addObject(hero)
           hero.id = heroId
         }
-
+        window.local.emit('onHeroJoined', hero)
         window.socket.emit('addHeroToGame', hero)
       }
     })
@@ -441,11 +441,7 @@ function init() {
   window.socket.on('onUpdateCustomGameFx', (customFx) => {
     if(window.host) {
       try {
-        customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles) {
-          const w = window
-          ${customFx} return { init, loaded, start, input, onCollide, intelligence, update, render } })`)
-        customFx = customFx(pathfinding, gridTool, camera, collisions, particles)
-        window.liveCustomGame = customFx
+        window.setLiveCustomFx(customFx)
       } catch (e) {
         console.log(e)
       }

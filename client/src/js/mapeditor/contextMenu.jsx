@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import modals from './modals.js'
+import { SwatchesPicker } from 'react-color';
 
 function init(editor, props) {
   editor.contextMenu = document.getElementById('context-menu')
@@ -29,7 +30,9 @@ class contextMenuEl extends React.Component{
     });
 
     window.addEventListener("click", e => {
-      this._toggleContextMenu("hide");
+      if(e.target.innerText !== 'Color Picker') {
+        this._toggleContextMenu("hide");
+      }
     });
 
     this.state = {
@@ -81,12 +84,24 @@ class contextMenuEl extends React.Component{
         onCopy(objectHighlighted)
       }
 
+      if(key === 'select-color') {
+        this.setState({ isColoring: true })
+      }
+
+      if(key === 'toggle-filled') {
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }}])
+      }
+
       if(key === 'set-pathfinding-limit') {
         onStartSetPathfindingLimit(objectHighlighted)
       }
 
       if(key === 'toggle-pause-game') {
         window.socket.emit('editGameState', { paused: !game.gameState.paused })
+      }
+
+      if(key === 'copy-id') {
+        window.copyToClipBoard(objectHighlighted.id)
       }
     }
   }
@@ -107,13 +122,26 @@ class contextMenuEl extends React.Component{
   };
 
   render() {
-    const { hide } = this.state;
+    const { hide, isColoring, chosenColor } = this.state;
     const { editor } = this.props;
     const { objectHighlighted, recievedObject, copiedObject } = editor
 
     if(hide) {
       editor.contextMenuVisible = false
       return null
+    }
+
+    if(isColoring) {
+      return <SwatchesPicker
+        color={ objectHighlighted.color }
+        onChange={ (color) => {
+          this.setState({
+            isColoring: false,
+          })
+          objectHighlighted.color = color.hex
+          window.socket.emit('editObjects', [{id: objectHighlighted.id, color: color.hex}])
+        }}
+      />
     }
 
     editor.contextMenuVisible = true
@@ -130,12 +158,10 @@ class contextMenuEl extends React.Component{
       <MenuItem key="resize">Resize</MenuItem>
       <MenuItem key="delete">Delete</MenuItem>
       <MenuItem key="copy">Copy</MenuItem>
-      <MenuItem key="color">Select Color</MenuItem>
       <MenuItem key="write-dialogue">Dialogue</MenuItem>
-      <SubMenu title="Trigger">
-        <MenuItem key="trigger-collision">When collided</MenuItem>
-        <MenuItem key="trigger-interact">When X is pressed</MenuItem>
-        <MenuItem key="trigger-chain">When selected object is triggered</MenuItem>
+      <SubMenu title="Color">
+        <MenuItem key="select-color">Color Picker</MenuItem>
+        <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
       </SubMenu>
       <SubMenu title="Name">
         <MenuItem key="name-object">Give Name</MenuItem>
@@ -146,6 +172,12 @@ class contextMenuEl extends React.Component{
         <MenuItem key="set-pathfinding-limit">Set exploration area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
+        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <SubMenu title="Trigger">
+          <MenuItem key="trigger-collision">When collided</MenuItem>
+          <MenuItem key="trigger-interact">When X is pressed</MenuItem>
+          <MenuItem key="trigger-chain">Select remote Trigger</MenuItem>
+        </SubMenu>
       </SubMenu>
     </Menu>
   }

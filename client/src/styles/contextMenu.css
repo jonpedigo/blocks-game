@@ -70,13 +70,23 @@
 .rc-menu-submenu-title {
   margin: 0;
   position: relative;
-  display: block;
-  padding: 7px 7px 7px 16px;
+  display: flex;
+  align-items: center;
+  padding: 6px 16px 6px 16px;
   white-space: nowrap;
+  color: white;
+  height: 18px;
 }
+.rc-menu-item:hover {
+  background: #555;
+}
+.rc-menu-submenu-title:hover {
+  background: #555;
+}
+
 .rc-menu-rtl .rc-menu-item,
 .rc-menu-rtl .rc-menu-submenu-title {
-  padding: 7px 16px 7px 7px;
+  padding: 6px 16px 6px 6px;
 }
 .rc-menu-item.rc-menu-item-disabled,
 .rc-menu-submenu-title.rc-menu-item-disabled,
@@ -96,7 +106,7 @@
   position: absolute;
 }
 .rc-menu-submenu-popup .submenu-title-wrapper {
-  padding-right: 20px;
+  padding-right: 0px;
 }
 .rc-menu-submenu-rtl.rc-menu-submenu-popup .submenu-title-wrapper,
 .rc-menu-submenu-rtl .rc-menu-submenu-popup .submenu-title-wrapper {
@@ -149,7 +159,7 @@
 .rc-menu-vertical-left,
 .rc-menu-vertical-right,
 .rc-menu-inline {
-  padding: 12px 0;
+  padding: 4px 0;
 }
 .rc-menu-vertical > .rc-menu-item,
 .rc-menu-vertical-left > .rc-menu-item,
@@ -159,7 +169,9 @@
 .rc-menu-vertical-left > .rc-menu-submenu > .rc-menu-submenu-title,
 .rc-menu-vertical-right > .rc-menu-submenu > .rc-menu-submenu-title,
 .rc-menu-inline > .rc-menu-submenu > .rc-menu-submenu-title {
-  padding: 12px 24px 12px 24px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 12px;
 }
 .rc-menu-rtl.rc-menu-vertical > .rc-menu-item,
 .rc-menu-rtl.rc-menu-vertical-left > .rc-menu-item,
@@ -175,17 +187,18 @@
 .rc-menu-vertical-left .rc-menu-submenu-arrow,
 .rc-menu-vertical-right .rc-menu-submenu-arrow,
 .rc-menu-inline .rc-menu-submenu-arrow {
-  display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: inherit;
   vertical-align: baseline;
   text-align: center;
   text-transform: none;
   text-rendering: auto;
-  position: absolute;
-  right: 16px;
   line-height: 1.5em;
+  margin-left: auto;
+  position: relative;
+  left: 10px;
 }
+
 .rc-menu-vertical .rc-menu-submenu-arrow:before,
 .rc-menu-vertical-left .rc-menu-submenu-arrow:before,
 .rc-menu-vertical-right .rc-menu-submenu-arrow:before,

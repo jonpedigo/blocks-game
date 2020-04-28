@@ -9,7 +9,7 @@ function init() {
     velocityY: 0,
     velocityMax: 100,
     speed: 100,
-    color: '#999',
+    color: '#525252',
     // cant put objects in it cuz of some pass by reference BS...
   }
   window.defaultObjects = []

@@ -1,8 +1,15 @@
 import camera from './camera.js'
 import chat from './chat.js'
 import feedback from './feedback.js'
+import drawTools from './mapeditor/drawTools.js'
 
 function update() {
+  //set camera so we render everything in the right place
+  camera.set(ctx, window.hero)
+
+  let tempCamera = JSON.parse(JSON.stringify(camera.get()))
+  tempCamera.multiplier = 1/tempCamera.multiplier
+
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
 
@@ -30,8 +37,6 @@ function update() {
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	//set camera so we render everything in the right place
-  camera.set(ctx, window.hero)
 
 	w.game.world.renderStyle = 'outlines'
  	if (w.game.world.renderStyle === 'outlines') {
@@ -96,6 +101,9 @@ function update() {
     ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
     // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
     ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
+    const { _interactableObject } = window.hero
+    let thickness = 3
+    drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, tempCamera, { thickness })
   }
 
 }

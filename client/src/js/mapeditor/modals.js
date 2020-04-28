@@ -1,7 +1,7 @@
 function writeDialogue(object, cb) {
   window.pageState.typingMode = true
   openWriteDialogueModal(object, (result) => {
-    if(result.value[0] && result.value[0].length) {
+    if(result && result.value[0] && result.value[0].length) {
       object.tags.heroUpdate = true
       object.heroUpdate.chat = [result.value[0]]
       if(!object.heroUpdate.flags) object.heroUpdate.flags = {}
@@ -22,7 +22,7 @@ function writeDialogue(object, cb) {
 function nameObject(object, cb) {
   window.pageState.typingMode = true
   openNameObjectModal(object, (result) => {
-    if(result.value[0] && result.value[0].length) {
+    if(result && result.value[0] && result.value[0].length) {
       object.name = result.value[0]
       object.namePosition = "center"
       if(result.value[1]) object.namePosition = "center"

@@ -17,6 +17,8 @@ function draw(ctx) {
   if(window.hero.lives < 0) {
     window.hero.lives = 0
   }
+  ctx.textAlign = 'start'
+  ctx.textBaseline = 'alphabetic'
 
   if(window.hero.flags.showScore) {
     ctx.fillStyle = 'white'

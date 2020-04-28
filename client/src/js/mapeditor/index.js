@@ -187,7 +187,7 @@ function render(ctx, game, camera) {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       color = 'rgba(255,255,255,0.6)'
     }
-    drawTools.drawObject(ctx, {...objectHighlighted, color}, tempCamera)
+    drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, tempCamera)
   }
 
   if(objectHighlightedChildren) {
@@ -196,15 +196,13 @@ function render(ctx, game, camera) {
       if(object.tags && object.tags.invisible) {
         color = 'rgba(255,255,255,0.4)'
       }
-      drawTools.drawObject(ctx, {...object, color}, tempCamera)
+      drawTools.drawFilledObject(ctx, {...object, color}, tempCamera)
     })
   }
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
   if(currentObject) {
-    drawTools.getObjectVertices(ctx, currentObject, tempCamera).forEach((vertice) => {
-      drawTools.drawVertice(ctx, vertice, tempCamera)
-    })
+    drawTools.drawObject(ctx, currentObject, tempCamera)
   }
 }
 

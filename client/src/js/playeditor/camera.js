@@ -143,7 +143,7 @@ function getObjectVertices(object) {
 
   const extraProps = {}
   if(object.tags.invisible) {
-    ctx.fillStyle='red';
+    ctx.fillStyle='rgba(255, 0,0, 0.2)';
     ctx.globalAlpha = 0.2;
     drawObject(ctx, object);
     ctx.globalAlpha = 1.0;
@@ -306,7 +306,7 @@ function render(ctx, hero, objects, grid) {
           b: {
             x: (node.gridX + 1) * w.editingGame.grid.nodeSize + w.editingGame.grid.startX,
             y: (node.gridY + 1) * w.editingGame.grid.nodeSize + w.editingGame.grid.startY,
-          }, color: 'red'})
+          }, color: 'rgba(255, 0,0, 0.3)'})
         }
       })
 

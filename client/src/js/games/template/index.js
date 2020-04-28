@@ -42,7 +42,12 @@ function intelligence(object, delta) {
 }
 
 // only on client
-function onCollide(agent, collider, result, removeObjects) {
+function onCollide(agent, collider, result, removeObjects, respawnObjects) {
+
+}
+
+// only on client
+function onHero(hero, collider, result, removeObjects, respawnObjects) {
 
 }
 
@@ -93,6 +98,10 @@ function keyDown(keyCode, hero) {
 
 }
 
+// only on client
+function onCollide(agent, collider, result, removeObjects, respawnObjects) {
+
+}
 
 // only on client
 function input(hero, keysDown, delta) {
@@ -105,10 +114,7 @@ function intelligence(object, delta) {
 
 }
 
-// only on client
-function onCollide(agent, collider, result, removeObjects) {
 
-}
 
 // after input, intel, physics, but before render
 // only on client

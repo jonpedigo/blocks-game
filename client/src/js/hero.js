@@ -322,11 +322,8 @@ function setRevertUpdateTimeout(id, hero, collider) {
   let timeoutFx = () => {
     hero.updateHistory = hero.updateHistory.filter((update) => {
       window.local.emit('onHeroUpdateReverted', hero, update)
-      console.log(collider.id, collider.fromCompendiumId, update.id)
-
       if(collider.fromCompendiumId) {
         if(collider.fromCompendiumId === update.id) {
-          console.log(update.prev)
           window.mergeDeep(hero, {...update.prev})
           return false
         }
@@ -370,6 +367,8 @@ window.findHeroInNewGame = function(game, hero) {
 }
 
 window.addHeroToGame = function(hero) {
+  console.log('ADDDING HERO', hero.id)
+  window.local.emit('onHeroAdded', hero)
   physics.addObject(hero)
   window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, relativeId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize, relativeX: -w.game.grid.nodeSize, relativeY: -w.game.grid.nodeSize}], { fromLiveGame: true })
 }

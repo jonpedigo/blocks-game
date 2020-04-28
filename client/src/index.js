@@ -8,6 +8,26 @@
 // set game boundaries to delete objects
 // TRUE zelda camera work
 // death by jump
+// Target/Homing awareness area
+
+// CONTEXT MENU TOOLS
+//Set Target, Set Pathfinding Target
+// PAINT TOOLS!
+
+//Set to game boundary size
+//Increment grid size, game boundary size
+//Set all objects to the middle ( FULL MIGRATION )
+
+// hero UPDATE is OK but maybe we can have a TRIGGER function editor. Its a code editor that sends a function to the host that the host saves as that objects effect? have it saved as a string?
+
+// can hero update have a general id? which means effects the hero that collided with it or interacted with it?
+// Thats how it exists right now ^^ but can something STORE an id to effect. An object id or hero id. It stores the id so when triggered it find the given object! ohh my...
+
+// why no just call init onPageLoad
+// implement lodash
+
+// game/group tags? ( non functional )
+// Hole punch tool ( CLICK TO SEPERATE OBJECT INTO TWO AND PUNCH HOLE IN IT) OR // If im adding an object and it collides with another object I want it to like morph around it
 
 // Pathfinding for something larger than one grid node
 // Perhaps not PATHFINDING but… targeting.
@@ -567,10 +587,6 @@ var mainLoop = function () {
       var sinceStart = now - startTime;
       var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
       window.fps = currentFps;
-      if(frameCount > 10000) {
-        frameCount = 0
-        startTime = Date.now()
-      }
   }
 
   if (deltaUpdate > updateInterval) {
