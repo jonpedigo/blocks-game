@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import modals from './modals.js'
 
+function init(editor, props) {
+  editor.contextMenu = document.getElementById('context-menu')
+
+  // Mount React App
+  ReactDOM.render(
+    React.createElement(contextMenuEl, { editor, ...props, ref: ref => editor.contextMenuRef = ref }),
+    editor.contextMenu
+  )
+}
+
 class contextMenuEl extends React.Component{
   constructor(props) {
     super(props)
@@ -26,7 +36,7 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleClick = ({ key }) => {
-      const { editor, onResize } = this.props;
+      const { editor, onResize, onDrag } = this.props;
 
       if(key === 'add-object') {
         window.addObjects(editor.objectHighlighted)
@@ -42,6 +52,10 @@ class contextMenuEl extends React.Component{
 
       if(key === 'resize') {
         onResize(editor.objectHighlighted)
+      }
+
+      if(key === 'drag') {
+        onDrag(editor.objectHighlighted)
       }
     }
   }
@@ -77,30 +91,20 @@ class contextMenuEl extends React.Component{
     }
 
     return <Menu onClick={this._handleClick}>
-      <MenuItem>Drag</MenuItem>
+      <MenuItem key="drag">Drag</MenuItem>
       <MenuItem key="resize">Resize</MenuItem>
-      <MenuItem>Delete</MenuItem>
-      <MenuItem>Copy</MenuItem>
+      <MenuItem key="delete">Delete</MenuItem>
+      <MenuItem key="copy">Copy</MenuItem>
+      <MenuItem key="color">Select Color</MenuItem>
       <MenuItem key="write-dialogue">Dialogue</MenuItem>
       <SubMenu title="Name">
         <MenuItem key="name-object">Give Name</MenuItem>
-        <MenuItem>Position Name in Center</MenuItem>
-        <MenuItem>Position Name above</MenuItem>
+        <MenuItem key="name-position-center">Position Name in Center</MenuItem>
+        <MenuItem key="name-position-above">Position Name above</MenuItem>
       </SubMenu>
     </Menu>
   }
 }
-
-function init(editor, options) {
-  editor.contextMenu = document.getElementById('context-menu')
-
-  // Mount React App
-  ReactDOM.render(
-    React.createElement(contextMenuEl, { editor, onResize: options.onResize, ref: ref => editor.contextMenuRef = ref }),
-    editor.contextMenu
-  )
-}
-
 
 export default {
   init

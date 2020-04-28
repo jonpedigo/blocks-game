@@ -214,6 +214,7 @@ window.resetReachablePlatformWidth = function(heroIn) {
 function onCollide(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   if(collider.tags && collider.tags['monster']) {
     if(hero.tags['monsterDestroyer']) {
+      window.local.emit('onHeroDestroyMonster', hero, collider, result, removeObjects, respawnObjects, options)
       if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
         respawnObjects.push(collider)
       } else {
@@ -221,7 +222,7 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects, option
       }
     } else {
       if(hero.lives == 0) {
-        window.local.emit('gameOver')
+        window.local.emit('onHeroNoLives', hero, collider, result, removeObjects, respawnObjects, options)
       }
       hero.lives--
       respawnObjects.push(hero)
@@ -245,6 +246,7 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects, option
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     heroUpdate(hero, collider)
+    window.local.emit('onHeroUpdate', hero, collider, result, removeObjects, respawnObjects, options)
     if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
   } else if(!options.fromInteractButton && collider.parentId !== hero.id){
     hero.lastPowerUpId = null
@@ -269,8 +271,8 @@ function heroUpdate (hero, collider) {
       return
     }
 
-    // only have 4 edits in the history at a time
-    if(hero.updateHistory.length >= 4) {
+    // only have 30 edits in the history at a time
+    if(hero.updateHistory.length >= 30) {
       hero.updateHistory.shift()
     }
 
@@ -307,6 +309,7 @@ function heroUpdate (hero, collider) {
 function setRevertUpdateTimeout(hero, collider) {
   let timeout = window.setTimeout(() => {
     hero.updateHistory = hero.updateHistory.filter((update) => {
+      window.local.emit('onHeroUpdateReverted', hero, update)
       if(collider.fromCompendiumId) {
         delete hero.timeouts[collider.fromCompendiumId]
         if(collider.fromCompendiumId === update.id) {

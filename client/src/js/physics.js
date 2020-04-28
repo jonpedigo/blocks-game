@@ -162,6 +162,7 @@ function heroCorrection(hero) {
       function correctHeroY() {
         if(result.overlap_y > 0) {
           hero.onGround = true
+          if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result, removeObjects, respawnObject)
           if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
             hero._parentId = landingObject.gameObject.id
             hero._skipNextGravity = true
@@ -249,6 +250,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
     if(body.gameObject.removed) continue
     if(body.gameObject.tags['requireActionButton']) continue
     if(heroPO.collides(body, result)) {
+      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
       heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
     }
   }
@@ -667,7 +669,7 @@ function update (delta) {
     if(hero._interactableObject) {
       let input = window.heroInput[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onObjectInteractable', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
+      window.local.emit('onObjectInteractable', hero._interactableObject, hero, hero._interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {
         window.local.emit('onHeroInteract', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
         heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })

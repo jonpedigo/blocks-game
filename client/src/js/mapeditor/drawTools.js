@@ -4,12 +4,16 @@ function getObjectVertices(ctx, object, camera) {
 
   const extraProps = {}
   if(object.tags.invisible) {
-    ctx.fillStyle='red';
     ctx.globalAlpha = 0.2;
-    drawObject(ctx, object);
+    drawObject(ctx, object, camera);
     ctx.globalAlpha = 1.0;
     return prev
   }
+  if(object.tags.filled) {
+    drawObject(ctx, object, camera);
+    return prev
+  }
+
   if(object.tags && object.tags.glowing) {
     extraProps.glow = 3
     extraProps.thickness = 2
@@ -47,7 +51,7 @@ function drawVertice(ctx, vertice, camera) {
 
   if(vertice.glow) {
     ctx.filter = "none";
-    drawVertice(ctx, {...vertice, glow: false})
+    drawVertice(ctx, {...vertice, glow: false}, camera)
   }
   if(vertice.color) {
     ctx.strokeStyle = "#999";
