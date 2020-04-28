@@ -3,18 +3,18 @@ function getObjectVertices(ctx, object, camera) {
   if(object.removed) return prev
 
   const extraProps = {}
-  if(object.tags.invisible) {
+  if(object.tags && object.tags.invisible) {
     ctx.globalAlpha = 0.2;
     drawObject(ctx, object, camera);
     ctx.globalAlpha = 1.0;
     return prev
   }
-  if(object.tags.filled) {
+  if(object.tags && object.tags.filled) {
     drawObject(ctx, object, camera);
     return prev
   }
 
-  if(object.tags && object.tags.glowing) {
+  if(object.tags && object.tags && object.tags && object.tags.glowing) {
     extraProps.glow = 3
     extraProps.thickness = 2
     extraProps.color = 'white'

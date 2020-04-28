@@ -91,7 +91,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
-      w.game.gameState = gameState
+      window.mergeDeep(w.game.gameState, gameState)
       if(window.usePlayEditor && window.syncGameStateToggle.checked) {
         window.gamestateeditor.update(gameState)
       }

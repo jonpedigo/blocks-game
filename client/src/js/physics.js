@@ -605,12 +605,15 @@ function update (delta) {
 
         if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton']) {
           let hero = w.game.heros[po.gameObject.relativeId]
-          if(!hero._interactableObject) {
-            hero._interactableObject = body.gameObject
-            hero._interactableObjectResult = result
-          } else if(body.gameObject.width < hero._interactableObject.width || body.gameObject.height < hero._interactableObject.height) {
-            hero._interactableObject = body.gameObject
-            hero._interactableObjectResult = result
+          // sometimes the hero could be logged off
+          if(hero) {
+            if(!hero._interactableObject) {
+              hero._interactableObject = body.gameObject
+              hero._interactableObjectResult = result
+            } else if(body.gameObject.width < hero._interactableObject.width || body.gameObject.height < hero._interactableObject.height) {
+              hero._interactableObject = body.gameObject
+              hero._interactableObjectResult = result
+            }
           }
         }
 

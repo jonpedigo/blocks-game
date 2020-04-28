@@ -37,10 +37,10 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleClick = ({ key }) => {
-      const { editor, onResize, onDrag, onDelete, onCopy } = this.props;
-      const { objectHighlighted } = editor
+      const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
+      const { objectHighlighted, recievedObject, copiedObject } = editor
 
-      if(key === 'add-object') {
+      if(key === 'create-object') {
         window.addObjects(objectHighlighted)
       }
 
@@ -66,11 +66,11 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'resize') {
-        onResize(objectHighlighted)
+        onStartResize(objectHighlighted)
       }
 
       if(key === 'drag') {
-        onDrag(objectHighlighted)
+        onStartDrag(objectHighlighted)
       }
 
       if(key === 'delete') {
@@ -79,6 +79,14 @@ class contextMenuEl extends React.Component{
 
       if(key === 'copy') {
         onCopy(objectHighlighted)
+      }
+
+      if(key === 'set-pathfinding-limit') {
+        onStartSetPathfindingLimit(objectHighlighted)
+      }
+
+      if(key === 'toggle-pause-game') {
+        window.socket.emit('editGameState', { paused: !game.gameState.paused })
       }
     }
   }
@@ -101,7 +109,7 @@ class contextMenuEl extends React.Component{
   render() {
     const { hide } = this.state;
     const { editor } = this.props;
-    const { objectHighlighted } = editor
+    const { objectHighlighted, recievedObject, copiedObject } = editor
 
     if(hide) {
       editor.contextMenuVisible = false
@@ -111,7 +119,9 @@ class contextMenuEl extends React.Component{
     editor.contextMenuVisible = true
     if(!objectHighlighted.id) {
       return <Menu onClick={this._handleClick}>
-        <MenuItem key='add-object'>Add</MenuItem>
+        <MenuItem key='create-object'>Create object</MenuItem>
+        { recievedObject && <MenuItem key='add-recieved-object'>Add recieved object</MenuItem> }
+        <MenuItem key='toggle-pause-game'>{ game.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
       </Menu>
     }
 
@@ -125,11 +135,17 @@ class contextMenuEl extends React.Component{
       <SubMenu title="Trigger">
         <MenuItem key="trigger-collision">When collided</MenuItem>
         <MenuItem key="trigger-interact">When X is pressed</MenuItem>
+        <MenuItem key="trigger-chain">When selected object is triggered</MenuItem>
       </SubMenu>
       <SubMenu title="Name">
         <MenuItem key="name-object">Give Name</MenuItem>
         <MenuItem key="name-position-center">Position Name in Center</MenuItem>
         <MenuItem key="name-position-above">Position Name above</MenuItem>
+      </SubMenu>
+      <SubMenu title="Advanced">
+        <MenuItem key="set-pathfinding-limit">Set exploration area</MenuItem>
+        <MenuItem key="set-parent">Set parent</MenuItem>
+        <MenuItem key="set-relative">Set relative</MenuItem>
       </SubMenu>
     </Menu>
   }

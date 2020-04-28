@@ -1,4 +1,4 @@
-import grid from '../grid.js'
+import gridTool from '../grid.js'
 import collisions from '../collisions'
 import contextMenu from './contextMenu.jsx'
 import drawTools from './drawTools';
@@ -18,9 +18,12 @@ window.mapEditor = {
     x: null,
     y: null,
   },
+  copiedObject: null,
   objectHighlighted: null,
   resizingObject: null,
   draggingObject: null,
+  pathfindingLimit: null,
+  isSettingPathfindingLimit: false
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
@@ -36,29 +39,45 @@ function init(ctx, game, camera) {
   })
 
   contextMenu.init(mapEditor, {
-    onResize,
-    onDrag,
+    onStartResize,
+    onStartDrag,
     onDelete,
+    onCopy,
+    onStartSetPathfindingLimit,
   })
   keyInput.init()
 }
 
-function handleMouseUp(e, camera) {
+function handleMouseUp(event, game, camera) {
   let clickEndX = ((event.offsetX + camera.x) * camera.multiplier)
   let clickEndY = ((event.offsetY + camera.y) * camera.multiplier)
 }
 
-function handleMouseDown(e, camera) {
+function handleMouseDown(event, game, camera) {
   mapEditor.clickStart.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.clickStart.y = ((event.offsetY + camera.y) * camera.multiplier)
 
-  if(mapEditor.resizingObject) {
+  if(mapEditor.copiedObject) {
+    window.addObjects([mapEditor.copiedObject])
+    mapEditor.copiedObject = null
+  } else if(mapEditor.isSettingPathfindingLimit) {
+    if(mapEditor.pathfindingLimit) {
+      const { pathfindingLimit, objectHighlighted } = mapEditor
+      gridTool.snapDragToGrid(pathfindingLimit, {dragging: true})
+      window.socket.emit('editObjects', [{id: objectHighlighted.id, pathfindingLimit, path: null}])
+      document.body.style.cursor = "default";
+      mapEditor.isSettingPathfindingLimit = false
+      mapEditor.pathfindingLimit = null
+    } else {
+      mapEditor.pathfindingLimit = { ...mapEditor.clickStart }
+      mapEditor.pathfindingLimit.width = 0
+      mapEditor.pathfindingLimit.height = 0
+    }
+  } else if(mapEditor.resizingObject) {
     const { resizingObject } = mapEditor
     window.socket.emit('editObjects', [{id: resizingObject.id, width: resizingObject.width, height: resizingObject.height}])
     mapEditor.resizingObject = null
-  }
-
-  if(mapEditor.draggingObject) {
+  } else if(mapEditor.draggingObject) {
     const { draggingObject } = mapEditor
     window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, y: draggingObject.y}])
     mapEditor.draggingObject = null
@@ -69,15 +88,25 @@ function handleMouseMove(event, game, camera) {
   mapEditor.mousePos.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.mousePos.y = ((event.offsetY + camera.y) * camera.multiplier)
 
-  if(mapEditor.resizingObject) updateResizingObject(mapEditor.resizingObject)
-  else if(mapEditor.draggingObject) updateDraggingObject(mapEditor.draggingObject)
-  else updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
+  if(mapEditor.copiedObject) {
+    updateDraggingObject(mapEditor.copiedObject)
+  } else if(mapEditor.isSettingPathfindingLimit) {
+    if(mapEditor.pathfindingLimit) {
+      updateResizingObject(mapEditor.pathfindingLimit)
+    }
+  } else if(mapEditor.resizingObject) {
+    updateResizingObject(mapEditor.resizingObject)
+  } else if(mapEditor.draggingObject) {
+    updateDraggingObject(mapEditor.draggingObject)
+  } else {
+    updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
+  }
 }
 
 function updateGridHighlight(location, game, camera) {
   if(mapEditor.contextMenuVisible) return
 
-  const { x,y } = grid.snapXYToGrid(location.x, location.y, { closest: false })
+  const { x,y } = gridTool.snapXYToGrid(location.x, location.y, { closest: false })
 
   let mouseLocation = {
     x,
@@ -103,12 +132,22 @@ function updateGridHighlight(location, game, camera) {
   }
 }
 
-function onResize(object) {
+function onStartResize(object) {
   mapEditor.resizingObject = JSON.parse(JSON.stringify(object))
 }
 
-function onDrag(object) {
+function onStartSetPathfindingLimit(object) {
+  mapEditor.isSettingPathfindingLimit = true
+  document.body.style.cursor = "crosshair";
+}
+
+function onStartDrag(object) {
   mapEditor.draggingObject = JSON.parse(JSON.stringify(object))
+}
+
+function onCopy(object) {
+  mapEditor.copiedObject = JSON.parse(JSON.stringify(object))
+  delete mapEditor.copiedObject.id
 }
 
 function onDelete(object) {
@@ -120,7 +159,6 @@ function onDelete(object) {
   }
 }
 
-
 function updateResizingObject(object) {
   const { mousePos } = mapEditor
   if(mousePos.x < object.x || mousePos.y < object.y) {
@@ -128,21 +166,21 @@ function updateResizingObject(object) {
   }
   object.width = mousePos.x - object.x
   object.height = mousePos.y - object.y
-  grid.snapDragToGrid(object, {dragging: true})
+  gridTool.snapDragToGrid(object, {dragging: true})
 }
 
 function updateDraggingObject(object) {
   const { mousePos } = mapEditor
   object.x = mousePos.x
   object.y = mousePos.y
-  grid.snapDragToGrid(object, {dragging: true})
+  gridTool.snapDragToGrid(object, {dragging: true})
 }
 
 function render(ctx, game, camera) {
   let tempCamera = JSON.parse(JSON.stringify(camera))
   tempCamera.multiplier = 1/tempCamera.multiplier
 
-  const { draggingObject, objectHighlighted, objectHighlightedChildren, resizingObject } = mapEditor
+  const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = mapEditor
 
   if(objectHighlighted) {
     let color = 'rgba(255,255,255,0.2)'
@@ -162,18 +200,12 @@ function render(ctx, game, camera) {
     })
   }
 
-  if(resizingObject) {
-    drawTools.getObjectVertices(ctx, resizingObject, tempCamera).forEach((vertice) => {
+  let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
+  if(currentObject) {
+    drawTools.getObjectVertices(ctx, currentObject, tempCamera).forEach((vertice) => {
       drawTools.drawVertice(ctx, vertice, tempCamera)
     })
   }
-
-  if(draggingObject) {
-    drawTools.getObjectVertices(ctx, draggingObject, tempCamera).forEach((vertice) => {
-      drawTools.drawVertice(ctx, vertice, tempCamera)
-    })
-  }
-
 }
 
 export default {

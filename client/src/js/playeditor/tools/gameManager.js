@@ -195,7 +195,7 @@ function init() {
     if(window.editingGame.branch) {
       window.mergeDeep(window.editingGame.gameState, gameStateUpdate)
     } else {
-      window.socket.emit('editGameState', {...w.editingGame.gameState, ...gameStateUpdate})
+      window.socket.emit('editGameState', gameStateUpdate)
     }
   }
 
