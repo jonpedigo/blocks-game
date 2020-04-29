@@ -32,7 +32,7 @@ function init() {
   window.saveCodeEditor = function() {
     try {
       let customFx = window.customGameEditor.getValue()
-      eval('(function a() {' + customFx + ' return { init, loaded, start, keyDown, input, onCollide, intelligence, update, render } })')
+      window.evalLiveCustomFx(customFx)()
       window.liveCustomGame = customFx
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)
@@ -52,13 +52,13 @@ function init() {
     if(!e.target) return
        //when the document body is clicked
     if (e.target.className && e.target.className.indexOf('start-game-fx-only') != -1) {
-      window.socket.emit('customFxEvent', 'start')
+      window.socket.emit('customFxEvent', 'onGameStart')
     }
     if (e.target.className && e.target.className.indexOf('load-game-fx-only') != -1) {
-      window.socket.emit('customFxEvent', 'loaded')
+      window.socket.emit('customFxEvent', 'onGameLoaded')
     }
-    if (e.target.className && e.target.className.indexOf('init-game-fx-only') != -1) {
-      window.socket.emit('customFxEvent', 'init')
+    if (e.target.className && e.target.className.indexOf('unload-game-fx-only') != -1) {
+      window.socket.emit('customFxEvent', 'onGameUnloaded')
     }
   })
 }

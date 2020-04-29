@@ -132,7 +132,7 @@ function updateGridHighlight(location, game, camera) {
   mapEditor.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
-  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, game.objects.filter((object) => !object.actionTriggerArea))
+  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, game.objects)
   if(smallestObject) mapEditor.objectHighlighted = smallestObject
 
   mapEditor.objectHighlightedChildren = []

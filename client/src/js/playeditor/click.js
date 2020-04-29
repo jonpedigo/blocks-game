@@ -48,6 +48,14 @@ function init() {
         return
       })) return
     }
+
+    let editorState = window.objecteditor.get()
+    if(!window.dragTimeout && editorState.parent && !editorState.compendiumId) {
+      window.dragTimeout = setTimeout(() => {
+        window.draggingObject = editorState
+      }, 118)
+      return
+    }
   })
 
   window.document.getElementById('game-canvas').addEventListener("mouseup", function(e) {

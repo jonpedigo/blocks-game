@@ -1,6 +1,5 @@
 // ( Force anticipated add )
-// local client events
-// interpolation
+// local client events, complete list...
 
 ////////////////////////////////////////////////////
 
@@ -424,16 +423,6 @@ window.loadGame = function(game) {
   w.game.grid = game.grid
   window.local.emit('onGridLoaded')
 
-  /// didnt get to init because game.id wasnt set yet
-  if(window.customGame) {
-    window.customGame.init()
-  }
-
-  /// didnt get to init because game.id wasnt set yet
-  if(window.liveCustomGame) {
-    window.liveCustomGame.init()
-  }
-
   if(game.compendium) window.compendium = game.compendium
   window.game.hero = game.hero
 
@@ -449,11 +438,6 @@ window.loadGame = function(game) {
     if(game.gameState && game.gameState.loaded) {
       if(!w.game.heros) w.game.heros = {}
       w.game.heros = game.heros
-      // if(window.host) {
-      //   Object.keys(w.game.heros).forEach((id) => {
-      //     window.resetHeroToDefault(w.game.heros[id])
-      //   })
-      // }
       w.game.gameState = game.gameState
       if(!w.game.gameState) w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     } else {
@@ -464,7 +448,6 @@ window.loadGame = function(game) {
       Object.keys(w.game.heros).forEach((id) => {
         w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
         w.game.heros[id].id = id
-        window.addHeroToGame(w.game.heros[id])
       })
     }
   }
@@ -475,7 +458,6 @@ window.loadGame = function(game) {
       window.hero = w.game.heros[window.hero.id]
     } else {
       w.game.heros[window.hero.id] = window.hero
-      window.addHeroToGame(window.hero)
     }
   }
 
@@ -499,15 +481,13 @@ window.loadGame = function(game) {
     window.gamestateeditor.update(w.game.gameState)
   }
 
-  if(!w.game.gameState.loaded) {
-    /// DEFAULT GAME FX
-    if(window.defaultCustomGame) {
-      window.defaultCustomGame.loaded()
-    }
-    /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.loaded()
-    }
+  /// DEFAULT GAME FX
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.onGameLoaded()
+  }
+  /// CUSTOM GAME FX
+  if(window.customGame) {
+    window.customGame.onGameLoaded()
   }
 
   w.game.gameState.loaded = true
@@ -588,6 +568,11 @@ var mainLoop = function () {
       // TESTING...Report #seconds since start and achieved fps.
       var sinceStart = now - startTime;
       var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
+      if(frameCount > 10) {
+        frameCount = 0
+        startTime = Date.now()
+      }
+
       window.fps = currentFps;
   }
 
@@ -610,6 +595,11 @@ var mainLoop = function () {
 ///////////////////////////////
 ///////////////////////////////
 var update = function (delta) {
+  w.game.heroList = []
+  window.forAllHeros((hero) => {
+    w.game.heroList.push(hero)
+  })
+
   if(window.isPlayer) {
     if(w.game.gameState && !w.game.gameState.paused) {
       if(!window.host) {
@@ -659,6 +649,18 @@ var update = function (delta) {
     // remove second part when a player can host a multiplayer game
     if(!w.game.gameState.paused && (!window.isPlayer || !window.hero.flags.paused)) {
       timeouts.update(delta)
+      /// DEFAULT GAME FX
+      if(window.defaultCustomGame) {
+        window.defaultCustomGame.update(delta)
+      }
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.update(delta)
+      }
+      /// CUSTOM GAME FX
+      if(window.liveCustomGame) {
+        window.liveCustomGame.update(delta)
+      }
 
       // movement
       physics.prepareObjectsAndHerosForMovementPhase()
@@ -680,19 +682,6 @@ var update = function (delta) {
       /// physics and corrections
       physics.prepareObjectsAndHerosForCollisionsPhase()
       physics.update(delta)
-
-      /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.update(delta)
-      }
 
       if(window.host && window.anticipatedObject) {
         let hero = window.hero

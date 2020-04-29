@@ -5,17 +5,19 @@ import pathfinding from '../../pathfinding.js'
 import particles from '../../particles.js'
 
 let explodingParticles;
-function init() {
-  explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
-}
 
-function loaded() {
+function onGameLoaded() {
+  explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
   w.game.gameState.paused = true
   window.hero.flags.showLives = true;
   window.hero.flags.showScore = true;
 }
 
-function start() {
+function onGameUnloaded() {
+
+}
+
+function onGameStart() {
   w.game.gameState.paused = false
   w.game.gameState.started = true
   w.game.gameState.startTime = Date.now()
@@ -24,7 +26,7 @@ function start() {
   window.hero.lives = 3
 }
 
-function keyDown(keyCode, hero) {
+function onKeyDown(keyCode, hero) {
   if(hero.flags.paused || w.game.gameState.paused) return
 }
 
@@ -94,14 +96,26 @@ function render(ctx, delta) {
   }
 }
 
+// only on client
+function onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+
+}
+
+// only on client
+function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
+
+}
+
 export default {
-  init,
-  loaded,
-  start,
-  keyDown,
+  onGameLoaded,
+  onGameUnloaded,
+  onGameStart,
+  onKeyDown,
   input,
   update,
   intelligence,
   render,
   onCollide,
+  onHeroCollide,
+  onHeroInteract,
 }

@@ -5,28 +5,26 @@ import pathfinding from '../../pathfinding.js'
 import action from './action'
 import particles from '../../particles.js'
 
-// Add events, and default values
-// happens on every load, including reload
-// on client and editor
-function init() {
-
-}
-
 // once we have loaded up the game from the server for the first time
 // interact with values loaded by the game, the values of other services
 // only on client
-function loaded() {
+function onGameLoaded() {
 
 }
+
+function onGameUnloaded() {
+
+}
+
 
 // called by editor or player
 // only on client
-function start() {
+function onGameStart() {
 
 }
 
 // only on client
-function keyDown(keyCode, hero) {
+function onKeyDown(keyCode, hero) {
   if(hero.flags.paused || w.game.gameState.paused) return
   // for keyCode 88 ( x ) can conflict with interact engine - && !hero._interactableObject
 
@@ -46,7 +44,9 @@ function input(hero, keysDown, delta) {
 }
 
 // only on client
-function intelligence(object, hero, delta) {
+function intelligence(object, delta) {
+  let hero = game.heroList[0]
+
   if(object.tags && object.tags['zombie']) {
     object.target = { x: hero.x, y: hero.y }
   }
@@ -281,14 +281,26 @@ function render(ctx) {
   }
 }
 
+// only on client
+function onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+
+}
+
+// only on client
+function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
+
+}
+
 export default {
-  init,
-  loaded,
-  start,
-  keyDown,
+  onGameLoaded,
+  onGameStart,
+  onGameUnloaded,
+  onKeyDown,
   input,
   update,
   intelligence,
   render,
   onCollide,
+  onHeroCollide,
+  onHeroInteract
 }

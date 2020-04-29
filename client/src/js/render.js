@@ -45,7 +45,6 @@ function update() {
 			camera.drawVertice(ctx, vertices[i])
 		}
 		ctx.fillStyle = 'white';
-		camera.drawObject(ctx, window.hero)
     for(let i = 0; i < w.game.objects.length; i++){
       if(!w.game.objects[i].tags.filled) continue
       if(w.game.objects[i].removed) continue
@@ -63,9 +62,13 @@ function update() {
 	}
 
   for(var heroId in w.game.heros) {
-    if(heroId === window.hero.id) continue;
     let currentHero = w.game.heros[heroId];
     camera.drawObject(ctx, currentHero);
+    if(currentHero.subObjects) {
+      window.forAllSubObjects(currentHero.subObjects, (subObject) => {
+        drawTools.drawObject(ctx, subObject, tempCamera)
+      })
+    }
   }
 
   w.game.world.shadows = false

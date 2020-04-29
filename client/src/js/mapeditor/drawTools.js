@@ -61,13 +61,15 @@ function drawBorder(ctx, object, camera, options = { thickness: 1 }) {
   })
 }
 
-function drawObject(ctx, object, camera) {
+function drawObject(ctx, object, camera, options = {showInvisible: false}) {
   if(object.tags && object.tags.filled) {
     drawFilledObject(ctx, object, camera);
   } if(object.tags && object.tags.invisible) {
-    ctx.globalAlpha = 0.2;
-    drawFilledObject(ctx, object, camera);
-    ctx.globalAlpha = 1.0;
+    if(options.showInvisible) {
+      ctx.globalAlpha = 0.2;
+      drawFilledObject(ctx, object, camera);
+      ctx.globalAlpha = 1.0;
+    }
   } else {
     drawBorder(ctx, object, camera);
   }

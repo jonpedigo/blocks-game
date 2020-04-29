@@ -7,44 +7,6 @@ function init(){
 
 }
 
-// function moveTowardsTarget(object, target, delta) {
-//   if(object.x > target.x) {
-//     object.velocityX -= (object.speed || 100) * delta
-//   } else if(object.x < target.x) {
-//     object.velocityX += (object.speed || 100) * delta
-//   } else {
-//     object.velocityX = 0
-//   }
-//
-//   if(object.y > target.y) {
-//     object.velocityY -= (object.speed || 100) * delta
-//   } else if(object.y < target.y) {
-//     object.velocityY += (object.speed || 100) * delta
-//   } else {
-//     object.velocityY = 0
-//   }
-// }
-
-function checkIfWillCrossTarget(object, target, delta) {
-  // let objectCopy = JSON.parse(JSON.stringify(object))
-  // physics.updatePosition(objectCopy, delta)
-  //
-  // let greaterX = false
-  // let lesserX = false
-  // if(objectCopy.x > target.x) {
-  //   greaterX = true
-  // }
-  //
-  // let objectCopy = JSON.parse(JSON.stringify(object))
-  // physics.updatePosition(objectCopy, delta)
-  //
-  // if(lesserX && greaterX) {
-  //   objectCopy.x = target.x
-  // }
-  //
-  // if(objectCopy.x > )
-}
-
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldX = object.x
   let oldY = object.y
@@ -88,14 +50,6 @@ function moveOnPath(object, delta) {
   let pathSpeedX = object.speed || -100
   let pathSpeedY = object.speed || -100
 
-  // old lerp code
-  // if(diffX < 5 && diffX >= 1) {
-  //   pathSpeedX = pathSpeedX * (1 - (1/diffX))
-  // }
-  // if(diffY < 5 && diffY >= 1) {
-  //   pathSpeedY = pathSpeedY * (1 - (1/diffY))
-  // }
-
   moveTowardsTarget(object, {x: pathX, y: pathY }, delta, { flat: true })
   let diffX = Math.abs(object.x - pathX)
   let diffY = Math.abs(object.y - pathY)
@@ -120,18 +74,6 @@ function moveOnPath(object, delta) {
     object.path.shift();
     return
   }
-
-  //  else if(object.x > pathX) {
-  //   object.velocityX = -pathSpeedX
-  // } else if(object.x < pathX) {
-  //   object.velocityX = pathSpeedX
-  // }
-
-  // else if(object.y > pathY) {
-  //   object.velocityY = -pathSpeedY
-  // } else if(object.y < pathY) {
-  //   object.velocityY = pathSpeedY
-  // }
 }
 
 function update(objects, delta) {
@@ -157,22 +99,19 @@ function update(objects, delta) {
       moveTowardsTarget(object, object.target, delta)
     }
 
-
-    let hero = window.hero
-    if(window.usePlayEditor) hero = window.editingHero
     /// DEFAULT GAME FX
     if(window.defaultCustomGame) {
-      window.defaultCustomGame.intelligence(object, hero, delta)
+      window.defaultCustomGame.intelligence(object, delta)
     }
 
     /// CUSTOM GAME FX
     if(window.customGame) {
-      window.customGame.intelligence(object, hero, delta)
+      window.customGame.intelligence(object, delta)
     }
 
     /// LIVE CUSTOM GAME FX
     if(window.liveCustomGame) {
-      window.liveCustomGame.intelligence(object, hero, delta)
+      window.liveCustomGame.intelligence(object, delta)
     }
 
     if(object.tags && object.tags['stationary']) {

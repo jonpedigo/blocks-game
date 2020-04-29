@@ -226,6 +226,12 @@ window.moveObjectPos = function(object, newPos, game = w.game) {
   object.y = newPos.y
 }
 
+window.forAllSubObjects = function (subObjects, fx) {
+  Object.keys(subObjects).forEach((id) => {
+    fx(subObjects[id], id)
+  })
+}
+
 export default {
   init,
   loaded,

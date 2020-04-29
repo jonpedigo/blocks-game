@@ -21,7 +21,7 @@ function init() {
           hero = window.findHeroInNewGame(window.game, {id: heroId})
           hero.id = heroId
           w.game.heros[hero.id] = hero
-          window.addHeroToGame(hero)
+          physics.addObject(hero)
         } else {
           physics.addObject(hero)
           hero.id = heroId
@@ -45,7 +45,7 @@ function init() {
       // dont do keydown event for hosts hero since we've already done locally
       if(window.isPlayer && heroId == window.hero.id) return
       let hero = w.game.heros[heroId]
-      input.keyDown(keyCode, hero)
+      input.onKeyDown(keyCode, hero)
     })
 
     // EDITOR CALLS THIS
@@ -149,13 +149,13 @@ function init() {
       w.game.gameState.started = true
 
       if(window.defaultCustomGame) {
-        window.defaultCustomGame.start()
+        window.defaultCustomGame.onGameStart()
       }
       if(window.customGame) {
-        window.customGame.start()
+        window.customGame.onGameStart()
       }
       if(window.liveCustomGame) {
-        window.liveCustomGame.start()
+        window.liveCustomGame.onGameStart()
       }
     })
   }
@@ -289,10 +289,6 @@ function init() {
   window.socket.on('onResetObjects', (updatedObjects) => {
     w.game.objects = w.game.objects.reduce((arr, object) => {
       if(object.removed) return arr
-      if(object.actionTriggerArea) {
-        arr.push(object)
-        return arr
-      }
       physics.removeObject(object)
       return arr
     }, [])
@@ -394,7 +390,7 @@ function init() {
     }
 
     w.game.objects = w.game.objects.filter((obj) => obj.id !== object.id)
-    physics.removeObjectById(object.id)
+    physics.removeObject(object)
     delete w.game.objectsById[object.id]
   })
 
@@ -411,7 +407,7 @@ function init() {
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
     if(window.host) {
-      physics.removeObjectById(id)
+      physics.removeObject(w.game.heros[id])
     }
     delete w.game.heros[id]
     if(window.usePlayEditor && window.editingHero.id == id) {
@@ -462,7 +458,6 @@ function init() {
   })
 
   window.socket.on('onCustomFxEvent', (event) => {
-    if(event !== 'loaded' && event !== 'init' && event !== 'start') return
     if(window.host && window.liveCustomGame && window.liveCustomGame[event]) {
       window.liveCustomGame[event]()
     }
@@ -486,24 +481,33 @@ function init() {
 }
 
 window.unloadGame = function() {
-  // if theres already a game going on, need to unload it
-  if(w.game.objects.length) {
-    if(window.usePlayEditor) {
-      window.editingObject = {
-        id: null,
-        i: null,
-      }
-      window.objecteditor.saved = true
-      window.objecteditor.update({})
-    }
-    w.game.objects.forEach((object) => {
-      physics.removeObjectById(object.id)
-    })
-    Object.keys(w.game.heros).forEach((heroId) => {
-      let hero = w.game.heros[heroId]
-      physics.removeObjectById(hero.id)
-    })
+  if(window.defaultCustomGame) {
+    window.defaultCustomGame.onGameUnloaded()
   }
+  if(window.customGame) {
+    window.customGame.onGameUnloaded()
+  }
+  if(window.liveCustomGame) {
+    window.liveCustomGame.onGameUnloaded()
+  }
+
+  if(window.usePlayEditor) {
+    window.editingObject = {
+      id: null,
+      i: null,
+    }
+    window.objecteditor.saved = true
+    window.objecteditor.update({})
+  }
+
+  w.game.objects.forEach((object) => {
+    physics.removeObject(object)
+  })
+  Object.keys(w.game.heros).forEach((heroId) => {
+    let hero = w.game.heros[heroId]
+    physics.removeObject(hero)
+  })
+
 }
 
 export default {

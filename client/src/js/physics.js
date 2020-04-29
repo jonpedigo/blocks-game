@@ -248,10 +248,23 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
       continue
     }
     if(body.gameObject.removed) continue
-    if(body.gameObject.tags['requireActionButton'] || body.gameObject.actionTriggerArea) continue
+    if(body.gameObject.tags['requireActionButton']) continue
     if(heroPO.collides(body, result)) {
-      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
       heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+      /// DEFAULT GAME FX
+      if(window.defaultCustomGame) {
+        window.defaultCustomGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+      }
+
+      /// CUSTOM GAME FX
+      if(window.customGame) {
+        window.customGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+      }
+
+      /// LIVE CUSTOM GAME FX
+      if(window.liveCustomGame) {
+        window.liveCustomGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+      }
     }
   }
 
@@ -393,6 +406,14 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   let everything = [...w.game.objects]
   let allHeros = getAllHeros()
   everything.push(...allHeros)
+  everything.forEach((object) => {
+    if(object.subObjects) {
+      window.forAllSubObjects(object.subObjects, (subObject) => {
+        subObject.ownerId = object.id
+        everything.push(subObject)
+      })
+    }
+  })
 
   everything.forEach((object, i) => {
     if(!object.id) {
@@ -431,7 +452,7 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
       continue
     }
 
-    if(body.gameObject.removed || (options.bypassHero && body.gameObject.id.indexOf('hero') >= 0)) continue
+    if(body.gameObject.removed || (options.bypassHero && body.gameObject.tags.hero)) continue
     if(po.collides(body, result)) {
       // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
       if(po.gameObject.tags['monster'] && body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
@@ -447,7 +468,7 @@ function objectCorrections(po, final, options = { bypassHero: false }) {
       }
 
       // objects with NO path but SOME velocity get corrections
-      let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY > 0 || po.gameObject.velocityX > 0))
+      let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY && po.gameObject.velocityY !== 0 || po.gameObject.velocityX && po.gameObject.velocityX !== 0))
       let bothAreObstacles = po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle']
       if(!po.gameObject.tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.tags['heroPushable'])) {
         if(Math.abs(result.overlap_x) !== 0) {
@@ -582,10 +603,14 @@ function update (delta) {
   // OBJECTS COLLIDING WITH OTHER OBJECTS
   /////////////////////////////////////////////////////
   for(let id in physicsObjects){
-    if(id.indexOf('hero') > -1) continue
     let po = physicsObjects[id]
     // console.log(po)
+    if(!po.gameObject) {
+      console.log('no game object found for phyics object id: ' + id)
+      continue
+    }
     if(po.gameObject.removed) continue
+    if(po.gameObject.tags.hero) continue
     let potentials = po.potentials()
     let result = po.createResult()
     // po VS body. the po is the one you should EFFECT
@@ -596,6 +621,18 @@ function update (delta) {
       }
       if(body.gameObject.removed) continue
       if(po.collides(body, result)) {
+        let collider = body.gameObject
+        let agent = po.gameObject
+        // problem is that this could also happen to the hero object which has its own..
+        if(collider.tags['monsterDestroyer'] && agent.tags['monster']) {
+          window.local.emit('onDestroyMonster', agent, collider, result, removeObjects, respawnObjects)
+          if(agent.spawnPointX >= 0 && agent.tags['respawn']) {
+            respawnObjects.push(agent)
+          } else {
+            removeObjects.push(agent)
+          }
+        }
+
         if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && collisions.shouldEffect(po.gameObject, body.gameObject)) {
           if(po.gameObject.lastPowerUpId !== body.gameObject.id) {
             window.mergeDeep(po.gameObject, {...body.gameObject.objectUpdate})
@@ -606,8 +643,8 @@ function update (delta) {
         }
 
         if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton']) {
-          let hero = w.game.heros[po.gameObject.relativeId]
           // sometimes the hero could be logged off
+          let hero = w.game.heros[po.gameObject.ownerId]
           if(hero) {
             if(!hero._interactableObject) {
               hero._interactableObject = body.gameObject
@@ -655,9 +692,10 @@ function update (delta) {
   function correctionPhase(final = false) {
     for(let id in physicsObjects){
       let po = physicsObjects[id]
+      if(!po.gameObject) continue
       if(po.gameObject.relativeId) continue
       if(po.gameObject.removed) continue
-      if(id.indexOf('hero') > -1) continue
+      if(po.gameObject.tags.hero) continue
       objectCorrections(po, final)
     }
   }
@@ -667,7 +705,6 @@ function update (delta) {
     if(object.parentId || object._parentId ) {
       attachToParent(object)
     }
-    if(!object.actionTriggerArea) containObjectWithinGridBoundaries(object)
     object._deltaX = object.x - object._initialX
     object._deltaY = object.y - object._initialY
   })
@@ -685,7 +722,21 @@ function update (delta) {
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero._interactableObject, hero, hero._interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {
-        window.local.emit('onHeroInteract', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
+        /// DEFAULT GAME FX
+        if(window.defaultCustomGame) {
+          window.defaultCustomGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+        }
+
+        /// CUSTOM GAME FX
+        if(window.customGame) {
+          window.customGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+        }
+
+        /// LIVE CUSTOM GAME FX
+        if(window.liveCustomGame) {
+          window.liveCustomGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+        }
+
         heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
       }
       // bad for JSON
@@ -719,6 +770,9 @@ function update (delta) {
     if(object.relativeId) {
       attachToRelative(object)
     }
+    if(object.subObjects) {
+      attachSubObjects(object, object.subObjects)
+    }
   })
 
   allHeros.forEach((hero) => {
@@ -726,9 +780,21 @@ function update (delta) {
     if(hero.relativeId) {
       attachToRelative(hero)
     }
+    if(hero.subObjects) {
+      attachSubObjects(hero, hero.subObjects)
+    }
   })
 }
 
+
+function attachSubObjects(object, subObjects) {
+  window.forAllSubObjects(subObjects, (subObject) => {
+    subObject.x = object.x + subObject.relativeX
+    subObject.y = object.y + subObject.relativeY
+    subObject.width = object.width + (subObject.relativeWidth)
+    subObject.height = object.height + (subObject.relativeHeight)
+  })
+}
 
 function attachToParent(object) {
   let parent = w.game.objectsById[object.parentId] || w.game.heros[object.parentId]
@@ -783,38 +849,50 @@ function drawSystem(ctx) {
   ctx.stroke()
 }
 
-function addObject(object, moving = false) {
+function addObject(object) {
   if(physicsObjects[object.id]) return console.log("we already have added a physics object with id " + object.id)
   const physicsObject = new Polygon(object.x, object.y, [ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
   system.insert(physicsObject)
   physicsObjects[object.id] = physicsObject
+  if(object.subObjects) {
+    window.forAllSubObjects(object.subObjects, (subObject, key) => {
+      subObject.id = key + '-sub-' + object.id
+      addObject(subObject)
+    })
+  }
   return physicsObject
 }
 
 function removeObject(object) {
   try {
     system.remove(physicsObjects[object.id])
+    if(object.subObjects) {
+      window.forAllSubObjects(object.subObjects, (subObject) => {
+        if(subObject.id) {
+          removeObject(subObject)
+        }
+      })
+    }
     delete physicsObjects[object.id];
   } catch(e) {
     console.error(e)
   }
 }
 
-function removeObjectById(id) {
-  try {
-    system.remove(physicsObjects[id])
-    delete physicsObjects[id];
-  } catch(e) {
-    console.error(e)
-  }
-}
+// function removeObjectById(id) {
+//   try {
+//     system.remove(physicsObjects[id])
+//     delete physicsObjects[id];
+//   } catch(e) {
+//     console.error(e)
+//   }
+// }
 
 export default {
   addObject,
   drawObject,
   drawSystem,
   removeObject,
-  removeObjectById,
   updatePosition,
   update,
   updateCorrections,

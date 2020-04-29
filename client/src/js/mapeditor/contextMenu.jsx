@@ -186,10 +186,9 @@ class contextMenuEl extends React.Component{
         <MenuItem key="set-relative">Set relative</MenuItem>
         {objectHighlighted.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-        <SubMenu title="Trigger">
+        <SubMenu title="Hero Update">
           <MenuItem key="trigger-collision">When collided</MenuItem>
           <MenuItem key="trigger-interact">When X is pressed</MenuItem>
-          <MenuItem key="trigger-chain">Select remote Trigger</MenuItem>
         </SubMenu>
       </SubMenu>
     </Menu>

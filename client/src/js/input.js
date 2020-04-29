@@ -18,7 +18,7 @@ function init(){
       //locally update the host input! ( teehee this is the magic! )
       if(window.host) {
         window.heroInput[window.hero.id] = window.keysDown
-        keyDown(e.keyCode, window.hero)
+        onKeyDown(e.keyCode, window.hero)
       } else {
         window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
       }
@@ -181,7 +181,7 @@ function getDirection() {
   return inputDirection
 }
 
-function keyDown(keyCode, hero) {
+function onKeyDown(keyCode, hero) {
   if(hero.flags.typingMode) return
 
   if(32 === keyCode) {
@@ -231,15 +231,15 @@ function keyDown(keyCode, hero) {
 
   /// DEFAULT GAME FX
   if(window.defaultCustomGame) {
-    window.defaultCustomGame.keyDown(keyCode, hero)
+    window.defaultCustomGame.onKeyDown(keyCode, hero)
   }
   /// CUSTOM GAME FX
   if(window.customGame) {
-    window.customGame.keyDown(keyCode, hero)
+    window.customGame.onKeyDown(keyCode, hero)
   }
   /// CUSTOM GAME FX
   if(window.liveCustomGame) {
-    window.liveCustomGame.keyDown(keyCode, hero)
+    window.liveCustomGame.onKeyDown(keyCode, hero)
   }
 }
 
@@ -247,6 +247,6 @@ export default {
   init,
   loaded,
   update,
-  keyDown,
+  onKeyDown,
   getDirection,
 }

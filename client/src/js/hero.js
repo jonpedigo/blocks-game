@@ -46,12 +46,34 @@ function init() {
       down: false,
       right: false,
       left: false,
-    }
+    },
   }
 
   window.local.on('onGridLoaded', () => {
     window.defaultHero.x = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
     window.defaultHero.y = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
+
+    window.defaultHero.subObjects = {
+      actionTriggerArea: {
+        x: 0, y: 0, width: 40, height: 40,
+        actionTriggerArea: true,
+        relativeX: -w.game.grid.nodeSize,
+        relativeY: -w.game.grid.nodeSize,
+        relativeWidth: w.game.grid.nodeSize * 2,
+        relativeHeight: w.game.grid.nodeSize * 2,
+        changeWithDirection: false,
+        tags: { obstacle: false, invisible: true, stationary: true },
+      },
+      spear: {
+        x: 0, y: 0, width: 40, height: 40,
+        relativeX: w.game.grid.nodeSize/5,
+        relativeY: -w.game.grid.nodeSize,
+        relativeWidth: -w.game.grid.nodeSize * .75,
+        relativeHeight: 0,
+        changeWithDirection: true,
+        tags: { monsterDestroyer: true, obstacle: false },
+      }
+    }
   })
 
   let savedHero = localStorage.getItem('hero');
@@ -126,7 +148,7 @@ window.resetHeroToDefault = function(hero, game = w.game) {
   window.removeHeroFromGame(hero)
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
   if(window.game.hero) {
-    newHero = JSON.parse(JSON.stringify(window.game.hero))
+    newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, window.game.hero)))
   }
   if(!hero.id) {
     alert('hero getting reset without id')
@@ -214,36 +236,22 @@ window.resetReachablePlatformWidth = function(heroIn) {
 
 function onCollide(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   if(collider.tags && collider.tags['monster']) {
-    if(hero.tags['monsterDestroyer']) {
-      window.local.emit('onHeroDestroyMonster', hero, collider, result, removeObjects, respawnObjects, options)
-      if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
-        respawnObjects.push(collider)
-      } else {
-        removeObjects.push(collider)
-      }
-    } else {
-      if(hero.lives == 0) {
-        window.local.emit('onHeroNoLives', hero, collider, result, removeObjects, respawnObjects, options)
-      }
-      hero.lives--
+    // if(hero.tags['monsterDestroyer']) {
+    //   window.local.emit('onHeroDestroyMonster', hero, collider, result, removeObjects, respawnObjects, options)
+    //   if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
+    //     respawnObjects.push(collider)
+    //   } else {
+    //     removeObjects.push(collider)
+    //   }
+    // } else {
+      // hero.lives--
       respawnObjects.push(hero)
-      return
-    }
+    // }
   }
 
   if(collider.tags && collider.tags['coin']) {
     hero.score++
   }
-
-  // if(collider.tags && collider.tags['chatter'] && collider.heroUpdate && collider.heroUpdate.chat && collider.heroUpdate.chat.length) {
-  //   if(collider.id !== hero.lastChatId) {
-  //     hero.chat = JSON.parse(JSON.stringify(collider.heroUpdate.chat))
-  //     // hero.chat.name = body.id
-  //     hero.lastChatId = collider.id
-  //   }
-  // } else {
-  //   hero.lastChatId = null
-  // }
 
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     if(collider.id !== hero.lastPowerUpId) {
@@ -254,7 +262,8 @@ function onCollide(hero, collider, result, removeObjects, respawnObjects, option
         hero.lastPowerUpId = null
       })
     }
-  } else {
+  } else if(collider.ownerId !== hero.id){
+    // if it collides with anything that it doesn't own..
     hero.lastPowerUpId = null
   }
 
@@ -370,17 +379,18 @@ window.addHeroToGame = function(hero) {
   console.log('ADDDING HERO', hero)
   window.local.emit('onHeroAdded', hero)
   physics.addObject(hero)
-  window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, relativeId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize, relativeX: -w.game.grid.nodeSize, relativeY: -w.game.grid.nodeSize}], { fromLiveGame: true })
 }
 
 window.removeHeroFromGame = function(hero) {
   if(window.physicsObjects[hero.id]) {
     physics.removeObject(hero)
   }
-  w.game.objects.forEach((obj) => {
-    if(obj.relativeId === hero.id && obj.actionTriggerArea) window.socket.emit('deleteObject', obj)
+}
+
+window.forAllHeros = function (fx) {
+  Object.keys(w.game.heros).forEach((id) => {
+    fx(w.game.heros[id], id)
   })
-  // window.addObjects([{ actionTriggerArea: true, tags: { obstacle: false, invisible: true, stationary: true }, parentId: hero.id, width: hero.width + (w.game.grid.nodeSize * 2), x: hero.x - w.game.grid.nodeSize, height: hero.height + (w.game.grid.nodeSize * 2), y: hero.y - w.game.grid.nodeSize}], { fromLiveGame: true })
 }
 
 export default {
