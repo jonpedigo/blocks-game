@@ -1,5 +1,5 @@
 const keysDown = {}
-import gridTool from '../grid.js'
+import gridTool from './grid.js'
 
 function init(){
   window.addEventListener("keydown", function (e) {
@@ -75,7 +75,7 @@ function update(delta) {
 
 }
 
-function loaded() {
+function getHero() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
     window.ghost = ghostData.ghost
@@ -94,5 +94,5 @@ function loaded() {
 export default {
   init,
   update,
-  loaded,
+  getHero,
 }

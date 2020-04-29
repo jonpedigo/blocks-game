@@ -1,5 +1,4 @@
 import hero from './hero.js'
-import ghost from './ghost.js'
 import timeouts from './timeouts'
 import intelligence from './intelligence.js'
 import grid from '../grid.js'
@@ -29,30 +28,52 @@ GAME.load = function(game){
   if(game.compendium) window.compendium = game.compendium
   GAME.hero = game.hero
 
-  let storedGameState = localStorage.getItem('gameStates')
-  if(storedGameState) storedGameState = storedGameState[game.id]
-  if(game.world.storeGameState && storedGameState) {
-    GAME.objects = storedGameState.objects
-    GAME.world = storedGameState.world
-    GAME.gameState = storedGameState.gameState
+  // let storedGameState = localStorage.getItem('gameStates')
+  // if(storedGameState) storedGameState = storedGameState[game.id]
+  // if(game.world.storeGameState && storedGameState) {
+  //   GAME.objects = storedGameState.objects
+  //   GAME.world = storedGameState.world
+  //   GAME.gameState = storedGameState.gameState
+  // } else {
+
+  GAME.objects = game.objects
+  GAME.world = game.world
+  // }
+
+  if(!GAME.objectsById) GAME.objectsById = {}
+  GAME.objects.forEach((object) => {
+    GAME.objectsById[object.id] = object
+    PHYSICS.addObject(object)
+  })
+
+  // for host to find themselves really is all...
+  if(game.heros) GAME.heros = game.heros
+
+  // grid
+  GAME.grid.nodes = grid.generateGridNodes(GAME.grid)
+  grid.updateGridObstacles()
+  window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+  handleWorldUpdate(GAME.world)
+
+  // game state
+  if(game.gameState && game.gameState.loaded) {
+    GAME.gameState = game.gameState
+    if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   } else {
-    GAME.objects = game.objects
-    GAME.world = game.world
-    if(game.gameState && game.gameState.loaded) {
-      if(!GAME.heros) GAME.heros = {}
-      GAME.heros = game.heros
-      GAME.gameState = game.gameState
-      if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-    } else {
-      GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      // you need to keep the heros from last time in this scenario ( you just loaded A WHOLE NEW GAME)
-      // GAME.heros = {}
-      if(!GAME.heros) GAME.heros = {}
-      Object.keys(GAME.heros).forEach((id) => {
-        GAME.heros[id] = window.findHeroInNewGame(game, GAME.heros[id])
-        GAME.heros[id].id = id
-      })
-    }
+    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  }
+
+  if(role.isPlayEditor) {
+    window.gamestateeditor.update(GAME.gameState)
+  }
+}
+
+GAME.loadHeros = function(game, options = { resetHeros: false }) {
+  if(options.resetHeros) {
+    Object.keys(GAME.heros).forEach((id) => {
+      GAME.heros[id] = window.findHeroInNewGame(game, GAME.heros[id])
+      GAME.heros[id].id = id
+    })
   }
 
   if(role.isHost && role.isPlayer) {
@@ -67,33 +88,6 @@ GAME.load = function(game){
   Object.keys(GAME.heros).forEach((id) => {
     PHYSICS.addObject(GAME.heros[id])
   })
-
-  if(!GAME.objectsById) GAME.objectsById = {}
-  GAME.objects.forEach((object) => {
-    GAME.objectsById[object.id] = object
-    PHYSICS.addObject(object)
-  })
-
-  // grid
-  GAME.grid.nodes = grid.generateGridNodes(GAME.grid)
-  grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-  handleWorldUpdate(GAME.world)
-
-  if(role.isPlayEditor) {
-    window.gamestateeditor.update(GAME.gameState)
-  }
-
-  /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onGameLoaded()
-  }
-  /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onGameLoaded()
-  }
-
-  GAME.gameState.loaded = true
 }
 
 GAME.unload = function() {
@@ -123,6 +117,8 @@ GAME.unload = function() {
     let hero = GAME.heros[heroId]
     PHYSICS.removeObject(hero)
   })
+
+  GAME.gameState = null
 }
 
 GAME.update = function(delta) {
@@ -131,21 +127,8 @@ GAME.update = function(delta) {
     GAME.heroList.push(hero)
   })
 
-  if(role.isPlayer) {
-    if(role.isGhost) {
-      if(window.hero.id === 'ghost') {
-        input.update(window.hero, window.keysDown, delta)
-      }
-      ghost.update()
-    }
-
-    if(!role.isGhost){
-      localStorage.setItem('hero', JSON.stringify(window.hero))
-      // we are locally updating the hero input as host
-      if(!role.isHost && !window.pageState.typingMode) {
-        window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
-      }
-    }
+  if(window.hero && window.hero.id === 'ghost') {
+    input.update(window.hero, window.keysDown, delta)
   }
 
   if(role.isHost) {
@@ -203,32 +186,17 @@ GAME.update = function(delta) {
 }
 
 function onPageLoad() {
-  objects.setDefault()
   world.setDefault()
   gameState.setDefault()
   tags.setDefault()
+  objects.setDefault()
   if(!window.isPlayEditor) {
     hero.setDefault()
-  }
-  if(role.isGhost) {
-    ghost.init()
   }
   timeouts.init()
   input.init()
 }
 
-function onGameLoad() {
-  objects.loaded()
-
-  if(!role.isPlayEditor) {
-    hero.loaded()
-    input.loaded()
-  }
-
-  if(role.isGhost) ghost.loaded()
-}
-
 export default {
   onPageLoad,
-  onGameLoad,
 }

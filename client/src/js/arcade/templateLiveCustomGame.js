@@ -15,13 +15,13 @@ function onGameStart() {
 }
 
 function onKeyDown(keyCode, hero) {
-  if(hero.flags.paused || game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 
 }
 
 
 function input(hero, keysDown, delta) {
-  if(hero.flags.paused || game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 
 }
 

@@ -171,10 +171,6 @@ function update(hero, keysDown, delta) {
   positionInput()
 }
 
-function loaded() {
-  // window.hero.inputDirection = 'up'
-}
-
 function getDirection() {
   return inputDirection
 }
@@ -243,7 +239,6 @@ function onKeyDown(keyCode, hero) {
 
 export default {
   init,
-  loaded,
   update,
   onKeyDown,
   getDirection,

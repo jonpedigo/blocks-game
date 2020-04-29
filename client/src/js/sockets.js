@@ -23,7 +23,7 @@ function init() {
 
   if(role.isHost) {
     window.socket.on('onAskJoinGame', (heroId) => {
-      if(GAME.gameState && GAME.gameState.loaded) {
+      if(GAME) {
         let hero = GAME.heros[heroId]
         if(!hero) {
           hero = window.findHeroInNewGame(GAME, {id: heroId})
@@ -433,20 +433,14 @@ function init() {
 
   window.socket.on('onCopyGame', (game) => {
     GAME.unload()
-    if(role.isHost || role.isPlayEditor) window.loadGame(game)
-    else {
-      window.loadGame(game)
-    }
+    window.loadGame(game, { resetHeros: true })
   })
 
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
     GAME.unload()
-    if(role.isHost || role.isPlayEditor) window.loadGame(game)
-    else {
-      window.loadGame(game)
-    }
+    window.loadGame(game, { resetHeros: true })
     window.changeGame(game.id)
   })
 

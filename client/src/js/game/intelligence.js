@@ -98,7 +98,7 @@ function update(objects, delta) {
       moveTowardsTarget(object, object.target, delta)
     }
 
-    let hero = game.heroList[0]
+    let hero = GAME.heroList[0]
 
     if(object.tags && object.tags['zombie']) {
       object.target = { x: hero.x, y: hero.y }

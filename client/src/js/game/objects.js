@@ -11,10 +11,6 @@ function setDefault() {
     color: '#525252',
     // cant put objects in it cuz of some pass by reference BS...
   }
-  window.defaultObjects = []
-}
-
-function loaded() {
   window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
 }
 
@@ -231,5 +227,4 @@ window.forAllSubObjects = function (subObjects, fx) {
 
 export default {
   setDefault,
-  loaded,
 }

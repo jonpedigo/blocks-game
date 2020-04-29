@@ -33,7 +33,6 @@ function init() {
     try {
       let customFx = window.customGameEditor.getValue()
       window.evalLiveCustomFx(customFx)()
-      window.liveCustomGame = customFx
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)
     } catch (e) {

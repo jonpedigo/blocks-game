@@ -11,7 +11,8 @@ import map from './map/index.js'
 import events from './events.js'
 import arcade from './arcade/index'
 import testArcade from './arcade/arcade/platformer'
-import game from './game'
+import gameManager from './game'
+import ghost from './ghost'
 import physics from './physics/index'
 
 
@@ -99,6 +100,19 @@ function initializeCanvas() {
   document.body.appendChild(window.canvas);
 }
 
+function getHeroId() {
+  // GET HERO ID
+  if(role.isGhost) {
+    window.heroId = 'ghost'
+  } if(role.isPlayer) {
+    let savedHero = localStorage.getItem('hero');
+    if(savedHero && JSON.parse(savedHero).id){
+      window.heroId = JSON.parse(savedHero).id
+    } else {
+      window.heroId = 'hero-'+window.uniqueID()
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -114,19 +128,26 @@ function onPageLoad() {
   establishRoleFromQuery()
   logRole()
   initializeCanvas()
-
+  getHeroId()
   if(role.isPlayEditor) {
     playEditor.onPageLoad()
   }
-  game.onPageLoad()
+  if(role.isGhost) {
+    ghost.init()
+  }
+  gameManager.onPageLoad()
   arcade.onPageLoad()
+  mapEditor.onPageLoad()
   events.init()
   sockets.init()
   constellation.init(ctx)
 
-  window.initializeGame()
+  askCurrentGame((game) => {
+    window.changeGame(game.id)
+    window.loadGame(game)
+    startGameLoop()
+  })
 }
-
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -134,68 +155,19 @@ function onPageLoad() {
 /////// ON INITIALIZE
 ///////////////////////////////
 ///////////////////////////////
-window.initializeGame = function (initialGameId) {
+function askCurrentGame(cb) {
   if(role.isArcadeMode) {
     let game = testArcade
-    GAME = game
     window.hero = window.findHeroInNewGame(game, { id: window.heroId })
-    window.loadGame(game)
-    window.onGameLoaded()
-    startGameLoop()
+    cb(game)
   } else {
-
-    // GET HERO ID
-    if(role.isGhost) {
-      window.heroId = 'ghost'
-    } if(role.isPlayer) {
-      let savedHero = localStorage.getItem('hero');
-      if(savedHero && JSON.parse(savedHero).id){
-        window.heroId = JSON.parse(savedHero).id
-      } else {
-        window.heroId = 'hero-'+window.uniqueID()
-      }
-    }
-
     // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
     window.socket.emit('askRestoreCurrentGame')
     window.socket.on('onAskRestoreCurrentGame', async (game) => {
       let currentGameExists = game && game.id
       if(currentGameExists) {
-        window.changeGame(game.id)
-        if(role.isHost) {
-          // join game locally
-          if(role.isPlayer) {
-            if(game.heros && game.heros[window.heroId]) {
-              window.hero = game.heros[window.heroId]
-              window.hero.id = window.heroId
-            } else {
-              window.hero = findHeroInNewGame(game, {id: window.heroId})
-              window.hero.id = window.heroId
-            }
-          }
-          // set hero reference, since we will be doing local updates on the host
-          window.loadGame(game)
-          startGameLoop()
-        } else if(role.isPlayEditor) {
-          window.loadGame(game)
-          startGameLoop()
-        } else if(role.isPlayer && !role.isGhost) {
-          window.socket.on('onJoinGame', (hero) => {
-            if(hero.id == window.heroId) {
-              window.hero = hero
-            }
-            if(!role.isHost) {
-              window.loadGame(game)
-              startGameLoop()
-            }
-          })
-          setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
-        } else {
-          window.loadGame(game)
-          startGameLoop()
-        }
+        cb(game)
       } else {
-        // right now I only have something for the play editor to do if there is no current game
         if(role.isPlayEditor) {
           const { value: loadGameId } = await Swal.fire({
             title: 'Load Game',
@@ -210,9 +182,7 @@ window.initializeGame = function (initialGameId) {
           })
           if(loadGameId) {
             window.socket.on('onLoadGame', (game) => {
-              window.changeGame(game.id)
-              window.loadGame(game)
-              startGameLoop()
+              cb(game)
             })
             window.socket.emit('setAndLoadCurrentGame', loadGameId)
           } else {
@@ -237,11 +207,11 @@ window.initializeGame = function (initialGameId) {
                 heros: {},
               }
               window.socket.emit('saveGame', game)
-              window.changeGame(game.id)
-              window.loadGame(game)
-              startGameLoop()
+              cb(game)
             }
           }
+        } else {
+          alert('no current game, reload after game has been chosen')
         }
       }
     })
@@ -254,9 +224,29 @@ window.initializeGame = function (initialGameId) {
 /////// LOAD GAME
 ///////////////////////////////
 ///////////////////////////////
-window.loadGame = function(game) {
-  GAME.load(game)
-  window.onGameLoad()
+window.loadGame = function(game, options) {
+  GAME.load(game, options)
+  let isFirstLoad = !GAME.gameState.loaded
+  GAME.gameState.loaded = true
+
+  // if you are a player and you dont already have a hero from the server ask for one
+  if(role.isPlayer && !role.isGhost && !window.hero) {
+    window.socket.on('onJoinGame', (hero) => {
+      if(hero.id == window.heroId) {
+        window.hero = hero
+      }
+      GAME.loadHeros(game, options)
+      window.onGameLoad(isFirstLoad)
+    })
+    setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
+  } else if(role.isGhost) {
+    GAME.loadHeros(game, options)
+    ghost.getHero()
+    window.onGameLoad(isFirstLoad)
+  } else {
+    GAME.loadHeros(game, options)
+    window.onGameLoad(isFirstLoad)
+  }
 }
 
 //////////////////////////////////////////////////////////////
@@ -265,14 +255,28 @@ window.loadGame = function(game) {
 /////// ON GAME LOAD
 ///////////////////////////////
 ///////////////////////////////
-window.onGameLoad = function() {
+window.onGameLoad = function(isFirstLoad) {
   window.pageState.gameLoaded = true
-
-  game.onGameLoad()
   if(role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
     mapEditor.onGameLoad(window.ctx, GAME, camera)
+  }
+
+  if(isFirstLoad) {
+    /// DEFAULT GAME FX
+    if(window.defaultCustomGame) {
+      window.defaultCustomGame.onGameLoaded()
+    }
+    /// CUSTOM GAME FX
+    if(window.customGame) {
+      window.customGame.onGameLoaded()
+    }
+
+    /// CUSTOM GAME FX
+    if(window.liveCustomGame) {
+      window.liveCustomGame.onGameLoaded()
+    }
   }
 }
 
@@ -352,6 +356,20 @@ var mainLoop = function () {
 ///////////////////////////////
 
 function update(delta) {
+  if(role.isPlayer) {
+    if(role.isGhost) {
+      ghost.update()
+    }
+
+    if(!role.isGhost){
+      localStorage.setItem('hero', JSON.stringify(window.hero))
+      // we are locally updating the hero input as host
+      if(!role.isHost && !window.pageState.typingMode) {
+        window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
+      }
+    }
+  }
+
   GAME.update(delta)
   if(window.remoteHeroMapEditorState) {
     mapEditor.update(delta, window.remoteHeroMapEditorState)

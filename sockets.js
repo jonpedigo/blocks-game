@@ -27,6 +27,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
           console.log(err);
       } else {
       let game = JSON.parse(data); //now it an gameect
+      delete game.heros
+      delete game.gameState
       return cb(game)
     }});
   }

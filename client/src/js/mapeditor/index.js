@@ -27,22 +27,18 @@ window.mapEditor = {
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
-function onGameLoad(ctx, game, camera) {
-  mapEditor.game = game
-  mapEditor.camera = camera
-  mapEditor.ctx = ctx
-
+function onPageLoad() {
   window.document.getElementById('game-canvas').addEventListener("mousedown", (e) => {
-    handleMouseDown(event)
+    if(mapEditor.game) handleMouseDown(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mousemove", (e) => {
-    handleMouseMove(event)
+    if(mapEditor.game) handleMouseMove(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mouseup", (e) => {
-    handleMouseUp(event)
+    if(mapEditor.game) handleMouseUp(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mouseout", (e) => {
-    handleMouseOut(event)
+    if(mapEditor.game) handleMouseOut(event)
   })
 
   contextMenu.init(mapEditor, {
@@ -53,6 +49,12 @@ function onGameLoad(ctx, game, camera) {
     onStartSetPathfindingLimit,
   })
   keyInput.init()
+}
+
+function onGameLoad(ctx, game, camera) {
+  mapEditor.game = game
+  mapEditor.camera = camera
+  mapEditor.ctx = ctx
 }
 
 function handleMouseUp(event) {
@@ -251,6 +253,7 @@ function update(delta, remoteState) {
 }
 
 export default {
+  onPageLoad,
   onGameLoad,
   render,
   update,

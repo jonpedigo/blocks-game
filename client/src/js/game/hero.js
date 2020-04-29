@@ -76,10 +76,6 @@ function setDefault() {
   })
 }
 
-function loaded() {
-
-}
-
 window.spawnHero = function (hero, game = GAME) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
@@ -270,5 +266,4 @@ window.forAllHeros = function (fx) {
 
 export default {
   setDefault,
-  loaded,
 }

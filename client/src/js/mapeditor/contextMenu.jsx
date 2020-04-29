@@ -108,7 +108,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'toggle-pause-game') {
-        window.socket.emit('editGameState', { paused: !game.gameState.paused })
+        window.socket.emit('editGameState', { paused: !GAME.gameState.paused })
       }
 
       if(key === 'copy-id') {
@@ -160,7 +160,7 @@ class contextMenuEl extends React.Component{
       return <Menu onClick={this._handleClick}>
         <MenuItem key='create-object'>Create object</MenuItem>
         { recievedObject && <MenuItem key='add-recieved-object'>Add recieved object</MenuItem> }
-        <MenuItem key='toggle-pause-game'>{ game.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
+        <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
       </Menu>
     }
 
