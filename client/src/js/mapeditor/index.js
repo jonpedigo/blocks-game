@@ -57,15 +57,15 @@ function onGameLoad(ctx, game, camera) {
 
 function handleMouseUp(event) {
   const { camera } = mapEditor
-  let clickEndX = ((event.offsetX + camera.x) * camera.multiplier)
-  let clickEndY = ((event.offsetY + camera.y) * camera.multiplier)
+  let clickEndX = ((event.offsetX + camera.x) / camera.multiplier)
+  let clickEndY = ((event.offsetY + camera.y) / camera.multiplier)
 }
 
 function handleMouseDown(event) {
   const { camera } = mapEditor
 
-  mapEditor.clickStart.x = ((event.offsetX + camera.x) * camera.multiplier)
-  mapEditor.clickStart.y = ((event.offsetY + camera.y) * camera.multiplier)
+  mapEditor.clickStart.x = ((event.offsetX + camera.x) / camera.multiplier)
+  mapEditor.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
 
   if(mapEditor.copiedObject) {
     window.addObjects([mapEditor.copiedObject])
@@ -107,8 +107,8 @@ function handleMouseMove(event) {
     mapEditor.skipRemoteStateUpdate = true
   }
 
-  mapEditor.mousePos.x = ((event.offsetX + camera.x) * camera.multiplier)
-  mapEditor.mousePos.y = ((event.offsetY + camera.y) * camera.multiplier)
+  mapEditor.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
+  mapEditor.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
 
   if(mapEditor.copiedObject) {
     updateDraggingObject(mapEditor.copiedObject)
@@ -213,9 +213,7 @@ function updateDraggingObject(object) {
 
 function render() {
   let ctx = mapEditor.ctx
-  let tempCamera = JSON.parse(JSON.stringify(mapEditor.camera))
-  tempCamera.multiplier = 1/tempCamera.multiplier
-
+  let camera = mapEditor.camera
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = mapEditor
 
   if(objectHighlighted) {
@@ -223,7 +221,7 @@ function render() {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       color = 'rgba(255,255,255,0.6)'
     }
-    drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, tempCamera)
+    drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
   }
 
   if(objectHighlightedChildren) {
@@ -232,13 +230,13 @@ function render() {
       if(object.tags && object.tags.invisible) {
         color = 'rgba(255,255,255,0.4)'
       }
-      drawTools.drawFilledObject(ctx, {...object, color}, tempCamera)
+      drawTools.drawFilledObject(ctx, {...object, color}, camera)
     })
   }
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
   if(currentObject) {
-    drawTools.drawObject(ctx, currentObject, tempCamera)
+    drawTools.drawObject(ctx, currentObject, camera)
   }
 }
 

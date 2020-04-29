@@ -39,9 +39,6 @@ function update() {
   //set camera so we render everything in the right place
   camera.set(ctx, window.hero)
 
-  let tempCamera = JSON.parse(JSON.stringify(camera))
-  tempCamera.multiplier = 1/tempCamera.multiplier
-
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
 
@@ -54,23 +51,23 @@ function update() {
 
 
   w.game.objects.forEach((object) => {
-    drawTools.drawObject(ctx, object, tempCamera)
+    drawTools.drawObject(ctx, object, camera)
   })
 
   for(var heroId in w.game.heros) {
     let currentHero = w.game.heros[heroId];
-    drawTools.drawObject(ctx, currentHero, tempCamera);
+    drawTools.drawObject(ctx, currentHero, camera);
     if(currentHero.subObjects) {
       window.forAllSubObjects(currentHero.subObjects, (subObject) => {
-        drawTools.drawObject(ctx, subObject, tempCamera)
+        drawTools.drawObject(ctx, subObject, camera)
       })
     }
   }
 
   w.game.objects.forEach((obj) => {
     if(obj.name) {
-      if(obj.namePosition === "center") drawNameCenter(ctx, obj, tempCamera)
-      if(obj.namePosition === "above") drawNameAbove(ctx, obj, tempCamera)
+      if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
+      if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
     }
   })
 
@@ -101,7 +98,7 @@ function update() {
 
     } else {
       let thickness = 3
-      drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, tempCamera, { thickness })
+      drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, camera, { thickness })
     }
   }
 }
