@@ -6,14 +6,24 @@ import collisions from './collisions.js'
 import particles from './particles.js'
 import input from './input.js'
 import modals from './mapeditor/modals.js'
+import io from 'socket.io-client'
 
 function init() {
+  // EVENT SETUP
+  if(role.isArcadeMode) {
+    window.socket = window.local
+  } else if (window.location.origin.indexOf('localhost') > 0) {
+    window.socket = io.connect('http://localhost:4000');
+  } else {
+    window.socket = io.connect();
+  }
+
   ///////////////////////////////
   ///////////////////////////////
   // just for host
   ///////////////////////////////
 
-  if(window.host) {
+  if(role.isHost) {
     window.socket.on('onAskJoinGame', (heroId) => {
       if(w.game.gameState && w.game.gameState.loaded) {
         let hero = w.game.heros[heroId]
@@ -21,9 +31,9 @@ function init() {
           hero = window.findHeroInNewGame(window.game, {id: heroId})
           hero.id = heroId
           w.game.heros[hero.id] = hero
-          physics.addObject(hero)
+          PHYSICS.addObject(hero)
         } else {
-          physics.addObject(hero)
+          PHYSICS.addObject(hero)
           hero.id = heroId
         }
         window.local.emit('onHeroJoined', hero)
@@ -34,7 +44,7 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
       // dont update input for hosts hero since we've already locally updated
-      if(window.isPlayer && window.hero && heroId == window.hero.id) {
+      if(role.isPlayer && window.hero && heroId == window.hero.id) {
         return
       }
       window.heroInput[heroId] = heroInput
@@ -43,7 +53,7 @@ function init() {
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
       // dont do keydown event for hosts hero since we've already done locally
-      if(window.isPlayer && heroId == window.hero.id) return
+      if(role.isPlayer && heroId == window.hero.id) return
       let hero = w.game.heros[heroId]
       input.onKeyDown(keyCode, hero)
     })
@@ -53,7 +63,7 @@ function init() {
       Object.keys(w.game.heros).forEach((id) => {
         if(id === hero.id) {
           w.game.heros[id] = window.resetHeroToDefault(w.game.heros[id])
-          if(window.isPlayer && window.hero.id === hero.id) window.hero = w.game.heros[id]
+          if(role.isPlayer && window.hero.id === hero.id) window.hero = w.game.heros[id]
         }
       })
     })
@@ -94,7 +104,7 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
       window.mergeDeep(w.game.gameState, gameState)
-      if(window.usePlayEditor && window.syncGameStateToggle.checked) {
+      if(role.isPlayEditor && window.syncGameStateToggle.checked) {
         window.gamestateeditor.update(gameState)
       }
     })
@@ -160,7 +170,7 @@ function init() {
     })
   }
 
-  if(window.ghost) {
+  if(role.isGhost) {
     window.socket.on('onSendHeroMapEditor', (mapEditor, heroId) => {
       if(window.hero.id === heroId) {
         window.remoteHeroMapEditorState = mapEditor
@@ -175,8 +185,8 @@ function init() {
   // HOST CALLS THIS
   window.socket.on('onUpdateGameState', (gameState) => {
     if(!window.pageState.gameLoaded) return
-    if(!window.host) w.game.gameState = gameState
-    if(window.usePlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
+    if(!role.isHost) w.game.gameState = gameState
+    if(role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
       window.gamestateeditor.update(gameState)
     }
   })
@@ -184,7 +194,7 @@ function init() {
   // host CALLS THIS
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
     if(!window.pageState.gameLoaded) return
-    if(!window.host) {
+    if(!role.isHost) {
       w.game.objects = objectsUpdated
       w.game.objectsById = w.game.objects.reduce((prev, next) => {
         prev[next.id] = next
@@ -192,7 +202,7 @@ function init() {
       }, {})
 
       // old interpolation code
-      // if(window.isPlayer) {
+      // if(role.isPlayer) {
       //   objectsUpdated.forEach((obj) => {
       //     let go = w.game.objectsById[obj.id]
       //     if(!go) {
@@ -205,7 +215,7 @@ function init() {
       //     delete obj.y
       //     window.mergeDeep(go, obj)
       //   })
-      // } else if(window.usePlayEditor) {
+      // } else if(role.isPlayEditor) {
       //   w.game.objects = objectsUpdated
       //   w.game.objectsById = w.game.objects.reduce((prev, next) => {
       //     prev[next.id] = next
@@ -214,7 +224,7 @@ function init() {
       // }
     }
 
-    if(window.usePlayEditor && window.objecteditor.get().id) {
+    if(role.isPlayEditor && window.objecteditor.get().id) {
       if(window.syncObjectsToggle.checked) {
         window.objecteditor.update(w.game.objectsById[window.objecteditor.get().id])
       }
@@ -225,20 +235,20 @@ function init() {
   window.socket.on('onUpdateHero', (updatedHero) => {
     if(!window.pageState.gameLoaded) return
 
-    if(!window.host) {
+    if(!role.isHost) {
       if(!w.game.heros[updatedHero.id]) {
         w.game.heros[updatedHero.id] = updatedHero
-        physics.addObject(updatedHero)
+        PHYSICS.addObject(updatedHero)
         // you need to reset the reference... really just for NON HOST PLAYER MODE ( because it loads non host )
       }
       window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
-      if(window.isPlayer && window.hero.id === updatedHero.id) {
+      if(role.isPlayer && window.hero.id === updatedHero.id) {
         window.mergeDeep(window.hero, updatedHero)
       }
       // old interpolation code
-      // } else if(window.usePlayEditor) {
+      // } else if(role.isPlayEditor) {
       //   window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
-      // } else if(window.isPlayer) {
+      // } else if(role.isPlayer) {
       //   let hero = w.game.heros[updatedHero.id]
       //   if(!hero) w.game.heros[updatedHero.id] = updatedHero
       //   hero._lerpX = updatedHero.x
@@ -248,7 +258,7 @@ function init() {
       //   window.mergeDeep(hero, updatedHero)
     }
 
-    if(window.pageState.gameLoaded && window.usePlayEditor) {
+    if(window.pageState.gameLoaded && role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
         if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity) {
           updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(w.game.heros[updatedHero.id])
@@ -274,7 +284,7 @@ function init() {
   window.socket.on('onAddObjects', (objectsAdded) => {
     w.game.objects.push(...objectsAdded)
     objectsAdded.forEach((object) => {
-      physics.addObject(object)
+      PHYSICS.addObject(object)
       w.game.objectsById[object.id] = object
     })
 
@@ -289,7 +299,7 @@ function init() {
   window.socket.on('onResetObjects', (updatedObjects) => {
     w.game.objects = w.game.objects.reduce((arr, object) => {
       if(object.removed) return arr
-      physics.removeObject(object)
+      PHYSICS.removeObject(object)
       return arr
     }, [])
 
@@ -309,8 +319,8 @@ function init() {
     w.game.world = JSON.parse(JSON.stringify(window.defaultWorld))
     if(!window.playEditor) camera.clearLimit()
     gridTool.updateGridObstacles()
-    if(window.host) window.resetPaths = true
-    if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+    if(role.isHost) window.resetPaths = true
+    if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
     window.handleWorldUpdate(w.game.world)
   })
 
@@ -342,7 +352,7 @@ function init() {
 
     window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
 
-    if(window.pageState.gameLoaded && window.usePlayEditor) {
+    if(window.pageState.gameLoaded && role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
         window.editingHero = w.game.heros[updatedHero.id]
         if(w.game.world.syncHero) {
@@ -359,7 +369,7 @@ function init() {
   window.socket.on('onRemoveObject', (object) => {
     if(!w.game.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
     }
 
     w.game.objectsById[object.id].removed = true
@@ -367,7 +377,7 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
-    if(window.usePlayEditor && window.objecteditor.get().id === object.id) {
+    if(role.isPlayEditor && window.objecteditor.get().id === object.id) {
       window.objecteditor.update({})
       window.objecteditor.saved = true
       window.updateObjectEditorNotifier()
@@ -375,7 +385,7 @@ function init() {
 
     if(!w.game.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(window.host) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
     }
 
     let spliceIndex
@@ -390,7 +400,7 @@ function init() {
     }
 
     w.game.objects = w.game.objects.filter((obj) => obj.id !== object.id)
-    physics.removeObject(object)
+    PHYSICS.removeObject(object)
     delete w.game.objectsById[object.id]
   })
 
@@ -399,25 +409,25 @@ function init() {
     w.game.grid = grid
     w.game.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
-    if(window.host) {
+    if(role.isHost) {
       window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
     }
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
-    if(window.host) {
-      physics.removeObject(w.game.heros[id])
+    if(role.isHost) {
+      PHYSICS.removeObject(w.game.heros[id])
     }
     delete w.game.heros[id]
-    if(window.usePlayEditor && window.editingHero.id == id) {
+    if(role.isPlayEditor && window.editingHero.id == id) {
       window.setEditingHero({})
     }
   })
 
   window.socket.on('onCopyGame', (game) => {
     window.unloadGame()
-    if(window.host || window.usePlayEditor) window.loadGame(game)
+    if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
       window.loadGameNonHost(game)
     }
@@ -427,7 +437,7 @@ function init() {
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
     window.unloadGame()
-    if(window.host || window.usePlayEditor) window.loadGame(game)
+    if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
       window.loadGameNonHost(game)
     }
@@ -444,7 +454,7 @@ function init() {
   })
 
   window.socket.on('onUpdateCustomGameFx', (customFx) => {
-    if(window.host) {
+    if(role.isHost) {
       try {
         window.setLiveCustomFx(customFx)
       } catch (e) {
@@ -452,19 +462,19 @@ function init() {
       }
     }
 
-    if(window.usePlayEditor) {
+    if(role.isPlayEditor) {
       window.customFx = customFx
     }
   })
 
   window.socket.on('onCustomFxEvent', (event) => {
-    if(window.host && window.liveCustomGame && window.liveCustomGame[event]) {
+    if(role.isHost && window.liveCustomGame && window.liveCustomGame[event]) {
       window.liveCustomGame[event]()
     }
   })
 
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
-    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+    if(role.isPlayer && !role.isGhost && window.hero.id === heroId) {
       modals.nameObject(object)
     }
 
@@ -474,7 +484,7 @@ function init() {
   })
 
   window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
-    if(window.isPlayer && !window.ghost && window.hero.id === heroId) {
+    if(role.isPlayer && !role.isGhost && window.hero.id === heroId) {
       modals.writeDialogue(object)
     }
   })
@@ -491,7 +501,7 @@ window.unloadGame = function() {
     window.liveCustomGame.onGameUnloaded()
   }
 
-  if(window.usePlayEditor) {
+  if(role.isPlayEditor) {
     window.editingObject = {
       id: null,
       i: null,
@@ -501,11 +511,11 @@ window.unloadGame = function() {
   }
 
   w.game.objects.forEach((object) => {
-    physics.removeObject(object)
+    PHYSICS.removeObject(object)
   })
   Object.keys(w.game.heros).forEach((heroId) => {
     let hero = w.game.heros[heroId]
-    physics.removeObject(hero)
+    PHYSICS.removeObject(hero)
   })
 
 }

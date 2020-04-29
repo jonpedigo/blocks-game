@@ -63,8 +63,8 @@ function init() {
   var setSelectedToHeroCamera = document.getElementById("set-selected-to-hero-camera");
   setSelectedToHeroCamera.addEventListener('click', function(){
     const value = {
-      width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier,
-      height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier,
+      width: window.playerCameraWidth * window.editingHero.zoomMultiplier,
+      height: window.playerCameraHeight * window.editingHero.zoomMultiplier,
       centerX: window.editingHero.x + window.editingHero.width/2,
       centerY: window.editingHero.y + window.editingHero.height/2,
     }
@@ -73,8 +73,8 @@ function init() {
     value.limitX = Math.abs(value.width/2)
     value.limitY = Math.abs(value.height/2)
     gridTool.snapObjectToGrid(value)
-    value.width = window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier
-    value.height = window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier
+    value.width = window.playerCameraWidth * window.editingHero.zoomMultiplier
+    value.height = window.playerCameraHeight * window.editingHero.zoomMultiplier
     if(window.selectorGameToggle.checked) {
       sendWorldUpdate( { gameBoundaries: {...value, behavior: w.editingGame.world.gameBoundaries ? w.editingGame.world.gameBoundaries.behavior : 'default' }})
     }
@@ -158,15 +158,15 @@ function init() {
   var setZoomToSelected = document.getElementById("set-zoom-to-selected");
   setZoomToSelected.addEventListener('click', function(){
     if(window.selectorGameToggle.checked) {
-      let zoomMultiplier = w.editingGame.world.gameBoundaries.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      let zoomMultiplier = w.editingGame.world.gameBoundaries.width/window.playerCameraWidth
       window.sendHeroUpdate({ zoomMultiplier })
     }
     if(window.selectorCameraToggle.checked) {
-      let zoomMultiplier = w.editingGame.world.lockCamera.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      let zoomMultiplier = w.editingGame.world.lockCamera.width/window.playerCameraWidth
       window.sendHeroUpdate({ zoomMultiplier })
     }
     if(window.selectorProceduralToggle.checked) {
-      let zoomMultiplier = w.editingGame.world.proceduralBoundaries.width/window.CONSTANTS.PLAYER_CAMERA_WIDTH
+      let zoomMultiplier = w.editingGame.world.proceduralBoundaries.width/window.playerCameraWidth
       window.sendHeroUpdate({ zoomMultiplier })
     }
   })

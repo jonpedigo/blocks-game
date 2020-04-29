@@ -7,7 +7,6 @@ function init() {
   window.gamestateeditor = new JSONEditor(gamestateeditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (gameState) => {
     emitEditorGameState(gameState)
   }});
-  window.gamestateeditor.update(window.defaultGameState)
 
   var zoomToUniverseButton = document.getElementById("zoom-out-to-universe");
   zoomToUniverseButton.addEventListener('click', () => {
@@ -300,5 +299,5 @@ window.updateBranchToggleStyle = function() {
 }
 
 export default {
-  init
+  init,
 }

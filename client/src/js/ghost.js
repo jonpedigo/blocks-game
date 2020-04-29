@@ -16,7 +16,7 @@ function init(){
         }
         if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === 0) {
-            window.hero = window.ghostHero
+            window.hero = role.isGhostHero
           } else {
             window.hero = window.game.heros[heroNames[i-1]]
           }
@@ -37,7 +37,7 @@ function init(){
         }
         if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === heroNames.length - 1) {
-            window.hero = window.ghostHero
+            window.hero = role.isGhostHero
           } else {
             window.hero = window.game.heros[heroNames[i+1]]
           }
@@ -59,7 +59,7 @@ function init(){
 }
 
 function update(delta) {
-  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: window.ghostHero}))
+  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: role.isGhostHero}))
 
   if(window.hero.id === 'ghost' && 16 in keysDown) {
     if (38 in keysDown) { // Player holding up
@@ -83,17 +83,17 @@ function update(delta) {
 function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
-    window.ghostHero = ghostData.ghost
+    role.isGhostHero = ghostData.ghost
     if(window.game.heros[ghostData.selectedHeroId]) window.hero = window.game.heros[ghostData.selectedHeroId]
   }
 
-  if(!window.ghostHero) window.ghostHero = JSON.parse(JSON.stringify(window.defaultHero))
-  window.ghostHero.color = 'rgba(255,255,255,0.1)'
-  window.ghostHero.arrowKeysBehavior = 'grid'
-  window.ghostHero.id = 'ghost'
-  gridTool.snapObjectToGrid(window.ghostHero)
-  if(window.hero.id === 'ghost') window.hero = window.ghostHero
-  // physics.addObject(window.ghostHero)
+  if(!role.isGhostHero) role.isGhostHero = JSON.parse(JSON.stringify(window.defaultHero))
+  role.isGhostHero.color = 'rgba(255,255,255,0.1)'
+  role.isGhostHero.arrowKeysBehavior = 'grid'
+  role.isGhostHero.id = 'ghost'
+  gridTool.snapObjectToGrid(role.isGhostHero)
+  if(window.hero.id === 'ghost') window.hero = role.isGhostHero
+  // PHYSICS.addObject(role.isGhostHero)
 }
 
 export default {

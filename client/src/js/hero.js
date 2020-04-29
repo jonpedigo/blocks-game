@@ -107,7 +107,7 @@ window.respawnHero = function (hero, game = w.game) {
   hero.velocityY = 0
 
   /// send objects that are possibly camping at their spawn point back to their spawn point
-  if(window.host && game && game.world && game.world.globalTags.noCamping) {
+  if(role.isHost && game && game.world && game.world.globalTags.noCamping) {
     game.objects.forEach((obj) => {
       if(obj.removed) return
 
@@ -159,13 +159,13 @@ window.resetHeroToDefault = function(hero, game = w.game) {
   return newHero
 }
 // window.resetHeroToDefault = function(hero) {
-// 	physics.removeObject(hero)
+// 	PHYSICS.removeObject(hero)
 //   let newHero = {}
 //   window.defaultHero.id = window.hero.id
 // 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
 //   w.game.heros[window.hero.id] = window.hero
 // 	localStorage.setItem('hero', JSON.stringify(window.hero));
-// 	physics.addObject(hero)
+// 	PHYSICS.addObject(hero)
 // }
 
 window.heroZoomAnimation = function(hero) {
@@ -192,8 +192,8 @@ window.heroZoomAnimation = function(hero) {
 
 window.getViewBoundaries = function(hero) {
   const value = {
-    width: window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier,
-    height: window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier,
+    width: window.playerCameraWidth * hero.zoomMultiplier,
+    height: window.playerCameraHeight * hero.zoomMultiplier,
     centerX: hero.x + hero.width/2,
     centerY: hero.y + hero.height/2,
   }
@@ -213,8 +213,8 @@ window.getViewBoundaries = function(hero) {
     rightDiff,
     topDiff,
     bottomDiff,
-    cameraWidth: window.CONSTANTS.PLAYER_CAMERA_WIDTH,
-    cameraHeight: window.CONSTANTS.PLAYER_CAMERA_HEIGHT,
+    cameraWidth: window.playerCameraWidth,
+    cameraHeight: window.playerCameraHeight,
   }
 }
 
@@ -378,12 +378,12 @@ window.findHeroInNewGame = function(game, hero) {
 window.addHeroToGame = function(hero) {
   console.log('ADDDING HERO', hero)
   window.local.emit('onHeroAdded', hero)
-  physics.addObject(hero)
+  PHYSICS.addObject(hero)
 }
 
 window.removeHeroFromGame = function(hero) {
-  if(window.physicsObjects[hero.id]) {
-    physics.removeObject(hero)
+  if(PHYSICS.PHYSICS.objects[hero.id]) {
+    PHYSICS.removeObject(hero)
   }
 }
 

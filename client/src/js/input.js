@@ -9,14 +9,14 @@ let lastJump = 0
 function init(){
   window.addEventListener("keydown", function (e) {
 
-    if(window.ghost) {
+    if(role.isGhost) {
       if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
-    } else if(window.isPlayer) {
+    } else if(role.isPlayer) {
       if(!window.pageState.typingMode) {
         window.keysDown[e.keyCode] = true
       }
       //locally update the host input! ( teehee this is the magic! )
-      if(window.host) {
+      if(role.isHost) {
         window.heroInput[window.hero.id] = window.keysDown
         onKeyDown(e.keyCode, window.hero)
       } else {

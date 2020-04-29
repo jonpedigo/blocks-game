@@ -29,14 +29,14 @@ window.anticipateObjectAdd = function(hero) {
       x: minX - w.game.grid.nodeSize,
       y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
       width: w.game.grid.nodeSize,
-      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (w.game.grid.nodeSize * 3) : w.game.grid.nodeSize,
+      height: isWall ? (window.playerCameraHeight * 2) - (w.game.grid.nodeSize * 3) : w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (topDiff < 1 && hero.directions.up) {
     let newObject = {
       x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: minY - w.game.grid.nodeSize,
-      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      width: isWall ? (window.playerCameraWidth * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
       height: w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
@@ -45,14 +45,14 @@ window.anticipateObjectAdd = function(hero) {
       x: maxX + w.game.grid.nodeSize,
       y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
       width: w.game.grid.nodeSize,
-      height: isWall ? (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      height: isWall ? (window.playerCameraHeight * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (bottomDiff > w.game.grid.nodeSize - 1 && hero.directions.down) {
     let newObject = {
       x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: maxY + w.game.grid.nodeSize,
-      width: isWall ? (window.CONSTANTS.PLAYER_CAMERA_WIDTH * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      width: isWall ? (window.playerCameraWidth * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
       height: w.game.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
@@ -99,26 +99,26 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
 
     //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
     if(newObject.x + newObject.width > (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX) {
-      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
     if(newObject.y + newObject.height > (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY) {
-      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
     if(newObject.x < w.game.grid.startX) {
-      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
     if(newObject.y < w.game.grid.startY) {
-      if(window.usePlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
 
     return newObject
   }).filter(obj => !!obj)
 
-  if(window.usePlayEditor && !options.fromLiveGame) {
+  if(role.isPlayEditor && !options.fromLiveGame) {
     if(alertAboutCollision) {
       if(!confirm('already an object on this grid node..confirm to add anyways')) return
     }

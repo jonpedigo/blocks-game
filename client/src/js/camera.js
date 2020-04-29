@@ -25,10 +25,10 @@ function clearLimit() {
 }
 
 function setHeroX(ctx, hero) {
-  camera.x = (((hero.x + hero.width/2)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_WIDTH/2
+  camera.x = (((hero.x + hero.width/2)/camera.multiplier)) - window.playerCanvasWidth/2
 }
 function setHeroY(ctx, hero) {
-  camera.y = (((hero.y + hero.height/2)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2
+  camera.y = (((hero.y + hero.height/2)/camera.multiplier)) - window.playerCanvasHeight/2
 }
 
 
@@ -43,10 +43,10 @@ function set(ctx = window.ctx, hero = window.hero) {
     const potentialX = ((hero.x + hero.width/2)/camera.multiplier)
 
     // too late, more
-    if(potentialX > ((((camera.centerX + camera.limitX)/camera.multiplier)) - (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2))) {
-      camera.x = (((camera.centerX + camera.limitX)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_WIDTH
+    if(potentialX > ((((camera.centerX + camera.limitX)/camera.multiplier)) - (window.playerCanvasWidth/2))) {
+      camera.x = (((camera.centerX + camera.limitX)/camera.multiplier)) - window.playerCanvasWidth
     // too soon, less
-  } else if (potentialX < ((((camera.centerX - camera.limitX)/camera.multiplier)) + (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2))) {
+  } else if (potentialX < ((((camera.centerX - camera.limitX)/camera.multiplier)) + (window.playerCanvasWidth/2))) {
       camera.x = (((camera.centerX - camera.limitX)/camera.multiplier))
     } else {
       setHeroX(ctx, hero)
@@ -58,9 +58,9 @@ function set(ctx = window.ctx, hero = window.hero) {
   if (camera.limitY) {
     const potentialY = ((hero.y + hero.height/2)/camera.multiplier)
 
-    if (potentialY > ((((camera.centerY + camera.limitY)/camera.multiplier))- (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2))) {
-      camera.y = (((camera.centerY + camera.limitY)/camera.multiplier)) - window.CONSTANTS.PLAYER_CANVAS_HEIGHT
-    } else if (potentialY < ((((camera.centerY - camera.limitY)/camera.multiplier)) + (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2))) {
+    if (potentialY > ((((camera.centerY + camera.limitY)/camera.multiplier))- (window.playerCanvasHeight/2))) {
+      camera.y = (((camera.centerY + camera.limitY)/camera.multiplier)) - window.playerCanvasHeight
+    } else if (potentialY < ((((camera.centerY - camera.limitY)/camera.multiplier)) + (window.playerCanvasHeight/2))) {
       camera.y = ((camera.centerY - camera.limitY)/camera.multiplier)
     } else {
       setHeroY(ctx, hero)

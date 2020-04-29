@@ -87,12 +87,12 @@ function render(ctx, delta) {
     multiplier = multiplier * multiplier
 
     ctx.fillStyle = `rgba(0,0,0, ${.8 * multiplier})`;
-    ctx.fillRect(0, 0, window.CONSTANTS.PLAYER_CANVAS_WIDTH, window.CONSTANTS.PLAYER_CANVAS_HEIGHT);
+    ctx.fillRect(0, 0, window.playerCanvasWidth, window.playerCanvasHeight);
     ctx.font =`20pt Courier New`
     ctx.fillStyle =`rgba(255,255,255, ${1 * multiplier})`;
     let text = w.game.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
     let metrics = ctx.measureText(text)
-    ctx.fillText(text, (window.CONSTANTS.PLAYER_CANVAS_WIDTH/2) - (metrics.width/2), (window.CONSTANTS.PLAYER_CANVAS_HEIGHT/2) + 10)
+    ctx.fillText(text, (window.playerCanvasWidth/2) - (metrics.width/2), (window.playerCanvasHeight/2) + 10)
   }
 }
 

@@ -28,7 +28,7 @@ let customCompendiums = {
   spencer1: spencer1Compendium,
 }
 
-function init() {
+function onPageLoad() {
   window.customGame = null
   window.defaultCustomGame = defaultCustomGame
 
@@ -36,10 +36,14 @@ function init() {
   window.defaultCompendium = defaultCompendium
 }
 
+function onGameLoad() {
+
+}
+
 window.changeGame = function(id) {
   window.customGame = customGames[id]
   window.customCompendium = customCompendiums[id]
-  if(window.usePlayEditor){
+  if(role.isPlayEditor){
     document.getElementById('current-game-id').innerHTML = id
     document.getElementById('game-id').value = id
   }
@@ -60,5 +64,5 @@ window.setLiveCustomFx = function(customFx) {
 }
 
 export default {
-  init
+  onPageLoad
 }

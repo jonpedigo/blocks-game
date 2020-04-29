@@ -85,9 +85,9 @@ function update() {
 
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
-  ctx.fillText(Math.ceil(window.fps), window.CONSTANTS.PLAYER_CANVAS_WIDTH - 50, 40)
+  ctx.fillText(Math.ceil(window.fps), window.playerCanvasWidth - 50, 40)
 
-  if(window.ghost) {
+  if(role.isGhost) {
     ctx.font =`24pt Arial`
     ctx.fillStyle="rgba(255,255,255,0.3)"
     ctx.fillText('Ghost View Id: ' + window.hero.id, 10, 40)
@@ -105,8 +105,8 @@ function update() {
       ctx.textAlign = 'center'
       // ctx.textBaseline = 'alphabetic'
       ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
-      // console.log(window.CONSTANTS.PLAYER_CANVAS_WIDTH/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
-      ctx.fillText(text, window.CONSTANTS.PLAYER_CANVAS_WIDTH/2, window.CONSTANTS.PLAYER_CANVAS_HEIGHT - (36 * window.canvasMultiplier))
+      // console.log(window.playerCanvasWidth/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
+      ctx.fillText(text, window.playerCanvasWidth/2, window.playerCanvasHeight - (36 * window.canvasMultiplier))
 
     } else {
       let thickness = 3

@@ -105,16 +105,15 @@ window.onChangeTool = function(toolName) {
 //DOM
 /////////////////////
 /////////////////////
-function init(ctx, objects) {
+function onPageLoad() {
   input.init()
   camera.init()
   click.init()
   tags.init()
 
-  // ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-  document.getElementById('game-canvas').style="left: 400px;"
-  ctx.canvas.width = window.innerWidth - 400 - 180;
+  window.canvas.height = window.innerHeight;
+  window.canvas.style="left: 400px;"
+  window.canvas.width = window.innerWidth - 400 - 180;
 
   heroEditor.init()
   objectEditor.init()
@@ -170,7 +169,7 @@ function createMaze() {
 }
 
 function createArena(boundaries) {
-  // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.CONSTANTS.PLAYER_CAMERA_HEIGHT * window.editingHero.zoomMultiplier)}
+  // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.playerCameraHeight * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.playerCameraHeight * window.editingHero.zoomMultiplier)}
 
   let parent = {
     id: 'parent-' + window.uniqueID(),
@@ -225,7 +224,7 @@ function createArena(boundaries) {
 }
 window.createArena = createArena
 
-function loaded() {
+function onGameLoad() {
   // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
@@ -249,8 +248,8 @@ function render(ctx) {
 }
 
 export default {
-  init,
-  loaded,
+  onPageLoad,
+  onGameLoad,
   render,
   update,
 }

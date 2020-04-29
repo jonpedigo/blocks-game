@@ -15,7 +15,7 @@ function update(delta) {
 }
 
 window.addTimeout = function(id, numberOfSeconds, fx) {
-  if(window.host) {
+  if(role.isHost) {
     let timeout = {
       id,
       timeRemaining: numberOfSeconds,

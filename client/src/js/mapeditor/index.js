@@ -27,7 +27,11 @@ window.mapEditor = {
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
-function init(ctx, game, camera) {
+function onPageLoad() {
+
+}
+
+function onGameLoad(ctx, game, camera) {
   window.document.getElementById('game-canvas').addEventListener("mousedown", (e) => {
     handleMouseDown(event, game, camera)
   })
@@ -90,12 +94,12 @@ function handleMouseDown(event, game, camera) {
 
 
 function handleMouseOut(event) {
-  if(window.ghost) {
+  if(role.isGhost) {
     mapEditor.skipRemoteStateUpdate = false
   }
 }
 function handleMouseMove(event, game, camera) {
-  if(window.ghost) {
+  if(role.isGhost) {
     mapEditor.skipRemoteStateUpdate = true
   }
 
@@ -236,13 +240,14 @@ function update(delta, game, camera, remoteState) {
     updateGridHighlight(remoteState.mousePos, game, camera)
   }
 
-  if(!window.ghost && window.isPlayer && window.hero) {
+  if(!role.isGhost && role.isPlayer && window.hero) {
     window.socket.emit('sendHeroMapEditor', { mousePos: mapEditor.mousePos } , window.hero.id)
   }
 }
 
 export default {
-  init,
+  onPageLoad,
+  onGameLoad,
   render,
   update,
 }

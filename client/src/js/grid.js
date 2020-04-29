@@ -284,7 +284,7 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   let hero = window.hero
-  if(window.usePlayEditor) {
+  if(role.isPlayEditor) {
     hero = window.editingHero
   }
 
@@ -303,13 +303,13 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
 
   if(w.game.world.gameBoundaries && w.game.world.gameBoundaries.x >= 0 && w.game.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(w.game.world.gameBoundaries)
-    if(attemptingX > gridX + width - (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
+    if(attemptingX > gridX + width - (((window.playerCameraWidth * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingX < gridX + (((window.CONSTANTS.PLAYER_CAMERA_WIDTH * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
+    } else if(attemptingX < gridX + (((window.playerCameraWidth * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
       return false
-    } else if(attemptingY > gridY + height - (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
+    } else if(attemptingY > gridY + height - (((window.playerCameraHeight * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingY < gridY + (((window.CONSTANTS.PLAYER_CAMERA_HEIGHT * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
+    } else if(attemptingY < gridY + (((window.playerCameraHeight * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
       return false
     }
   }
