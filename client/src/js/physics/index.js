@@ -12,8 +12,6 @@ import {
   containObjectWithinGridBoundaries,
 } from './physicsTools.js'
 
-import heroTool from './hero.js'
-
 const objects = {}
 
 // Create the collision system
@@ -23,6 +21,9 @@ window.PHYSICS = {
   removeObject,
   system,
   objects,
+  update,
+  prepareObjectsAndHerosForMovementPhase,
+  updatePosition,
 }
 
 function update (delta) {
@@ -96,6 +97,15 @@ function updatePosition(object, delta) {
       object.y += object.velocityY * delta
     }
   }
+
+  if(object.tags && object.tags['stationary']) {
+    object.velocityY = 0
+    object.velocityX = 0
+    object.accY = 0
+    object.accX = 0
+    object.x = object._initialX
+    object.y = object._initialY
+  }
 }
 
 function getAllHeros() {
@@ -165,7 +175,7 @@ function heroPhysics(removeObjects, respawnObjects) {
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero, removeObjects, respawnObjects)
     if(hero.relativeId) return
-    heroCorrection(hero)
+    heroCorrection(hero, removeObjects, respawnObjects)
   })
 }
 
@@ -201,12 +211,6 @@ function objectPhysics(removeObjects, respawnObjects) {
 function postPhysics(removeObjects, respawnObjects) {
   let allHeros = getAllHeros()
   // GET DELTA
-  w.game.objects.forEach((object, i) => {
-    if(object.removed) return
-    object._deltaX = object.x - object._initialX
-    object._deltaY = object.y - object._initialY
-  })
-
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(hero._interactableObject) {
@@ -214,46 +218,50 @@ function postPhysics(removeObjects, respawnObjects) {
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero._interactableObject, hero, hero._interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {
-        /// DEFAULT GAME FX
-        if(window.defaultCustomGame) {
-          window.defaultCustomGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
-        }
-
-        /// CUSTOM GAME FX
-        if(window.customGame) {
-          window.customGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
-        }
-
-        /// LIVE CUSTOM GAME FX
-        if(window.liveCustomGame) {
-          window.liveCustomGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
-        }
-
-        heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
+        window.local.emit('onHeroInteract', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
       }
       // bad for JSON
       delete hero._interactableObjectResult
     }
-    hero._deltaX = hero.x - hero._initialX
-    hero._deltaY = hero.y - hero._initialY
+  })
+
+  // NON CHILD GO FIRST
+  w.game.objects.forEach((object, i) => {
+    if(object.removed) return
+    if(!object.parentId && !object._parentId) {
+      attachToParent(object)
+      containObjectWithinGridBoundaries(object)
+      object._deltaX = object.x - object._initialX
+      object._deltaY = object.y - object._initialY
+    }
+  })
+
+  allHeros.forEach((hero) => {
+    if(hero.removed) return
+    if(!hero.parentId && !hero._parentId) {
+      attachToParent(hero)
+      containObjectWithinGridBoundaries(hero)
+      hero._deltaX = hero.x - hero._initialX
+      hero._deltaY = hero.y - hero._initialY
+    }
   })
 
 
-  // ATTACH TO PARENT AND CONTAIN WITHIN BOUNDARIES
+  // THEN ATTACH CHILDREN OBJECTS TO PARENT
   w.game.objects.forEach((object, i) => {
     if(object.removed) return
     if(object.parentId || object._parentId ) {
       attachToParent(object)
+      containObjectWithinGridBoundaries(object)
     }
-    containObjectWithinGridBoundaries(object)
   })
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(hero.parentId || hero._parentId ) {
       attachToParent(hero)
+      containObjectWithinGridBoundaries(hero)
     }
-    containObjectWithinGridBoundaries(hero)
   })
 
 
@@ -283,8 +291,13 @@ function removeAndRespawn(removeObjects, respawnObjects) {
   removeObjects.forEach((gameObject) => {
     // remove locally first
     gameObject.removed = true
-    window.local.emit('onRemoveObject', gameObject)
-    window.socket.emit('removeObject', gameObject)
+    if(gameObject.id.indexOf('hero') > -1) {
+      window.local.emit('onRemoveHero', gameObject)
+      window.socket.emit('removeHero', gameObject)
+    } else {
+      window.local.emit('onRemoveObject', gameObject)
+      window.socket.emit('removeObject', gameObject)
+    }
   })
 
   respawnObjects.forEach((gameObject) => {
@@ -296,7 +309,6 @@ function removeAndRespawn(removeObjects, respawnObjects) {
       window.respawnObject(gameObject)
       window.local.emit('onRespawnObject', gameObject)
     } else {
-      window.local.emit('onDeleteObject', gameObject)
       window.socket.emit('deleteObject', gameObject)
     }
   })

@@ -12,6 +12,8 @@ import events from './events.js'
 import arcade from './arcade/index'
 import testArcade from './arcade/arcade/platformer'
 import game from './game'
+import physics from './physics/index'
+
 
 window.w = window;
 window.camera = new cameraTool()

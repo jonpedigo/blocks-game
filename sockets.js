@@ -124,6 +124,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onJoinGame', hero)
   })
 
+  socket.on('removeHero', (hero) => {
+    io.emit('onRemoveHero', hero)
+  })
+
   // this is really only for the live editing shit when im reloading their page all the time
   socket.on('askRestoreCurrentGame', () => {
     socket.emit('onAskRestoreCurrentGame', currentGame)

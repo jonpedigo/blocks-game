@@ -1,4 +1,3 @@
-import physics from './physics'
 import hero from './hero.js'
 import ghost from './ghost.js'
 import timeouts from './timeouts'
@@ -10,6 +9,7 @@ import objects from './objects.js'
 import gameState from './gameState.js'
 import world from './world.js'
 import tags from './tags.js'
+import events from './events.js'
 
 window.GAME = {
   pfgrid: null,
@@ -166,7 +166,7 @@ GAME.update = function(delta) {
       }
 
       // movement
-      physics.prepareObjectsAndHerosForMovementPhase()
+      PHYSICS.prepareObjectsAndHerosForMovementPhase()
       Object.keys(w.game.heros).forEach((id) => {
         if(window.hero.flags.paused) return
         let hero = w.game.heros[id]
@@ -174,16 +174,16 @@ GAME.update = function(delta) {
           window.heroZoomAnimation(hero)
         }
         if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
-        physics.updatePosition(hero, delta)
+        PHYSICS.updatePosition(hero, delta)
         // window.heroInput[id] = {}
       })
-      w.game.objects.forEach((object) => {
-        physics.updatePosition(object, delta)
-      })
       intelligence.update(w.game.objects, delta)
+      w.game.objects.forEach((object) => {
+        PHYSICS.updatePosition(object, delta)
+      })
 
       /// physics and corrections
-      physics.update(delta)
+      PHYSICS.update(delta)
 
       if(role.isHost && window.anticipatedObject) {
         let hero = window.hero

@@ -173,7 +173,7 @@ function init() {
 
   if(role.isGhost) {
     window.socket.on('onSendHeroMapEditor', (mapEditor, heroId) => {
-      if(window.hero.id === heroId) {
+      if(window.hero && window.hero.id === heroId) {
         window.remoteHeroMapEditorState = mapEditor
       }
     })
@@ -377,6 +377,11 @@ function init() {
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
+  window.socket.on('onRemoveHero', (hero) => {
+    w.game.heros[hero.id].removed = true
+  })
+
+  // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
     if(role.isPlayEditor && window.objecteditor.get().id === object.id) {
       window.objecteditor.update({})
@@ -430,16 +435,17 @@ function init() {
     GAME.unload()
     if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
-      window.loadGameNonHost(game)
+      window.loadGame(game)
     }
   })
 
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
+    GAME.unload()
     if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
-      window.loadGameNonHost(game)
+      window.loadGame(game)
     }
     window.changeGame(game.id)
   })

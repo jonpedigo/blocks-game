@@ -1,93 +1,4 @@
 import { Polygon } from 'collisions';
-import heroTool from './hero';
-
-function shouldEffect(agent, collider) {
-  if(collider.idRequirement) {
-    if(agent.id === collider.idRequirement) {
-      return true
-    } else {
-      return false
-    }
-  } else if(collider.tagRequirements && collider.tagRequirements) {
-    if(collider.needsAllTagRequirements) {
-      if(collider.tagRequirements.all((requirement) => {
-        return agent.tags[requirement]
-      })) {
-        return true
-      } else return false
-    } else {
-      if(collider.tagRequirements.some((requirement) => {
-        return agent.tags[requirement]
-      })) {
-        return true
-      } else return false
-    }
-  }
-
-  return true
-}
-
-// Create a Result object for collecting information about the collisions
-function updatePosition(object, delta) {
-  if(object.removed || object.relativeId) return
-
-  // if(object.accX) {
-  //   object.velocityX += ( object.accX )
-  //     if(object.accX > 0) {
-  //     object.accX -= ( object.accDecayX )
-  //     if(object.accX < 0) {
-  //       object.accX = 0
-  //     }
-  //   } else if (object.accX < 0) {
-  //     object.accX += ( object.accDecayX )
-  //     if(object.accX > 0) {
-  //       object.accX = 0
-  //     }
-  //   }
-  // }
-  if(object.velocityX) {
-    if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
-    else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
-    object.x += object.velocityX * delta
-  }
-
-  // if(object.accY) {
-  //   object.velocityY += ( object.accY )
-  //   if(object.accY > 0) {
-  //     object.accY -= ( object.accDecayY )
-  //     if(object.accY < 0) {
-  //       object.accY = 0
-  //     }
-  //   } else if (object.accY < 0) {
-  //     object.accY += ( object.accDecayY )
-  //     if(object.accY > 0) {
-  //       object.accY = 0
-  //     }
-  //   }
-  // }
-
-  if(object.tags && object.tags.gravity) {
-    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
-    object.y += distance
-    object.velocityY += (1000 * delta)
-  }
-
-  if(object.velocityY) {
-    if(object.velocityY >= object.velocityMax) {
-      object.velocityY = object.velocityMax
-    }
-    else if(object.velocityY <= object.velocityMax * -1) {
-      object.velocityY = object.velocityMax * -1
-    }
-
-    if(object._skipNextGravity) {
-      object._skipNextGravity = false
-    } else if(object.tags && !object.tags.gravity) {
-      object.y += object.velocityY * delta
-    }
-  }
-}
-
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -95,7 +6,7 @@ function updatePosition(object, delta) {
 /////////////////////////////////////////////////////
 // HERO CORRECTIONS
 /////////////////////////////////////////////////////
-function heroCorrection(hero) {
+function heroCorrection(hero, removeObjects, respawnObjects) {
   hero.onGround = false
 
   PHYSICS.system.update()
@@ -234,23 +145,8 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
       continue
     }
     if(body.gameObject.removed) continue
-    if(body.gameObject.tags['requireActionButton']) continue
     if(heroPO.collides(body, result)) {
-      heroTool.onCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
-
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
-
-      /// LIVE CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.onHeroCollide(heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
+      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
     }
   }
 
@@ -469,62 +365,22 @@ function objectCollisionEffects(po, removeObjects, respawnObjects) {
     if(po.collides(body, result)) {
       let collider = body.gameObject
       let agent = po.gameObject
-      // problem is that this could also happen to the hero object which has its own..
-      if(collider.tags['monsterDestroyer'] && agent.tags['monster']) {
-        window.local.emit('onDestroyMonster', agent, collider, result, removeObjects, respawnObjects)
-        if(agent.spawnPointX >= 0 && agent.tags['respawn']) {
-          respawnObjects.push(agent)
-        } else {
-          removeObjects.push(agent)
-        }
-      }
 
-      if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && shouldEffect(po.gameObject, body.gameObject)) {
-        if(po.gameObject.lastPowerUpId !== body.gameObject.id) {
-          window.mergeDeep(po.gameObject, {...body.gameObject.objectUpdate})
-          po.gameObject.lastPowerUpId = body.gameObject.id
-        }
-      } else {
-        po.gameObject.lastPowerUpId = null
-      }
-
-      if(po.gameObject.actionTriggerArea && body.gameObject.tags['requireActionButton']) {
+      if(agent.actionTriggerArea && collider.tags['requireActionButton']) {
         // sometimes the hero could be logged off
-        let hero = w.game.heros[po.gameObject.ownerId]
+        let hero = w.game.heros[agent.ownerId]
         if(hero) {
           if(!hero._interactableObject) {
-            hero._interactableObject = body.gameObject
+            hero._interactableObject = collider
             hero._interactableObjectResult = result
-          } else if(body.gameObject.width < hero._interactableObject.width || body.gameObject.height < hero._interactableObject.height) {
-            hero._interactableObject = body.gameObject
+          } else if(collider.width < hero._interactableObject.width || collider.height < hero._interactableObject.height) {
+            hero._interactableObject = collider
             hero._interactableObjectResult = result
           }
         }
       }
 
-      if(po.gameObject.tags['victim'] && body.gameObject.tags['monster']) {
-        window.local.emit('onMonsterDestroyVictim', po.gameObject, body.gameObject)
-        if(po.gameObject.spawnPointX >= 0 && po.gameObject.tags['respawn']) {
-          respawnObjects.push(po.gameObject)
-        } else {
-          removeObjects.push(po.gameObject)
-        }
-      }
-
-      /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
-
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
-
-      /// LIVE CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.onCollide(po.gameObject, body.gameObject, result, removeObjects, respawnObjects)
-      }
+      window.local.emit('onObjectCollide', agent, collider, result, removeObjects, respawnObjects)
     }
   }
 }

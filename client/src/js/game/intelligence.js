@@ -98,6 +98,148 @@ function update(objects, delta) {
       moveTowardsTarget(object, object.target, delta)
     }
 
+    let hero = game.heroList[0]
+
+    if(object.tags && object.tags['zombie']) {
+      object.target = { x: hero.x, y: hero.y }
+    }
+
+    if(object.tags && object.tags['homing']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        const { gridX, gridY } = gridTool.convertToGridXY(object)
+        object.gridX = gridX
+        object.gridY = gridY
+
+        const heroGridPos = gridTool.convertToGridXY(hero)
+        hero.gridX = heroGridPos.gridX
+        hero.gridY = heroGridPos.gridY
+
+        object.path = pathfinding.findPath({
+          x: gridX,
+          y: gridY,
+        }, {
+          x: hero.gridX,
+          y: hero.gridY,
+        }, { pathfindingLimit: object.pathfindingLimit })
+      }
+    }
+
+    if(object.tags && object.tags['wander']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.walkAround(object)]
+        const { gridX, gridY } = gridTool.convertToGridXY(object)
+        object.gridX = gridX
+        object.gridY = gridY
+      }
+    }
+
+    if(object.tags && object.tags['pacer']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.walkWithPurpose(object)]
+        const { gridX, gridY } = gridTool.convertToGridXY(object)
+        object.gridX = gridX
+        object.gridY = gridY
+      }
+    }
+
+    if(object.tags && object.tags['spelunker']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.exploreCave(object)]
+        const { gridX, gridY } = gridTool.convertToGridXY(object)
+        object.gridX = gridX
+        object.gridY = gridY
+      }
+    }
+
+    if(object.tags && object.tags['lemmings']) {
+      if(!object.path || (object.path && !object.path.length)) {
+        object.path = [pathfinding.walkIntoWall(object)]
+        const { gridX, gridY } = gridTool.convertToGridXY(object)
+        object.gridX = gridX
+        object.gridY = gridY
+      }
+    }
+
+    if(object.tags && object.tags['goomba']) {
+      if(object.velocityMax === 0) object.velocityMax = 100
+
+      if(!object.direction) {
+        object.direction = 'right'
+      }
+
+      if(object.direction === 'right' ) {
+        object.velocityX = object.speed || 100
+      }
+
+      if(object.direction === 'left') {
+        object.velocityX = -object.speed || -100
+      }
+    }
+
+    if(object.tags && object.tags['goombaSideways']) {
+      if(object.velocityMax === 0) object.velocityMax = 100
+
+      if(!object.direction) {
+        object.direction = 'down'
+      }
+
+      if(object.direction === 'down' ) {
+        object.velocityY = object.speed || 100
+      }
+
+      if(object.direction === 'up') {
+        object.velocityY = -object.speed || -100
+      }
+    }
+
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    // ZONE STUFF
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    if(object.tags && object.tags['spawnZone']) {
+      if(!object.spawnedIds) object.spawnedIds = []
+
+      object.spawnedIds = object.spawnedIds.filter((id) => {
+        if(w.game.objectsById[id] && !w.game.objectsById[id].removed) {
+          return true
+        } else return false
+      })
+
+      if(object.initialSpawnPool && (object.spawnPool === undefined || object.spawnPool === null)) {
+        object.spawnPool = object.initialSpawnPool
+      }
+
+      if(object.spawnedIds.length < object.spawnTotal && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0)) {
+        let newObject = {
+          x: object.x,
+          y: object.y,
+          width: object.width,
+          height: object.height,
+          id: 'spawned-' + window.uniqueID(),
+          ...object.spawnObject,
+          spawned: true,
+        }
+        // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
+        // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
+
+        let createdObject = window.addObjects([newObject], { fromLiveGame: true })
+        object.spawnedIds.push(createdObject[0].id)
+        if(object.spawnPool) object.spawnPool--
+
+        object.spawnWait = true
+        setTimeout(() => {
+          object.spawnWait = false
+        }, object.spawnWaitTime || 1000)
+      }
+    }
+
     /// DEFAULT GAME FX
     if(window.defaultCustomGame) {
       window.defaultCustomGame.intelligence(object, delta)
@@ -111,13 +253,6 @@ function update(objects, delta) {
     /// LIVE CUSTOM GAME FX
     if(window.liveCustomGame) {
       window.liveCustomGame.intelligence(object, delta)
-    }
-
-    if(object.tags && object.tags['stationary']) {
-      object.velocityY = 0
-      object.velocityX = 0
-      object.accY = 0
-      object.accX = 0
     }
   })
 }
