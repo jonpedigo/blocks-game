@@ -122,7 +122,8 @@ function init() {
   }
   function resetHeroToDefault() {
     if(window.editingGame.branch) {
-      window.resetHeroToDefault(window.editingHero)
+      window.editingHero = window.resetHeroToDefault(window.editingHero)
+      window.editingGame.heros[window.editingHero.id] = window.editingHero
     } else {
       window.socket.emit('resetHeroToDefault', window.editingHero)
     }

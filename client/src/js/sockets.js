@@ -59,10 +59,7 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
       Object.keys(GAME.heros).forEach((id) => {
-        console.log('?>')
-
         if(id === hero.id) {
-          console.log('?')
           GAME.heros[id] = window.resetHeroToDefault(GAME.heros[id])
           if(role.isPlayer && window.hero.id === hero.id) window.hero = GAME.heros[id]
         }
@@ -443,6 +440,14 @@ function init() {
     window.loadGame(game, { resetHeros: true })
     window.changeGame(game.id)
   })
+
+  // this is from branch merge
+  window.socket.on('onSetGameJSON', (game) => {
+    GAME.unload()
+    window.loadGame(game)
+    window.changeGame(game.id)
+  })
+
 
   // window.socket.on('onNewGame', () => {
   //   window.changeGame(null)

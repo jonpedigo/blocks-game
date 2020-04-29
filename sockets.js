@@ -94,7 +94,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   socket.on('setGameJSON', (game) => {
     currentGame = game
-    io.emit('onSetGame', game)
+    io.emit('onSetGameJSON', game)
   })
 
   // this is for when we are editing and we want to send this world to all people

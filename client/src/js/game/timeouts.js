@@ -1,4 +1,4 @@
-function init() {
+function setDefault() {
   window.timeouts = []
   window.timeoutsById = {}
 }
@@ -49,6 +49,6 @@ window.incrementTimeout = function(id, numberOfSeconds) {
 }
 
 export default {
-  init,
+  setDefault,
   update,
 }

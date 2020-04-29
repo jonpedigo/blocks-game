@@ -239,12 +239,9 @@ window.loadGame = function(game, options) {
       window.onGameLoad(isFirstLoad)
     })
     setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
-  } else if(role.isGhost) {
-    GAME.loadHeros(game, options)
-    ghost.getHero()
-    window.onGameLoad(isFirstLoad)
   } else {
     GAME.loadHeros(game, options)
+    if(role.isGhost) ghost.getHero()
     window.onGameLoad(isFirstLoad)
   }
 }
@@ -371,6 +368,7 @@ function update(delta) {
   }
 
   GAME.update(delta)
+
   if(window.remoteHeroMapEditorState) {
     mapEditor.update(delta, window.remoteHeroMapEditorState)
   } else {

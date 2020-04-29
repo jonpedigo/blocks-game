@@ -146,15 +146,6 @@ window.resetHeroToDefault = function(hero, game = GAME) {
   window.addHeroToGame(newHero)
   return newHero
 }
-// window.resetHeroToDefault = function(hero) {
-// 	PHYSICS.removeObject(hero)
-//   let newHero = {}
-//   window.defaultHero.id = window.hero.id
-// 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-//   GAME.heros[window.hero.id] = window.hero
-// 	localStorage.setItem('hero', JSON.stringify(window.hero));
-// 	PHYSICS.addObject(hero)
-// }
 
 window.heroZoomAnimation = function(hero) {
   if(hero.animationZoomTarget > hero.animationZoomMultiplier) {

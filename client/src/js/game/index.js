@@ -1,6 +1,6 @@
 import hero from './hero.js'
 import timeouts from './timeouts'
-import intelligence from './intelligence.js'
+import intelligence from './intelligence'
 import grid from '../grid.js'
 import input from './input.js'
 import pathfinding from './pathfinding.js'
@@ -8,7 +8,7 @@ import objects from './objects.js'
 import gameState from './gameState.js'
 import world from './world.js'
 import tags from './tags.js'
-import events from './events.js'
+import events from './events/index'
 
 window.GAME = {
   pfgrid: null,
@@ -193,7 +193,7 @@ function onPageLoad() {
   if(!window.isPlayEditor) {
     hero.setDefault()
   }
-  timeouts.init()
+  timeouts.setDefault()
   input.init()
 }
 

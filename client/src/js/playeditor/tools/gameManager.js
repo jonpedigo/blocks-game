@@ -173,9 +173,37 @@ function init() {
   })
 
   document.getElementById("clear-branch").addEventListener('click', () => {
-    window.unloadGame()
+    if(window.defaultCustomGame) {
+      window.defaultCustomGame.onGameUnloaded()
+    }
+    if(window.customGame) {
+      window.customGame.onGameUnloaded()
+    }
+    if(window.liveCustomGame) {
+      window.liveCustomGame.onGameUnloaded()
+    }
+
+    if(role.isPlayEditor) {
+      window.editingObject = {
+        id: null,
+        i: null,
+      }
+      window.objecteditor.saved = true
+      window.objecteditor.update({})
+    }
+
+    window.editingGame.objects.forEach((object) => {
+      PHYSICS.removeObject(object)
+    })
+    Object.keys(window.editingGame.heros).forEach((heroId) => {
+      let hero = window.editingGame.heros[heroId]
+      PHYSICS.removeObject(hero)
+    })
+
+    window.editingGame.gameState = null
     window.branch = null
     window.editingGame = GAME
+    window.editingGame.branch = false
     window.loadGame(GAME)
     window.updateBranchToggleStyle()
     branchViewToggle.checked = true
