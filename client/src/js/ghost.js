@@ -1,5 +1,4 @@
 const keysDown = {}
-import physics from './physics.js'
 import gridTool from './grid.js'
 
 function init(){
@@ -16,7 +15,7 @@ function init(){
         }
         if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === 0) {
-            window.hero = role.isGhostHero
+            window.hero = window.ghost
           } else {
             window.hero = window.game.heros[heroNames[i-1]]
           }
@@ -37,7 +36,7 @@ function init(){
         }
         if(window.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === heroNames.length - 1) {
-            window.hero = role.isGhostHero
+            window.hero = window.ghost
           } else {
             window.hero = window.game.heros[heroNames[i+1]]
           }
@@ -83,17 +82,17 @@ function update(delta) {
 function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
-    role.isGhostHero = ghostData.ghost
+    window.ghost = ghostData.ghost
     if(window.game.heros[ghostData.selectedHeroId]) window.hero = window.game.heros[ghostData.selectedHeroId]
   }
 
-  if(!role.isGhostHero) role.isGhostHero = JSON.parse(JSON.stringify(window.defaultHero))
-  role.isGhostHero.color = 'rgba(255,255,255,0.1)'
-  role.isGhostHero.arrowKeysBehavior = 'grid'
-  role.isGhostHero.id = 'ghost'
-  gridTool.snapObjectToGrid(role.isGhostHero)
-  if(window.hero.id === 'ghost') window.hero = role.isGhostHero
-  // PHYSICS.addObject(role.isGhostHero)
+  if(!window.ghost) window.ghost = JSON.parse(JSON.stringify(window.defaultHero))
+  window.ghost.color = 'rgba(255,255,255,0.1)'
+  window.ghost.arrowKeysBehavior = 'grid'
+  window.ghost.id = 'ghost'
+  gridTool.snapObjectToGrid(window.ghost)
+  window.hero = window.ghost
+  window.game.heros.ghost = window.ghost
 }
 
 export default {

@@ -1,5 +1,4 @@
 import gridTool from './grid.js'
-import physics from './physics.js'
 import camera from './camera.js'
 import pathfinding from './pathfinding.js'
 import collisions from './collisions.js'
@@ -426,7 +425,7 @@ function init() {
   })
 
   window.socket.on('onCopyGame', (game) => {
-    window.unloadGame()
+    GAME.unload()
     if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
       window.loadGameNonHost(game)
@@ -436,7 +435,6 @@ function init() {
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
-    window.unloadGame()
     if(role.isHost || role.isPlayEditor) window.loadGame(game)
     else {
       window.loadGameNonHost(game)
@@ -488,36 +486,6 @@ function init() {
       modals.writeDialogue(object)
     }
   })
-}
-
-window.unloadGame = function() {
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onGameUnloaded()
-  }
-  if(window.customGame) {
-    window.customGame.onGameUnloaded()
-  }
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onGameUnloaded()
-  }
-
-  if(role.isPlayEditor) {
-    window.editingObject = {
-      id: null,
-      i: null,
-    }
-    window.objecteditor.saved = true
-    window.objecteditor.update({})
-  }
-
-  w.game.objects.forEach((object) => {
-    PHYSICS.removeObject(object)
-  })
-  Object.keys(w.game.heros).forEach((heroId) => {
-    let hero = w.game.heros[heroId]
-    PHYSICS.removeObject(hero)
-  })
-
 }
 
 export default {

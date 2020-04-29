@@ -10,7 +10,7 @@ function init(){
   window.addEventListener("keydown", function (e) {
 
     if(role.isGhost) {
-      if(window.hero.id === 'ghost') keyDown(e.keyCode, window.hero)
+      if(window.hero.id === 'ghost') onKeyDown(e.keyCode, window.hero)
     } else if(role.isPlayer) {
       if(!window.pageState.typingMode) {
         window.keysDown[e.keyCode] = true

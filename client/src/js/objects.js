@@ -1,4 +1,3 @@
-import physics from './physics.js'
 import pathfinding from './pathfinding.js'
 import collisions from './collisions'
 import grid from './grid.js'

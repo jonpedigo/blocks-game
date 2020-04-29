@@ -1,5 +1,4 @@
 import gridTool from '../grid.js'
-import physics from '../physics.js'
 import camera from '../camera.js'
 import pathfinding from '../pathfinding.js'
 import collisions from '../collisions.js'

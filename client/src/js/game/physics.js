@@ -40,6 +40,7 @@ function updatePosition(object, delta) {
   //     }
   //   }
   // }
+  
   if(object.velocityX) {
     if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
     else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1

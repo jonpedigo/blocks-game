@@ -1,6 +1,31 @@
 import { Polygon } from 'collisions';
-import collisions from './collisions';
-import heroTool from './hero';
+import heroTool from '../hero';
+
+function shouldEffect(agent, collider) {
+  if(collider.idRequirement) {
+    if(agent.id === collider.idRequirement) {
+      return true
+    } else {
+      return false
+    }
+  } else if(collider.tagRequirements && collider.tagRequirements) {
+    if(collider.needsAllTagRequirements) {
+      if(collider.tagRequirements.all((requirement) => {
+        return agent.tags[requirement]
+      })) {
+        return true
+      } else return false
+    } else {
+      if(collider.tagRequirements.some((requirement) => {
+        return agent.tags[requirement]
+      })) {
+        return true
+      } else return false
+    }
+  }
+
+  return true
+}
 
 // Create a Result object for collecting information about the collisions
 function updatePosition(object, delta) {
@@ -454,7 +479,7 @@ function objectCollisionEffects(po, removeObjects, respawnObjects) {
         }
       }
 
-      if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && collisions.shouldEffect(po.gameObject, body.gameObject)) {
+      if(body.gameObject.tags['objectUpdate'] && body.gameObject.objectUpdate && shouldEffect(po.gameObject, body.gameObject)) {
         if(po.gameObject.lastPowerUpId !== body.gameObject.id) {
           window.mergeDeep(po.gameObject, {...body.gameObject.objectUpdate})
           po.gameObject.lastPowerUpId = body.gameObject.id

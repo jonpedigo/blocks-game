@@ -51,8 +51,6 @@ function update() {
       if(w.game.objects[i].tags.invisible) continue
       camera.drawObject(ctx, w.game.objects[i])
     }
-	} else if(w.game.world.renderStyle === 'physics'){
-		physics.drawSystem(ctx, vertices)
 	} else {
 		for(let i = 0; i < w.game.objects.length; i++){
       if(w.game.objects[i].removed) continue

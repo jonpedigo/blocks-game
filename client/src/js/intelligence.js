@@ -1,7 +1,6 @@
 import pathfinding from './pathfinding.js'
 import collision from './collisions'
 import gridTool from './grid.js'
-import physics from './physics.js'
 
 function init(){
 

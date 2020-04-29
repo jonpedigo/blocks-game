@@ -1,12 +1,10 @@
 import chat from './chat.js'
-import physics from './physics'
 import input from './input.js'
 import camera from './camera.js'
 import collisions from './collisions.js'
 import playEditor from './playeditor/playeditor.js'
 import mapEditor from './mapeditor/index.js'
 import shadow from './shadow.js'
-import intelligence from './intelligence.js'
 import grid from './grid.js'
 import feedback from './feedback.js'
 import sockets from './sockets.js'
@@ -15,14 +13,16 @@ import pathfinding from './pathfinding.js'
 import utils from './utils.js'
 import objects from './objects.js'
 import hero from './hero.js'
+import ghost from './ghost.js'
+import timeouts from './game/timeouts'
 import world from './world.js'
 import render from './render.js'
 import gameState from './gameState.js'
 import events from './events.js'
 import arcade from './arcade/index'
-import ghost from './ghost.js'
 import testArcade from './arcade/arcade/platformer'
-import timeouts from './timeouts'
+import './game'
+
 window.w = window;
 
 function establishRoleFromQuery() {
@@ -121,9 +121,7 @@ function onPageLoad() {
   establishRoleFromQuery()
   logRole()
   initializeCanvas()
-  if(role.isMapEditor) {
-    mapEditor.onPageLoad()
-  }
+  mapEditor.onPageLoad()
   if(role.isPlayEditor) {
     playEditor.onPageLoad()
   }
@@ -147,20 +145,20 @@ window.initializeGame = function (initialGameId) {
   events.init()
   sockets.init()
   gameState.init()
-  hero.init()
+  if(!window.isPlayEditor) {
+    hero.init()
+  }
   timeouts.init()
 
   if(role.isGhost) {
     ghost.init()
   }
 
-  if(role.isPlayer){
-    feedback.init()
-    constellation.init(ctx)
-    camera.init()
-		input.init()
-		chat.init()
-	}
+  feedback.init()
+  constellation.init(ctx)
+  camera.init()
+	input.init()
+	chat.init()
 
   if(role.isArcadeMode) {
     let game = testArcade
@@ -199,18 +197,16 @@ window.initializeGame = function (initialGameId) {
               window.hero = hero
             }
             if(!role.isHost) {
-              window.loadGameNonHost(game)
+              window.loadGame(game)
               startGameLoop()
             }
           })
           setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
         } else {
-          window.loadGameNonHost(game)
+          window.loadGame(game)
           startGameLoop()
         }
-
       } else {
-
         // right now I only have something for the play editor to do if there is no current game
         if(role.isPlayEditor) {
           const { value: loadGameId } = await Swal.fire({
@@ -264,30 +260,6 @@ window.initializeGame = function (initialGameId) {
   }
 };
 
-window.loadGameNonHost = function (game) {
-  window.changeGame(game.id)
-
-  // world
-  w.game.world = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultWorld)), game.world)
-  w.game.grid = game.grid
-  window.local.emit('onGridLoaded')
-  w.game.objects = game.objects
-  w.game.objectsById = {}
-  w.game.objects.forEach((object) => {
-    w.game.objectsById[object.id] = object
-    PHYSICS.addObject(object)
-  })
-  w.game.gameState = game.gameState
-  w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
-  w.game.heros = {}
-  if(role.isPlayer && !role.isGhost) {
-    w.game.heros[window.hero.id] = window.hero
-    PHYSICS.addObject(window.hero)
-  }
-  window.handleWorldUpdate(w.game.world)
-  window.onGameLoaded()
-}
-
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -295,77 +267,7 @@ window.loadGameNonHost = function (game) {
 ///////////////////////////////
 ///////////////////////////////
 window.loadGame = function(game) {
-  w.game.grid = game.grid
-  window.local.emit('onGridLoaded')
-
-  if(game.compendium) window.compendium = game.compendium
-  window.game.hero = game.hero
-
-  let storedGameState = localStorage.getItem('gameStates')
-  if(storedGameState) storedGameState = storedGameState[game.id]
-  if(game.world.storeGameState && storedGameState) {
-    w.game.objects = storedGameState.objects
-    w.game.world = storedGameState.world
-    w.game.gameState = storedGameState.gameState
-  } else {
-    w.game.objects = game.objects
-    w.game.world = game.world
-    if(game.gameState && game.gameState.loaded) {
-      if(!w.game.heros) w.game.heros = {}
-      w.game.heros = game.heros
-      w.game.gameState = game.gameState
-      if(!w.game.gameState) w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-    } else {
-      w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      // you need to keep the heros from last time in this scenario ( you just loaded A WHOLE NEW GAME)
-      // w.game.heros = {}
-      if(!w.game.heros) w.game.heros = {}
-      Object.keys(w.game.heros).forEach((id) => {
-        w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
-        w.game.heros[id].id = id
-      })
-    }
-  }
-
-  if(role.isHost && role.isPlayer) {
-    // just gotta make sure when we reload all these crazy player bois that the reference for the host hero is reset because it doesnt get reset any other time for the host
-    if(w.game.heros[window.hero.id]) {
-      window.hero = w.game.heros[window.hero.id]
-    } else {
-      w.game.heros[window.hero.id] = window.hero
-    }
-  }
-
-  Object.keys(w.game.heros).forEach((id) => {
-    PHYSICS.addObject(w.game.heros[id])
-  })
-
-  if(!w.game.objectsById) w.game.objectsById = {}
-  w.game.objects.forEach((object) => {
-    w.game.objectsById[object.id] = object
-    PHYSICS.addObject(object)
-  })
-
-  // grid
-  w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
-  grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
-  handleWorldUpdate(w.game.world)
-
-  if(role.isPlayEditor) {
-    window.gamestateeditor.update(w.game.gameState)
-  }
-
-  /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onGameLoaded()
-  }
-  /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onGameLoaded()
-  }
-
-  w.game.gameState.loaded = true
+  GAME.load(game)
   window.onGameLoad()
 }
 
@@ -382,19 +284,19 @@ window.onGameLoad = function() {
   window.pageState.gameLoaded = true
 
   objects.loaded()
-  if(role.isPlayer) {
+
+  if(!role.isPlayer) {
     hero.loaded()
     input.loaded()
   }
+
   if(role.isGhost) ghost.loaded()
 
-  if(role.isMapEditor) {
-    mapEditor.onGameLoad(window.ctx, w.game, camera.get())
-  }
   if(role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
     camera.loaded()
+    mapEditor.onGameLoad(window.ctx, w.game, camera.get())
   }
 }
 
@@ -472,119 +374,21 @@ var mainLoop = function () {
 /////// UPDATE GAME OBJECTS AND RENDER
 ///////////////////////////////
 ///////////////////////////////
-var update = function (delta) {
-  w.game.heroList = []
-  window.forAllHeros((hero) => {
-    w.game.heroList.push(hero)
-  })
 
-  if(role.isPlayer) {
-    if(w.game.gameState && !w.game.gameState.paused) {
-      if(!role.isHost) {
-        // old interpolation code
-        // input.update(window.hero, window.keysDown, delta)
-        // Object.keys(w.game.heros).forEach((id) => {
-        //   let hero = w.game.heros[id]
-        //   physics.updatePosition(hero, delta)
-        //   physics.lerpObject(hero, delta)
-        // })
-        // w.game.objects.forEach((object) => {
-        //   physics.updatePosition(object, delta)
-        //   physics.lerpObject(object, delta)
-        // })
-        // physics.prepareObjectsAndHerosForCollisionsPhase()
-        // physics.updateCorrections(delta)
-      }
-    }
-    if(role.isGhost) {
-      if(window.hero.id === 'ghost') {
-        input.update(window.hero, window.keysDown, delta)
-      }
-    }
-
-    if(role.isMapEditor) {
-      if(window.remoteHeroMapEditorState) {
-        mapEditor.update(delta, w.game, camera.get(), window.remoteHeroMapEditorState)
-      } else {
-        mapEditor.update(delta, w.game, camera.get())
-      }
-    }
-
-    if(!role.isGhost){
-      localStorage.setItem('hero', JSON.stringify(window.hero))
-      // we are locally updating the hero input as host
-      if(!role.isHost && !window.pageState.typingMode) {
-        window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
-      }
-    }
+function update(delta) {
+  GAME.update(delta)
+  if(window.remoteHeroMapEditorState) {
+    mapEditor.update(delta, w.game, camera.get(), window.remoteHeroMapEditorState)
+  } else {
+    mapEditor.update(delta, w.game, camera.get())
   }
-
-  if(role.isGhost) {
-    ghost.update()
-  }
-
-  if(role.isHost) {
-    // remove second part when a player can host a multiplayer game
-    if(!w.game.gameState.paused && (!role.isPlayer || !window.hero.flags.paused)) {
-      timeouts.update(delta)
-      /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.update(delta)
-      }
-      /// CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.update(delta)
-      }
-
-      // movement
-      physics.prepareObjectsAndHerosForMovementPhase()
-      Object.keys(w.game.heros).forEach((id) => {
-        if(window.hero.flags.paused) return
-        let hero = w.game.heros[id]
-        if(hero.animationZoomTarget) {
-          window.heroZoomAnimation(hero)
-        }
-        if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
-        physics.updatePosition(hero, delta)
-        // window.heroInput[id] = {}
-      })
-      w.game.objects.forEach((object) => {
-        physics.updatePosition(object, delta)
-      })
-      intelligence.update(w.game.objects, delta)
-
-      /// physics and corrections
-      physics.update(delta)
-
-      if(role.isHost && window.anticipatedObject) {
-        let hero = window.hero
-        if(role.isPlayEditor) {
-          hero = window.editingHero
-        }
-        if(role.isPlayer) window.anticipateObjectAdd(window.hero)
-        else if(role.isPlayEditor) window.anticipateObjectAdd(window.editingHero)
-      }
-    }
-  }
-
-  if((role.isHost || role.isPlayEditor) && w.game.world.globalTags.calculatePathCollisions) {
-    grid.updateGridObstacles()
-    window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
-  }
-};
-
+}
 
 function renderGame(delta) {
   if(role.isPlayEditor) {
     playEditor.update(delta)
     playEditor.render(ctx, window.hero, w.game.objects);
   }
-
-
 
   if(role.isPlayer) {
     render.update(ctx, delta);
@@ -609,7 +413,7 @@ function renderGame(delta) {
     }
   }
 
-  if(role.isMapEditor) {
+  if(!window.isPlayEditor) {
     mapEditor.render(ctx, w.game, camera.get())
   }
 }
