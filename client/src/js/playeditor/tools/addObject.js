@@ -64,7 +64,7 @@ function init() {
     window.removeObjectState(object)
     window.objecteditor.update(object)
     window.objecteditor.saved = true
-    w.game.compendium = window.compendium
+    GAME.compendium = window.compendium
     updateCompendium()
     window.updateObjectEditorNotifier()
     window.socket.emit('updateCompendium', window.compendium)
@@ -231,7 +231,7 @@ window.copyParentAndChildOrRelatives = function(parent, children) {
 }
 
 function loaded() {
-  if(w.game.compendium) window.compendium = game.compendium
+  if(GAME.compendium) window.compendium = game.compendium
   updateCompendium()
 }
 

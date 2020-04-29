@@ -135,8 +135,8 @@ function updateGridHighlight(location) {
   let mouseLocation = {
     x,
     y,
-    width: w.game.grid.nodeSize,
-    height: w.game.grid.nodeSize
+    width: GAME.grid.nodeSize,
+    height: GAME.grid.nodeSize
   }
 
   mapEditor.objectHighlighted = mouseLocation

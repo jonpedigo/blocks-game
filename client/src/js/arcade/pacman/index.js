@@ -7,7 +7,7 @@ let explodingParticles;
 
 function onGameLoaded() {
   explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
-  w.game.gameState.paused = true
+  GAME.gameState.paused = true
   window.hero.flags.showLives = true;
   window.hero.flags.showScore = true;
 }
@@ -17,26 +17,26 @@ function onGameUnloaded() {
 }
 
 function onGameStart() {
-  w.game.gameState.paused = false
-  w.game.gameState.started = true
-  w.game.gameState.startTime = Date.now()
+  GAME.gameState.paused = false
+  GAME.gameState.started = true
+  GAME.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
   window.respawnHeros()
   window.hero.lives = 3
 }
 
 function onKeyDown(keyCode, hero) {
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 }
 
 function input(hero, keysDown, delta) {
-  if(w.game.gameState.paused) {
+  if(GAME.gameState.paused) {
     if(32 in keysDown) {
       window.socket.emit('startGame')
     }
   }
 
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 }
 
 
@@ -50,8 +50,8 @@ function onCollide(agent, collider, result, removeObjects) {
 
 function update(delta) {
   if(window.hero.lives === 0) {
-    w.game.gameState.gameOver = true
-    w.game.gameState.paused = true
+    GAME.gameState.gameOver = true
+    GAME.gameState.paused = true
   }
 }
 
@@ -60,7 +60,7 @@ function render(ctx, delta) {
     particle.draw(ctx, delta)
   })
 
-  if(w.game.gameState.paused && w.game.gameState.started) {
+  if(GAME.gameState.paused && GAME.gameState.started) {
     const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
 
     // ctx.fillStyle = 'rgba(0,0,0,0.8)';
@@ -89,7 +89,7 @@ function render(ctx, delta) {
     ctx.fillRect(0, 0, window.playerCanvasWidth, window.playerCanvasHeight);
     ctx.font =`20pt Courier New`
     ctx.fillStyle =`rgba(255,255,255, ${1 * multiplier})`;
-    let text = w.game.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
+    let text = GAME.gameState.gameOver ? 'Game over. Press space to try again' : 'Press space to start'
     let metrics = ctx.measureText(text)
     ctx.fillText(text, (window.playerCanvasWidth/2) - (metrics.width/2), (window.playerCanvasHeight/2) + 10)
   }

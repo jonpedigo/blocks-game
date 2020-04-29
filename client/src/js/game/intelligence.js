@@ -43,8 +43,8 @@ function moveTowardsTarget(object, target, delta, options = { flat: false}) {
 }
 
 function moveOnPath(object, delta) {
-  let pathX = (object.path[0].x * w.game.grid.nodeSize) + w.game.grid.startX
-  let pathY = (object.path[0].y * w.game.grid.nodeSize) + w.game.grid.startY
+  let pathX = (object.path[0].x * GAME.grid.nodeSize) + GAME.grid.startX
+  let pathY = (object.path[0].y * GAME.grid.nodeSize) + GAME.grid.startY
 
   let pathSpeedX = object.speed || -100
   let pathSpeedY = object.speed || -100
@@ -207,7 +207,7 @@ function update(objects, delta) {
       if(!object.spawnedIds) object.spawnedIds = []
 
       object.spawnedIds = object.spawnedIds.filter((id) => {
-        if(w.game.objectsById[id] && !w.game.objectsById[id].removed) {
+        if(GAME.objectsById[id] && !GAME.objectsById[id].removed) {
           return true
         } else return false
       })

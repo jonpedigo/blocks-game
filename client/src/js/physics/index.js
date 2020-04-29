@@ -109,9 +109,9 @@ function updatePosition(object, delta) {
 }
 
 function getAllHeros() {
-  let allHeros = Object.keys(w.game.heros).reduce((prev, id) => {
+  let allHeros = Object.keys(GAME.heros).reduce((prev, id) => {
     if(id === 'ghost') return prev
-    prev.push(w.game.heros[id])
+    prev.push(GAME.heros[id])
     return prev
   }, [])
   return allHeros
@@ -119,7 +119,7 @@ function getAllHeros() {
 
 function prepareObjectsAndHerosForMovementPhase() {
   // set objects new position and widths
-  let everything = [...w.game.objects]
+  let everything = [...GAME.objects]
   let allHeros = getAllHeros()
   everything.push(...allHeros)
 
@@ -135,7 +135,7 @@ function prepareObjectsAndHerosForMovementPhase() {
 
 function prepareObjectsAndHerosForCollisionsPhase() {
   // set objects new position and widths
-  let everything = [...w.game.objects]
+  let everything = [...GAME.objects]
   let allHeros = getAllHeros()
   everything.push(...allHeros)
   everything.forEach((object) => {
@@ -226,7 +226,7 @@ function postPhysics(removeObjects, respawnObjects) {
   })
 
   // NON CHILD GO FIRST
-  w.game.objects.forEach((object, i) => {
+  GAME.objects.forEach((object, i) => {
     if(object.removed) return
     if(!object.parentId && !object._parentId) {
       attachToParent(object)
@@ -248,7 +248,7 @@ function postPhysics(removeObjects, respawnObjects) {
 
 
   // THEN ATTACH CHILDREN OBJECTS TO PARENT
-  w.game.objects.forEach((object, i) => {
+  GAME.objects.forEach((object, i) => {
     if(object.removed) return
     if(object.parentId || object._parentId ) {
       attachToParent(object)
@@ -266,7 +266,7 @@ function postPhysics(removeObjects, respawnObjects) {
 
 
   // ATTACH OBJECTS THAT ARE SEPERATE FROM BOUNDARIES
-  w.game.objects.forEach((object, i) => {
+  GAME.objects.forEach((object, i) => {
     if(object.removed) return
     if(object.relativeId) {
       attachToRelative(object)

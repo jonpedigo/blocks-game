@@ -20,8 +20,8 @@ function setDefault() {
   }
 
   window.local.on('onGridLoaded', () => {
-    window.defaultWorld.worldSpawnPointX = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
-    window.defaultWorld.worldSpawnPointY = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
+    window.defaultWorld.worldSpawnPointX = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
+    window.defaultWorld.worldSpawnPointY = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
   })
 }
 
@@ -41,14 +41,14 @@ window.handleWorldUpdate = function(updatedWorld) {
     if(key === 'gameBoundaries') {
       gridTool.updateGridObstacles()
       if(role.isHost) window.resetPaths = true
-      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
     if(key === 'globalTags' || key === 'editorTags') {
       for(let tag in updatedWorld.globalTags) {
-        if(tag === 'calculatePathCollisions' && w.game.grid.nodes) {
+        if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
           gridTool.updateGridObstacles()
-          if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+          if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
         }
       }
       if(key === 'syncHero' && role.isPlayEditor) {
@@ -64,7 +64,7 @@ window.handleWorldUpdate = function(updatedWorld) {
   }
 
   if(role.isPlayEditor) {
-    window.worldeditor.update(w.game.world)
+    window.worldeditor.update(GAME.world)
     window.worldeditor.expandAll()
   }
 }

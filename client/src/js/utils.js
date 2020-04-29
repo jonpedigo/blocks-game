@@ -50,7 +50,7 @@ window.copyToClipBoard = function(copyText) {
     if (result.state == "granted" || result.state == "prompt") {
       /* write to the clipboard now */
       navigator.clipboard.writeText(copyText).then(function() {
-        console.log('copied', w.game.id, 'to clipboard')
+        console.log('copied', GAME.id, 'to clipboard')
       }, function() {
         console.log('copy failed')
         /* clipboard write failed */

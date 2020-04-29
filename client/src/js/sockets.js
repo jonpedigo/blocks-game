@@ -23,12 +23,12 @@ function init() {
 
   if(role.isHost) {
     window.socket.on('onAskJoinGame', (heroId) => {
-      if(w.game.gameState && w.game.gameState.loaded) {
-        let hero = w.game.heros[heroId]
+      if(GAME.gameState && GAME.gameState.loaded) {
+        let hero = GAME.heros[heroId]
         if(!hero) {
-          hero = window.findHeroInNewGame(w.game, {id: heroId})
+          hero = window.findHeroInNewGame(GAME, {id: heroId})
           hero.id = heroId
-          w.game.heros[hero.id] = hero
+          GAME.heros[hero.id] = hero
           PHYSICS.addObject(hero)
         } else {
           PHYSICS.addObject(hero)
@@ -52,28 +52,28 @@ function init() {
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
       // dont do keydown event for hosts hero since we've already done locally
       if(role.isPlayer && heroId == window.hero.id) return
-      let hero = w.game.heros[heroId]
+      let hero = GAME.heros[heroId]
       input.onKeyDown(keyCode, hero)
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
-      Object.keys(w.game.heros).forEach((id) => {
+      Object.keys(GAME.heros).forEach((id) => {
         console.log('?>')
 
         if(id === hero.id) {
           console.log('?')
-          w.game.heros[id] = window.resetHeroToDefault(w.game.heros[id])
-          if(role.isPlayer && window.hero.id === hero.id) window.hero = w.game.heros[id]
+          GAME.heros[id] = window.resetHeroToDefault(GAME.heros[id])
+          if(role.isPlayer && window.hero.id === hero.id) window.hero = GAME.heros[id]
         }
       })
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onRespawnHero', (hero) => {
-      Object.keys(w.game.heros).forEach((id) => {
+      Object.keys(GAME.heros).forEach((id) => {
         if(id === hero.id) {
-          window.respawnHero(w.game.heros[id])
+          window.respawnHero(GAME.heros[id])
         }
       })
     })
@@ -82,10 +82,10 @@ function init() {
   	window.socket.on('onEditObjects', (editedObjects) => {
       editedObjects.forEach((obj) => {
         // slow down that gravity boi!
-        if(w.game.objectsById[obj.id].tags.gravity && !obj.tags.gravity) {
+        if(GAME.objectsById[obj.id].tags.gravity && !obj.tags.gravity) {
           obj.velocityY = 0
         }
-        let objectById = w.game.objectsById[obj.id]
+        let objectById = GAME.objectsById[obj.id]
         // if(!obj.x) {
         //   obj.x = objectById.x
         // }
@@ -95,18 +95,18 @@ function init() {
         obj.path = null
         window.mergeDeep(objectById, obj)
       })
-      if(!w.game.world.globalTags.calculatePathCollisions) {
+      if(!GAME.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
         window.resetPaths = true
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
   	})
 
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
-      window.mergeDeep(w.game.gameState, gameState)
+      window.mergeDeep(GAME.gameState, gameState)
       if(role.isPlayEditor && window.syncGameStateToggle.checked) {
-        w.gamestateeditor.update(gameState)
+        window.gamestateeditor.update(gameState)
       }
     })
 
@@ -122,7 +122,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onStopGame', () => {
-      if(!w.game.gameState.started) {
+      if(!GAME.gameState.started) {
         return console.log('trying to stop game that aint even started yet')
       }
 
@@ -133,31 +133,31 @@ function init() {
 
       if(initialGameState) {
         initialGameState = JSON.parse(initialGameState)
-        w.game.objects = initialGameState.objects
-        w.game.heros = initialGameState.heros
-        w.game.world = initialGameState.world
-        w.game.gameState = initialGameState.gameState
-        w.game.grid = initialGameState.grid
-        w.game.grid.nodes = gridTool.generateGridNodes(w.game.grid)
+        GAME.objects = initialGameState.objects
+        GAME.heros = initialGameState.heros
+        GAME.world = initialGameState.world
+        GAME.gameState = initialGameState.gameState
+        GAME.grid = initialGameState.grid
+        GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
         gridTool.updateGridObstacles()
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+        window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
-      // w.game.gameState.paused = true
-      w.game.gameState.started = false
-      w.game.gameState.loaded = true
+      // GAME.gameState.paused = true
+      GAME.gameState.started = false
+      GAME.gameState.loaded = true
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onStartGame', () => {
-      if(w.game.gameState.started) {
+      if(GAME.gameState.started) {
         return console.log('trying to start game that has already started')
       }
 
       // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-      localStorage.setItem('initialGameState', JSON.stringify({...w.game, grid: {...w.game.grid, nodes: null }}))
-      w.game.gameState.paused = false
-      w.game.gameState.started = true
+      localStorage.setItem('initialGameState', JSON.stringify({...GAME, grid: {...GAME.grid, nodes: null }}))
+      GAME.gameState.paused = false
+      GAME.gameState.started = true
 
       if(window.defaultCustomGame) {
         window.defaultCustomGame.onGameStart()
@@ -186,9 +186,9 @@ function init() {
   // HOST CALLS THIS
   window.socket.on('onUpdateGameState', (gameState) => {
     if(!window.pageState.gameLoaded) return
-    if(!role.isHost) w.game.gameState = gameState
+    if(!role.isHost) GAME.gameState = gameState
     if(role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
-      w.gamestateeditor.update(gameState)
+      window.gamestateeditor.update(gameState)
     }
   })
 
@@ -196,8 +196,8 @@ function init() {
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
     if(!window.pageState.gameLoaded) return
     if(!role.isHost) {
-      w.game.objects = objectsUpdated
-      w.game.objectsById = w.game.objects.reduce((prev, next) => {
+      GAME.objects = objectsUpdated
+      GAME.objectsById = GAME.objects.reduce((prev, next) => {
         prev[next.id] = next
         return prev
       }, {})
@@ -205,9 +205,9 @@ function init() {
       // old interpolation code
       // if(role.isPlayer) {
       //   objectsUpdated.forEach((obj) => {
-      //     let go = w.game.objectsById[obj.id]
+      //     let go = GAME.objectsById[obj.id]
       //     if(!go) {
-      //       w.game.objectsById[obj.id] = obj
+      //       GAME.objectsById[obj.id] = obj
       //       go = obj
       //     }
       //     go._lerpX = obj.x
@@ -217,8 +217,8 @@ function init() {
       //     window.mergeDeep(go, obj)
       //   })
       // } else if(role.isPlayEditor) {
-      //   w.game.objects = objectsUpdated
-      //   w.game.objectsById = w.game.objects.reduce((prev, next) => {
+      //   GAME.objects = objectsUpdated
+      //   GAME.objectsById = GAME.objects.reduce((prev, next) => {
       //     prev[next.id] = next
       //     return prev
       //   }, {})
@@ -227,7 +227,7 @@ function init() {
 
     if(role.isPlayEditor && window.objecteditor.get().id) {
       if(window.syncObjectsToggle.checked) {
-        window.objecteditor.update(w.game.objectsById[window.objecteditor.get().id])
+        window.objecteditor.update(GAME.objectsById[window.objecteditor.get().id])
       }
     }
   })
@@ -237,21 +237,21 @@ function init() {
     if(!window.pageState.gameLoaded) return
 
     if(!role.isHost) {
-      if(!w.game.heros[updatedHero.id]) {
-        w.game.heros[updatedHero.id] = updatedHero
+      if(!GAME.heros[updatedHero.id]) {
+        GAME.heros[updatedHero.id] = updatedHero
         PHYSICS.addObject(updatedHero)
         // you need to reset the reference... really just for NON HOST PLAYER MODE ( because it loads non host )
       }
-      window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
+      window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
       if(role.isPlayer && window.hero.id === updatedHero.id) {
         window.mergeDeep(window.hero, updatedHero)
       }
       // old interpolation code
       // } else if(role.isPlayEditor) {
-      //   window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
+      //   window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
       // } else if(role.isPlayer) {
-      //   let hero = w.game.heros[updatedHero.id]
-      //   if(!hero) w.game.heros[updatedHero.id] = updatedHero
+      //   let hero = GAME.heros[updatedHero.id]
+      //   if(!hero) GAME.heros[updatedHero.id] = updatedHero
       //   hero._lerpX = updatedHero.x
       //   hero._lerpY = updatedHero.y
       //   delete updatedHero.x
@@ -261,15 +261,15 @@ function init() {
 
     if(window.pageState.gameLoaded && role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
-        if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity) {
-          updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(w.game.heros[updatedHero.id])
+        if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
+          updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
         }
-        if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== w.game.heros[updatedHero.id].speed) {
-          updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(w.game.heros[updatedHero.id])
+        if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
+          updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
         }
 
         window.editingHero = updatedHero
-        if(w.game.world.syncHero) {
+        if(GAME.world.syncHero) {
           window.setEditingHero(updatedHero)
         }
       }
@@ -283,59 +283,59 @@ function init() {
 
   // EVERYONE CALLS THIS
   window.socket.on('onAddObjects', (objectsAdded) => {
-    w.game.objects.push(...objectsAdded)
+    GAME.objects.push(...objectsAdded)
     objectsAdded.forEach((object) => {
       PHYSICS.addObject(object)
-      w.game.objectsById[object.id] = object
+      GAME.objectsById[object.id] = object
     })
 
-    if(w.game.grid.nodes && !w.game.world.globalTags.calculatePathCollisions) {
+    if(GAME.grid.nodes && !GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
       window.resetPaths = true
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onResetObjects', (updatedObjects) => {
-    w.game.objects = w.game.objects.reduce((arr, object) => {
+    GAME.objects = GAME.objects.reduce((arr, object) => {
       if(object.removed) return arr
       PHYSICS.removeObject(object)
       return arr
     }, [])
 
-    w.game.objectsById = w.game.objects.reduce((prev, next) => {
+    GAME.objectsById = GAME.objects.reduce((prev, next) => {
       prev[next.id] = next
       return prev
     }, {})
 
-    if(!w.game.world.globalTags.calculatePathCollisions) {
+    if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
-    w.game.world = JSON.parse(JSON.stringify(window.defaultWorld))
+    GAME.world = JSON.parse(JSON.stringify(window.defaultWorld))
     if(!window.playEditor) window.camera.clearLimit()
     gridTool.updateGridObstacles()
     if(role.isHost) window.resetPaths = true
-    if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
-    window.handleWorldUpdate(w.game.world)
+    if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    window.handleWorldUpdate(GAME.world)
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
-    if(w.game.world) {
+    if(GAME.world) {
       for(let key in updatedWorld) {
         const value = updatedWorld[key]
 
         if(value instanceof Object) {
-          w.game.world[key] = {}
-          window.mergeDeep(w.game.world[key], value)
+          GAME.world[key] = {}
+          window.mergeDeep(GAME.world[key], value)
         } else {
-          w.game.world[key] = value
+          GAME.world[key] = value
         }
       }
       window.handleWorldUpdate(updatedWorld)
@@ -344,20 +344,20 @@ function init() {
 
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
-  	if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity) {
-  		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(w.game.heros[updatedHero.id])
+  	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
+  		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
   	}
-  	if(updatedHero.jumpVelocity !== w.game.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== w.game.heros[updatedHero.id].speed) {
-  		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(w.game.heros[updatedHero.id])
+  	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
+  		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
   	}
 
-    window.mergeDeep(w.game.heros[updatedHero.id], updatedHero)
+    window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
 
     if(window.pageState.gameLoaded && role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
-        window.editingHero = w.game.heros[updatedHero.id]
-        if(w.game.world.syncHero) {
-          window.setEditingHero(w.game.heros[updatedHero.id])
+        window.editingHero = GAME.heros[updatedHero.id]
+        if(GAME.world.syncHero) {
+          window.setEditingHero(GAME.heros[updatedHero.id])
         }
       }
       if(!window.editingHero.id) {
@@ -368,17 +368,17 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveObject', (object) => {
-    if(!w.game.world.globalTags.calculatePathCollisions) {
+    if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
-    w.game.objectsById[object.id].removed = true
+    GAME.objectsById[object.id].removed = true
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveHero', (hero) => {
-    w.game.heros[hero.id].removed = true
+    GAME.heros[hero.id].removed = true
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
@@ -389,43 +389,43 @@ function init() {
       window.updateObjectEditorNotifier()
     }
 
-    if(!w.game.world.globalTags.calculatePathCollisions) {
+    if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
     let spliceIndex
-    w.game.objects.forEach((obj, i) => {
+    GAME.objects.forEach((obj, i) => {
       if(obj.id == object.id) {
         spliceIndex
       }
     })
 
     if(spliceIndex >= 0) {
-      w.game.objects.splice(spliceIndex, 1)
+      GAME.objects.splice(spliceIndex, 1)
     }
 
-    w.game.objects = w.game.objects.filter((obj) => obj.id !== object.id)
+    GAME.objects = GAME.objects.filter((obj) => obj.id !== object.id)
     PHYSICS.removeObject(object)
-    delete w.game.objectsById[object.id]
+    delete GAME.objectsById[object.id]
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
-    w.game.grid = grid
-    w.game.grid.nodes = gridTool.generateGridNodes(grid)
+    GAME.grid = grid
+    GAME.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
     if(role.isHost) {
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
     if(role.isHost) {
-      PHYSICS.removeObject(w.game.heros[id])
+      PHYSICS.removeObject(GAME.heros[id])
     }
-    delete w.game.heros[id]
+    delete GAME.heros[id]
     if(role.isPlayEditor && window.editingHero.id == id) {
       window.setEditingHero({})
     }
@@ -452,7 +452,7 @@ function init() {
 
   // window.socket.on('onNewGame', () => {
   //   window.changeGame(null)
-  //   w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  //   GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   // })
 
   window.socket.on('onGameSaved', (id) => {

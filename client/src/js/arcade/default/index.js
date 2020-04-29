@@ -24,7 +24,7 @@ function onGameStart() {
 
 // only on client
 function onKeyDown(keyCode, hero) {
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
   // for keyCode 88 ( x ) can conflict with interact engine - && !hero._interactableObject
 
   if(keyCode === 90) {
@@ -39,7 +39,7 @@ function onKeyDown(keyCode, hero) {
 
 // only on client
 function input(hero, keysDown, delta) {
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 }
 
 // only on client

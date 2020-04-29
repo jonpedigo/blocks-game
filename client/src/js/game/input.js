@@ -59,7 +59,7 @@ function update(hero, keysDown, delta) {
     window.liveCustomGame.input(hero, keysDown, delta)
   }
 
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 
   if (38 in keysDown) { // Player holding up
     if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
@@ -193,7 +193,7 @@ function onKeyDown(keyCode, hero) {
     }
   }
 
-  if(hero.flags.paused || w.game.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) return
 
   if(32 === keyCode) {
     if(hero.onGround && hero.tags.gravity) {
@@ -204,13 +204,13 @@ function onKeyDown(keyCode, hero) {
 
   if(hero.arrowKeysBehavior === 'grid') {
     if (38 === keyCode) { // Player holding up
-      hero.y -= w.game.grid.nodeSize
+      hero.y -= GAME.grid.nodeSize
     } else if (40 === keyCode) { // Player holding down
-      hero.y += w.game.grid.nodeSize
+      hero.y += GAME.grid.nodeSize
     } else if (37 === keyCode) { // Player holding left
-      hero.x -= w.game.grid.nodeSize
+      hero.x -= GAME.grid.nodeSize
     } else if (39 === keyCode) { // Player holding right
-      hero.x += w.game.grid.nodeSize
+      hero.x += GAME.grid.nodeSize
     }
   }
 

@@ -135,11 +135,9 @@ function onPageLoad() {
 ///////////////////////////////
 ///////////////////////////////
 window.initializeGame = function (initialGameId) {
-  w.game = {}
-
   if(role.isArcadeMode) {
     let game = testArcade
-    w.game = game
+    GAME = game
     window.hero = window.findHeroInNewGame(game, { id: window.heroId })
     window.loadGame(game)
     window.onGameLoaded()
@@ -274,7 +272,7 @@ window.onGameLoad = function() {
   if(role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
-    mapEditor.onGameLoad(window.ctx, w.game, camera)
+    mapEditor.onGameLoad(window.ctx, GAME, camera)
   }
 }
 
@@ -291,8 +289,8 @@ var frameCount = 0;
 var fps, startTime, now, deltaRender, deltaNetwork, thenRender, thenNetwork, thenUpdate, deltaUpdate;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 function startGameLoop() {
-  if(!w.game.objects || !w.game.world || !w.game.grid || !w.game.heros || (role.isPlayer && !window.hero)) {
-    console.log('game loaded without critical data, trying again soon', !w.game.objects, !w.game.world, !w.game.grid, !w.game.heros, (role.isPlayer && !window.hero))
+  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (role.isPlayer && !window.hero)) {
+    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (role.isPlayer && !window.hero))
     setTimeout(startGameLoop, 1000)
     return
   }
@@ -365,7 +363,7 @@ function update(delta) {
 function render(delta) {
   if(role.isPlayEditor) {
     playEditor.update(delta)
-    playEditor.render(ctx, window.hero, w.game.objects);
+    playEditor.render(ctx, window.hero, GAME.objects);
   }
 
   if(role.isPlayer) {
@@ -392,18 +390,18 @@ function render(delta) {
   }
 
   if(!window.isPlayEditor) {
-    mapEditor.render(ctx, w.game)
+    mapEditor.render(ctx, GAME)
   }
 }
 
 function networkUpdate() {
-  window.socket.emit('updateObjects', w.game.objects)
-  window.socket.emit('updateGameState', w.game.gameState)
-  window.socket.emit('updateWorldOnServerOnly', w.game.world)
-  window.socket.emit('updateHeros', w.game.heros)
-  if(w.game.gameState.started && w.game.world.storeEntireGameState) {
+  window.socket.emit('updateObjects', GAME.objects)
+  window.socket.emit('updateGameState', GAME.gameState)
+  window.socket.emit('updateWorldOnServerOnly', GAME.world)
+  window.socket.emit('updateHeros', GAME.heros)
+  if(GAME.gameState.started && GAME.world.storeEntireGameState) {
     let storedGameState = localStorage.getItem('gameStates')
-    localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [w.game.id]: {...w.game, grid: {...w.game.grid, nodes: null }}}))
+    localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))
   }
   let timeout = window.lastDelta * 3
   if(timeout > 250) {

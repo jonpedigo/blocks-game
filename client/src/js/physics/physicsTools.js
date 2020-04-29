@@ -165,7 +165,7 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //DO THE PACMAN FLIP!!
-  let gameBoundaries = w.game.world.gameBoundaries
+  let gameBoundaries = GAME.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
     if(object.tags.fresh) {
@@ -244,17 +244,17 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX) {
-    object.x = (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX - object.width
+  if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+    object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
   }
-  if(object.y + object.height > (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY) {
-    object.y = (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY - object.height
+  if(object.y + object.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+    object.y = (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY - object.height
   }
-  if(object.x < w.game.grid.startX) {
-    object.x = w.game.grid.startX
+  if(object.x < GAME.grid.startX) {
+    object.x = GAME.grid.startX
   }
-  if(object.y < w.game.grid.startY) {
-    object.y = w.game.grid.startY
+  if(object.y < GAME.grid.startY) {
+    object.y = GAME.grid.startY
   }
 }
 
@@ -368,7 +368,7 @@ function objectCollisionEffects(po, removeObjects, respawnObjects) {
 
       if(agent.actionTriggerArea && collider.tags['requireActionButton']) {
         // sometimes the hero could be logged off
-        let hero = w.game.heros[agent.ownerId]
+        let hero = GAME.heros[agent.ownerId]
         if(hero) {
           if(!hero._interactableObject) {
             hero._interactableObject = collider
@@ -394,7 +394,7 @@ function attachSubObjects(object, subObjects) {
 }
 
 function attachToParent(object) {
-  let parent = w.game.objectsById[object.parentId] || w.game.heros[object.parentId]
+  let parent = GAME.objectsById[object.parentId] || GAME.heros[object.parentId]
 
   if(parent) {
     object.x += parent._deltaX
@@ -402,7 +402,7 @@ function attachToParent(object) {
   } else delete object.parentId
 
   //// idk temporary parentId
-  parent = w.game.objectsById[object._parentId] || w.game.heros[object._parentId]
+  parent = GAME.objectsById[object._parentId] || GAME.heros[object._parentId]
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
@@ -410,7 +410,7 @@ function attachToParent(object) {
 }
 
 function attachToRelative(object) {
-  let relative = w.game.objectsById[object.relativeId] || w.game.heros[object.relativeId]
+  let relative = GAME.objectsById[object.relativeId] || GAME.heros[object.relativeId]
 
   if(relative) {
     object.x = relative.x + object.relativeX

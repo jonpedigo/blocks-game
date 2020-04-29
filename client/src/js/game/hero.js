@@ -49,25 +49,25 @@ function setDefault() {
   }
 
   window.local.on('onGridLoaded', () => {
-    window.defaultHero.x = w.game.grid.startX + (w.game.grid.width * w.game.grid.nodeSize)/2
-    window.defaultHero.y = w.game.grid.startY + (w.game.grid.height * w.game.grid.nodeSize)/2
+    window.defaultHero.x = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
+    window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
 
     window.defaultHero.subObjects = {
       actionTriggerArea: {
         x: 0, y: 0, width: 40, height: 40,
         actionTriggerArea: true,
-        relativeX: -w.game.grid.nodeSize,
-        relativeY: -w.game.grid.nodeSize,
-        relativeWidth: w.game.grid.nodeSize * 2,
-        relativeHeight: w.game.grid.nodeSize * 2,
+        relativeX: -GAME.grid.nodeSize,
+        relativeY: -GAME.grid.nodeSize,
+        relativeWidth: GAME.grid.nodeSize * 2,
+        relativeHeight: GAME.grid.nodeSize * 2,
         changeWithDirection: false,
         tags: { obstacle: false, invisible: true, stationary: true },
       },
       spear: {
         x: 0, y: 0, width: 40, height: 40,
-        relativeX: w.game.grid.nodeSize/5,
-        relativeY: -w.game.grid.nodeSize,
-        relativeWidth: -w.game.grid.nodeSize * .75,
+        relativeX: GAME.grid.nodeSize/5,
+        relativeY: -GAME.grid.nodeSize,
+        relativeWidth: -GAME.grid.nodeSize * .75,
         relativeHeight: 0,
         changeWithDirection: true,
         tags: { monsterDestroyer: true, obstacle: false },
@@ -80,7 +80,7 @@ function loaded() {
 
 }
 
-window.spawnHero = function (hero, game = w.game) {
+window.spawnHero = function (hero, game = GAME) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
     hero.x = hero.spawnPointX
@@ -94,7 +94,7 @@ window.spawnHero = function (hero, game = w.game) {
   }
 }
 
-window.respawnHero = function (hero, game = w.game) {
+window.respawnHero = function (hero, game = GAME) {
   hero.velocityX = 0
   hero.velocityY = 0
 
@@ -125,22 +125,22 @@ window.respawnHero = function (hero, game = w.game) {
 }
 
 window.respawnHeros = function (hero) {
-  Object.keys(w.game.heros).forEach((id) => {
-    window.respawnHero(w.game.heros[id])
+  Object.keys(GAME.heros).forEach((id) => {
+    window.respawnHero(GAME.heros[id])
   })
 }
 
 window.updateAllHeros = function(update) {
-  Object.keys(w.game.heros).forEach((id) => {
-    window.mergeDeep(w.game.heros[id], update)
+  Object.keys(GAME.heros).forEach((id) => {
+    window.mergeDeep(GAME.heros[id], update)
   })
 }
 
-window.resetHeroToDefault = function(hero, game = w.game) {
+window.resetHeroToDefault = function(hero, game = GAME) {
   window.removeHeroFromGame(hero)
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-  if(w.game.hero) {
-    newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, w.game.hero)))
+  if(GAME.hero) {
+    newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, GAME.hero)))
   }
   if(!hero.id) {
     alert('hero getting reset without id')
@@ -155,7 +155,7 @@ window.resetHeroToDefault = function(hero, game = w.game) {
 //   let newHero = {}
 //   window.defaultHero.id = window.hero.id
 // 	Object.assign(newHero, JSON.parse(JSON.stringify(window.defaultHero)))
-//   w.game.heros[window.hero.id] = window.hero
+//   GAME.heros[window.hero.id] = window.hero
 // 	localStorage.setItem('hero', JSON.stringify(window.hero));
 // 	PHYSICS.addObject(hero)
 // }
@@ -263,8 +263,8 @@ window.removeHeroFromGame = function(hero) {
 }
 
 window.forAllHeros = function (fx) {
-  Object.keys(w.game.heros).forEach((id) => {
-    fx(w.game.heros[id], id)
+  Object.keys(GAME.heros).forEach((id) => {
+    fx(GAME.heros[id], id)
   })
 }
 

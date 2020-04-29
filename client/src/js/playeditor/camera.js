@@ -444,7 +444,7 @@ function render(ctx, hero, objects, grid) {
     drawObject(ctx, {...w.editingGame.objectsById[window.editingHero.parentId], color: 'rgba(255, 0,0,.2)'})
   }
 
-  w.game.objects.forEach((obj) => {
+  GAME.objects.forEach((obj) => {
     if(obj.name) {
       if(obj.namePosition === "center") drawNameCenter(ctx, obj)
       if(obj.namePosition === "above") drawNameAbove(ctx, obj)

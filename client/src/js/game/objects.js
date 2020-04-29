@@ -25,41 +25,41 @@ window.anticipateObjectAdd = function(hero) {
 
   if (leftDiff < 1 && hero.directions.left) {
     let newObject = {
-      x: minX - w.game.grid.nodeSize,
-      y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-      width: w.game.grid.nodeSize,
-      height: isWall ? (window.playerCameraHeight * 2) - (w.game.grid.nodeSize * 3) : w.game.grid.nodeSize,
+      x: minX - GAME.grid.nodeSize,
+      y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+      width: GAME.grid.nodeSize,
+      height: isWall ? (window.playerCameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (topDiff < 1 && hero.directions.up) {
     let newObject = {
-      x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-      y: minY - w.game.grid.nodeSize,
-      width: isWall ? (window.playerCameraWidth * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
-      height: w.game.grid.nodeSize,
+      x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+      y: minY - GAME.grid.nodeSize,
+      width: isWall ? (window.playerCameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+      height: GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (rightDiff > w.game.grid.nodeSize - 1 && hero.directions.right) {
+  } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
     let newObject = {
-      x: maxX + w.game.grid.nodeSize,
-      y: isWall ? minY + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
-      width: w.game.grid.nodeSize,
-      height: isWall ? (window.playerCameraHeight * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
+      x: maxX + GAME.grid.nodeSize,
+      y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+      width: GAME.grid.nodeSize,
+      height: isWall ? (window.playerCameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
-  } else if (bottomDiff > w.game.grid.nodeSize - 1 && hero.directions.down) {
+  } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
     let newObject = {
-      x: isWall ? minX + ( w.game.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
-      y: maxY + w.game.grid.nodeSize,
-      width: isWall ? (window.playerCameraWidth * 2) - (w.game.grid.nodeSize * 4) : w.game.grid.nodeSize,
-      height: w.game.grid.nodeSize,
+      x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+      y: maxY + GAME.grid.nodeSize,
+      width: isWall ? (window.playerCameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+      height: GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   }
 
   function addAnticipatedObject(newObject) {
     let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
-    if(grid.keepGridXYWithinBoundaries(x/w.game.grid.nodeSize, y/w.game.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/w.game.grid.nodeSize, (y + newObject.height)/w.game.grid.nodeSize)) {
+    if(grid.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
       window.addObjects([{...newObject, ...window.anticipatedObject}])
       window.anticipatedObject = null
     }
@@ -88,28 +88,28 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
     newObject.spawnPointX = newObject.x
     newObject.spawnPointY = newObject.y
 
-    if(!w.game.world.globalTags.calculatePathCollisions) {
+    if(!GAME.world.globalTags.calculatePathCollisions) {
       grid.addObstacle(newObject)
     }
 
-    if(newObject.tags.obstacle && collisions.check(newObject, w.game.objects) && !options.bypassCollisions) {
+    if(newObject.tags.obstacle && collisions.check(newObject, GAME.objects) && !options.bypassCollisions) {
       alertAboutCollision = true
     }
 
     //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-    if(newObject.x + newObject.width > (w.game.grid.nodeSize * w.game.grid.width) + w.game.grid.startX) {
+    if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
       if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.y + newObject.height > (w.game.grid.nodeSize * w.game.grid.height) + w.game.grid.startY) {
+    if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
       if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.x < w.game.grid.startX) {
+    if(newObject.x < GAME.grid.startX) {
       if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
-    if(newObject.y < w.game.grid.startY) {
+    if(newObject.y < GAME.grid.startY) {
       if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
       return null
     }
@@ -197,7 +197,7 @@ window.respawnObject = function(object) {
   object.y = object.spawnPointY
 }
 
-window.moveObjectPos = function(object, newPos, game = w.game) {
+window.moveObjectPos = function(object, newPos, game = GAME) {
   let diffX = newPos.x - object.x
   let diffY = newPos.y - object.y
   //also update children

@@ -2,19 +2,19 @@ import collisions from './collisions'
 
 function convertToGridXY(object, options = { }) {
   // pretend we are dealing with a 0,0 plane
-  let x = object.x - w.game.grid.nodes[0][0].x
-  let y = object.y - w.game.grid.nodes[0][0].y
+  let x = object.x - GAME.grid.nodes[0][0].x
+  let y = object.y - GAME.grid.nodes[0][0].y
 
-  let diffX = x % w.game.grid.nodeSize
+  let diffX = x % GAME.grid.nodeSize
   x -= diffX
-  let gridX = x/w.game.grid.nodeSize
+  let gridX = x/GAME.grid.nodeSize
 
-  let diffY = y % w.game.grid.nodeSize
+  let diffY = y % GAME.grid.nodeSize
   y -= diffY
-  let gridY = y/w.game.grid.nodeSize
+  let gridY = y/GAME.grid.nodeSize
 
-  let width = Math.floor(object.width / w.game.grid.nodeSize)
-  let height = Math.floor(object.height / w.game.grid.nodeSize)
+  let width = Math.floor(object.width / GAME.grid.nodeSize)
+  let height = Math.floor(object.height / GAME.grid.nodeSize)
 
   return { x, y, gridX, gridY, diffX, diffY, width, height }
 }
@@ -25,7 +25,7 @@ function generateGridNodes(gridProps) {
   for(var i = 0; i < gridProps.width; i++) {
     grid.push([])
     for(var j = 0; j < gridProps.height; j++) {
-      grid[i].push({x: gridProps.startX + (i * w.game.grid.nodeSize), y: gridProps.startX + (j * w.game.grid.nodeSize), width: w.game.grid.nodeSize, height: w.game.grid.nodeSize, gridX: i, gridY: j})
+      grid[i].push({x: gridProps.startX + (i * GAME.grid.nodeSize), y: gridProps.startX + (j * GAME.grid.nodeSize), width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, gridX: i, gridY: j})
     }
   }
 
@@ -33,24 +33,24 @@ function generateGridNodes(gridProps) {
 }
 
 function forEach(fx) {
-  for(var i = 0; i < w.game.grid.width; i++) {
-    for(var j = 0; j < w.game.grid.height; j++) {
-      fx(w.game.grid.nodes[i][j])
+  for(var i = 0; i < GAME.grid.width; i++) {
+    for(var j = 0; j < GAME.grid.height; j++) {
+      fx(GAME.grid.nodes[i][j])
     }
   }
 }
 
 function snapXYToGrid(x, y, options = { closest: true }) {
-  let diffX = x % w.game.grid.nodeSize;
-  if(diffX > w.game.grid.nodeSize/2 && options.closest) {
-    x += (w.game.grid.nodeSize - diffX)
+  let diffX = x % GAME.grid.nodeSize;
+  if(diffX > GAME.grid.nodeSize/2 && options.closest) {
+    x += (GAME.grid.nodeSize - diffX)
   } else {
     x -= diffX
   }
 
-  let diffY = y % w.game.grid.nodeSize;
-  if(diffY > w.game.grid.nodeSize/2 && options.closest) {
-    y += (w.game.grid.nodeSize - diffY)
+  let diffY = y % GAME.grid.nodeSize;
+  if(diffY > GAME.grid.nodeSize/2 && options.closest) {
+    y += (GAME.grid.nodeSize - diffY)
   } else {
     y -= diffY
   }
@@ -59,43 +59,43 @@ function snapXYToGrid(x, y, options = { closest: true }) {
 
 function getRandomGridWithinXY(min, max) {
   let xyrandom = (Math.random() * (max - min)) + min
-  let diff = xyrandom % w.game.grid.nodeSize
+  let diff = xyrandom % GAME.grid.nodeSize
   return xyrandom - diff
 }
 
 function getAllDiffs({x, y, width, height}) {
-  let leftDiff = x % w.game.grid.nodeSize
-  let topDiff = y % w.game.grid.nodeSize
-  let rightDiff = (x + width) % w.game.grid.nodeSize
-  let bottomDiff = (y + height) % w.game.grid.nodeSize
+  let leftDiff = x % GAME.grid.nodeSize
+  let topDiff = y % GAME.grid.nodeSize
+  let rightDiff = (x + width) % GAME.grid.nodeSize
+  let bottomDiff = (y + height) % GAME.grid.nodeSize
   return { leftDiff, topDiff, rightDiff, bottomDiff }
 }
 
 function snapObjectToGrid(object) {
-  let diffX = object.x % w.game.grid.nodeSize;
-  if(diffX > w.game.grid.nodeSize/2) {
-    object.x += (w.game.grid.nodeSize - diffX)
+  let diffX = object.x % GAME.grid.nodeSize;
+  if(diffX > GAME.grid.nodeSize/2) {
+    object.x += (GAME.grid.nodeSize - diffX)
   } else {
     object.x -= diffX
   }
 
-  let diffY = object.y % w.game.grid.nodeSize;
-  if(diffY > w.game.grid.nodeSize/2) {
-    object.y += (w.game.grid.nodeSize - diffY)
+  let diffY = object.y % GAME.grid.nodeSize;
+  if(diffY > GAME.grid.nodeSize/2) {
+    object.y += (GAME.grid.nodeSize - diffY)
   } else {
     object.y -= diffY
   }
 
-  let diffWidth = object.width % w.game.grid.nodeSize;
-  if(diffWidth > w.game.grid.nodeSize/2) {
-    object.width += (w.game.grid.nodeSize - diffWidth)
+  let diffWidth = object.width % GAME.grid.nodeSize;
+  if(diffWidth > GAME.grid.nodeSize/2) {
+    object.width += (GAME.grid.nodeSize - diffWidth)
   } else {
     object.width -= diffWidth
   }
 
-  let diffHeight = object.height % w.game.grid.nodeSize;
-  if(diffHeight > w.game.grid.nodeSize/2) {
-    object.height += (w.game.grid.nodeSize - diffHeight)
+  let diffHeight = object.height % GAME.grid.nodeSize;
+  if(diffHeight > GAME.grid.nodeSize/2) {
+    object.height += (GAME.grid.nodeSize - diffHeight)
   } else {
     object.height -= diffHeight
   }
@@ -103,7 +103,7 @@ function snapObjectToGrid(object) {
 
 
 function snapTinyObjectToGrid(object, tinySize) {
-  let medium = w.game.grid.nodeSize - tinySize
+  let medium = GAME.grid.nodeSize - tinySize
   const { x, y } = snapXYToGrid(object.x, object.y)
   object.y = y + medium/2
   object.x = x + medium/2
@@ -122,90 +122,90 @@ function snapDragToGrid(object) {
     object.height = Math.abs(object.height)
   }
 
-  let diffX = object.x % w.game.grid.nodeSize
+  let diffX = object.x % GAME.grid.nodeSize
   object.x -= diffX
 
-  if(diffX > w.game.grid.nodeSize/2) {
-    diffX -= w.game.grid.nodeSize/2
+  if(diffX > GAME.grid.nodeSize/2) {
+    diffX -= GAME.grid.nodeSize/2
   }
 
-  let diffY = object.y % w.game.grid.nodeSize;
+  let diffY = object.y % GAME.grid.nodeSize;
   object.y -= diffY
 
-  if(diffY > w.game.grid.nodeSize/2) {
-    diffY -= w.game.grid.nodeSize/2
+  if(diffY > GAME.grid.nodeSize/2) {
+    diffY -= GAME.grid.nodeSize/2
   }
 
-  let diffWidth = object.width % w.game.grid.nodeSize;
-  if(diffWidth > w.game.grid.nodeSize/2) {
-    // object.width += (w.game.grid.nodeSize - diffWidth)
+  let diffWidth = object.width % GAME.grid.nodeSize;
+  if(diffWidth > GAME.grid.nodeSize/2) {
+    // object.width += (GAME.grid.nodeSize - diffWidth)
   } else {
     // object.width -= diffWidth
   }
 
-  let diffHeight = object.height % w.game.grid.nodeSize;
-  if(diffHeight > w.game.grid.nodeSize/2) {
-    // object.height += (w.game.grid.nodeSize - diffHeight)
+  let diffHeight = object.height % GAME.grid.nodeSize;
+  if(diffHeight > GAME.grid.nodeSize/2) {
+    // object.height += (GAME.grid.nodeSize - diffHeight)
   } else {
     // object.height -= diffHeight
   }
 
-  object.width = Math.ceil(object.width/w.game.grid.nodeSize) * w.game.grid.nodeSize
-  object.height = Math.ceil(object.height/w.game.grid.nodeSize) * w.game.grid.nodeSize
+  object.width = Math.ceil(object.width/GAME.grid.nodeSize) * GAME.grid.nodeSize
+  object.height = Math.ceil(object.height/GAME.grid.nodeSize) * GAME.grid.nodeSize
 
-  if(diffY + diffHeight > w.game.grid.nodeSize) {
-    object.height += w.game.grid.nodeSize
+  if(diffY + diffHeight > GAME.grid.nodeSize) {
+    object.height += GAME.grid.nodeSize
   }
-  if(diffX + diffWidth > w.game.grid.nodeSize) {
-    object.width += w.game.grid.nodeSize
+  if(diffX + diffWidth > GAME.grid.nodeSize) {
+    object.width += GAME.grid.nodeSize
   }
 
-  object.gridX = object.x/w.game.grid.nodeSize
-  object.gridY = object.y/w.game.grid.nodeSize
-  object.gridWidth = object.width/w.game.grid.nodeSize
-  object.gridHeight = object.height/w.game.grid.nodeSize
+  object.gridX = object.x/GAME.grid.nodeSize
+  object.gridY = object.y/GAME.grid.nodeSize
+  object.gridWidth = object.width/GAME.grid.nodeSize
+  object.gridHeight = object.height/GAME.grid.nodeSize
 }
 
 window.snapAllObjectsToGrid = function() {
-	w.game.objects.forEach((object) => {
+	GAME.objects.forEach((object) => {
     if(object.removed) return
 
 		snapObjectToGrid(object)
 	})
 
   snapObjectToGrid(window.hero)
-  window.hero.width = w.game.grid.nodeSize
-  window.hero.height = w.game.grid.nodeSize
+  window.hero.width = GAME.grid.nodeSize
+  window.hero.height = GAME.grid.nodeSize
 }
 
 function createGridNodeAt(x, y) {
-  let diffX = x % w.game.grid.nodeSize
+  let diffX = x % GAME.grid.nodeSize
   x -= diffX
 
-  let diffY = y % w.game.grid.nodeSize
+  let diffY = y % GAME.grid.nodeSize
   y -= diffY
 
   return {
-    x, y, width: w.game.grid.nodeSize, height: w.game.grid.nodeSize,
+    x, y, width: GAME.grid.nodeSize, height: GAME.grid.nodeSize,
   }
 }
 
 function addObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || w.game.world.globalTags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.globalTags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
     // pretend we are dealing with a 0,0 plane
-    let x = object.x - w.game.grid.startX
-    let y = object.y - w.game.grid.startY
+    let x = object.x - GAME.grid.startX
+    let y = object.y - GAME.grid.startY
 
-    let diffX = x % w.game.grid.nodeSize
+    let diffX = x % GAME.grid.nodeSize
     x -= diffX
-    x = x/w.game.grid.nodeSize
+    x = x/GAME.grid.nodeSize
 
-    let diffY = y % w.game.grid.nodeSize
+    let diffY = y % GAME.grid.nodeSize
     y -= diffY
-    y = y/w.game.grid.nodeSize
+    y = y/GAME.grid.nodeSize
 
-    let gridWidth = object.width / w.game.grid.nodeSize;
-    let gridHeight = object.height / w.game.grid.nodeSize;
+    let gridWidth = object.width / GAME.grid.nodeSize;
+    let gridHeight = object.height / GAME.grid.nodeSize;
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
@@ -216,9 +216,9 @@ function addObstacle(object) {
 }
 
 function hasObstacleUpdate(x, y, hasObstacle) {
-  if(x >= 0 && x < w.game.grid.width) {
-    if(y >= 0 && y < w.game.grid.height) {
-      let gridNode = w.game.grid.nodes[x][y]
+  if(x >= 0 && x < GAME.grid.width) {
+    if(y >= 0 && y < GAME.grid.height) {
+      let gridNode = GAME.grid.nodes[x][y]
       gridNode.hasObstacle = hasObstacle
     }
   }
@@ -227,19 +227,19 @@ function hasObstacleUpdate(x, y, hasObstacle) {
 function removeObstacle(object) {
   if(true) {
     // pretend we are dealing with a 0,0 plane
-    let x = object.x - w.game.grid.startX
-    let y = object.y - w.game.grid.startY
+    let x = object.x - GAME.grid.startX
+    let y = object.y - GAME.grid.startY
 
-    let diffX = x % w.game.grid.nodeSize
+    let diffX = x % GAME.grid.nodeSize
     x -= diffX
-    x = x/w.game.grid.nodeSize
+    x = x/GAME.grid.nodeSize
 
-    let diffY = y % w.game.grid.nodeSize
+    let diffY = y % GAME.grid.nodeSize
     y -= diffY
-    y = y/w.game.grid.nodeSize
+    y = y/GAME.grid.nodeSize
 
-    let gridWidth = object.width / w.game.grid.nodeSize;
-    let gridHeight = object.height / w.game.grid.nodeSize;
+    let gridWidth = object.width / GAME.grid.nodeSize;
+    let gridHeight = object.height / GAME.grid.nodeSize;
 
     for(let currentx = x; currentx < x + gridWidth; currentx++) {
       for(let currenty = y; currenty < y + gridHeight; currenty++) {
@@ -254,7 +254,7 @@ function updateGridObstacles() {
     gridNode.hasObstacle = false
   })
 
-  w.game.objects.forEach((obj) => {
+  GAME.objects.forEach((obj) => {
     if(obj.removed) return
 
     if(obj.tags && obj.tags.obstacle || obj.tags.onlyHeroAllowed) {
@@ -274,8 +274,8 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     hero = window.editingHero
   }
 
-  if(w.game.world.gameBoundaries && w.game.world.gameBoundaries.x >= 0 && (w.game.world.gameBoundaries.behavior === 'boundaryAll' || w.game.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
-    const {gridX, gridY, width, height } = convertToGridXY(w.game.world.gameBoundaries)
+  if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
+    const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
       return false
     } else if(attemptingX < gridX) {
@@ -287,15 +287,15 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
   }
 
-  if(w.game.world.gameBoundaries && w.game.world.gameBoundaries.x >= 0 && w.game.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    const {gridX, gridY, width, height } = convertToGridXY(w.game.world.gameBoundaries)
-    if(attemptingX > gridX + width - (((window.playerCameraWidth * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
+  if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+    const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
+    if(attemptingX > gridX + width - (((window.playerCameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingX < gridX + (((window.playerCameraWidth * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
+    } else if(attemptingX < gridX + (((window.playerCameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
       return false
-    } else if(attemptingY > gridY + height - (((window.playerCameraHeight * hero.zoomMultiplier)/2)/w.game.grid.nodeSize) - 1) {
+    } else if(attemptingY > gridY + height - (((window.playerCameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingY < gridY + (((window.playerCameraHeight * hero.zoomMultiplier)/2)/w.game.grid.nodeSize)) {
+    } else if(attemptingY < gridY + (((window.playerCameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
       return false
     }
   }
@@ -314,8 +314,8 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(attemptingX >= (w.game.grid.startX/w.game.grid.nodeSize) && attemptingX < w.game.grid.width + w.game.grid.startX) {
-    if(attemptingY >= (w.game.grid.startY/w.game.grid.nodeSize) && attemptingY < w.game.grid.height + w.game.grid.startY) {
+  if(attemptingX >= (GAME.grid.startX/GAME.grid.nodeSize) && attemptingX < GAME.grid.width + GAME.grid.startX) {
+    if(attemptingY >= (GAME.grid.startY/GAME.grid.nodeSize) && attemptingY < GAME.grid.height + GAME.grid.startY) {
       return true
     }
   }

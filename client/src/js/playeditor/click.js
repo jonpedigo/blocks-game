@@ -513,7 +513,7 @@ function init() {
           window.highlightedObjectGroup.forEach((object) => {
             // console.log(object.id, newObject.id)
             // object.parentId = newObject.id
-            w.game.objectsById[object.id].parentId = newObject.id
+            GAME.objectsById[object.id].parentId = newObject.id
           })
 
           window.emitEditObjectsOther()
@@ -522,7 +522,7 @@ function init() {
           window.highlightedObjectGroup.forEach((object) => {
             // console.log(object.id, newObject.id)
             // object.parentId = newObject.id
-            let gameObject = w.game.objectsById[object.id]
+            let gameObject = GAME.objectsById[object.id]
             gameObject.relativeId = newObject.id
             gameObject.relativeX = gameObject.x - newObject.x
             gameObject.relativeY = gameObject.y - newObject.y

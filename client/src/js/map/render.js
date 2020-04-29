@@ -50,12 +50,12 @@ function update() {
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-  w.game.objects.forEach((object) => {
+  GAME.objects.forEach((object) => {
     drawTools.drawObject(ctx, object, camera)
   })
 
-  for(var heroId in w.game.heros) {
-    let currentHero = w.game.heros[heroId];
+  for(var heroId in GAME.heros) {
+    let currentHero = GAME.heros[heroId];
     drawTools.drawObject(ctx, currentHero, camera);
     if(currentHero.subObjects) {
       window.forAllSubObjects(currentHero.subObjects, (subObject) => {
@@ -64,7 +64,7 @@ function update() {
     }
   }
 
-  w.game.objects.forEach((obj) => {
+  GAME.objects.forEach((obj) => {
     if(obj.name) {
       if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
       if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)

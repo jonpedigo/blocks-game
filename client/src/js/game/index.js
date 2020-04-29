@@ -23,65 +23,65 @@ window.GAME = {
 }
 
 GAME.load = function(game){
-  w.game.grid = game.grid
+  GAME.grid = game.grid
   window.local.emit('onGridLoaded')
 
   if(game.compendium) window.compendium = game.compendium
-  w.game.hero = game.hero
+  GAME.hero = game.hero
 
   let storedGameState = localStorage.getItem('gameStates')
   if(storedGameState) storedGameState = storedGameState[game.id]
   if(game.world.storeGameState && storedGameState) {
-    w.game.objects = storedGameState.objects
-    w.game.world = storedGameState.world
-    w.game.gameState = storedGameState.gameState
+    GAME.objects = storedGameState.objects
+    GAME.world = storedGameState.world
+    GAME.gameState = storedGameState.gameState
   } else {
-    w.game.objects = game.objects
-    w.game.world = game.world
+    GAME.objects = game.objects
+    GAME.world = game.world
     if(game.gameState && game.gameState.loaded) {
-      if(!w.game.heros) w.game.heros = {}
-      w.game.heros = game.heros
-      w.game.gameState = game.gameState
-      if(!w.game.gameState) w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      if(!GAME.heros) GAME.heros = {}
+      GAME.heros = game.heros
+      GAME.gameState = game.gameState
+      if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     } else {
-      w.game.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       // you need to keep the heros from last time in this scenario ( you just loaded A WHOLE NEW GAME)
-      // w.game.heros = {}
-      if(!w.game.heros) w.game.heros = {}
-      Object.keys(w.game.heros).forEach((id) => {
-        w.game.heros[id] = window.findHeroInNewGame(game, w.game.heros[id])
-        w.game.heros[id].id = id
+      // GAME.heros = {}
+      if(!GAME.heros) GAME.heros = {}
+      Object.keys(GAME.heros).forEach((id) => {
+        GAME.heros[id] = window.findHeroInNewGame(game, GAME.heros[id])
+        GAME.heros[id].id = id
       })
     }
   }
 
   if(role.isHost && role.isPlayer) {
     // just gotta make sure when we reload all these crazy player bois that the reference for the host hero is reset because it doesnt get reset any other time for the host
-    if(w.game.heros[window.hero.id]) {
-      window.hero = w.game.heros[window.hero.id]
+    if(GAME.heros[window.hero.id]) {
+      window.hero = GAME.heros[window.hero.id]
     } else {
-      w.game.heros[window.hero.id] = window.hero
+      GAME.heros[window.hero.id] = window.hero
     }
   }
 
-  Object.keys(w.game.heros).forEach((id) => {
-    PHYSICS.addObject(w.game.heros[id])
+  Object.keys(GAME.heros).forEach((id) => {
+    PHYSICS.addObject(GAME.heros[id])
   })
 
-  if(!w.game.objectsById) w.game.objectsById = {}
-  w.game.objects.forEach((object) => {
-    w.game.objectsById[object.id] = object
+  if(!GAME.objectsById) GAME.objectsById = {}
+  GAME.objects.forEach((object) => {
+    GAME.objectsById[object.id] = object
     PHYSICS.addObject(object)
   })
 
   // grid
-  w.game.grid.nodes = grid.generateGridNodes(w.game.grid)
+  GAME.grid.nodes = grid.generateGridNodes(GAME.grid)
   grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
-  handleWorldUpdate(w.game.world)
+  window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+  handleWorldUpdate(GAME.world)
 
   if(role.isPlayEditor) {
-    w.gamestateeditor.update(w.game.gameState)
+    window.gamestateeditor.update(GAME.gameState)
   }
 
   /// DEFAULT GAME FX
@@ -93,7 +93,7 @@ GAME.load = function(game){
     window.customGame.onGameLoaded()
   }
 
-  w.game.gameState.loaded = true
+  GAME.gameState.loaded = true
 }
 
 GAME.unload = function() {
@@ -116,19 +116,19 @@ GAME.unload = function() {
     window.objecteditor.update({})
   }
 
-  w.game.objects.forEach((object) => {
+  GAME.objects.forEach((object) => {
     PHYSICS.removeObject(object)
   })
-  Object.keys(w.game.heros).forEach((heroId) => {
-    let hero = w.game.heros[heroId]
+  Object.keys(GAME.heros).forEach((heroId) => {
+    let hero = GAME.heros[heroId]
     PHYSICS.removeObject(hero)
   })
 }
 
 GAME.update = function(delta) {
-  w.game.heroList = []
+  GAME.heroList = []
   window.forAllHeros((hero) => {
-    w.game.heroList.push(hero)
+    GAME.heroList.push(hero)
   })
 
   if(role.isPlayer) {
@@ -150,7 +150,7 @@ GAME.update = function(delta) {
 
   if(role.isHost) {
     // remove second part when a player can host a multiplayer game
-    if(!w.game.gameState.paused && (!role.isPlayer || !window.hero.flags.paused)) {
+    if(!GAME.gameState.paused && (!role.isPlayer || !window.hero.flags.paused)) {
       timeouts.update(delta)
       /// DEFAULT GAME FX
       if(window.defaultCustomGame) {
@@ -167,9 +167,9 @@ GAME.update = function(delta) {
 
       // movement
       PHYSICS.prepareObjectsAndHerosForMovementPhase()
-      Object.keys(w.game.heros).forEach((id) => {
+      Object.keys(GAME.heros).forEach((id) => {
         if(window.hero.flags.paused) return
-        let hero = w.game.heros[id]
+        let hero = GAME.heros[id]
         if(hero.animationZoomTarget) {
           window.heroZoomAnimation(hero)
         }
@@ -177,8 +177,8 @@ GAME.update = function(delta) {
         PHYSICS.updatePosition(hero, delta)
         // window.heroInput[id] = {}
       })
-      intelligence.update(w.game.objects, delta)
-      w.game.objects.forEach((object) => {
+      intelligence.update(GAME.objects, delta)
+      GAME.objects.forEach((object) => {
         PHYSICS.updatePosition(object, delta)
       })
 
@@ -196,9 +196,9 @@ GAME.update = function(delta) {
     }
   }
 
-  if((role.isHost || role.isPlayEditor) && w.game.world.globalTags.calculatePathCollisions) {
+  if((role.isHost || role.isPlayEditor) && GAME.world.globalTags.calculatePathCollisions) {
     grid.updateGridObstacles()
-    window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
+    window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
   }
 }
 
