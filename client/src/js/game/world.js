@@ -1,7 +1,7 @@
 import gridTool from '../grid.js'
 import pathfinding from './pathfinding.js'
 
-function init() {
+function setDefault() {
   window.defaultWorld = {
     id: 'world-' + window.uniqueID(),
   	lockCamera: null,
@@ -70,5 +70,5 @@ window.handleWorldUpdate = function(updatedWorld) {
 }
 
 export default {
-  init
+  setDefault
 }

@@ -2,7 +2,7 @@ import pathfinding from './pathfinding.js'
 import collisions from '../collisions'
 import grid from '../grid.js'
 
-function init() {
+function setDefault() {
   window.defaultObject = {
     velocityX: 0,
     velocityY: 0,
@@ -232,6 +232,6 @@ window.forAllSubObjects = function (subObjects, fx) {
 }
 
 export default {
-  init,
+  setDefault,
   loaded,
 }

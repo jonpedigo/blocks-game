@@ -4,7 +4,6 @@ import gridTool from '../grid.js'
 import procedural from './procedural.js'
 import camera from './camera.js'
 import click from './click.js'
-import tags from './tags.js'
 import input from './input.js'
 import worldEditor from './tools/worldEditor.js'
 import objectEditor from './tools/objectEditor.js'
@@ -109,7 +108,6 @@ function onPageLoad() {
   input.init()
   camera.init()
   click.init()
-  tags.init()
 
   window.canvas.height = window.innerHeight;
   window.canvas.style="left: 400px;"

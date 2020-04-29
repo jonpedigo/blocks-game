@@ -51,10 +51,6 @@ function init(){
   window.addEventListener("keyup", function (e) {
 	   delete keysDown[e.keyCode]
   }, false)
-
-  window.heroId = 'ghost'
-  window.hero = JSON.parse(JSON.stringify(window.defaultHero))
-  window.hero.id = window.heroId
 }
 
 function update(delta) {

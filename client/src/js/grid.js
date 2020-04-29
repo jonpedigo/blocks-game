@@ -1,15 +1,5 @@
 import collisions from './collisions'
 
-function init() {
-  window.defaultGrid = {
-    width: 80,
-    height: 80,
-    nodeSize: 40,
-    startX: 0,
-    startY: 0,
-  }
-}
-
 function convertToGridXY(object, options = { }) {
   // pretend we are dealing with a 0,0 plane
   let x = object.x - w.game.grid.nodes[0][0].x
@@ -188,10 +178,6 @@ window.snapAllObjectsToGrid = function() {
   window.hero.height = w.game.grid.nodeSize
 }
 
-function update(hero, objects) {
-
-}
-
 function createGridNodeAt(x, y) {
   let diffX = x % w.game.grid.nodeSize
   x -= diffX
@@ -338,9 +324,7 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
 }
 
 export default {
-  init,
   forEach,
-  update,
   snapObjectToGrid,
   snapDragToGrid,
   snapTinyObjectToGrid,

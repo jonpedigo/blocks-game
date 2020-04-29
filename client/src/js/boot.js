@@ -112,14 +112,12 @@ function onPageLoad() {
   establishRoleFromQuery()
   logRole()
   initializeCanvas()
-  
+
   if(role.isPlayEditor) {
     playEditor.onPageLoad()
   }
   game.onPageLoad()
   arcade.onPageLoad()
-
-	grid.init()
   events.init()
   sockets.init()
   constellation.init(ctx)
@@ -145,6 +143,19 @@ window.initializeGame = function (initialGameId) {
     window.onGameLoaded()
     startGameLoop()
   } else {
+
+    // GET HERO ID
+    if(role.isGhost) {
+      window.heroId = 'ghost'
+    } if(role.isPlayer) {
+      let savedHero = localStorage.getItem('hero');
+      if(savedHero && JSON.parse(savedHero).id){
+        window.heroId = JSON.parse(savedHero).id
+      } else {
+        window.heroId = 'hero-'+window.uniqueID()
+      }
+    }
+
     // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
     window.socket.emit('askRestoreCurrentGame')
     window.socket.on('onAskRestoreCurrentGame', async (game) => {

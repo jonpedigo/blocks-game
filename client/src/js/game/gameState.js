@@ -1,4 +1,4 @@
-function init() {
+function setDefault() {
   window.defaultGameState = {
     paused : false,
     started: false,
@@ -10,5 +10,5 @@ function init() {
 }
 
 export default {
-  init
+  setDefault
 }

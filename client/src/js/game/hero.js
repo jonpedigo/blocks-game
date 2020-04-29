@@ -2,7 +2,7 @@ import pathfinding from './pathfinding.js'
 import collisions from '../collisions'
 import grid from '../grid.js'
 
-function init() {
+function setDefault() {
   window.defaultHero = {
   	width: 40,
   	height: 40,
@@ -26,6 +26,7 @@ function init() {
       isPlayer: true,
       monsterDestroyer: false,
       gravity: false,
+      filled: true,
     },
   	zoomMultiplier: 1.875,
     // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
@@ -73,13 +74,6 @@ function init() {
       }
     }
   })
-
-  let savedHero = localStorage.getItem('hero');
-  if(savedHero && JSON.parse(savedHero).id){
-    window.heroId = JSON.parse(savedHero).id
-  } else {
-    window.heroId = 'hero-'+window.uniqueID()
-  }
 }
 
 function loaded() {
@@ -392,7 +386,7 @@ window.forAllHeros = function (fx) {
 }
 
 export default {
-  init,
+  setDefault,
   onCollide,
   loaded,
 }

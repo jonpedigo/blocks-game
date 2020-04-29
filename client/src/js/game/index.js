@@ -9,6 +9,7 @@ import pathfinding from './pathfinding.js'
 import objects from './objects.js'
 import gameState from './gameState.js'
 import world from './world.js'
+import tags from './tags.js'
 
 window.GAME = {
   pfgrid: null,
@@ -202,17 +203,17 @@ GAME.update = function(delta) {
 }
 
 function onPageLoad() {
-  objects.init()
-  world.init()
-  gameState.init()
-  timeouts.init()
-
+  objects.setDefault()
+  world.setDefault()
+  gameState.setDefault()
+  tags.setDefault()
   if(!window.isPlayEditor) {
-    hero.init()
+    hero.setDefault()
   }
   if(role.isGhost) {
     ghost.init()
   }
+  timeouts.init()
   input.init()
 }
 
