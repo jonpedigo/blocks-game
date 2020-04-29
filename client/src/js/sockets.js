@@ -26,7 +26,7 @@ function init() {
       if(w.game.gameState && w.game.gameState.loaded) {
         let hero = w.game.heros[heroId]
         if(!hero) {
-          hero = window.findHeroInNewGame(window.game, {id: heroId})
+          hero = window.findHeroInNewGame(w.game, {id: heroId})
           hero.id = heroId
           w.game.heros[hero.id] = hero
           PHYSICS.addObject(hero)
@@ -106,7 +106,7 @@ function init() {
     window.socket.on('onEditGameState', (gameState) => {
       window.mergeDeep(w.game.gameState, gameState)
       if(role.isPlayEditor && window.syncGameStateToggle.checked) {
-        window.gamestateeditor.update(gameState)
+        w.gamestateeditor.update(gameState)
       }
     })
 
@@ -155,7 +155,7 @@ function init() {
       }
 
       // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-      localStorage.setItem('initialGameState', JSON.stringify({...window.game, grid: {...window.game.grid, nodes: null }}))
+      localStorage.setItem('initialGameState', JSON.stringify({...w.game, grid: {...w.game.grid, nodes: null }}))
       w.game.gameState.paused = false
       w.game.gameState.started = true
 
@@ -188,7 +188,7 @@ function init() {
     if(!window.pageState.gameLoaded) return
     if(!role.isHost) w.game.gameState = gameState
     if(role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
-      window.gamestateeditor.update(gameState)
+      w.gamestateeditor.update(gameState)
     }
   })
 

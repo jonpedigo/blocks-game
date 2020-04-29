@@ -41,7 +41,7 @@ window.changeGame = function(id) {
     document.getElementById('current-game-id').innerHTML = id
     document.getElementById('game-id').value = id
   }
-  window.game.id = id
+  w.game.id = id
 }
 
 window.evalLiveCustomFx = function(customFx) {

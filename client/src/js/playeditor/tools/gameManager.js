@@ -4,7 +4,7 @@ function init() {
   var gamestateeditor = document.createElement("div")
   gamestateeditor.id = 'gamestateeditor'
   document.getElementById('tool-'+TOOLS.GAME_MANAGER).appendChild(gamestateeditor);
-  window.gamestateeditor = new JSONEditor(gamestateeditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (gameState) => {
+  w.gamestateeditor = new JSONEditor(gamestateeditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (gameState) => {
     emitEditorGameState(gameState)
   }});
 
@@ -135,7 +135,7 @@ function init() {
   })
 
   document.getElementById("branch-edit").addEventListener('click', () => {
-    window.branch = JSON.parse(JSON.stringify(window.game))
+    window.branch = JSON.parse(JSON.stringify(w.game))
     window.editingGame = window.branch
     window.editingGame.branch = true
     window.updateBranchToggleStyle()
@@ -151,15 +151,15 @@ function init() {
       delete hero.velocityX
     })
     window.branch.objects.forEach((obj) => {
-      if(!window.game.objectsById[obj.id]) window.game.objects.push(obj)
+      if(!w.game.objectsById[obj.id]) w.game.objects.push(obj)
       else window.removeObjectState(obj)
     })
-    window.mergeDeep(window.game.objects, window.branch.objects)
-    window.mergeDeep(window.game.heros, window.branch.heros)
-    window.mergeDeep(window.game.world, window.branch.world)
-    window.mergeDeep(window.game.gameState, window.branch.gameState)
-    window.game.grid = window.branch.grid
-    window.socket.emit('setGameJSON', window.game)
+    window.mergeDeep(w.game.objects, window.branch.objects)
+    window.mergeDeep(w.game.heros, window.branch.heros)
+    window.mergeDeep(w.game.world, window.branch.world)
+    window.mergeDeep(w.game.gameState, window.branch.gameState)
+    w.game.grid = window.branch.grid
+    window.socket.emit('setGameJSON', w.game)
     window.branch = null
     window.updateBranchToggleStyle()
     branchViewToggle.checked = true
@@ -175,8 +175,8 @@ function init() {
   document.getElementById("clear-branch").addEventListener('click', () => {
     window.unloadGame()
     window.branch = null
-    window.editingGame = window.game
-    window.loadGame(window.game)
+    window.editingGame = w.game
+    window.loadGame(w.game)
     window.updateBranchToggleStyle()
     branchViewToggle.checked = true
   })
@@ -184,7 +184,7 @@ function init() {
   const branchViewToggle = document.getElementById("myonoffswitch")
   branchViewToggle.addEventListener('change', (el) => {
     if(branchViewToggle.checked) {
-      window.editingGame = window.game
+      window.editingGame = w.game
     } else {
       window.editingGame = window.branch
     }

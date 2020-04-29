@@ -27,7 +27,7 @@ GAME.load = function(game){
   window.local.emit('onGridLoaded')
 
   if(game.compendium) window.compendium = game.compendium
-  window.game.hero = game.hero
+  w.game.hero = game.hero
 
   let storedGameState = localStorage.getItem('gameStates')
   if(storedGameState) storedGameState = storedGameState[game.id]
@@ -81,7 +81,7 @@ GAME.load = function(game){
   handleWorldUpdate(w.game.world)
 
   if(role.isPlayEditor) {
-    window.gamestateeditor.update(w.game.gameState)
+    w.gamestateeditor.update(w.game.gameState)
   }
 
   /// DEFAULT GAME FX

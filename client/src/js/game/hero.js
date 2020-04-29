@@ -139,8 +139,8 @@ window.updateAllHeros = function(update) {
 window.resetHeroToDefault = function(hero, game = w.game) {
   window.removeHeroFromGame(hero)
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-  if(window.game.hero) {
-    newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, window.game.hero)))
+  if(w.game.hero) {
+    newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, w.game.hero)))
   }
   if(!hero.id) {
     alert('hero getting reset without id')

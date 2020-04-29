@@ -135,7 +135,7 @@ function onPageLoad() {
 ///////////////////////////////
 ///////////////////////////////
 window.initializeGame = function (initialGameId) {
-  window.game = {}
+  w.game = {}
 
   if(role.isArcadeMode) {
     let game = testArcade

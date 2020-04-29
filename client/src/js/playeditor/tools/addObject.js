@@ -231,7 +231,7 @@ window.copyParentAndChildOrRelatives = function(parent, children) {
 }
 
 function loaded() {
-  if(window.game.compendium) window.compendium = game.compendium
+  if(w.game.compendium) window.compendium = game.compendium
   updateCompendium()
 }
 

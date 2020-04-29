@@ -7,17 +7,17 @@ function init(){
 
     //select left
     if(keysDown['188']){
-      let heroNames = Object.keys(window.game.heros)
+      let heroNames = Object.keys(w.game.heros)
       for(let i = 0; i < heroNames.length; i++) {
         if(window.hero.id === 'ghost') {
-          window.hero = window.game.heros[heroNames[heroNames.length-1]]
+          window.hero = w.game.heros[heroNames[heroNames.length-1]]
           break
         }
-        if(window.game.heros[heroNames[i]].id === window.hero.id) {
+        if(w.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === 0) {
             window.hero = window.ghost
           } else {
-            window.hero = window.game.heros[heroNames[i-1]]
+            window.hero = w.game.heros[heroNames[i-1]]
           }
           break;
         }
@@ -28,17 +28,17 @@ function init(){
 
     //select right
     if(keysDown['190']){
-      let heroNames = Object.keys(window.game.heros)
+      let heroNames = Object.keys(w.game.heros)
       for(let i = 0; i < heroNames.length; i++) {
         if(window.hero.id === 'ghost') {
-          window.hero = window.game.heros[heroNames[0]]
+          window.hero = w.game.heros[heroNames[0]]
           break
         }
-        if(window.game.heros[heroNames[i]].id === window.hero.id) {
+        if(w.game.heros[heroNames[i]].id === window.hero.id) {
           if(i === heroNames.length - 1) {
             window.hero = window.ghost
           } else {
-            window.hero = window.game.heros[heroNames[i+1]]
+            window.hero = w.game.heros[heroNames[i+1]]
           }
           break;
         }
@@ -79,7 +79,7 @@ function loaded() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
     window.ghost = ghostData.ghost
-    if(window.game.heros[ghostData.selectedHeroId]) window.hero = window.game.heros[ghostData.selectedHeroId]
+    if(w.game.heros[ghostData.selectedHeroId]) window.hero = w.game.heros[ghostData.selectedHeroId]
   }
 
   if(!window.ghost) window.ghost = JSON.parse(JSON.stringify(window.defaultHero))
@@ -88,7 +88,7 @@ function loaded() {
   window.ghost.id = 'ghost'
   gridTool.snapObjectToGrid(window.ghost)
   window.hero = window.ghost
-  window.game.heros.ghost = window.ghost
+  w.game.heros.ghost = window.ghost
 }
 
 export default {
