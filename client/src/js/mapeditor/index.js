@@ -27,24 +27,23 @@ window.mapEditor = {
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
-function onPageLoad() {
-
-}
-
 function onGameLoad(ctx, game, camera) {
+  mapEditor.game = game
+  mapEditor.camera = camera
+  mapEditor.ctx = ctx
+
   window.document.getElementById('game-canvas').addEventListener("mousedown", (e) => {
-    handleMouseDown(event, game, camera)
+    handleMouseDown(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mousemove", (e) => {
-    handleMouseMove(event, game, camera)
+    handleMouseMove(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mouseup", (e) => {
-    handleMouseUp(event, game, camera)
+    handleMouseUp(event)
   })
   window.document.getElementById('game-canvas').addEventListener("mouseout", (e) => {
-    handleMouseOut(event, game, camera)
+    handleMouseOut(event)
   })
-
 
   contextMenu.init(mapEditor, {
     onStartResize,
@@ -56,12 +55,15 @@ function onGameLoad(ctx, game, camera) {
   keyInput.init()
 }
 
-function handleMouseUp(event, game, camera) {
+function handleMouseUp(event) {
+  const { camera } = mapEditor
   let clickEndX = ((event.offsetX + camera.x) * camera.multiplier)
   let clickEndY = ((event.offsetY + camera.y) * camera.multiplier)
 }
 
-function handleMouseDown(event, game, camera) {
+function handleMouseDown(event) {
+  const { camera } = mapEditor
+
   mapEditor.clickStart.x = ((event.offsetX + camera.x) * camera.multiplier)
   mapEditor.clickStart.y = ((event.offsetY + camera.y) * camera.multiplier)
 
@@ -98,7 +100,9 @@ function handleMouseOut(event) {
     mapEditor.skipRemoteStateUpdate = false
   }
 }
-function handleMouseMove(event, game, camera) {
+function handleMouseMove(event) {
+  const { camera } = mapEditor
+
   if(role.isGhost) {
     mapEditor.skipRemoteStateUpdate = true
   }
@@ -117,11 +121,13 @@ function handleMouseMove(event, game, camera) {
   } else if(mapEditor.draggingObject) {
     updateDraggingObject(mapEditor.draggingObject)
   } else {
-    updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y}, game, camera)
+    updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y})
   }
 }
 
-function updateGridHighlight(location, game, camera) {
+function updateGridHighlight(location) {
+  const { game } = mapEditor
+
   if(mapEditor.contextMenuVisible) return
 
   const { x,y } = gridTool.snapXYToGrid(location.x, location.y, { closest: false })
@@ -205,8 +211,9 @@ function updateDraggingObject(object) {
   gridTool.snapDragToGrid(object, {dragging: true})
 }
 
-function render(ctx, game, camera) {
-  let tempCamera = JSON.parse(JSON.stringify(camera))
+function render() {
+  let ctx = mapEditor.ctx
+  let tempCamera = JSON.parse(JSON.stringify(mapEditor.camera))
   tempCamera.multiplier = 1/tempCamera.multiplier
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = mapEditor
@@ -235,9 +242,9 @@ function render(ctx, game, camera) {
   }
 }
 
-function update(delta, game, camera, remoteState) {
+function update(delta, remoteState) {
   if(remoteState && !window.mapEditor.skipRemoteStateUpdate) {
-    updateGridHighlight(remoteState.mousePos, game, camera)
+    updateGridHighlight(remoteState.mousePos, mapEditor.game, mapEditor.camera)
   }
 
   if(!role.isGhost && role.isPlayer && window.hero) {
@@ -246,7 +253,6 @@ function update(delta, game, camera, remoteState) {
 }
 
 export default {
-  onPageLoad,
   onGameLoad,
   render,
   update,

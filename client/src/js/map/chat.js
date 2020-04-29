@@ -1,7 +1,4 @@
 const keysDown = {}
-function init() {
-
-}
 
 function render(ctx, hero){
 	if(window.hero.flags.showChat){
@@ -80,6 +77,5 @@ function drawChat(ctx, chat){
 }
 
 export default {
-	init,
 	render
 }

@@ -1,5 +1,4 @@
-import gridTool from './grid.js'
-import camera from './camera.js'
+import gridTool from '../grid.js'
 import pathfinding from './pathfinding.js'
 
 function init() {

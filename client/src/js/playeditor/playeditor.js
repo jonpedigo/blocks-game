@@ -225,6 +225,7 @@ function createArena(boundaries) {
 window.createArena = createArena
 
 function onGameLoad() {
+  window.editingGame = window.game
   // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()

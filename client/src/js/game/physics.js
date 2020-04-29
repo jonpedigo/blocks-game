@@ -12,6 +12,8 @@ import {
   containObjectWithinGridBoundaries,
 } from './physicsTools.js'
 
+import heroTool from './hero.js'
+
 const objects = {}
 
 // Create the collision system
@@ -21,6 +23,18 @@ window.PHYSICS = {
   removeObject,
   system,
   objects,
+}
+
+function update (delta) {
+  // update physics system
+  system.update()
+  let removeObjects = []
+  let respawnObjects = []
+  prepareObjectsAndHerosForCollisionsPhase(),
+  heroPhysics(removeObjects, respawnObjects)
+  objectPhysics(removeObjects, respawnObjects)
+  postPhysics(removeObjects, respawnObjects)
+  removeAndRespawn(removeObjects, respawnObjects)
 }
 
 function updatePosition(object, delta) {
@@ -40,7 +54,7 @@ function updatePosition(object, delta) {
   //     }
   //   }
   // }
-  
+
   if(object.velocityX) {
     if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
     else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
@@ -184,7 +198,7 @@ function objectPhysics(removeObjects, respawnObjects) {
   }
 }
 
-function postPhysics() {
+function postPhysics(removeObjects, respawnObjects) {
   let allHeros = getAllHeros()
   // GET DELTA
   w.game.objects.forEach((object, i) => {
@@ -202,17 +216,17 @@ function postPhysics() {
       if(input && 88 in input) {
         /// DEFAULT GAME FX
         if(window.defaultCustomGame) {
-          window.defaultCustomGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+          window.defaultCustomGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
         }
 
         /// CUSTOM GAME FX
         if(window.customGame) {
-          window.customGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+          window.customGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
         }
 
         /// LIVE CUSTOM GAME FX
         if(window.liveCustomGame) {
-          window.liveCustomGame.onHeroInteract(hero, hero._interactableObject, result, removeObjects, respawnObjects)
+          window.liveCustomGame.onHeroInteract(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
         }
 
         heroTool.onCollide(hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects, { fromInteractButton: true })
@@ -287,19 +301,6 @@ function removeAndRespawn(removeObjects, respawnObjects) {
     }
   })
 }
-
-function update (delta) {
-  // update physics system
-  system.update()
-  let removeObjects = []
-  let respawnObjects = []
-  prepareObjectsAndHerosForCollisionsPhase(),
-  heroPhysics(removeObjects, respawnObjects)
-  objectPhysics(removeObjects, respawnObjects)
-  postPhysics()
-  removeAndRespawn(removeObjects, respawnObjects)
-}
-
 
 export default {
   update,

@@ -1,6 +1,6 @@
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'
-import pathfinding from '../../pathfinding.js'
+import pathfinding from '../../game/pathfinding.js'
 
 function shootBullet(hero) {
   let directions = hero.directions

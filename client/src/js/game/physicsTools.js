@@ -1,5 +1,5 @@
 import { Polygon } from 'collisions';
-import heroTool from '../hero';
+import heroTool from './hero';
 
 function shouldEffect(agent, collider) {
   if(collider.idRequirement) {

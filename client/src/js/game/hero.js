@@ -1,7 +1,6 @@
 import pathfinding from './pathfinding.js'
-import collisions from './collisions'
-import grid from './grid.js'
-import ghost from './ghost.js'
+import collisions from '../collisions'
+import grid from '../grid.js'
 
 function init() {
   window.defaultHero = {
@@ -381,7 +380,7 @@ window.addHeroToGame = function(hero) {
 }
 
 window.removeHeroFromGame = function(hero) {
-  if(PHYSICS.PHYSICS.objects[hero.id]) {
+  if(PHYSICS.objects[hero.id]) {
     PHYSICS.removeObject(hero)
   }
 }

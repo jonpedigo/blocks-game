@@ -1,7 +1,6 @@
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'
-import camera from '../../camera.js'
-import pathfinding from '../../pathfinding.js'
+import pathfinding from '../../game/pathfinding.js'
 import particles from '../../particles.js'
 
 let explodingParticles;

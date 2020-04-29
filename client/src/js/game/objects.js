@@ -1,6 +1,6 @@
 import pathfinding from './pathfinding.js'
-import collisions from './collisions'
-import grid from './grid.js'
+import collisions from '../collisions'
+import grid from '../grid.js'
 
 function init() {
   window.defaultObject = {

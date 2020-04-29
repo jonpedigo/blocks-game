@@ -1,7 +1,7 @@
 import collisions from '../../collisions'
 import gridTool from '../../grid.js'
 import camera from '../../camera.js'
-import pathfinding from '../../pathfinding.js'
+import pathfinding from '../../game/pathfinding.js'
 import particles from '../../particles.js'
 
 // once we have loaded up the game from the server for the first time
@@ -12,7 +12,7 @@ function onGameLoaded() {
 }
 
 function onGameUnloaded() {
-  
+
 }
 
 // called by editor or player

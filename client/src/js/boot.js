@@ -1,29 +1,20 @@
-import chat from './chat.js'
-import input from './input.js'
-import camera from './camera.js'
+import cameraTool from './camera.js'
 import collisions from './collisions.js'
 import playEditor from './playeditor/playeditor.js'
 import mapEditor from './mapeditor/index.js'
 import shadow from './shadow.js'
 import grid from './grid.js'
-import feedback from './feedback.js'
 import sockets from './sockets.js'
 import constellation from './constellation.js'
-import pathfinding from './pathfinding.js'
 import utils from './utils.js'
-import objects from './objects.js'
-import hero from './hero.js'
-import ghost from './ghost.js'
-import timeouts from './game/timeouts'
-import world from './world.js'
-import render from './render.js'
-import gameState from './gameState.js'
+import map from './map/index.js'
 import events from './events.js'
 import arcade from './arcade/index'
 import testArcade from './arcade/arcade/platformer'
-import './game'
+import game from './game'
 
 window.w = window;
+window.camera = new cameraTool()
 
 function establishRoleFromQuery() {
   // ROLE SETUP
@@ -121,10 +112,18 @@ function onPageLoad() {
   establishRoleFromQuery()
   logRole()
   initializeCanvas()
-  mapEditor.onPageLoad()
+  
   if(role.isPlayEditor) {
     playEditor.onPageLoad()
   }
+  game.onPageLoad()
+  arcade.onPageLoad()
+
+	grid.init()
+  events.init()
+  sockets.init()
+  constellation.init(ctx)
+
   window.initializeGame()
 }
 
@@ -137,28 +136,6 @@ function onPageLoad() {
 ///////////////////////////////
 window.initializeGame = function (initialGameId) {
   window.game = {}
-
-  arcade.onPageLoad()
-  objects.init()
-  world.init()
-	grid.init()
-  events.init()
-  sockets.init()
-  gameState.init()
-  if(!window.isPlayEditor) {
-    hero.init()
-  }
-  timeouts.init()
-
-  if(role.isGhost) {
-    ghost.init()
-  }
-
-  feedback.init()
-  constellation.init(ctx)
-  camera.init()
-	input.init()
-	chat.init()
 
   if(role.isArcadeMode) {
     let game = testArcade
@@ -278,25 +255,13 @@ window.loadGame = function(game) {
 ///////////////////////////////
 ///////////////////////////////
 window.onGameLoad = function() {
-  if(role.isPlayEditor) {
-    window.editingGame = window.game
-  }
   window.pageState.gameLoaded = true
 
-  objects.loaded()
-
-  if(!role.isPlayer) {
-    hero.loaded()
-    input.loaded()
-  }
-
-  if(role.isGhost) ghost.loaded()
-
+  game.onGameLoad()
   if(role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
-    camera.loaded()
-    mapEditor.onGameLoad(window.ctx, w.game, camera.get())
+    mapEditor.onGameLoad(window.ctx, w.game, camera)
   }
 }
 
@@ -343,7 +308,7 @@ var mainLoop = function () {
       // Get ready for next frame by setting then=now, but...
       // Also, adjust for gameInterval not being multiple of 16.67
       thenRender = now - (deltaRender % renderInterval);
-      renderGame(deltaRender / 1000)
+      render(deltaRender / 1000)
 
       // TESTING...Report #seconds since start and achieved fps.
       var sinceStart = now - startTime;
@@ -378,20 +343,20 @@ var mainLoop = function () {
 function update(delta) {
   GAME.update(delta)
   if(window.remoteHeroMapEditorState) {
-    mapEditor.update(delta, w.game, camera.get(), window.remoteHeroMapEditorState)
+    mapEditor.update(delta, window.remoteHeroMapEditorState)
   } else {
-    mapEditor.update(delta, w.game, camera.get())
+    mapEditor.update(delta)
   }
 }
 
-function renderGame(delta) {
+function render(delta) {
   if(role.isPlayEditor) {
     playEditor.update(delta)
     playEditor.render(ctx, window.hero, w.game.objects);
   }
 
   if(role.isPlayer) {
-    render.update(ctx, delta);
+    map.render(ctx, delta);
     /// DEFAULT GAME FX
 
     if(window.defaultCustomGame) {
@@ -414,7 +379,7 @@ function renderGame(delta) {
   }
 
   if(!window.isPlayEditor) {
-    mapEditor.render(ctx, w.game, camera.get())
+    mapEditor.render(ctx, w.game)
   }
 }
 

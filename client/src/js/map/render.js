@@ -1,13 +1,45 @@
-import camera from './camera.js'
 import chat from './chat.js'
 import feedback from './feedback.js'
-import drawTools from './mapeditor/drawTools.js'
+import drawTools from '../mapeditor/drawTools.js'
+
+function drawNameCenter(ctx, object, camera) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 20*(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width - fontSize)*camera.multiplier
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, object.name, (object.x+(object.width/2))*camera.multiplier - camera.x, ((object.y+(object.height/2))*camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
+}
+
+function drawNameAbove(ctx, object, camera) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 20*(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width - fontSize)*camera.multiplier
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, object.name, (object.x + (object.width/2))*camera.multiplier - camera.x, object.y*camera.multiplier - camera.y - height, lineWidth, fontSize)
+}
+
+function drawObject(ctx, object, withNames = false) {
+  if(object.color) ctx.fillStyle = object.color
+  ctx.fillRect((object.x*camera.multiplier - camera.x), (object.y*camera.multiplier - camera.y), (object.width*camera.multiplier), (object.height*camera.multiplier));
+  // ctx.fillStyle = 'white';
+  if(withNames) {
+    drawName(ctx, object)
+  }
+}
 
 function update() {
   //set camera so we render everything in the right place
   camera.set(ctx, window.hero)
 
-  let tempCamera = JSON.parse(JSON.stringify(camera.get()))
+  let tempCamera = JSON.parse(JSON.stringify(camera))
   tempCamera.multiplier = 1/tempCamera.multiplier
 
   ctx.shadowBlur = 0;
@@ -15,53 +47,19 @@ function update() {
 
   ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   ctx.filter = "none"
-  let vertices = [...w.game.objects].reduce((prev, object) => {
-    if(object.removed) return prev
-    if(object.tags.filled) return prev
-    if(object.tags.invisible) return prev
-    let extraProps = {}
-    if(object.tags.glowing) {
-      extraProps.glow = 3
-      extraProps.thickness = 2
-      extraProps.color = 'white'
-    }
-    if(object.color) extraProps.color = object.color
-		prev.push({a:{x:object.x,y:object.y}, b:{x:object.x + object.width,y:object.y}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y}, b:{x:object.x + object.width,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x + object.width,y:object.y + object.height}, b:{x:object.x,y:object.y + object.height}, ...extraProps})
-		prev.push({a:{x:object.x,y:object.y + object.height}, b:{x:object.x,y:object.y}, ...extraProps})
-		return prev
-	}, [])
 
   //reset background
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-	w.game.world.renderStyle = 'outlines'
- 	if (w.game.world.renderStyle === 'outlines') {
-		ctx.strokeStyle = "#999";
-		for(var i=0;i<vertices.length;i++){
-			camera.drawVertice(ctx, vertices[i])
-		}
-		ctx.fillStyle = 'white';
-    for(let i = 0; i < w.game.objects.length; i++){
-      if(!w.game.objects[i].tags.filled) continue
-      if(w.game.objects[i].removed) continue
-      if(w.game.objects[i].tags.invisible) continue
-      camera.drawObject(ctx, w.game.objects[i])
-    }
-	} else {
-		for(let i = 0; i < w.game.objects.length; i++){
-      if(w.game.objects[i].removed) continue
-      if(w.game.objects[i].tags.invisible) continue
-			camera.drawObject(ctx, w.game.objects[i])
-		}
-	}
+  w.game.objects.forEach((object) => {
+    drawTools.drawObject(ctx, object, tempCamera)
+  })
 
   for(var heroId in w.game.heros) {
     let currentHero = w.game.heros[heroId];
-    camera.drawObject(ctx, currentHero);
+    drawTools.drawObject(ctx, currentHero, tempCamera);
     if(currentHero.subObjects) {
       window.forAllSubObjects(currentHero.subObjects, (subObject) => {
         drawTools.drawObject(ctx, subObject, tempCamera)
@@ -69,15 +67,10 @@ function update() {
     }
   }
 
-  w.game.world.shadows = false
-  if(w.game.world.shadows === true) {
-    shadow.draw(ctx, vertices, hero)
-  }
-
   w.game.objects.forEach((obj) => {
     if(obj.name) {
-      if(obj.namePosition === "center") camera.drawNameCenter(ctx, obj)
-      if(obj.namePosition === "above") camera.drawNameAbove(ctx, obj)
+      if(obj.namePosition === "center") drawNameCenter(ctx, obj, tempCamera)
+      if(obj.namePosition === "above") drawNameAbove(ctx, obj, tempCamera)
     }
   })
 

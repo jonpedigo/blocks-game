@@ -1,6 +1,6 @@
 import pathfinding from './pathfinding.js'
-import collision from './collisions'
-import gridTool from './grid.js'
+import collision from '../collisions'
+import gridTool from '../grid.js'
 
 function init(){
 

@@ -1,13 +1,8 @@
-import camera from './camera'
-
 function pad(num, size) {
     var s = "000000000" + num;
     return s.substr(s.length-size);
 }
 
-function init() {
-
-}
 
 function draw(ctx) {
   if(window.hero.score < 0) {
@@ -35,6 +30,5 @@ function draw(ctx) {
 }
 
 export default {
-  init,
   draw,
 }

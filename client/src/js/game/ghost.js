@@ -1,5 +1,5 @@
 const keysDown = {}
-import gridTool from './grid.js'
+import gridTool from '../grid.js'
 
 function init(){
   window.addEventListener("keydown", function (e) {

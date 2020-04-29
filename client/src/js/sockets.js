@@ -1,9 +1,8 @@
 import gridTool from './grid.js'
-import camera from './camera.js'
-import pathfinding from './pathfinding.js'
+import pathfinding from './game/pathfinding.js'
 import collisions from './collisions.js'
 import particles from './particles.js'
-import input from './input.js'
+import input from './game/input.js'
 import modals from './mapeditor/modals.js'
 import io from 'socket.io-client'
 
@@ -60,7 +59,10 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
       Object.keys(w.game.heros).forEach((id) => {
+        console.log('?>')
+
         if(id === hero.id) {
+          console.log('?')
           w.game.heros[id] = window.resetHeroToDefault(w.game.heros[id])
           if(role.isPlayer && window.hero.id === hero.id) window.hero = w.game.heros[id]
         }
@@ -316,7 +318,7 @@ function init() {
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
     w.game.world = JSON.parse(JSON.stringify(window.defaultWorld))
-    if(!window.playEditor) camera.clearLimit()
+    if(!window.playEditor) window.camera.clearLimit()
     gridTool.updateGridObstacles()
     if(role.isHost) window.resetPaths = true
     if(role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)

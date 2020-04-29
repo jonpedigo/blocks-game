@@ -1,9 +1,8 @@
 import gridTool from '../grid.js'
-import camera from '../camera.js'
-import pathfinding from '../pathfinding.js'
+import pathfinding from '../game/pathfinding.js'
 import collisions from '../collisions.js'
 import particles from '../particles.js'
-import input from '../input.js'
+import input from '../game/input.js'
 import modals from '../mapeditor/modals.js'
 import drawTools from '../mapeditor/drawTools.js'
 import './templateLiveCustomGame.js'
@@ -35,10 +34,6 @@ function onPageLoad() {
   window.defaultCompendium = defaultCompendium
 }
 
-function onGameLoad() {
-
-}
-
 window.changeGame = function(id) {
   window.customGame = customGames[id]
   window.customCompendium = customCompendiums[id]
@@ -58,7 +53,7 @@ window.evalLiveCustomFx = function(customFx) {
 
 window.setLiveCustomFx = function(customFx) {
   customFx = window.evalLiveCustomFx(customFx)
-  customFx = customFx(pathfinding, gridTool, camera, collisions, particles, drawTools)
+  customFx = customFx(pathfinding, gridTool, window.camera, collisions, particles, drawTools)
   window.liveCustomGame = customFx
 }
 

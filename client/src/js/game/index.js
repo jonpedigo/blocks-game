@@ -1,13 +1,25 @@
 import physics from './physics'
-import hero from '../hero.js'
-import ghost from '../ghost.js'
+import hero from './hero.js'
+import ghost from './ghost.js'
 import timeouts from './timeouts'
-import intelligence from '../intelligence.js'
+import intelligence from './intelligence.js'
 import grid from '../grid.js'
-import input from '../input.js'
-import pathfinding from '../pathfinding.js'
+import input from './input.js'
+import pathfinding from './pathfinding.js'
+import objects from './objects.js'
+import gameState from './gameState.js'
+import world from './world.js'
 
-window.GAME = {}
+window.GAME = {
+  pfgrid: null,
+  heros: {},
+  herosList: [],
+  objects: [],
+  objectsById: {},
+  world: {},
+  grid: {},
+  state: {},
+}
 
 GAME.load = function(game){
   w.game.grid = game.grid
@@ -187,4 +199,35 @@ GAME.update = function(delta) {
     grid.updateGridObstacles()
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(w.game.grid.nodes)
   }
+}
+
+function onPageLoad() {
+  objects.init()
+  world.init()
+  gameState.init()
+  timeouts.init()
+
+  if(!window.isPlayEditor) {
+    hero.init()
+  }
+  if(role.isGhost) {
+    ghost.init()
+  }
+  input.init()
+}
+
+function onGameLoad() {
+  objects.loaded()
+
+  if(!role.isPlayEditor) {
+    hero.loaded()
+    input.loaded()
+  }
+
+  if(role.isGhost) ghost.loaded()
+}
+
+export default {
+  onPageLoad,
+  onGameLoad,
 }

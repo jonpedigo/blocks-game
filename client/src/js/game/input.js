@@ -1,5 +1,3 @@
-import camera from './camera';
-
 window.keysDown = {}
 // this is the one for the host
 window.heroInput = {}

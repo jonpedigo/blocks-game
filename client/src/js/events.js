@@ -1,5 +1,3 @@
-import pathfinding from './pathfinding'
-import gridTool from './grid'
 import mockServer from '../../../sockets'
 
 class EventEmitter {

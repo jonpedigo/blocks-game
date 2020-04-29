@@ -1,5 +1,3 @@
-import camera from './camera.js'
-
 // Find intersection of RAY & SEGMENT
 function getIntersection(ray,segment){
 	// RAY in parametric: Point + Delta*T1
