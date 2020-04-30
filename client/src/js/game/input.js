@@ -10,7 +10,7 @@ function init(){
     if(PAGE.role.isGhost) {
       if(HERO.hero.id === 'ghost') onKeyDown(e.keyCode, HERO.hero)
     } else if(PAGE.role.isPlayer) {
-      if(!window.PAGE.typingMode) {
+      if(!PAGE.typingMode) {
         GAME.keysDown[e.keyCode] = true
       }
       //locally update the host input! ( teehee this is the magic! )

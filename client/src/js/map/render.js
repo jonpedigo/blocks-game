@@ -90,7 +90,7 @@ function update() {
   chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(HERO.hero && HERO.hero._interactableObject && !window.HERO.hero.flags.showChat) {
+  if(HERO.hero && HERO.hero._interactableObject && !HERO.hero.flags.showChat) {
     const { _interactableObject } = HERO.hero
 
     if(_interactableObject.tags.invisible) {

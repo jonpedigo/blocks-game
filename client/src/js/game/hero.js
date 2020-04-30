@@ -81,27 +81,27 @@ function setDefault() {
   })
 }
 
-window.spawnHero = function (hero, game = GAME) {
+window.spawnHero = function (hero) {
   // hero spawn point takes precedence
   if(hero.spawnPointX && hero.spawnPointX >= 0) {
     hero.x = hero.spawnPointX
     hero.y = hero.spawnPointY
-  } else if(game && game.world.worldSpawnPointX && game.world.worldSpawnPointX >= 0) {
-    hero.x = game.world.worldSpawnPointX
-    hero.y = game.world.worldSpawnPointY
+  } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0) {
+    hero.x = GAME.world.worldSpawnPointX
+    hero.y = GAME.world.worldSpawnPointY
   } else {
     hero.x = 960
     hero.y = 960
   }
 }
 
-window.respawnHero = function (hero, game = GAME) {
+window.respawnHero = function (hero) {
   hero.velocityX = 0
   hero.velocityY = 0
 
   /// send objects that are possibly camping at their spawn point back to their spawn point
-  if(PAGE.role.isHost && game && game.world && game.world.globalTags.noCamping) {
-    game.objects.forEach((obj) => {
+  if(PAGE.role.isHost && GAME && GAME.world && GAME.world.globalTags.noCamping) {
+    GAME.objects.forEach((obj) => {
       if(obj.removed) return
 
       if(obj.tags.zombie || obj.tags.homing) {
@@ -122,10 +122,10 @@ window.respawnHero = function (hero, game = GAME) {
     })
   }
 
-  window.spawnHero(hero, game)
+  window.spawnHero(hero)
 }
 
-window.respawnHeros = function (hero) {
+window.respawnHeros = function () {
   Object.keys(GAME.heros).forEach((id) => {
     window.respawnHero(GAME.heros[id])
   })
@@ -137,7 +137,7 @@ window.updateAllHeros = function(update) {
   })
 }
 
-window.resetHeroToDefault = function(hero, game = GAME) {
+window.resetHeroToDefault = function(hero) {
   window.removeHeroFromGame(hero)
   let newHero = JSON.parse(JSON.stringify(window.defaultHero))
   if(GAME.hero) {
@@ -218,11 +218,11 @@ window.resetReachablePlatformWidth = function(heroIn) {
 	return width * 2
 }
 
-window.findHeroInNewGame = function(game, hero) {
+window.findHeroInNewGame = function(hero) {
   // if we have decided to restore position, find hero in hero list
-  if(game.world.globalTags.shouldRestoreHero && game.heros && hero) {
-    for(var heroId in game.heros) {
-      let currentHero = game.heros[heroId]
+  if(GAME.world.globalTags.shouldRestoreHero && GAME.heros && hero) {
+    for(var heroId in GAME.heros) {
+      let currentHero = GAME.heros[heroId]
       if(currentHero.id == hero.id) {
         return currentHero
       }
@@ -230,17 +230,17 @@ window.findHeroInNewGame = function(game, hero) {
     console.log('failed to find hero with id' + HERO.hero.id)
   }
 
-  if(!game.world.globalTags.isAsymmetric && game.hero) {
+  if(!GAME.world.globalTags.isAsymmetric && GAME.hero) {
     // save current users id to the world.hero object and then store all other variables as the new hero
-    if(hero && hero.id) game.hero.id = hero.id
-    hero = game.hero
+    if(hero && hero.id) GAME.hero.id = hero.id
+    hero = GAME.hero
     // if(!hero.id) hero.id = 'hero-'+window.uniqueID()
     // but then also respawn the hero
-    window.respawnHero(hero, game)
+    window.respawnHero(hero)
     return hero
   }
 
-  return window.resetHeroToDefault(hero, game)
+  return window.resetHeroToDefault(hero)
 }
 
 window.addHeroToGame = function(hero) {

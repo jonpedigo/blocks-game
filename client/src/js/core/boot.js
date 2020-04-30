@@ -18,7 +18,7 @@ import mapEditor from '../mapeditor/index.js'
 function establishRoleFromQuery() {
   // ROLE SETUP
   const { getParameterByName } = window
-  window.PAGE.role = {}
+  PAGE.role = {}
   PAGE.role.isHost = false
   PAGE.role.isPlayer = true
 
@@ -126,7 +126,7 @@ function onPageLoad() {
 function askCurrentGame(cb) {
   if(PAGE.role.isArcadeMode) {
     let game = testArcade
-    HERO.hero = window.findHeroInNewGame(game, { id: HERO.id })
+    HERO.hero = window.findHeroInNewGame({ id: HERO.id })
     cb(game)
   } else {
     // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
@@ -198,7 +198,7 @@ window.loadGame = function(game, options) {
   GAME.gameState.loaded = true
 
   // if you are a player and you dont already have a hero from the server ask for one
-  if(PAGE.role.isPlayer && !PAGE.role.isGhost && !window.HERO.hero) {
+  if(PAGE.role.isPlayer && !PAGE.role.isGhost && !HERO.hero) {
     window.socket.on('onJoinGame', (hero) => {
       if(hero.id == HERO.id) {
         HERO.hero = hero
@@ -221,7 +221,7 @@ window.loadGame = function(game, options) {
 ///////////////////////////////
 ///////////////////////////////
 window.onGameLoad = function(isFirstLoad) {
-  window.PAGE.gameLoaded = true
+  PAGE.gameLoaded = true
   if(PAGE.role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {

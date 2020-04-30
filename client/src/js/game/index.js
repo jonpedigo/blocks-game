@@ -71,7 +71,7 @@ GAME.load = function(game){
 GAME.loadHeros = function(game, options = { resetHeros: false }) {
   if(options.resetHeros) {
     Object.keys(GAME.heros).forEach((id) => {
-      GAME.heros[id] = window.findHeroInNewGame(game, GAME.heros[id])
+      GAME.heros[id] = window.findHeroInNewGame(GAME.heros[id])
       GAME.heros[id].id = id
     })
   }
@@ -133,7 +133,7 @@ GAME.update = function(delta) {
 
   if(PAGE.role.isHost) {
     // remove second part when a player can host a multiplayer game
-    if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !window.HERO.hero.flags.paused)) {
+    if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !HERO.hero.flags.paused)) {
       timeouts.update(delta)
       /// DEFAULT GAME FX
       if(GAME.defaultCustomGame) {

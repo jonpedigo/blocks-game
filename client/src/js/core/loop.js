@@ -18,8 +18,8 @@ var fps, startTime, now, deltaRender, deltaNetwork, thenRender, thenNetwork, the
 window.w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 window.startGameLoop = function() {
-  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (PAGE.role.isPlayer && !window.HERO.hero)) {
-    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (PAGE.role.isPlayer && !window.HERO.hero))
+  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (PAGE.role.isPlayer && !HERO.hero)) {
+    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (PAGE.role.isPlayer && !HERO.hero))
     setTimeout(startGameLoop, 1000)
     return
   }
@@ -89,7 +89,7 @@ function update(delta) {
     if(!PAGE.role.isGhost){
       localStorage.setItem('hero', JSON.stringify(HERO.hero))
       // we are locally updating the hero input as host
-      if(!PAGE.role.isHost && !window.PAGE.typingMode) {
+      if(!PAGE.role.isHost && !PAGE.typingMode) {
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
       }
     }

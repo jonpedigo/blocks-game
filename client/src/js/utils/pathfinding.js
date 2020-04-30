@@ -70,7 +70,7 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
 function findOpenGridNear({ position, onlySurrounding = false, prioritizeNear, onFail = () => {} }){
   const { x, y } = position
 
-  GAME.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
+  GAME.pfgrid = _convertGridToPathfindingGrid(GAME.grid.nodes)
   // console.log('looking for open grid near', x, y)
 
   if(!onlySurrounding && isGridWalkable(x, y)) return { x, y }
@@ -103,7 +103,7 @@ function forceFindOpenGridNear({position, level = 0}){
   const {x, y} = position
 
   if(level == 0) {
-    GAME.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
+    GAME.pfgrid = _convertGridToPathfindingGrid(GAME.grid.nodes)
   }
 
   console.log('looking for open grid near', x, y)

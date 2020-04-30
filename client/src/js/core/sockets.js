@@ -25,7 +25,7 @@ function init() {
       if(GAME) {
         let hero = GAME.heros[heroId]
         if(!hero) {
-          hero = window.findHeroInNewGame(GAME, {id: heroId})
+          hero = window.findHeroInNewGame({id: heroId})
           hero.id = heroId
           GAME.heros[hero.id] = hero
           PHYSICS.addObject(hero)
