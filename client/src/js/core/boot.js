@@ -1,4 +1,3 @@
-import cameraTool from './camera.js'
 import collisions from '../utils/collisions.js'
 import playEditor from '../playeditor/playeditor.js'
 import shadow from '../map/shadow.js'
@@ -13,10 +12,8 @@ import physics from '../physics/index'
 import loop from './loop.js'
 import map from '../map/index.js'
 import ghost from './ghost'
-import constellation from '../map/constellation.js'
 import mapEditor from '../mapeditor/index.js'
 
-window.camera = new cameraTool()
 
 function establishRoleFromQuery() {
   // ROLE SETUP
@@ -101,7 +98,6 @@ function onPageLoad() {
   } else {
     map.onPageLoad()
     mapEditor.onPageLoad(MAP.canvas)
-    constellation.init(MAP.ctx)
   }
 
   if(PAGE.role.isGhost) {
@@ -229,7 +225,7 @@ window.onGameLoad = function(isFirstLoad) {
   if(PAGE.role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
-    mapEditor.onGameLoad(window.ctx, GAME, camera)
+    mapEditor.onGameLoad(MAP.ctx, GAME, MAP.camera)
   }
 
   if(isFirstLoad) {

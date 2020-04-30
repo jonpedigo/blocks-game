@@ -106,29 +106,29 @@ function render(delta) {
   }
 
   if(PAGE.role.isPlayer) {
-    map.render(ctx, delta);
+    map.render(delta);
     /// DEFAULT GAME FX
 
     if(window.defaultCustomGame) {
-      window.defaultCustomGame.render(ctx, delta)
+      window.defaultCustomGame.render(MAP.ctx, delta)
     }
 
     /// CUSTOM GAME FX
     if(window.customGame) {
-      window.customGame.render(ctx, delta)
+      window.customGame.render(MAP.ctx, delta)
     }
 
     /// CUSTOM GAME FX
     if(window.liveCustomGame) {
-      window.liveCustomGame.render(ctx, delta)
-    }
-
-    if(HERO.hero.animationZoomMultiplier) {
-      constellation.animate()
+      window.liveCustomGame.render(MAP.ctx, delta)
     }
   }
 
   mapEditor.render()
+
+  if(PAGE.role.isPlayer && HERO.hero.animationZoomMultiplier) {
+    constellation.animate()
+  }
 }
 
 function networkUpdate() {

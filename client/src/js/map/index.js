@@ -1,5 +1,6 @@
 import render from './render'
-import cameraTool from '../camera.js'
+import cameraTool from '../core/camera.js'
+import constellation from './constellation.js'
 
 window.MAP = {
   canvas: null,
@@ -15,18 +16,17 @@ function onPageLoad() {
   MAP.ctx = MAP.canvas.getContext("2d");
   if(PAGE.role.isPlayer) {
     function onResize() {
-      window.canvasMultiplier = window.innerWidth/640;
-      window.playerCanvasWidth = 640 * window.canvasMultiplier
-      window.playerCanvasHeight = 320 * window.canvasMultiplier
-      MAP.canvas.width = window.playerCanvasWidth;
-      MAP.canvas.height = window.playerCanvasHeight;
+      MAP.canvasMultiplier = window.innerWidth/640;
+      MAP.canvas.width = 640 * MAP.canvasMultiplier;
+      MAP.canvas.height = 320 * MAP.canvasMultiplier;
+      constellation.loadStars(MAP.ctx)
     }
     window.addEventListener("resize", onResize);
     onResize()
   }
 
   MAP.canvas.id = 'game-canvas'
-  document.body.appendChild(window.canvas);
+  document.body.appendChild(MAP.canvas);
 }
 
 export default {

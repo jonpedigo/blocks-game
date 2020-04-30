@@ -347,6 +347,7 @@ function init() {
   		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
   	}
 
+    console.log(updatedHero)
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
 
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {

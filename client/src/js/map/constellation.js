@@ -1,3 +1,5 @@
+window.constellationDistance = 4000
+
 function Star(x,y,r,color){
     this.x = x;
     this.y = y;
@@ -53,6 +55,9 @@ function animate(){
     update();
   }
 
+  console.log(HERO.hero.animationZoomMultiplier)
+
+
   let hero = HERO.hero
   if(PAGE.role.isPlayEditor) hero = window.editingHero
   /*
@@ -60,12 +65,12 @@ function animate(){
     out the context.clearRect.
   */
     // context.fillStyle = 'rgba(255, 255, 255, .1)';
-    // context.fillRect(0,0,window.playerCanvasWidth,window.playerCanvasHeight);
-    // context.clearRect(0,0,window.playerCanvasWidth,window.playerCanvasHeight);
+    // context.fillRect(0,0,MAP.canvas.width,MAP.canvas.height);
+    // context.clearRect(0,0,MAP.canvas.width,MAP.canvas.height);
     let multiplier = (hero.animationZoomMultiplier)/window.constellationDistance
 
-    camera.x = ((window.playerCanvasWidth/2)/multiplier) - window.playerCanvasWidth /2
-    camera.y = ((window.playerCanvasHeight/2)/multiplier) -window.playerCanvasHeight /2
+    camera.x = ((MAP.canvas.width/2)/multiplier) - MAP.canvas.width /2
+    camera.y = ((MAP.canvas.height/2)/multiplier) -MAP.canvas.height /2
 
     for(var i = 0; i < arrStars.length; i++){
       arrStars[i].render();
@@ -73,22 +78,20 @@ function animate(){
 }
 
 let context;
-function init(ctx) {
+function loadStars(ctx) {
   window.arrStars = [];
   context = ctx
   for(let i = 0; i < 800; i++){
-      var randX = Math.floor((Math.random()*(window.playerCanvasWidth))+1);
-      var randY = Math.floor((Math.random()*(window.playerCanvasHeight))+1);
-      var randR = Math.random() * .3 + .01;
+    var randX = Math.floor((Math.random()*(MAP.canvas.width))+1);
+    var randY = Math.floor((Math.random()*(MAP.canvas.height))+1);
+    var randR = Math.random() * .5 + .01;
 
-      var star = new Star(randX, randY, randR, randomColor());
-      arrStars.push(star);
+    var star = new Star(randX, randY, randR, randomColor());
+    arrStars.push(star);
   }
-  window.constellationDistance = 4000
-
 }
 
 export default {
-  init,
+  loadStars,
   animate
 }

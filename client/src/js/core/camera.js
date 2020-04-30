@@ -24,10 +24,10 @@ this.clearLimit = function() {
 }
 
 this.setHeroX = function (ctx, hero = HERO.hero) {
-  this.x = (((hero.x + hero.width/2)*this.multiplier)) - window.playerCanvasWidth/2
+  this.x = (((hero.x + hero.width/2)*this.multiplier)) - MAP.canvas.width/2
 }
 this.setHeroY = function(ctx, hero = HERO.hero) {
-  this.y = (((hero.y + hero.height/2)*this.multiplier)) - window.playerCanvasHeight/2
+  this.y = (((hero.y + hero.height/2)*this.multiplier)) - MAP.canvas.height/2
 }
 
 
@@ -36,18 +36,26 @@ this.get = function(){
 }
 
 this.set = function(ctx = window.ctx, hero = HERO.hero) {
-  this.multiplier = hero.zoomMultiplier / window.canvasMultiplier
-  if(hero.animationZoomMultiplier) this.multiplier = hero.animationZoomMultiplier / window.canvasMultiplier
+  this.multiplier = hero.zoomMultiplier / MAP.canvasMultiplier
+
+  if(hero.animationZoomMultiplier) {
+    this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
+    this.multiplier = 1/this.multiplier
+    this.setHeroX(ctx, hero)
+    this.setHeroY(ctx, hero)
+    // dont trap on zoom animation...
+    return
+  }
   this.multiplier = 1/this.multiplier
 
   if (this.limitX) {
     const potentialX = ((hero.x + hero.width/2)*this.multiplier)
 
     // too late, more
-    if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (window.playerCanvasWidth/2))) {
-      this.x = (((this.centerX + this.limitX)*this.multiplier)) - window.playerCanvasWidth
+    if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
+      this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
     // too soon, less
-  } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (window.playerCanvasWidth/2))) {
+  } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
       this.x = (((this.centerX - this.limitX)*this.multiplier))
     } else {
       this.setHeroX(ctx, hero)
@@ -59,9 +67,9 @@ this.set = function(ctx = window.ctx, hero = HERO.hero) {
   if (this.limitY) {
     const potentialY = ((hero.y + hero.height/2)*this.multiplier)
 
-    if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (window.playerCanvasHeight/2))) {
-      this.y = (((this.centerY + this.limitY)*this.multiplier)) - window.playerCanvasHeight
-    } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (window.playerCanvasHeight/2))) {
+    if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
+      this.y = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
+    } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (MAP.canvas.height/2))) {
       this.y = ((this.centerY - this.limitY)*this.multiplier)
     } else {
       this.setHeroY(ctx, hero)

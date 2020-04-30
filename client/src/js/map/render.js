@@ -36,6 +36,8 @@ function drawObject(ctx, object, withNames = false) {
 }
 
 function update() {
+  const { ctx, camera, canvas } = MAP
+
   //set camera so we render everything in the right place
   camera.set(ctx, HERO.hero)
 
@@ -64,16 +66,20 @@ function update() {
     }
   }
 
-  GAME.objects.forEach((obj) => {
-    if(obj.name) {
-      if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
-      if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
-    }
-  })
+  // dont show names if we zoom to the stars
+  if(!HERO.hero.animationZoomMultiplier) {
+    GAME.objects.forEach((obj) => {
+      if(obj.name) {
+        if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
+        if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
+      }
+    })
+  }
+
 
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
-  ctx.fillText(Math.ceil(window.fps), window.playerCanvasWidth - 50, 40)
+  ctx.fillText(Math.ceil(window.fps), MAP.canvas.width - 50, 40)
 
   if(PAGE.role.isGhost) {
     ctx.font =`24pt Arial`
@@ -92,9 +98,9 @@ function update() {
       let text = "Press X to interact"
       ctx.textAlign = 'center'
       // ctx.textBaseline = 'alphabetic'
-      ctx.font =`${18 * window.canvasMultiplier}pt Courier New`
-      // console.log(window.playerCanvasWidth/2 - (200 * window.canvasMultiplier), 240 * window.canvasMultiplier)
-      ctx.fillText(text, window.playerCanvasWidth/2, window.playerCanvasHeight - (36 * window.canvasMultiplier))
+      ctx.font =`${18 * MAP.canvasMultiplier}pt Courier New`
+      // console.log(MAP.canvas.width/2 - (200 * MAP.canvasMultiplier), 240 * MAP.canvasMultiplier)
+      ctx.fillText(text, MAP.canvas.width/2, MAP.canvas.height - (36 * MAP.canvasMultiplier))
 
     } else {
       let thickness = 3

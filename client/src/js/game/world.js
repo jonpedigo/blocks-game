@@ -32,9 +32,9 @@ window.handleWorldUpdate = function(updatedWorld) {
 
     if(key === 'lockCamera' && !PAGE.role.isPlayEditor) {
       if(value && value.limitX) {
-        camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+        MAP.camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
       } else {
-        camera.clearLimit();
+        MAP.camera.clearLimit();
       }
     }
 

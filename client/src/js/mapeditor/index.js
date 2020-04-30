@@ -35,6 +35,8 @@ window.defaultMapEditor = JSON.parse(JSON.stringify(MAPEDITOR))
 function onPageLoad(gameCanvas) {
   MAPEDITOR.canvas = gameCanvas
 
+  console.log('?')
+
   gameCanvas.addEventListener("mousedown", (e) => {
     if(MAPEDITOR.game) handleMouseDown(event)
   })
