@@ -1,7 +1,7 @@
 import heroModifiers from '../../arcade/default/compendium/heroCompendium.js'
 import camera from '../camera.js'
-import collisions from '../../collisions'
-import gridTool from '../../grid.js'
+import collisions from '../../utils/collisions'
+import gridTool from '../../utils/grid.js'
 import JSONEditor from 'jsoneditor'
 
 function init() {

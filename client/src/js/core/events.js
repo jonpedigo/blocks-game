@@ -1,4 +1,4 @@
-import mockServer from '../../../sockets'
+import mockServer from '../../../../sockets'
 
 class EventEmitter {
   constructor() {

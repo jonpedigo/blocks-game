@@ -1,4 +1,4 @@
-import collisions from '../collisions'
+import collisions from '../utils/collisions'
 
 function getObjectRelations(object, game) {
   let parent = object

@@ -1,5 +1,5 @@
-import pathfinding from '../pathfinding.js'
-import gridTool from '../../grid.js'
+import pathfinding from '../../utils/pathfinding.js'
+import gridTool from '../../utils/grid.js'
 
 export default function pathfinderIntelligence(object) {
   let hero = GAME.heroList[0]

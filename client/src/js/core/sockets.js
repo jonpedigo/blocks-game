@@ -1,9 +1,8 @@
-import gridTool from './grid.js'
-import pathfinding from './game/pathfinding.js'
-import collisions from './collisions.js'
-import particles from './particles.js'
-import input from './game/input.js'
-import modals from './mapeditor/modals.js'
+import gridTool from '../utils/grid.js'
+import pathfinding from '../utils/pathfinding.js'
+import collisions from '../utils/collisions.js'
+import input from '../game/input.js'
+import modals from '../mapeditor/modals.js'
 import io from 'socket.io-client'
 
 function init() {

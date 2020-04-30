@@ -1,8 +1,8 @@
-import collisions from '../../collisions'
-import gridTool from '../../grid.js'
-import pathfinding from '../../game/pathfinding.js'
+import collisions from '../../utils/collisions'
+import gridTool from '../../utils/grid.js'
+import pathfinding from '../../utils/pathfinding.js'
 import action from './action'
-import particles from '../../particles.js'
+import particles from '../../map/particles.js'
 
 // once we have loaded up the game from the server for the first time
 // interact with values loaded by the game, the values of other services

@@ -1,7 +1,7 @@
-import collisions from '../../collisions'
-import gridTool from '../../grid.js'
-import pathfinding from '../../game/pathfinding.js'
-import particles from '../../particles.js'
+import collisions from '../../utils/collisions'
+import gridTool from '../../utils/grid.js'
+import pathfinding from '../../utils/pathfinding.js'
+import particles from '../../map/particles.js'
 
 let explodingParticles;
 

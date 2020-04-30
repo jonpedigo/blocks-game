@@ -1,5 +1,5 @@
-import gridTool from '../grid.js'
-import collisions from '../collisions'
+import gridTool from '../utils/grid.js'
+import collisions from '../utils/collisions'
 
 function init() {
   window.clickStart = {

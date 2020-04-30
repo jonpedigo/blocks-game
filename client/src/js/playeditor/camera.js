@@ -1,4 +1,4 @@
-import gridTool from '../grid.js'
+import gridTool from '../utils/grid.js'
 
 
 function init() {

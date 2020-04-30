@@ -124,5 +124,5 @@ just make sure to set something to stationary if its not supposed to be move, or
 
 import './styles/index.scss'
 import './styles/jsoneditor.css'
-import { onPageLoad } from './js/boot.js'
+import { onPageLoad } from './js/core/boot.js'
 onPageLoad()

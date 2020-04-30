@@ -1,5 +1,5 @@
-import gridTool from '../grid.js'
-import pathfinding from './pathfinding.js'
+import gridTool from '../utils/grid.js'
+import pathfinding from '../utils/pathfinding.js'
 
 function setDefault() {
   window.defaultWorld = {

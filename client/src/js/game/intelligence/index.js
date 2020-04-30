@@ -1,6 +1,6 @@
-import pathfinding from '../pathfinding.js'
-import collision from '../../collisions'
-import gridTool from '../../grid.js'
+import pathfinding from '../../utils/pathfinding.js'
+import collision from '../../utils/collisions'
+import gridTool from '../../utils/grid.js'
 
 import pathfinderIntelligence from './pathfinders'
 import spawnZoneIntelligence from './spawnZone'

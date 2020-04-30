@@ -1,5 +1,5 @@
-import gridTool from '../grid.js'
-import collisions from '../collisions'
+import gridTool from '../utils/grid.js'
+import collisions from '../utils/collisions'
 import contextMenu from './contextMenu.jsx'
 import drawTools from './drawTools';
 import selectionTools from './selectionTools';
@@ -23,7 +23,12 @@ window.mapEditor = {
   resizingObject: null,
   draggingObject: null,
   pathfindingLimit: null,
-  isSettingPathfindingLimit: false
+  isSettingPathfindingLimit: false,
+
+  canvas: null,
+  game: null,
+  camera: null,
+  ctx: null,
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
@@ -139,8 +144,8 @@ function updateGridHighlight(location) {
   let mouseLocation = {
     x,
     y,
-    width: GAME.grid.nodeSize,
-    height: GAME.grid.nodeSize
+    width: game.grid.nodeSize,
+    height: game.grid.nodeSize
   }
 
   mapEditor.objectHighlighted = mouseLocation
@@ -188,7 +193,7 @@ function onDelete(object) {
 }
 
 function updateResizingObject(object, options = { allowTiny : true }) {
-  const { mousePos } = mapEditor
+  const { mousePos, game } = mapEditor
   if(mousePos.x < object.x || mousePos.y < object.y) {
     return
   }
@@ -196,7 +201,7 @@ function updateResizingObject(object, options = { allowTiny : true }) {
   object.height = mousePos.y - object.y
 
   let tinySize
-  if(object.width < GAME.grid.nodeSize - 4 && object.height < GAME.grid.nodeSize - 4 && options.allowTiny) {
+  if(object.width < game.grid.nodeSize - 4 && object.height < game.grid.nodeSize - 4 && options.allowTiny) {
     tinySize = object.width
   }
 
@@ -246,7 +251,7 @@ function render() {
 
 function update(delta, remoteState) {
   if(remoteState && !window.mapEditor.skipRemoteStateUpdate) {
-    updateGridHighlight(remoteState.mousePos, mapEditor.game, mapEditor.camera)
+    updateGridHighlight(remoteState.mousePos)
   }
 
   if(!role.isGhost && role.isPlayer && window.hero) {

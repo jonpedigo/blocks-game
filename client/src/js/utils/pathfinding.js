@@ -19,7 +19,7 @@
   // 1) No new obstacles are made
   // 2) All obstacles that are made are aligned to the grid
 
-import gridTool from '../grid.js'
+import gridTool from '../utils/grid.js'
 
 const PF = require('pathfinding')
 const finder = new PF.AStarFinder()
