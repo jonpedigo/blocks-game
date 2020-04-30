@@ -11,7 +11,7 @@ function init() {
   var herojsoneditor = document.createElement("div")
   herojsoneditor.id = 'herojsoneditor'
   document.getElementById('tool-'+TOOLS.HERO_EDITOR).appendChild(herojsoneditor);
-  window.heroeditor = new JSONEditor(herojsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (object) => {
+  w.heroeditor = new JSONEditor(herojsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (object) => {
     if(window.editingGame.branch) {
       w.editingGame.hero = object
     } else {
@@ -91,7 +91,7 @@ function init() {
 
   function sendEditorHeroOther(update) {
     // get the hero from the editor, everything except for the x, y values
-    let hero = window.heroeditor.get()
+    let hero = w.heroeditor.get()
     const heroCopy = Object.assign({}, hero)
     delete heroCopy.x
     delete heroCopy.y
@@ -103,7 +103,7 @@ function init() {
   }
 
   function sendEditorHeroPos() {
-    let hero = window.heroeditor.get()
+    let hero = w.heroeditor.get()
     if(window.editingGame.branch) {
       window.mergeDeep(w.editingGame.heros[hero.id], { id: hero.id, x: hero.x, y: hero.y })
     } else {
@@ -131,13 +131,13 @@ function init() {
 
   window.setEditingHero = function(hero) {
     window.editingHero = hero
-    window.heroeditor.update(window.editingHero)
-    window.heroeditor.expandAll()
+    w.heroeditor.update(window.editingHero)
+    w.heroeditor.expandAll()
   }
 
   window.getEditingHero = function() {
-    window.heroeditor.update(w.editingGame.heros[window.editingHero.id])
-    window.heroeditor.expandAll()
+    w.heroeditor.update(w.editingGame.heros[window.editingHero.id])
+    w.heroeditor.expandAll()
   }
 
   window.findHero = function() {

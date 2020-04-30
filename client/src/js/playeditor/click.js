@@ -273,8 +273,8 @@ function init() {
           .forEach((hero, i) => {
             collisions.checkObject(click, hero, () => {
               window.editingHero = hero
-              window.heroeditor.update(w.editingGame.heros[window.editingHero.id])
-              window.heroeditor.expandAll()
+              w.heroeditor.update(w.editingGame.heros[window.editingHero.id])
+              w.heroeditor.expandAll()
             })
           })
         }

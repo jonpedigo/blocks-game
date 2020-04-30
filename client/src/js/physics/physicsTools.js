@@ -158,12 +158,6 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
 
 function containObjectWithinGridBoundaries(object) {
 
-  // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
-  let hero = window.hero
-  if(role.isPlayEditor) {
-    hero = window.editingHero
-  }
-
   //DO THE PACMAN FLIP!!
   let gameBoundaries = GAME.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
@@ -173,6 +167,12 @@ function containObjectWithinGridBoundaries(object) {
     }
 
     if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (hero && hero.id)) {
+      // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
+      let hero = window.hero
+      if(role.isPlayEditor) {
+        hero = window.editingHero
+      }
+
       let legal = true
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((window.playerCameraWidth * hero.zoomMultiplier)/2 )) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (window.playerCameraWidth * hero.zoomMultiplier)/2

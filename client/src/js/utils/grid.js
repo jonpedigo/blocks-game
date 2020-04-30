@@ -269,11 +269,6 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  let hero = window.hero
-  if(role.isPlayEditor) {
-    hero = window.editingHero
-  }
-
   if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
@@ -288,6 +283,11 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+    let hero = window.hero
+    if(role.isPlayEditor) {
+      hero = window.editingHero
+      // single player only feature
+    }
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - (((window.playerCameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       return false

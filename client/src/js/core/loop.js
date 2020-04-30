@@ -133,7 +133,7 @@ function render(delta) {
     }
   }
 
-  if(!window.isPlayEditor) {
+  if(!role.isPlayEditor) {
     mapEditor.render(window.ctx, GAME)
   }
 }

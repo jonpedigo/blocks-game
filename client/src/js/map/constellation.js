@@ -1,6 +1,3 @@
-window.showUniverse = false
-window.constellationDistance = 4000
-
 function Star(x,y,r,color){
     this.x = x;
     this.y = y;
@@ -75,9 +72,9 @@ function animate(){
     }
 }
 
-window.arrStars = [];
 let context;
 function init(ctx) {
+  window.arrStars = [];
   context = ctx
   for(let i = 0; i < 800; i++){
       var randX = Math.floor((Math.random()*(window.playerCanvasWidth))+1);
@@ -87,6 +84,7 @@ function init(ctx) {
       var star = new Star(randX, randY, randR, randomColor());
       arrStars.push(star);
   }
+  window.constellationDistance = 4000
 
 }
 
