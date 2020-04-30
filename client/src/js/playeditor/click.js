@@ -16,7 +16,7 @@ function init() {
     y: null,
   }
 
-  window.document.getElementById('game-canvas').addEventListener("mousedown", function(e) {
+  window.document.getElementById('playeditor-canvas').addEventListener("mousedown", function(e) {
     if(window.currentTool !== window.TOOLS.SIMPLE_EDITOR || !window.dragObjectPosToggle.checked) return
     window.dragStart.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.dragStart.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
@@ -58,7 +58,7 @@ function init() {
     }
   })
 
-  window.document.getElementById('game-canvas').addEventListener("mouseup", function(e) {
+  window.document.getElementById('playeditor-canvas').addEventListener("mouseup", function(e) {
     let dragEndX = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     let dragEndY = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
 
@@ -117,7 +117,7 @@ function init() {
     window.dragTimeout = null
   })
 
-  window.document.getElementById('game-canvas').addEventListener("mousemove", function(e) {
+  window.document.getElementById('playeditor-canvas').addEventListener("mousemove", function(e) {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
 
@@ -219,7 +219,7 @@ function init() {
     }
   })
 
-  window.document.getElementById('game-canvas').addEventListener('click',function(e){
+  window.document.getElementById('playeditor-canvas').addEventListener('click',function(e){
     if(window.clickStart.x && window.clickStart.y) {
       //second click
       if(window.tools[window.currentTool].onSecondClick) window.tools[window.currentTool].onSecondClick(e)
@@ -290,7 +290,9 @@ function init() {
           height: 1,
         }
 
-        if(window.setObjectSpawnToggle.checked) {
+        if(window.objectNoneToggle.checked) {
+          return
+        } if(window.setObjectSpawnToggle.checked) {
           let spawnPoints = {spawnPointX: click.x, spawnPointY: click.y}
           // window.sendObjectUpdate(spawnPoints)
           window.objecteditor.saved = false
@@ -417,7 +419,10 @@ function init() {
       onFirstClick: (e) => {
         let editorObject = window.objecteditor.get()
 
-        if((window.groupAddToggle.checked || window.addRelativeToggle.checked || window.addParentToggle.checked || window.addWallToggle.checked) && !editorObject.parent) {
+
+        if(window.addNoneToggle.checked) {
+          return
+        } else if((window.groupAddToggle.checked || window.addRelativeToggle.checked || window.addParentToggle.checked || window.addWallToggle.checked) && !editorObject.parent) {
           defaultFirstClick(e)
         } else {
           const click = {

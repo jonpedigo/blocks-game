@@ -27,17 +27,19 @@ window.mapEditor = {
 }
 window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
 
-function onPageLoad() {
-  window.document.getElementById('game-canvas').addEventListener("mousedown", (e) => {
+function onPageLoad(gameCanvas) {
+  mapEditor.canvas = gameCanvas
+
+  gameCanvas.addEventListener("mousedown", (e) => {
     if(mapEditor.game) handleMouseDown(event)
   })
-  window.document.getElementById('game-canvas').addEventListener("mousemove", (e) => {
+  gameCanvas.addEventListener("mousemove", (e) => {
     if(mapEditor.game) handleMouseMove(event)
   })
-  window.document.getElementById('game-canvas').addEventListener("mouseup", (e) => {
+  gameCanvas.addEventListener("mouseup", (e) => {
     if(mapEditor.game) handleMouseUp(event)
   })
-  window.document.getElementById('game-canvas').addEventListener("mouseout", (e) => {
+  gameCanvas.addEventListener("mouseout", (e) => {
     if(mapEditor.game) handleMouseOut(event)
   })
 
@@ -194,7 +196,7 @@ function updateResizingObject(object, options = { allowTiny : true }) {
   object.height = mousePos.y - object.y
 
   let tinySize
-  if(object.width < game.grid.nodeSize - 4 && object.height < game.grid.nodeSize - 4 && options.allowTiny) {
+  if(object.width < GAME.grid.nodeSize - 4 && object.height < GAME.grid.nodeSize - 4 && options.allowTiny) {
     tinySize = object.width
   }
 

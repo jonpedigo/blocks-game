@@ -76,28 +76,27 @@ function initializeCanvas() {
   if(!role.isPlayEditor) {
     var editor = document.getElementById("play-editor");
     editor.style = 'display:none';
-  }
 
-  // Canvas SETUP
-  window.canvas = document.createElement("canvas");
-  window.ctx = window.canvas.getContext("2d");
+    // Canvas SETUP
+    window.canvas = document.createElement("canvas");
+    window.ctx = window.canvas.getContext("2d");
+    if(role.isPlayer) {
+      function onResize() {
+        window.canvasMultiplier = window.innerWidth/640;
+        window.playerCanvasWidth = 640 * window.canvasMultiplier
+        window.playerCanvasHeight = 320 * window.canvasMultiplier
+        window.canvas.width = window.playerCanvasWidth;
+        window.canvas.height = window.playerCanvasHeight;
+      }
+      window.addEventListener("resize", onResize);
+      onResize()
+    }
+
+    window.canvas.id = 'game-canvas'
+    document.body.appendChild(window.canvas);
+  }
   window.playerCameraWidth = 640
   window.playerCameraHeight = 320
-
-  if(role.isPlayer) {
-    function onResize() {
-      window.canvasMultiplier = window.innerWidth/640;
-      window.playerCanvasWidth = 640 * window.canvasMultiplier
-      window.playerCanvasHeight = 320 * window.canvasMultiplier
-      window.canvas.width = window.playerCanvasWidth;
-      window.canvas.height = window.playerCanvasHeight;
-    }
-    window.addEventListener("resize", onResize);
-    onResize()
-  }
-
-  window.canvas.id = 'game-canvas'
-  document.body.appendChild(window.canvas);
 }
 
 function getHeroId() {
@@ -131,16 +130,17 @@ function onPageLoad() {
   getHeroId()
   if(role.isPlayEditor) {
     playEditor.onPageLoad()
+  } else {
+    mapEditor.onPageLoad(window.canvas)
+    constellation.init(window.ctx)
   }
   if(role.isGhost) {
     ghost.init()
   }
   gameManager.onPageLoad()
   arcade.onPageLoad()
-  mapEditor.onPageLoad()
   events.init()
   sockets.init()
-  constellation.init(ctx)
 
   askCurrentGame((game) => {
     window.changeGame(game.id)
@@ -379,7 +379,7 @@ function update(delta) {
 function render(delta) {
   if(role.isPlayEditor) {
     playEditor.update(delta)
-    playEditor.render(ctx, window.hero, GAME.objects);
+    playEditor.render();
   }
 
   if(role.isPlayer) {
@@ -406,7 +406,7 @@ function render(delta) {
   }
 
   if(!window.isPlayEditor) {
-    mapEditor.render(ctx, GAME)
+    mapEditor.render(window.ctx, GAME)
   }
 }
 

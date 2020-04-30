@@ -11,7 +11,7 @@ import heroEditor from './tools/heroEditor.js'
 import gameManager from './tools/gameManager.js'
 import addObject from './tools/addObject.js'
 import customGame from './tools/customGame.js'
-
+import mapEditor from '../mapeditor/index.js'
 //
 import 'ace-builds'
 import 'ace-builds/webpack-resolver';
@@ -23,7 +23,10 @@ import 'ace-builds/src-noconflict/mode-json';
 //GLOBALS
 /////////////////////
 /////////////////////
-window.objectFactory = []
+window.playEditor = {
+  ctx: null,
+  canvas: null
+}
 
 window.TOOLS = {
   ADD_OBJECT: 'addObject',
@@ -61,18 +64,18 @@ window.onChangeTool = function(toolName) {
   document.getElementById(toolName + '-selector').className='button selected tool-selectors'
 
   // if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
-  //   // document.getElementById('game-canvas').style="left: 400px;"
-  //   // ctx.canvas.width = window.innerWidth - 400 - 180;
+  //   // playEditor.canvas.style="left: 400px;"
+  //   // playEditor.canvas.width = window.innerWidth - 400 - 180;
   // } else
   if(toolName === window.TOOLS.CUSTOM_GAME) {
     let width = document.getElementById("editor").getBoundingClientRect().width
-    document.getElementById('game-canvas').style=`left: ${width}px`
-    ctx.canvas.width = window.innerWidth - width - 180;
+    playEditor.canvas.style=`left: ${width}px`
+    playEditor.canvas.width = window.innerWidth - width - 180;
   } else {
-    document.getElementById('game-canvas').style="left: 400px;"
-    ctx.canvas.width = window.innerWidth - 400 - 180;
-    // ctx.canvas.width = window.innerWidth;
-    // document.getElementById('game-canvas').style="left: 0px;"
+    playEditor.canvas.style="left: 400px;"
+    playEditor.canvas.width = window.innerWidth - 400 - 180;
+    // playEditor.canvas.width = window.innerWidth;
+    // playEditor.canvas.style="left: 0px;"
   }
 
   if(window.currentTool && window.currentTool === window.TOOLS.SIMPLE_EDITOR && toolName === window.TOOLS.ADD_OBJECT) {
@@ -105,13 +108,19 @@ window.onChangeTool = function(toolName) {
 /////////////////////
 /////////////////////
 function onPageLoad() {
+  playEditor.canvas = document.createElement("canvas");
+  playEditor.ctx = playEditor.canvas.getContext("2d");
+  playEditor.canvas.id = 'playeditor-canvas'
+  document.body.appendChild(playEditor.canvas);
+  playEditor.canvas.height = window.innerHeight;
+  playEditor.canvas.style="left: 400px;"
+  playEditor.canvas.width = window.innerWidth - 400 - 180;
+
+  mapEditor.onPageLoad(playEditor.canvas)
+
   input.init()
   camera.init()
   click.init()
-
-  window.canvas.height = window.innerHeight;
-  window.canvas.style="left: 400px;"
-  window.canvas.width = window.innerWidth - 400 - 180;
 
   heroEditor.init()
   objectEditor.init()
@@ -228,6 +237,7 @@ function onGameLoad() {
   objectEditor.loaded()
   addObject.loaded()
   worldEditor.loaded()
+  mapEditor.onGameLoad(playEditor.ctx, window.editingGame, window.camera)
 }
 
 function update(delta) {
@@ -242,8 +252,9 @@ function update(delta) {
   }
 }
 
-function render(ctx) {
-  camera.render(ctx)
+function render() {
+  window.camera.multiplier = window.scaleMultiplier
+  camera.render(playEditor.ctx)
 }
 
 export default {

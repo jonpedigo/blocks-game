@@ -19,7 +19,7 @@ class contextMenuEl extends React.Component{
   constructor(props) {
     super(props)
 
-    window.document.getElementById('game-canvas').addEventListener("contextmenu", e => {
+    props.editor.canvas.addEventListener("contextmenu", e => {
       e.preventDefault();
       const origin = {
         left: e.pageX,

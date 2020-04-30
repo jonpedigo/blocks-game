@@ -97,6 +97,8 @@ function init() {
       window.socket.emit('updateWorld', { syncObjects: false })
     }
   }
+
+  window.objectNoneToggle = document.getElementById("add-none")
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')

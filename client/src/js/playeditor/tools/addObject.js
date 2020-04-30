@@ -9,6 +9,7 @@ function init() {
     window.socket.emit('anticipateObject', {...window.objecteditor.get(), wall: true});
   })
 
+  window.addNoneToggle = document.getElementById("add-none")
   window.gridNodeAddToggle = document.getElementById("add-object-grid-node")
   window.groupAddToggle = document.getElementById("add-object-group")
   window.dotAddToggle = document.getElementById("add-object-dot")

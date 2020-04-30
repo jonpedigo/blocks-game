@@ -17,6 +17,7 @@ function init() {
 function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, specialLineWidth = .6, color = 'white'}) {
   let height = w.editingGame.grid.nodeSize * gridHeight
   let width = w.editingGame.grid.nodeSize * gridWidth
+  let ctx = playEditor.ctx
 
   ctx.strokeStyle = "#999";
   if(color) {
@@ -139,6 +140,7 @@ function drawVertice(ctx, vertice) {
 }
 
 function getObjectVertices(object) {
+  let ctx = playEditor.ctx
   let prev = []
   if(object.removed) return prev
 
@@ -164,7 +166,8 @@ function getObjectVertices(object) {
   return prev
 }
 
-function render(ctx, hero, objects, grid) {
+function render() {
+  let ctx = playEditor.ctx
   window.camera.multiplier = window.scaleMultiplier
   let objectEditorState = window.objecteditor.get()
 

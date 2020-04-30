@@ -68,6 +68,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
   }
 
   let alertAboutCollision
+  let hasBeenWarned = false
 
   objects = objects.map((newObject, i) => {
     newObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultObject)), newObject)
@@ -94,19 +95,23 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
 
     //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
     if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
-      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      hasBeenWarned = true
       return null
     }
     if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
-      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      hasBeenWarned = true
       return null
     }
     if(newObject.x < GAME.grid.startX) {
-      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      hasBeenWarned = true
       return null
     }
     if(newObject.y < GAME.grid.startY) {
-      if(role.isPlayEditor) alert('adding obj outside grid system, canceled')
+      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      hasBeenWarned = true
       return null
     }
 
