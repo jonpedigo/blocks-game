@@ -35,8 +35,6 @@ window.defaultMapEditor = JSON.parse(JSON.stringify(MAPEDITOR))
 function onPageLoad(gameCanvas) {
   MAPEDITOR.canvas = gameCanvas
 
-  console.log('?')
-
   gameCanvas.addEventListener("mousedown", (e) => {
     if(MAPEDITOR.game) handleMouseDown(event)
   })
@@ -248,7 +246,11 @@ function render() {
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
   if(currentObject) {
-    drawTools.drawObject(ctx, currentObject, camera)
+    if(currentObject.tags.invisible) {
+      drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false, filled: true}, color: 'rgba(255,255,255,0.2)'}, camera)
+    } else {
+      drawTools.drawObject(ctx, currentObject, camera)
+    }
   }
 }
 

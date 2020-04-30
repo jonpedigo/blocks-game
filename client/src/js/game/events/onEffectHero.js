@@ -45,7 +45,7 @@ function heroUpdate (hero, collider) {
     timeoutId = hero.id+collider.fromCompendiumId
   }
 
-  if(collider.tags['revertAfterTimeout'] && window.timeoutsById[timeoutId] && window.timeoutsById[timeoutId].timeRemaining > 0) {
+  if(collider.tags['revertAfterTimeout'] && GAME.timeoutsById[timeoutId] && GAME.timeoutsById[timeoutId].timeRemaining > 0) {
     if(collider.tags['incrementRevertTimeout']) {
       window.incrementTimeout(timeoutId, collider.powerUpTimer || 3)
     } else {

@@ -5,18 +5,18 @@ window.local.on('onHeroInteract', (hero, interactor, result, removeObjects, resp
   onEffectHero(hero, interactor, result, removeObjects, respawnObjects, { fromInteractButton: true })
 
   /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
   }
 
   /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
+  if(GAME.customGame) {
+    GAME.customGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
   }
 
   /// LIVE CUSTOM GAME FX
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onHeroInteract(hero, interactor, result, removeObjects, respawnObjects)
   }
 })
 
@@ -26,18 +26,18 @@ window.local.on('onHeroCollide', (hero, collider, result, removeObjects, respawn
   onEffectHero(hero, collider, result, removeObjects, respawnObjects, { fromInteractButton: false })
 
   /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
   }
 
   /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
+  if(GAME.customGame) {
+    GAME.customGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
   }
 
   /// LIVE CUSTOM GAME FX
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onHeroCollide(hero, collider, result, removeObjects, respawnObjects)
   }
 })
 
@@ -45,17 +45,17 @@ window.local.on('onObjectCollide', (agent, collider, result, removeObjects, resp
   onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
 
   /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 
   /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+  if(GAME.customGame) {
+    GAME.customGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 
   /// LIVE CUSTOM GAME FX
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 })

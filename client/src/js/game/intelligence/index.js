@@ -88,7 +88,7 @@ function update(objects, delta) {
     //////////////////////////////////////////
     //////////////////////////////////////////
     if(object.path && object.path.length) {
-      if(window.resetPaths) {
+      if(GAME.resetPaths) {
         object.path = []
         object.velocityX = 0
         object.velocityY = 0
@@ -101,18 +101,18 @@ function update(objects, delta) {
     spawnZoneIntelligence(object)
 
     /// DEFAULT GAME FX
-    if(window.defaultCustomGame) {
-      window.defaultCustomGame.intelligence(object, delta)
+    if(GAME.defaultCustomGame) {
+      GAME.defaultCustomGame.intelligence(object, delta)
     }
 
     /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.intelligence(object, delta)
+    if(GAME.customGame) {
+      GAME.customGame.intelligence(object, delta)
     }
 
     /// LIVE CUSTOM GAME FX
-    if(window.liveCustomGame) {
-      window.liveCustomGame.intelligence(object, delta)
+    if(GAME.liveCustomGame) {
+      GAME.liveCustomGame.intelligence(object, delta)
     }
   })
 }

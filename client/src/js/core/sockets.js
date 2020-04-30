@@ -44,7 +44,7 @@ function init() {
       if(PAGE.role.isPlayer && HERO.hero && heroId == HERO.hero.id) {
         return
       }
-      window.heroInput[heroId] = heroInput
+      GAME.heroInputs[heroId] = heroInput
     })
 
     // PLAYERS CALL THIS
@@ -93,8 +93,8 @@ function init() {
       })
       if(!GAME.world.globalTags.calculatePathCollisions) {
         gridTool.updateGridObstacles()
-        window.resetPaths = true
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+        GAME.resetPaths = true
+        GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
   	})
 
@@ -136,7 +136,7 @@ function init() {
         GAME.grid = initialGameState.grid
         GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
         gridTool.updateGridObstacles()
-        window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+        GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
       // GAME.gameState.paused = true
@@ -155,14 +155,14 @@ function init() {
       GAME.gameState.paused = false
       GAME.gameState.started = true
 
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.onGameStart()
+      if(GAME.defaultCustomGame) {
+        GAME.defaultCustomGame.onGameStart()
       }
-      if(window.customGame) {
-        window.customGame.onGameStart()
+      if(GAME.customGame) {
+        GAME.customGame.onGameStart()
       }
-      if(window.liveCustomGame) {
-        window.liveCustomGame.onGameStart()
+      if(GAME.liveCustomGame) {
+        GAME.liveCustomGame.onGameStart()
       }
     })
   }
@@ -287,8 +287,8 @@ function init() {
 
     if(GAME.grid.nodes && !GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      window.resetPaths = true
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      GAME.resetPaths = true
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
@@ -307,7 +307,7 @@ function init() {
 
     if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
@@ -316,8 +316,8 @@ function init() {
     GAME.world = JSON.parse(JSON.stringify(window.defaultWorld))
     if(!PAGE.role.isPlayEditor) window.camera.clearLimit()
     gridTool.updateGridObstacles()
-    if(PAGE.role.isHost) window.resetPaths = true
-    if(PAGE.role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    if(PAGE.role.isHost) GAME.resetPaths = true
+    if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     window.handleWorldUpdate(GAME.world)
   })
 
@@ -367,7 +367,7 @@ function init() {
   window.socket.on('onRemoveObject', (object) => {
     if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(PAGE.role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
     GAME.objectsById[object.id].removed = true
@@ -388,7 +388,7 @@ function init() {
 
     if(!GAME.world.globalTags.calculatePathCollisions) {
       gridTool.updateGridObstacles()
-      if(PAGE.role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
     let spliceIndex
@@ -413,7 +413,7 @@ function init() {
     GAME.grid.nodes = gridTool.generateGridNodes(grid)
     gridTool.updateGridObstacles()
     if(PAGE.role.isHost) {
-      window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
 
@@ -473,8 +473,8 @@ function init() {
   })
 
   window.socket.on('onCustomFxEvent', (event) => {
-    if(PAGE.role.isHost && window.liveCustomGame && window.liveCustomGame[event]) {
-      window.liveCustomGame[event]()
+    if(PAGE.role.isHost && GAME.liveCustomGame && GAME.liveCustomGame[event]) {
+      GAME.liveCustomGame[event]()
     }
   })
 

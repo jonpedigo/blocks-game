@@ -52,7 +52,7 @@ GAME.load = function(game){
   // grid
   GAME.grid.nodes = grid.generateGridNodes(GAME.grid)
   grid.updateGridObstacles()
-  window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+  GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
   handleWorldUpdate(GAME.world)
 
   // game state
@@ -91,14 +91,14 @@ GAME.loadHeros = function(game, options = { resetHeros: false }) {
 }
 
 GAME.unload = function() {
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onGameUnloaded()
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onGameUnloaded()
   }
-  if(window.customGame) {
-    window.customGame.onGameUnloaded()
+  if(GAME.customGame) {
+    GAME.customGame.onGameUnloaded()
   }
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onGameUnloaded()
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onGameUnloaded()
   }
 
   if(PAGE.role.isPlayEditor) {
@@ -128,7 +128,7 @@ GAME.update = function(delta) {
   })
 
   if(HERO.hero && HERO.hero.id === 'ghost') {
-    input.update(HERO.hero, window.keysDown, delta)
+    input.update(HERO.hero, GAME.keysDown, delta)
   }
 
   if(PAGE.role.isHost) {
@@ -136,16 +136,16 @@ GAME.update = function(delta) {
     if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !window.HERO.hero.flags.paused)) {
       timeouts.update(delta)
       /// DEFAULT GAME FX
-      if(window.defaultCustomGame) {
-        window.defaultCustomGame.update(delta)
+      if(GAME.defaultCustomGame) {
+        GAME.defaultCustomGame.update(delta)
       }
       /// CUSTOM GAME FX
-      if(window.customGame) {
-        window.customGame.update(delta)
+      if(GAME.customGame) {
+        GAME.customGame.update(delta)
       }
       /// CUSTOM GAME FX
-      if(window.liveCustomGame) {
-        window.liveCustomGame.update(delta)
+      if(GAME.liveCustomGame) {
+        GAME.liveCustomGame.update(delta)
       }
 
       // movement
@@ -156,9 +156,9 @@ GAME.update = function(delta) {
         if(hero.animationZoomTarget) {
           heroZoomAnimation(hero)
         }
-        if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
+        if(GAME.heroInputs[id]) input.update(hero, GAME.heroInputs[id], delta)
         PHYSICS.updatePosition(hero, delta)
-        // window.heroInput[id] = {}
+        // GAME.heroInputs[id] = {}
       })
       intelligence.update(GAME.objects, delta)
       GAME.objects.forEach((object) => {
@@ -181,7 +181,7 @@ GAME.update = function(delta) {
 
   if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.globalTags.calculatePathCollisions) {
     grid.updateGridObstacles()
-    window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
   }
 }
 

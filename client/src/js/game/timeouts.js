@@ -1,10 +1,10 @@
 function setDefault() {
-  window.timeouts = []
-  window.timeoutsById = {}
+  GAME.timeouts = []
+  GAME.timeoutsById = {}
 }
 
 function update(delta) {
-  window.timeouts = window.timeouts.filter((timeout) => {
+  GAME.timeouts = GAME.timeouts.filter((timeout) => {
     timeout.timeRemaining -= delta
     if(timeout.timeRemaining <= 0) {
       if(timeout.fx) timeout.fx()
@@ -23,14 +23,14 @@ window.addTimeout = function(id, numberOfSeconds, fx) {
       fx,
       resetTotal: 0,
     }
-    window.timeouts.push(timeout)
-    window.timeoutsById[id] = timeout
+    GAME.timeouts.push(timeout)
+    GAME.timeoutsById[id] = timeout
   }
 }
 
 window.addOrResetTimeout = function(id, numberOfSeconds, fx) {
 
-  if(!window.timeoutsById[id] || (window.timeoutsById[id] && window.timeoutsById[id].timeRemaining <= 0)) {
+  if(!GAME.timeoutsById[id] || (GAME.timeoutsById[id] && GAME.timeoutsById[id].timeRemaining <= 0)) {
     window.addTimeout(id, numberOfSeconds, fx)
   } else {
     window.resetTimeout(id, numberOfSeconds)
@@ -38,14 +38,14 @@ window.addOrResetTimeout = function(id, numberOfSeconds, fx) {
 }
 
 window.resetTimeout = function(id, numberOfSeconds) {
-  window.timeoutsById[id].timeRemaining = numberOfSeconds
-  window.timeoutsById[id].totalTime = numberOfSeconds
-  window.timeoutsById[id].resetTotal++
+  GAME.timeoutsById[id].timeRemaining = numberOfSeconds
+  GAME.timeoutsById[id].totalTime = numberOfSeconds
+  GAME.timeoutsById[id].resetTotal++
 }
 
 window.incrementTimeout = function(id, numberOfSeconds) {
-  window.timeoutsById[id].timeRemaining+= numberOfSeconds
-  window.timeoutsById[id].totalTime+= numberOfSeconds
+  GAME.timeoutsById[id].timeRemaining+= numberOfSeconds
+  GAME.timeoutsById[id].totalTime+= numberOfSeconds
 }
 
 export default {

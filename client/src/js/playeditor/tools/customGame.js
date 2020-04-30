@@ -19,8 +19,8 @@ function init() {
     fontSize: "20pt",
   });
 
-  window.customGameEditor = editor
-  window.customGameEditor.session.on('change', function(delta) {
+  GAME.customGameEditor = editor
+  GAME.customGameEditor.session.on('change', function(delta) {
     document.getElementById("is-code-editor-saved").innerHTML = "Not saved"
   });
 
@@ -31,7 +31,7 @@ function init() {
 
   window.saveCodeEditor = function() {
     try {
-      let customFx = window.customGameEditor.getValue()
+      let customFx = GAME.customGameEditor.getValue()
       window.evalLiveCustomFx(customFx)()
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)
@@ -43,7 +43,7 @@ function init() {
   }
 
   window.resetCodeEditor = function() {
-    window.customGameEditor.setValue(window.templateGameString);
+    GAME.customGameEditor.setValue(window.templateGameString);
     localStorage.setItem('codeEditor', null)
   }
 

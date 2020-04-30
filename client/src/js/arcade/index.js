@@ -27,15 +27,15 @@ let customCompendiums = {
 }
 
 function onPageLoad() {
-  window.customGame = null
-  window.defaultCustomGame = defaultCustomGame
+  GAME.customGame = null
+  GAME.defaultCustomGame = defaultCustomGame
 
   window.customCompendium = null
   window.defaultCompendium = defaultCompendium
 }
 
 window.changeGame = function(id) {
-  window.customGame = customGames[id]
+  GAME.customGame = customGames[id]
   window.customCompendium = customCompendiums[id]
   if(PAGE.role.isPlayEditor){
     document.getElementById('current-game-id').innerHTML = id
@@ -54,7 +54,7 @@ window.evalLiveCustomFx = function(customFx) {
 window.setLiveCustomFx = function(customFx) {
   customFx = window.evalLiveCustomFx(customFx)
   customFx = customFx(pathfinding, gridTool, window.camera, collisions, particles, drawTools)
-  window.liveCustomGame = customFx
+  GAME.liveCustomGame = customFx
 }
 
 export default {

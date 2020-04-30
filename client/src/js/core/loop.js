@@ -90,7 +90,7 @@ function update(delta) {
       localStorage.setItem('hero', JSON.stringify(HERO.hero))
       // we are locally updating the hero input as host
       if(!PAGE.role.isHost && !window.PAGE.typingMode) {
-        window.socket.emit('sendHeroInput', window.keysDown, HERO.hero.id)
+        window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
       }
     }
   }
@@ -109,18 +109,18 @@ function render(delta) {
     map.render(delta);
     /// DEFAULT GAME FX
 
-    if(window.defaultCustomGame) {
-      window.defaultCustomGame.render(MAP.ctx, delta)
+    if(GAME.defaultCustomGame) {
+      GAME.defaultCustomGame.render(MAP.ctx, delta)
     }
 
     /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.render(MAP.ctx, delta)
+    if(GAME.customGame) {
+      GAME.customGame.render(MAP.ctx, delta)
     }
 
     /// CUSTOM GAME FX
-    if(window.liveCustomGame) {
-      window.liveCustomGame.render(MAP.ctx, delta)
+    if(GAME.liveCustomGame) {
+      GAME.liveCustomGame.render(MAP.ctx, delta)
     }
   }
 

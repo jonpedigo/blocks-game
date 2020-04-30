@@ -1,7 +1,6 @@
 import modals from '../mapeditor/modals.js'
 
 const keysDown = {}
-window.keysDown = {}
 
 let justChangedHerosLeft = false
 let justChangedHerosRight = false

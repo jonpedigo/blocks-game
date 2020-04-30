@@ -40,15 +40,15 @@ window.handleWorldUpdate = function(updatedWorld) {
 
     if(key === 'gameBoundaries') {
       gridTool.updateGridObstacles()
-      if(PAGE.role.isHost) window.resetPaths = true
-      if(PAGE.role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      if(PAGE.role.isHost) GAME.resetPaths = true
+      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
     if(key === 'globalTags' || key === 'editorTags') {
       for(let tag in updatedWorld.globalTags) {
         if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
           gridTool.updateGridObstacles()
-          if(PAGE.role.isHost) window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+          if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
         }
       }
       if(key === 'syncHero' && PAGE.role.isPlayEditor) {

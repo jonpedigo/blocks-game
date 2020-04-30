@@ -55,7 +55,7 @@ function onCollide(agent, collider, result, removeObjects, respawnObjects, hero)
 // after input, intel, physics, but before render
 // only on client
 function update(delta) {
-  window.resetPaths = false
+  GAME.resetPaths = false
 }
 
 // only on client

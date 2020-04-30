@@ -1,21 +1,21 @@
-window.keysDown = {}
-// this is the one for the host
-window.heroInput = {}
-
 let lastJump = 0
 
 function init(){
+  GAME.keysDown = {}
+  // this is the one for the host
+  GAME.heroInputs = {}
+
   window.addEventListener("keydown", function (e) {
 
     if(PAGE.role.isGhost) {
       if(HERO.hero.id === 'ghost') onKeyDown(e.keyCode, HERO.hero)
     } else if(PAGE.role.isPlayer) {
       if(!window.PAGE.typingMode) {
-        window.keysDown[e.keyCode] = true
+        GAME.keysDown[e.keyCode] = true
       }
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
-        window.heroInput[HERO.hero.id] = window.keysDown
+        GAME.heroInputs[HERO.hero.id] = GAME.keysDown
         onKeyDown(e.keyCode, HERO.hero)
       } else {
         window.socket.emit('sendHeroKeyDown', e.keyCode, HERO.hero.id)
@@ -24,7 +24,7 @@ function init(){
   }, false)
 
   window.addEventListener("keyup", function (e) {
-	   delete window.keysDown[e.keyCode]
+	   delete GAME.keysDown[e.keyCode]
   }, false)
 }
 
@@ -45,18 +45,18 @@ function update(hero, keysDown, delta) {
     d 68
   */
   /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.input(hero, keysDown, delta)
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.input(hero, keysDown, delta)
   }
 
   /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.input(hero, keysDown, delta)
+  if(GAME.customGame) {
+    GAME.customGame.input(hero, keysDown, delta)
   }
 
   /// LIVE CUSTOM GAME FX
-  if(window.liveCustomGame) {
-    window.liveCustomGame.input(hero, keysDown, delta)
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.input(hero, keysDown, delta)
   }
 
   if(hero.flags.paused || GAME.gameState.paused) return
@@ -224,16 +224,16 @@ function onKeyDown(keyCode, hero) {
   }
 
   /// DEFAULT GAME FX
-  if(window.defaultCustomGame) {
-    window.defaultCustomGame.onKeyDown(keyCode, hero)
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onKeyDown(keyCode, hero)
   }
   /// CUSTOM GAME FX
-  if(window.customGame) {
-    window.customGame.onKeyDown(keyCode, hero)
+  if(GAME.customGame) {
+    GAME.customGame.onKeyDown(keyCode, hero)
   }
   /// CUSTOM GAME FX
-  if(window.liveCustomGame) {
-    window.liveCustomGame.onKeyDown(keyCode, hero)
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onKeyDown(keyCode, hero)
   }
 }
 

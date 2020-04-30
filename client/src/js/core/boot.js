@@ -230,17 +230,17 @@ window.onGameLoad = function(isFirstLoad) {
 
   if(isFirstLoad) {
     /// DEFAULT GAME FX
-    if(window.defaultCustomGame) {
-      window.defaultCustomGame.onGameLoaded()
+    if(GAME.defaultCustomGame) {
+      GAME.defaultCustomGame.onGameLoaded()
     }
     /// CUSTOM GAME FX
-    if(window.customGame) {
-      window.customGame.onGameLoaded()
+    if(GAME.customGame) {
+      GAME.customGame.onGameLoaded()
     }
 
     /// CUSTOM GAME FX
-    if(window.liveCustomGame) {
-      window.liveCustomGame.onGameLoaded()
+    if(GAME.liveCustomGame) {
+      GAME.liveCustomGame.onGameLoaded()
     }
   }
 }

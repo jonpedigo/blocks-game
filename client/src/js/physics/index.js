@@ -214,7 +214,7 @@ function postPhysics(removeObjects, respawnObjects) {
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(hero._interactableObject) {
-      let input = window.heroInput[hero.id]
+      let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero._interactableObject, hero, hero._interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {

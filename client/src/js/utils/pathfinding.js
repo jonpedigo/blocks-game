@@ -23,7 +23,6 @@ import gridTool from '../utils/grid.js'
 
 const PF = require('pathfinding')
 const finder = new PF.AStarFinder()
-window.pfgrid = null
 
 function convertGridToPathfindingGrid(grid, saveToWindow = true) {
   const pfgrid = new PF.Grid(grid.length, grid[0].length);
@@ -32,7 +31,7 @@ function convertGridToPathfindingGrid(grid, saveToWindow = true) {
     for (let y = 0; y < grid[x].length; y++) {
       if(grid[x][y].hasObstacle) {
         pfgrid.setWalkableAt(x, y, false);
-        // window.resetPaths = true
+        // GAME.resetPaths = true
       }
     }
   }
@@ -57,7 +56,7 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
   const toY = toPosition.y
 
   if(gridTool.keepGridXYWithinBoundaries(toX, toY, options)) {
-    var gridBackup = window.pfgrid.clone();
+    var gridBackup = GAME.pfgrid.clone();
     return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
       return {x: path[0], y: path[1]}
     });
@@ -71,7 +70,7 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
 function findOpenGridNear({ position, onlySurrounding = false, prioritizeNear, onFail = () => {} }){
   const { x, y } = position
 
-  window.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
+  GAME.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
   // console.log('looking for open grid near', x, y)
 
   if(!onlySurrounding && isGridWalkable(x, y)) return { x, y }
@@ -104,7 +103,7 @@ function forceFindOpenGridNear({position, level = 0}){
   const {x, y} = position
 
   if(level == 0) {
-    window.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
+    GAME.pfgrid = _convertGridToPathfindingGrid(window.grid.nodes)
   }
 
   console.log('looking for open grid near', x, y)
@@ -135,9 +134,9 @@ function forceFindOpenGridNear({position, level = 0}){
 function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   // for pathfinding with area
   if(gridTool.keepGridXYWithinBoundaries(x, y, options)) {
-    if(!window.pfgrid.nodes[y]) return false
-    if(!window.pfgrid.nodes[y][x]) return false
-    if(!window.pfgrid.nodes[y][x].walkable) return false
+    if(!GAME.pfgrid.nodes[y]) return false
+    if(!GAME.pfgrid.nodes[y][x]) return false
+    if(!GAME.pfgrid.nodes[y][x].walkable) return false
     return true
   } else {
     return false
