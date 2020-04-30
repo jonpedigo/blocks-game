@@ -5,27 +5,27 @@ function pad(num, size) {
 
 
 function draw(ctx) {
-  if(window.hero.score < 0) {
-    window.hero.score = 0
+  if(HERO.hero.score < 0) {
+    HERO.hero.score = 0
   }
 
-  if(window.hero.lives < 0) {
-    window.hero.lives = 0
+  if(HERO.hero.lives < 0) {
+    HERO.hero.lives = 0
   }
   ctx.textAlign = 'start'
   ctx.textBaseline = 'alphabetic'
 
-  if(window.hero.flags.showScore) {
+  if(HERO.hero.flags.showScore) {
     ctx.fillStyle = 'white'
     ctx.font = "21px Courier New";
-    ctx.fillText(pad(window.hero.score, 4), 18, 30)
+    ctx.fillText(pad(HERO.hero.score, 4), 18, 30)
   }
 
-  if(window.hero.flags.showLives) {
+  if(HERO.hero.flags.showLives) {
     ctx.fillStyle = 'white'
-    ctx.fillRect(20, 50, window.hero.width/3, window.hero.height/3)
+    ctx.fillRect(20, 50, HERO.hero.width/3, HERO.hero.height/3)
     ctx.font = "16px Courier New";
-    ctx.fillText('x' + window.hero.lives, 25 + window.hero.width/3, 50 + window.hero.height/3)
+    ctx.fillText('x' + HERO.hero.lives, 25 + HERO.hero.width/3, 50 + HERO.hero.height/3)
   }
 }
 

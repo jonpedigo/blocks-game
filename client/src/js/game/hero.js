@@ -2,6 +2,11 @@ import pathfinding from '../utils/pathfinding.js'
 import collisions from '../utils/collisions'
 import grid from '../utils/grid.js'
 
+window.HERO = {
+  cameraWidth: 640,
+  cameraHeight: 320
+}
+
 function setDefault() {
   window.defaultHero = {
   	width: 40,
@@ -95,7 +100,7 @@ window.respawnHero = function (hero, game = GAME) {
   hero.velocityY = 0
 
   /// send objects that are possibly camping at their spawn point back to their spawn point
-  if(role.isHost && game && game.world && game.world.globalTags.noCamping) {
+  if(PAGE.role.isHost && game && game.world && game.world.globalTags.noCamping) {
     game.objects.forEach((obj) => {
       if(obj.removed) return
 
@@ -171,8 +176,8 @@ window.heroZoomAnimation = function(hero) {
 
 window.getViewBoundaries = function(hero) {
   const value = {
-    width: window.playerCameraWidth * hero.zoomMultiplier,
-    height: window.playerCameraHeight * hero.zoomMultiplier,
+    width: HERO.cameraWidth * hero.zoomMultiplier,
+    height: HERO.cameraHeight * hero.zoomMultiplier,
     centerX: hero.x + hero.width/2,
     centerY: hero.y + hero.height/2,
   }
@@ -192,8 +197,8 @@ window.getViewBoundaries = function(hero) {
     rightDiff,
     topDiff,
     bottomDiff,
-    cameraWidth: window.playerCameraWidth,
-    cameraHeight: window.playerCameraHeight,
+    cameraWidth: HERO.cameraWidth,
+    cameraHeight: HERO.cameraHeight,
   }
 }
 
@@ -222,7 +227,7 @@ window.findHeroInNewGame = function(game, hero) {
         return currentHero
       }
     }
-    console.log('failed to find hero with id' + window.hero.id)
+    console.log('failed to find hero with id' + HERO.hero.id)
   }
 
   if(!game.world.globalTags.isAsymmetric && game.hero) {
@@ -239,7 +244,7 @@ window.findHeroInNewGame = function(game, hero) {
 }
 
 window.addHeroToGame = function(hero) {
-  console.log('ADDDING HERO', hero)
+  console.log('ADDDING HERO.hero', hero)
   PHYSICS.addObject(hero)
 }
 

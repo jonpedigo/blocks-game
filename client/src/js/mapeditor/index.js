@@ -5,7 +5,7 @@ import drawTools from './drawTools';
 import selectionTools from './selectionTools';
 import keyInput from './keyInput';
 
-window.mapEditor = {
+window.MAPEDITOR = {
   clickStart: {
     x: null,
     y: null,
@@ -30,25 +30,25 @@ window.mapEditor = {
   camera: null,
   ctx: null,
 }
-window.defaultMapEditor = JSON.parse(JSON.stringify(mapEditor))
+window.defaultMapEditor = JSON.parse(JSON.stringify(MAPEDITOR))
 
 function onPageLoad(gameCanvas) {
-  mapEditor.canvas = gameCanvas
+  MAPEDITOR.canvas = gameCanvas
 
   gameCanvas.addEventListener("mousedown", (e) => {
-    if(mapEditor.game) handleMouseDown(event)
+    if(MAPEDITOR.game) handleMouseDown(event)
   })
   gameCanvas.addEventListener("mousemove", (e) => {
-    if(mapEditor.game) handleMouseMove(event)
+    if(MAPEDITOR.game) handleMouseMove(event)
   })
   gameCanvas.addEventListener("mouseup", (e) => {
-    if(mapEditor.game) handleMouseUp(event)
+    if(MAPEDITOR.game) handleMouseUp(event)
   })
   gameCanvas.addEventListener("mouseout", (e) => {
-    if(mapEditor.game) handleMouseOut(event)
+    if(MAPEDITOR.game) handleMouseOut(event)
   })
 
-  contextMenu.init(mapEditor, {
+  contextMenu.init(MAPEDITOR, {
     onStartResize,
     onStartDrag,
     onDelete,
@@ -59,85 +59,85 @@ function onPageLoad(gameCanvas) {
 }
 
 function onGameLoad(ctx, game, camera) {
-  mapEditor.game = game
-  mapEditor.camera = camera
-  mapEditor.ctx = ctx
+  MAPEDITOR.game = game
+  MAPEDITOR.camera = camera
+  MAPEDITOR.ctx = ctx
 }
 
 function handleMouseUp(event) {
-  const { camera } = mapEditor
+  const { camera } = MAPEDITOR
   let clickEndX = ((event.offsetX + camera.x) / camera.multiplier)
   let clickEndY = ((event.offsetY + camera.y) / camera.multiplier)
 }
 
 function handleMouseDown(event) {
-  const { camera } = mapEditor
+  const { camera } = MAPEDITOR
 
-  mapEditor.clickStart.x = ((event.offsetX + camera.x) / camera.multiplier)
-  mapEditor.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
+  MAPEDITOR.clickStart.x = ((event.offsetX + camera.x) / camera.multiplier)
+  MAPEDITOR.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
 
-  if(mapEditor.copiedObject) {
-    window.addObjects([mapEditor.copiedObject])
-    mapEditor.copiedObject = null
-  } else if(mapEditor.isSettingPathfindingLimit) {
-    if(mapEditor.pathfindingLimit) {
-      const { pathfindingLimit, objectHighlighted } = mapEditor
+  if(MAPEDITOR.copiedObject) {
+    window.addObjects([MAPEDITOR.copiedObject])
+    MAPEDITOR.copiedObject = null
+  } else if(MAPEDITOR.isSettingPathfindingLimit) {
+    if(MAPEDITOR.pathfindingLimit) {
+      const { pathfindingLimit, objectHighlighted } = MAPEDITOR
       gridTool.snapDragToGrid(pathfindingLimit, {dragging: true})
       window.socket.emit('editObjects', [{id: objectHighlighted.id, pathfindingLimit, path: null}])
       document.body.style.cursor = "default";
-      mapEditor.isSettingPathfindingLimit = false
-      mapEditor.pathfindingLimit = null
+      MAPEDITOR.isSettingPathfindingLimit = false
+      MAPEDITOR.pathfindingLimit = null
     } else {
-      mapEditor.pathfindingLimit = { ...mapEditor.clickStart }
-      mapEditor.pathfindingLimit.width = 0
-      mapEditor.pathfindingLimit.height = 0
+      MAPEDITOR.pathfindingLimit = { ...MAPEDITOR.clickStart }
+      MAPEDITOR.pathfindingLimit.width = 0
+      MAPEDITOR.pathfindingLimit.height = 0
     }
-  } else if(mapEditor.resizingObject) {
-    const { resizingObject } = mapEditor
+  } else if(MAPEDITOR.resizingObject) {
+    const { resizingObject } = MAPEDITOR
     window.socket.emit('editObjects', [{id: resizingObject.id, x: resizingObject.x, y: resizingObject.y, width: resizingObject.width, height: resizingObject.height}])
-    mapEditor.resizingObject = null
-  } else if(mapEditor.draggingObject) {
-    const { draggingObject } = mapEditor
+    MAPEDITOR.resizingObject = null
+  } else if(MAPEDITOR.draggingObject) {
+    const { draggingObject } = MAPEDITOR
     window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, y: draggingObject.y}])
-    mapEditor.draggingObject = null
+    MAPEDITOR.draggingObject = null
   }
 }
 
 
 function handleMouseOut(event) {
-  if(role.isGhost) {
-    mapEditor.skipRemoteStateUpdate = false
+  if(PAGE.role.isGhost) {
+    MAPEDITOR.skipRemoteStateUpdate = false
   }
 }
 function handleMouseMove(event) {
-  const { camera } = mapEditor
+  const { camera } = MAPEDITOR
 
-  if(role.isGhost) {
-    mapEditor.skipRemoteStateUpdate = true
+  if(PAGE.role.isGhost) {
+    MAPEDITOR.skipRemoteStateUpdate = true
   }
 
-  mapEditor.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
-  mapEditor.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
+  MAPEDITOR.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
+  MAPEDITOR.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
 
-  if(mapEditor.copiedObject) {
-    updateDraggingObject(mapEditor.copiedObject)
-  } else if(mapEditor.isSettingPathfindingLimit) {
-    if(mapEditor.pathfindingLimit) {
-      updateResizingObject(mapEditor.pathfindingLimit, { allowTiny: false })
+  if(MAPEDITOR.copiedObject) {
+    updateDraggingObject(MAPEDITOR.copiedObject)
+  } else if(MAPEDITOR.isSettingPathfindingLimit) {
+    if(MAPEDITOR.pathfindingLimit) {
+      updateResizingObject(MAPEDITOR.pathfindingLimit, { allowTiny: false })
     }
-  } else if(mapEditor.resizingObject) {
-    updateResizingObject(mapEditor.resizingObject)
-  } else if(mapEditor.draggingObject) {
-    updateDraggingObject(mapEditor.draggingObject)
+  } else if(MAPEDITOR.resizingObject) {
+    updateResizingObject(MAPEDITOR.resizingObject)
+  } else if(MAPEDITOR.draggingObject) {
+    updateDraggingObject(MAPEDITOR.draggingObject)
   } else {
-    updateGridHighlight({x: mapEditor.mousePos.x, y: mapEditor.mousePos.y})
+    updateGridHighlight({x: MAPEDITOR.mousePos.x, y: MAPEDITOR.mousePos.y})
   }
 }
 
 function updateGridHighlight(location) {
-  const { game } = mapEditor
+  const { game } = MAPEDITOR
 
-  if(mapEditor.contextMenuVisible) return
+  if(MAPEDITOR.contextMenuVisible) return
 
   const { x,y } = gridTool.snapXYToGrid(location.x, location.y, { closest: false })
 
@@ -148,39 +148,39 @@ function updateGridHighlight(location) {
     height: game.grid.nodeSize
   }
 
-  mapEditor.objectHighlighted = mouseLocation
+  MAPEDITOR.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
   let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, game.objects)
-  if(smallestObject) mapEditor.objectHighlighted = smallestObject
+  if(smallestObject) MAPEDITOR.objectHighlighted = smallestObject
 
-  mapEditor.objectHighlightedChildren = []
-  if(mapEditor.objectHighlighted.id) {
+  MAPEDITOR.objectHighlightedChildren = []
+  if(MAPEDITOR.objectHighlighted.id) {
     // see if grid high light has children or is child
-    const { parent, children } = selectionTools.getObjectRelations(mapEditor.objectHighlighted, game)
-    if(children.length && parent.id === mapEditor.objectHighlighted.id) {
-      mapEditor.objectHighlighted = parent
-      mapEditor.objectHighlightedChildren = children
+    const { parent, children } = selectionTools.getObjectRelations(MAPEDITOR.objectHighlighted, game)
+    if(children.length && parent.id === MAPEDITOR.objectHighlighted.id) {
+      MAPEDITOR.objectHighlighted = parent
+      MAPEDITOR.objectHighlightedChildren = children
     }
   }
 }
 
 function onStartResize(object) {
-  mapEditor.resizingObject = JSON.parse(JSON.stringify(object))
+  MAPEDITOR.resizingObject = JSON.parse(JSON.stringify(object))
 }
 
 function onStartSetPathfindingLimit(object) {
-  mapEditor.isSettingPathfindingLimit = true
+  MAPEDITOR.isSettingPathfindingLimit = true
   document.body.style.cursor = "crosshair";
 }
 
 function onStartDrag(object) {
-  mapEditor.draggingObject = JSON.parse(JSON.stringify(object))
+  MAPEDITOR.draggingObject = JSON.parse(JSON.stringify(object))
 }
 
 function onCopy(object) {
-  mapEditor.copiedObject = JSON.parse(JSON.stringify(object))
-  delete mapEditor.copiedObject.id
+  MAPEDITOR.copiedObject = JSON.parse(JSON.stringify(object))
+  delete MAPEDITOR.copiedObject.id
 }
 
 function onDelete(object) {
@@ -193,7 +193,7 @@ function onDelete(object) {
 }
 
 function updateResizingObject(object, options = { allowTiny : true }) {
-  const { mousePos, game } = mapEditor
+  const { mousePos, game } = MAPEDITOR
   if(mousePos.x < object.x || mousePos.y < object.y) {
     return
   }
@@ -214,16 +214,17 @@ function updateResizingObject(object, options = { allowTiny : true }) {
 }
 
 function updateDraggingObject(object) {
-  const { mousePos } = mapEditor
+  const { mousePos } = MAPEDITOR
   object.x = mousePos.x
   object.y = mousePos.y
   gridTool.snapDragToGrid(object, {dragging: true})
 }
 
 function render() {
-  let ctx = mapEditor.ctx
-  let camera = mapEditor.camera
-  const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = mapEditor
+  let ctx = MAPEDITOR.ctx
+  let camera = MAPEDITOR.camera
+
+  const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = MAPEDITOR
 
   if(objectHighlighted) {
     let color = 'rgba(255,255,255,0.2)'
@@ -249,13 +250,13 @@ function render() {
   }
 }
 
-function update(delta, remoteState) {
-  if(remoteState && !window.mapEditor.skipRemoteStateUpdate) {
-    updateGridHighlight(remoteState.mousePos)
+function update(delta) {
+  if(MAPEDITOR.remoteState && !MAPEDITOR.skipRemoteStateUpdate) {
+    updateGridHighlight(MAPEDITOR.remoteState.mousePos)
   }
 
-  if(!role.isGhost && role.isPlayer && window.hero) {
-    window.socket.emit('sendHeroMapEditor', { mousePos: mapEditor.mousePos } , window.hero.id)
+  if(!PAGE.role.isGhost && PAGE.role.isPlayer && HERO.hero) {
+    window.socket.emit('sendHeroMapEditor', { mousePos: MAPEDITOR.mousePos } , HERO.hero.id)
   }
 }
 

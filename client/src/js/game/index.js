@@ -63,7 +63,7 @@ GAME.load = function(game){
     GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   }
 
-  if(role.isPlayEditor) {
+  if(PAGE.role.isPlayEditor) {
     window.gamestateeditor.update(GAME.gameState)
   }
 }
@@ -76,12 +76,12 @@ GAME.loadHeros = function(game, options = { resetHeros: false }) {
     })
   }
 
-  if(role.isHost && role.isPlayer) {
+  if(PAGE.role.isHost && PAGE.role.isPlayer) {
     // just gotta make sure when we reload all these crazy player bois that the reference for the host hero is reset because it doesnt get reset any other time for the host
-    if(GAME.heros[window.hero.id]) {
-      window.hero = GAME.heros[window.hero.id]
+    if(GAME.heros[HERO.hero.id]) {
+      HERO.hero = GAME.heros[HERO.hero.id]
     } else {
-      GAME.heros[window.hero.id] = window.hero
+      GAME.heros[HERO.hero.id] = HERO.hero
     }
   }
 
@@ -101,7 +101,7 @@ GAME.unload = function() {
     window.liveCustomGame.onGameUnloaded()
   }
 
-  if(role.isPlayEditor) {
+  if(PAGE.role.isPlayEditor) {
     window.editingObject = {
       id: null,
       i: null,
@@ -127,13 +127,13 @@ GAME.update = function(delta) {
     GAME.heroList.push(hero)
   })
 
-  if(window.hero && window.hero.id === 'ghost') {
-    input.update(window.hero, window.keysDown, delta)
+  if(HERO.hero && HERO.hero.id === 'ghost') {
+    input.update(HERO.hero, window.keysDown, delta)
   }
 
-  if(role.isHost) {
+  if(PAGE.role.isHost) {
     // remove second part when a player can host a multiplayer game
-    if(!GAME.gameState.paused && (!role.isPlayer || !window.hero.flags.paused)) {
+    if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !window.HERO.hero.flags.paused)) {
       timeouts.update(delta)
       /// DEFAULT GAME FX
       if(window.defaultCustomGame) {
@@ -151,10 +151,10 @@ GAME.update = function(delta) {
       // movement
       PHYSICS.prepareObjectsAndHerosForMovementPhase()
       Object.keys(GAME.heros).forEach((id) => {
-        if(window.hero.flags.paused) return
+        if(HERO.hero.flags.paused) return
         let hero = GAME.heros[id]
         if(hero.animationZoomTarget) {
-          window.heroZoomAnimation(hero)
+          heroZoomAnimation(hero)
         }
         if(window.heroInput[id]) input.update(hero, window.heroInput[id], delta)
         PHYSICS.updatePosition(hero, delta)
@@ -168,18 +168,18 @@ GAME.update = function(delta) {
       /// physics and corrections
       PHYSICS.update(delta)
 
-      if(role.isHost && window.anticipatedObject) {
-        let hero = window.hero
-        if(role.isPlayEditor) {
+      if(PAGE.role.isHost && window.anticipatedObject) {
+        let hero = HERO.hero
+        if(PAGE.role.isPlayEditor) {
           hero = window.editingHero
         }
-        if(role.isPlayer) window.anticipateObjectAdd(window.hero)
-        else if(role.isPlayEditor) window.anticipateObjectAdd(window.editingHero)
+        if(PAGE.role.isPlayer) window.anticipateObjectAdd(HERO.hero)
+        else if(PAGE.role.isPlayEditor) window.anticipateObjectAdd(window.editingHero)
       }
     }
   }
 
-  if((role.isHost || role.isPlayEditor) && GAME.world.globalTags.calculatePathCollisions) {
+  if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.globalTags.calculatePathCollisions) {
     grid.updateGridObstacles()
     window.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
   }

@@ -37,7 +37,7 @@ function drawObject(ctx, object, withNames = false) {
 
 function update() {
   //set camera so we render everything in the right place
-  camera.set(ctx, window.hero)
+  camera.set(ctx, HERO.hero)
 
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
@@ -75,17 +75,17 @@ function update() {
 	ctx.fillStyle="rgba(255,255,255,0.3)"
   ctx.fillText(Math.ceil(window.fps), window.playerCanvasWidth - 50, 40)
 
-  if(role.isGhost) {
+  if(PAGE.role.isGhost) {
     ctx.font =`24pt Arial`
     ctx.fillStyle="rgba(255,255,255,0.3)"
-    ctx.fillText('Ghost View Id: ' + window.hero.id, 10, 40)
+    ctx.fillText('Ghost View Id: ' + HERO.hero.id, 10, 40)
   }
 
   chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(window.hero && window.hero._interactableObject && !window.hero.flags.showChat) {
-    const { _interactableObject } = window.hero
+  if(HERO.hero && HERO.hero._interactableObject && !window.HERO.hero.flags.showChat) {
+    const { _interactableObject } = HERO.hero
 
     if(_interactableObject.tags.invisible) {
       ctx.fillStyle = "rgb(255, 255, 255)";

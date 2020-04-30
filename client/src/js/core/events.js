@@ -31,7 +31,7 @@ class EventEmitter {
 window.local = new EventEmitter()
 
 function init() {
-  if(role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode) {
     mockServer(null, window.local, window.local, { arcadeMode: true })
   }
 }

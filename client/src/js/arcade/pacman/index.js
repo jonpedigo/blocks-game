@@ -8,8 +8,8 @@ let explodingParticles;
 function onGameLoaded() {
   explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
   GAME.gameState.paused = true
-  window.hero.flags.showLives = true;
-  window.hero.flags.showScore = true;
+  HERO.hero.flags.showLives = true;
+  HERO.hero.flags.showScore = true;
 }
 
 function onGameUnloaded() {
@@ -22,7 +22,7 @@ function onGameStart() {
   GAME.gameState.startTime = Date.now()
   window.resetSpawnAreasAndObjects()
   window.respawnHeros()
-  window.hero.lives = 3
+  HERO.hero.lives = 3
 }
 
 function onKeyDown(keyCode, hero) {
@@ -49,7 +49,7 @@ function onCollide(agent, collider, result, removeObjects) {
 }
 
 function update(delta) {
-  if(window.hero.lives === 0) {
+  if(HERO.hero.lives === 0) {
     GAME.gameState.gameOver = true
     GAME.gameState.paused = true
   }
@@ -61,7 +61,7 @@ function render(ctx, delta) {
   })
 
   if(GAME.gameState.paused && GAME.gameState.started) {
-    const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(window.hero)
+    const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(HERO.hero)
 
     // ctx.fillStyle = 'rgba(0,0,0,0.8)';
     // ctx.fillRect((minX/window.camera.multiplier - window.camera.x), (minY/window.camera.multiplier - window.camera.y), cameraWidth/window.camera.multiplier, cameraHeight/window.camera.multiplier);
@@ -74,7 +74,7 @@ function render(ctx, delta) {
     // let metrics = ctx.measureText(text)
     // window.wrapText(ctx, text, centerX/window.camera.multiplier - window.camera.x - (metrics.width/2), centerY/window.camera.multiplier - window.camera.y, 600/window.camera.multiplier, 80/window.camera.multiplier)
 
-    let multiplier = ((4000 - (window.hero.animationZoomMultiplier || 0))/4000)
+    let multiplier = ((4000 - (HERO.hero.animationZoomMultiplier || 0))/4000)
     // since I wanted the growth to occur very fast quickly, I had to decrease the value of the multiplier exponentialy ( it would turn into a decimal... oh god dont delte took me forever)
     multiplier = multiplier * multiplier
     multiplier = multiplier * multiplier

@@ -7,18 +7,18 @@ let lastJump = 0
 function init(){
   window.addEventListener("keydown", function (e) {
 
-    if(role.isGhost) {
-      if(window.hero.id === 'ghost') onKeyDown(e.keyCode, window.hero)
-    } else if(role.isPlayer) {
-      if(!window.pageState.typingMode) {
+    if(PAGE.role.isGhost) {
+      if(HERO.hero.id === 'ghost') onKeyDown(e.keyCode, HERO.hero)
+    } else if(PAGE.role.isPlayer) {
+      if(!window.PAGE.typingMode) {
         window.keysDown[e.keyCode] = true
       }
       //locally update the host input! ( teehee this is the magic! )
-      if(role.isHost) {
-        window.heroInput[window.hero.id] = window.keysDown
-        onKeyDown(e.keyCode, window.hero)
+      if(PAGE.role.isHost) {
+        window.heroInput[HERO.hero.id] = window.keysDown
+        onKeyDown(e.keyCode, HERO.hero)
       } else {
-        window.socket.emit('sendHeroKeyDown', e.keyCode, window.hero.id)
+        window.socket.emit('sendHeroKeyDown', e.keyCode, HERO.hero.id)
       }
     }
   }, false)

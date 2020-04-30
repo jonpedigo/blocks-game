@@ -1,9 +1,9 @@
 const keysDown = {}
 
 function render(ctx, hero){
-	if(window.hero.flags.showChat){
-		if(window.hero.chat.length) {
-			drawChat(ctx, window.hero.chat)
+	if(HERO.hero.flags.showChat){
+		if(HERO.hero.chat.length) {
+			drawChat(ctx, HERO.hero.chat)
 		}
 	}
 }
@@ -34,7 +34,7 @@ function drawChat(ctx, chat){
 	ctx.fillRect(window.playerCanvasWidth/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) , (420 * window.canvasMultiplier), 95 * window.canvasMultiplier)
 
 	// //portrait
-	// if(window.hero.chat.portrait){
+	// if(HERO.hero.chat.portrait){
 	// 	//portrait outline
 	// 	ctx.fillStyle="rgba(255,255,255,.1)"
 	// 	ctx.fillRect(window.playerCanvasWidth/2 - 200, 140, 80, 70)
@@ -51,10 +51,10 @@ function drawChat(ctx, chat){
 	ctx.font =`${18 * window.canvasMultiplier}pt Arial`
 	ctx.fillStyle="white"
 	//portrait name
-	if(window.hero.chatName) {
+	if(HERO.hero.chatName) {
 		ctx.fontWeight = "normal"
 		let x = window.playerCanvasWidth/2
-		ctx.fillText(window.hero.chatName, window.playerCanvasWidth/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) )
+		ctx.fillText(HERO.hero.chatName, window.playerCanvasWidth/2 - (210 * window.canvasMultiplier), (210 * window.canvasMultiplier) )
 	}
 
 	//text

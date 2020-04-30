@@ -24,14 +24,14 @@ window.anticipateObjectAdd = function(hero) {
       x: minX - GAME.grid.nodeSize,
       y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
       width: GAME.grid.nodeSize,
-      height: isWall ? (window.playerCameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
+      height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (topDiff < 1 && hero.directions.up) {
     let newObject = {
       x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: minY - GAME.grid.nodeSize,
-      width: isWall ? (window.playerCameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+      width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
       height: GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
@@ -40,14 +40,14 @@ window.anticipateObjectAdd = function(hero) {
       x: maxX + GAME.grid.nodeSize,
       y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
       width: GAME.grid.nodeSize,
-      height: isWall ? (window.playerCameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+      height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
   } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
     let newObject = {
       x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
       y: maxY + GAME.grid.nodeSize,
-      width: isWall ? (window.playerCameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+      width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
       height: GAME.grid.nodeSize,
     }
     addAnticipatedObject(newObject)
@@ -95,22 +95,22 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
 
     //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
     if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
-      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
       hasBeenWarned = true
       return null
     }
     if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
-      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
       hasBeenWarned = true
       return null
     }
     if(newObject.x < GAME.grid.startX) {
-      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
       hasBeenWarned = true
       return null
     }
     if(newObject.y < GAME.grid.startY) {
-      if(role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+      if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
       hasBeenWarned = true
       return null
     }
@@ -118,7 +118,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
     return newObject
   }).filter(obj => !!obj)
 
-  if(role.isPlayEditor && !options.fromLiveGame) {
+  if(PAGE.role.isPlayEditor && !options.fromLiveGame) {
     if(alertAboutCollision) {
       if(!confirm('already an object on this grid node..confirm to add anyways')) return
     }
@@ -142,7 +142,7 @@ window.addObjects = function(objects, options = { bypassCollisions: false, fromL
       warnings += 'has VELOCITY\n'
     }
     if(sampleObject.heroUpdate) {
-      warnings += 'has HERO UPDATE\n'
+      warnings += 'has HERO.hero UPDATE\n'
     }
     if(sampleObject.objectUpdate) {
       warnings += 'has OBJECT UPDATE\n'

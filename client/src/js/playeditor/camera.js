@@ -17,7 +17,7 @@ function init() {
 function drawGrid({startX, startY, gridWidth, gridHeight, normalLineWidth = .2, specialLineWidth = .6, color = 'white'}) {
   let height = w.editingGame.grid.nodeSize * gridHeight
   let width = w.editingGame.grid.nodeSize * gridWidth
-  let ctx = playEditor.ctx
+  let ctx = PLAYEDITOR.ctx
 
   ctx.strokeStyle = "#999";
   if(color) {
@@ -140,7 +140,7 @@ function drawVertice(ctx, vertice) {
 }
 
 function getObjectVertices(object) {
-  let ctx = playEditor.ctx
+  let ctx = PLAYEDITOR.ctx
   let prev = []
   if(object.removed) return prev
 
@@ -167,7 +167,7 @@ function getObjectVertices(object) {
 }
 
 function render() {
-  let ctx = playEditor.ctx
+  let ctx = PLAYEDITOR.ctx
   window.camera.multiplier = window.scaleMultiplier
   let objectEditorState = window.objecteditor.get()
 
@@ -192,10 +192,10 @@ function render() {
       // }
       // drawGrid({...value, normalLineWidth: .2, specialLineWidth: 0, color: 'red'})
       // let value2 = {
-      //   startX: w.editingGame.world.gameBoundaries.x + window.playerCameraWidth - w.editingGame.grid.nodeSize,
-      //   startY: w.editingGame.world.gameBoundaries.y + window.playerCameraHeight - w.editingGame.grid.nodeSize,
-      //   gridWidth: ((w.editingGame.world.gameBoundaries.width - window.playerCameraWidth * 2)/w.editingGame.grid.nodeSize) + 2,
-      //   gridHeight: ((w.editingGame.world.gameBoundaries.height - window.playerCameraHeight * 2)/w.editingGame.grid.nodeSize) + 2
+      //   startX: w.editingGame.world.gameBoundaries.x + HERO.cameraWidth - w.editingGame.grid.nodeSize,
+      //   startY: w.editingGame.world.gameBoundaries.y + HERO.cameraHeight - w.editingGame.grid.nodeSize,
+      //   gridWidth: ((w.editingGame.world.gameBoundaries.width - HERO.cameraWidth * 2)/w.editingGame.grid.nodeSize) + 2,
+      //   gridHeight: ((w.editingGame.world.gameBoundaries.height - HERO.cameraHeight * 2)/w.editingGame.grid.nodeSize) + 2
       // }
       // drawGrid({...value2, normalLineWidth: .3})
     } else if(w.editingGame.world && w.editingGame.world.gameBoundaries) {
@@ -283,7 +283,7 @@ function render() {
 
   ////////////////
   ////////////////
-  // HEROS
+  // HERO.heroS
   ////////////////
   ////////////////
   ctx.fillStyle = 'white';
@@ -331,7 +331,7 @@ function render() {
   if(window.clickStart.x && (currentTool === TOOLS.WORLD_EDITOR || currentTool === TOOLS.PROCEDURAL )) {
     ctx.strokeStyle = '#FFF'
     let possibleBox = { x: (clickStart.x/window.scaleMultiplier), y: (clickStart.y/window.scaleMultiplier), width: mousePos.x - (clickStart.x/window.scaleMultiplier), height: mousePos.y - (clickStart.y/window.scaleMultiplier)}
-    if(Math.abs(possibleBox.width) >= (window.playerCameraWidth * window.editingHero.zoomMultiplier) && Math.abs(possibleBox.height) >= window.playerCameraHeight * window.editingHero.zoomMultiplier) ctx.strokeStyle = '#FFF'
+    if(Math.abs(possibleBox.width) >= (HERO.cameraWidth * window.editingHero.zoomMultiplier) && Math.abs(possibleBox.height) >= HERO.cameraHeight * window.editingHero.zoomMultiplier) ctx.strokeStyle = '#FFF'
     else ctx.strokeStyle = 'red'
     drawBorder(ctx, possibleBox)
   }
@@ -396,10 +396,10 @@ function render() {
       drawBorder(ctx, valueRed);
       ctx.strokeStyle='white';
       let valueWhite = {
-        x: w.editingGame.world.gameBoundaries.x + ((window.playerCameraWidth * window.editingHero.zoomMultiplier)/2),
-        y: w.editingGame.world.gameBoundaries.y + ((window.playerCameraHeight * window.editingHero.zoomMultiplier)/2),
-        width: w.editingGame.world.gameBoundaries.width - ((window.playerCameraWidth * window.editingHero.zoomMultiplier)),
-        height: w.editingGame.world.gameBoundaries.height - ((window.playerCameraHeight * window.editingHero.zoomMultiplier))
+        x: w.editingGame.world.gameBoundaries.x + ((HERO.cameraWidth * window.editingHero.zoomMultiplier)/2),
+        y: w.editingGame.world.gameBoundaries.y + ((HERO.cameraHeight * window.editingHero.zoomMultiplier)/2),
+        width: w.editingGame.world.gameBoundaries.width - ((HERO.cameraWidth * window.editingHero.zoomMultiplier)),
+        height: w.editingGame.world.gameBoundaries.height - ((HERO.cameraHeight * window.editingHero.zoomMultiplier))
       }
       drawBorder(ctx, valueWhite);
     } else {
@@ -417,15 +417,15 @@ function render() {
 
   ////////////////
   ////////////////
-  // HEROS SETTINGS
+  // HERO.heroS SETTINGS
   ////////////////
   ////////////////
   for(var heroId in w.editingGame.heros) {
     let currentHero = w.editingGame.heros[heroId];
 
-    if(!w.editingGame.world.lockCamera || !w.editingGame.world.lockCamera.x || ((window.playerCameraWidth * currentHero.zoomMultiplier)) < w.editingGame.world.lockCamera.width) {
+    if(!w.editingGame.world.lockCamera || !w.editingGame.world.lockCamera.x || ((HERO.cameraWidth * currentHero.zoomMultiplier)) < w.editingGame.world.lockCamera.width) {
       ctx.strokeStyle='#0A0';
-      drawBorder(ctx, {x: currentHero.x - (window.playerCameraWidth * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (window.playerCameraHeight * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (window.playerCameraWidth * currentHero.zoomMultiplier), height: (window.playerCameraHeight * currentHero.zoomMultiplier)})
+      drawBorder(ctx, {x: currentHero.x - (HERO.cameraWidth * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (HERO.cameraHeight * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (HERO.cameraWidth * currentHero.zoomMultiplier), height: (HERO.cameraHeight * currentHero.zoomMultiplier)})
     }
 
     if(currentHero.reachablePlatformHeight && currentHero.tags.gravity) {

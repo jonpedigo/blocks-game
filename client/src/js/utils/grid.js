@@ -173,9 +173,9 @@ window.snapAllObjectsToGrid = function() {
 		snapObjectToGrid(object)
 	})
 
-  snapObjectToGrid(window.hero)
-  window.hero.width = GAME.grid.nodeSize
-  window.hero.height = GAME.grid.nodeSize
+  snapObjectToGrid(HERO.hero)
+  HERO.hero.width = GAME.grid.nodeSize
+  HERO.hero.height = GAME.grid.nodeSize
 }
 
 function createGridNodeAt(x, y) {
@@ -283,19 +283,19 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    let hero = window.hero
-    if(role.isPlayEditor) {
+    let hero = HERO.hero
+    if(PAGE.role.isPlayEditor) {
       hero = window.editingHero
       // single player only feature
     }
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
-    if(attemptingX > gridX + width - (((window.playerCameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+    if(attemptingX > gridX + width - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingX < gridX + (((window.playerCameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+    } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
       return false
-    } else if(attemptingY > gridY + height - (((window.playerCameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+    } else if(attemptingY > gridY + height - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       return false
-    } else if(attemptingY < gridY + (((window.playerCameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+    } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
       return false
     }
   }

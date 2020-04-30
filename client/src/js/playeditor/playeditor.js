@@ -23,7 +23,7 @@ import 'ace-builds/src-noconflict/mode-json';
 //GLOBALS
 /////////////////////
 /////////////////////
-window.playEditor = {
+window.PLAYEDITOR = {
   ctx: null,
   canvas: null
 }
@@ -64,18 +64,18 @@ window.onChangeTool = function(toolName) {
   document.getElementById(toolName + '-selector').className='button selected tool-selectors'
 
   // if(toolName === window.TOOLS.WORLD_EDITOR || toolName === window.TOOLS.HERO_EDITOR || toolName === window.TOOLS.SIMPLE_EDITOR || toolName === window.TOOLS.GAME_MANAGER) {
-  //   // playEditor.canvas.style="left: 400px;"
-  //   // playEditor.canvas.width = window.innerWidth - 400 - 180;
+  //   // PLAYEDITOR.canvas.style="left: 400px;"
+  //   // PLAYEDITOR.canvas.width = window.innerWidth - 400 - 180;
   // } else
   if(toolName === window.TOOLS.CUSTOM_GAME) {
     let width = document.getElementById("editor").getBoundingClientRect().width
-    playEditor.canvas.style=`left: ${width}px`
-    playEditor.canvas.width = window.innerWidth - width - 180;
+    PLAYEDITOR.canvas.style=`left: ${width}px`
+    PLAYEDITOR.canvas.width = window.innerWidth - width - 180;
   } else {
-    playEditor.canvas.style="left: 400px;"
-    playEditor.canvas.width = window.innerWidth - 400 - 180;
-    // playEditor.canvas.width = window.innerWidth;
-    // playEditor.canvas.style="left: 0px;"
+    PLAYEDITOR.canvas.style="left: 400px;"
+    PLAYEDITOR.canvas.width = window.innerWidth - 400 - 180;
+    // PLAYEDITOR.canvas.width = window.innerWidth;
+    // PLAYEDITOR.canvas.style="left: 0px;"
   }
 
   if(window.currentTool && window.currentTool === window.TOOLS.SIMPLE_EDITOR && toolName === window.TOOLS.ADD_OBJECT) {
@@ -108,15 +108,15 @@ window.onChangeTool = function(toolName) {
 /////////////////////
 /////////////////////
 function onPageLoad() {
-  playEditor.canvas = document.createElement("canvas");
-  playEditor.ctx = playEditor.canvas.getContext("2d");
-  playEditor.canvas.id = 'playeditor-canvas'
-  document.body.appendChild(playEditor.canvas);
-  playEditor.canvas.height = window.innerHeight;
-  playEditor.canvas.style="left: 400px;"
-  playEditor.canvas.width = window.innerWidth - 400 - 180;
+  PLAYEDITOR.canvas = document.createElement("canvas");
+  PLAYEDITOR.ctx = PLAYEDITOR.canvas.getContext("2d");
+  PLAYEDITOR.canvas.id = 'playeditor-canvas'
+  document.body.appendChild(PLAYEDITOR.canvas);
+  PLAYEDITOR.canvas.height = window.innerHeight;
+  PLAYEDITOR.canvas.style="left: 400px;"
+  PLAYEDITOR.canvas.width = window.innerWidth - 400 - 180;
 
-  mapEditor.onPageLoad(playEditor.canvas)
+  mapEditor.onPageLoad(PLAYEDITOR.canvas)
 
   input.init()
   camera.init()
@@ -176,7 +176,7 @@ function createMaze() {
 }
 
 function createArena(boundaries) {
-  // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (window.playerCameraHeight * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (window.playerCameraHeight * window.editingHero.zoomMultiplier)}
+  // let boundaries = {x: window.editingHero.x - (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier)/2 + window.editingHero.width/2, y: window.editingHero.y - (HERO.cameraHeight * window.editingHero.zoomMultiplier)/2 + window.editingHero.height/2, width: (window.CONSTANTS.PLAYER_CAMERA_WIDTH * window.editingHero.zoomMultiplier), height: (HERO.cameraHeight * window.editingHero.zoomMultiplier)}
 
   let parent = {
     id: 'parent-' + window.uniqueID(),
@@ -237,7 +237,7 @@ function onGameLoad() {
   objectEditor.loaded()
   addObject.loaded()
   worldEditor.loaded()
-  mapEditor.onGameLoad(playEditor.ctx, window.editingGame, window.camera)
+  mapEditor.onGameLoad(PLAYEDITOR.ctx, window.editingGame, window.camera)
 }
 
 function update(delta) {
@@ -254,7 +254,7 @@ function update(delta) {
 
 function render() {
   window.camera.multiplier = window.scaleMultiplier
-  camera.render(playEditor.ctx)
+  camera.render(PLAYEDITOR.ctx)
 }
 
 export default {

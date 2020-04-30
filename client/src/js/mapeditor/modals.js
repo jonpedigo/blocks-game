@@ -1,5 +1,5 @@
 function writeDialogue(object, cb) {
-  window.pageState.typingMode = true
+  window.PAGE.typingMode = true
   openWriteDialogueModal(object, (result) => {
     if(result && result.value[0] && result.value[0].length) {
       object.tags.heroUpdate = true
@@ -15,12 +15,12 @@ function writeDialogue(object, cb) {
       if(cb) cb(object)
       else window.socket.emit('editObjects', [{id: object.id, heroUpdate: object.heroUpdate, tags: object.tags}])
     }
-    window.pageState.typingMode = false
+    window.PAGE.typingMode = false
   })
 }
 
 function nameObject(object, cb) {
-  window.pageState.typingMode = true
+  window.PAGE.typingMode = true
   openNameObjectModal(object, (result) => {
     if(result && result.value[0] && result.value[0].length) {
       object.name = result.value[0]
@@ -30,7 +30,7 @@ function nameObject(object, cb) {
       if(cb) cb(object)
       else window.socket.emit('editObjects', [{id: object.id, name: object.name, namePosition: object.namePosition}])
     }
-    window.pageState.typingMode = false
+    window.PAGE.typingMode = false
   })
 }
 

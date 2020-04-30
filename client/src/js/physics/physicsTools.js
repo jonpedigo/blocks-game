@@ -4,7 +4,7 @@ import { Polygon } from 'collisions';
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
-// HERO CORRECTIONS
+// HERO.hero CORRECTIONS
 /////////////////////////////////////////////////////
 function heroCorrection(hero, removeObjects, respawnObjects) {
   hero.onGround = false
@@ -132,7 +132,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
   /////////////////////////////////////////////////////
-  // HERO EFFECTS ON COLLISION
+  // HERO.hero EFFECTS ON COLLISION
   /////////////////////////////////////////////////////
   const result = PHYSICS.objects[hero.id].createResult()
   const potentials = PHYSICS.objects[hero.id].potentials()
@@ -166,28 +166,28 @@ function containObjectWithinGridBoundaries(object) {
       objectToEdit = JSON.parse(JSON.stringify(object))
     }
 
-    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (hero && hero.id)) {
+    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (HERO.hero && HERO.hero.id)) {
       // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
-      let hero = window.hero
-      if(role.isPlayEditor) {
+      let hero = HERO.hero
+      if(PAGE.role.isPlayEditor) {
         hero = window.editingHero
       }
 
       let legal = true
-      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((window.playerCameraWidth * hero.zoomMultiplier)/2 )) {
-        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (window.playerCameraWidth * hero.zoomMultiplier)/2
+      if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((HERO.cameraWidth * hero.zoomMultiplier)/2 )) {
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (HERO.cameraWidth * hero.zoomMultiplier)/2
         legal = false
       }
-      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((window.playerCameraHeight * hero.zoomMultiplier)/2 )) {
-        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((window.playerCameraHeight * hero.zoomMultiplier)/2 )
+      if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((HERO.cameraHeight * hero.zoomMultiplier)/2 )) {
+        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((HERO.cameraHeight * hero.zoomMultiplier)/2 )
         legal = false
       }
-      if(objectToEdit.x < gameBoundaries.x + ((window.playerCameraWidth * hero.zoomMultiplier)/2)) {
-        objectToEdit.x = gameBoundaries.x + ((window.playerCameraWidth * hero.zoomMultiplier)/2)
+      if(objectToEdit.x < gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2)) {
+        objectToEdit.x = gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2)
         legal = false
       }
-      if(objectToEdit.y < gameBoundaries.y + ((window.playerCameraHeight * hero.zoomMultiplier)/2)) {
-        objectToEdit.y = gameBoundaries.y + ((window.playerCameraHeight * hero.zoomMultiplier)/2)
+      if(objectToEdit.y < gameBoundaries.y + ((HERO.cameraHeight * hero.zoomMultiplier)/2)) {
+        objectToEdit.y = gameBoundaries.y + ((HERO.cameraHeight * hero.zoomMultiplier)/2)
         legal = false
       }
       if(legal && object.tags.fresh){
@@ -444,7 +444,7 @@ function removeObject(object) {
     }
     delete PHYSICS.objects[object.id];
   } catch(e) {
-    console.error(e)
+    console.error(object, e)
   }
 }
 

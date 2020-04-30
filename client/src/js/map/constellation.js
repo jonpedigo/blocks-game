@@ -17,8 +17,8 @@ Star.prototype = {
     constructor: Star,
     render: function(){
 
-      let hero = window.hero
-      if(role.isPlayEditor) hero = window.editingHero
+      let hero = HERO.hero
+      if(PAGE.role.isPlayEditor) hero = window.editingHero
       let multiplier = (hero.animationZoomMultiplier)/window.constellationDistance
 
       context.beginPath();
@@ -49,12 +49,12 @@ function update(){
 }
 
 function animate(){
-  if(window.constellationDistance === window.hero.animationZoomMultiplier) {
+  if(window.constellationDistance === HERO.hero.animationZoomMultiplier) {
     update();
   }
 
-  let hero = window.hero
-  if(role.isPlayEditor) hero = window.editingHero
+  let hero = HERO.hero
+  if(PAGE.role.isPlayEditor) hero = window.editingHero
   /*
     Remove comments below these for a cool trailing effect & comment
     out the context.clearRect.

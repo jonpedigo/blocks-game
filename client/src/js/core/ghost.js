@@ -9,15 +9,15 @@ function init(){
     if(keysDown['188']){
       let heroNames = Object.keys(GAME.heros)
       for(let i = 0; i < heroNames.length; i++) {
-        if(window.hero.id === 'ghost') {
-          window.hero = GAME.heros[heroNames[heroNames.length-1]]
+        if(HERO.hero.id === 'ghost') {
+          HERO.hero = GAME.heros[heroNames[heroNames.length-1]]
           break
         }
-        if(GAME.heros[heroNames[i]].id === window.hero.id) {
+        if(GAME.heros[heroNames[i]].id === HERO.hero.id) {
           if(i === 0) {
-            window.hero = window.ghost
+            HERO.hero = HERO.ghost
           } else {
-            window.hero = GAME.heros[heroNames[i-1]]
+            HERO.hero = GAME.heros[heroNames[i-1]]
           }
           break;
         }
@@ -30,15 +30,15 @@ function init(){
     if(keysDown['190']){
       let heroNames = Object.keys(GAME.heros)
       for(let i = 0; i < heroNames.length; i++) {
-        if(window.hero.id === 'ghost') {
-          window.hero = GAME.heros[heroNames[0]]
+        if(HERO.hero.id === 'ghost') {
+          HERO.hero = GAME.heros[heroNames[0]]
           break
         }
-        if(GAME.heros[heroNames[i]].id === window.hero.id) {
+        if(GAME.heros[heroNames[i]].id === HERO.hero.id) {
           if(i === heroNames.length - 1) {
-            window.hero = window.ghost
+            HERO.hero = HERO.ghost
           } else {
-            window.hero = GAME.heros[heroNames[i+1]]
+            HERO.hero = GAME.heros[heroNames[i+1]]
           }
           break;
         }
@@ -54,22 +54,22 @@ function init(){
 }
 
 function update(delta) {
-  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: window.hero.id, ghost: role.isGhostHero}))
+  localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: HERO.hero.id, ghost: PAGE.role.isGhostHero}))
 
-  if(window.hero.id === 'ghost' && 16 in keysDown) {
+  if(HERO.hero.id === 'ghost' && 16 in keysDown) {
     if (38 in keysDown) { // Player holding up
-      hero.y -= GAME.grid.nodeSize
+      HERO.hero.y -= GAME.grid.nodeSize
     }
     if (40 in keysDown) { // Player holding down
-      hero.y += GAME.grid.nodeSize
+      HERO.hero.y += GAME.grid.nodeSize
     }
 
     if (37 in keysDown) { // Player holding left
-      hero.x -= GAME.grid.nodeSize
+      HERO.hero.x -= GAME.grid.nodeSize
     }
 
     if (39 in keysDown) { // Player holding right
-      hero.x += GAME.grid.nodeSize
+      HERO.hero.x += GAME.grid.nodeSize
     }
   }
 
@@ -78,17 +78,17 @@ function update(delta) {
 function getHero() {
   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
   if(ghostData && ghostData.selectedHeroId) {
-    window.ghost = ghostData.ghost
-    if(GAME.heros[ghostData.selectedHeroId]) window.hero = GAME.heros[ghostData.selectedHeroId]
+    HERO.ghost = ghostData.ghost
+    if(GAME.heros[ghostData.selectedHeroId]) HERO.hero = GAME.heros[ghostData.selectedHeroId]
   }
 
-  if(!window.ghost) window.ghost = JSON.parse(JSON.stringify(window.defaultHero))
-  window.ghost.color = 'rgba(255,255,255,0.1)'
-  window.ghost.arrowKeysBehavior = 'grid'
-  window.ghost.id = 'ghost'
-  gridTool.snapObjectToGrid(window.ghost)
-  window.hero = window.ghost
-  GAME.heros.ghost = window.ghost
+  if(!HERO.ghost) HERO.ghost = JSON.parse(JSON.stringify(window.defaultHero))
+  HERO.ghost.color = 'rgba(255,255,255,0.1)'
+  HERO.ghost.arrowKeysBehavior = 'grid'
+  HERO.ghost.id = 'ghost'
+  gridTool.snapObjectToGrid(HERO.ghost)
+  HERO.hero = HERO.ghost
+  GAME.heros.ghost = HERO.ghost
 }
 
 export default {

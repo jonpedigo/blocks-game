@@ -23,10 +23,10 @@ this.clearLimit = function() {
   this.limitY = null
 }
 
-this.setHeroX = function (ctx, hero = window.hero) {
+this.setHeroX = function (ctx, hero = HERO.hero) {
   this.x = (((hero.x + hero.width/2)*this.multiplier)) - window.playerCanvasWidth/2
 }
-this.setHeroY = function(ctx, hero = window.hero) {
+this.setHeroY = function(ctx, hero = HERO.hero) {
   this.y = (((hero.y + hero.height/2)*this.multiplier)) - window.playerCanvasHeight/2
 }
 
@@ -35,7 +35,7 @@ this.get = function(){
   return camera
 }
 
-this.set = function(ctx = window.ctx, hero = window.hero) {
+this.set = function(ctx = window.ctx, hero = HERO.hero) {
   this.multiplier = hero.zoomMultiplier / window.canvasMultiplier
   if(hero.animationZoomMultiplier) this.multiplier = hero.animationZoomMultiplier / window.canvasMultiplier
   this.multiplier = 1/this.multiplier

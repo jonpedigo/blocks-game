@@ -183,7 +183,7 @@ function init() {
       window.liveCustomGame.onGameUnloaded()
     }
 
-    if(role.isPlayEditor) {
+    if(PAGE.role.isPlayEditor) {
       window.editingObject = {
         id: null,
         i: null,

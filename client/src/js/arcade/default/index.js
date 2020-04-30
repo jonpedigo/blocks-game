@@ -60,13 +60,13 @@ function update(delta) {
 
 // only on client
 function render(ctx) {
-  if(window.hero) {
+  if(HERO.hero) {
 
     // got some gradients to work..
-    // let startx = (window.hero.x + 20)/window.camera.multiplier - window.camera.x
-    // let starty = (window.hero.y - 40)/window.camera.multiplier - window.camera.y
-    // let endx = (window.hero.x + 20)/window.camera.multiplier - window.camera.x
-    // let endy = (window.hero.y - 20)/window.camera.multiplier - window.camera.y
+    // let startx = (HERO.hero.x + 20)/window.camera.multiplier - window.camera.x
+    // let starty = (HERO.hero.y - 40)/window.camera.multiplier - window.camera.y
+    // let endx = (HERO.hero.x + 20)/window.camera.multiplier - window.camera.x
+    // let endy = (HERO.hero.y - 20)/window.camera.multiplier - window.camera.y
     // var cx=250;
     // var cy=250;
     // var r=30;
@@ -103,12 +103,12 @@ function render(ctx) {
     // ctx.strokeStyle = 'white'
     // ctx.lineWidth=1;
     //
-    // if(window.hero.directions.down) {
+    // if(HERO.hero.directions.down) {
     //   let sWidth = 17.5;
     //   let sHeight = 20;
     //   var path=new Path2D();
-    //   let x = window.hero.x/window.camera.multiplier - window.camera.x
-    //   let y = (window.hero.y-20)/window.camera.multiplier - window.camera.y
+    //   let x = HERO.hero.x/window.camera.multiplier - window.camera.x
+    //   let y = (HERO.hero.y-20)/window.camera.multiplier - window.camera.y
     //   path.moveTo(x + (sWidth/2) +5, y+ sHeight/2);
     //   path.lineTo(x + (sWidth/2), y+ (sHeight/2)-10);
     //   path.lineTo(x + (sWidth/2)-5, y + sHeight/2);

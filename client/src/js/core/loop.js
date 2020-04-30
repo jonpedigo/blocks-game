@@ -2,7 +2,7 @@ import map from '../map/index.js'
 import ghost from './ghost'
 import constellation from '../map/constellation.js'
 import mapEditor from '../mapeditor/index.js'
-import playEditor from '../playeditor/playeditor.js'
+import PLAYEDITOR from '../playeditor/playeditor.js'
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@ var fps, startTime, now, deltaRender, deltaNetwork, thenRender, thenNetwork, the
 window.w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 window.startGameLoop = function() {
-  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (role.isPlayer && !window.hero)) {
-    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (role.isPlayer && !window.hero))
+  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (PAGE.role.isPlayer && !window.HERO.hero)) {
+    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (PAGE.role.isPlayer && !window.HERO.hero))
     setTimeout(startGameLoop, 1000)
     return
   }
@@ -67,7 +67,7 @@ var mainLoop = function () {
     update(deltaUpdate / 1000);
   }
 
-  if (role.isHost && deltaNetwork > networkInterval) {
+  if (PAGE.role.isHost && deltaNetwork > networkInterval) {
     thenNetwork = now - (deltaNetwork % networkInterval);
     networkUpdate()
   }
@@ -81,36 +81,31 @@ var mainLoop = function () {
 ///////////////////////////////
 
 function update(delta) {
-  if(role.isPlayer) {
-    if(role.isGhost) {
+  if(PAGE.role.isPlayer) {
+    if(PAGE.role.isGhost) {
       ghost.update()
     }
 
-    if(!role.isGhost){
-      localStorage.setItem('hero', JSON.stringify(window.hero))
+    if(!PAGE.role.isGhost){
+      localStorage.setItem('hero', JSON.stringify(HERO.hero))
       // we are locally updating the hero input as host
-      if(!role.isHost && !window.pageState.typingMode) {
-        window.socket.emit('sendHeroInput', window.keysDown, window.hero.id)
+      if(!PAGE.role.isHost && !window.PAGE.typingMode) {
+        window.socket.emit('sendHeroInput', window.keysDown, HERO.hero.id)
       }
     }
   }
 
   GAME.update(delta)
-
-  if(window.remoteHeroMapEditorState) {
-    mapEditor.update(delta, window.remoteHeroMapEditorState)
-  } else {
-    mapEditor.update(delta)
-  }
+  mapEditor.update(delta)
 }
 
 function render(delta) {
-  if(role.isPlayEditor) {
-    playEditor.update(delta)
-    playEditor.render();
+  if(PAGE.role.isPlayEditor) {
+    PLAYEDITOR.update(delta)
+    PLAYEDITOR.render();
   }
 
-  if(role.isPlayer) {
+  if(PAGE.role.isPlayer) {
     map.render(ctx, delta);
     /// DEFAULT GAME FX
 
@@ -128,14 +123,12 @@ function render(delta) {
       window.liveCustomGame.render(ctx, delta)
     }
 
-    if(window.hero.animationZoomMultiplier) {
+    if(HERO.hero.animationZoomMultiplier) {
       constellation.animate()
     }
   }
 
-  if(!role.isPlayEditor) {
-    mapEditor.render(window.ctx, GAME)
-  }
+  mapEditor.render()
 }
 
 function networkUpdate() {

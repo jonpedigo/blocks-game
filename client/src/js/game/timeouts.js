@@ -15,7 +15,7 @@ function update(delta) {
 }
 
 window.addTimeout = function(id, numberOfSeconds, fx) {
-  if(role.isHost) {
+  if(PAGE.role.isHost) {
     let timeout = {
       id,
       timeRemaining: numberOfSeconds,

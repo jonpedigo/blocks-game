@@ -3,9 +3,9 @@ const parameters = {
 
 }
 
-window.mazeWidthMultiplier = 1;
 function genMaze (width = 10, height = 10, xOff, yOff) {
   let maze = generateMaze([height, width])
+  let mazeWidthMultiplier = 1;
 
   return maze.cells.reduce((acc, row, y) => {
     acc.push(...row.map((cell, x) => {

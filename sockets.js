@@ -226,7 +226,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   ///////////////////////////
   ///////////////////////////
-  //HERO
+  //HERO.hero
   ///////////////////////////
   socket.on('sendHeroInput', (input, hero) => {
     io.emit('onSendHeroInput', input, hero)

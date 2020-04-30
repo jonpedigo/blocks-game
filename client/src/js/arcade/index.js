@@ -37,7 +37,7 @@ function onPageLoad() {
 window.changeGame = function(id) {
   window.customGame = customGames[id]
   window.customCompendium = customCompendiums[id]
-  if(role.isPlayEditor){
+  if(PAGE.role.isPlayEditor){
     document.getElementById('current-game-id').innerHTML = id
     document.getElementById('game-id').value = id
   }

@@ -21,93 +21,64 @@ window.camera = new cameraTool()
 function establishRoleFromQuery() {
   // ROLE SETUP
   const { getParameterByName } = window
-  window.role = {}
-  role.isHost = false
-  role.isPlayer = true
+  window.PAGE.role = {}
+  PAGE.role.isHost = false
+  PAGE.role.isPlayer = true
 
   if(window.getParameterByName('playEditor')) {
-    role.isPlayEditor = true
-    role.isPlayer = false
+    PAGE.role.isPlayEditor = true
+    PAGE.role.isPlayer = false
   }
 
   if(window.getParameterByName('host')) {
-    role.isHost = true
+    PAGE.role.isHost = true
   }
 
   if(window.getParameterByName('mapEditor')) {
-    role.isMapEditor = true
+    PAGE.role.isMapEditor = true
   }
 
   if(window.getParameterByName('arcadeMode')) {
-    role.isHost = true
-    role.isArcadeMode = true
-    role.isPlayer = true
+    PAGE.role.isHost = true
+    PAGE.role.isArcadeMode = true
+    PAGE.role.isPlayer = true
   }
 
   if(window.getParameterByName('ghost')) {
-    role.isPlayEditor = false
-    role.isPlayer = true
-    role.isGhost = true
+    PAGE.role.isPlayEditor = false
+    PAGE.role.isPlayer = true
+    PAGE.role.isGhost = true
   }
 }
 
 function logRole() {
-  const { role } = window
-
-  if(role.isHost) {
-    if(role.isArcadeMode) console.log('host-local')
+  if(PAGE.role.isHost) {
+    if(PAGE.role.isArcadeMode) console.log('host-local')
     else console.log('host')
   } else {
     console.log('non host')
   }
 
-  if(role.isPlayEditor) {
+  if(PAGE.role.isPlayEditor) {
     console.log('editor')
   }
-  if(role.isPlayer) {
-    if(role.isGhost){
+  if(PAGE.role.isPlayer) {
+    if(PAGE.role.isGhost){
       console.log('player-ghost')
     } else console.log('player')
   }
 }
 
-function initializeCanvas() {
-  if(!role.isPlayEditor) {
-    var editor = document.getElementById("play-editor");
-    editor.style = 'display:none';
-
-    // Canvas SETUP
-    window.canvas = document.createElement("canvas");
-    window.ctx = window.canvas.getContext("2d");
-    if(role.isPlayer) {
-      function onResize() {
-        window.canvasMultiplier = window.innerWidth/640;
-        window.playerCanvasWidth = 640 * window.canvasMultiplier
-        window.playerCanvasHeight = 320 * window.canvasMultiplier
-        window.canvas.width = window.playerCanvasWidth;
-        window.canvas.height = window.playerCanvasHeight;
-      }
-      window.addEventListener("resize", onResize);
-      onResize()
-    }
-
-    window.canvas.id = 'game-canvas'
-    document.body.appendChild(window.canvas);
-  }
-  window.playerCameraWidth = 640
-  window.playerCameraHeight = 320
-}
-
 function getHeroId() {
-  // GET HERO ID
-  if(role.isGhost) {
-    window.heroId = 'ghost'
-  } if(role.isPlayer) {
+  // GET HERO.hero ID
+  if(PAGE.role.isGhost) {
+    HERO.id = 'ghost'
+  } if(PAGE.role.isPlayer) {
     let savedHero = localStorage.getItem('hero');
     if(savedHero && JSON.parse(savedHero).id){
-      window.heroId = JSON.parse(savedHero).id
+      HERO.id = JSON.parse(savedHero).id
     } else {
-      window.heroId = 'hero-'+window.uniqueID()
+      HERO.id = 'hero-'+window.uniqueID()
     }
   }
 }
@@ -119,25 +90,27 @@ function getHeroId() {
 ///////////////////////////////
 ///////////////////////////////
 function onPageLoad() {
-  window.pageState = {
+  window.PAGE = {
     gameLoaded: false,
-    pageLoaded: false,
   }
   establishRoleFromQuery()
   logRole()
-  initializeCanvas()
   getHeroId()
-  if(role.isPlayEditor) {
+  if(PAGE.role.isPlayEditor) {
     playEditor.onPageLoad()
   } else {
-    mapEditor.onPageLoad(window.canvas)
-    constellation.init(window.ctx)
+    map.onPageLoad()
+    mapEditor.onPageLoad(MAP.canvas)
+    constellation.init(MAP.ctx)
   }
-  if(role.isGhost) {
+
+  if(PAGE.role.isGhost) {
     ghost.init()
   }
+
   gameManager.onPageLoad()
   arcade.onPageLoad()
+
   events.init()
   sockets.init()
 
@@ -155,9 +128,9 @@ function onPageLoad() {
 ///////////////////////////////
 ///////////////////////////////
 function askCurrentGame(cb) {
-  if(role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode) {
     let game = testArcade
-    window.hero = window.findHeroInNewGame(game, { id: window.heroId })
+    HERO.hero = window.findHeroInNewGame(game, { id: HERO.id })
     cb(game)
   } else {
     // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
@@ -167,7 +140,7 @@ function askCurrentGame(cb) {
       if(currentGameExists) {
         cb(game)
       } else {
-        if(role.isPlayEditor) {
+        if(PAGE.role.isPlayEditor) {
           const { value: loadGameId } = await Swal.fire({
             title: 'Load Game',
             text: "Enter id of game",
@@ -229,18 +202,18 @@ window.loadGame = function(game, options) {
   GAME.gameState.loaded = true
 
   // if you are a player and you dont already have a hero from the server ask for one
-  if(role.isPlayer && !role.isGhost && !window.hero) {
+  if(PAGE.role.isPlayer && !PAGE.role.isGhost && !window.HERO.hero) {
     window.socket.on('onJoinGame', (hero) => {
-      if(hero.id == window.heroId) {
-        window.hero = hero
+      if(hero.id == HERO.id) {
+        HERO.hero = hero
       }
       GAME.loadHeros(game, options)
       window.onGameLoad(isFirstLoad)
     })
-    setTimeout(function() { window.socket.emit('askJoinGame', window.heroId) }, 1000)
+    setTimeout(function() { window.socket.emit('askJoinGame', HERO.id) }, 1000)
   } else {
     GAME.loadHeros(game, options)
-    if(role.isGhost) ghost.getHero()
+    if(PAGE.role.isGhost) ghost.getHero()
     window.onGameLoad(isFirstLoad)
   }
 }
@@ -252,8 +225,8 @@ window.loadGame = function(game, options) {
 ///////////////////////////////
 ///////////////////////////////
 window.onGameLoad = function(isFirstLoad) {
-  window.pageState.gameLoaded = true
-  if(role.isPlayEditor) {
+  window.PAGE.gameLoaded = true
+  if(PAGE.role.isPlayEditor) {
     playEditor.onGameLoad()
   } else {
     mapEditor.onGameLoad(window.ctx, GAME, camera)
