@@ -160,14 +160,14 @@ GAME.onUpdate = function(delta) {
       GAME.heroList.forEach(hero => {
         if(hero.flags.paused) return
         if(GAME.heroInputs[hero.id]) input.onUpdate(hero, GAME.heroInputs[hero.id], delta)
-        window.local.on('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
+        window.local.emit('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
       })
       //////////////////////////////
       //// OBJECTS
       GAME.ai.onUpdate(GAME.objects, delta)
       GAME.resetPaths = false
       GAME.objects.forEach((object) => {
-        window.local.on('onUpdateObject', object, delta)
+        window.local.emit('onUpdateObject', object, delta)
       })
       //// UPDATE GAME STATE PHASE -- END
       //////////////////////////////

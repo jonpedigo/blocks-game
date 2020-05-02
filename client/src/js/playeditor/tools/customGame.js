@@ -1,7 +1,6 @@
 function init() {
   var saveCustomGameFx = document.getElementById("save-custom-fx");
   saveCustomGameFx.addEventListener('click', () => {
-    console.log('?')
     window.saveCodeEditor()
   })
 
@@ -33,7 +32,7 @@ function init() {
   window.saveCodeEditor = function() {
     try {
       let customFx = window.customGameEditor.getValue()
-      window.evalLiveCustomFx(customFx)()
+      window.ARCADE.evalLiveCustomFx(customFx)()
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)
     } catch (e) {

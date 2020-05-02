@@ -6,6 +6,8 @@ class EventEmitter {
   }
 
   emit(eventName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if(eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
+
     var args = new Array(arguments.length);
 
     let event = this.events[eventName];

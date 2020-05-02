@@ -438,32 +438,32 @@ function init() {
   window.socket.on('onSetGame', (game) => {
     GAME.unload()
     PAGE.loadGame(game, { resetHeros: true })
-    window.changeGame(game.id)
+    ARCADE.changeGame(game.id)
   })
 
   // this is from branch merge
   window.socket.on('onSetGameJSON', (game) => {
     GAME.unload()
     PAGE.loadGame(game)
-    window.changeGame(game.id)
+    ARCADE.changeGame(game.id)
   })
 
 
   // window.socket.on('onNewGame', () => {
-  //   window.changeGame(null)
+  //   ARCADE.changeGame(null)
   //   GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   // })
 
   window.socket.on('onGameSaved', (id) => {
-    window.changeGame(id)
+    ARCADE.changeGame(id)
   })
 
   window.socket.on('onUpdateCustomGameFx', (customFx) => {
-    window.local.on('onUpdateCustomGameFx', customFx)
+    window.local.emit('onUpdateCustomGameFx', customFx)
   })
 
-  window.socket.on('onCustomFxEvent', (event) => {
-    window.local.on('onCustomFxEvent', event)
+  window.socket.on('onCustomFxEvent', (eventName) => {
+    window.local.emit('onCustomFxEvent', eventName)
   })
 
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {

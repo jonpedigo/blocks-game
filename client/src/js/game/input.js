@@ -202,7 +202,7 @@ function onKeyDown(keyCode, hero) {
     hero.inputDirection = 'right'
   }
 
-  window.local.on('onKeyDown', keyCode, hero)
+  window.local.emit('onKeyDown', keyCode, hero)
 }
 
 export default {

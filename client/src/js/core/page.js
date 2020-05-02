@@ -78,7 +78,7 @@ class Page{
     window.local.emit('onPageLoaded')
 
     PAGE.askCurrentGame((game) => {
-      window.changeGame(game.id)
+      ARCADE.changeGame(game.id)
       PAGE.loadGame(game)
       window.startGameLoop()
     })

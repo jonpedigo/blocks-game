@@ -16,9 +16,9 @@ import spencer1Game from './spencer1'
 import spencer1Compendium from './spencer1'
 
 let customGames = {
-  default: defaultCustomGame,
-  pacman: pacmanGame,
-  spencer1: spencer1Game,
+  default: new defaultCustomGame(),
+  pacman: new pacmanGame(),
+  spencer1: new spencer1Game(),
 }
 
 let customCompendiums = {
@@ -31,16 +31,16 @@ class Arcade{
 
   onPageLoaded() {
     ARCADE.customGame = null
-    ARCADE.defaultCustomGame = defaultCustomGame
+    ARCADE.defaultCustomGame = customGames.default
 
     ARCADE.customCompendium = null
     ARCADE.defaultCompendium = defaultCompendium
   }
 
-  onUpdateCustomGameFx() {
+  onUpdateCustomGameFx(customFx) {
     if(PAGE.role.isHost) {
       try {
-        window.setLiveCustomFx(customFx)
+        ARCADE.setLiveCustomFx(customFx)
       } catch (e) {
         console.log(e)
       }
@@ -51,34 +51,34 @@ class Arcade{
     }
   }
 
-  onCustomFxEvent() {
-    if(PAGE.role.isHost && ARCADE.liveCustomGame && ARCADE.liveCustomGame[event]) {
-      ARCADE.liveCustomGame[event]()
+  onCustomFxEvent(eventName) {
+    if(PAGE.role.isHost && ARCADE.liveCustomGame && ARCADE.liveCustomGame[eventName]) {
+      ARCADE.liveCustomGame[eventName]()
     }
+  }
+
+  evalLiveCustomFx(customFx) {
+    return eval(`(function a(pathfinding, gridTool, collisions, particles, drawTools) {
+        ${customFx}
+      return CustomGame })`)
+  }
+
+  setLiveCustomFx(customFx) {
+    customFx = ARCADE.evalLiveCustomFx(customFx)
+    customFx = customFx(pathfinding, gridTool, collisions, particles, drawTools)
+    customFx = new customFx
+    ARCADE.liveCustomGame = customFx
+  }
+
+  changeGame(id) {
+    ARCADE.customGame = customGames[id]
+    ARCADE.customCompendium = customCompendiums[id]
+    if(PAGE.role.isPlayEditor){
+      document.getElementById('current-game-id').innerHTML = id
+      document.getElementById('game-id').value = id
+    }
+    GAME.id = id
   }
 }
 
 window.ARCADE = new Arcade()
-
-window.changeGame = function(id) {
-  ARCADE.customGame = customGames[id]
-  ARCADE.customCompendium = customCompendiums[id]
-  if(PAGE.role.isPlayEditor){
-    document.getElementById('current-game-id').innerHTML = id
-    document.getElementById('game-id').value = id
-  }
-  GAME.id = id
-}
-
-window.evalLiveCustomFx = function(customFx) {
-  customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles, drawTools) {
-    const w = window
-    ${customFx} return { onGameLoaded, onGameStart, onKeyDown, onUpdate, onUpdateObject, onUpdateHero, onObjectCollide, onHeroCollide, onHeroInteract, onRender, onGameUnload } })`)
-  return customFx
-}
-
-window.setLiveCustomFx = function(customFx) {
-  customFx = window.evalLiveCustomFx(customFx)
-  customFx = customFx(pathfinding, gridTool, window.camera, collisions, particles, drawTools)
-  ARCADE.liveCustomGame = customFx
-}
