@@ -141,7 +141,7 @@ function init() {
   }
 
   window.findHero = function() {
-    camera.setCamera(ctx, w.editingGame.heros[window.editingHero.id])
+    camera.setCamera(PLAYEDITOR.canvas.ctx, w.editingGame.heros[window.editingHero.id])
   }
 
   window.setEditorToAnyHero = function () {

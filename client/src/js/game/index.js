@@ -1,15 +1,13 @@
-import hero from './hero.js'
 import timeouts from './timeouts'
 import ai from './ai'
 import gridUtil from '../utils/grid.js'
 import input from './input.js'
 import pathfinding from '../utils/pathfinding.js'
-import objects from './objects.js'
 import gameState from './gameState.js'
 import world from './world.js'
 import tags from './tags.js'
-import './events/index'
-import './game'
+import objects from './objects'
+import heros from './heros'
 
 window.GAME = {
   pfgrid: null,
@@ -23,16 +21,15 @@ window.GAME = {
   ai: ai,
 }
 
-function onPageLoad() {
-  input.onPageLoad()
+GAME.onPageLoad = function() {
   world.setDefault()
   gameState.setDefault()
   tags.setDefault()
-  objects.setDefault()
-  if(!window.isPlayEditor) {
-    hero.setDefault()
-  }
   timeouts.setDefault()
+
+  input.onPageLoad()
+  heros.onPageLoad()
+  objects.onPageLoad()
 }
 
 GAME.load = function(game){
@@ -86,6 +83,8 @@ GAME.load = function(game){
   if(PAGE.role.isPlayEditor) {
     window.gamestateeditor.update(GAME.gameState)
   }
+
+  GAME.gameState.loaded = true
 }
 
 GAME.loadHeros = function(game, options = { resetHeros: false }) {
@@ -110,18 +109,12 @@ GAME.loadHeros = function(game, options = { resetHeros: false }) {
   GAME.heroList.forEach(({id}) => {
     PHYSICS.addObject(GAME.heros[id])
   })
+
+  window.local.emit('onHerosLoaded')
 }
 
 GAME.unload = function() {
-  if(GAME.defaultCustomGame) {
-    GAME.defaultCustomGame.onGameUnloaded()
-  }
-  if(GAME.customGame) {
-    GAME.customGame.onGameUnloaded()
-  }
-  if(GAME.liveCustomGame) {
-    GAME.liveCustomGame.onGameUnloaded()
-  }
+  window.local.emit('onGameUnloaded')
 
   if(PAGE.role.isPlayEditor) {
     window.editingObject = {
@@ -143,15 +136,11 @@ GAME.unload = function() {
   GAME.gameState = null
 }
 
-function onUpdate(delta) {
+GAME.onUpdate = function(delta) {
   GAME.heroList = []
   window.forAllHeros((hero) => {
     GAME.heroList.push(hero)
   })
-
-  if(HERO.hero && HERO.hero.id === 'ghost') {
-    input.update(HERO.hero, GAME.keysDown, delta)
-  }
 
   if(PAGE.role.isHost) {
     // remove second part when a player can host a multiplayer game
@@ -171,39 +160,14 @@ function onUpdate(delta) {
       GAME.heroList.forEach(hero => {
         if(hero.flags.paused) return
         if(GAME.heroInputs[hero.id]) input.onUpdate(hero, GAME.heroInputs[hero.id], delta)
-        //// DEFAULT GAME UPDATE
-        if(GAME.defaultCustomGame) {
-          GAME.defaultCustomGame.onUpdateHero(hero, GAME.heroInputs[hero.id], delta)
-        }
-        //////////////////////////////
-        //// CUSTOM GAME UPDATE
-        if(GAME.customGame) {
-          GAME.customGame.onUpdateHero(hero, GAME.heroInputs[hero.id], delta)
-        }
-        //////////////////////////////
-        //// LIVE CUSTOM GAME UPDATE
-        if(GAME.liveCustomGame) {
-          GAME.liveCustomGame.onUpdateHero(hero, GAME.heroInputs[hero.id], delta)
-        }
+        window.local.on('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
       })
       //////////////////////////////
       //// OBJECTS
       GAME.ai.onUpdate(GAME.objects, delta)
       GAME.resetPaths = false
       GAME.objects.forEach((object) => {
-        if(GAME.defaultCustomGame) {
-          GAME.defaultCustomGame.onUpdateObject(object, delta)
-        }
-        //////////////////////////////
-        //// CUSTOM GAME UPDATE
-        if(GAME.customGame) {
-          GAME.customGame.onUpdateObject(object, delta)
-        }
-        //////////////////////////////
-        //// LIVE CUSTOM GAME UPDATE
-        if(GAME.liveCustomGame) {
-          GAME.liveCustomGame.onUpdateObject(object, delta)
-        }
+        window.local.on('onUpdateObject', object, delta)
       })
       //// UPDATE GAME STATE PHASE -- END
       //////////////////////////////
@@ -255,9 +219,11 @@ function onUpdate(delta) {
       //// 4. SPECIAL EVENT PHASE - START
       //////////////////////////////
       //// ANIMATION
-      if(hero.animationZoomTarget) {
-        heroZoomAnimation(hero)
-      }
+      GAME.heroList.forEach((hero) => {
+        if(hero.animationZoomTarget) {
+          window.heroZoomAnimation(hero)
+        }
+      })
       //////////////////////////////
       //// ANTICIPATE OBJECT
       if(PAGE.role.isHost && window.anticipatedObject) {
@@ -279,9 +245,4 @@ function onUpdate(delta) {
     gridUtil.updateGridObstacles()
     GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
   }
-}
-
-export default {
-  onPageLoad,
-  onUpdate,
 }

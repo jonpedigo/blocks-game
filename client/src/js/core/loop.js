@@ -1,9 +1,4 @@
-import map from '../map/index.js'
-import ghost from './ghost'
-import constellation from '../map/constellation.js'
 import mapEditor from '../mapeditor/index.js'
-import PLAYEDITOR from '../playeditor/playeditor.js'
-import gameManager from '../game'
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -82,37 +77,21 @@ var mainLoop = function () {
 ///////////////////////////////
 
 function update(delta) {
-  if(PAGE.role.isPlayEditor) {
-    PLAYEDITOR.onUpdate(delta)
-  }
+  window.local.emit('onUpdate', delta)
 
-  if(PAGE.role.isPlayer) {
-    if(PAGE.role.isGhost) {
-      ghost.onUpdate()
-    }
-
-    if(!PAGE.role.isGhost){
-      localStorage.setItem('hero', JSON.stringify(HERO.hero))
-      // we are locally updating the hero input as host
-      if(!PAGE.role.isHost && !PAGE.typingMode) {
-        window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
-      }
+  if(PAGE.role.isPlayer && !PAGE.role.isGhost){
+    localStorage.setItem('hero', JSON.stringify(HERO.hero))
+    // we are locally updating the hero input as host
+    if(!PAGE.role.isHost && !PAGE.typingMode) {
+      window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
     }
   }
 
-  gameManager.onUpdate(delta)
   mapEditor.onUpdate(delta)
 }
 
 function render(delta) {
-  if(PAGE.role.isPlayEditor) {
-    PLAYEDITOR.onRender(delta);
-  }
-
-  if(PAGE.role.isPlayer) {
-    map.onRender(delta);
-  }
-
+  window.local.emit('onRender', delta)
   mapEditor.onRender(delta)
 }
 

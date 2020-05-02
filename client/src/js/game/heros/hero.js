@@ -1,85 +1,115 @@
-import pathfinding from '../utils/pathfinding.js'
-import collisions from '../utils/collisions'
-import grid from '../utils/grid.js'
+import pathfinding from '../../utils/pathfinding.js'
+import collisions from '../../utils/collisions'
+import grid from '../../utils/grid.js'
 
-window.HERO = {
-  cameraWidth: 640,
-  cameraHeight: 320
-}
-
-function setDefault() {
-  window.defaultHero = {
-  	width: 40,
-  	height: 40,
-  	velocityX: 0,
-  	velocityY: 0,
-  	velocityMax: 200,
-    color: 'white',
-  	// accY: 0,
-  	// accX: 0,
-  	// accDecayX: 0,
-  	// accDecayY: 0,
-  	speed: 150,
-  	arrowKeysBehavior: 'flatDiagonal',
-    actionButtonBehavior: 'dropWall',
-  	jumpVelocity: -480,
-  	// spawnPointX: (40) * 20,
-  	// spawnPointY: (40) * 20,
-  	tags: {
-      obstacle: true,
-      hero: true,
-      isPlayer: true,
-      monsterDestroyer: false,
-      gravity: false,
-      filled: true,
-    },
-  	zoomMultiplier: 1.875,
-    // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
-    // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
-    lives: 10,
-    score: 0,
-    chat: [],
-    flags : {
-      showChat: false,
-      showScore: false,
-      showLives: false,
-      paused: false,
-    },
-    directions: {
-      up: false,
-      down: false,
-      right: false,
-      left: false,
-    },
+class Hero{
+  constructor() {
+    this.cameraWidth = 640,
+    this.cameraHeight = 320
+    this.setDefault()
   }
 
-  window.local.on('onGridLoaded', () => {
-    window.defaultHero.x = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
-    window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
+  joinGame(cb) {
+    window.socket.on('onJoinGame', (hero) => {
+      if(hero.id == HERO.id) {
+        HERO.hero = hero
+      }
+      cb()
+    })
+    setTimeout(function() { window.socket.emit('askJoinGame', HERO.id) }, 1000)
+  }
 
-    window.defaultHero.subObjects = {
-      actionTriggerArea: {
-        x: 0, y: 0, width: 40, height: 40,
-        actionTriggerArea: true,
-        relativeX: -GAME.grid.nodeSize,
-        relativeY: -GAME.grid.nodeSize,
-        relativeWidth: GAME.grid.nodeSize * 2,
-        relativeHeight: GAME.grid.nodeSize * 2,
-        changeWithDirection: false,
-        tags: { obstacle: false, invisible: true, stationary: true },
-      },
-      spear: {
-        x: 0, y: 0, width: 40, height: 40,
-        relativeX: GAME.grid.nodeSize/5,
-        relativeY: -GAME.grid.nodeSize,
-        relativeWidth: -GAME.grid.nodeSize * .75,
-        relativeHeight: 0,
-        changeWithDirection: true,
-        tags: { monsterDestroyer: true, obstacle: false },
+  getHeroId() {
+    // GET HERO.hero ID
+    if(PAGE.role.isGhost) {
+      console.log('?')
+      HERO.id = 'ghost'
+    } if(PAGE.role.isPlayer) {
+      let savedHero = localStorage.getItem('hero');
+      if(savedHero && JSON.parse(savedHero).id){
+        HERO.id = JSON.parse(savedHero).id
+      } else {
+        HERO.id = 'hero-'+window.uniqueID()
       }
     }
-  })
+  }
+
+  setDefault() {
+    window.defaultHero = {
+    	width: 40,
+    	height: 40,
+    	velocityX: 0,
+    	velocityY: 0,
+    	velocityMax: 200,
+      color: 'white',
+    	// accY: 0,
+    	// accX: 0,
+    	// accDecayX: 0,
+    	// accDecayY: 0,
+    	speed: 150,
+    	arrowKeysBehavior: 'flatDiagonal',
+      actionButtonBehavior: 'dropWall',
+    	jumpVelocity: -480,
+    	// spawnPointX: (40) * 20,
+    	// spawnPointY: (40) * 20,
+    	tags: {
+        obstacle: true,
+        hero: true,
+        isPlayer: true,
+        monsterDestroyer: false,
+        gravity: false,
+        filled: true,
+      },
+    	zoomMultiplier: 1.875,
+      // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
+      // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
+      lives: 10,
+      score: 0,
+      chat: [],
+      flags : {
+        showChat: false,
+        showScore: false,
+        showLives: false,
+        paused: false,
+      },
+      directions: {
+        up: false,
+        down: false,
+        right: false,
+        left: false,
+      },
+    }
+
+    window.local.on('onGridLoaded', () => {
+      window.defaultHero.x = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
+      window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
+
+      window.defaultHero.subObjects = {
+        actionTriggerArea: {
+          x: 0, y: 0, width: 40, height: 40,
+          actionTriggerArea: true,
+          relativeX: -GAME.grid.nodeSize,
+          relativeY: -GAME.grid.nodeSize,
+          relativeWidth: GAME.grid.nodeSize * 2,
+          relativeHeight: GAME.grid.nodeSize * 2,
+          changeWithDirection: false,
+          tags: { obstacle: false, invisible: true, stationary: true },
+        },
+        spear: {
+          x: 0, y: 0, width: 40, height: 40,
+          relativeX: GAME.grid.nodeSize/5,
+          relativeY: -GAME.grid.nodeSize,
+          relativeWidth: -GAME.grid.nodeSize * .75,
+          relativeHeight: 0,
+          changeWithDirection: true,
+          tags: { monsterDestroyer: true, obstacle: false },
+        }
+      }
+    })
+  }
 }
+
+window.HERO = new Hero()
 
 window.spawnHero = function (hero) {
   // hero spawn point takes precedence
@@ -257,8 +287,4 @@ window.forAllHeros = function (fx) {
   Object.keys(GAME.heros).forEach((id) => {
     fx(GAME.heros[id], id)
   })
-}
-
-export default {
-  setDefault,
 }

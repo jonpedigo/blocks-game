@@ -26,13 +26,19 @@ let customCompendiums = {
   spencer1: spencer1Compendium,
 }
 
-function onPageLoad() {
-  GAME.customGame = null
-  GAME.defaultCustomGame = defaultCustomGame
+class Arcade{
+  constructor() {}
 
-  window.customCompendium = null
-  window.defaultCompendium = defaultCompendium
+  onPageLoad() {
+    GAME.customGame = null
+    GAME.defaultCustomGame = defaultCustomGame
+
+    window.customCompendium = null
+    window.defaultCompendium = defaultCompendium
+  }
 }
+
+window.ARCADE = new Arcade()
 
 window.changeGame = function(id) {
   GAME.customGame = customGames[id]
@@ -55,8 +61,4 @@ window.setLiveCustomFx = function(customFx) {
   customFx = window.evalLiveCustomFx(customFx)
   customFx = customFx(pathfinding, gridTool, window.camera, collisions, particles, drawTools)
   GAME.liveCustomGame = customFx
-}
-
-export default {
-  onPageLoad
 }

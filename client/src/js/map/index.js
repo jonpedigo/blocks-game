@@ -8,7 +8,7 @@ window.MAP = {
   camera: new cameraTool()
 }
 
-function onPageLoad() {
+MAP.onPageLoad = function() {
   document.getElementById("play-editor").style = 'display:none';
 
   // Canvas SETUP
@@ -29,30 +29,9 @@ function onPageLoad() {
   document.body.appendChild(MAP.canvas);
 }
 
-function onRender(delta) {
+MAP.onRender = function(delta) {
   render.update()
-
-  /// DEFAULT GAME FX
-  if(GAME.defaultCustomGame) {
-    GAME.defaultCustomGame.onRender(MAP.ctx, delta)
-  }
-
-  /// CUSTOM GAME FX
-  if(GAME.customGame) {
-    GAME.customGame.onRender(MAP.ctx, delta)
-  }
-
-  /// CUSTOM GAME FX
-  if(GAME.liveCustomGame) {
-    GAME.liveCustomGame.onRender(MAP.ctx, delta)
-  }
-
   if(PAGE.role.isPlayer && HERO.hero.animationZoomMultiplier) {
     constellation.onRender()
   }
-}
-
-export default {
-  onPageLoad,
-  onRender,
 }

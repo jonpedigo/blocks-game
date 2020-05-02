@@ -98,7 +98,7 @@ function init() {
     }
   }
 
-  window.objectNoneToggle = document.getElementById("add-none")
+  window.objectNoneToggle = document.getElementById("object-none")
   window.setObjectSpawnToggle = document.getElementById('set-spawn-object')
   window.selectorObjectToggle = document.getElementById('select-object')
   window.setObjectPathfindingLimitToggle = document.getElementById('set-pathfinding-limit')
@@ -155,7 +155,7 @@ window.emitEditObjectsPos = function() {
 window.findObject = function() {
   let editorState = window.objecteditor.get()
   if(editorState.id) {
-    camera.setCamera(ctx, editorState)
+    camera.setCamera(PLAYEDITOR.canvas.ctx, editorState)
   }
 }
 

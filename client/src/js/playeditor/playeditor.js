@@ -257,9 +257,7 @@ function onRender() {
   camera.render(PLAYEDITOR.ctx)
 }
 
-export default {
-  onPageLoad,
-  onGameLoad,
-  onRender,
-  onUpdate,
-}
+PLAYEDITOR.onPageLoad = onPageLoad
+PLAYEDITOR.onGameLoad = onGameLoad
+PLAYEDITOR.onRender = onRender
+PLAYEDITOR.onUpdate = onUpdate

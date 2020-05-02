@@ -1,6 +1,5 @@
 import gridTool from '../utils/grid.js'
 
-
 function init() {
   window.camera = {
     x: -100,
@@ -460,10 +459,14 @@ function render() {
   ctx.fillText(Math.ceil(window.fps), 20, 40)
 }
 
-function setCameraHeroX(ctx, hero) {
+function setCameraHeroX(ctxNOT, hero) {
+  let ctx = PLAYEDITOR.ctx
+
   window.camera.x = ((hero.x + hero.width/2) * window.scaleMultiplier) - ctx.canvas.width/2
 }
-function setCameraHeroY(ctx, hero) {
+function setCameraHeroY(ctxNOT, hero) {
+  let ctx = PLAYEDITOR.ctx
+
   window.camera.y = ((hero.y + hero.height/2) * window.scaleMultiplier) - ctx.canvas.height/2
 }
 function setCamera(ctx, hero) {
