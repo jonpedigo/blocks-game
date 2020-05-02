@@ -1,6 +1,6 @@
 let lastJump = 0
 
-function init(){
+function onPageLoad(){
   GAME.keysDown = {}
   // this is the one for the host
   GAME.heroInputs = {}
@@ -28,7 +28,7 @@ function init(){
   }, false)
 }
 
-function update(hero, keysDown, delta) {
+function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
 
   hero._initialX = hero.x
@@ -45,20 +45,6 @@ function update(hero, keysDown, delta) {
     d 68
   */
   /// DEFAULT GAME FX
-  if(GAME.defaultCustomGame) {
-    GAME.defaultCustomGame.input(hero, keysDown, delta)
-  }
-
-  /// CUSTOM GAME FX
-  if(GAME.customGame) {
-    GAME.customGame.input(hero, keysDown, delta)
-  }
-
-  /// LIVE CUSTOM GAME FX
-  if(GAME.liveCustomGame) {
-    GAME.liveCustomGame.input(hero, keysDown, delta)
-  }
-
   if(hero.flags.paused || GAME.gameState.paused) return
 
   if (38 in keysDown) { // Player holding up
@@ -238,8 +224,8 @@ function onKeyDown(keyCode, hero) {
 }
 
 export default {
-  init,
-  update,
+  onPageLoad,
+  onUpdate,
   onKeyDown,
   getDirection,
 }

@@ -56,15 +56,14 @@ function update() {
     drawTools.drawObject(ctx, object, camera)
   })
 
-  for(var heroId in GAME.heros) {
-    let currentHero = GAME.heros[heroId];
-    drawTools.drawObject(ctx, currentHero, camera);
-    if(currentHero.subObjects) {
-      window.forAllSubObjects(currentHero.subObjects, (subObject) => {
+  GAME.heroList.forEach((hero) => {
+    drawTools.drawObject(ctx, hero, camera);
+    if(hero.subObjects) {
+      window.forAllSubObjects(hero.subObjects, (subObject) => {
         drawTools.drawObject(ctx, subObject, camera)
       })
     }
-  }
+  })
 
   // dont show names if we zoom to the stars
   if(!HERO.hero.animationZoomMultiplier) {

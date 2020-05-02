@@ -46,16 +46,16 @@ window.local.on('onObjectCollide', (agent, collider, result, removeObjects, resp
 
   /// DEFAULT GAME FX
   if(GAME.defaultCustomGame) {
-    GAME.defaultCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+    GAME.defaultCustomGame.onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 
   /// CUSTOM GAME FX
   if(GAME.customGame) {
-    GAME.customGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+    GAME.customGame.onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 
   /// LIVE CUSTOM GAME FX
   if(GAME.liveCustomGame) {
-    GAME.liveCustomGame.onCollide(agent, collider, result, removeObjects, respawnObjects)
+    GAME.liveCustomGame.onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
   }
 })

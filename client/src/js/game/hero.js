@@ -126,13 +126,13 @@ window.respawnHero = function (hero) {
 }
 
 window.respawnHeros = function () {
-  Object.keys(GAME.heros).forEach((id) => {
+  GAME.heroList.forEach(({id}) => {
     window.respawnHero(GAME.heros[id])
   })
 }
 
 window.updateAllHeros = function(update) {
-  Object.keys(GAME.heros).forEach((id) => {
+  GAME.heroList.forEach(({id}) => {
     window.mergeDeep(GAME.heros[id], update)
   })
 }
@@ -221,12 +221,11 @@ window.resetReachablePlatformWidth = function(heroIn) {
 window.findHeroInNewGame = function(hero) {
   // if we have decided to restore position, find hero in hero list
   if(GAME.world.globalTags.shouldRestoreHero && GAME.heros && hero) {
-    for(var heroId in GAME.heros) {
-      let currentHero = GAME.heros[heroId]
+    GAME.heroList.forEach((currentHero) => {
       if(currentHero.id == hero.id) {
         return currentHero
       }
-    }
+    })
     console.log('failed to find hero with id' + HERO.hero.id)
   }
 

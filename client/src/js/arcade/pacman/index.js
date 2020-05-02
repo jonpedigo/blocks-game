@@ -29,7 +29,15 @@ function onKeyDown(keyCode, hero) {
   if(hero.flags.paused || GAME.gameState.paused) return
 }
 
-function input(hero, keysDown, delta) {
+function onUpdate(delta) {
+
+}
+
+function onUpdateObject(object, delta) {
+
+}
+
+function onUpdateHero(hero, keysDown, delta) {
   if(GAME.gameState.paused) {
     if(32 in keysDown) {
       window.socket.emit('startGame')
@@ -37,25 +45,19 @@ function input(hero, keysDown, delta) {
   }
 
   if(hero.flags.paused || GAME.gameState.paused) return
-}
 
-
-function intelligence(object, delta) {
-
-}
-
-function onCollide(agent, collider, result, removeObjects) {
-
-}
-
-function update(delta) {
-  if(HERO.hero.lives === 0) {
+  if(hero.lives === 0) {
     GAME.gameState.gameOver = true
     GAME.gameState.paused = true
   }
 }
 
-function render(ctx, delta) {
+function onObjectCollide(agent, collider, result, removeObjects) {
+
+}
+
+
+function onRender(ctx, delta) {
   explodingParticles.forEach((particle) => {
     particle.draw(ctx, delta)
   })
@@ -95,12 +97,10 @@ function render(ctx, delta) {
   }
 }
 
-// only on client
 function onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
 
 }
 
-// only on client
 function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
 
 }
@@ -110,11 +110,11 @@ export default {
   onGameUnloaded,
   onGameStart,
   onKeyDown,
-  input,
-  update,
-  intelligence,
-  render,
-  onCollide,
+  onUpdate,
+  onUpdateHero,
+  onUpdateObject,
+  onRender,
+  onObjectCollide,
   onHeroCollide,
   onHeroInteract,
 }

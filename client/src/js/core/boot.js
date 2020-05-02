@@ -1,6 +1,5 @@
 import collisions from '../utils/collisions.js'
 import playEditor from '../playeditor/playeditor.js'
-import shadow from '../map/shadow.js'
 import grid from '../utils/grid.js'
 import sockets from './sockets.js'
 import utils from '../utils/utils.js'
@@ -13,7 +12,6 @@ import loop from './loop.js'
 import map from '../map/index.js'
 import ghost from './ghost'
 import mapEditor from '../mapeditor/index.js'
-
 
 function establishRoleFromQuery() {
   // ROLE SETUP

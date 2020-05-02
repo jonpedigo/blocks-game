@@ -42,10 +42,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   socket.on('saveGame', (game) => {
     if(!game.world.globalTags.shouldRestoreHero && !game.world.globalTags.isAsymmetric && game.heros) {
-      if(Object.keys(game.heros).length > 1) {
+      if(GAME.heroList.length > 1) {
         console.log("ERROR, two heros sent to a non asymettric, non restoring world")
       }
-      if(Object.keys(game.heros).length == 1) {
+      if(GAME.heroList.length == 1) {
         for(var heroId in game.heros) {
         }
         game.hero = game.heros[heroId]

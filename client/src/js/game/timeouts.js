@@ -3,7 +3,7 @@ function setDefault() {
   GAME.timeoutsById = {}
 }
 
-function update(delta) {
+function onUpdate(delta) {
   GAME.timeouts = GAME.timeouts.filter((timeout) => {
     timeout.timeRemaining -= delta
     if(timeout.timeRemaining <= 0) {
@@ -50,5 +50,5 @@ window.incrementTimeout = function(id, numberOfSeconds) {
 
 export default {
   setDefault,
-  update,
+  onUpdate,
 }

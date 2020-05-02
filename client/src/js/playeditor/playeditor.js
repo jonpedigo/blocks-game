@@ -240,7 +240,7 @@ function onGameLoad() {
   mapEditor.onGameLoad(PLAYEDITOR.ctx, window.editingGame, window.camera)
 }
 
-function update(delta) {
+function onUpdate(delta) {
   input.update(delta)
   if(window.editingGame.branch) {
     w.editingGame.objects.forEach((object) => {
@@ -252,7 +252,7 @@ function update(delta) {
   }
 }
 
-function render() {
+function onRender() {
   window.camera.multiplier = window.scaleMultiplier
   camera.render(PLAYEDITOR.ctx)
 }
@@ -260,6 +260,6 @@ function render() {
 export default {
   onPageLoad,
   onGameLoad,
-  render,
-  update,
+  onRender,
+  onUpdate,
 }

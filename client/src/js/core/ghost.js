@@ -7,17 +7,17 @@ function init(){
 
     //select left
     if(keysDown['188']){
-      let heroNames = Object.keys(GAME.heros)
-      for(let i = 0; i < heroNames.length; i++) {
+      let heroIds = Object.keys(GAME.heros)
+      for(let i = 0; i < heroIds.length; i++) {
         if(HERO.hero.id === 'ghost') {
-          HERO.hero = GAME.heros[heroNames[heroNames.length-1]]
+          HERO.hero = GAME.heros[heroIds[heroIds.length-1]]
           break
         }
-        if(GAME.heros[heroNames[i]].id === HERO.hero.id) {
+        if(GAME.heros[heroIds[i]].id === HERO.hero.id) {
           if(i === 0) {
             HERO.hero = HERO.ghost
           } else {
-            HERO.hero = GAME.heros[heroNames[i-1]]
+            HERO.hero = GAME.heros[heroIds[i-1]]
           }
           break;
         }
@@ -28,17 +28,17 @@ function init(){
 
     //select right
     if(keysDown['190']){
-      let heroNames = Object.keys(GAME.heros)
-      for(let i = 0; i < heroNames.length; i++) {
+      let heroIds = Object.keys(GAME.heros)
+      for(let i = 0; i < heroIds.length; i++) {
         if(HERO.hero.id === 'ghost') {
-          HERO.hero = GAME.heros[heroNames[0]]
+          HERO.hero = GAME.heros[heroIds[0]]
           break
         }
-        if(GAME.heros[heroNames[i]].id === HERO.hero.id) {
-          if(i === heroNames.length - 1) {
+        if(GAME.heros[heroIds[i]].id === HERO.hero.id) {
+          if(i === heroIds.length - 1) {
             HERO.hero = HERO.ghost
           } else {
-            HERO.hero = GAME.heros[heroNames[i+1]]
+            HERO.hero = GAME.heros[heroIds[i+1]]
           }
           break;
         }

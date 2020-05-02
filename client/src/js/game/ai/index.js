@@ -74,7 +74,7 @@ function moveOnPath(object, delta) {
   }
 }
 
-function update(objects, delta) {
+function onUpdate(objects, delta) {
   objects.forEach((object) => {
     if(object.removed) return
     //////////////////////////////////////////
@@ -99,24 +99,9 @@ function update(objects, delta) {
 
     pathfinderIntelligence(object)
     spawnZoneIntelligence(object)
-
-    /// DEFAULT GAME FX
-    if(GAME.defaultCustomGame) {
-      GAME.defaultCustomGame.intelligence(object, delta)
-    }
-
-    /// CUSTOM GAME FX
-    if(GAME.customGame) {
-      GAME.customGame.intelligence(object, delta)
-    }
-
-    /// LIVE CUSTOM GAME FX
-    if(GAME.liveCustomGame) {
-      GAME.liveCustomGame.intelligence(object, delta)
-    }
   })
 }
 
 export default {
-  update,
+  onUpdate,
 }

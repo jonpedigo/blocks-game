@@ -1,12 +1,6 @@
 // the more events we have hardcoded in the less we have to UNLOAD
 window.templateGameString = `
-// once we have loaded up the game from the server for the first time
-// interact with values loaded by the game, the values of other services
 function onGameLoaded() {
-
-}
-
-function onGameUnloaded() {
 
 }
 
@@ -19,17 +13,16 @@ function onKeyDown(keyCode, hero) {
 
 }
 
+function onUpdate(delta) {
 
-function input(hero, keysDown, delta) {
+}
+
+function onUpdateHero(hero, keysDown, delta) {
   if(hero.flags.paused || GAME.gameState.paused) return
 
 }
 
-function intelligence(object, delta) {
-
-}
-
-function onCollide(agent, collider, result, removeObjects, respawnObjects) {
+function onUpdateObject(object, delta) {
 
 }
 
@@ -41,11 +34,16 @@ function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
 
 }
 
-// after input, intel, physics, but before render
-function update(delta) {
+function onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
 
 }
 
-function render(ctx) {
+
+function onRender(ctx) {
+
+}
+
+function onGameUnloaded() {
+
 }
 `

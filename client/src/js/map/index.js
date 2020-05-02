@@ -19,7 +19,7 @@ function onPageLoad() {
       MAP.canvasMultiplier = window.innerWidth/640;
       MAP.canvas.width = 640 * MAP.canvasMultiplier;
       MAP.canvas.height = 320 * MAP.canvasMultiplier;
-      constellation.loadStars(MAP.ctx)
+      constellation.onResize(MAP.ctx)
     }
     window.addEventListener("resize", onResize);
     onResize()
@@ -29,7 +29,30 @@ function onPageLoad() {
   document.body.appendChild(MAP.canvas);
 }
 
+function onRender(delta) {
+  render.update()
+
+  /// DEFAULT GAME FX
+  if(GAME.defaultCustomGame) {
+    GAME.defaultCustomGame.onRender(MAP.ctx, delta)
+  }
+
+  /// CUSTOM GAME FX
+  if(GAME.customGame) {
+    GAME.customGame.onRender(MAP.ctx, delta)
+  }
+
+  /// CUSTOM GAME FX
+  if(GAME.liveCustomGame) {
+    GAME.liveCustomGame.onRender(MAP.ctx, delta)
+  }
+
+  if(PAGE.role.isPlayer && HERO.hero.animationZoomMultiplier) {
+    constellation.onRender()
+  }
+}
+
 export default {
   onPageLoad,
-  render: render.update,
+  onRender,
 }

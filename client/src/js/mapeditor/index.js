@@ -220,7 +220,7 @@ function updateDraggingObject(object) {
   gridTool.snapDragToGrid(object, {dragging: true})
 }
 
-function render() {
+function onRender() {
   let ctx = MAPEDITOR.ctx
   let camera = MAPEDITOR.camera
 
@@ -254,7 +254,7 @@ function render() {
   }
 }
 
-function update(delta) {
+function onUpdate(delta) {
   if(MAPEDITOR.remoteState && !MAPEDITOR.skipRemoteStateUpdate) {
     updateGridHighlight(MAPEDITOR.remoteState.mousePos)
   }
@@ -267,6 +267,6 @@ function update(delta) {
 export default {
   onPageLoad,
   onGameLoad,
-  render,
-  update,
+  onRender,
+  onUpdate,
 }

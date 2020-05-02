@@ -21,17 +21,17 @@ window.PHYSICS = {
   removeObject,
   system,
   objects,
-  update,
+  correctAndEffectAllObjectAndHeros,
   prepareObjectsAndHerosForMovementPhase,
   updatePosition,
 }
 
-function update (delta) {
+function correctAndEffectAllObjectAndHeros (delta) {
   // update physics system
   system.update()
   let removeObjects = []
   let respawnObjects = []
-  prepareObjectsAndHerosForCollisionsPhase(),
+  prepareObjectsAndHerosForCollisionsPhase()
   heroPhysics(removeObjects, respawnObjects)
   objectPhysics(removeObjects, respawnObjects)
   postPhysics(removeObjects, respawnObjects)
@@ -109,12 +109,10 @@ function updatePosition(object, delta) {
 }
 
 function getAllHeros() {
-  let allHeros = Object.keys(GAME.heros).reduce((prev, id) => {
-    if(id === 'ghost') return prev
-    prev.push(GAME.heros[id])
-    return prev
-  }, [])
-  return allHeros
+  return GAME.heroList.filter(({id}) => {
+    if(id === 'ghost') return false
+    else return true
+  })
 }
 
 function prepareObjectsAndHerosForMovementPhase() {
@@ -315,7 +313,7 @@ function removeAndRespawn(removeObjects, respawnObjects) {
 }
 
 export default {
-  update,
+  correctAndEffectAllObjectAndHeros,
   updatePosition,
   prepareObjectsAndHerosForMovementPhase,
 }

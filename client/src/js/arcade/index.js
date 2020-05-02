@@ -47,7 +47,7 @@ window.changeGame = function(id) {
 window.evalLiveCustomFx = function(customFx) {
   customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles, drawTools) {
     const w = window
-    ${customFx} return { onGameLoaded, onGameUnloaded, onGameStart, input, onKeyDown, onCollide, onHeroCollide, onHeroInteract, intelligence, update, render } })`)
+    ${customFx} return { onGameLoaded, onGameStart, onKeyDown, onUpdate, onUpdateObject, onUpdateHero, onObjectCollide, onHeroCollide, onHeroInteract, onRender, onGameUnloaded } })`)
   return customFx
 }
 

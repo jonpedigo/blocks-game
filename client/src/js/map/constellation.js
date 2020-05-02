@@ -50,7 +50,7 @@ function update(){
   }
 }
 
-function animate(){
+function onRender(){
   if(window.constellationDistance === HERO.hero.animationZoomMultiplier) {
     update();
   }
@@ -78,7 +78,7 @@ function animate(){
 }
 
 let context;
-function loadStars(ctx) {
+function onResize(ctx) {
   window.arrStars = [];
   context = ctx
   for(let i = 0; i < 800; i++){
@@ -92,6 +92,6 @@ function loadStars(ctx) {
 }
 
 export default {
-  loadStars,
-  animate
+  onResize,
+  onRender
 }

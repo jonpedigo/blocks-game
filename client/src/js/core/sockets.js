@@ -57,7 +57,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
-      Object.keys(GAME.heros).forEach((id) => {
+      GAME.heroList.forEach(({id}) => {
         if(id === hero.id) {
           GAME.heros[id] = window.resetHeroToDefault(GAME.heros[id])
           if(PAGE.role.isPlayer && HERO.hero.id === hero.id) HERO.hero = GAME.heros[id]
@@ -67,7 +67,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onRespawnHero', (hero) => {
-      Object.keys(GAME.heros).forEach((id) => {
+      GAME.heroList.forEach(({id}) => {
         if(id === hero.id) {
           window.respawnHero(GAME.heros[id])
         }

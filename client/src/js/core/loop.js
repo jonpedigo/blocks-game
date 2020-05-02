@@ -3,6 +3,7 @@ import ghost from './ghost'
 import constellation from '../map/constellation.js'
 import mapEditor from '../mapeditor/index.js'
 import PLAYEDITOR from '../playeditor/playeditor.js'
+import gameManager from '../game'
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -81,9 +82,13 @@ var mainLoop = function () {
 ///////////////////////////////
 
 function update(delta) {
+  if(PAGE.role.isPlayEditor) {
+    PLAYEDITOR.onUpdate(delta)
+  }
+
   if(PAGE.role.isPlayer) {
     if(PAGE.role.isGhost) {
-      ghost.update()
+      ghost.onUpdate()
     }
 
     if(!PAGE.role.isGhost){
@@ -95,40 +100,20 @@ function update(delta) {
     }
   }
 
-  GAME.update(delta)
-  mapEditor.update(delta)
+  gameManager.onUpdate(delta)
+  mapEditor.onUpdate(delta)
 }
 
 function render(delta) {
   if(PAGE.role.isPlayEditor) {
-    PLAYEDITOR.update(delta)
-    PLAYEDITOR.render();
+    PLAYEDITOR.onRender(delta);
   }
 
   if(PAGE.role.isPlayer) {
-    map.render(delta);
-    /// DEFAULT GAME FX
-
-    if(GAME.defaultCustomGame) {
-      GAME.defaultCustomGame.render(MAP.ctx, delta)
-    }
-
-    /// CUSTOM GAME FX
-    if(GAME.customGame) {
-      GAME.customGame.render(MAP.ctx, delta)
-    }
-
-    /// CUSTOM GAME FX
-    if(GAME.liveCustomGame) {
-      GAME.liveCustomGame.render(MAP.ctx, delta)
-    }
+    map.onRender(delta);
   }
 
-  mapEditor.render()
-
-  if(PAGE.role.isPlayer && HERO.hero.animationZoomMultiplier) {
-    constellation.animate()
-  }
+  mapEditor.onRender(delta)
 }
 
 function networkUpdate() {
