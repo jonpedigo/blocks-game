@@ -1,6 +1,6 @@
 let lastJump = 0
 
-function onPageLoad(){
+function onPageLoaded(){
   GAME.keysDown = {}
   // this is the one for the host
   GAME.heroInputs = {}
@@ -30,9 +30,6 @@ function onPageLoad(){
 
 function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
-
-  hero._initialX = hero.x
-  hero._initialY = hero.y
 
   /*
     left arrow	37
@@ -157,10 +154,6 @@ function onUpdate(hero, keysDown, delta) {
   positionInput()
 }
 
-function getDirection() {
-  return inputDirection
-}
-
 function onKeyDown(keyCode, hero) {
   if(hero.flags.typingMode) return
 
@@ -209,23 +202,11 @@ function onKeyDown(keyCode, hero) {
     hero.inputDirection = 'right'
   }
 
-  /// DEFAULT GAME FX
-  if(GAME.defaultCustomGame) {
-    GAME.defaultCustomGame.onKeyDown(keyCode, hero)
-  }
-  /// CUSTOM GAME FX
-  if(GAME.customGame) {
-    GAME.customGame.onKeyDown(keyCode, hero)
-  }
-  /// CUSTOM GAME FX
-  if(GAME.liveCustomGame) {
-    GAME.liveCustomGame.onKeyDown(keyCode, hero)
-  }
+  window.local.on('onKeyDown', keyCode, hero)
 }
 
 export default {
-  onPageLoad,
+  onPageLoaded,
   onUpdate,
   onKeyDown,
-  getDirection,
 }

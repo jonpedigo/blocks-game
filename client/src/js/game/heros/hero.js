@@ -22,7 +22,6 @@ class Hero{
   getHeroId() {
     // GET HERO.hero ID
     if(PAGE.role.isGhost) {
-      console.log('?')
       HERO.id = 'ghost'
     } if(PAGE.role.isPlayer) {
       let savedHero = localStorage.getItem('hero');
@@ -106,6 +105,16 @@ class Hero{
         }
       }
     })
+  }
+
+  onUpdate() {
+    if(PAGE.role.isPlayer && !PAGE.role.isGhost){
+      localStorage.setItem('hero', JSON.stringify(HERO.hero))
+      // we are locally updating the hero input as host
+      if(!PAGE.role.isHost && !PAGE.typingMode) {
+        window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
+      }
+    }
   }
 }
 

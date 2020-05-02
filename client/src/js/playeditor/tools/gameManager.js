@@ -173,14 +173,14 @@ function init() {
   })
 
   document.getElementById("clear-branch").addEventListener('click', () => {
-    if(GAME.defaultCustomGame) {
-      GAME.defaultCustomGame.onGameUnloaded()
+    if(ARCADE.defaultCustomGame) {
+      ARCADE.defaultCustomGame.onGameUnloaded()
     }
-    if(GAME.customGame) {
-      GAME.customGame.onGameUnloaded()
+    if(ARCADE.customGame) {
+      ARCADE.customGame.onGameUnloaded()
     }
-    if(GAME.liveCustomGame) {
-      GAME.liveCustomGame.onGameUnloaded()
+    if(ARCADE.liveCustomGame) {
+      ARCADE.liveCustomGame.onGameUnloaded()
     }
 
     if(PAGE.role.isPlayEditor) {

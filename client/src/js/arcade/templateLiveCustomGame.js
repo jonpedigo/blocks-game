@@ -43,7 +43,7 @@ function onRender(ctx) {
 
 }
 
-function onGameUnloaded() {
+function onGameUnload() {
 
 }
 `

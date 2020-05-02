@@ -12,7 +12,7 @@ function onGameLoaded() {
   HERO.hero.flags.showScore = true;
 }
 
-function onGameUnloaded() {
+function onGameUnload() {
 
 }
 
@@ -107,7 +107,7 @@ function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
 
 export default {
   onGameLoaded,
-  onGameUnloaded,
+  onGameUnload,
   onGameStart,
   onKeyDown,
   onUpdate,

@@ -155,14 +155,14 @@ function init() {
       GAME.gameState.paused = false
       GAME.gameState.started = true
 
-      if(GAME.defaultCustomGame) {
-        GAME.defaultCustomGame.onGameStart()
+      if(ARCADE.defaultCustomGame) {
+        ARCADE.defaultCustomGame.onGameStart()
       }
-      if(GAME.customGame) {
-        GAME.customGame.onGameStart()
+      if(ARCADE.customGame) {
+        ARCADE.customGame.onGameStart()
       }
-      if(GAME.liveCustomGame) {
-        GAME.liveCustomGame.onGameStart()
+      if(ARCADE.liveCustomGame) {
+        ARCADE.liveCustomGame.onGameStart()
       }
     })
   }
@@ -430,21 +430,21 @@ function init() {
 
   window.socket.on('onCopyGame', (game) => {
     GAME.unload()
-    window.loadGame(game, { resetHeros: true })
+    PAGE.loadGame(game, { resetHeros: true })
   })
 
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
     GAME.unload()
-    window.loadGame(game, { resetHeros: true })
+    PAGE.loadGame(game, { resetHeros: true })
     window.changeGame(game.id)
   })
 
   // this is from branch merge
   window.socket.on('onSetGameJSON', (game) => {
     GAME.unload()
-    window.loadGame(game)
+    PAGE.loadGame(game)
     window.changeGame(game.id)
   })
 
@@ -459,23 +459,11 @@ function init() {
   })
 
   window.socket.on('onUpdateCustomGameFx', (customFx) => {
-    if(PAGE.role.isHost) {
-      try {
-        window.setLiveCustomFx(customFx)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
-    if(PAGE.role.isPlayEditor) {
-      window.customFx = customFx
-    }
+    window.local.on('onUpdateCustomGameFx', customFx)
   })
 
   window.socket.on('onCustomFxEvent', (event) => {
-    if(PAGE.role.isHost && GAME.liveCustomGame && GAME.liveCustomGame[event]) {
-      GAME.liveCustomGame[event]()
-    }
+    window.local.on('onCustomFxEvent', event)
   })
 
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {

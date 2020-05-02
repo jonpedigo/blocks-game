@@ -5,7 +5,7 @@ import input from '../input.js'
 class Ghost{
   constructor() {}
 
-  onPageLoad(){
+  onPageLoaded(){
     window.addEventListener("keydown", function (e) {
       keysDown[e.keyCode] = true
 
@@ -79,7 +79,7 @@ class Ghost{
     }
   }
 
-  onGameLoad() {
+  onGameLoaded() {
     let ghostData = JSON.parse(localStorage.getItem('ghostData'));
     if(ghostData && ghostData.selectedHeroId) {
       HERO.ghost = ghostData.ghost

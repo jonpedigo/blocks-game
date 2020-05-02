@@ -29,20 +29,40 @@ let customCompendiums = {
 class Arcade{
   constructor() {}
 
-  onPageLoad() {
-    GAME.customGame = null
-    GAME.defaultCustomGame = defaultCustomGame
+  onPageLoaded() {
+    ARCADE.customGame = null
+    ARCADE.defaultCustomGame = defaultCustomGame
 
-    window.customCompendium = null
-    window.defaultCompendium = defaultCompendium
+    ARCADE.customCompendium = null
+    ARCADE.defaultCompendium = defaultCompendium
+  }
+
+  onUpdateCustomGameFx() {
+    if(PAGE.role.isHost) {
+      try {
+        window.setLiveCustomFx(customFx)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    if(PAGE.role.isPlayEditor) {
+      window.customFx = customFx
+    }
+  }
+
+  onCustomFxEvent() {
+    if(PAGE.role.isHost && ARCADE.liveCustomGame && ARCADE.liveCustomGame[event]) {
+      ARCADE.liveCustomGame[event]()
+    }
   }
 }
 
 window.ARCADE = new Arcade()
 
 window.changeGame = function(id) {
-  GAME.customGame = customGames[id]
-  window.customCompendium = customCompendiums[id]
+  ARCADE.customGame = customGames[id]
+  ARCADE.customCompendium = customCompendiums[id]
   if(PAGE.role.isPlayEditor){
     document.getElementById('current-game-id').innerHTML = id
     document.getElementById('game-id').value = id
@@ -53,12 +73,12 @@ window.changeGame = function(id) {
 window.evalLiveCustomFx = function(customFx) {
   customFx = eval(`(function a(pathfinding, gridTool, camera, collisions, particles, drawTools) {
     const w = window
-    ${customFx} return { onGameLoaded, onGameStart, onKeyDown, onUpdate, onUpdateObject, onUpdateHero, onObjectCollide, onHeroCollide, onHeroInteract, onRender, onGameUnloaded } })`)
+    ${customFx} return { onGameLoaded, onGameStart, onKeyDown, onUpdate, onUpdateObject, onUpdateHero, onObjectCollide, onHeroCollide, onHeroInteract, onRender, onGameUnload } })`)
   return customFx
 }
 
 window.setLiveCustomFx = function(customFx) {
   customFx = window.evalLiveCustomFx(customFx)
   customFx = customFx(pathfinding, gridTool, window.camera, collisions, particles, drawTools)
-  GAME.liveCustomGame = customFx
+  ARCADE.liveCustomGame = customFx
 }

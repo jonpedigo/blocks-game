@@ -107,7 +107,7 @@ window.onChangeTool = function(toolName) {
 //DOM
 /////////////////////
 /////////////////////
-function onPageLoad() {
+function onPageLoaded() {
   PLAYEDITOR.canvas = document.createElement("canvas");
   PLAYEDITOR.ctx = PLAYEDITOR.canvas.getContext("2d");
   PLAYEDITOR.canvas.id = 'playeditor-canvas'
@@ -116,11 +116,12 @@ function onPageLoad() {
   PLAYEDITOR.canvas.style="left: 400px;"
   PLAYEDITOR.canvas.width = window.innerWidth - 400 - 180;
 
-  mapEditor.onPageLoad(PLAYEDITOR.canvas)
 
   input.init()
   camera.init()
   click.init()
+
+  MAPEDITOR.set(PLAYEDITOR.ctx, PLAYEDITOR.canvas, window.camera)
 
   heroEditor.init()
   objectEditor.init()
@@ -231,13 +232,12 @@ function createArena(boundaries) {
 }
 window.createArena = createArena
 
-function onGameLoad() {
+function onGameLoaded() {
   window.editingGame = GAME
   // window.setEditorToAnyHero()
   objectEditor.loaded()
   addObject.loaded()
   worldEditor.loaded()
-  mapEditor.onGameLoad(PLAYEDITOR.ctx, window.editingGame, window.camera)
 }
 
 function onUpdate(delta) {
@@ -257,7 +257,7 @@ function onRender() {
   camera.render(PLAYEDITOR.ctx)
 }
 
-PLAYEDITOR.onPageLoad = onPageLoad
-PLAYEDITOR.onGameLoad = onGameLoad
+PLAYEDITOR.onPageLoaded = onPageLoaded
+PLAYEDITOR.onGameLoaded = onGameLoaded
 PLAYEDITOR.onRender = onRender
 PLAYEDITOR.onUpdate = onUpdate

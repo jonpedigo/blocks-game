@@ -11,29 +11,25 @@ class EventEmitter {
     let event = this.events[eventName];
     if(!event) event = []
 
+    if(PAGE[eventName]) {
+      event.push(PAGE[eventName])
+    }
+
     if(GAME[eventName]) {
       event.push(GAME[eventName])
     }
-    if(GAME.defaultCustomGame && GAME.defaultCustomGame[eventName]) {
-      event.push(GAME.defaultCustomGame[eventName])
+    if(ARCADE.defaultCustomGame && ARCADE.defaultCustomGame[eventName]) {
+      event.push(ARCADE.defaultCustomGame[eventName])
     }
-    if(GAME.customGame && GAME.customGame[eventName]) {
-      event.push(GAME.customGame[eventName])
+    if(ARCADE.customGame && ARCADE.customGame[eventName]) {
+      event.push(ARCADE.customGame[eventName])
     }
-    if(GAME.liveCustomGame && GAME.liveCustomGame[eventName]) {
-      event.push(GAME.liveCustomGame[eventName])
+    if(ARCADE.liveCustomGame && ARCADE.liveCustomGame[eventName]) {
+      event.push(ARCADE.liveCustomGame[eventName])
     }
 
     if(ARCADE[eventName]) {
       event.push(ARCADE[eventName])
-    }
-
-    if(PAGE.role.isGhost && GHOST[eventName]) {
-      event.push(GHOST[eventName])
-    }
-
-    if(PAGE[eventName]) {
-      event.push(PAGE[eventName])
     }
 
     if(HERO[eventName]) {
@@ -52,12 +48,12 @@ class EventEmitter {
       event.push(MAP[eventName])
     }
 
-    if(MAPEDITOR[eventName]) {
-      event.push(MAPEDITOR[eventName])
-    }
-
     if(PAGE.role.isPlayEditor && PLAYEDITOR[eventName]) {
       event.push(PLAYEDITOR[eventName])
+    }
+
+    if(MAPEDITOR[eventName]) {
+      event.push(MAPEDITOR[eventName])
     }
 
     event.push()

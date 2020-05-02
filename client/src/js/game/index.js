@@ -21,15 +21,15 @@ window.GAME = {
   ai: ai,
 }
 
-GAME.onPageLoad = function() {
+GAME.onPageLoaded = function() {
   world.setDefault()
   gameState.setDefault()
   tags.setDefault()
   timeouts.setDefault()
 
-  input.onPageLoad()
-  heros.onPageLoad()
-  objects.onPageLoad()
+  input.onPageLoaded()
+  heros.onPageLoaded()
+  objects.onPageLoaded()
 }
 
 GAME.load = function(game){

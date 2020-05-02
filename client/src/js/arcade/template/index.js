@@ -48,7 +48,7 @@ function onRender(ctx) {
 
 }
 
-function onGameUnloaded() {
+function onGameUnload() {
 
 }
 
@@ -64,5 +64,5 @@ export default {
   onHeroInteract,
   onObjectCollide,
   onRender,
-  onGameUnloaded,
+  onGameUnload,
 }

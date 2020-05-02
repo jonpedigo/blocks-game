@@ -416,7 +416,7 @@ function render() {
 
   ////////////////
   ////////////////
-  // HERO.heroS SETTINGS
+  // HERO SETTINGS
   ////////////////
   ////////////////
   for(var heroId in w.editingGame.heros) {

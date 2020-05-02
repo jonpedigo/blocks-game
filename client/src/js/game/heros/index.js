@@ -2,7 +2,7 @@ import onEffectHero from './onEffectHero'
 import hero from './hero.js'
 import ghost from './ghost.js'
 
-function onPageLoad() {
+function onPageLoaded() {
   GAME.onHeroInteract = function(hero, interactor, result, removeObjects, respawnObjects) {
     onEffectHero(hero, interactor, result, removeObjects, respawnObjects, { fromInteractButton: true })
   }
@@ -14,5 +14,5 @@ function onPageLoad() {
 }
 
 export default {
-  onPageLoad
+  onPageLoaded
 }

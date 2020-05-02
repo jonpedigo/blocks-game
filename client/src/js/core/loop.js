@@ -1,5 +1,3 @@
-import mapEditor from '../mapeditor/index.js'
-
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -78,21 +76,10 @@ var mainLoop = function () {
 
 function update(delta) {
   window.local.emit('onUpdate', delta)
-
-  if(PAGE.role.isPlayer && !PAGE.role.isGhost){
-    localStorage.setItem('hero', JSON.stringify(HERO.hero))
-    // we are locally updating the hero input as host
-    if(!PAGE.role.isHost && !PAGE.typingMode) {
-      window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
-    }
-  }
-
-  mapEditor.onUpdate(delta)
 }
 
 function render(delta) {
   window.local.emit('onRender', delta)
-  mapEditor.onRender(delta)
 }
 
 function networkUpdate() {

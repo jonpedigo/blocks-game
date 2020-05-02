@@ -9,7 +9,7 @@ function onGameLoaded() {
 
 }
 
-function onGameUnloaded() {
+function onGameUnload() {
 
 }
 
@@ -54,7 +54,7 @@ function onRender(ctx) {
 
 export default {
   onGameLoaded,
-  onGameUnloaded,
+  onGameUnload,
   onGameStart,
   onKeyDown,
   onUpdateHero,

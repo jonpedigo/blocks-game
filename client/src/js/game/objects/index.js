@@ -1,7 +1,7 @@
 import onObjectCollide from './onObjectCollide'
 import objects from './objects.js'
 
-function onPageLoad() {
+function onPageLoaded() {
   objects.setDefault()
   
   GAME.onObjectCollide = function (agent, collider, result, removeObjects, respawnObjects) {
@@ -10,5 +10,5 @@ function onPageLoad() {
 }
 
 export default {
-  onPageLoad
+  onPageLoaded
 }

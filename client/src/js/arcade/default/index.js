@@ -10,7 +10,7 @@ function onGameLoaded() {
 
 }
 
-function onGameUnloaded() {
+function onGameUnload() {
 
 }
 
@@ -119,7 +119,7 @@ function onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
 export default {
   onGameLoaded,
   onGameStart,
-  onGameUnloaded,
+  onGameUnload,
   onKeyDown,
   onUpdateHero,
   onUpdate,

@@ -1,6 +1,7 @@
 function init() {
   var saveCustomGameFx = document.getElementById("save-custom-fx");
   saveCustomGameFx.addEventListener('click', () => {
+    console.log('?')
     window.saveCodeEditor()
   })
 
@@ -19,8 +20,8 @@ function init() {
     fontSize: "20pt",
   });
 
-  GAME.customGameEditor = editor
-  GAME.customGameEditor.session.on('change', function(delta) {
+  window.customGameEditor = editor
+  window.customGameEditor.session.on('change', function(delta) {
     document.getElementById("is-code-editor-saved").innerHTML = "Not saved"
   });
 
@@ -31,7 +32,7 @@ function init() {
 
   window.saveCodeEditor = function() {
     try {
-      let customFx = GAME.customGameEditor.getValue()
+      let customFx = window.customGameEditor.getValue()
       window.evalLiveCustomFx(customFx)()
       window.socket.emit('updateCustomGameFx', customFx)
       localStorage.setItem('codeEditor', customFx)
@@ -43,7 +44,7 @@ function init() {
   }
 
   window.resetCodeEditor = function() {
-    GAME.customGameEditor.setValue(window.templateGameString);
+    window.customGameEditor.setValue(window.templateGameString);
     localStorage.setItem('codeEditor', null)
   }
 

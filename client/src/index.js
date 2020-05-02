@@ -22,7 +22,7 @@
 // can hero update have a general id? which means effects the hero that collided with it or interacted with it?
 // Thats how it exists right now ^^ but can something STORE an id to effect. An object id or hero id. It stores the id so when triggered it find the given object! ohh my...
 
-// why no just call init onPageLoad
+// why no just call init onPageLoaded
 // implement lodash
 
 // game/group tags? ( non functional )
@@ -121,12 +121,13 @@ Engine trail on a car u know what I mean?
 REGARDING PHYSICS, SOMETHING EARLIER ON THE i LIST ( objects ) loose the battle for corrections. They correct for everything else first
 just make sure to set something to stationary if its not supposed to be move, or else it will be subject to spawn ( i ) order
 */
-import './js/core/boot.js'
+import './js/core/page.js'
 import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/map/index.js'
 import './js//physics/index.js'
+import './js/mapeditor/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 

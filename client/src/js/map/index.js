@@ -8,7 +8,7 @@ window.MAP = {
   camera: new cameraTool()
 }
 
-MAP.onPageLoad = function() {
+MAP.onPageLoaded = function() {
   document.getElementById("play-editor").style = 'display:none';
 
   // Canvas SETUP
@@ -27,6 +27,8 @@ MAP.onPageLoad = function() {
 
   MAP.canvas.id = 'game-canvas'
   document.body.appendChild(MAP.canvas);
+
+  MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
 }
 
 MAP.onRender = function(delta) {

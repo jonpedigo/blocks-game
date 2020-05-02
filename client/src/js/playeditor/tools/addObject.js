@@ -131,16 +131,16 @@ function updateCompendium() {
     }
     e[i].appendChild(defaultEl)
 
-    for(let id in window.defaultCompendium.object) {
+    for(let id in ARCADE.defaultCompendium.object) {
       let comEl = document.createElement('button')
       comEl.innerHTML = id
       comEl.onclick= function(e) {
         window.objecteditor.defaultCompendium = true
-        clickOnCompendium(false, window.defaultCompendium.object[id])
+        clickOnCompendium(false, ARCADE.defaultCompendium.object[id])
       }
       comEl.oncontextmenu = function(e) {
         e.preventDefault()
-        clickOnCompendium(true, window.defaultCompendium.object[id])
+        clickOnCompendium(true, ARCADE.defaultCompendium.object[id])
       }
       e[i].appendChild(comEl)
     }
