@@ -183,12 +183,12 @@ function objectCollisionEffects(po, removeObjects, respawnObjects) {
         // sometimes the hero could be logged off
         let hero = GAME.heros[agent.ownerId]
         if(hero) {
-          if(!hero._interactableObject) {
-            hero._interactableObject = collider
-            hero._interactableObjectResult = result
-          } else if(collider.width < hero._interactableObject.width || collider.height < hero._interactableObject.height) {
-            hero._interactableObject = collider
-            hero._interactableObjectResult = result
+          if(!hero.interactableObject) {
+            hero.interactableObject = collider
+            hero.interactableObjectResult = result
+          } else if(collider.width < hero.interactableObject.width || collider.height < hero.interactableObject.height) {
+            hero.interactableObject = collider
+            hero.interactableObjectResult = result
           }
         }
       }

@@ -1,4 +1,4 @@
-function check(agent, objects, onCollide) {
+function check(agent, objects, onCollide = () => {}) {
   let illegal = false
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
@@ -21,9 +21,11 @@ function checkObject(agent, object, onCollide) {
     && agent.y < (object.y + object.height)
     && object.y < (agent.y + agent.height)
   ) {
-    onCollide()
+    if(onCollide) onCollide()
     return true
   }
+
+  return false
 }
 
 export default {

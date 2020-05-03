@@ -101,14 +101,14 @@ class Objects{
     delete object._parentId
     delete object._skipNextGravity
     delete object.i
-    delete object._interactableObject
+    delete object.interactableObject
     delete object.gridHeight
     delete object.gridWidth
     delete object.onGround
   }
 
   getMapState(object) {
-    return {
+    let mapState = {
       id: object.id,
       x: object.x,
       y: object.y,
@@ -118,6 +118,19 @@ class Objects{
       name: object.name,
       namePos: object.namePos,
     }
+
+    if(object.subObjects) {
+      mapState.subObjects = {}
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+        mapState.subObjects[key] = {}
+        mapState.subObjects[key].x = subObject.x
+        mapState.subObjects[key].y = subObject.y
+        mapState.subObjects[key].width = subObject.width
+        mapState.subObjects[key].height = subObject.height
+      })
+    }
+
+    return mapState
   }
 
   anticipatedAdd(hero) {

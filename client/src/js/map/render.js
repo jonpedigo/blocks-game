@@ -1,6 +1,7 @@
 import chat from './chat.js'
 import feedback from './feedback.js'
 import drawTools from '../mapeditor/drawTools.js'
+import collisionsUtil from '../utils/collisions.js'
 
 function drawNameCenter(ctx, object, camera) {
   ctx.fillStyle = "rgb(250, 250, 250)";
@@ -52,8 +53,11 @@ function update() {
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
+  let viewBoundaries = HERO.getViewBoundaries(HERO.hero)
   GAME.objects.forEach((object) => {
-    drawTools.drawObject(ctx, object, camera)
+    if(collisionsUtil.checkObject(viewBoundaries, object)) {
+      drawTools.drawObject(ctx, object, camera)
+    }
   })
 
   GAME.heroList.forEach((hero) => {
@@ -68,7 +72,7 @@ function update() {
   // dont show names if we zoom to the stars
   if(!HERO.hero.animationZoomMultiplier) {
     GAME.objects.forEach((obj) => {
-      if(obj.name) {
+      if(obj.name && !obj.removed) {
         if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
         if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
       }
@@ -89,10 +93,10 @@ function update() {
   chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(HERO.hero && HERO.hero._interactableObject && !HERO.hero.flags.showChat) {
-    const { _interactableObject } = HERO.hero
+  if(HERO.hero && HERO.hero.interactableObject && !HERO.hero.flags.showChat) {
+    const { interactableObject } = HERO.hero
 
-    if(_interactableObject.tags.invisible) {
+    if(interactableObject.tags.invisible) {
       ctx.fillStyle = "rgb(255, 255, 255)";
       let text = "Press X to interact"
       ctx.textAlign = 'center'
@@ -103,7 +107,7 @@ function update() {
 
     } else {
       let thickness = 3
-      drawTools.drawBorder(ctx, {x: _interactableObject.x-thickness, y: _interactableObject.y - thickness, width: _interactableObject.width + (thickness*2), height: _interactableObject.height + (thickness*2)}, camera, { thickness })
+      drawTools.drawBorder(ctx, {x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
     }
   }
 }

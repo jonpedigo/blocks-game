@@ -126,7 +126,7 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
-    object._interactableObject = null
+    object.interactableObject = null
   })
 }
 
@@ -212,15 +212,15 @@ function postPhysics(removeObjects, respawnObjects) {
   // GET DELTA
   allHeros.forEach((hero) => {
     if(hero.removed) return
-    if(hero._interactableObject) {
+    if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onObjectInteractable', hero._interactableObject, hero, hero._interactableObjectResult, removeObjects, respawnObjects)
+      window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult, removeObjects, respawnObjects)
       if(input && 88 in input) {
-        window.local.emit('onHeroInteract', hero, hero._interactableObject, hero._interactableObjectResult, removeObjects, respawnObjects)
+        window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult, removeObjects, respawnObjects)
       }
       // bad for JSON
-      delete hero._interactableObjectResult
+      delete hero.interactableObjectResult
     }
   })
 

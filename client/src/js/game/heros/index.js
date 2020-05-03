@@ -246,6 +246,10 @@ class Hero{
       centerY: value.centerY,
       minX: value.x,
       minY: value.y,
+      x: value.x,
+      y: value.y,
+      width: value.width,
+      height: value.height,
       maxX: value.x + value.width,
       maxY: value.y + value.height,
       leftDiff,
@@ -319,7 +323,7 @@ class Hero{
     delete hero.chat
     delete hero._parentId
     delete hero._skipNextGravity
-    delete hero._interactableObject
+    delete hero.interactableObject
     delete hero.gridHeight
     delete hero.gridWidth
     delete hero.updateHistory
@@ -328,13 +332,13 @@ class Hero{
   }
 
   getMapState(hero) {
-    return {
+    let mapState = {
       id: hero.id,
       x: hero.x,
       y: hero.y,
       width: hero.width,
       height: hero.height,
-      _interactableObject: hero._interactableObject,
+      interactableObject: hero.interactableObject,
       chat: hero.chat,
       flags: hero.flags,
       directions: hero.directions,
@@ -344,6 +348,18 @@ class Hero{
       lives: hero.lives,
       score: hero.score,
     }
+
+    if(hero.subObjects) {
+      mapState.subObjects = {}
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+        mapState.subObjects[key] = {}
+        mapState.subObjects[key].x = subObject.x
+        mapState.subObjects[key].y = subObject.y
+        mapState.subObjects[key].width = subObject.width
+        mapState.subObjects[key].height = subObject.height
+      })
+    }
+    return mapState
   }
 }
 
