@@ -112,7 +112,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'copy-id') {
-        window.copyToClipBoard(objectHighlighted.id)
+        PAGE.copyToClipBoard(objectHighlighted.id)
       }
     }
   }

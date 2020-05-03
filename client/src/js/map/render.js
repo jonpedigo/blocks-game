@@ -78,7 +78,7 @@ function update() {
 
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
-  ctx.fillText(Math.ceil(window.fps), MAP.canvas.width - 50, 40)
+  ctx.fillText(Math.ceil(PAGE.fps), MAP.canvas.width - 50, 40)
 
   if(PAGE.role.isGhost) {
     ctx.font =`24pt Arial`

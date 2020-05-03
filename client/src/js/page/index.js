@@ -18,26 +18,26 @@ class Page{
     PAGE.role.isHost = false
     PAGE.role.isPlayer = true
 
-    if(window.getParameterByName('playEditor')) {
+    if(PAGE.getParameterByName('playEditor')) {
       PAGE.role.isPlayEditor = true
       PAGE.role.isPlayer = false
     }
 
-    if(window.getParameterByName('host')) {
+    if(PAGE.getParameterByName('host')) {
       PAGE.role.isHost = true
     }
 
-    if(window.getParameterByName('mapEditor')) {
+    if(PAGE.getParameterByName('mapEditor')) {
       PAGE.role.isMapEditor = true
     }
 
-    if(window.getParameterByName('arcadeMode')) {
+    if(PAGE.getParameterByName('arcadeMode')) {
       PAGE.role.isHost = true
       PAGE.role.isArcadeMode = true
       PAGE.role.isPlayer = true
     }
 
-    if(window.getParameterByName('ghost')) {
+    if(PAGE.getParameterByName('ghost')) {
       PAGE.role.isPlayEditor = false
       PAGE.role.isPlayer = true
       PAGE.role.isGhost = true
@@ -153,6 +153,37 @@ class Page{
 
   onGameLoaded() {
     PAGE.gameLoaded = true
+  }
+
+  resetStorage() {
+    localStorage.removeItem('hero')
+    localStorage.removeItem('ghostData')
+    window.location.reload()
+  }
+
+  getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  copyToClipBoard(copyText) {
+    console.log('trying to copy', copyText)
+    navigator.permissions.query({name: "clipboard-write"}).then(result => {
+      if (result.state == "granted" || result.state == "prompt") {
+        /* write to the clipboard now */
+        navigator.clipboard.writeText(copyText).then(function() {
+          console.log('copied', GAME.id, 'to clipboard')
+        }, function() {
+          console.log('copy failed')
+          /* clipboard write failed */
+        });
+      }
+    });
   }
 }
 

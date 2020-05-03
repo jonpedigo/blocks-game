@@ -22,7 +22,7 @@ export default function onEffectHero(hero, collider, result, removeObjects, resp
     if(collider.id !== hero.lastPowerUpId) {
       heroUpdate(hero, collider)
       if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
-      window.addOrResetTimeout(hero.id+'.lastPowerUpId', 3, () => {
+      GAME.addOrResetTimeout(hero.id+'.lastPowerUpId', 3, () => {
         hero.lastPowerUpId = null
       })
     }
@@ -48,9 +48,9 @@ function heroUpdate (hero, collider) {
 
   if(collider.tags['revertAfterTimeout'] && GAME.timeoutsById[timeoutId] && GAME.timeoutsById[timeoutId].timeRemaining > 0) {
     if(collider.tags['incrementRevertTimeout']) {
-      window.incrementTimeout(timeoutId, collider.powerUpTimer || 3)
+      GAME.incrementTimeout(timeoutId, collider.powerUpTimer || 3)
     } else {
-      window.resetTimeout(timeoutId, collider.powerUpTimer || 3)
+      GAME.resetTimeout(timeoutId, collider.powerUpTimer || 3)
     }
     return
   }
@@ -110,5 +110,5 @@ function setRevertUpdateTimeout(id, hero, collider) {
     })
   }
 
-  window.addOrResetTimeout(id, collider.powerUpTimer || 3, timeoutFx)
+  GAME.addOrResetTimeout(id, collider.powerUpTimer || 3, timeoutFx)
 }

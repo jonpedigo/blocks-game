@@ -15,10 +15,6 @@ class Objects{
     }
   }
 
-  onGameLoaded() {
-    window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
-  }
-
   onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
     onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
   }
@@ -27,6 +23,11 @@ class Objects{
     Object.keys(subObjects).forEach((id) => {
       fx(subObjects[id], id)
     })
+  }
+
+  respawn(object) {
+    object.x = object.spawnPointX
+    object.y = object.spawnPointY
   }
 
   migratePos(object, newPos) {
@@ -79,6 +80,26 @@ class Objects{
     delete object._parentId
     delete object._skipNextGravity
     delete object.fresh
+    delete object.i
+  }
+
+  cleanForNetwork(object) {
+    delete object._initialY
+    delete object._initialX
+    delete object._deltaY
+    delete object._deltaX
+    delete object.velocityY
+    delete object.velocityX
+    delete object.lastPowerUpId
+    delete object.direction
+    delete object.gridX
+    delete object.gridY
+    delete object._parentId
+    delete object._skipNextGravity
+    delete object.i
+    delete object._interactableObject
+    delete object.gridHeight
+    delete object.gridWidth
   }
 
   anticipatedAdd(hero) {
@@ -231,11 +252,6 @@ class Objects{
     }
 
     return objects
-  }
-
-  respawn(object) {
-    object.x = object.spawnPointX
-    object.y = object.spawnPointY
   }
 }
 

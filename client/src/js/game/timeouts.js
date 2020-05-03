@@ -14,7 +14,7 @@ function onUpdate(delta) {
   })
 }
 
-window.addTimeout = function(id, numberOfSeconds, fx) {
+function addTimeout(id, numberOfSeconds, fx) {
   if(PAGE.role.isHost) {
     let timeout = {
       id,
@@ -28,22 +28,22 @@ window.addTimeout = function(id, numberOfSeconds, fx) {
   }
 }
 
-window.addOrResetTimeout = function(id, numberOfSeconds, fx) {
+function addOrResetTimeout(id, numberOfSeconds, fx) {
 
   if(!GAME.timeoutsById[id] || (GAME.timeoutsById[id] && GAME.timeoutsById[id].timeRemaining <= 0)) {
-    window.addTimeout(id, numberOfSeconds, fx)
+    GAME.addTimeout(id, numberOfSeconds, fx)
   } else {
-    window.resetTimeout(id, numberOfSeconds)
+    GAME.resetTimeout(id, numberOfSeconds)
   }
 }
 
-window.resetTimeout = function(id, numberOfSeconds) {
+function resetTimeout(id, numberOfSeconds) {
   GAME.timeoutsById[id].timeRemaining = numberOfSeconds
   GAME.timeoutsById[id].totalTime = numberOfSeconds
   GAME.timeoutsById[id].resetTotal++
 }
 
-window.incrementTimeout = function(id, numberOfSeconds) {
+function incrementTimeout(id, numberOfSeconds) {
   GAME.timeoutsById[id].timeRemaining+= numberOfSeconds
   GAME.timeoutsById[id].totalTime+= numberOfSeconds
 }
@@ -51,4 +51,8 @@ window.incrementTimeout = function(id, numberOfSeconds) {
 export default {
   setDefault,
   onUpdate,
+  addTimeout,
+  incrementTimeout,
+  resetTimeout,
+  addOrResetTimeout,
 }

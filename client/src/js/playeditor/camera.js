@@ -456,7 +456,7 @@ function render() {
   /// FRAMES PER SECOND
   ctx.font =`24pt Arial`
   ctx.fillStyle="rgba(255,255,255,.3)"
-  ctx.fillText(Math.ceil(window.fps), 20, 40)
+  ctx.fillText(Math.ceil(PAGE.fps), 20, 40)
 }
 
 function setCameraHeroX(ctxNOT, hero) {

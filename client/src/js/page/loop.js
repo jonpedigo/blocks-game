@@ -52,7 +52,7 @@ var mainLoop = function () {
         startTime = Date.now()
       }
 
-      window.fps = currentFps;
+      PAGE.fps = currentFps;
   }
 
   if (deltaUpdate > updateInterval) {
@@ -90,9 +90,5 @@ function networkUpdate() {
   if(GAME.gameState.started && GAME.world.storeEntireGameState) {
     let storedGameState = localStorage.getItem('gameStates')
     localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))
-  }
-  let timeout = window.lastDelta * 3
-  if(timeout > 250) {
-    timeout = 250
   }
 }

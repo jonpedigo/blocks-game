@@ -290,6 +290,8 @@ function init() {
       GAME.resetPaths = true
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
+
+    window.local.emit('onAddObjects', objectsAdded)
   })
 
   // EDITOR CALLS THIS
@@ -347,7 +349,6 @@ function init() {
   		updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
   	}
 
-    console.log(updatedHero)
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
 
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {

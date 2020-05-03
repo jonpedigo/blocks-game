@@ -361,6 +361,32 @@ class Game{
       }
     }
   }
+
+  addTimeout(id, numberOfSeconds, fx) {
+    timeouts.addTimeout(id, numberOfSeconds, fx)
+  }
+  incrementTimeout(id, numberOfSeconds) {
+    timeouts.incrementTimeout(id, numberOfSeconds)
+  }
+  resetTimeout(id, numberOfSeconds) {
+    timeouts.resetTimeout(id, numberOfSeconds)
+  }
+  addOrResetTimeout(id, numberOfSeconds, fx) {
+    timeouts.addOrResetTimeout(id, numberOfSeconds, fx)
+  }
+
+  cleanForNetwork() {
+    GAME.objects.forEach((object) => {
+      Object.keys(object.tags).forEach((key) => {
+        if(object.tags[key] === false) delete object.tags[key]
+        OBJECTS.cleanForNetwork(object)
+      })
+    })
+
+    GAME.heroList.forEach((hero) => {
+      HERO.cleanForNetwork(hero)
+    })
+  }
 }
 
 window.GAME = new Game()

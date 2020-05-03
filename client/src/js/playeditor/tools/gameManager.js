@@ -41,6 +41,7 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
+
     let gameCopy = JSON.parse(JSON.stringify(window.editingGame))
     if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && gameCopy.heros) {
       if(Object.keys(gameCopy.heros).length > 1) {
@@ -68,16 +69,42 @@ function init() {
     if(gameCopy.grid && gameCopy.grid.nodes) {
       delete gameCopy.grid.nodes
     }
+    if(gameCopy.pfgrid) {
+      delete gameCopy.pfgrid
+    }
+    gameCopy.objects.forEach((object) => {
+      Object.keys(object.tags).forEach((key) => {
+        if(object.tags[key] === false) delete object.tags[key]
+        OBJECTS.cleanForNetwork(object)
+      })
+    })
 
+    gameCopy.heroList.forEach((hero) => {
+      HERO.cleanForNetwork(hero)
+    })
+
+    HERO.cleanForNetwork(gameCopy.hero)
+
+    if(gameCopy.heroList) {
+      delete gameCopy.heroList
+    }
+
+    delete gameCopy.keysDown
+    delete gameCopy.heroInputs
+    delete gameCopy.timeouts
+    delete gameCopy.timeoutsById
+    delete gameCopy.objectsById
+
+    console.log(gameCopy)
 
     var copyText = JSON.stringify(gameCopy);
-    window.copyToClipBoard(copyText)
+    PAGE.copyToClipBoard(copyText)
   })
 
   var copyCompendiumToClipBoard = document.getElementById("copy-compendium-to-clipboard");
   copyCompendiumToClipBoard.addEventListener('click', () => {
     var copyText = JSON.stringify(window.compendium);
-    window.copyToClipBoard(copyText)
+    PAGE.copyToClipBoard(copyText)
   })
 
   var resetAllObjectStateButton = document.getElementById("reset-all-objects-state");

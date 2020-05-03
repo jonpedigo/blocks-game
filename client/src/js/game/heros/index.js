@@ -296,6 +296,35 @@ class Hero{
   	let width = (velocity * deltaInAir)
   	return width * 2
   }
+
+  cleanForNetwork(hero) {
+    delete hero._initialY
+    delete hero._initialX
+    delete hero._deltaY
+    delete hero._deltaX
+    delete hero.velocityY
+    delete hero.velocityX
+    delete hero.lastPowerUpId
+    delete hero.direction
+    delete hero.gridX
+    delete hero.gridY
+    delete hero.directions
+    delete hero.inputDirection
+    delete hero.reachablePlatformWidth
+    delete hero.reachablePlatformHeight
+    delete hero.lastChatId
+    delete hero.animationZoomMultiplier
+    delete hero.animationZoomTarget
+    delete hero.endAnimation
+    delete hero.chat
+    delete hero._parentId
+    delete hero._skipNextGravity
+    delete hero._interactableObject
+    delete hero.gridHeight
+    delete hero.gridWidth
+    delete hero.updateHistory
+    delete hero.timeouts
+  }
 }
 
 window.HERO = new Hero()

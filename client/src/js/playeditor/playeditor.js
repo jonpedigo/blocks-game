@@ -173,6 +173,7 @@ function createMaze() {
     o.tags.stationary = true
     return o
   })
+
   OBJECTS.add(maze)
 }
 
