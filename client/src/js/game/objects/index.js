@@ -15,6 +15,10 @@ class Objects{
     }
   }
 
+  onGameLoaded() {
+    window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
+  }
+
   onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
     onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
   }
@@ -83,7 +87,7 @@ class Objects{
     delete object.i
   }
 
-  cleanForNetwork(object) {
+  cleanForSave(object) {
     delete object._initialY
     delete object._initialX
     delete object._deltaY
@@ -100,6 +104,20 @@ class Objects{
     delete object._interactableObject
     delete object.gridHeight
     delete object.gridWidth
+    delete object.onGround
+  }
+
+  getMapState(object) {
+    return {
+      id: object.id,
+      x: object.x,
+      y: object.y,
+      width: object.width,
+      height: object.height,
+      color: object.color,
+      name: object.name,
+      namePos: object.namePos,
+    }
   }
 
   anticipatedAdd(hero) {

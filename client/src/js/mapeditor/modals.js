@@ -2,6 +2,7 @@ function writeDialogue(object, cb) {
   PAGE.typingMode = true
   openWriteDialogueModal(object, (result) => {
     if(result && result.value[0] && result.value[0].length) {
+      if(!object.heroUpdate) object.heroUpdate = {}
       object.tags.heroUpdate = true
       object.heroUpdate.chat = [result.value[0]]
       if(!object.heroUpdate.flags) object.heroUpdate.flags = {}

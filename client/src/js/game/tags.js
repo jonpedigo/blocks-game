@@ -1,7 +1,7 @@
 function setDefault() {
   window.defaultTags = {
     // COLLISIONS
-    obstacle: true,
+    obstacle: false,
     stationary: false,
     monster: false,
     victim: false,

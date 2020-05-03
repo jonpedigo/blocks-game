@@ -41,63 +41,10 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
+    let saveGame = cleanGameForSave(window.editingGame)
 
-    let gameCopy = JSON.parse(JSON.stringify(window.editingGame))
-    if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && gameCopy.heros) {
-      if(Object.keys(gameCopy.heros).length > 1) {
-        console.log("ERROR, two heros sent to a non asymettric, non restoring world")
-      }
-      if(Object.keys(gameCopy.heros).length == 1) {
-        for(var heroId in gameCopy.heros) {
-        }
-        gameCopy.hero = gameCopy.heros[heroId]
-      }
-
-      // never save gameState or heros, this is generated don the fly
-      delete gameCopy.heros
-    }
-
-    // never save gameState or heros, this is generated don the fly
-    if(gameCopy.gameState) {
-      delete gameCopy.gameState
-    }
-
-    if(!gameCopy.id) {
-      gameCopy.id = window.uniqueID()
-    }
-
-    if(gameCopy.grid && gameCopy.grid.nodes) {
-      delete gameCopy.grid.nodes
-    }
-    if(gameCopy.pfgrid) {
-      delete gameCopy.pfgrid
-    }
-    gameCopy.objects.forEach((object) => {
-      Object.keys(object.tags).forEach((key) => {
-        if(object.tags[key] === false) delete object.tags[key]
-        OBJECTS.cleanForNetwork(object)
-      })
-    })
-
-    gameCopy.heroList.forEach((hero) => {
-      HERO.cleanForNetwork(hero)
-    })
-
-    HERO.cleanForNetwork(gameCopy.hero)
-
-    if(gameCopy.heroList) {
-      delete gameCopy.heroList
-    }
-
-    delete gameCopy.keysDown
-    delete gameCopy.heroInputs
-    delete gameCopy.timeouts
-    delete gameCopy.timeoutsById
-    delete gameCopy.objectsById
-
-    console.log(gameCopy)
-
-    var copyText = JSON.stringify(gameCopy);
+    console.log(saveGame)
+    var copyText = JSON.stringify(saveGame);
     PAGE.copyToClipBoard(copyText)
   })
 
@@ -133,7 +80,9 @@ function init() {
     window.socket.emit('resetObjects')
   }
   window.saveGame = function() {
-    window.socket.emit('saveGame', {...window.editingGame, branch: null, id: document.getElementById('game-id').value,
+    let saveGame = cleanGameForSave(window.editingGame)
+
+    window.socket.emit('saveGame', {...saveGame,
           compendium: window.compendium })
   }
   window.setGame = function() {
@@ -351,6 +300,48 @@ window.updateBranchToggleStyle = function() {
   } else {
     document.getElementById('branch-on-off').style = 'opacity: 0;'
   }
+}
+
+
+function cleanGameForSave(game) {
+  let gameCopy = JSON.parse(JSON.stringify({
+    objects: game.objects,
+    world: game.world,
+    grid: game.grid,
+  }))
+
+  if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
+    if(Object.keys(game.heros).length > 1) {
+      console.log("ERROR, two heros sent to a non asymettric, non restoring world")
+    }
+    if(Object.keys(game.heros).length == 1) {
+      for(var heroId in game.heros) {
+      }
+      gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
+    }
+  }
+
+  let idValue = document.getElementById('game-id').value
+  if(idValue) {
+    gameCopy.id = idValue
+  }else if(!gameCopy.id) {
+    gameCopy.id = 'game-' + window.uniqueID()
+  }
+
+  if(gameCopy.grid && gameCopy.grid.nodes) {
+    delete gameCopy.grid.nodes
+  }
+
+  gameCopy.objects.forEach((object) => {
+    Object.keys(object.tags).forEach((key) => {
+      if(object.tags[key] === false) delete object.tags[key]
+      OBJECTS.cleanForSave(object)
+    })
+  })
+
+  HERO.cleanForSave(gameCopy.hero)
+
+  return gameCopy
 }
 
 export default {

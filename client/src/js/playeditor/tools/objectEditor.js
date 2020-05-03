@@ -30,7 +30,7 @@ function init() {
   var sendObjectPos = document.getElementById("send-object-pos");
   sendObjectPos.addEventListener('click', () => {
     let editingObject = window.objecteditor.get();
-    window.sendObjectUpdate({ x: editingObject.x, y: editingObject.y })
+    window.sendObjectUpdate({ id: editingObject.id, x: editingObject.x, y: editingObject.y })
   })
 
   var sendObjectOther = document.getElementById("send-object-other");
@@ -109,22 +109,25 @@ window.updateEditorState = function() {
 }
 
 window.sendObjectUpdate = function(objectUpdate) {
-  let editorState = window.objecteditor.get()
-  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(!objectUpdate.id) return
+
+  window.mergeDeep(w.editingGame.objectsById[objectUpdate.id], objectUpdate)
   if(window.editingGame.branch) {
 
-  } else if(window.objecteditor.live && editorState.id) {
-    window.socket.emit('editObjects', w.editingGame.objects)
+  } else if(window.objecteditor.live) {
+    window.socket.emit('editObjects', [objectUpdate])
   }
 }
 
 window.sendObjectUpdateOther = function(objectUpdate) {
-  let editorState = window.objecteditor.get()
-  window.mergeDeep(w.editingGame.objectsById[editorState.id], objectUpdate)
+  if(!objectUpdate.id) return
+  window.mergeDeep(w.editingGame.objectsById[objectUpdate.id], objectUpdate)
   if(window.editingGame.branch) {
 
   } else {
-    window.emitEditObjectsOther()
+    delete objectUpdate.x
+    delete objectUpdate.y
+    window.socket.emit('editObjects', [objectUpdate])
   }
   window.objecteditor.saved = true
   window.updateObjectEditorNotifier()

@@ -297,7 +297,7 @@ class Hero{
   	return width * 2
   }
 
-  cleanForNetwork(hero) {
+  cleanForSave(hero) {
     delete hero._initialY
     delete hero._initialX
     delete hero._deltaY
@@ -324,6 +324,26 @@ class Hero{
     delete hero.gridWidth
     delete hero.updateHistory
     delete hero.timeouts
+    delete hero.onGround
+  }
+
+  getMapState(hero) {
+    return {
+      id: hero.id,
+      x: hero.x,
+      y: hero.y,
+      width: hero.width,
+      height: hero.height,
+      _interactableObject: hero._interactableObject,
+      chat: hero.chat,
+      flags: hero.flags,
+      directions: hero.directions,
+      animationZoomMultiplier: hero.animationZoomMultiplier,
+      color: hero.color,
+      inputDirection: hero.inputDirection,
+      lives: hero.lives,
+      score: hero.score,
+    }
   }
 }
 

@@ -178,14 +178,15 @@ class Game{
     //   GAME.gameState = storedGameState.gameState
     // } else {
 
-    GAME.objects = game.objects
     GAME.world = game.world
-    // }
 
     if(!GAME.objectsById) GAME.objectsById = {}
-    GAME.objects.forEach((object) => {
+    GAME.objects = game.objects.map((object) => {
+      object.tags = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultTags)), object.tags)
       GAME.objectsById[object.id] = object
       PHYSICS.addObject(object)
+
+      return object
     })
 
     // for host to find themselves really is all...
@@ -373,19 +374,6 @@ class Game{
   }
   addOrResetTimeout(id, numberOfSeconds, fx) {
     timeouts.addOrResetTimeout(id, numberOfSeconds, fx)
-  }
-
-  cleanForNetwork() {
-    GAME.objects.forEach((object) => {
-      Object.keys(object.tags).forEach((key) => {
-        if(object.tags[key] === false) delete object.tags[key]
-        OBJECTS.cleanForNetwork(object)
-      })
-    })
-
-    GAME.heroList.forEach((hero) => {
-      HERO.cleanForNetwork(hero)
-    })
   }
 }
 

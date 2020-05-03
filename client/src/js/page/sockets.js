@@ -192,12 +192,10 @@ function init() {
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
     if(!PAGE.gameLoaded) return
     if(!PAGE.role.isHost) {
-      GAME.objects = objectsUpdated
-      GAME.objectsById = GAME.objects.reduce((prev, next) => {
-        prev[next.id] = next
-        return prev
-      }, {})
-
+      objectsUpdated.forEach((obj) => {
+        let objectById = GAME.objectsById[obj.id]
+        window.mergeDeep(objectById, obj)
+      })
       // old interpolation code
       // if(PAGE.role.isPlayer) {
       //   objectsUpdated.forEach((obj) => {
@@ -264,9 +262,9 @@ function init() {
           updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
         }
 
-        window.editingHero = updatedHero
+        window.editingHero = GAME.heros[updatedHero.id]
         if(GAME.world.syncHero) {
-          window.setEditingHero(updatedHero)
+          window.setEditingHero(GAME.heros[updatedHero.id])
         }
       }
     }

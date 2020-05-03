@@ -169,13 +169,15 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onAnticipateObject', object)
   })
 
-  socket.on('updateObjects', (updatedobjects) => {
+  socket.on('updateObjectsComplete', (updatedobjects) => {
     currentGame.objects = updatedobjects
     io.emit('onUpdateObjects', currentGame.objects)
   })
+  socket.on('updateObjects', (updatedobjects) => {
+    io.emit('onUpdateObjects', updatedobjects)
+  })
   socket.on('editObjects', (editedobjects) => {
-    currentGame.objects = editedobjects
-    io.emit('onEditObjects', currentGame.objects)
+    io.emit('onEditObjects', editedobjects)
   })
   socket.on('resetObjects', (objects) => {
     io.emit('onResetObjects')
@@ -239,6 +241,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateHero', hero)
   })
   socket.on('updateHeros', (heros) => {
+    Object.keys(heros).forEach((id) => {
+      io.emit('onUpdateHero', heros[id])
+    })
+  })
+  socket.on('updateHerosComplete', (heros) => {
     currentGame.heros = heros
     Object.keys(currentGame.heros).forEach((id) => {
       io.emit('onUpdateHero', currentGame.heros[id])
