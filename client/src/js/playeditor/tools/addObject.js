@@ -32,7 +32,7 @@ function init() {
     }
     object.compendiumId = 'compendium-' + window.uniqueID()
 
-    window.removeObjectState(object)
+    OBJECTS.removeState(object)
     console.log('added: ' + object.compendiumId + ' to compendium')
     window.objecteditor.saved = false
     window.objecteditor.defaultCompendium = false
@@ -62,7 +62,7 @@ function init() {
       window.compendium[object.compendiumId] = object
     }
 
-    window.removeObjectState(object)
+    OBJECTS.removeState(object)
     window.objecteditor.update(object)
     window.objecteditor.saved = true
     GAME.compendium = window.compendium
@@ -224,10 +224,10 @@ window.copyParentAndChildOrRelatives = function(parent, children) {
     }
     objCopy.__relativeToParentX = objCopy.x - parentCopy.x
     objCopy.__relativeToParentY = objCopy.y - parentCopy.y
-    window.removeObjectState(objCopy)
+    OBJECTS.removeState(objCopy)
     return objCopy
   })
-  window.removeObjectState(parentCopy)
+  OBJECTS.removeState(parentCopy)
   return { parent: parentCopy, children }
 }
 

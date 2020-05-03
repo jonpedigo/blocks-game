@@ -39,7 +39,7 @@ window.handleWorldUpdate = function(updatedWorld) {
     }
 
     if(key === 'gameBoundaries') {
-      gridTool.updateGridObstacles()
+      GAME.updateGridObstacles()
       if(PAGE.role.isHost) GAME.resetPaths = true
       if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
@@ -47,7 +47,7 @@ window.handleWorldUpdate = function(updatedWorld) {
     if(key === 'globalTags' || key === 'editorTags') {
       for(let tag in updatedWorld.globalTags) {
         if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
-          gridTool.updateGridObstacles()
+          GAME.updateGridObstacles()
           if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
         }
       }

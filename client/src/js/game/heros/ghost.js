@@ -3,8 +3,6 @@ import gridUtil from '../../utils/grid.js'
 import input from '../input.js'
 
 class Ghost{
-  constructor() {}
-
   onPageLoaded(){
     window.addEventListener("keydown", function (e) {
       keysDown[e.keyCode] = true

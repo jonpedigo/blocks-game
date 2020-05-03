@@ -13,14 +13,10 @@ function init() {
       let object = w.editingGame.objectsById[editorState.id]
 
       if((object.tags.obstacle == true && editorState.tags.obstacle == false) || (object.tags.stationary == true && editorState.tags.stationary == false)) {
-        gridTool.removeObstacle({...object, tags: editorState.tags})
+        GAME.removeObstacle({...object, tags: editorState.tags})
       }
       if((object.tags.obstacle == false && editorState.tags.obstacle == true) || (object.tags.stationary == false && editorState.tags.stationary == true) || (object.tags.onlyHeroAllowed == false && editorState.tags.onlyHeroAllowed == true)) {
-        gridTool.addObstacle({...object, tags: editorState.tags})
-      }
-
-      if((object.tags.requireActionButton == false && editorState.tags.requireActionButton == true) || (object.tags.stationary == false && editorState.tags.stationary == true)) {
-
+        GAME.addObstacle({...object, tags: editorState.tags})
       }
 
       window.objecteditor.saved = false

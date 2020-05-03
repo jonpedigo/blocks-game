@@ -113,7 +113,7 @@ function init() {
 
   function respawnHero() {
     if(window.editingGame.branch) {
-      window.respawnHero(window.editingHero)
+      HERO.respawn(window.editingHero)
     } else {
       window.socket.emit('respawnHero', window.editingHero)
     }
@@ -122,7 +122,7 @@ function init() {
   }
   function resetHeroToDefault() {
     if(window.editingGame.branch) {
-      window.editingHero = window.resetHeroToDefault(window.editingHero)
+      window.editingHero = HERO.resetToDefault(window.editingHero)
       window.editingGame.heros[window.editingHero.id] = window.editingHero
     } else {
       window.socket.emit('resetHeroToDefault', window.editingHero)

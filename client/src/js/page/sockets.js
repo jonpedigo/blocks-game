@@ -25,7 +25,7 @@ function init() {
       if(GAME) {
         let hero = GAME.heros[heroId]
         if(!hero) {
-          hero = window.findHeroInNewGame({id: heroId})
+          hero = HERO.summonFromGameData({id: heroId})
           hero.id = heroId
           GAME.heros[hero.id] = hero
           PHYSICS.addObject(hero)
@@ -59,7 +59,7 @@ function init() {
     window.socket.on('onResetHeroToDefault', (hero) => {
       GAME.heroList.forEach(({id}) => {
         if(id === hero.id) {
-          GAME.heros[id] = window.resetHeroToDefault(GAME.heros[id])
+          GAME.heros[id] = HERO.resetToDefault(GAME.heros[id])
           if(PAGE.role.isPlayer && HERO.hero.id === hero.id) HERO.hero = GAME.heros[id]
         }
       })
@@ -69,7 +69,7 @@ function init() {
     window.socket.on('onRespawnHero', (hero) => {
       GAME.heroList.forEach(({id}) => {
         if(id === hero.id) {
-          window.respawnHero(GAME.heros[id])
+          HERO.respawn(GAME.heros[id])
         }
       })
     })
@@ -92,7 +92,7 @@ function init() {
         window.mergeDeep(objectById, obj)
       })
       if(!GAME.world.globalTags.calculatePathCollisions) {
-        gridTool.updateGridObstacles()
+        GAME.updateGridObstacles()
         GAME.resetPaths = true
         GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
@@ -113,7 +113,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onAnticipateObject', (object) => {
-  		window.anticipatedObject = object
+  		OBJECTS.anticipatedForAdd = object
   	})
 
     // EDITOR CALLS THIS
@@ -135,7 +135,7 @@ function init() {
         GAME.gameState = initialGameState.gameState
         GAME.grid = initialGameState.grid
         GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
-        gridTool.updateGridObstacles()
+        GAME.updateGridObstacles()
         GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
@@ -258,10 +258,10 @@ function init() {
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
         if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
-          updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
+          updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
         }
         if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
-          updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
+          updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
         }
 
         window.editingHero = updatedHero
@@ -286,7 +286,7 @@ function init() {
     })
 
     if(GAME.grid.nodes && !GAME.world.globalTags.calculatePathCollisions) {
-      gridTool.updateGridObstacles()
+      GAME.updateGridObstacles()
       GAME.resetPaths = true
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
@@ -306,7 +306,7 @@ function init() {
     }, {})
 
     if(!GAME.world.globalTags.calculatePathCollisions) {
-      gridTool.updateGridObstacles()
+      GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
   })
@@ -315,7 +315,7 @@ function init() {
   window.socket.on('onResetWorld', () => {
     GAME.world = JSON.parse(JSON.stringify(window.defaultWorld))
     if(!PAGE.role.isPlayEditor) window.camera.clearLimit()
-    gridTool.updateGridObstacles()
+    GAME.updateGridObstacles()
     if(PAGE.role.isHost) GAME.resetPaths = true
     if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     window.handleWorldUpdate(GAME.world)
@@ -341,10 +341,10 @@ function init() {
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
   	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
-  		updatedHero.reachablePlatformHeight = window.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
+  		updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
   	}
   	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
-  		updatedHero.reachablePlatformWidth = window.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
+  		updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
   	}
 
     console.log(updatedHero)
@@ -366,7 +366,7 @@ function init() {
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveObject', (object) => {
     if(!GAME.world.globalTags.calculatePathCollisions) {
-      gridTool.updateGridObstacles()
+      GAME.updateGridObstacles()
       if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
@@ -387,7 +387,7 @@ function init() {
     }
 
     if(!GAME.world.globalTags.calculatePathCollisions) {
-      gridTool.updateGridObstacles()
+      GAME.updateGridObstacles()
       if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
 
@@ -411,7 +411,7 @@ function init() {
   window.socket.on('onUpdateGrid', (grid) => {
     GAME.grid = grid
     GAME.grid.nodes = gridTool.generateGridNodes(grid)
-    gridTool.updateGridObstacles()
+    GAME.updateGridObstacles()
     if(PAGE.role.isHost) {
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
@@ -430,21 +430,21 @@ function init() {
 
   window.socket.on('onCopyGame', (game) => {
     GAME.unload()
-    PAGE.loadGame(game, { resetHeros: true })
+    GAME.load(game, { resetHeros: true })
   })
 
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
     GAME.unload()
-    PAGE.loadGame(game, { resetHeros: true })
+    GAME.load(game, { resetHeros: true })
     ARCADE.changeGame(game.id)
   })
 
   // this is from branch merge
   window.socket.on('onSetGameJSON', (game) => {
     GAME.unload()
-    PAGE.loadGame(game)
+    GAME.load(game)
     ARCADE.changeGame(game.id)
   })
 
@@ -453,18 +453,6 @@ function init() {
   //   ARCADE.changeGame(null)
   //   GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   // })
-
-  window.socket.on('onGameSaved', (id) => {
-    ARCADE.changeGame(id)
-  })
-
-  window.socket.on('onUpdateCustomGameFx', (customFx) => {
-    window.local.emit('onUpdateCustomGameFx', customFx)
-  })
-
-  window.socket.on('onCustomFxEvent', (eventName) => {
-    window.local.emit('onCustomFxEvent', eventName)
-  })
 
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
     if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.hero.id === heroId) {
@@ -480,6 +468,18 @@ function init() {
     if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.hero.id === heroId) {
       modals.writeDialogue(object)
     }
+  })
+
+  window.socket.on('onGameSaved', (id) => {
+    window.local.emit('onGameSaved', id)
+  })
+
+  window.socket.on('onUpdateCustomGameFx', (customFx) => {
+    window.local.emit('onUpdateCustomGameFx', customFx)
+  })
+
+  window.socket.on('onCustomFxEvent', (eventName) => {
+    window.local.emit('onCustomFxEvent', eventName)
   })
 }
 

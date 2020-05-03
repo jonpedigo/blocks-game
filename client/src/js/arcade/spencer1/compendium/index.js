@@ -1,7 +1,7 @@
 import hero from './heroCompendium'
 import object from './objectCompendium'
 
-export {
+export default {
   hero,
   object
 }

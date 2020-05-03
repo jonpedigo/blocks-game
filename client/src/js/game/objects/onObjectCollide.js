@@ -1,4 +1,4 @@
-function onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
+export default function onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
   if(agent.tags['monsterDestroyer'] && collider.tags['monster']) {
     window.local.emit('onDestroyMonster', agent, collider, result, removeObjects, respawnObjects)
     if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
@@ -75,5 +75,3 @@ function shouldEffect(agent, collider) {
 
   return true
 }
-
-export default onObjectCollide

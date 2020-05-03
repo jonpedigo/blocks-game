@@ -1,4 +1,5 @@
-function onEffectHero(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
+export default function onEffectHero(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
+
   if(collider.tags && collider.tags['monster']) {
     // if(hero.tags['monsterDestroyer']) {
     //   window.local.emit('onHeroDestroyMonster', hero, collider, result, removeObjects, respawnObjects, options)
@@ -111,6 +112,3 @@ function setRevertUpdateTimeout(id, hero, collider) {
 
   window.addOrResetTimeout(id, collider.powerUpTimer || 3, timeoutFx)
 }
-
-
-export default onEffectHero

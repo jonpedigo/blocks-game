@@ -28,7 +28,6 @@ window.PHYSICS = {
 
 function correctAndEffectAllObjectAndHeros (delta) {
   // update physics system
-  system.update()
   let removeObjects = []
   let respawnObjects = []
   prepareObjectsAndHerosForCollisionsPhase()
@@ -138,7 +137,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.push(...allHeros)
   everything.forEach((object) => {
     if(object.subObjects) {
-      window.forAllSubObjects(object.subObjects, (subObject) => {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
         subObject.ownerId = object.id
         everything.push(subObject)
       })
@@ -166,6 +165,8 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
     }
   })
+
+  system.update()
 }
 
 function heroPhysics(removeObjects, respawnObjects) {
@@ -182,7 +183,7 @@ function objectPhysics(removeObjects, respawnObjects) {
     let po = PHYSICS.objects[id]
     // console.log(po)
     if(!po.gameObject) {
-      console.log('no game object found for phyics object id: ' + id)
+      if(PHYSICS.debug) console.log('no game object found for phyics object id: ' + id)
       continue
     }
     if(po.gameObject.removed) continue
@@ -300,11 +301,11 @@ function removeAndRespawn(removeObjects, respawnObjects) {
 
   respawnObjects.forEach((gameObject) => {
     if(gameObject.id.indexOf('hero') > -1) {
-      window.respawnHero(gameObject)
+      HERO.respawn(gameObject)
       window.socket.emit('updateHeroPos', gameObject)
       window.local.emit('onRespawnHero', gameObject)
     } else if(gameObject.spawnPointX >= 0){
-      window.respawnObject(gameObject)
+      OBJECTS.respawn(gameObject)
       window.local.emit('onRespawnObject', gameObject)
     } else {
       window.socket.emit('deleteObject', gameObject)

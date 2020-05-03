@@ -121,7 +121,7 @@ Engine trail on a car u know what I mean?
 REGARDING PHYSICS, SOMETHING EARLIER ON THE i LIST ( objects ) loose the battle for corrections. They correct for everything else first
 just make sure to set something to stationary if its not supposed to be move, or else it will be subject to spawn ( i ) order
 */
-import './js/core/page.js'
+import './js/page/index.js'
 import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'

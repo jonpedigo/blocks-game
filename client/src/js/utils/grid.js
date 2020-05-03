@@ -32,14 +32,6 @@ function generateGridNodes(gridProps) {
   return grid
 }
 
-function forEach(fx) {
-  for(var i = 0; i < GAME.grid.width; i++) {
-    for(var j = 0; j < GAME.grid.height; j++) {
-      fx(GAME.grid.nodes[i][j])
-    }
-  }
-}
-
 function snapXYToGrid(x, y, options = { closest: true }) {
   let diffX = x % GAME.grid.nodeSize;
   if(diffX > GAME.grid.nodeSize/2 && options.closest) {
@@ -166,18 +158,6 @@ function snapDragToGrid(object) {
   object.gridHeight = object.height/GAME.grid.nodeSize
 }
 
-window.snapAllObjectsToGrid = function() {
-	GAME.objects.forEach((object) => {
-    if(object.removed) return
-
-		snapObjectToGrid(object)
-	})
-
-  snapObjectToGrid(HERO.hero)
-  HERO.hero.width = GAME.grid.nodeSize
-  HERO.hero.height = GAME.grid.nodeSize
-}
-
 function createGridNodeAt(x, y) {
   let diffX = x % GAME.grid.nodeSize
   x -= diffX
@@ -188,79 +168,6 @@ function createGridNodeAt(x, y) {
   return {
     x, y, width: GAME.grid.nodeSize, height: GAME.grid.nodeSize,
   }
-}
-
-function addObstacle(object) {
-  if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.globalTags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
-    // pretend we are dealing with a 0,0 plane
-    let x = object.x - GAME.grid.startX
-    let y = object.y - GAME.grid.startY
-
-    let diffX = x % GAME.grid.nodeSize
-    x -= diffX
-    x = x/GAME.grid.nodeSize
-
-    let diffY = y % GAME.grid.nodeSize
-    y -= diffY
-    y = y/GAME.grid.nodeSize
-
-    let gridWidth = object.width / GAME.grid.nodeSize;
-    let gridHeight = object.height / GAME.grid.nodeSize;
-
-    for(let currentx = x; currentx < x + gridWidth; currentx++) {
-      for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        hasObstacleUpdate(currentx, currenty, true)
-      }
-    }
-  }
-}
-
-function hasObstacleUpdate(x, y, hasObstacle) {
-  if(x >= 0 && x < GAME.grid.width) {
-    if(y >= 0 && y < GAME.grid.height) {
-      let gridNode = GAME.grid.nodes[x][y]
-      gridNode.hasObstacle = hasObstacle
-    }
-  }
-}
-
-function removeObstacle(object) {
-  if(true) {
-    // pretend we are dealing with a 0,0 plane
-    let x = object.x - GAME.grid.startX
-    let y = object.y - GAME.grid.startY
-
-    let diffX = x % GAME.grid.nodeSize
-    x -= diffX
-    x = x/GAME.grid.nodeSize
-
-    let diffY = y % GAME.grid.nodeSize
-    y -= diffY
-    y = y/GAME.grid.nodeSize
-
-    let gridWidth = object.width / GAME.grid.nodeSize;
-    let gridHeight = object.height / GAME.grid.nodeSize;
-
-    for(let currentx = x; currentx < x + gridWidth; currentx++) {
-      for(let currenty = y; currenty < y + gridHeight; currenty++) {
-        hasObstacleUpdate(currentx, currenty, false)
-      }
-    }
-  }
-}
-
-function updateGridObstacles() {
-  forEach((gridNode) => {
-    gridNode.hasObstacle = false
-  })
-
-  GAME.objects.forEach((obj) => {
-    if(obj.removed) return
-
-    if(obj.tags && obj.tags.obstacle || obj.tags.onlyHeroAllowed) {
-      addObstacle(obj)
-    }
-  })
 }
 
 function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
@@ -324,17 +231,13 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
 }
 
 export default {
-  forEach,
   snapObjectToGrid,
   snapDragToGrid,
   snapTinyObjectToGrid,
   createGridNodeAt,
   generateGridNodes,
   snapXYToGrid,
-  updateGridObstacles,
   getAllDiffs,
-  addObstacle,
-  removeObstacle,
   convertToGridXY,
   getRandomGridWithinXY,
   keepGridXYWithinBoundaries,

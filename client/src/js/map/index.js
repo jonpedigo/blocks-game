@@ -1,5 +1,5 @@
 import render from './render'
-import cameraTool from '../core/camera.js'
+import cameraTool from './camera.js'
 import constellation from './constellation.js'
 
 window.MAP = {

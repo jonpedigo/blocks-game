@@ -85,7 +85,7 @@ window.onChangeTool = function(toolName) {
       if(editorState.compendiumId) delete editorState.compendiumId
       delete editorState.id
       editorState.i = null
-      window.removeObjectState(editorState)
+      OBJECTS.removeState(editorState)
       window.objecteditor.saved = true
       window.objecteditor.update(editorState)
       window.updateObjectEditorNotifier()
@@ -173,7 +173,7 @@ function createMaze() {
     o.tags.stationary = true
     return o
   })
-  window.addObjects(maze)
+  OBJECTS.add(maze)
 }
 
 function createArena(boundaries) {
@@ -228,7 +228,7 @@ function createArena(boundaries) {
     parentId: parent.id,
   }
 
-  window.addObjects([parent, wallTop, wallRight, wallLeft, wallBottom])
+  OBJECTS.add([parent, wallTop, wallRight, wallLeft, wallBottom])
 }
 window.createArena = createArena
 

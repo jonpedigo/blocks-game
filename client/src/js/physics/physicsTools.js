@@ -1,4 +1,34 @@
 import { Polygon } from 'collisions';
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// HERO EFFECTS ON COLLISION
+/////////////////////////////////////////////////////
+function heroCollisionEffects(hero, removeObjects, respawnObjects) {
+  const result = PHYSICS.objects[hero.id].createResult()
+  const potentials = PHYSICS.objects[hero.id].potentials()
+  let illegal = false
+  let correction = {x: hero.x, y: hero.y}
+  let heroPO = PHYSICS.objects[hero.id]
+  for(const body of potentials) {
+    if(!body.gameObject) {
+      if(PHYSICS.debug) console.log('missing game object on body', body)
+      continue
+    }
+    if(body.gameObject.removed) continue
+    if(heroPO.collides(body, result)) {
+      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+    }
+  }
+
+  // in case there was respawns or something
+  heroPO.x = hero.x
+  heroPO.y = hero.y
+}
+
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -25,7 +55,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
     let corrections = []
     for(const body of potentials) {
       if(!body.gameObject) {
-        console.log('missing game object on body', body)
+        if(PHYSICS.debug) console.log('missing game object on body', body)
         continue
       }
       if(body.gameObject.removed) continue
@@ -126,38 +156,143 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
   }
 }
 
-function heroCollisionEffects(hero, removeObjects, respawnObjects) {
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  // HERO.hero EFFECTS ON COLLISION
-  /////////////////////////////////////////////////////
-  const result = PHYSICS.objects[hero.id].createResult()
-  const potentials = PHYSICS.objects[hero.id].potentials()
-  let illegal = false
-  let correction = {x: hero.x, y: hero.y}
-  let heroPO = PHYSICS.objects[hero.id]
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// OBJECTS COLLIDING WITH OTHER OBJECTS
+/////////////////////////////////////////////////////
+function objectCollisionEffects(po, removeObjects, respawnObjects) {
+
+  let potentials = po.potentials()
+  let result = po.createResult()
+  // po VS body. the po is the one you should EFFECT
   for(const body of potentials) {
     if(!body.gameObject) {
-      console.log('missing game object on body', body)
+      if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
     if(body.gameObject.removed) continue
-    if(heroPO.collides(body, result)) {
-      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+    if(po.collides(body, result)) {
+      let collider = body.gameObject
+      let agent = po.gameObject
+
+      if(agent.actionTriggerArea && collider.tags['requireActionButton']) {
+        // sometimes the hero could be logged off
+        let hero = GAME.heros[agent.ownerId]
+        if(hero) {
+          if(!hero._interactableObject) {
+            hero._interactableObject = collider
+            hero._interactableObjectResult = result
+          } else if(collider.width < hero._interactableObject.width || collider.height < hero._interactableObject.height) {
+            hero._interactableObject = collider
+            hero._interactableObjectResult = result
+          }
+        }
+      }
+
+      window.local.emit('onObjectCollide', agent, collider, result, removeObjects, respawnObjects)
     }
   }
-
-  // in case there was respawns or something
-  heroPO.x = hero.x
-  heroPO.y = hero.y
 }
 
 
-function containObjectWithinGridBoundaries(object) {
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+// OBJECT CORRECTIONS
+/////////////////////////////////////////////////////
+function objectCorrection(po, final) {
+  // if you are creating a result up here youll only be able to correct for one obj at a time
+  // if you are accumulating the result like for the hero
+  let result = po.createResult()
+  let correction = {x: po.x, y: po.y}
+  let potentials = po.potentials()
+  let illegal = false
+  for(const body of potentials) {
+    if(!body.gameObject) {
+      if(PHYSICS.debug) console.log('missing game object on body', body)
+      continue
+    }
+    if(body.gameObject.removed) continue
+    if(po.collides(body, result)) {
+      // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
+      if(po.gameObject.tags['monster'] && body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
 
+      // objects with NO path but SOME velocity get corrections
+      let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY && po.gameObject.velocityY !== 0 || po.gameObject.velocityX && po.gameObject.velocityX !== 0))
+      let bothAreObstacles = po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle']
+      if(!po.gameObject.tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.tags['heroPushable'])) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
+
+      if(po.gameObject.tags && po.gameObject.tags['heroPushable'] && body.gameObject.tags && body.gameObject.tags['hero'] && !po.gameObject.tags['stationary']) {
+        if(Math.abs(result.overlap_x) !== 0) {
+          illegal = true
+          correction.x -= result.overlap * result.overlap_x
+        }
+        if(Math.abs(result.overlap_y) !== 0) {
+          illegal = true
+          correction.y -= result.overlap * result.overlap_y
+        }
+        break;
+      }
+
+    }
+  }
+
+  if(illegal) {
+    if(result.overlap_y === 1) {
+      po.gameObject.velocityY = 0
+      po.gameObject.onGround = true
+    } else if(result.overlap_y === -1){
+      po.gameObject.velocityY = 0
+    }
+    if(result.overlap_x === 1) {
+      po.gameObject.velocityX = 0
+    } else if(result.overlap_x === -1){
+      po.gameObject.velocityX = 0
+    }
+
+    po.x = correction.x
+    po.y = correction.y
+  }
+
+  if(final) {
+    // just give up correction and prevent any movement from these mother fuckers
+    if(illegal) {
+      po.gameObject.x = po.gameObject._initialX
+      po.gameObject.y = po.gameObject._initialY
+    } else {
+      po.gameObject.x = po.x
+      po.gameObject.y = po.y
+    }
+  }
+}
+
+function containObjectWithinGridBoundaries(object) {
   //DO THE PACMAN FLIP!!
   let gameBoundaries = GAME.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
@@ -258,134 +393,8 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
-function objectCorrection(po, final, options = { bypassHero: false }) {
-  // if you are creating a result up here youll only be able to correct for one obj at a time
-  // if you are accumulating the result like for the hero
-  let result = po.createResult()
-  let correction = {x: po.x, y: po.y}
-  let potentials = po.potentials()
-  let illegal = false
-  for(const body of potentials) {
-    if(!body.gameObject) {
-      console.log('missing game object on body', body)
-      continue
-    }
-
-    if(body.gameObject.removed || (options.bypassHero && body.gameObject.tags.hero)) continue
-    if(po.collides(body, result)) {
-      // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
-      if(po.gameObject.tags['monster'] && body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
-        if(Math.abs(result.overlap_x) !== 0) {
-          illegal = true
-          correction.x -= result.overlap * result.overlap_x
-        }
-        if(Math.abs(result.overlap_y) !== 0) {
-          illegal = true
-          correction.y -= result.overlap * result.overlap_y
-        }
-        break;
-      }
-
-      // objects with NO path but SOME velocity get corrections
-      let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY && po.gameObject.velocityY !== 0 || po.gameObject.velocityX && po.gameObject.velocityX !== 0))
-      let bothAreObstacles = po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle']
-      if(!po.gameObject.tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.tags['heroPushable'])) {
-        if(Math.abs(result.overlap_x) !== 0) {
-          illegal = true
-          correction.x -= result.overlap * result.overlap_x
-        }
-        if(Math.abs(result.overlap_y) !== 0) {
-          illegal = true
-          correction.y -= result.overlap * result.overlap_y
-        }
-        break;
-      }
-
-      if(po.gameObject.tags && po.gameObject.tags['heroPushable'] && body.gameObject.tags && body.gameObject.tags['hero'] && !po.gameObject.tags['stationary']) {
-        if(Math.abs(result.overlap_x) !== 0) {
-          illegal = true
-          correction.x -= result.overlap * result.overlap_x
-        }
-        if(Math.abs(result.overlap_y) !== 0) {
-          illegal = true
-          correction.y -= result.overlap * result.overlap_y
-        }
-        break;
-      }
-
-    }
-  }
-
-  if(illegal) {
-    if(result.overlap_y === 1) {
-      po.gameObject.velocityY = 0
-      po.gameObject.onGround = true
-    } else if(result.overlap_y === -1){
-      po.gameObject.velocityY = 0
-    }
-    if(result.overlap_x === 1) {
-      po.gameObject.velocityX = 0
-    } else if(result.overlap_x === -1){
-      po.gameObject.velocityX = 0
-    }
-
-    po.x = correction.x
-    po.y = correction.y
-  }
-
-  if(final) {
-    // just give up correction and prevent any movement from these mother fuckers
-    if(illegal) {
-      po.gameObject.x = po.gameObject._initialX
-      po.gameObject.y = po.gameObject._initialY
-    } else {
-      po.gameObject.x = po.x
-      po.gameObject.y = po.y
-    }
-  }
-}
-
-function objectCollisionEffects(po, removeObjects, respawnObjects) {
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////
-  // OBJECTS COLLIDING WITH OTHER OBJECTS
-  /////////////////////////////////////////////////////
-  let potentials = po.potentials()
-  let result = po.createResult()
-  // po VS body. the po is the one you should EFFECT
-  for(const body of potentials) {
-    if(!body.gameObject) {
-      console.log('missing game object on body', body)
-      continue
-    }
-    if(body.gameObject.removed) continue
-    if(po.collides(body, result)) {
-      let collider = body.gameObject
-      let agent = po.gameObject
-
-      if(agent.actionTriggerArea && collider.tags['requireActionButton']) {
-        // sometimes the hero could be logged off
-        let hero = GAME.heros[agent.ownerId]
-        if(hero) {
-          if(!hero._interactableObject) {
-            hero._interactableObject = collider
-            hero._interactableObjectResult = result
-          } else if(collider.width < hero._interactableObject.width || collider.height < hero._interactableObject.height) {
-            hero._interactableObject = collider
-            hero._interactableObjectResult = result
-          }
-        }
-      }
-
-      window.local.emit('onObjectCollide', agent, collider, result, removeObjects, respawnObjects)
-    }
-  }
-}
 function attachSubObjects(object, subObjects) {
-  window.forAllSubObjects(subObjects, (subObject) => {
+  OBJECTS.forAllSubObjects(subObjects, (subObject) => {
     subObject.x = object.x + subObject.relativeX
     subObject.y = object.y + subObject.relativeY
     subObject.width = object.width + (subObject.relativeWidth)
@@ -424,9 +433,8 @@ function addObject(object) {
   PHYSICS.system.insert(physicsObject)
   PHYSICS.objects[object.id] = physicsObject
   if(object.subObjects) {
-    window.forAllSubObjects(object.subObjects, (subObject, key) => {
-      subObject.id = key + '-sub-' + object.id
-      addObject(subObject)
+    OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+      PHYSICS.addObject(subObject)
     })
   }
   return physicsObject
@@ -436,10 +444,8 @@ function removeObject(object) {
   try {
     PHYSICS.system.remove(PHYSICS.objects[object.id])
     if(object.subObjects) {
-      window.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.id) {
-          removeObject(subObject)
-        }
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        PHYSICS.removeObject(subObject)
       })
     }
     delete PHYSICS.objects[object.id];

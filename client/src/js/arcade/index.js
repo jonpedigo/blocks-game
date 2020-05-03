@@ -7,13 +7,13 @@ import modals from '../mapeditor/modals.js'
 import drawTools from '../mapeditor/drawTools.js'
 import './templateLiveCustomGame.js'
 
-import defaultCustomGame from './default'
+import defaultCustomGame from './default/default'
 import defaultCompendium from './default/compendium'
-import pacmanGame from './pacman'
-import templateGame from './template'
+import pacmanGame from './pacman/pacman'
+import templateGame from './template/template'
 
-import spencer1Game from './spencer1'
-import spencer1Compendium from './spencer1'
+import spencer1Game from './spencer1/spencer1'
+import spencer1Compendium from './spencer1/compendium'
 
 let customGames = {
   default: new defaultCustomGame(),
@@ -57,15 +57,19 @@ class Arcade{
     }
   }
 
+  onGameSaved(id) {
+    ARCADE.changeGame(id)
+  }
+
   evalLiveCustomFx(customFx) {
-    return eval(`(function a(pathfinding, gridTool, collisions, particles, drawTools) {
+    return eval(`(function a(pathfindingUtil, gridUtil, collisionsUtil, drawUtil, particlesUtil) {
         ${customFx}
       return CustomGame })`)
   }
 
   setLiveCustomFx(customFx) {
     customFx = ARCADE.evalLiveCustomFx(customFx)
-    customFx = customFx(pathfinding, gridTool, collisions, particles, drawTools)
+    customFx = customFx(pathfinding, gridTool, collisions, drawTools, particles)
     customFx = new customFx
     ARCADE.liveCustomGame = customFx
   }

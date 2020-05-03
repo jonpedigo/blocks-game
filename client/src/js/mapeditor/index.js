@@ -123,7 +123,7 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.copiedObject) {
-    window.addObjects([MAPEDITOR.copiedObject])
+    OBJECTS.add([MAPEDITOR.copiedObject])
     MAPEDITOR.copiedObject = null
   } else if(MAPEDITOR.isSettingPathfindingLimit) {
     if(MAPEDITOR.pathfindingLimit) {

@@ -34,6 +34,10 @@ class EventEmitter {
       event.push(ARCADE[eventName])
     }
 
+    if(OBJECTS[eventName]) {
+      event.push(OBJECTS[eventName])
+    }
+
     if(HERO[eventName]) {
       event.push(HERO[eventName])
     }

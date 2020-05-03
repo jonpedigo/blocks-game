@@ -22,7 +22,7 @@ export default class CustomGame{
     GAME.gameState.started = true
     GAME.gameState.startTime = Date.now()
     window.resetSpawnAreasAndObjects()
-    window.respawnHeros()
+    HERO.respawn()
     HERO.hero.lives = 3
   }
 
@@ -64,7 +64,7 @@ export default class CustomGame{
     })
 
     if(GAME.gameState.paused && GAME.gameState.started) {
-      const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = window.getViewBoundaries(HERO.hero)
+      const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = HERO.getViewBoundaries(HERO.hero)
 
       // ctx.fillStyle = 'rgba(0,0,0,0.8)';
       // ctx.fillRect((minX/window.camera.multiplier - window.camera.x), (minY/window.camera.multiplier - window.camera.y), cameraWidth/window.camera.multiplier, cameraHeight/window.camera.multiplier);

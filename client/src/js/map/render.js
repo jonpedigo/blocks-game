@@ -59,7 +59,7 @@ function update() {
   GAME.heroList.forEach((hero) => {
     drawTools.drawObject(ctx, hero, camera);
     if(hero.subObjects) {
-      window.forAllSubObjects(hero.subObjects, (subObject) => {
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
         drawTools.drawObject(ctx, subObject, camera)
       })
     }

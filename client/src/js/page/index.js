@@ -79,7 +79,7 @@ class Page{
 
     PAGE.askCurrentGame((game) => {
       ARCADE.changeGame(game.id)
-      PAGE.loadGame(game)
+      GAME.load(game)
       window.startGameLoop()
     })
   }
@@ -93,7 +93,7 @@ class Page{
   askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
       let game = testArcade
-      HERO.hero = window.findHeroInNewGame({ id: HERO.id })
+      HERO.hero = HERO.summonFromGameData({ id: HERO.id })
       cb(game)
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
@@ -134,12 +134,10 @@ class Page{
               if(newGameId) {
                 let game = {
                   id: newGameId,
-                  gameState: JSON.parse(JSON.stringify(window.defaultGameState)),
                   world: JSON.parse(JSON.stringify(window.defaultWorld)),
                   hero: JSON.parse(JSON.stringify(window.defaultHero)),
                   objects: [],
                   grid: JSON.parse(JSON.stringify(window.defaultGrid)),
-                  heros: {},
                 }
                 window.socket.emit('saveGame', game)
                 cb(game)
@@ -152,29 +150,6 @@ class Page{
       })
     }
   };
-
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////
-  /////// LOAD GAME
-  ///////////////////////////////
-  ///////////////////////////////
-  loadGame(game, options) {
-    let isFirstLoad = !GAME.gameState || !GAME.gameState.loaded
-    GAME.load(game, options)
-
-    // if you are a player and you dont already have a hero from the server ask for one
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && !HERO.hero) {
-      HERO.joinGame(onHerosReady)
-    } else {
-      onHerosReady()
-    }
-
-    function onHerosReady() {
-      GAME.loadHeros(game, options)
-      window.local.emit('onGameLoaded', isFirstLoad)
-    }
-  }
 
   onGameLoaded() {
     PAGE.gameLoaded = true

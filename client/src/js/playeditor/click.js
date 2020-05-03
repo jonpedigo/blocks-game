@@ -450,9 +450,9 @@ function init() {
               if(editorObject.forSelectionOnly) delete child.parentId
             })
             if(editorObject.forSelectionOnly) {
-              window.addObjects(children)
+              OBJECTS.add(children)
             } else {
-              window.addObjects([parent, ...children])
+              OBJECTS.add([parent, ...children])
             }
             return
           }
@@ -475,7 +475,7 @@ function init() {
 
           Object.assign(newObject, location)
 
-          window.addObjects(newObject)
+          OBJECTS.add(newObject)
         }
       },
       onSecondClick: (e) => {
@@ -512,7 +512,7 @@ function init() {
         }
         Object.assign(newObject, location)
 
-        window.addObjects(newObject)
+        OBJECTS.add(newObject)
 
         if(window.addParentToggle.checked) {
           window.highlightedObjectGroup.forEach((object) => {

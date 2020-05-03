@@ -6,7 +6,7 @@ import particles from '../../map/particles.js'
 
 export default class CustomGame{
   onGameLoaded() {
-    console.log('hello')
+
   }
 
   onGameUnload() {
