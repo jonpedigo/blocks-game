@@ -11,15 +11,11 @@ class Ghost{
       if(keysDown['188']){
         let heroIds = Object.keys(GAME.heros)
         for(let i = 0; i < heroIds.length; i++) {
-          // if(HERO.id === 'ghost') {
-          //   GAME.heros[HERO.id] = GAME.heros[heroIds[heroIds.length-1]]
-          //   break
-          // }
           if(GAME.heros[heroIds[i]].id === HERO.id) {
             if(i === 0) {
-              GAME.heros[HERO.id] = GAME.heros[heroIds[heroIds.length-1]]
+              HERO.id = GAME.heros[heroIds[heroIds.length-1]].id
             } else {
-              GAME.heros[HERO.id] = GAME.heros[heroIds[i-1]]
+              HERO.id = GAME.heros[heroIds[i-1]].id
             }
             break;
           }
@@ -32,15 +28,11 @@ class Ghost{
       if(keysDown['190']){
         let heroIds = Object.keys(GAME.heros)
         for(let i = 0; i < heroIds.length; i++) {
-          if(HERO.id === 'ghost') {
-            GAME.heros[HERO.id] = GAME.heros[heroIds[0]]
-            break
-          }
           if(GAME.heros[heroIds[i]].id === HERO.id) {
             if(i === heroIds.length - 1) {
-              GAME.heros[HERO.id] = HERO.ghost
+              HERO.id = GAME.heros[heroIds[0]].id
             } else {
-              GAME.heros[HERO.id] = GAME.heros[heroIds[i+1]]
+              HERO.id = GAME.heros[heroIds[i+1]].id
             }
             break;
           }
@@ -81,7 +73,7 @@ class Ghost{
     let ghostData = JSON.parse(localStorage.getItem('ghostData'));
     if(ghostData && ghostData.selectedHeroId) {
       HERO.ghost = ghostData.ghost
-      if(GAME.heros[ghostData.selectedHeroId]) GAME.heros[HERO.id] = GAME.heros[ghostData.selectedHeroId]
+      if(GAME.heros[ghostData.selectedHeroId]) HERO.id = ghostData.selectedHeroId
     }
 
     if(!HERO.ghost) HERO.ghost = JSON.parse(JSON.stringify(window.defaultHero))
@@ -89,7 +81,6 @@ class Ghost{
     HERO.ghost.arrowKeysBehavior = 'grid'
     HERO.ghost.id = 'ghost'
     gridUtil.snapObjectToGrid(HERO.ghost)
-    GAME.heros[HERO.id] = HERO.ghost
     GAME.heros.ghost = HERO.ghost
   }
 }

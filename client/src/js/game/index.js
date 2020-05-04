@@ -157,13 +157,12 @@ class Game{
 
   onHeroJoinedGame(hero) {
     HERO.addHero(hero)
-    if(!GAME.heros[HERO.id] && hero.id == HERO.id) {
+    if(hero.id == HERO.id) {
       window.local.emit('onHeroFound', hero)
     }
   }
 
   onHeroFound(hero) {
-    GAME.heros[HERO.id] = GAME.heros[hero.id]
     GAME.loadHeros(GAME)
     window.local.emit('onGameLoaded')
   }
@@ -206,7 +205,6 @@ class Game{
 
     GAME.world = game.world
 
-    if(!GAME.objectsById) GAME.objectsById = {}
     GAME.objects = game.objects.map((object) => {
       OBJECTS.addObject(object)
       return object
@@ -235,10 +233,10 @@ class Game{
       window.gamestateeditor.update(GAME.gameState)
     }
 
-    window.local.emit('onWorldLoaded')
-    window.local.emit('onGameStateLoaded')
-    window.local.emit('onCompendiumLoaded')
-    window.local.emit('onObjectsLoaded')
+    // window.local.emit('onWorldLoaded')
+    // window.local.emit('onGameStateLoaded')
+    // window.local.emit('onCompendiumLoaded')
+    // window.local.emit('onObjectsLoaded')
     window.local.emit('onGameHeroLoaded')
   }
 
@@ -255,11 +253,6 @@ class Game{
       GAME.heroList.push(hero)
       HERO.addHero(hero)
     })
-
-    // set ref
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost) {
-      GAME.heros[HERO.id] = GAME.heros[HERO.id]
-    }
 
     window.local.emit('onHerosLoaded')
   }
@@ -408,7 +401,7 @@ class Game{
       GAME.world = initialGameState.world
       GAME.gameState = initialGameState.gameState
       GAME.grid = initialGameState.grid
-      GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
+      GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
       GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }

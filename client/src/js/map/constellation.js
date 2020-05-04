@@ -55,9 +55,6 @@ function onRender(){
     update();
   }
 
-  console.log(GAME.heros[HERO.id].animationZoomMultiplier)
-
-
   let hero = GAME.heros[HERO.id]
   if(PAGE.role.isPlayEditor) hero = window.editingHero
   /*

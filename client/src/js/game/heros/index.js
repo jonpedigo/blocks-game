@@ -24,7 +24,7 @@ class Hero{
     // GET GAME.heros[HERO.id] ID
     if(PAGE.role.isGhost) {
       HERO.id = 'ghost'
-    } if(PAGE.role.isPlayer) {
+    } else if(PAGE.role.isPlayer) {
       let savedHero = localStorage.getItem('hero');
       if(savedHero && JSON.parse(savedHero).id){
         HERO.id = JSON.parse(savedHero).id
@@ -97,16 +97,16 @@ class Hero{
           changeWithDirection: false,
           tags: { obstacle: false, invisible: true, stationary: true },
         },
-        spear: {
-          id: 'spear-'+window.uniqueID(),
-          x: 0, y: 0, width: 40, height: 40,
-          relativeX: GAME.grid.nodeSize/5,
-          relativeY: -GAME.grid.nodeSize,
-          relativeWidth: -GAME.grid.nodeSize * .75,
-          relativeHeight: 0,
-          changeWithDirection: true,
-          tags: { monsterDestroyer: true, obstacle: false },
-        }
+        // spear: {
+        //   id: 'spear-'+window.uniqueID(),
+        //   x: 0, y: 0, width: 40, height: 40,
+        //   relativeX: GAME.grid.nodeSize/5,
+        //   relativeY: -GAME.grid.nodeSize,
+        //   relativeWidth: -GAME.grid.nodeSize * .75,
+        //   relativeHeight: 0,
+        //   changeWithDirection: true,
+        //   tags: { monsterDestroyer: true, obstacle: false },
+        // }
       }
     })
   }
@@ -266,7 +266,7 @@ class Hero{
 
     if(!GAME.world.globalTags.isAsymmetric && GAME.hero) {
       delete GAME.hero.id
-      window.mergeDeep(hero, GAME.hero)
+      hero = JSON.parse(JSON.stringify(GAME.hero))
       HERO.respawn(hero)
       return hero
     }
@@ -365,7 +365,6 @@ class Hero{
 
   onResetHeroToDefault(hero) {
     GAME.heros[hero.id] = HERO.resetToDefault(GAME.heros[hero.id])
-    if(PAGE.role.isPlayer && HERO.id === hero.id) GAME.heros[HERO.id] = GAME.heros[hero.id]
   }
 
   onRespawnHero(hero) {

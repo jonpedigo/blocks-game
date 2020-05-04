@@ -77,7 +77,7 @@ class Page{
         error(...args)
       }
       window.addEventListener('error', function(e) {
-        window.socket.emit('hostLog', e.message
+        window.socket.emit('hostLog', 'ERROR', e.message
               , '\n', e.filename, ':', e.lineno, (e.colno ? ':' + e.colno : '')
               , e.error && e.error.stack ? '\n' : '', e.error ? e.error.stack : undefined
           );
@@ -179,6 +179,7 @@ class Page{
   onGameLoaded() {
     if(!PAGE.loopStarted) {
       window.startGameLoop()
+      window.local.emit('onGameLoopStarted')
       PAGE.loopStarted = true
     }
     PAGE.gameLoaded = true

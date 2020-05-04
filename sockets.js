@@ -43,33 +43,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   ///////////////////////////
   socket.on('saveGame', (game) => {
-    if(!game.world.globalTags.shouldRestoreHero && !game.world.globalTags.isAsymmetric && game.heros) {
-      if(GAME.heroList.length > 1) {
-        console.log("ERROR, two heros sent to a non asymettric, non restoring world")
-      }
-      if(GAME.heroList.length == 1) {
-        for(var heroId in game.heros) {
-        }
-        game.hero = game.heros[heroId]
-      }
-    }
-
-    if(game.heros) delete game.heros
-
-    if(!game.id) {
-      game.id = window.uniqueID()
-    }
-
-    if(game.grid && game.grid.nodes) {
-      delete game.grid.nodes
-    }
-
-    // never save gameState
-    if(game.gameState) {
-      delete game.gameState
-    }
-    fs.writeFile('./data/' + game.id + '.json', JSON.stringify(game), 'utf8', () => {
-      console.log('game: ' + game.id + ' saved')
+    fs.writeFile('data/' + game.id + '.json', JSON.stringify(game), 'utf8', (e) => {
+      if(e) return console.log(e)
+      else console.log('game: ' + game.id + ' saved')
     });
     io.emit('onGameSaved', game.id)
     currentGame = game
@@ -77,7 +53,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
   socket.on('getGame', (id) => {
-    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+    fs.readFile('data/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {

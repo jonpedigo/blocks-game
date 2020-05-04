@@ -80,8 +80,10 @@ function init() {
     window.socket.emit('resetObjects')
   }
   window.saveGame = function() {
+    console.log('previous version before save', window.editingGame)
     let saveGame = cleanGameForSave(window.editingGame)
 
+    console.log('saving', saveGame)
     window.socket.emit('saveGame', {...saveGame,
           compendium: window.compendium })
   }
@@ -149,16 +151,6 @@ function init() {
   })
 
   document.getElementById("clear-branch").addEventListener('click', () => {
-    if(ARCADE.defaultCustomGame) {
-      ARCADE.defaultCustomGame.onGameUnloaded()
-    }
-    if(ARCADE.customGame) {
-      ARCADE.customGame.onGameUnloaded()
-    }
-    if(ARCADE.liveCustomGame) {
-      ARCADE.liveCustomGame.onGameUnloaded()
-    }
-
     if(PAGE.role.isPlayEditor) {
       window.editingObject = {
         id: null,
@@ -213,10 +205,6 @@ function init() {
   document.body.addEventListener('click', function(e) {
     if(!e.target) return
        //when the document body is clicked
-
-    if (e.target.className && e.target.className.indexOf('new-game') != -1) {
-      window.socket.emit('copyGame', 'default')
-    }
     if (e.target.className && e.target.className.indexOf('load-game-purgatory') != -1) {
       window.socket.emit('copyGame', 'purgatory')
     }
@@ -316,7 +304,7 @@ function cleanGameForSave(game) {
         gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
       }
     }
-    gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
+    if(!gameCopy.hero) gameCopy.hero = JSON.parse(JSON.stringify(game.heroList[0]))
   }
 
   let idValue = document.getElementById('game-id').value
