@@ -90,18 +90,18 @@ function onUpdate(hero, keysDown, delta) {
     if(hero.arrowKeysBehavior === 'flatDiagonal') {
       if(!hero.tags.gravity) {
         if (38 in keysDown && !hero.tags.gravity) { // Player holding up
-          hero.velocityY = -Math.ceil(hero.speed * delta) * 100
+          hero.velocityY = -hero.speed
         } else if (40 in keysDown) { // Player holding down
-          hero.velocityY = Math.ceil(hero.speed * delta) * 100
+          hero.velocityY = hero.speed
         } else {
           hero.velocityY = 0
         }
       }
 
       if (37 in keysDown) { // Player holding left
-        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
+        hero.velocityX = -hero.speed
       } else if (39 in keysDown) { // Player holding right
-        hero.velocityX = Math.ceil(hero.speed * delta) * 100
+        hero.velocityX = hero.speed
       } else {
         hero.velocityX = 0
       }
@@ -158,7 +158,7 @@ function onKeyDown(keyCode, hero) {
   if(hero.flags.typingMode) return
 
   if(32 === keyCode) {
-    if(hero.chat.length) {
+    if(hero.chat && hero.chat.length) {
       hero.chat.shift()
       if(!hero.chat.length) {
         hero.flags.showChat = false

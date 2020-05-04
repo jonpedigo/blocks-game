@@ -67,6 +67,10 @@ class Ghost{
       }
       input.onUpdate(GAME.heros[HERO.id], GAME.keysDown, delta)
     }
+
+    window.addEventListener('scroll', (e) => {
+      console.log(e)
+    })
   }
 
   onGameLoaded() {

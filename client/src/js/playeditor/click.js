@@ -1,4 +1,4 @@
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import collisions from '../utils/collisions'
 
 function init() {
@@ -20,7 +20,7 @@ function init() {
     if(window.currentTool !== window.TOOLS.SIMPLE_EDITOR || !window.dragObjectPosToggle.checked) return
     window.dragStart.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.dragStart.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
-    const { x,y } = gridTool.createGridNodeAt(window.dragStart.x, window.dragStart.y)
+    const { x,y } = gridUtil.createGridNodeAt(window.dragStart.x, window.dragStart.y)
     let click = {
       x,
       y,
@@ -68,7 +68,7 @@ function init() {
 
       // SO BASICALLY HERE WE DRAG PARENTS AND THIER CHILDREN BOTH, IN THE GAME CHILDREN ARE SEPERATE THAN THEIR PARENTS
       // BUT THIS DOESNT CARE, ITS AN EDITOR CHEAT CODE. THIS ALLOWS US TO DRAG A BUNCH OF OBJECTS AT ONCE USING THE PARENT/CHILD DRAG TOGETHER METHOD
-      const { x,y } = gridTool.createGridNodeAt(dragEndX, dragEndY)
+      const { x,y } = gridUtil.createGridNodeAt(dragEndX, dragEndY)
       if(window.draggingObject.parent) {
         let parentGameObject
         if(window.draggingObject.forSelectionOnly) {
@@ -88,10 +88,10 @@ function init() {
           gameObj.y -= diffY
           if(gameObj.pathfindingLimit) {
             // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
-            const { x, y } = gridTool.createGridNodeAt(diffX, diffY)
+            const { x, y } = gridUtil.createGridNodeAt(diffX, diffY)
             gameObj.pathfindingLimit.x -= x
             gameObj.pathfindingLimit.y -= y
-            gridTool.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
+            gridUtil.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
           }
         })
       } else {
@@ -101,10 +101,10 @@ function init() {
         gameObj.x = x
         gameObj.y = y
         if(gameObj.pathfindingLimit) {
-          const { x: x2, y: y2 } = gridTool.createGridNodeAt(diffX, diffY)
+          const { x: x2, y: y2 } = gridUtil.createGridNodeAt(diffX, diffY)
           gameObj.pathfindingLimit.x -= x2
           gameObj.pathfindingLimit.y -= y2
-          gridTool.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
+          gridUtil.snapDragToGrid(gameObj.pathfindingLimit, {dragging: true})
         }
       }
 
@@ -121,7 +121,7 @@ function init() {
     window.mousePos.x = ((e.offsetX + window.camera.x)/window.scaleMultiplier)
     window.mousePos.y = ((e.offsetY + window.camera.y)/window.scaleMultiplier)
 
-    const { x,y } = gridTool.createGridNodeAt(window.mousePos.x, window.mousePos.y)
+    const { x,y } = gridUtil.createGridNodeAt(window.mousePos.x, window.mousePos.y)
 
     let location = {
       x,
@@ -174,7 +174,7 @@ function init() {
         x: window.clickStart.x/window.scaleMultiplier,
         y: window.clickStart.y/window.scaleMultiplier,
       }
-      gridTool.snapDragToGrid(location, {dragging: true})
+      gridUtil.snapDragToGrid(location, {dragging: true})
     }
 
     if(window.useEditorSizeAddToggle.checked  && window.currentTool === window.TOOLS.ADD_OBJECT) {
@@ -200,7 +200,7 @@ function init() {
           window.highlightedObjectGroup.push(object)
         })
       })
-      gridTool.snapDragToGrid(location, {dragging: true})
+      gridUtil.snapDragToGrid(location, {dragging: true})
     }
     window.gridHighlight = location
 
@@ -351,7 +351,7 @@ function init() {
         }
 
         if(window.setObjectPathfindingLimitToggle.checked) {
-          gridTool.snapDragToGrid(value, {dragging: true})
+          gridUtil.snapDragToGrid(value, {dragging: true})
           window.objecteditor.saved = false
           // window.sendObjectUpdate({ pathfindingLimit: value})
           window.objecteditor.update({...window.objecteditor.get(), pathfindingLimit: value})
@@ -359,7 +359,7 @@ function init() {
           // window.setObjectPathfindingLimitToggle.checked = false
           // window.selectorObjectToggle.checked = true
         } else if(window.selectObjectGroupToggle.checked) {
-          gridTool.snapDragToGrid(value, {dragging: true})
+          gridUtil.snapDragToGrid(value, {dragging: true})
           window.objecteditor.update({
             parent: value,
             children: JSON.parse(JSON.stringify(window.highlightedObjectGroup)),
@@ -391,7 +391,7 @@ function init() {
           y: window.clickStart.y/window.scaleMultiplier,
         }
 
-        gridTool.snapDragToGrid(value, {dragging: true})
+        gridUtil.snapDragToGrid(value, {dragging: true})
 
         const {x, y, width, height} = value;
         if(window.currentTool === TOOLS.PROCEDURAL || selectorProceduralToggle.checked) {
@@ -430,7 +430,7 @@ function init() {
             y: (e.offsetY + window.camera.y)/window.scaleMultiplier,
           }
 
-          const { x, y } = gridTool.createGridNodeAt(click.x, click.y)
+          const { x, y } = gridUtil.createGridNodeAt(click.x, click.y)
           let location = {
             width: w.editingGame.grid.nodeSize,
             height: w.editingGame.grid.nodeSize,
@@ -485,7 +485,7 @@ function init() {
           x: window.clickStart.x/window.scaleMultiplier,
           y: window.clickStart.y/window.scaleMultiplier,
         }
-        gridTool.snapDragToGrid(location, { dragging: true })
+        gridUtil.snapDragToGrid(location, { dragging: true })
 
         let editorObject = window.objecteditor.get()
 

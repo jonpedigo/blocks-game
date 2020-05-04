@@ -1,6 +1,6 @@
 import pathfinding from '../../utils/pathfinding.js'
 import collision from '../../utils/collisions'
-import gridTool from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 
 import pathfinderIntelligence from './pathfinders'
 import spawnZoneIntelligence from './spawnZone'
@@ -52,7 +52,7 @@ function moveOnPath(object, delta) {
   let diffX = Math.abs(object.x - pathX)
   let diffY = Math.abs(object.y - pathY)
 
-  const { gridX, gridY, x, y } = gridTool.convertToGridXY(object)
+  const { gridX, gridY, x, y } = gridUtil.convertToGridXY(object)
   object.gridX = gridX
   object.gridY = gridY
 

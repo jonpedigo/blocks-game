@@ -1,4 +1,4 @@
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import pathfinding from '../utils/pathfinding.js'
 
 function setDefault() {
@@ -10,7 +10,7 @@ function setDefault() {
     worldSpawnPointX: null,
     worldSpawnPointY: null,
     globalTags: {
-      calculatePathCollisions: false,
+      calculatePathCollisions: true,
       noCamping: false,
       targetOnSight: false,
       isAsymmetric: false,

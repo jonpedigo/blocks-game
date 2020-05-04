@@ -2,7 +2,8 @@ import onEffectHero from './onEffectHero'
 import ghost from './ghost.js'
 import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
-import grid from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
+import input from '../input.js'
 
 class Hero{
   constructor() {
@@ -40,20 +41,20 @@ class Hero{
     	height: 40,
     	velocityX: 0,
     	velocityY: 0,
-    	velocityMax: 200,
+    	velocityMax: 400,
       color: 'white',
     	// accY: 0,
     	// accX: 0,
     	// accDecayX: 0,
     	// accDecayY: 0,
-    	speed: 150,
+    	speed: 250,
     	arrowKeysBehavior: 'flatDiagonal',
       actionButtonBehavior: 'dropWall',
     	jumpVelocity: -480,
     	// spawnPointX: (40) * 20,
     	// spawnPointY: (40) * 20,
     	tags: {
-        obstacle: true,
+        obstacle: false,
         hero: true,
         isPlayer: true,
         monsterDestroyer: false,
@@ -145,11 +146,11 @@ class Hero{
         if(obj.removed) return
 
         if(obj.tags.zombie || obj.tags.homing) {
-          const { gridX, gridY } = grid.convertToGridXY(obj)
+          const { gridX, gridY } = gridUtil.convertToGridXY(obj)
           obj.gridX = gridX
           obj.gridY = gridY
 
-          const spawnGridPos = grid.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
+          const spawnGridPos = gridUtil.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
 
           obj.path = pathfinding.findPath({
             x: gridX,
@@ -165,11 +166,11 @@ class Hero{
     HERO.spawn(hero)
   }
 
-  resetToDefault(hero) {
+  resetToDefault(hero, useGame) {
     HERO.deleteHero(hero)
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-    if(GAME.hero) {
-      newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, GAME.hero)))
+    if(GAME.hero && useGame) {
+      newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.hero)))
     }
     if(!hero.id) {
       alert('hero getting reset without id')
@@ -230,8 +231,8 @@ class Hero{
     value.x = value.centerX - value.width/2
     value.y = value.centerY - value.height/2
     let nonGrid = {...value}
-    const { leftDiff, rightDiff, topDiff, bottomDiff } = grid.getAllDiffs(value)
-    grid.snapDragToGrid(value)
+    const { leftDiff, rightDiff, topDiff, bottomDiff } = gridUtil.getAllDiffs(value)
+    gridUtil.snapDragToGrid(value)
 
     return {
       centerX: value.centerX,
@@ -271,23 +272,7 @@ class Hero{
       return hero
     }
 
-    return HERO.resetToDefault(hero)
-  }
-
-  resetReachablePlatformHeight(hero) {
-  	let velocity = hero.jumpVelocity
-  	let gravity = 1000
-  	let delta = (0 - velocity)/gravity
-  	let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
-  	return height
-  }
-
-  resetReachablePlatformWidth(hero) {
-  	let velocity = hero.speed
-  	let gravity = 1000
-  	let deltaInAir = (0 - hero.jumpVelocity)/gravity
-  	let width = (velocity * deltaInAir)
-  	return width * 2
+    return HERO.resetToDefault(hero, true)
   }
 
   cleanForSave(hero) {
@@ -353,18 +338,14 @@ class Hero{
   }
 
   onEditHero(updatedHero) {
-    if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
-      updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
-    }
-    if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
-      updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
-    }
-
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }
 
   onResetHeroToDefault(hero) {
     GAME.heros[hero.id] = HERO.resetToDefault(GAME.heros[hero.id])
+  }
+  onResetHeroToGameDefault(hero) {
+    GAME.heros[hero.id] = HERO.resetToDefault(GAME.heros[hero.id], true)
   }
 
   onRespawnHero(hero) {
@@ -388,6 +369,10 @@ class Hero{
     GAME.heros[hero.id].removed = true
   }
 
+  onDeleteHero(hero) {
+    HERO.deleteHero(hero)
+  }
+
   deleteHero(hero) {
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
@@ -400,7 +385,7 @@ class Hero{
 
   onNetworkUpdateHero(updatedHero) {
     if(!PAGE.gameLoaded) return
-
+    HERO.resetReachablePlatformArea(updatedHero)
     if(!PAGE.role.isHost) {
       window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
       if(PAGE.role.isPlayer && HERO.id === updatedHero.id) {
@@ -422,6 +407,38 @@ class Hero{
     if(PAGE.role.isPlayer && heroId == HERO.id) return
     let hero = GAME.heros[heroId]
     input.onKeyDown(keyCode, hero)
+  }
+
+  resetReachablePlatformArea(hero) {
+    if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity) {
+      hero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[hero.id])
+    }
+    if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity || hero.speed !== GAME.heros[hero.id].speed) {
+      hero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[hero.id])
+    }
+  }
+
+  resetReachablePlatformHeight(hero) {
+    let velocity = hero.jumpVelocity
+    if(Math.abs(hero.jumpVelocity) > Math.abs(hero.velocityMax)) velocity = Math.abs(hero.velocityMax)
+    let gravity = 1000
+    let delta = (0 - velocity)/gravity
+    let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+    return height
+  }
+
+  resetReachablePlatformWidth(hero) {
+    // for flatDiagonal
+    let velocityX = hero.speed
+    if(Math.abs(velocityX) > Math.abs(hero.velocityMax)) velocityX = Math.abs(hero.velocityMax)
+
+
+    let deltaVelocityYToUse = hero.jumpVelocity
+    if(Math.abs(hero.jumpVelocity) > Math.abs(hero.velocityMax)) deltaVelocityYToUse = Math.abs(hero.velocityMax)
+    let gravity = 1000
+    let deltaInAir = (0 - deltaVelocityYToUse)/gravity
+    let width = (velocityX * deltaInAir)
+    return width * 2
   }
 }
 

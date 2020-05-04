@@ -66,9 +66,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
           if(result.overlap_y === 1) {
-            if(body.gameObject.tags.movingPlatform) {
-              landingObject = body
-            }
+            landingObject = body
           }
           // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
         }
@@ -89,7 +87,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
       function correctHeroY() {
         if(result.overlap_y > 0) {
           hero.onGround = true
-          if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result, removeObjects, respawnObject)
+          if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result, removeObjects, respawnObjects)
           if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
             hero._parentId = landingObject.gameObject.id
             hero._skipNextGravity = true

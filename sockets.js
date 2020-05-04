@@ -236,6 +236,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('resetHeroToDefault', (hero) => {
     io.emit('onResetHeroToDefault', hero)
   })
+  socket.on('resetHeroToGameDefault', (hero) => {
+    io.emit('onResetHeroToGameDefault', hero)
+  })
   socket.on('respawnHero', (hero) => {
     io.emit('onRespawnHero', hero)
   })

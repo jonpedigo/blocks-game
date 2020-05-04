@@ -1,7 +1,7 @@
 import onObjectCollide from './onObjectCollide'
 import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
-import grid from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 
 class Objects{
   constructor() {
@@ -48,7 +48,7 @@ class Objects{
 
     if(object.pathfindingLimit) {
       // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
-      const { x, y } = grid.snapXYToGrid(diffX, diffY)
+      const { x, y } = gridUtil.snapXYToGrid(diffX, diffY)
       object.pathfindingLimit.x += x
       object.pathfindingLimit.y += y
       // grid.snapDragToGrid(object.pathfindingLimit, {dragging: true})
@@ -142,14 +142,14 @@ class Objects{
     if (leftDiff < 1 && hero.directions.left) {
       let newObject = {
         x: minX - GAME.grid.nodeSize,
-        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
         width: GAME.grid.nodeSize,
         height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
       }
       addAnticipatedObject(newObject)
     } else if (topDiff < 1 && hero.directions.up) {
       let newObject = {
-        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
         y: minY - GAME.grid.nodeSize,
         width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
         height: GAME.grid.nodeSize,
@@ -158,14 +158,14 @@ class Objects{
     } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
       let newObject = {
         x: maxX + GAME.grid.nodeSize,
-        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minY, maxY),
+        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
         width: GAME.grid.nodeSize,
         height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
       }
       addAnticipatedObject(newObject)
     } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
       let newObject = {
-        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : grid.getRandomGridWithinXY(minX, maxX),
+        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
         y: maxY + GAME.grid.nodeSize,
         width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
         height: GAME.grid.nodeSize,
@@ -174,8 +174,8 @@ class Objects{
     }
 
     function addAnticipatedObject(newObject) {
-      let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
-      if(grid.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
+      let {x , y} = gridUtil.snapXYToGrid(newObject.x, newObject.y)
+      if(gridUtil.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && gridUtil.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
         OBJECTS.create([{...newObject, ...OBJECTS.anticipatedForAdd}])
         OBJECTS.anticipatedForAdd = null
       }

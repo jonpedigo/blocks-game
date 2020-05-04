@@ -1,6 +1,6 @@
 import JSONEditor from 'jsoneditor'
 import collisions from '../utils/collisions'
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import procedural from './procedural.js'
 import camera from './camera.js'
 import click from './click.js'
@@ -152,7 +152,7 @@ function onPageLoaded() {
 
 function createGrid() {
   let { width, height } = w.editingGame.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  const { x, y } = gridUtil.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
   width = Math.floor(width / (w.editingGame.grid.nodeSize))
   let h = Math.floor(height / (w.editingGame.grid.nodeSize))
   w.editingGame.grid.width = width
@@ -160,12 +160,12 @@ function createGrid() {
   w.editingGame.grid.startX = x
   w.editingGame.grid.startY = y
   window.socket.emit('updateGrid', {...w.editingGame.grid, nodes: null})
-  w.editingGame.grid.nodes = gridTool.generateGridNodes(w.editingGame.grid)
+  w.editingGame.grid.nodes = gridUtil.generateGridNodes(w.editingGame.grid)
 }
 
 function createMaze() {
   let { width, height } = w.editingGame.world.proceduralBoundaries
-  const { x, y } = gridTool.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
+  const { x, y } = gridUtil.snapXYToGrid(w.editingGame.world.proceduralBoundaries.x, w.editingGame.world.proceduralBoundaries.y);
   width = Math.floor(width / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
   let h = Math.floor(height / (w.editingGame.grid.nodeSize * window.mazeWidthMultiplier)/2)
 

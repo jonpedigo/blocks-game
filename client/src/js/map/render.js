@@ -56,7 +56,7 @@ function update() {
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
     if(object.removed) return
-    if(collisionsUtil.checkObject(viewBoundaries, object)) {
+    if(MAP.camera.clipping || collisionsUtil.checkObject(viewBoundaries, object)) {
       drawTools.drawObject(ctx, object, camera)
     }
   })

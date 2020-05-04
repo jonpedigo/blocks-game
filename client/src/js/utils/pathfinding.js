@@ -19,7 +19,7 @@
   // 1) No new obstacles are made
   // 2) All obstacles that are made are aligned to the grid
 
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 
 const PF = require('pathfinding')
 const finder = new PF.AStarFinder()
@@ -55,7 +55,7 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
   const toX = toPosition.x
   const toY = toPosition.y
 
-  if(gridTool.keepGridXYWithinBoundaries(toX, toY, options)) {
+  if(gridUtil.keepGridXYWithinBoundaries(toX, toY, options)) {
     var gridBackup = GAME.pfgrid.clone();
     return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
       return {x: path[0], y: path[1]}
@@ -133,7 +133,7 @@ function forceFindOpenGridNear({position, level = 0}){
 
 function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   // for pathfinding with area
-  if(gridTool.keepGridXYWithinBoundaries(x, y, options)) {
+  if(gridUtil.keepGridXYWithinBoundaries(x, y, options)) {
     if(!GAME.pfgrid.nodes[y]) return false
     if(!GAME.pfgrid.nodes[y][x]) return false
     if(!GAME.pfgrid.nodes[y][x].walkable) return false
@@ -144,7 +144,7 @@ function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfind
 }
 
 function walkIntoWall(object) {
-  const { gridX, gridY } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
@@ -188,7 +188,7 @@ function walkIntoWall(object) {
 
 
 function exploreCave(object) {
-  const { gridX, gridY } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
@@ -235,7 +235,7 @@ function exploreCave(object) {
       }
     }
 
-    console.log('going my own way!')
+    // console.log('going my own way!')
 
     let directions = [
       'left',
@@ -256,7 +256,7 @@ function exploreCave(object) {
 
 
 function walkWithPurpose(object) {
-  const { gridX, gridY } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
   let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
@@ -318,7 +318,7 @@ function walkWithPurpose(object) {
 }
 
 function walkAround(object) {
-  const { gridX, gridY } = gridTool.convertToGridXY(object)
+  const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
   let direction = ''
   if(object.direction) {

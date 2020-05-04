@@ -1,5 +1,5 @@
 import collisions from '../../utils/collisions'
-import gridTool from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 import JSONEditor from 'jsoneditor'
 
 function init() {
@@ -72,7 +72,7 @@ function init() {
     value.y = value.centerY - value.height/2
     value.limitX = Math.abs(value.width/2)
     value.limitY = Math.abs(value.height/2)
-    gridTool.snapObjectToGrid(value)
+    gridUtil.snapObjectToGrid(value)
     value.width = HERO.cameraWidth * window.editingHero.zoomMultiplier
     value.height = HERO.cameraHeight * window.editingHero.zoomMultiplier
     if(window.selectorGameToggle.checked) {

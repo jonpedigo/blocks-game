@@ -1,4 +1,4 @@
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import pathfinding from '../utils/pathfinding.js'
 import collisions from '../utils/collisions.js'
 import input from '../game/input.js'
@@ -38,6 +38,10 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
       window.local.emit('onResetHeroToDefault', hero)
+    })
+    // EDITOR CALLS THIS
+    window.socket.on('onResetHeroToGameDefault', (hero) => {
+      window.local.emit('onResetHeroToGameDefault', hero)
     })
 
     // EDITOR CALLS THIS
@@ -143,16 +147,8 @@ function init() {
     //   delete updatedHero.x
     //   delete updatedHero.y
     //   window.mergeDeep(hero, updatedHero)
-
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
-        if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
-          updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
-        }
-        if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
-          updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
-        }
-
         window.editingHero = GAME.heros[updatedHero.id]
         if(GAME.world.syncHero) {
           window.setEditingHero(GAME.heros[updatedHero.id])
@@ -193,6 +189,7 @@ function init() {
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
     window.local.emit('onEditHero', updatedHero)
+
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
         window.editingHero = GAME.heros[updatedHero.id]

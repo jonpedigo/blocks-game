@@ -1,5 +1,5 @@
 import pathfinding from '../../utils/pathfinding.js'
-import gridTool from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 
 export default function pathfinderIntelligence(object) {
   let hero = GAME.heroList[0]
@@ -10,11 +10,11 @@ export default function pathfinderIntelligence(object) {
 
   if(object.tags && object.tags['homing']) {
     if(!object.path || (object.path && !object.path.length)) {
-      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
       object.gridY = gridY
 
-      const heroGridPos = gridTool.convertToGridXY(hero)
+      const heroGridPos = gridUtil.convertToGridXY(hero)
       hero.gridX = heroGridPos.gridX
       hero.gridY = heroGridPos.gridY
 
@@ -31,7 +31,7 @@ export default function pathfinderIntelligence(object) {
   if(object.tags && object.tags['wander']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkAround(object)]
-      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
       object.gridY = gridY
     }
@@ -40,7 +40,7 @@ export default function pathfinderIntelligence(object) {
   if(object.tags && object.tags['pacer']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkWithPurpose(object)]
-      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
       object.gridY = gridY
     }
@@ -49,7 +49,7 @@ export default function pathfinderIntelligence(object) {
   if(object.tags && object.tags['spelunker']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.exploreCave(object)]
-      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
       object.gridY = gridY
     }
@@ -58,7 +58,7 @@ export default function pathfinderIntelligence(object) {
   if(object.tags && object.tags['lemmings']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkIntoWall(object)]
-      const { gridX, gridY } = gridTool.convertToGridXY(object)
+      const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
       object.gridY = gridY
     }

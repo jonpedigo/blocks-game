@@ -1,4 +1,4 @@
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import collisions from '../utils/collisions'
 import contextMenu from './contextMenu.jsx'
 import drawTools from './drawTools';
@@ -148,7 +148,7 @@ function handleMouseDown(event) {
   } else if(MAPEDITOR.isSettingPathfindingLimit) {
     if(MAPEDITOR.pathfindingLimit) {
       const { pathfindingLimit, objectHighlighted } = MAPEDITOR
-      gridTool.snapDragToGrid(pathfindingLimit, {dragging: true})
+      gridUtil.snapDragToGrid(pathfindingLimit, {dragging: true})
       window.socket.emit('editObjects', [{id: objectHighlighted.id, pathfindingLimit, path: null}])
       document.body.style.cursor = "default";
       MAPEDITOR.isSettingPathfindingLimit = false
@@ -203,7 +203,7 @@ function handleMouseMove(event) {
 function updateGridHighlight(location) {
   if(MAPEDITOR.contextMenuVisible) return
 
-  const { x,y } = gridTool.snapXYToGrid(location.x, location.y, { closest: false })
+  const { x,y } = gridUtil.snapXYToGrid(location.x, location.y, { closest: false })
 
   let mouseLocation = {
     x,
@@ -270,9 +270,9 @@ function updateResizingObject(object, options = { allowTiny : true }) {
   }
 
   if(tinySize) {
-    gridTool.snapTinyObjectToGrid(object, tinySize)
+    gridUtil.snapTinyObjectToGrid(object, tinySize)
   } else {
-    gridTool.snapDragToGrid(object)
+    gridUtil.snapDragToGrid(object)
   }
 
 }
@@ -281,7 +281,7 @@ function updateDraggingObject(object) {
   const { mousePos } = MAPEDITOR
   object.x = mousePos.x
   object.y = mousePos.y
-  gridTool.snapDragToGrid(object, {dragging: true})
+  gridUtil.snapDragToGrid(object, {dragging: true})
 }
 
 window.MAPEDITOR = new MapEditor()

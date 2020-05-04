@@ -1,4 +1,4 @@
-import gridTool from '../utils/grid.js'
+import gridUtil from '../utils/grid.js'
 import pathfinding from '../utils/pathfinding.js'
 import collisions from '../utils/collisions.js'
 import particles from '../map/particles.js'
@@ -77,7 +77,7 @@ class Arcade{
 
   setLiveCustomFx(customFx) {
     customFx = ARCADE.evalLiveCustomFx(customFx)
-    customFx = customFx(pathfinding, gridTool, collisions, drawTools, particles)
+    customFx = customFx(pathfinding, gridUtil, collisions, drawTools, particles)
     customFx = new customFx
     ARCADE.liveCustomGame = customFx
   }

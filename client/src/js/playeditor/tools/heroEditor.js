@@ -1,7 +1,7 @@
 import heroModifiers from '../../arcade/default/compendium/heroCompendium.js'
 import camera from '../camera.js'
 import collisions from '../../utils/collisions'
-import gridTool from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 import JSONEditor from 'jsoneditor'
 
 function init() {
@@ -55,6 +55,8 @@ function init() {
   })
   var respawnHeroButton = document.getElementById("respawn-hero");
   respawnHeroButton.addEventListener('click', respawnHero)
+  var resetHeroGameButton = document.getElementById("reset-hero-game");
+  resetHeroGameButton.addEventListener('click', resetHeroToGameDefault)
   var resetHeroButton = document.getElementById("reset-hero");
   resetHeroButton.addEventListener('click', resetHeroToDefault)
   var deleteButton = document.getElementById("delete-hero");
@@ -128,6 +130,16 @@ function init() {
       window.socket.emit('resetHeroToDefault', window.editingHero)
     }
   }
+
+  function resetHeroToGameDefault() {
+    if(window.editingGame.branch) {
+      window.editingHero = HERO.resetToDefault(window.editingHero, true)
+      window.editingGame.heros[window.editingHero.id] = window.editingHero
+    } else {
+      window.socket.emit('resetHeroToGameDefault', window.editingHero)
+    }
+  }
+
 
   window.setEditingHero = function(hero) {
     window.editingHero = hero

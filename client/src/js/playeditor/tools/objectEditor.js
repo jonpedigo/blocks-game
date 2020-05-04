@@ -1,5 +1,5 @@
 import collisions from '../../utils/collisions'
-import gridTool from '../../utils/grid.js'
+import gridUtil from '../../utils/grid.js'
 import JSONEditor from 'jsoneditor'
 import camera from '../camera.js'
 

@@ -1,12 +1,7 @@
-import collisions from '../utils/collisions.js'
-import playEditor from '../playeditor/playeditor.js'
-import grid from '../utils/grid.js'
 import sockets from './sockets.js'
-import utils from '../utils/utils.js'
 import events from './events.js'
 import testArcade from '../../../../data/spencer1.json'
 import loop from './loop.js'
-import mapEditor from '../mapeditor/index.js'
 
 class Page{
   constructor() {

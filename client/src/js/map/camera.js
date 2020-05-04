@@ -47,16 +47,16 @@ this.set = function(ctx, hero) {
     return
   }
   this.multiplier = 1/this.multiplier
+  this.clipping = false
 
   if (this.limitX) {
     const potentialX = ((hero.x + hero.width/2)*this.multiplier)
-
-    // too late, more
     if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
       this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
-    // too soon, less
-  } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
+      this.clipping = true
+    } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
       this.x = (((this.centerX - this.limitX)*this.multiplier))
+      this.clipping = true
     } else {
       this.setHeroX(ctx, hero)
     }
@@ -69,8 +69,10 @@ this.set = function(ctx, hero) {
 
     if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
       this.y = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
+      this.clipping = true
     } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (MAP.canvas.height/2))) {
       this.y = ((this.centerY - this.limitY)*this.multiplier)
+      this.clipping = true
     } else {
       this.setHeroY(ctx, hero)
     }

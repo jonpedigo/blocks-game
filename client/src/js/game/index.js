@@ -396,14 +396,8 @@ class Game{
 
     if(initialGameState) {
       initialGameState = JSON.parse(initialGameState)
-      GAME.objects = initialGameState.objects
-      GAME.heros = initialGameState.heros
-      GAME.world = initialGameState.world
-      GAME.gameState = initialGameState.gameState
-      GAME.grid = initialGameState.grid
-      GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
-      GAME.updateGridObstacles()
-      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      GAME.unload()
+      GAME.loadAndJoin(initialGameState)
     }
 
     GAME.gameState.started = false
@@ -442,7 +436,7 @@ class Game{
 
   onUpdateGrid(grid) {
     GAME.grid = grid
-    GAME.grid.nodes = gridTool.generateGridNodes(grid)
+    GAME.grid.nodes = gridUtil.generateGridNodes(grid)
     GAME.updateGridObstacles()
     if(PAGE.role.isHost) {
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
