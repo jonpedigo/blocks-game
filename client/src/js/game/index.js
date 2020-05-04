@@ -41,7 +41,7 @@ class Game{
 
     if(PAGE.role.isHost) {
       // remove second part when a player can host a multiplayer game
-      if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !HERO.hero.flags.paused)) {
+      if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !GAME.heros[HERO.id].flags.paused)) {
         //// PREPARE ALL
         PHYSICS.prepareObjectsAndHerosForMovementPhase()
         //////////////////////////////
@@ -126,11 +126,11 @@ class Game{
         //////////////////////////////
         //// ANTICIPATE OBJECT
         if(PAGE.role.isHost && OBJECTS.anticipatedForAdd) {
-          let hero = HERO.hero
+          let hero = GAME.heros[HERO.id]
           if(PAGE.role.isPlayEditor) {
             hero = window.editingHero
           }
-          if(PAGE.role.isPlayer) OBJECTS.anticipatedAdd(HERO.hero)
+          if(PAGE.role.isPlayer) OBJECTS.anticipatedAdd(GAME.heros[HERO.id])
           else if(PAGE.role.isPlayEditor) OBJECTS.anticipatedAdd(window.editingHero)
         }
         //////////////////////////////
@@ -146,20 +146,45 @@ class Game{
     }
   }
 
-  load(game, options) {
-    let isFirstLoad = !GAME.gameState || !GAME.gameState.loaded
-    GAME.loadGridWorldObjectsCompendiumState(game, options)
+  onAskJoinGame(heroId) {
+    let hero = GAME.heros[heroId]
+    if(!hero) {
+      hero = HERO.summonFromGameData({id: heroId})
+      hero.id = heroId
+      window.socket.emit('heroJoinedGamed', hero)
+    }
+  }
+
+  onHeroJoinedGame(hero) {
+    HERO.addHero(hero)
+    if(!GAME.heros[HERO.id] && hero.id == HERO.id) {
+      window.local.emit('onHeroFound', hero)
+    }
+  }
+
+  onHeroFound(hero) {
+    GAME.heros[HERO.id] = GAME.heros[hero.id]
+    GAME.loadHeros(GAME)
+    window.local.emit('onGameLoaded')
+  }
+
+  onGameLoaded() {
+    GAME.gameState.loaded = true
+  }
+
+  loadAndJoin(game) {
+    GAME.loadGridWorldObjectsCompendiumState(game)
 
     // if you are a player and you dont already have a hero from the server ask for one
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && !HERO.hero) {
-      HERO.joinGame(onHerosReady)
+    if(PAGE.role.isPlayer && !PAGE.role.isGhost && !GAME.heros[HERO.id]) {
+      if(GAME.heros[HERO.id]) {
+        window.local.emit('onHeroFound', GAME.heros[HERO.id])
+      } else {
+        window.socket.emit('askJoinGame', HERO.id)
+      }
     } else {
-      onHerosReady()
-    }
-
-    function onHerosReady() {
-      GAME.loadHeros(game, options)
-      window.local.emit('onGameLoaded', isFirstLoad)
+      GAME.loadHeros(GAME)
+      window.local.emit('onGameLoaded')
     }
   }
 
@@ -169,6 +194,7 @@ class Game{
 
     if(game.compendium) window.compendium = game.compendium
     GAME.hero = game.hero
+    GAME.hero.id = 'default hero'
 
     // let storedGameState = localStorage.getItem('gameStates')
     // if(storedGameState) storedGameState = storedGameState[game.id]
@@ -182,27 +208,20 @@ class Game{
 
     if(!GAME.objectsById) GAME.objectsById = {}
     GAME.objects = game.objects.map((object) => {
-      object.tags = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultTags)), object.tags)
-      GAME.objectsById[object.id] = object
-      PHYSICS.addObject(object)
-
+      OBJECTS.addObject(object)
       return object
     })
 
     // for host to find themselves really is all...
     if(game.heros) {
       GAME.heros = game.heros
-      GAME.heroList = []
-      HERO.forAll((hero) => {
-        GAME.heroList.push(hero)
-      })
     }
 
     // grid
     GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
     GAME.updateGridObstacles()
     GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    handleWorldUpdate(GAME.world)
+    GAME.handleWorldUpdate(GAME.world)
 
     // game state
     if(game.gameState && game.gameState.loaded) {
@@ -216,35 +235,31 @@ class Game{
       window.gamestateeditor.update(GAME.gameState)
     }
 
-    GAME.gameState.loaded = true
     window.local.emit('onWorldLoaded')
     window.local.emit('onGameStateLoaded')
     window.local.emit('onCompendiumLoaded')
     window.local.emit('onObjectsLoaded')
+    window.local.emit('onGameHeroLoaded')
   }
 
-  loadHeros(game, options = { resetHeros: false }) {
-    if(options.resetHeros) {
+  loadHeros(heros) {
+    if(!GAME.gameState.loaded) {
       GAME.heroList.forEach(({id}) => {
         GAME.heros[id] = HERO.summonFromGameData(GAME.heros[id])
         GAME.heros[id].id = id
       })
     }
 
-    if(PAGE.role.isHost && PAGE.role.isPlayer) {
-      // just gotta make sure when we reload all these crazy player bois that the reference for the host hero is reset because it doesnt get reset any other time for the host
-      if(GAME.heros[HERO.hero.id]) {
-        HERO.hero = GAME.heros[HERO.hero.id]
-      } else {
-        GAME.heros[HERO.hero.id] = HERO.hero
-      }
-
-      GAME.heroList.push(HERO.hero)
-    }
-
-    GAME.heroList.forEach(({id}) => {
-      PHYSICS.addObject(GAME.heros[id])
+    GAME.heroList = []
+    HERO.forAll((hero) => {
+      GAME.heroList.push(hero)
+      HERO.addHero(hero)
     })
+
+    // set ref
+    if(PAGE.role.isPlayer && !PAGE.role.isGhost) {
+      GAME.heros[HERO.id] = GAME.heros[HERO.id]
+    }
 
     window.local.emit('onHerosLoaded')
   }
@@ -279,9 +294,9 @@ class Game{
       gridUtil.snapObjectToGrid(object)
     })
 
-    gridUtil.snapObjectToGrid(HERO.hero)
-    HERO.hero.width = GAME.grid.nodeSize
-    HERO.hero.height = GAME.grid.nodeSize
+    gridUtil.snapObjectToGrid(GAME.heros[HERO.id])
+    GAME.heros[HERO.id].width = GAME.grid.nodeSize
+    GAME.heros[HERO.id].height = GAME.grid.nodeSize
   }
 
   addObstacle(object) {
@@ -374,6 +389,153 @@ class Game{
   }
   addOrResetTimeout(id, numberOfSeconds, fx) {
     timeouts.addOrResetTimeout(id, numberOfSeconds, fx)
+  }
+
+  onStopGame() {
+    if(!GAME.gameState.started) {
+      return console.log('trying to stop game that aint even started yet')
+    }
+
+    let initialGameState = localStorage.getItem('initialGameState')
+    if(!initialGameState) {
+      console.log('game stopped, but no initial game state set')
+    }
+
+    if(initialGameState) {
+      initialGameState = JSON.parse(initialGameState)
+      GAME.objects = initialGameState.objects
+      GAME.heros = initialGameState.heros
+      GAME.world = initialGameState.world
+      GAME.gameState = initialGameState.gameState
+      GAME.grid = initialGameState.grid
+      GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
+      GAME.updateGridObstacles()
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    }
+
+    GAME.gameState.started = false
+  }
+
+  onGameStart() {
+    if(GAME.gameState.started) {
+      return console.log('trying to start game that has already started')
+    }
+
+    // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
+    localStorage.setItem('initialGameState', JSON.stringify({...GAME, grid: {...GAME.grid, nodes: null }}))
+    GAME.gameState.paused = false
+    GAME.gameState.started = true
+  }
+
+  onEditGameState(gameState) {
+    window.mergeDeep(GAME.gameState, gameState)
+  }
+
+  onUpdateGameState(gameState) {
+    if(!PAGE.gameLoaded) return
+    if(!PAGE.role.isHost) GAME.gameState = gameState
+  }
+
+  onChangeGame(game) {
+    GAME.unload()
+    GAME.loadAndJoin(game)
+    ARCADE.changeGame(game.id)
+  }
+
+  onReloadGame(game) {
+    GAME.unload()
+    GAME.loadAndJoin(game)
+  }
+
+  onUpdateGrid(grid) {
+    GAME.grid = grid
+    GAME.grid.nodes = gridTool.generateGridNodes(grid)
+    GAME.updateGridObstacles()
+    if(PAGE.role.isHost) {
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    }
+  }
+
+  onUpdateWorld(updatedWorld) {
+    if(GAME.world) {
+      for(let key in updatedWorld) {
+        const value = updatedWorld[key]
+
+        if(value instanceof Object) {
+          GAME.world[key] = {}
+          window.mergeDeep(GAME.world[key], value)
+        } else {
+          GAME.world[key] = value
+        }
+      }
+      GAME.handleWorldUpdate(updatedWorld)
+    }
+  }
+
+  handleWorldUpdate(updatedWorld) {
+    for(let key in updatedWorld) {
+      const value = updatedWorld[key]
+
+      if(key === 'lockCamera' && !PAGE.role.isPlayEditor) {
+        if(value && value.limitX) {
+          MAP.camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
+        } else {
+          MAP.camera.clearLimit();
+        }
+      }
+
+      if(key === 'gameBoundaries') {
+        GAME.updateGridObstacles()
+        if(PAGE.role.isHost) GAME.resetPaths = true
+        if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+      }
+
+      if(key === 'globalTags' || key === 'editorTags') {
+        for(let tag in updatedWorld.globalTags) {
+          if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
+            GAME.updateGridObstacles()
+            if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+          }
+        }
+        if(key === 'syncHero' && PAGE.role.isPlayEditor) {
+          window.syncHeroToggle.checked = value
+        }
+        if(key === 'syncObjects' && PAGE.role.isPlayEditor) {
+          window.syncObjectsToggle.checked = value
+        }
+        if(key === 'syncGameState' && PAGE.role.isPlayEditor) {
+          window.syncGameStateToggle.checked = value
+        }
+      }
+    }
+
+    window.local.emit('onUpdatePFgrid')
+
+    if(PAGE.role.isPlayEditor) {
+      window.worldeditor.update(GAME.world)
+      window.worldeditor.expandAll()
+    }
+  }
+
+  onUpdatePFgrid() {
+    if(!GAME.world.globalTags.calculatePathCollisions) {
+      GAME.updateGridObstacles()
+      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    }
+  }
+
+  onResetWorld() {
+    GAME.world = JSON.parse(JSON.stringify(window.defaultWorld))
+    if(!PAGE.role.isPlayEditor) MAP.camera.clearLimit()
+    GAME.handleWorldUpdate(GAME.world)
+  }
+
+  onResetObjects() {
+    GAME.objects.forEach((object) => {
+      PHYSICS.removeObject(object)
+    }, [])
+    GAME.objects = []
+    GAME.objectsById = {}
   }
 }
 

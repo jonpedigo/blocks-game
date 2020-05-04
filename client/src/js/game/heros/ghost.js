@@ -11,15 +11,15 @@ class Ghost{
       if(keysDown['188']){
         let heroIds = Object.keys(GAME.heros)
         for(let i = 0; i < heroIds.length; i++) {
-          if(HERO.hero.id === 'ghost') {
-            HERO.hero = GAME.heros[heroIds[heroIds.length-1]]
-            break
-          }
-          if(GAME.heros[heroIds[i]].id === HERO.hero.id) {
+          // if(HERO.id === 'ghost') {
+          //   GAME.heros[HERO.id] = GAME.heros[heroIds[heroIds.length-1]]
+          //   break
+          // }
+          if(GAME.heros[heroIds[i]].id === HERO.id) {
             if(i === 0) {
-              HERO.hero = HERO.ghost
+              GAME.heros[HERO.id] = GAME.heros[heroIds[heroIds.length-1]]
             } else {
-              HERO.hero = GAME.heros[heroIds[i-1]]
+              GAME.heros[HERO.id] = GAME.heros[heroIds[i-1]]
             }
             break;
           }
@@ -32,15 +32,15 @@ class Ghost{
       if(keysDown['190']){
         let heroIds = Object.keys(GAME.heros)
         for(let i = 0; i < heroIds.length; i++) {
-          if(HERO.hero.id === 'ghost') {
-            HERO.hero = GAME.heros[heroIds[0]]
+          if(HERO.id === 'ghost') {
+            GAME.heros[HERO.id] = GAME.heros[heroIds[0]]
             break
           }
-          if(GAME.heros[heroIds[i]].id === HERO.hero.id) {
+          if(GAME.heros[heroIds[i]].id === HERO.id) {
             if(i === heroIds.length - 1) {
-              HERO.hero = HERO.ghost
+              GAME.heros[HERO.id] = HERO.ghost
             } else {
-              HERO.hero = GAME.heros[heroIds[i+1]]
+              GAME.heros[HERO.id] = GAME.heros[heroIds[i+1]]
             }
             break;
           }
@@ -56,24 +56,24 @@ class Ghost{
   }
 
   onUpdate(delta) {
-    localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: HERO.hero.id, ghost: PAGE.role.isGhostHero}))
+    localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: HERO.id, ghost: PAGE.role.isGhostHero}))
 
-    if(HERO.hero.id === 'ghost' && 16 in keysDown) {
+    if(HERO.id === 'ghost' && 16 in keysDown) {
       if (38 in keysDown) { // Player holding up
-        HERO.hero.y -= GAME.grid.nodeSize
+        GAME.heros[HERO.id].y -= GAME.grid.nodeSize
       }
       if (40 in keysDown) { // Player holding down
-        HERO.hero.y += GAME.grid.nodeSize
+        GAME.heros[HERO.id].y += GAME.grid.nodeSize
       }
 
       if (37 in keysDown) { // Player holding left
-        HERO.hero.x -= GAME.grid.nodeSize
+        GAME.heros[HERO.id].x -= GAME.grid.nodeSize
       }
 
       if (39 in keysDown) { // Player holding right
-        HERO.hero.x += GAME.grid.nodeSize
+        GAME.heros[HERO.id].x += GAME.grid.nodeSize
       }
-      input.onUpdate(HERO.hero, GAME.keysDown, delta)
+      input.onUpdate(GAME.heros[HERO.id], GAME.keysDown, delta)
     }
   }
 
@@ -81,7 +81,7 @@ class Ghost{
     let ghostData = JSON.parse(localStorage.getItem('ghostData'));
     if(ghostData && ghostData.selectedHeroId) {
       HERO.ghost = ghostData.ghost
-      if(GAME.heros[ghostData.selectedHeroId]) HERO.hero = GAME.heros[ghostData.selectedHeroId]
+      if(GAME.heros[ghostData.selectedHeroId]) GAME.heros[HERO.id] = GAME.heros[ghostData.selectedHeroId]
     }
 
     if(!HERO.ghost) HERO.ghost = JSON.parse(JSON.stringify(window.defaultHero))
@@ -89,7 +89,7 @@ class Ghost{
     HERO.ghost.arrowKeysBehavior = 'grid'
     HERO.ghost.id = 'ghost'
     gridUtil.snapObjectToGrid(HERO.ghost)
-    HERO.hero = HERO.ghost
+    GAME.heros[HERO.id] = HERO.ghost
     GAME.heros.ghost = HERO.ghost
   }
 }

@@ -25,7 +25,7 @@ export default function spawnZoneIntelligence(object) {
       // let x = gridTool.getRandomGridWithinXY(object.x, object.x+width)
       // let y = gridTool.getRandomGridWithinXY(object.y, object.y+height)
 
-      let createdObject = OBJECTS.add([newObject], { fromLiveGame: true })
+      let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
       object.spawnedIds.push(createdObject[0].id)
       if(object.spawnPool) object.spawnPool--
 

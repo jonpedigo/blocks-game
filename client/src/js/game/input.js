@@ -8,17 +8,17 @@ function onPageLoaded(){
   window.addEventListener("keydown", function (e) {
 
     if(PAGE.role.isGhost) {
-      if(HERO.hero.id === 'ghost') onKeyDown(e.keyCode, HERO.hero)
+      if(HERO.id === 'ghost') onKeyDown(e.keyCode, GAME.heros[HERO.id])
     } else if(PAGE.role.isPlayer) {
       if(!PAGE.typingMode) {
         GAME.keysDown[e.keyCode] = true
       }
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
-        GAME.heroInputs[HERO.hero.id] = GAME.keysDown
-        onKeyDown(e.keyCode, HERO.hero)
+        GAME.heroInputs[HERO.id] = GAME.keysDown
+        onKeyDown(e.keyCode, GAME.heros[HERO.id])
       } else {
-        window.socket.emit('sendHeroKeyDown', e.keyCode, HERO.hero.id)
+        window.socket.emit('sendHeroKeyDown', e.keyCode, HERO.id)
       }
     }
   }, false)

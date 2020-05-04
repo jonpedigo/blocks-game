@@ -290,25 +290,18 @@ function removeAndRespawn(removeObjects, respawnObjects) {
   removeObjects.forEach((gameObject) => {
     // remove locally first
     gameObject.removed = true
-    if(gameObject.id.indexOf('hero') > -1) {
-      window.local.emit('onRemoveHero', gameObject)
-      window.socket.emit('removeHero', gameObject)
+    if(gameObject.tags.hero) {
+      HERO.removeHero(gameObject)
     } else {
-      window.local.emit('onRemoveObject', gameObject)
-      window.socket.emit('removeObject', gameObject)
+      OBJECTS.removeObject(gameObject)
     }
   })
 
   respawnObjects.forEach((gameObject) => {
     if(gameObject.id.indexOf('hero') > -1) {
       HERO.respawn(gameObject)
-      window.socket.emit('updateHeroPos', gameObject)
-      window.local.emit('onRespawnHero', gameObject)
     } else if(gameObject.spawnPointX >= 0){
       OBJECTS.respawn(gameObject)
-      window.local.emit('onRespawnObject', gameObject)
-    } else {
-      window.socket.emit('deleteObject', gameObject)
     }
   })
 }

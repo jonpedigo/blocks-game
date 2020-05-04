@@ -44,7 +44,7 @@ class contextMenuEl extends React.Component{
       const { objectHighlighted, recievedObject, copiedObject } = editor
 
       if(key === 'create-object') {
-        OBJECTS.add(objectHighlighted)
+        OBJECTS.create(objectHighlighted)
       }
 
       if(key === "name-object") {

@@ -34,7 +34,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
-// HERO.hero CORRECTIONS
+// GAME.heros[HERO.id] CORRECTIONS
 /////////////////////////////////////////////////////
 function heroCorrection(hero, removeObjects, respawnObjects) {
   hero.onGround = false
@@ -301,9 +301,9 @@ function containObjectWithinGridBoundaries(object) {
       objectToEdit = JSON.parse(JSON.stringify(object))
     }
 
-    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (HERO.hero && HERO.hero.id)) {
+    if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (GAME.heros[HERO.id] && HERO.id)) {
       // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
-      let hero = HERO.hero
+      let hero = GAME.heros[HERO.id]
       if(PAGE.role.isPlayEditor) {
         hero = window.editingHero
       }
@@ -434,6 +434,7 @@ function addObject(object) {
   PHYSICS.objects[object.id] = physicsObject
   if(object.subObjects) {
     OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+      console.log('adding subobject', key)
       PHYSICS.addObject(subObject)
     })
   }

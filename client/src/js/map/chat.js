@@ -1,9 +1,9 @@
 const keysDown = {}
 
 function render(ctx, hero){
-	if(HERO.hero.flags.showChat){
-		if(HERO.hero.chat.length) {
-			drawChat(ctx, HERO.hero.chat)
+	if(GAME.heros[HERO.id].flags.showChat){
+		if(GAME.heros[HERO.id].chat.length) {
+			drawChat(ctx, GAME.heros[HERO.id].chat)
 		}
 	}
 }
@@ -34,7 +34,7 @@ function drawChat(ctx, chat){
 	ctx.fillRect(MAP.canvas.width/2 - (210 * MAP.canvasMultiplier), (210 * MAP.canvasMultiplier) , (420 * MAP.canvasMultiplier), 95 * MAP.canvasMultiplier)
 
 	// //portrait
-	// if(HERO.hero.chat.portrait){
+	// if(GAME.heros[HERO.id].chat.portrait){
 	// 	//portrait outline
 	// 	ctx.fillStyle="rgba(255,255,255,.1)"
 	// 	ctx.fillRect(MAP.canvas.width/2 - 200, 140, 80, 70)
@@ -51,10 +51,10 @@ function drawChat(ctx, chat){
 	ctx.font =`${18 * MAP.canvasMultiplier}pt Arial`
 	ctx.fillStyle="white"
 	//portrait name
-	if(HERO.hero.chatName) {
+	if(GAME.heros[HERO.id].chatName) {
 		ctx.fontWeight = "normal"
 		let x = MAP.canvas.width/2
-		ctx.fillText(HERO.hero.chatName, MAP.canvas.width/2 - (210 * MAP.canvasMultiplier), (210 * MAP.canvasMultiplier) )
+		ctx.fillText(GAME.heros[HERO.id].chatName, MAP.canvas.width/2 - (210 * MAP.canvasMultiplier), (210 * MAP.canvasMultiplier) )
 	}
 
 	//text

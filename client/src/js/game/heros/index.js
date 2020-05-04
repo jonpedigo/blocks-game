@@ -20,18 +20,8 @@ class Hero{
     onEffectHero(hero, collider, result, removeObjects, respawnObjects, { fromInteractButton: false })
   }
 
-  joinGame(cb) {
-    window.socket.on('onJoinGame', (hero) => {
-      if(hero.id == HERO.id) {
-        HERO.hero = hero
-      }
-      cb()
-    })
-    setTimeout(function() { window.socket.emit('askJoinGame', HERO.id) }, 1000)
-  }
-
   getHeroId() {
-    // GET HERO.hero ID
+    // GET GAME.heros[HERO.id] ID
     if(PAGE.role.isGhost) {
       HERO.id = 'ghost'
     } if(PAGE.role.isPlayer) {
@@ -69,6 +59,7 @@ class Hero{
         monsterDestroyer: false,
         gravity: false,
         filled: true,
+        default: false,
       },
     	zoomMultiplier: 1.875,
       // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
@@ -122,10 +113,10 @@ class Hero{
 
   onUpdate() {
     if(PAGE.role.isPlayer && !PAGE.role.isGhost){
-      localStorage.setItem('hero', JSON.stringify(HERO.hero))
+      localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
       // we are locally updating the hero input as host
       if(!PAGE.role.isHost && !PAGE.typingMode) {
-        window.socket.emit('sendHeroInput', GAME.keysDown, HERO.hero.id)
+        window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }
   }
@@ -175,7 +166,7 @@ class Hero{
   }
 
   resetToDefault(hero) {
-    PHYSICS.removeObject(hero)
+    HERO.removeHero(hero)
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
     if(GAME.hero) {
       newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, GAME.hero)))
@@ -185,7 +176,7 @@ class Hero{
     }
     newHero.id = hero.id
     HERO.spawn(newHero)
-    PHYSICS.addObject(newHero)
+    HERO.addHero(newHero)
     return newHero
   }
 
@@ -269,15 +260,12 @@ class Hero{
           return currentHero
         }
       })
-      console.log('failed to find hero with id' + HERO.hero.id)
+      console.log('failed to find hero with id' + HERO.id)
     }
 
     if(!GAME.world.globalTags.isAsymmetric && GAME.hero) {
-      // save current users id to the world.hero object and then store all other variables as the new hero
-      if(hero && hero.id) GAME.hero.id = hero.id
-      hero = GAME.hero
-      // if(!hero.id) hero.id = 'hero-'+window.uniqueID()
-      // but then also respawn the hero
+      delete GAME.hero.id
+      window.mergeDeep(hero, GAME.hero)
       HERO.respawn(hero)
       return hero
     }
@@ -347,6 +335,7 @@ class Hero{
       inputDirection: hero.inputDirection,
       lives: hero.lives,
       score: hero.score,
+      removed: hero.removed,
     }
 
     if(hero.subObjects) {
@@ -360,6 +349,71 @@ class Hero{
       })
     }
     return mapState
+  }
+
+  onEditHero(updatedHero) {
+    if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
+      updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
+    }
+    if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
+      updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
+    }
+
+    window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
+  }
+
+  onResetHeroToDefault(hero) {
+    GAME.heros[hero.id] = HERO.resetToDefault(GAME.heros[hero.id])
+    if(PAGE.role.isPlayer && HERO.id === hero.id) GAME.heros[HERO.id] = GAME.heros[hero.id]
+  }
+
+  onRespawnHero(hero) {
+    HERO.respawn(GAME.heros[hero.id])
+  }
+
+  addHero(hero) {
+    GAME.heros[hero.id] = hero
+    OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+      if(!subObject.id) {
+        subObject.id = key + window.uniqueID()
+      }
+    })
+    PHYSICS.addObject(hero)
+  }
+
+  removeHero(hero) {
+    GAME.heros[hero.id].removed = true
+  }
+
+  onDeleteHero(id) {
+    PHYSICS.removeObject(GAME.heros[id])
+    delete GAME.heros[id]
+  }
+
+  onNetworkUpdateHero(updatedHero) {
+    if(!PAGE.gameLoaded) return
+
+    if(!PAGE.role.isHost) {
+      window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
+      if(PAGE.role.isPlayer && HERO.id === updatedHero.id) {
+        window.mergeDeep(GAME.heros[HERO.id], updatedHero)
+      }
+    }
+  }
+
+  onSendHeroInput(input, heroId) {
+    // dont update input for hosts hero since we've already locally updated
+    if(PAGE.role.isPlayer && GAME.heros[HERO.id] && heroId == HERO.id) {
+      return
+    }
+    GAME.heroInputs[heroId] = input
+  }
+
+  onSendHeroKeyDown(keyCode, heroId) {
+    // dont do keydown event for hosts hero since we've already done locally
+    if(PAGE.role.isPlayer && heroId == HERO.id) return
+    let hero = GAME.heros[heroId]
+    input.onKeyDown(keyCode, hero)
   }
 }
 

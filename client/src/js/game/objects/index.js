@@ -117,6 +117,7 @@ class Objects{
       color: object.color,
       name: object.name,
       namePos: object.namePos,
+      removed: object.removed,
     }
 
     if(object.subObjects) {
@@ -175,13 +176,13 @@ class Objects{
     function addAnticipatedObject(newObject) {
       let {x , y} = grid.snapXYToGrid(newObject.x, newObject.y)
       if(grid.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && grid.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
-        OBJECTS.add([{...newObject, ...OBJECTS.anticipatedForAdd}])
+        OBJECTS.create([{...newObject, ...OBJECTS.anticipatedForAdd}])
         OBJECTS.anticipatedForAdd = null
       }
     }
   }
 
-  add(objects, options = { bypassCollisions: false, fromLiveGame: false }, game) {
+  create(objects, options = { bypassCollisions: false, fromLiveGame: false }) {
     if(!objects.length) {
       objects = [objects]
     }
@@ -261,7 +262,7 @@ class Objects{
         warnings += 'has VELOCITY\n'
       }
       if(sampleObject.heroUpdate) {
-        warnings += 'has HERO.hero UPDATE\n'
+        warnings += 'has GAME.heros[HERO.id] UPDATE\n'
       }
       if(sampleObject.objectUpdate) {
         warnings += 'has OBJECT UPDATE\n'
@@ -283,6 +284,70 @@ class Objects{
     }
 
     return objects
+  }
+
+  onEditObjects(editedObjects) {
+    editedObjects.forEach((obj) => {
+      // slow down that gravity boi!
+      if(GAME.objectsById[obj.id].tags.gravity === true && obj.tags.gravity === false) {
+        obj.velocityY = 0
+      }
+      let objectById = GAME.objectsById[obj.id]
+      obj.path = null
+      window.mergeDeep(objectById, obj)
+    })
+
+    GAME.resetPaths = true
+
+    window.local.emit('onUpdatePFgrid')
+  }
+
+  onAnticipateObject(object) {
+    OBJECTS.anticipatedForAdd = object
+  }
+
+  addObject(object) {
+    object.tags = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultTags)), object.tags)
+    GAME.objectsById[object.id] = object
+    PHYSICS.addObject(object)
+  }
+
+  removeObject(object) {
+    GAME.objectsById[object.id].removed = true
+    window.local.emit('onUpdatePFgrid')
+  }
+
+  onDeleteObject(object) {
+    let spliceIndex
+    GAME.objects.forEach((obj, i) => {
+      if(obj.id == object.id) {
+        spliceIndex = i
+      }
+    })
+    if(spliceIndex >= 0) {
+      GAME.objects.splice(spliceIndex, 1)
+    }
+    PHYSICS.removeObject(object)
+    delete GAME.objectsById[object.id]
+    window.local.emit('onUpdatePFgrid')
+  }
+
+  onNetworkUpdateObjects(objectsUpdated) {
+    if(!PAGE.gameLoaded) return
+    if(!PAGE.role.isHost) {
+      objectsUpdated.forEach((obj) => {
+        let objectById = GAME.objectsById[obj.id]
+        window.mergeDeep(objectById, obj)
+      })
+    }
+  }
+
+  onNetworkAddObjects(objectsAddedd) {
+    GAME.objects.push(...objectsAdded)
+    objectsAdded.forEach((object) => {
+      OBJECTS.addObject(object)
+    })
+    window.local.emit('onUpdatePFgrid')
   }
 }
 

@@ -282,7 +282,7 @@ function render() {
 
   ////////////////
   ////////////////
-  // HERO.heroS
+  // GAME.heros[HERO.id]S
   ////////////////
   ////////////////
   ctx.fillStyle = 'white';

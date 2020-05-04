@@ -29,8 +29,8 @@ function init() {
     window.resetObjects()
   })
 
-  var resetSpawnAreasAndObjects = document.getElementById("reset-spawn-and-objects");
-  resetSpawnAreasAndObjects.addEventListener('click', function(){
+  var resetSpawnAreasAndObjectsButton = document.getElementById("reset-spawn-and-objects");
+  resetSpawnAreasAndObjectsButton.addEventListener('click', function(){
     window.resetSpawnAreasAndObjects()
   })
 
@@ -311,14 +311,12 @@ function cleanGameForSave(game) {
   }))
 
   if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
-    if(Object.keys(game.heros).length > 1) {
-      console.log("ERROR, two heros sent to a non asymettric, non restoring world")
-    }
-    if(Object.keys(game.heros).length == 1) {
-      for(var heroId in game.heros) {
+    for(var heroId in game.heros) {
+      if(game.heros[heroId].tags.default) {
+        gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
       }
-      gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
     }
+    gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
   }
 
   let idValue = document.getElementById('game-id').value

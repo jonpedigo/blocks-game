@@ -25,50 +25,6 @@ function setDefault() {
   })
 }
 
-
-window.handleWorldUpdate = function(updatedWorld) {
-  for(let key in updatedWorld) {
-    const value = updatedWorld[key]
-
-    if(key === 'lockCamera' && !PAGE.role.isPlayEditor) {
-      if(value && value.limitX) {
-        MAP.camera.setLimit(value.limitX, value.limitY, value.centerX, value.centerY)
-      } else {
-        MAP.camera.clearLimit();
-      }
-    }
-
-    if(key === 'gameBoundaries') {
-      GAME.updateGridObstacles()
-      if(PAGE.role.isHost) GAME.resetPaths = true
-      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
-
-    if(key === 'globalTags' || key === 'editorTags') {
-      for(let tag in updatedWorld.globalTags) {
-        if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
-          GAME.updateGridObstacles()
-          if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-        }
-      }
-      if(key === 'syncHero' && PAGE.role.isPlayEditor) {
-        window.syncHeroToggle.checked = value
-      }
-      if(key === 'syncObjects' && PAGE.role.isPlayEditor) {
-        window.syncObjectsToggle.checked = value
-      }
-      if(key === 'syncGameState' && PAGE.role.isPlayEditor) {
-        window.syncGameStateToggle.checked = value
-      }
-    }
-  }
-
-  if(PAGE.role.isPlayEditor) {
-    window.worldeditor.update(GAME.world)
-    window.worldeditor.expandAll()
-  }
-}
-
 export default {
   setDefault
 }

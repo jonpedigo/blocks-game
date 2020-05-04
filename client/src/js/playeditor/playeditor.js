@@ -174,7 +174,7 @@ function createMaze() {
     return o
   })
 
-  OBJECTS.add(maze)
+  OBJECTS.create(maze)
 }
 
 function createArena(boundaries) {
@@ -229,7 +229,7 @@ function createArena(boundaries) {
     parentId: parent.id,
   }
 
-  OBJECTS.add([parent, wallTop, wallRight, wallLeft, wallBottom])
+  OBJECTS.create([parent, wallTop, wallRight, wallLeft, wallBottom])
 }
 window.createArena = createArena
 

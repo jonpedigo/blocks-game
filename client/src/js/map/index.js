@@ -33,7 +33,7 @@ MAP.onPageLoaded = function() {
 
 MAP.onRender = function(delta) {
   render.update()
-  if(PAGE.role.isPlayer && HERO.hero.animationZoomMultiplier) {
+  if(PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {
     constellation.onRender()
   }
 }

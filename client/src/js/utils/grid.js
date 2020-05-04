@@ -190,7 +190,7 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    let hero = HERO.hero
+    let hero = GAME.heros[HERO.id]
     if(PAGE.role.isPlayEditor) {
       hero = window.editingHero
       // single player only feature

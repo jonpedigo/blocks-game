@@ -19,7 +19,7 @@ Star.prototype = {
     constructor: Star,
     render: function(){
 
-      let hero = HERO.hero
+      let hero = GAME.heros[HERO.id]
       if(PAGE.role.isPlayEditor) hero = window.editingHero
       let multiplier = (hero.animationZoomMultiplier)/window.constellationDistance
 
@@ -51,14 +51,14 @@ function update(){
 }
 
 function onRender(){
-  if(window.constellationDistance === HERO.hero.animationZoomMultiplier) {
+  if(window.constellationDistance === GAME.heros[HERO.id].animationZoomMultiplier) {
     update();
   }
 
-  console.log(HERO.hero.animationZoomMultiplier)
+  console.log(GAME.heros[HERO.id].animationZoomMultiplier)
 
 
-  let hero = HERO.hero
+  let hero = GAME.heros[HERO.id]
   if(PAGE.role.isPlayEditor) hero = window.editingHero
   /*
     Remove comments below these for a cool trailing effect & comment

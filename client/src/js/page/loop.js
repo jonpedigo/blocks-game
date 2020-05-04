@@ -6,15 +6,15 @@
 ///////////////////////////////
 let updateInterval = 1000/60
 let renderInterval = 1000/24
-let mapNetworkInterval = 1000/8
+let mapNetworkInterval = 1000/24
 let completeNetworkInterval = 1000/.5
 var frameCount = 0;
 var fps, startTime, now, deltaRender, deltaMapNetwork, deltaCompleteNetwork, thenRender, thenMapNetwork, thenCompleteNetwork, thenUpdate, deltaUpdate;
 window.w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 window.startGameLoop = function() {
-  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (PAGE.role.isPlayer && !HERO.hero)) {
-    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (PAGE.role.isPlayer && !HERO.hero))
+  if(!GAME.objects || !GAME.world || !GAME.grid || !GAME.heros || (PAGE.role.isPlayer && !GAME.heros[HERO.id])) {
+    console.log('game loaded without critical data, trying again soon', !GAME.objects, !GAME.world, !GAME.grid, !GAME.heros, (PAGE.role.isPlayer && !GAME.heros[HERO.id]))
     setTimeout(startGameLoop, 1000)
     return
   }
@@ -66,6 +66,8 @@ var mainLoop = function () {
 
   if (PAGE.role.isHost && deltaCompleteNetwork > completeNetworkInterval) {
     thenCompleteNetwork = now - (deltaCompleteNetwork % completeNetworkInterval);
+    // reset mapNetworkUpdate as well
+    thenMapNetwork = thenCompleteNetwork
     completeNetworkUpdate()
   } else if (PAGE.role.isHost && deltaMapNetwork > mapNetworkInterval) {
     thenMapNetwork = now - (deltaMapNetwork % mapNetworkInterval);

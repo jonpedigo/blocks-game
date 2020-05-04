@@ -40,7 +40,7 @@ function update() {
   const { ctx, camera, canvas } = MAP
 
   //set camera so we render everything in the right place
-  camera.set(ctx, HERO.hero)
+  camera.set(ctx, GAME.heros[HERO.id])
 
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
@@ -53,8 +53,9 @@ function update() {
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-  let viewBoundaries = HERO.getViewBoundaries(HERO.hero)
+  let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
+    if(object.removed) return
     if(collisionsUtil.checkObject(viewBoundaries, object)) {
       drawTools.drawObject(ctx, object, camera)
     }
@@ -70,7 +71,7 @@ function update() {
   })
 
   // dont show names if we zoom to the stars
-  if(!HERO.hero.animationZoomMultiplier) {
+  if(!GAME.heros[HERO.id].animationZoomMultiplier) {
     GAME.objects.forEach((obj) => {
       if(obj.name && !obj.removed) {
         if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
@@ -87,14 +88,14 @@ function update() {
   if(PAGE.role.isGhost) {
     ctx.font =`24pt Arial`
     ctx.fillStyle="rgba(255,255,255,0.3)"
-    ctx.fillText('Ghost View Id: ' + HERO.hero.id, 10, 40)
+    ctx.fillText('Ghost View Id: ' + HERO.id, 10, 40)
   }
 
   chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(HERO.hero && HERO.hero.interactableObject && !HERO.hero.flags.showChat) {
-    const { interactableObject } = HERO.hero
+  if(GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && !GAME.heros[HERO.id].flags.showChat) {
+    const { interactableObject } = GAME.heros[HERO.id]
 
     if(interactableObject.tags.invisible) {
       ctx.fillStyle = "rgb(255, 255, 255)";

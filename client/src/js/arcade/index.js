@@ -35,6 +35,14 @@ class Arcade{
 
     ARCADE.customCompendium = null
     ARCADE.defaultCompendium = defaultCompendium
+
+    if(!PAGE.role.isArcadeMode) {
+      window.socket.emit('getCustomGameFx')
+    }
+  }
+
+  onGetCustomGameFx(customFx) {
+    ARCADE.setLiveCustomFx(customFx)
   }
 
   onUpdateCustomGameFx(customFx) {

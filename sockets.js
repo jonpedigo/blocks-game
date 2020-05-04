@@ -16,6 +16,8 @@ let currentGame = {
   world: {},
 }
 
+let savedCustomCode = ''
+
 function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   // socket.on('saveSocket', (heroId) => {
   //   herosockets[heroId] = socket
@@ -122,8 +124,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onAskJoinGame', heroId)
   })
 
-  socket.on('addHeroToGame', (hero) => {
-    io.emit('onJoinGame', hero)
+  socket.on('heroJoinedGamed', (hero) => {
+    io.emit('onHeroJoinedGame', hero)
   })
 
   socket.on('removeHero', (hero) => {
@@ -228,7 +230,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   ///////////////////////////
   ///////////////////////////
-  //HERO.hero
+  //GAME.heros[HERO.id]
   ///////////////////////////
   socket.on('sendHeroInput', (input, hero) => {
     io.emit('onSendHeroInput', input, hero)
@@ -296,7 +298,14 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   // CUSTOM GAME FX
   ///////////////////////////
+  socket.on('getCustomGameFx', () => {
+    if(savedCustomCode) {
+      io.emit('onGetCustomGameFx', savedCustomCode)
+    }
+  })
+
   socket.on('updateCustomGameFx', (customGameFx) => {
+    savedCustomCode = customGameFx
     io.emit('onUpdateCustomGameFx', customGameFx)
   })
 

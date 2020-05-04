@@ -65,13 +65,15 @@ class MapEditor{
     keyInput.init()
   }
 
+
+
   onUpdate(delta) {
     if(MAPEDITOR.remoteState && !MAPEDITOR.skipRemoteStateUpdate) {
       updateGridHighlight(MAPEDITOR.remoteState.mousePos)
     }
 
-    if(!PAGE.role.isGhost && PAGE.role.isPlayer && HERO.hero) {
-      window.socket.emit('sendHeroMapEditor', { mousePos: MAPEDITOR.mousePos } , HERO.hero.id)
+    if(!PAGE.role.isGhost && PAGE.role.isPlayer && GAME.heros[HERO.id]) {
+      window.socket.emit('sendHeroMapEditor', { mousePos: MAPEDITOR.mousePos } , HERO.id)
     }
   }
 
@@ -108,6 +110,24 @@ class MapEditor{
       }
     }
   }
+
+  onSendHeroMapEditor(remoteState, heroId) {
+    if(GAME.heros[HERO.id] && HERO.id === heroId) {
+      MAPEDITOR.remoteState = remoteState
+    }
+  }
+
+  onAskHeroToNameObject(object, heroId) {
+    if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.id === heroId) {
+      modals.nameObject(object)
+    }
+  }
+
+  onAskHeroToWriteChat(object, heroId) {
+    if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.id === heroId) {
+      modals.writeDialogue(object)
+    }
+  }
 }
 
 function handleMouseUp(event) {
@@ -123,7 +143,7 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.copiedObject) {
-    OBJECTS.add([MAPEDITOR.copiedObject])
+    OBJECTS.create([MAPEDITOR.copiedObject])
     MAPEDITOR.copiedObject = null
   } else if(MAPEDITOR.isSettingPathfindingLimit) {
     if(MAPEDITOR.pathfindingLimit) {

@@ -48,13 +48,13 @@ export default class CustomGame{
   }
 
   onRender(ctx) {
-    if(HERO.hero) {
+    if(GAME.heros[HERO.id]) {
 
       // got some gradients to work..
-      // let startx = (HERO.hero.x + 20)/window.camera.multiplier - window.camera.x
-      // let starty = (HERO.hero.y - 40)/window.camera.multiplier - window.camera.y
-      // let endx = (HERO.hero.x + 20)/window.camera.multiplier - window.camera.x
-      // let endy = (HERO.hero.y - 20)/window.camera.multiplier - window.camera.y
+      // let startx = (GAME.heros[HERO.id].x + 20)/window.camera.multiplier - window.camera.x
+      // let starty = (GAME.heros[HERO.id].y - 40)/window.camera.multiplier - window.camera.y
+      // let endx = (GAME.heros[HERO.id].x + 20)/window.camera.multiplier - window.camera.x
+      // let endy = (GAME.heros[HERO.id].y - 20)/window.camera.multiplier - window.camera.y
       // var cx=250;
       // var cy=250;
       // var r=30;
@@ -91,12 +91,12 @@ export default class CustomGame{
       // ctx.strokeStyle = 'white'
       // ctx.lineWidth=1;
       //
-      // if(HERO.hero.directions.down) {
+      // if(GAME.heros[HERO.id].directions.down) {
       //   let sWidth = 17.5;
       //   let sHeight = 20;
       //   var path=new Path2D();
-      //   let x = HERO.hero.x/window.camera.multiplier - window.camera.x
-      //   let y = (HERO.hero.y-20)/window.camera.multiplier - window.camera.y
+      //   let x = GAME.heros[HERO.id].x/window.camera.multiplier - window.camera.x
+      //   let y = (GAME.heros[HERO.id].y-20)/window.camera.multiplier - window.camera.y
       //   path.moveTo(x + (sWidth/2) +5, y+ sHeight/2);
       //   path.lineTo(x + (sWidth/2), y+ (sHeight/2)-10);
       //   path.lineTo(x + (sWidth/2)-5, y + sHeight/2);

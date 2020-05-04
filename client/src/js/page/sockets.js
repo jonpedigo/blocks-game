@@ -8,7 +8,7 @@ import io from 'socket.io-client'
 function init() {
   // EVENT SETUP
   if(PAGE.role.isArcadeMode) {
-    window.socket = window.local
+    window.socket = window.mockSocket
   } else if (window.location.origin.indexOf('localhost') > 0) {
     window.socket = io.connect('http://localhost:4000');
   } else {
@@ -22,85 +22,37 @@ function init() {
 
   if(PAGE.role.isHost) {
     window.socket.on('onAskJoinGame', (heroId) => {
-      if(GAME) {
-        let hero = GAME.heros[heroId]
-        if(!hero) {
-          hero = HERO.summonFromGameData({id: heroId})
-          hero.id = heroId
-          GAME.heros[hero.id] = hero
-          PHYSICS.addObject(hero)
-        } else {
-          PHYSICS.addObject(hero)
-          hero.id = heroId
-        }
-        window.local.emit('onHeroJoined', hero)
-        window.socket.emit('addHeroToGame', hero)
-      }
+      window.local.emit('onAskJoinGame', heroId)
     })
 
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
-      // dont update input for hosts hero since we've already locally updated
-      if(PAGE.role.isPlayer && HERO.hero && heroId == HERO.hero.id) {
-        return
-      }
-      GAME.heroInputs[heroId] = heroInput
+      window.local.emit('onSendHeroInput', heroInput, heroId)
     })
 
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
-      // dont do keydown event for hosts hero since we've already done locally
-      if(PAGE.role.isPlayer && heroId == HERO.hero.id) return
-      let hero = GAME.heros[heroId]
-      input.onKeyDown(keyCode, hero)
+      window.local.emit('onSendHeroKeyDown', keyCode, heroId)
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
-      GAME.heroList.forEach(({id}) => {
-        if(id === hero.id) {
-          GAME.heros[id] = HERO.resetToDefault(GAME.heros[id])
-          if(PAGE.role.isPlayer && HERO.hero.id === hero.id) HERO.hero = GAME.heros[id]
-        }
-      })
+      window.local.emit('onResetHeroToDefault', hero)
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onRespawnHero', (hero) => {
-      GAME.heroList.forEach(({id}) => {
-        if(id === hero.id) {
-          HERO.respawn(GAME.heros[id])
-        }
-      })
+      window.local.emit('onRespawnHero', hero)
     })
 
     // EDITOR CALLS THIS
   	window.socket.on('onEditObjects', (editedObjects) => {
-      editedObjects.forEach((obj) => {
-        // slow down that gravity boi!
-        if(GAME.objectsById[obj.id].tags.gravity && !obj.tags.gravity) {
-          obj.velocityY = 0
-        }
-        let objectById = GAME.objectsById[obj.id]
-        // if(!obj.x) {
-        //   obj.x = objectById.x
-        // }
-        // if(!obj.y) {
-        //   obj.y = objectById.y
-        // }
-        obj.path = null
-        window.mergeDeep(objectById, obj)
-      })
-      if(!GAME.world.globalTags.calculatePathCollisions) {
-        GAME.updateGridObstacles()
-        GAME.resetPaths = true
-        GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-      }
+      window.local.emit('onEditObjects', editedObjects)
   	})
 
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
-      window.mergeDeep(GAME.gameState, gameState)
+      window.local.emit('onEditGameState', gameState)
       if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked) {
         window.gamestateeditor.update(gameState)
       }
@@ -108,70 +60,28 @@ function init() {
 
     // EDITOR CALLS THIS
   	window.socket.on('onSnapAllObjectsToGrid', () => {
-  		window.snapAllObjectsToGrid()
+  	   GAME.snapToGrid()
   	})
 
     // EDITOR CALLS THIS
     window.socket.on('onAnticipateObject', (object) => {
-  		OBJECTS.anticipatedForAdd = object
+      window.local.emit('onAnticipateObject', object)
   	})
 
     // EDITOR CALLS THIS
     window.socket.on('onStopGame', () => {
-      if(!GAME.gameState.started) {
-        return console.log('trying to stop game that aint even started yet')
-      }
-
-      let initialGameState = localStorage.getItem('initialGameState')
-      if(!initialGameState) {
-        console.log('game stopped, but no initial game state set')
-      }
-
-      if(initialGameState) {
-        initialGameState = JSON.parse(initialGameState)
-        GAME.objects = initialGameState.objects
-        GAME.heros = initialGameState.heros
-        GAME.world = initialGameState.world
-        GAME.gameState = initialGameState.gameState
-        GAME.grid = initialGameState.grid
-        GAME.grid.nodes = gridTool.generateGridNodes(GAME.grid)
-        GAME.updateGridObstacles()
-        GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-      }
-
-      // GAME.gameState.paused = true
-      GAME.gameState.started = false
-      GAME.gameState.loaded = true
+      window.local.emit('onStopGame')
     })
 
     // EDITOR CALLS THIS
     window.socket.on('onStartGame', () => {
-      if(GAME.gameState.started) {
-        return console.log('trying to start game that has already started')
-      }
-
-      // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-      localStorage.setItem('initialGameState', JSON.stringify({...GAME, grid: {...GAME.grid, nodes: null }}))
-      GAME.gameState.paused = false
-      GAME.gameState.started = true
-
-      if(ARCADE.defaultCustomGame) {
-        ARCADE.defaultCustomGame.onGameStart()
-      }
-      if(ARCADE.customGame) {
-        ARCADE.customGame.onGameStart()
-      }
-      if(ARCADE.liveCustomGame) {
-        ARCADE.liveCustomGame.onGameStart()
-      }
+      window.local.emit('onGameStart')
     })
   }
 
   if(PAGE.role.isGhost) {
     window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
-      if(HERO.hero && HERO.hero.id === heroId && MAPEDITOR) {
-        MAPEDITOR.remoteState = remoteState
-      }
+      window.local.emit('onSendHeroMapEditor', remoteState, heroId)
     })
   }
 
@@ -181,8 +91,7 @@ function init() {
   ///////////////////////////////
   // HOST CALLS THIS
   window.socket.on('onUpdateGameState', (gameState) => {
-    if(!PAGE.gameLoaded) return
-    if(!PAGE.role.isHost) GAME.gameState = gameState
+    window.local.emit('onUpdateGameState', gameState)
     if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
       window.gamestateeditor.update(gameState)
     }
@@ -190,12 +99,7 @@ function init() {
 
   // host CALLS THIS
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    if(!PAGE.gameLoaded) return
-    if(!PAGE.role.isHost) {
-      objectsUpdated.forEach((obj) => {
-        let objectById = GAME.objectsById[obj.id]
-        window.mergeDeep(objectById, obj)
-      })
+    window.local.emit('onNetworkUpdateObjects', objectsUpdated)
       // old interpolation code
       // if(PAGE.role.isPlayer) {
       //   objectsUpdated.forEach((obj) => {
@@ -217,7 +121,6 @@ function init() {
       //     return prev
       //   }, {})
       // }
-    }
 
     if(PAGE.role.isPlayEditor && window.objecteditor.get().id) {
       if(window.syncObjectsToggle.checked) {
@@ -228,30 +131,18 @@ function init() {
 
   // HOST CALLS THIS
   window.socket.on('onUpdateHero', (updatedHero) => {
-    if(!PAGE.gameLoaded) return
-
-    if(!PAGE.role.isHost) {
-      if(!GAME.heros[updatedHero.id]) {
-        GAME.heros[updatedHero.id] = updatedHero
-        PHYSICS.addObject(updatedHero)
-        // you need to reset the reference... really just for NON HOST PLAYER MODE ( because it loads non host )
-      }
-      window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
-      if(PAGE.role.isPlayer && HERO.hero.id === updatedHero.id) {
-        window.mergeDeep(HERO.hero, updatedHero)
-      }
-      // old interpolation code
-      // } else if(PAGE.role.isPlayEditor) {
-      //   window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
-      // } else if(PAGE.role.isPlayer) {
-      //   let hero = GAME.heros[updatedHero.id]
-      //   if(!hero) GAME.heros[updatedHero.id] = updatedHero
-      //   hero._lerpX = updatedHero.x
-      //   hero._lerpY = updatedHero.y
-      //   delete updatedHero.x
-      //   delete updatedHero.y
-      //   window.mergeDeep(hero, updatedHero)
-    }
+    window.local.emit('onNetworkUpdateHero', updatedHero)
+    // old interpolation code
+    // } else if(PAGE.role.isPlayEditor) {
+    //   window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
+    // } else if(PAGE.role.isPlayer) {
+    //   let hero = GAME.heros[updatedHero.id]
+    //   if(!hero) GAME.heros[updatedHero.id] = updatedHero
+    //   hero._lerpX = updatedHero.x
+    //   hero._lerpY = updatedHero.y
+    //   delete updatedHero.x
+    //   delete updatedHero.y
+    //   window.mergeDeep(hero, updatedHero)
 
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
@@ -277,78 +168,31 @@ function init() {
 
   // EVERYONE CALLS THIS
   window.socket.on('onAddObjects', (objectsAdded) => {
-    GAME.objects.push(...objectsAdded)
-    objectsAdded.forEach((object) => {
-      PHYSICS.addObject(object)
-      GAME.objectsById[object.id] = object
-    })
-
-    if(GAME.grid.nodes && !GAME.world.globalTags.calculatePathCollisions) {
-      GAME.updateGridObstacles()
-      GAME.resetPaths = true
-      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
-
     window.local.emit('onAddObjects', objectsAdded)
   })
 
+  window.socket.on('onHeroJoinedGame', (hero) => {
+    window.local.emit('onHeroJoinedGame', hero)
+  })
+
   // EDITOR CALLS THIS
-  window.socket.on('onResetObjects', (updatedObjects) => {
-    GAME.objects = GAME.objects.reduce((arr, object) => {
-      if(object.removed) return arr
-      PHYSICS.removeObject(object)
-      return arr
-    }, [])
-
-    GAME.objectsById = GAME.objects.reduce((prev, next) => {
-      prev[next.id] = next
-      return prev
-    }, {})
-
-    if(!GAME.world.globalTags.calculatePathCollisions) {
-      GAME.updateGridObstacles()
-      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
+  window.socket.on('onResetObjects', () => {
+    window.local.emit('onResetObjects')
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
-    GAME.world = JSON.parse(JSON.stringify(window.defaultWorld))
-    if(!PAGE.role.isPlayEditor) window.camera.clearLimit()
-    GAME.updateGridObstacles()
-    if(PAGE.role.isHost) GAME.resetPaths = true
-    if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    window.handleWorldUpdate(GAME.world)
+    window.local.emit('onResetWorld')
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateWorld', (updatedWorld) => {
-    if(GAME.world) {
-      for(let key in updatedWorld) {
-        const value = updatedWorld[key]
-
-        if(value instanceof Object) {
-          GAME.world[key] = {}
-          window.mergeDeep(GAME.world[key], value)
-        } else {
-          GAME.world[key] = value
-        }
-      }
-      window.handleWorldUpdate(updatedWorld)
-    }
+    window.local.emit('onUpdateWorld', updatedWorld)
   })
 
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
-  	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity) {
-  		updatedHero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[updatedHero.id])
-  	}
-  	if(updatedHero.jumpVelocity !== GAME.heros[updatedHero.id].jumpVelocity || updatedHero.speed !== GAME.heros[updatedHero.id].speed) {
-  		updatedHero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[updatedHero.id])
-  	}
-
-    window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
-
+    window.local.emit('onEditHero', updatedHero)
     if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
       if(window.editingHero.id === updatedHero.id) {
         window.editingHero = GAME.heros[updatedHero.id]
@@ -364,17 +208,12 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveObject', (object) => {
-    if(!GAME.world.globalTags.calculatePathCollisions) {
-      GAME.updateGridObstacles()
-      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
-
-    GAME.objectsById[object.id].removed = true
+    GAME.removeObject(object)
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveHero', (hero) => {
-    GAME.heros[hero.id].removed = true
+    GAME.removeObject(hero)
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
@@ -384,89 +223,46 @@ function init() {
       window.objecteditor.saved = true
       window.updateObjectEditorNotifier()
     }
-
-    if(!GAME.world.globalTags.calculatePathCollisions) {
-      GAME.updateGridObstacles()
-      if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
-
-    let spliceIndex
-    GAME.objects.forEach((obj, i) => {
-      if(obj.id == object.id) {
-        spliceIndex
-      }
-    })
-
-    if(spliceIndex >= 0) {
-      GAME.objects.splice(spliceIndex, 1)
-    }
-
-    GAME.objects = GAME.objects.filter((obj) => obj.id !== object.id)
-    PHYSICS.removeObject(object)
-    delete GAME.objectsById[object.id]
+    window.local.emit('onDeleteObject', object)
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
-    GAME.grid = grid
-    GAME.grid.nodes = gridTool.generateGridNodes(grid)
-    GAME.updateGridObstacles()
-    if(PAGE.role.isHost) {
-      GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    }
+    window.local.emit('onUpdateGrid', grid)
   })
 
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (id) => {
-    if(PAGE.role.isHost) {
-      PHYSICS.removeObject(GAME.heros[id])
-    }
-    delete GAME.heros[id]
     if(PAGE.role.isPlayEditor && window.editingHero.id == id) {
       window.setEditingHero({})
     }
+    window.local.emit('onDeleteHero', id)
   })
 
   window.socket.on('onCopyGame', (game) => {
-    GAME.unload()
-    GAME.load(game, { resetHeros: true })
+    window.local.emit('onReloadGame', game)
   })
 
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
-    GAME.unload()
-    GAME.load(game, { resetHeros: true })
-    ARCADE.changeGame(game.id)
+    window.local.emit('onChangeGame', game)
   })
 
   // this is from branch merge
   window.socket.on('onSetGameJSON', (game) => {
-    GAME.unload()
-    GAME.load(game)
-    ARCADE.changeGame(game.id)
+    window.local.emit('onChangeGame', game)
   })
 
-
-  // window.socket.on('onNewGame', () => {
-  //   ARCADE.changeGame(null)
-  //   GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-  // })
-
   window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.hero.id === heroId) {
-      modals.nameObject(object)
-    }
-
+    window.local.emit('onAskHeroToNameObject', object, heroId)
     // let ctx = document.getElementById('swal-canvas').getContext('2d')
     // ctx.fillStyle = object.color
     // ctx.fillRect(10, 10, object.width, object.height);
   })
 
   window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.hero.id === heroId) {
-      modals.writeDialogue(object)
-    }
+    window.local.emit('onAskHeroToWriteChat', object, heroId)
   })
 
   window.socket.on('onGameSaved', (id) => {
@@ -479,6 +275,10 @@ function init() {
 
   window.socket.on('onCustomFxEvent', (eventName) => {
     window.local.emit('onCustomFxEvent', eventName)
+  })
+
+  window.socket.on('onGetCustomGameFx', (eventName) => {
+    window.local.emit('onGetCustomGameFx', eventName)
   })
 }
 

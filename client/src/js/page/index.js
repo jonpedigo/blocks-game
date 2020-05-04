@@ -79,7 +79,7 @@ class Page{
 
     PAGE.askCurrentGame((game) => {
       ARCADE.changeGame(game.id)
-      GAME.load(game)
+      GAME.loadAndJoin(game)
       window.startGameLoop()
     })
   }
@@ -93,7 +93,7 @@ class Page{
   askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
       let game = testArcade
-      HERO.hero = HERO.summonFromGameData({ id: HERO.id })
+      GAME.heros[HERO.id] = HERO.summonFromGameData({ id: HERO.id })
       cb(game)
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
@@ -158,6 +158,7 @@ class Page{
   resetStorage() {
     localStorage.removeItem('hero')
     localStorage.removeItem('ghostData')
+    PAGE.role.isPlayer = false
     window.location.reload()
   }
 

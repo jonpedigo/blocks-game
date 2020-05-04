@@ -9,8 +9,8 @@ export default class CustomGame{
   onGameLoaded() {
     explodingParticles = particles.createExplodingParticles({startX : 100, startY: 100, animationDuration: 2000, speed: 50, radius: 30, life: 1000, color: 'white', count: 1})
     GAME.gameState.paused = true
-    HERO.hero.flags.showLives = true;
-    HERO.hero.flags.showScore = true;
+    GAME.heros[HERO.id].flags.showLives = true;
+    GAME.heros[HERO.id].flags.showScore = true;
   }
 
   onGameUnload() {
@@ -23,7 +23,7 @@ export default class CustomGame{
     GAME.gameState.startTime = Date.now()
     window.resetSpawnAreasAndObjects()
     HERO.respawn()
-    HERO.hero.lives = 3
+    GAME.heros[HERO.id].lives = 3
   }
 
   onKeyDown(keyCode, hero) {
@@ -64,7 +64,7 @@ export default class CustomGame{
     })
 
     if(GAME.gameState.paused && GAME.gameState.started) {
-      const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = HERO.getViewBoundaries(HERO.hero)
+      const { minX, maxX, minY, maxY, centerY, centerX, cameraHeight, cameraWidth } = HERO.getViewBoundaries(GAME.heros[HERO.id])
 
       // ctx.fillStyle = 'rgba(0,0,0,0.8)';
       // ctx.fillRect((minX/window.camera.multiplier - window.camera.x), (minY/window.camera.multiplier - window.camera.y), cameraWidth/window.camera.multiplier, cameraHeight/window.camera.multiplier);
@@ -77,7 +77,7 @@ export default class CustomGame{
       // let metrics = ctx.measureText(text)
       // window.wrapText(ctx, text, centerX/window.camera.multiplier - window.camera.x - (metrics.width/2), centerY/window.camera.multiplier - window.camera.y, 600/window.camera.multiplier, 80/window.camera.multiplier)
 
-      let multiplier = ((4000 - (HERO.hero.animationZoomMultiplier || 0))/4000)
+      let multiplier = ((4000 - (GAME.heros[HERO.id].animationZoomMultiplier || 0))/4000)
       // since I wanted the growth to occur very fast quickly, I had to decrease the value of the multiplier exponentialy ( it would turn into a decimal... oh god dont delte took me forever)
       multiplier = multiplier * multiplier
       multiplier = multiplier * multiplier

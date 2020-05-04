@@ -41,7 +41,7 @@ function shootBullet(hero) {
     })
   }
 
-  OBJECTS.add([shooted], { fromLiveGame: true })
+  OBJECTS.create([shooted], { fromLiveGame: true })
 }
 
 function dropWall(hero) {
@@ -84,7 +84,7 @@ function dropWall(hero) {
     })
   }
 
-  OBJECTS.add([wall], { fromLiveGame: true })
+  OBJECTS.create([wall], { fromLiveGame: true })
 }
 
 export default {
