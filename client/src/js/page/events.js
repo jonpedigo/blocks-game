@@ -13,7 +13,7 @@ class EventEmitter {
     if(!event) event = []
 
     if(!this.mockSocket) {
-      if(eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
+      if(eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
 
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])
@@ -24,14 +24,18 @@ class EventEmitter {
       }
 
       if(PAGE.role.isHost) {
-        if(ARCADE.defaultCustomGame && ARCADE.defaultCustomGame[eventName]) {
-          event.push(ARCADE.defaultCustomGame[eventName])
-        }
-        if(ARCADE.customGame && ARCADE.customGame[eventName]) {
-          event.push(ARCADE.customGame[eventName])
-        }
-        if(ARCADE.liveCustomGame && ARCADE.liveCustomGame[eventName]) {
-          event.push(ARCADE.liveCustomGame[eventName])
+        try {
+          if(ARCADE.defaultCustomGame && ARCADE.defaultCustomGame[eventName]) {
+            event.push(ARCADE.defaultCustomGame[eventName])
+          }
+          if(ARCADE.customGame && ARCADE.customGame[eventName]) {
+            event.push(ARCADE.customGame[eventName])
+          }
+          if(ARCADE.liveCustomGame && ARCADE.liveCustomGame[eventName]) {
+            event.push(ARCADE.liveCustomGame[eventName])
+          }
+        } catch(e) {
+          console.error(e)
         }
       }
 

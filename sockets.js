@@ -328,6 +328,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('askHeroToWriteChat', (object, heroId) => {
     io.emit('onAskHeroToWriteChat', object, heroId)
   })
+
+  socket.on('hostLog', (msg, arg1, arg2, arg3) => {
+    let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+    io.emit('onHostLog', ...args)
+  })
 }
 
 module.exports = socketEvents

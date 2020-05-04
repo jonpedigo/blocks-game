@@ -432,23 +432,23 @@ function addObject(object) {
   const physicsObject = new Polygon(object.x, object.y, [ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
   PHYSICS.system.insert(physicsObject)
   PHYSICS.objects[object.id] = physicsObject
-  if(object.subObjects) {
-    OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
-      console.log('adding subobject', key)
-      PHYSICS.addObject(subObject)
-    })
-  }
+  // if(object.subObjects) {
+  //   OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+  //     console.log('adding subobject', key)
+  //     PHYSICS.addObject(subObject)
+  //   })
+  // }
   return physicsObject
 }
 
 function removeObject(object) {
   try {
     PHYSICS.system.remove(PHYSICS.objects[object.id])
-    if(object.subObjects) {
-      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        PHYSICS.removeObject(subObject)
-      })
-    }
+    // if(object.subObjects) {
+    //   OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+    //     PHYSICS.removeObject(subObject)
+    //   })
+    // }
     delete PHYSICS.objects[object.id];
   } catch(e) {
     console.error(object, e)

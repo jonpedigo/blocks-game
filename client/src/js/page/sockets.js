@@ -168,7 +168,7 @@ function init() {
 
   // EVERYONE CALLS THIS
   window.socket.on('onAddObjects', (objectsAdded) => {
-    window.local.emit('onAddObjects', objectsAdded)
+    window.local.emit('onNetworkAddObjects', objectsAdded)
   })
 
   window.socket.on('onHeroJoinedGame', (hero) => {
@@ -280,6 +280,13 @@ function init() {
   window.socket.on('onGetCustomGameFx', (eventName) => {
     window.local.emit('onGetCustomGameFx', eventName)
   })
+
+  if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {
+    window.socket.on('onHostLog', (msg, arg1, arg2, arg3) => {
+      let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+      console.log('host -> ', ...args)
+    })
+  }
 }
 
 export default {

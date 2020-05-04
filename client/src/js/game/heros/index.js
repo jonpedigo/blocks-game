@@ -166,7 +166,7 @@ class Hero{
   }
 
   resetToDefault(hero) {
-    HERO.removeHero(hero)
+    HERO.deleteHero(hero)
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
     if(GAME.hero) {
       newHero = JSON.parse(JSON.stringify(window.mergeDeep(window.defaultHero, GAME.hero)))
@@ -229,6 +229,7 @@ class Hero{
     }
     value.x = value.centerX - value.width/2
     value.y = value.centerY - value.height/2
+    let nonGrid = {...value}
     const { leftDiff, rightDiff, topDiff, bottomDiff } = grid.getAllDiffs(value)
     grid.snapDragToGrid(value)
 
@@ -237,10 +238,10 @@ class Hero{
       centerY: value.centerY,
       minX: value.x,
       minY: value.y,
-      x: value.x,
-      y: value.y,
-      width: value.width,
-      height: value.height,
+      x: nonGrid.x,
+      y: nonGrid.y,
+      width: nonGrid.width,
+      height: nonGrid.height,
       maxX: value.x + value.width,
       maxY: value.y + value.height,
       leftDiff,
@@ -373,11 +374,14 @@ class Hero{
 
   addHero(hero) {
     GAME.heros[hero.id] = hero
-    OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-      if(!subObject.id) {
-        subObject.id = key + window.uniqueID()
-      }
-    })
+    if(hero.subObjects) {
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+        if(!subObject.id) {
+          subObject.id = key + window.uniqueID()
+        }
+        PHYSICS.addObject(subObject)
+      })
+    }
     PHYSICS.addObject(hero)
   }
 
@@ -385,9 +389,14 @@ class Hero{
     GAME.heros[hero.id].removed = true
   }
 
-  onDeleteHero(id) {
-    PHYSICS.removeObject(GAME.heros[id])
-    delete GAME.heros[id]
+  deleteHero(hero) {
+    if(hero.subObjects) {
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+        PHYSICS.removeObject(subObject)
+      })
+    }
+    PHYSICS.removeObject(GAME.heros[hero.id])
+    delete GAME.heros[hero.id]
   }
 
   onNetworkUpdateHero(updatedHero) {

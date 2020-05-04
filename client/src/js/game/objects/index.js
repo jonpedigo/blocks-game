@@ -342,7 +342,7 @@ class Objects{
     }
   }
 
-  onNetworkAddObjects(objectsAddedd) {
+  onNetworkAddObjects(objectsAdded) {
     GAME.objects.push(...objectsAdded)
     objectsAdded.forEach((object) => {
       OBJECTS.addObject(object)

@@ -4,7 +4,7 @@ import grid from '../utils/grid.js'
 import sockets from './sockets.js'
 import utils from '../utils/utils.js'
 import events from './events.js'
-import testArcade from '../arcade/arcade/platformer'
+import testArcade from '../../../../data/spencer1.json'
 import loop from './loop.js'
 import mapEditor from '../mapeditor/index.js'
 
@@ -62,6 +62,29 @@ class Page{
     }
   }
 
+  setupRemoteLogging() {
+    if(PAGE.role.isHost) {
+      let log = console.log
+      console.log = function(msg, arg1, arg2, arg3) {
+        let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+        window.socket.emit('hostLog', ...args)
+        log(...args)
+      }
+      let error = console.error
+      console.error = function(msg, arg1, arg2, arg3) {
+        let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+        window.socket.emit('hostLog', ...args)
+        error(...args)
+      }
+      window.addEventListener('error', function(e) {
+        window.socket.emit('hostLog', e.message
+              , '\n', e.filename, ':', e.lineno, (e.colno ? ':' + e.colno : '')
+              , e.error && e.error.stack ? '\n' : '', e.error ? e.error.stack : undefined
+          );
+      }, false);
+    }
+  }
+
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -71,6 +94,7 @@ class Page{
   load() {
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
+    PAGE.setupRemoteLogging()
     HERO.getHeroId()
 
     events.init()
@@ -80,7 +104,6 @@ class Page{
     PAGE.askCurrentGame((game) => {
       ARCADE.changeGame(game.id)
       GAME.loadAndJoin(game)
-      window.startGameLoop()
     })
   }
 
@@ -93,8 +116,10 @@ class Page{
   askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
       let game = testArcade
-      GAME.heros[HERO.id] = HERO.summonFromGameData({ id: HERO.id })
-      cb(game)
+      GAME.loadGridWorldObjectsCompendiumState(game)
+      GAME.heros = []
+      HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
+      window.local.emit('onGameLoaded')
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
       window.socket.emit('askRestoreCurrentGame')
@@ -152,6 +177,10 @@ class Page{
   };
 
   onGameLoaded() {
+    if(!PAGE.loopStarted) {
+      window.startGameLoop()
+      PAGE.loopStarted = true
+    }
     PAGE.gameLoaded = true
   }
 
