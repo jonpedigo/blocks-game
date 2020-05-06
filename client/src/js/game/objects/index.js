@@ -30,8 +30,16 @@ class Objects{
   }
 
   respawn(object) {
-    object.x = object.spawnPointX
-    object.y = object.spawnPointY
+    const {x, y } = OBJECTS.getSpawnCoords(object)
+    object.x = x
+    object.y = y
+  }
+
+  getSpawnCoords(object) {
+    return {
+      x: object.spawnPointX,
+      y: object.spawnPointY
+    }
   }
 
   migratePos(object, newPos) {
@@ -65,26 +73,31 @@ class Objects{
       delete object.x
       delete object.y
     }
+    delete object.target
+    delete object.path
+
     delete object._initialY
     delete object._initialX
     delete object._deltaY
     delete object._deltaX
     delete object.velocityY
     delete object.velocityX
-    delete object.spawnedIds
-    delete object.spawnWait
-    delete object.target
-    delete object.path
-    delete object.removed
     delete object.lastPowerUpId
     delete object.direction
     delete object.gridX
     delete object.gridY
-    delete object.spawnPool
     delete object._parentId
     delete object._skipNextGravity
     delete object.fresh
     delete object.i
+    delete object.interactableObject
+    delete object.gridHeight
+    delete object.gridWidth
+    delete object.onGround
+    delete object.spawnedIds
+    delete object.spawnWait
+    delete object.spawnPool
+    delete object.removed
   }
 
   cleanForSave(object) {
@@ -100,11 +113,16 @@ class Objects{
     delete object.gridY
     delete object._parentId
     delete object._skipNextGravity
+    delete object.fresh
     delete object.i
     delete object.interactableObject
     delete object.gridHeight
     delete object.gridWidth
     delete object.onGround
+    delete object.spawnedIds
+    delete object.spawnWait
+    delete object.spawnPool
+    delete object.removed
   }
 
   getMapState(object) {

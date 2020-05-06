@@ -123,16 +123,26 @@ class Hero{
   }
 
   spawn(hero) {
+    const {x, y } = HERO.getSpawnCoords(hero)
+    hero.x = x
+    hero.y = y
+  }
+
+  getSpawnCoords(hero) {
+    let x = 960;
+    let y = 960;
     // hero spawn point takes precedence
     if(hero.spawnPointX && hero.spawnPointX >= 0) {
-      hero.x = hero.spawnPointX
-      hero.y = hero.spawnPointY
+      x = hero.spawnPointX
+      y = hero.spawnPointY
     } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0) {
-      hero.x = GAME.world.worldSpawnPointX
-      hero.y = GAME.world.worldSpawnPointY
-    } else {
-      hero.x = 960
-      hero.y = 960
+      x = GAME.world.worldSpawnPointX
+      y = GAME.world.worldSpawnPointY
+    }
+
+    return {
+      x,
+      y,
     }
   }
 

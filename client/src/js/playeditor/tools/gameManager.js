@@ -41,7 +41,7 @@ function init() {
 
   var copyGameToClipBoard = document.getElementById("copy-game-to-clipboard");
   copyGameToClipBoard.addEventListener('click', () => {
-    let saveGame = cleanGameForSave(window.editingGame)
+    let saveGame = GAME.cleanForSave(window.editingGame)
 
     console.log(saveGame)
     var copyText = JSON.stringify(saveGame);
@@ -81,7 +81,7 @@ function init() {
   }
   window.saveGame = function() {
     console.log('previous version before save', window.editingGame)
-    let saveGame = cleanGameForSave(window.editingGame)
+    let saveGame = GAME.cleanForSave(window.editingGame)
 
     console.log('saving', saveGame)
     window.socket.emit('saveGame', {...saveGame,
@@ -288,46 +288,6 @@ window.updateBranchToggleStyle = function() {
   } else {
     document.getElementById('branch-on-off').style = 'opacity: 0;'
   }
-}
-
-
-function cleanGameForSave(game) {
-  let gameCopy = JSON.parse(JSON.stringify({
-    objects: game.objects,
-    world: game.world,
-    grid: game.grid,
-  }))
-
-  if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
-    for(var heroId in game.heros) {
-      if(game.heros[heroId].tags.default) {
-        gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
-      }
-    }
-    if(!gameCopy.hero) gameCopy.hero = JSON.parse(JSON.stringify(game.heroList[0]))
-  }
-
-  let idValue = document.getElementById('game-id').value
-  if(idValue) {
-    gameCopy.id = idValue
-  }else if(!gameCopy.id) {
-    gameCopy.id = 'game-' + window.uniqueID()
-  }
-
-  if(gameCopy.grid && gameCopy.grid.nodes) {
-    delete gameCopy.grid.nodes
-  }
-
-  gameCopy.objects.forEach((object) => {
-    Object.keys(object.tags).forEach((key) => {
-      if(object.tags[key] === false) delete object.tags[key]
-      OBJECTS.cleanForSave(object)
-    })
-  })
-
-  HERO.cleanForSave(gameCopy.hero)
-
-  return gameCopy
 }
 
 export default {

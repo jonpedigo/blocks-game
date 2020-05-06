@@ -7,7 +7,7 @@
 let updateInterval = 1000/60
 let renderInterval = 1000/24
 let mapNetworkInterval = 1000/24
-let completeNetworkInterval = 1000/.5
+let completeNetworkInterval = 1000/1
 var frameCount = 0;
 var fps, startTime, now, deltaRender, deltaMapNetwork, deltaCompleteNetwork, thenRender, thenMapNetwork, thenCompleteNetwork, thenUpdate, deltaUpdate;
 window.w = window;

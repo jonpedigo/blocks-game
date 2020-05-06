@@ -80,8 +80,6 @@ function update() {
     })
   }
 
-
-
   ctx.textAlign = 'start'
 	ctx.textBaseline = 'alphabetic'
   ctx.font =`24pt Arial`
@@ -108,11 +106,16 @@ function update() {
       ctx.font =`${18 * MAP.canvasMultiplier}pt Courier New`
       // console.log(MAP.canvas.width/2 - (200 * MAP.canvasMultiplier), 240 * MAP.canvasMultiplier)
       ctx.fillText(text, MAP.canvas.width/2, MAP.canvas.height - (36 * MAP.canvasMultiplier))
-
     } else {
       let thickness = 3
       drawTools.drawBorder(ctx, {x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
     }
+  }
+
+  if(!GAME.gameState.started && GAME.heros[HERO.id]) {
+    const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
+    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
   }
 }
 

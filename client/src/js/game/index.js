@@ -61,12 +61,15 @@ class Game{
         })
         //////////////////////////////
         //// OBJECTS
-        GAME.ai.onUpdate(GAME.objects, delta)
-        GAME.resetPaths = false
-        GAME.objects.forEach((object) => {
-          if(object.removed) return
-          window.local.emit('onUpdateObject', object, delta)
-        })
+        if(GAME.gameState.started) {
+          GAME.ai.onUpdate(GAME.objects, delta)
+          GAME.resetPaths = false
+          GAME.objects.forEach((object) => {
+            if(object.removed) return
+            window.local.emit('onUpdateObject', object, delta)
+          })
+        }
+
         //// UPDATE GAME STATE PHASE -- END
         //////////////////////////////
         //////////////////////////////
@@ -87,10 +90,12 @@ class Game{
           // GAME.heroInputs[id] = {}
         })
         //// OBJECTS
-        GAME.objects.forEach((object) => {
-          if(object.removed) return
-          PHYSICS.updatePosition(object, delta)
-        })
+        if(GAME.gameState.started) {
+          GAME.objects.forEach((object) => {
+            if(object.removed) return
+            PHYSICS.updatePosition(object, delta)
+          })
+        }
         //////////////////////////////
         // PHYSICS MOVEMENT PHASE -- END
         //////////////////////////////
@@ -203,24 +208,6 @@ class Game{
     //   GAME.gameState = storedGameState.gameState
     // } else {
 
-    GAME.world = game.world
-
-    GAME.objects = game.objects.map((object) => {
-      OBJECTS.addObject(object)
-      return object
-    })
-
-    // for host to find themselves really is all...
-    if(game.heros) {
-      GAME.heros = game.heros
-    }
-
-    // grid
-    GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
-    GAME.updateGridObstacles()
-    GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
-    GAME.handleWorldUpdate(GAME.world)
-
     // game state
     if(game.gameState && game.gameState.loaded) {
       GAME.gameState = game.gameState
@@ -228,6 +215,30 @@ class Game{
     } else {
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
+
+    GAME.objects = game.objects.map((object) => {
+      OBJECTS.addObject(object)
+      if(!GAME.gameState.loaded) {
+        OBJECTS.respawn(object)
+      }
+      return object
+    })
+
+    if(!GAME.gameState.loaded) {
+      GAME.objects.filter((object) => !object.spawned)
+    }
+
+    // for host to find themselves ONRELOAD really is all...
+    if(game.heros) {
+      GAME.heros = game.heros
+    }
+
+    // grid
+    GAME.world = game.world
+    GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
+    GAME.updateGridObstacles()
+    GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    GAME.handleWorldUpdate(GAME.world)
 
     if(PAGE.role.isPlayEditor) {
       window.gamestateeditor.update(GAME.gameState)
@@ -398,9 +409,7 @@ class Game{
       initialGameState = JSON.parse(initialGameState)
       GAME.unload()
       GAME.loadAndJoin(initialGameState)
-    }
-
-    GAME.gameState.started = false
+    } else console.log('NO STATE TO RESTORE AFTER STOPPING')
   }
 
   onGameStart() {
@@ -409,9 +418,52 @@ class Game{
     }
 
     // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-    localStorage.setItem('initialGameState', JSON.stringify({...GAME, grid: {...GAME.grid, nodes: null }}))
+    localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
+    HERO.spawn(GAME.heros[HERO.id])
     GAME.gameState.paused = false
     GAME.gameState.started = true
+  }
+
+  cleanForSave(game) {
+    let gameCopy = JSON.parse(JSON.stringify({
+      objects: game.objects.filter((object) => !object.spawned),
+      world: game.world,
+      grid: game.grid,
+    }))
+
+    if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
+      for(var heroId in game.heros) {
+        if(game.heros[heroId].tags.default) {
+          gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
+        }
+      }
+      if(!gameCopy.hero && game.heros[heroId]) gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
+      else if(!gameCopy.hero && game.heroList.length) gameCopy.hero = JSON.parse(JSON.stringify(game.heroList[0]))
+      else if(!gameCopy.hero && game.hero) gameCopy.hero = game.hero
+      else if(!gameCopy.hero) return alert('could not find a game hero')
+    }
+
+    let idValue = document.getElementById('game-id').value
+    if(idValue) {
+      gameCopy.id = idValue
+    }else if(!gameCopy.id) {
+      gameCopy.id = 'game-' + window.uniqueID()
+    }
+
+    if(gameCopy.grid && gameCopy.grid.nodes) {
+      delete gameCopy.grid.nodes
+    }
+
+    gameCopy.objects.forEach((object) => {
+      Object.keys(object.tags).forEach((key) => {
+        if(object.tags[key] === false) delete object.tags[key]
+        OBJECTS.cleanForSave(object)
+      })
+    })
+
+    HERO.cleanForSave(gameCopy.hero)
+
+    return gameCopy
   }
 
   onEditGameState(gameState) {

@@ -164,7 +164,11 @@ function handleMouseDown(event) {
     MAPEDITOR.resizingObject = null
   } else if(MAPEDITOR.draggingObject) {
     const { draggingObject } = MAPEDITOR
-    window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, y: draggingObject.y}])
+    if(GAME.gameState.started) {
+      window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, y: draggingObject.y}])
+    } else {
+      window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY}])
+    }
     MAPEDITOR.draggingObject = null
   }
 }
