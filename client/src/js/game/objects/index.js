@@ -73,6 +73,8 @@ class Objects{
       delete object.x
       delete object.y
     }
+
+    // this is the only dif between removeState and Clean for Save
     delete object.target
     delete object.path
 
@@ -101,6 +103,8 @@ class Objects{
   }
 
   cleanForSave(object) {
+    delete object.x
+    delete object.y
     delete object._initialY
     delete object._initialX
     delete object._deltaY

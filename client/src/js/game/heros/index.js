@@ -282,10 +282,12 @@ class Hero{
       return hero
     }
 
-    return HERO.resetToDefault(hero, true)
+    return HERO.resetToDefault(hero)
   }
 
   cleanForSave(hero) {
+    delete hero.x
+    delete hero.y
     delete hero._initialY
     delete hero._initialX
     delete hero._deltaY
@@ -305,6 +307,7 @@ class Hero{
     delete hero.animationZoomTarget
     delete hero.endAnimation
     delete hero.chat
+    delete hero.chatName
     delete hero._parentId
     delete hero._skipNextGravity
     delete hero.interactableObject
