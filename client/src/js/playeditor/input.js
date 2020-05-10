@@ -43,7 +43,7 @@ function init(hero){
           let editorState = window.objecteditor.get()
           if(editorState.id && !editorState.parent) {
             let update = editorState
-            OBJECTS.removeState(update)
+            update = OBJECTS.getProperties(update)
             window.sendObjectUpdateOther(update)
           } else if(editorState.compendiumId){
             window.saveCompendiumObject(window.objecteditor.get())

@@ -82,10 +82,9 @@ window.onChangeTool = function(toolName) {
     let editorState = window.objecteditor.get()
     // if we are switching from a live object to a dead object
     if(editorState.id) {
-      if(editorState.compendiumId) delete editorState.compendiumId
+      editorState = OBJECTS.getProperties(editorState)
       delete editorState.id
-      editorState.i = null
-      OBJECTS.removeState(editorState)
+      if(editorState.compendiumId) delete editorState.compendiumId
       window.objecteditor.saved = true
       window.objecteditor.update(editorState)
       window.updateObjectEditorNotifier()

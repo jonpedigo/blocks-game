@@ -91,11 +91,11 @@ class Hero{
           id: 'ata-'+window.uniqueID(),
           x: 0, y: 0, width: 40, height: 40,
           actionTriggerArea: true,
-          relativeX: -GAME.grid.nodeSize,
-          relativeY: -GAME.grid.nodeSize,
+          changeWithDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
           relativeHeight: GAME.grid.nodeSize * 2,
-          changeWithDirection: false,
+          relativeX: -GAME.grid.nodeSize,
+          relativeY: -GAME.grid.nodeSize,
           tags: { obstacle: false, invisible: true, stationary: true },
         },
         // spear: {
@@ -285,37 +285,82 @@ class Hero{
     return HERO.resetToDefault(hero)
   }
 
-  cleanForSave(hero) {
-    delete hero.x
-    delete hero.y
-    delete hero._initialY
-    delete hero._initialX
-    delete hero._deltaY
-    delete hero._deltaX
-    delete hero.velocityY
-    delete hero.velocityX
-    delete hero.lastPowerUpId
-    delete hero.direction
-    delete hero.gridX
-    delete hero.gridY
-    delete hero.directions
-    delete hero.inputDirection
-    delete hero.reachablePlatformWidth
-    delete hero.reachablePlatformHeight
-    delete hero.lastChatId
-    delete hero.animationZoomMultiplier
-    delete hero.animationZoomTarget
-    delete hero.endAnimation
-    delete hero.chat
-    delete hero.chatName
-    delete hero._parentId
-    delete hero._skipNextGravity
-    delete hero.interactableObject
-    delete hero.gridHeight
-    delete hero.gridWidth
-    delete hero.updateHistory
-    delete hero.timeouts
-    delete hero.onGround
+  getState(hero) {
+    let state = {
+      x: hero.x,
+      y: hero.y,
+      _initialY: hero._initialY,
+      _initialX: hero._initialX,
+      _deltaY: hero._deltaY,
+      _deltaX: hero._deltaX,
+      velocityY: hero.velocityY,
+      velocityX: hero.velocityX,
+      lastPowerUpId: hero.lastPowerUpId,
+      directions: hero.directions,
+      gridX: hero.gridX,
+      gridY: hero.gridY,
+      inputDirection: hero.inputDirection,
+      reachablePlatformWidth: hero.reachablePlatformWidth,
+      reachablePlatformHeight: hero.reachablePlatformHeight,
+      animationZoomMultiplier: hero.animationZoomMultiplier,
+      animationZoomTarget: hero.animationZoomTarget,
+      endAnimation: hero.endAnimation,
+      chat: hero.chat,
+      chatName: hero.chatName,
+      _parentId: hero._parentId,
+      _skipNextGravity: hero._skipNextGravity,
+      interactableObject: hero.interactableObject,
+      gridHeight: hero.gridHeight,
+      gridWidth: hero.gridWidth,
+      updateHistory: hero.updateHistory,
+      onGround: hero.onGround,
+      customState: hero.customState,
+    }
+
+    if(hero.subObjects) {
+      state.subObjects = {}
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+        state.subObjects[key] = OBJECTS.getState(subObject)
+        window.removeFalsey(state.subObjects[key])
+      })
+    }
+
+    return state
+  }
+
+  getProperties(hero) {
+    let properties = {
+      id: hero.id,
+      actionButtonBehavior: hero.actionButtonBehavior,
+      arrowKeysBehavior: hero.arrowKeysBehavior,
+      jumpVelocity: hero.jumpVelocity,
+      velocityMax: hero.velocityMax,
+      speed: hero.speed,
+      width: hero.width,
+      height: hero.height,
+      flags: hero.flags,
+      tags: hero.tags,
+      zoomMultiplier: hero.zoomMultiplier,
+      color: hero.color,
+      lives: hero.lives,
+      spawnPointX: hero.spawnPointX,
+      spawnPointY: hero.spawnPointY,
+      relativeX: hero.relativeX,
+      relativeY: hero.relativeY,
+      relativeId: hero.relativeId,
+      parentId: hero.parentId,
+      customProps: hero.customProps,
+    }
+
+    if(hero.subObjects) {
+      properties.subObjects = {}
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
+        properties.subObjects[key] = OBJECTS.getProperties(subObject)
+        window.removeFalsey(properties.subObjects[key])
+      })
+    }
+
+    return properties
   }
 
   getMapState(hero) {
@@ -329,12 +374,14 @@ class Hero{
       chat: hero.chat,
       flags: hero.flags,
       directions: hero.directions,
+      zoomMultiplier: hero.zoomMultiplier,
       animationZoomMultiplier: hero.animationZoomMultiplier,
       color: hero.color,
       inputDirection: hero.inputDirection,
       lives: hero.lives,
       score: hero.score,
       removed: hero.removed,
+      custom: hero.custom,
     }
 
     if(hero.subObjects) {
@@ -347,6 +394,7 @@ class Hero{
         mapState.subObjects[key].height = subObject.height
       })
     }
+
     return mapState
   }
 

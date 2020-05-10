@@ -77,3 +77,9 @@ window.wrapText = function(ctx, text, x, y, maxWidth, lineHeight) {
   }
   ctx.fillText(line, x, y);
 }
+
+window.removeFalsey = function(object, removeFalse) {
+  Object.keys(object).forEach((key) => {
+    if((object[key] === false && removeFalse) || object[key] === null || object[key] === undefined) delete object[key]
+  })
+}

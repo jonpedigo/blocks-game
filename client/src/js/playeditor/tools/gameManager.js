@@ -128,11 +128,13 @@ function init() {
       delete hero.velocityY
       delete hero.velocityX
     })
-    window.branch.objects.forEach((obj) => {
-      if(!GAME.objectsById[obj.id]) GAME.objects.push(obj)
-      else OBJECTS.removeState(obj)
+    window.branch.objects = window.branch.objects.map((obj) => {
+      if(!GAME.objectsById[obj.id]) {
+        GAME.objects.push(obj)
+        return obj
+      }
+      return OBJECTS.getProperties(obj)
     })
-    window.mergeDeep(GAME.objects, window.branch.objects)
     window.mergeDeep(GAME.heros, window.branch.heros)
     window.mergeDeep(GAME.world, window.branch.world)
     window.mergeDeep(GAME.gameState, window.branch.gameState)
@@ -273,10 +275,10 @@ window.resetAllObjectState = function() {
       window.socket.emit('deleteObject', object)
     }
 
-    OBJECTS.removeState(object, { skipPos: true })
-    OBJECTS.respawn(object)
+    let newObject = OBJECTS.getProperties(object)
+    OBJECTS.respawn(newObject)
 
-    arr.push(object)
+    arr.push(newObject)
     return arr
   }, [])
   if(!w.editingGame.branch) window.socket.emit('editObjects', w.editingGame.objects)

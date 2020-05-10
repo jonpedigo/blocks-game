@@ -454,14 +454,16 @@ class Game{
       delete gameCopy.grid.nodes
     }
 
-    gameCopy.objects.forEach((object) => {
-      Object.keys(object.tags).forEach((key) => {
-        if(object.tags[key] === false) delete object.tags[key]
-        OBJECTS.cleanForSave(object)
-      })
+    gameCopy.objects = gameCopy.objects.map((object) => {
+      window.removeFalsey(object.tags, true)
+      let props = OBJECTS.getProperties(object)
+      window.removeFalsey(props)
+      return props
     })
 
-    HERO.cleanForSave(gameCopy.hero)
+    gameCopy.hero = HERO.getProperties(gameCopy.hero)
+    window.removeFalsey(gameCopy.hero)
+    window.removeFalsey(gameCopy.hero.tags, true)
 
     return gameCopy
   }

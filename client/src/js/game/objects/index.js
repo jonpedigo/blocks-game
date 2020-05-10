@@ -68,65 +68,91 @@ class Objects{
     object.y = newPos.y
   }
 
-  removeState(object, options = { skipPos : false }) {
-    if(!options.skipPos) {
-      delete object.x
-      delete object.y
+  getState(object) {
+    let state = {
+      x: object.x,
+      y: object.y,
+      _initialY: object._initialY,
+      _initialX: object._initialX,
+      _deltaY: object._deltaY,
+      _deltaX: object._deltaX,
+      velocityY: object.velocityY,
+      velocityX: object.velocityX,
+      target: object.target,
+      path: object.path,
+      lastPowerUpId: object.lastPowerUpId,
+      direction: object.direction,
+      fresh: object.fresh,
+      gridX: object.gridX,
+      gridY: object.gridY,
+      _parentId: object._parentId,
+      _skipNextGravity: object._skipNextGravity,
+      gridHeight: object.gridHeight,
+      gridWidth: object.gridWidth,
+      onGround: object.onGround,
+      removed: object.removed,
+      spawnedIds: object.spawnedIds,
+      spawnWait: object.spawnWait,
+      spawnPool: object.spawnPool,
+      customState: object.customState,
     }
 
-    // this is the only dif between removeState and Clean for Save
-    delete object.target
-    delete object.path
+    if(object.subObjects) {
+      state.subObjects = {}
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+        state.subObjects[key] = OBJECTS.getState(subObject)
+        window.removeFalsey(state.subObjects[key])
+      })
+    }
 
-    delete object._initialY
-    delete object._initialX
-    delete object._deltaY
-    delete object._deltaX
-    delete object.velocityY
-    delete object.velocityX
-    delete object.lastPowerUpId
-    delete object.direction
-    delete object.gridX
-    delete object.gridY
-    delete object._parentId
-    delete object._skipNextGravity
-    delete object.fresh
-    delete object.i
-    delete object.interactableObject
-    delete object.gridHeight
-    delete object.gridWidth
-    delete object.onGround
-    delete object.spawnedIds
-    delete object.spawnWait
-    delete object.spawnPool
-    delete object.removed
+    return state
   }
 
-  cleanForSave(object) {
-    delete object.x
-    delete object.y
-    delete object._initialY
-    delete object._initialX
-    delete object._deltaY
-    delete object._deltaX
-    delete object.velocityY
-    delete object.velocityX
-    delete object.lastPowerUpId
-    delete object.direction
-    delete object.gridX
-    delete object.gridY
-    delete object._parentId
-    delete object._skipNextGravity
-    delete object.fresh
-    delete object.i
-    delete object.interactableObject
-    delete object.gridHeight
-    delete object.gridWidth
-    delete object.onGround
-    delete object.spawnedIds
-    delete object.spawnWait
-    delete object.spawnPool
-    delete object.removed
+  getProperties(object) {
+    let properties = {
+      id: object.id,
+      velocityMax: object.velocityMax,
+      speed: object.speed,
+      width: object.width,
+      height: object.height,
+      tags: object.tags,
+      color: object.color,
+      spawnPointX: object.spawnPointX,
+      spawnPointY: object.spawnPointY,
+      heroUpdate: object.heroUpdate,
+      objectUpdate: object.objectUpdate,
+      pathfindingLimit: object.pathfindingLimit,
+      relativeX: object.relativeX,
+      relativeY: object.relativeY,
+      relativeId: object.relativeId,
+      parentId: object.parentId,
+
+      // sub objects
+      actionTriggerArea: object.actionTriggerArea,
+      changeWithDirection: object.changeWithDirection,
+      relativeWidth: object.relativeWidth,
+      relativeHeight: object.relativeHeight,
+
+      //spawn objects
+      initialSpawnPool: object.initialSpawnPool,
+      spawnObject: object.spawnObject,
+      spawnWaitTime: object.spawnWaitTime,
+
+      //compendium
+      compendiumId: object.compendiumId,
+      fromCompendiumId: object.compendiumId,
+
+      custom: object.custom,
+    }
+
+    if(object.subObjects) {
+      properties.subObjects = {}
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
+        properties.subObjects[key] = OBJECTS.getProperties(subObject)
+      })
+    }
+
+    return properties
   }
 
   getMapState(object) {

@@ -22,17 +22,21 @@ function init() {
 
   window.addToCompendium = function(object) {
     object = JSON.parse(JSON.stringify(object))
-    delete object.i
-    delete object.id
+
     if(object.parent) {
-      delete object.parent.id
       object.children.forEach((child) => {
         delete child.id
       })
+      delete object.parent.id
+      object.parent = OBJECTS.getProperties(object.parent)
+    } else {
+      object = OBJECTS.getProperties(object)
+      delete object.i
+      delete object.id
     }
+
     object.compendiumId = 'compendium-' + window.uniqueID()
 
-    OBJECTS.removeState(object)
     console.log('added: ' + object.compendiumId + ' to compendium')
     window.objecteditor.saved = false
     window.objecteditor.defaultCompendium = false
@@ -62,7 +66,7 @@ function init() {
       window.compendium[object.compendiumId] = object
     }
 
-    OBJECTS.removeState(object)
+    object = OBJECTS.getProperties(object)
     window.objecteditor.update(object)
     window.objecteditor.saved = true
     GAME.compendium = window.compendium
@@ -213,21 +217,23 @@ window.getAllChildrenAndRelatives = function(parent) {
 
 window.copyParentAndChildOrRelatives = function(parent, children) {
   let parentCopy = JSON.parse(JSON.stringify(parent))
-  parentCopy.id = 'parent-'+window.uniqueID()
+  let parentId = 'parent-'+window.uniqueID()
   children = children.map((obj) => {
     let objCopy = JSON.parse(JSON.stringify(obj))
-    objCopy.id = 'object'+window.uniqueID()
     if(objCopy.parentId) {
-      objCopy.parentId = parentCopy.id
+      objCopy.parentId = parentId
     } else if(objCopy.relativeId) {
-      objCopy.relativeId = parentCopy.id
+      objCopy.relativeId = parentId
     }
-    objCopy.__relativeToParentX = objCopy.x - parentCopy.x
-    objCopy.__relativeToParentY = objCopy.y - parentCopy.y
-    OBJECTS.removeState(objCopy)
-    return objCopy
+    const __relativeToParentX = objCopy.x - parentCopy.x
+    const __relativeToParentY = objCopy.y - parentCopy.y
+    objCopy = OBJECTS.getProperties(objCopy)
+    objCopy.id = 'object'+window.uniqueID()
+    obj.__relativeToParentX = __relativeToParentX
+    obj.__relativeToParentY = __relativeToParentY
   })
-  OBJECTS.removeState(parentCopy)
+  parentCopy = OBJECTS.getProperties(parentCopy)
+  parentCopy.id = parentId
   return { parent: parentCopy, children }
 }
 
