@@ -21,6 +21,7 @@ export default function onEffectHero(hero, collider, result, removeObjects, resp
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     if(collider.id !== hero.lastPowerUpId) {
       heroUpdate(hero, collider)
+      if(collider.tags['oneTimeUpdate']) collider.tags['heroUpdate'] = false
       if(!options.fromInteractButton) hero.lastPowerUpId = collider.id
       GAME.addOrResetTimeout(hero.id+'.lastPowerUpId', 3, () => {
         hero.lastPowerUpId = null

@@ -7,6 +7,7 @@ function setDefault() {
     victim: false,
     coin: false,
     heroUpdate: false,
+    oneTimeUpdate: false,
     // objectUpdate: false,
     // worldUpdate: false,
     // gameStateUpdate: false,
