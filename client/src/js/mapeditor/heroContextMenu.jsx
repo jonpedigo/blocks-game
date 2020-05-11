@@ -26,6 +26,11 @@ export default class HeroContextMenu extends React.Component{
         openColorPicker()
       }
 
+      if(key === 'respawn') {
+        console.log(objectHighlighted.y)
+        window.socket.emit('respawnHero', objectHighlighted)
+      }
+
       if(key === 'toggle-filled') {
         window.socket.emit('editHero', {id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }})
       }

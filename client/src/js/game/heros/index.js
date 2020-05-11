@@ -124,6 +124,7 @@ class Hero{
 
   spawn(hero) {
     const {x, y } = HERO.getSpawnCoords(hero)
+    console.log(x, y)
     hero.x = x
     hero.y = y
     hero.velocityX = 0
@@ -134,10 +135,10 @@ class Hero{
     let x = 960;
     let y = 960;
     // hero spawn point takes precedence
-    if(hero.spawnPointX && hero.spawnPointX >= 0) {
+    if(hero.spawnPointX && hero.spawnPointX >= 0 && hero.spawnPointY && hero.spawnPointY >= 0) {
       x = hero.spawnPointX
       y = hero.spawnPointY
-    } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0) {
+    } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0 && GAME.world.worldSpawnPointY && GAME.world.worldSpawnPointY >= 0) {
       x = GAME.world.worldSpawnPointX
       y = GAME.world.worldSpawnPointY
     }
@@ -412,7 +413,9 @@ class Hero{
   }
 
   onRespawnHero(hero) {
+    console.log(hero)
     HERO.respawn(GAME.heros[hero.id])
+    console.log(hero)
   }
 
   addHero(hero) {
