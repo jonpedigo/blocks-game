@@ -263,22 +263,22 @@ class Objects{
 
       //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
       if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
-        if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+        if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
         return null
       }
       if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
-        if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+        if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
         return null
       }
       if(newObject.x < GAME.grid.startX) {
-        if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+        if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
         return null
       }
       if(newObject.y < GAME.grid.startY) {
-        if(PAGE.role.isPlayEditor && !hasBeenWarned) alert('adding obj outside grid system, canceled')
+        if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
         return null
       }
@@ -286,7 +286,7 @@ class Objects{
       return newObject
     }).filter(obj => !!obj)
 
-    if(PAGE.role.isPlayEditor && !options.fromLiveGame) {
+    if(PAGE.role.isPlayEditor && !options.fromLiveGame && !window.playEditorKeysDown[18]) {
       if(alertAboutCollision) {
         if(!confirm('already an object on this grid node..confirm to add anyways')) return
       }
