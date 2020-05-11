@@ -1,10 +1,11 @@
-function writeDialogue(object, cb) {
+function writeDialogue(object, dialogueIndex, cb) {
   PAGE.typingMode = true
-  openWriteDialogueModal(object, (result) => {
+  openWriteDialogueModal(object, object.heroUpdate.chat[dialogueIndex], (result) => {
     if(result && result.value[0] && result.value[0].length) {
       if(!object.heroUpdate) object.heroUpdate = {}
+      if(!object.heroUpdate.chat) object.heroUpdate.chat = []
       object.tags.heroUpdate = true
-      object.heroUpdate.chat = [result.value[0]]
+      object.heroUpdate.chat[dialogueIndex] = result.value[0]
       if(!object.heroUpdate.flags) object.heroUpdate.flags = {}
       object.heroUpdate.flags.showChat = true
       object.heroUpdate.flags.paused = true
@@ -60,7 +61,8 @@ function openNameObjectModal(object, cb) {
   }).then(cb)
 }
 
-function openWriteDialogueModal(object, cb) {
+function openWriteDialogueModal(object, dialogueStart = "", cb) {
+  console.log(dialogueStart)
   Swal.fire({
     title: 'What does this object say?',
     showClass: {
@@ -73,8 +75,9 @@ function openWriteDialogueModal(object, cb) {
     // html:"<input type='radio' name='name-where' checked id='center-name'>Center name within object</input><br><input type='radio' name='name-where' id='name-above'>Display name above object</input>",
     input: 'textarea',
     inputAttributes: {
-      autocapitalize: 'off'
+      autocapitalize: 'off',
     },
+    inputValue: dialogueStart,
     html:"<input id='press-x' type='checkbox'>Press X to activate dialogue</input>",
     preConfirm: (result) => {
       return [

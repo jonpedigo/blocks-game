@@ -64,8 +64,26 @@ class contextMenuEl extends React.Component{
         window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: true }}])
       }
 
-      if(key === "write-dialogue") {
-        modals.writeDialogue(objectHighlighted)
+      if(key === "add-dialogue") {
+        if(!objectHighlighted.heroUpdate){
+          objectHighlighted.heroUpdate = {}
+        }
+        if(!objectHighlighted.heroUpdate.chat) {
+          objectHighlighted.heroUpdate.chat = []
+        }
+        objectHighlighted.heroUpdate.chat.push('')
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
+      }
+
+      if(key.indexOf("remove-dialogue") === 0) {
+        let dialogueIndex = key[key.length-1]
+        objectHighlighted.heroUpdate.chat.splice(i, 1)
+        window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
+      }
+
+      if(key.indexOf("edit-dialogue") === 0) {
+        let dialogueIndex = key[key.length-1]
+        modals.writeDialogue(objectHighlighted, dialogueIndex)
       }
 
       if(key === 'resize') {
@@ -187,7 +205,15 @@ class contextMenuEl extends React.Component{
       <MenuItem key="resize">Resize</MenuItem>
       <MenuItem key="delete">Delete</MenuItem>
       <MenuItem key="copy">Copy</MenuItem>
-      <MenuItem key="write-dialogue">Dialogue</MenuItem>
+      <SubMenu title="Dialogue">
+        <MenuItem key="add-dialogue">Add Dialogue</MenuItem>
+        {objectHighlighted.heroUpdate && objectHighlighted.heroUpdate.chat && objectHighlighted.heroUpdate.chat.map((dialogue, i) => {
+          return <MenuItem key={"edit-dialogue-"+i}>{'Edit Dialogue ' + (i+1)}</MenuItem>
+        })}
+        {objectHighlighted.heroUpdate && objectHighlighted.heroUpdate.chat && objectHighlighted.heroUpdate.chat.map((dialogue, i) => {
+          return <MenuItem key={"remove-dialogue-"+i}>{'Remove Dialogue ' + (i+1)}</MenuItem>
+        })}
+      </SubMenu>
       <SubMenu title="Color">
         <MenuItem key="select-color">Color Picker</MenuItem>
         <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
