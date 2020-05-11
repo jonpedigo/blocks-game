@@ -32,7 +32,9 @@ class contextMenuEl extends React.Component{
     });
 
     window.addEventListener("click", e => {
-      if(e.target.innerText !== 'Color Picker') {
+      if(e.target.innerText === 'Color Picker' || e.target.innerText === 'Set world background color') {
+
+      } else {
         this._toggleContextMenu("hide");
       }
     });
@@ -41,9 +43,13 @@ class contextMenuEl extends React.Component{
       hide: true
     }
 
+    this.openColorPicker = () => {
+      this.setState({ isColoring: true })
+    }
+
     this._handleObjectMenuClick = ({ key }) => {
       const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
-      const { objectHighlighted, recievedObject, copiedObject } = editor
+      const { objectHighlighted, copiedObject } = editor
 
       if(key === "name-object") {
         modals.nameObject(objectHighlighted)
@@ -73,7 +79,7 @@ class contextMenuEl extends React.Component{
           objectHighlighted.heroUpdate.chat = []
         }
         objectHighlighted.heroUpdate.chat.push('')
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
+        modals.writeDialogue(objectHighlighted, objectHighlighted.heroUpdate.chat.length-1)
       }
 
       if(key.indexOf("remove-dialogue") === 0) {
@@ -104,7 +110,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'select-color') {
-        this.onColor()
+        this.openColorPicker()
       }
 
       if(key === 'toggle-filled') {
@@ -128,8 +134,8 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleMapMenuClick = ({ key }) => {
-      const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
-      const { objectHighlighted, recievedObject, copiedObject } = editor
+      const { editor } = this.props;
+      const { objectHighlighted, recievedObject } = editor
 
       if(key === 'create-object') {
         OBJECTS.create({...objectHighlighted, tags: {obstacle: true}})
@@ -138,11 +144,23 @@ class contextMenuEl extends React.Component{
       if(key === 'toggle-pause-game') {
         window.socket.emit('editGameState', { paused: !GAME.gameState.paused })
       }
-    }
-  }
 
-  onColor() {
-    this.setState({ isColoring: true })
+      if(key === 'toggle-start-game') {
+        if(GAME.gameState.started) {
+          window.socket.emit('stopGame')
+        } else {
+          window.socket.emit('startGame')
+        }
+      }
+
+      if(key === 'set-world-respawn-point') {
+        window.socket.emit('updateWorld', {worldSpawnPointX: objectHighlighted.x, worldSpawnPointY:  objectHighlighted.y})
+      }
+
+      if(key === 'select-color') {
+        this.openColorPicker()
+      }
+    }
   }
 
   _toggleContextMenu(command) {
@@ -178,7 +196,9 @@ class contextMenuEl extends React.Component{
             isColoring: false,
           })
           objectHighlighted.color = color.hex
-          if(objectHighlighted.tags.hero) {
+          if(!objectHighlighted.id) {
+            window.socket.emit('updateWorld', {backgroundColor: color.hex})
+          } else if(objectHighlighted.tags.hero) {
             window.socket.emit('editHero', {id: objectHighlighted.id, color: color.hex})
           } else {
             window.socket.emit('editObjects', [{id: objectHighlighted.id, color: color.hex}])
@@ -190,14 +210,17 @@ class contextMenuEl extends React.Component{
     editor.contextMenuVisible = true
 
     if(objectHighlighted.tags && objectHighlighted.tags.hero) {
-      return <HeroContextMenu editor={editor} onStartResize={this.props.onStartResize} onStartDrag={this.props.onStartDrag} onDelete={this.props.onDelete} onColor={this.onColor}/>
+      return <HeroContextMenu editor={editor} onStartResize={this.props.onStartResize} onStartDrag={this.props.onStartDrag} onDelete={this.props.onDelete} openColorPicker={this.openColorPicker}/>
     }
 
     if(!objectHighlighted.id) {
       return <Menu onClick={this._handleMapMenuClick}>
         <MenuItem key='create-object'>Create object</MenuItem>
+        <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
+        <MenuItem key='select-color'>Set world background color</MenuItem>
         { recievedObject && <MenuItem key='add-recieved-object'>Add recieved object</MenuItem> }
         <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
+        <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
       </Menu>
     }
 
@@ -224,10 +247,10 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-position-above">Position Name above</MenuItem>
         <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
-      <SubMenu title="Tags">
-        <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
-      </SubMenu>
       <SubMenu title="Advanced">
+        <SubMenu title="Tags">
+          <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
+        </SubMenu>
         <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>

@@ -50,6 +50,9 @@ function update() {
 
   //reset background
 	ctx.fillStyle = 'black';
+  if(GAME.world.backgroundColor) {
+    ctx.fillStyle = GAME.world.backgroundColor
+  }
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 

@@ -89,7 +89,7 @@ class Page{
   load() {
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
-    PAGE.setupRemoteLogging()
+    //PAGE.setupRemoteLogging()
     HERO.getHeroId()
 
     events.init()

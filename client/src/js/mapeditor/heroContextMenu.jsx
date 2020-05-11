@@ -7,7 +7,7 @@ export default class HeroContextMenu extends React.Component{
     super(props)
 
     this._handleHeroMenuClick = ({ key }) => {
-      const { editor, onStartResize, onStartDrag, onDelete, onColor } = this.props;
+      const { editor, onStartResize, onStartDrag, onDelete, openColorPicker } = this.props;
       const { objectHighlighted } = editor
 
       if(key === 'resize') {
@@ -23,7 +23,7 @@ export default class HeroContextMenu extends React.Component{
       }
 
       if(key === 'select-color') {
-        onColor()
+        openColorPicker()
       }
 
       if(key === 'toggle-filled') {
@@ -37,11 +37,13 @@ export default class HeroContextMenu extends React.Component{
   }
 
   render() {
+    const { editor } = this.props
+    const { objectHighlighted } = editor
+
     return <Menu onClick={this._handleHeroMenuClick}>
       <MenuItem key='drag'>Drag</MenuItem>
       <MenuItem key='resize'>Resize</MenuItem>
       <MenuItem key='respawn'>Respawn</MenuItem>
-      <MenuItem key='set-respawn-point'>Set current position as respawn point</MenuItem>
       <SubMenu title="Color">
         <MenuItem key="select-color">Color Picker</MenuItem>
         <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
