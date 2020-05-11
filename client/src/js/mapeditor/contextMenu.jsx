@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
-import modals from './modals.js'
 import { SwatchesPicker } from 'react-color';
+import HeroContextMenu from './HeroContextMenu.jsx';
+import modals from './modals.js'
 
 function init(editor, props) {
   editor.contextMenu = document.getElementById('context-menu')
@@ -39,13 +40,9 @@ class contextMenuEl extends React.Component{
       hide: true
     }
 
-    this._handleClick = ({ key }) => {
+    this._handleObjectMenuClick = ({ key }) => {
       const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
       const { objectHighlighted, recievedObject, copiedObject } = editor
-
-      if(key === 'create-object') {
-        OBJECTS.create({...objectHighlighted, tags: {obstacle: true}})
-      }
 
       if(key === "name-object") {
         modals.nameObject(objectHighlighted)
@@ -88,7 +85,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'select-color') {
-        this.setState({ isColoring: true })
+        this.onColor()
       }
 
       if(key === 'toggle-filled') {
@@ -102,19 +99,31 @@ class contextMenuEl extends React.Component{
         window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { invisible: true, obstacle: false }}])
       }
 
-
       if(key === 'set-pathfinding-limit') {
         onStartSetPathfindingLimit(objectHighlighted)
-      }
-
-      if(key === 'toggle-pause-game') {
-        window.socket.emit('editGameState', { paused: !GAME.gameState.paused })
       }
 
       if(key === 'copy-id') {
         PAGE.copyToClipBoard(objectHighlighted.id)
       }
     }
+
+    this._handleMapMenuClick = ({ key }) => {
+      const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
+      const { objectHighlighted, recievedObject, copiedObject } = editor
+
+      if(key === 'create-object') {
+        OBJECTS.create({...objectHighlighted, tags: {obstacle: true}})
+      }
+
+      if(key === 'toggle-pause-game') {
+        window.socket.emit('editGameState', { paused: !GAME.gameState.paused })
+      }
+    }
+  }
+
+  onColor() {
+    this.setState({ isColoring: true })
   }
 
   _toggleContextMenu(command) {
@@ -150,21 +159,30 @@ class contextMenuEl extends React.Component{
             isColoring: false,
           })
           objectHighlighted.color = color.hex
-          window.socket.emit('editObjects', [{id: objectHighlighted.id, color: color.hex}])
+          if(objectHighlighted.tags.hero) {
+            window.socket.emit('editHero', {id: objectHighlighted.id, color: color.hex})
+          } else {
+            window.socket.emit('editObjects', [{id: objectHighlighted.id, color: color.hex}])
+          }
         }}
       />
     }
 
     editor.contextMenuVisible = true
+
+    if(objectHighlighted.tags && objectHighlighted.tags.hero) {
+      return <HeroContextMenu editor={editor} onStartResize={this.props.onStartResize} onStartDrag={this.props.onStartDrag} onDelete={this.props.onDelete} onColor={this.onColor}/>
+    }
+
     if(!objectHighlighted.id) {
-      return <Menu onClick={this._handleClick}>
+      return <Menu onClick={this._handleMapMenuClick}>
         <MenuItem key='create-object'>Create object</MenuItem>
         { recievedObject && <MenuItem key='add-recieved-object'>Add recieved object</MenuItem> }
         <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
       </Menu>
     }
 
-    return <Menu onClick={this._handleClick}>
+    return <Menu onClick={this._handleObjectMenuClick}>
       <MenuItem key="drag">Drag</MenuItem>
       <MenuItem key="resize">Resize</MenuItem>
       <MenuItem key="delete">Delete</MenuItem>

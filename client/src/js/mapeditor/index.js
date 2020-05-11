@@ -1,5 +1,5 @@
 import gridUtil from '../utils/grid.js'
-import collisions from '../utils/collisions'
+import collisionsUtil from '../utils/collisions'
 import contextMenu from './contextMenu.jsx'
 import drawTools from './drawTools';
 import selectionTools from './selectionTools';
@@ -64,8 +64,6 @@ class MapEditor{
 
     keyInput.init()
   }
-
-
 
   onUpdate(delta) {
     if(MAPEDITOR.remoteState && !MAPEDITOR.skipRemoteStateUpdate) {
@@ -149,7 +147,7 @@ function handleMouseDown(event) {
     if(MAPEDITOR.pathfindingLimit) {
       const { pathfindingLimit, objectHighlighted } = MAPEDITOR
       gridUtil.snapDragToGrid(pathfindingLimit, {dragging: true})
-      window.socket.emit('editObjects', [{id: objectHighlighted.id, pathfindingLimit, path: null}])
+      editHighlightedObject({id: objectHighlighted.id, pathfindingLimit, path: null})
       document.body.style.cursor = "default";
       MAPEDITOR.isSettingPathfindingLimit = false
       MAPEDITOR.pathfindingLimit = null
@@ -160,16 +158,24 @@ function handleMouseDown(event) {
     }
   } else if(MAPEDITOR.resizingObject) {
     const { resizingObject } = MAPEDITOR
-    window.socket.emit('editObjects', [{id: resizingObject.id, x: resizingObject.x, y: resizingObject.y, width: resizingObject.width, height: resizingObject.height}])
+    networkEditObject(resizingObject, {id: resizingObject.id, x: resizingObject.x, y: resizingObject.y, width: resizingObject.width, height: resizingObject.height})
     MAPEDITOR.resizingObject = null
   } else if(MAPEDITOR.draggingObject) {
     const { draggingObject } = MAPEDITOR
     if(GAME.gameState.started) {
-      window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, y: draggingObject.y}])
+      networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, y: draggingObject.y})
     } else {
-      window.socket.emit('editObjects', [{id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY}])
+      networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY})
     }
     MAPEDITOR.draggingObject = null
+  }
+}
+
+function networkEditObject(object, update) {
+  if(object.tags.hero) {
+    window.socket.emit('editHero', update)
+  } else {
+    window.socket.emit('editObjects', [update])
   }
 }
 
@@ -220,6 +226,11 @@ function updateGridHighlight(location) {
 
   // find the smallest one stacked up
   let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects)
+
+  collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
+    smallestObject = hero
+  })
+
   if(smallestObject) MAPEDITOR.objectHighlighted = smallestObject
 
   MAPEDITOR.objectHighlightedChildren = []
@@ -252,7 +263,10 @@ function onCopy(object) {
 }
 
 function onDelete(object) {
-  if(object.id) {
+  if(object.tags.hero) {
+    window.socket.emit('deleteHero', object.id)
+    window.objectHighlighted = null
+  } else if(object.id) {
     window.socket.emit('deleteObject', object)
     window.objectHighlighted = null
   } else {
