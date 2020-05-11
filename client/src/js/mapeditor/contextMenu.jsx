@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import { SwatchesPicker } from 'react-color';
-import HeroContextMenu from './HeroContextMenu.jsx';
-import TagMenu from './TagMenu.jsx';
+import HeroContextMenu from './heroContextMenu.jsx';
+import TagMenu from './tagMenu.jsx';
 import modals from './modals.js'
 
 function init(editor, props) {
