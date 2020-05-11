@@ -299,7 +299,17 @@ function updateDraggingObject(object) {
   const { mousePos } = MAPEDITOR
   object.x = mousePos.x
   object.y = mousePos.y
-  gridUtil.snapDragToGrid(object, {dragging: true})
+
+  let tinySize
+  if(object.width < GAME.grid.nodeSize - 4 && object.height < GAME.grid.nodeSize - 4) {
+    tinySize = object.width
+  }
+
+  if(tinySize) {
+    gridUtil.snapTinyObjectToGrid(object, tinySize)
+  } else {
+    gridUtil.snapDragToGrid(object)
+  }
 }
 
 window.MAPEDITOR = new MapEditor()

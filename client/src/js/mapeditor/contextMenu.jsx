@@ -77,7 +77,7 @@ class contextMenuEl extends React.Component{
 
       if(key.indexOf("remove-dialogue") === 0) {
         let dialogueIndex = key[key.length-1]
-        objectHighlighted.heroUpdate.chat.splice(i, 1)
+        objectHighlighted.heroUpdate.chat.splice(dialogueIndex, 1)
         window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
       }
 
