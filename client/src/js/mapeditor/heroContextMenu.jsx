@@ -2,6 +2,7 @@ import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import modals from './modals.js'
 
+
 export default class HeroContextMenu extends React.Component{
   constructor(props) {
     super(props)
