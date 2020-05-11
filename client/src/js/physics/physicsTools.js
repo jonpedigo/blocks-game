@@ -146,7 +146,6 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
         } else if(heroPO.y < hero._initialY) {
           hero.directions.up = true
         }
-
         hero.x = heroPO.x
         hero.y = heroPO.y
       }

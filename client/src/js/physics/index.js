@@ -21,8 +21,10 @@ window.PHYSICS = {
   removeObject,
   system,
   objects,
+  heroCorrection,
   correctAndEffectAllObjectAndHeros,
   prepareObjectsAndHerosForMovementPhase,
+  prepareObjectsAndHerosForCollisionsPhase,
   updatePosition,
 }
 
@@ -76,12 +78,12 @@ function updatePosition(object, delta) {
   //   }
   // }
 
-  if(object.tags && object.tags.gravity) {
-    // objects with no velocity can still have gravity
-    let velocityY = object.velocityY || 1
-    let distance = (velocityY * delta) +  ((1000 * (delta * delta))/2)
+  if(object._skipNextGravity) {
+    object._skipNextGravity = false
+  } else if(object.tags && object.tags.gravity) {
+    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
     object.y += distance
-    velocityY += (1000 * delta)
+    object.velocityY += (1000 * delta)
   }
 
   if(object.velocityY) {
@@ -92,9 +94,7 @@ function updatePosition(object, delta) {
       object.velocityY = object.velocityMax * -1
     }
 
-    if(object._skipNextGravity) {
-      object._skipNextGravity = false
-    } else if(object.tags && !object.tags.gravity) {
+    if(object.tags && !object.tags.gravity) {
       object.y += object.velocityY * delta
     }
   }

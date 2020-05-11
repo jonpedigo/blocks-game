@@ -124,7 +124,6 @@ class Hero{
 
   spawn(hero) {
     const {x, y } = HERO.getSpawnCoords(hero)
-    console.log(x, y)
     hero.x = x
     hero.y = y
     hero.velocityX = 0

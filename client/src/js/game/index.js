@@ -44,6 +44,18 @@ class Game{
       if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !GAME.heros[HERO.id].flags.paused)) {
         //// PREPARE ALL
         PHYSICS.prepareObjectsAndHerosForMovementPhase()
+
+        if(!GAME.gameState.started) {
+          GAME.heroList.forEach(hero => {
+            if(hero.flags.paused) return
+            if(GAME.heroInputs[hero.id]) input.onUpdate(hero, GAME.heroInputs[hero.id], delta)
+            window.local.emit('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
+            PHYSICS.updatePosition(hero, delta)
+            PHYSICS.prepareObjectsAndHerosForCollisionsPhase(hero, [], [])
+            PHYSICS.heroCorrection(hero, [], [])
+          })
+          return
+        }
         //////////////////////////////
         //////////////////////////////
         //////////////////////////////
@@ -61,14 +73,12 @@ class Game{
         })
         //////////////////////////////
         //// OBJECTS
-        if(GAME.gameState.started) {
-          GAME.ai.onUpdate(GAME.objects, delta)
-          GAME.resetPaths = false
-          GAME.objects.forEach((object) => {
-            if(object.removed) return
-            window.local.emit('onUpdateObject', object, delta)
-          })
-        }
+        GAME.ai.onUpdate(GAME.objects, delta)
+        GAME.resetPaths = false
+        GAME.objects.forEach((object) => {
+          if(object.removed) return
+          window.local.emit('onUpdateObject', object, delta)
+        })
 
         //// UPDATE GAME STATE PHASE -- END
         //////////////////////////////
