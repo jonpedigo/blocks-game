@@ -1,38 +1,5 @@
 function setDefault() {
-  window.defaultTags = {
-    // COLLISIONS
-    obstacle: false,
-    stationary: false,
-    monster: false,
-    victim: false,
-    coin: false,
-    heroUpdate: false,
-    oneTimeUpdate: false,
-    // objectUpdate: false,
-    // worldUpdate: false,
-    // gameStateUpdate: false,
-    deleteAfter: false,
-    revertAfterTimeout: false,
-
-    // BUTTONS
-    requireActionButton: false,
-
-    // PHYSICS
-    gravity: false,
-    movingPlatform: false,
-    // child: false,
-    onlyHeroAllowed: false,
-    noHeroAllowed: false,
-    heroPushable: false,
-
-    // // UI
-    // chatter: false,
-
-    // GRAPHICAL
-    glowing: false,
-    filled: false,
-    invisible: false,
-
+  window.movementTags = {
     // MOVEMENT
     pacer: false,
     spelunker: false,
@@ -42,13 +9,51 @@ function setDefault() {
     goombaSideways: false,
     homing: false,
     zombie: false,
+  }
 
-    // ZONE
+  window.triggerBehaviorTags = {
+    monster: false,
+    monsterDestroyer: false,
+    monsterVictim: false,
+    coin: false,
+    deleteAfter: false,
+    requireActionButton: false,
+  }
+
+  window.behaviorTags = {
     spawnZone: false,
+  }
 
-    // TEMPORARY STATE ( are temporary things...flags? )
+  window.heroUpdateTags = {
+    heroUpdate: false,
+    oneTimeUpdate: false,
+    revertAfterTimeout: false,
+  }
+
+  window.physicsTags = {
+    gravity: false,
+    obstacle: false,
+    stationary: false,
+    onlyHeroAllowed: false,
+    noHeroAllowed: false,
+    movingPlatform: false,
+    heroPushable: false,
+  }
+
+  window.graphicalTags = {
+    glowing: false,
+    filled: false,
+    invisible: false,
+  }
+
+  window.defaultTags = {
+    ...window.physicsTags,
+    ...window.collisionBehaviorTags,
+    ...window.behaviorTags,
+    ...window.heroUpdateTags,
+    ...window.movementTags,
+    ...window.graphicalTags,
     fresh: false,
-
   }
 
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))

@@ -77,9 +77,11 @@ function updatePosition(object, delta) {
   // }
 
   if(object.tags && object.tags.gravity) {
-    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
+    // objects with no velocity can still have gravity
+    let velocityY = object.velocityY || 1
+    let distance = (velocityY * delta) +  ((1000 * (delta * delta))/2)
     object.y += distance
-    object.velocityY += (1000 * delta)
+    velocityY += (1000 * delta)
   }
 
   if(object.velocityY) {

@@ -155,8 +155,6 @@ function onUpdate(hero, keysDown, delta) {
 }
 
 function onKeyDown(keyCode, hero) {
-  if(hero.flags.typingMode) return
-
   if(32 === keyCode) {
     if(hero.chat && hero.chat.length) {
       hero.chat.shift()

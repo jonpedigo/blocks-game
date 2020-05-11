@@ -30,13 +30,6 @@ export default class HeroContextMenu extends React.Component{
         window.socket.emit('editHero', {id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }})
       }
 
-      if(key === 'toggle-visible') {
-        window.socket.emit('editHero', {id: objectHighlighted.id, tags: { invisible: false }})
-      }
-      if(key === 'toggle-invisible') {
-        window.socket.emit('editHero', {id: objectHighlighted.id, tags: { invisible: true }})
-      }
-
       if(key === 'copy-id') {
         PAGE.copyToClipBoard(objectHighlighted.id)
       }
@@ -45,7 +38,21 @@ export default class HeroContextMenu extends React.Component{
 
   render() {
     return <Menu onClick={this._handleHeroMenuClick}>
-      <MenuItem key='drag'>Create object</MenuItem>
+      <MenuItem key='drag'>Drag</MenuItem>
+      <MenuItem key='resize'>Resize</MenuItem>
+      <MenuItem key='respawn'>Respawn</MenuItem>
+      <MenuItem key='set-respawn-point'>Set current position as respawn point</MenuItem>
+      <SubMenu title="Color">
+        <MenuItem key="select-color">Color Picker</MenuItem>
+        <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
+      </SubMenu>
+      <SubMenu title="Advanced">
+        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <MenuItem key="add-compendium">Set as Game Default Hero</MenuItem>
+        <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
+        <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
+      </SubMenu>
+      <MenuItem key='delete'>Delete</MenuItem>
     </Menu>
   }
 }

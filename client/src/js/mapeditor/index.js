@@ -101,7 +101,7 @@ class MapEditor{
 
     let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
     if(currentObject) {
-      if(currentObject.tags.invisible) {
+      if(currentObject.tags && currentObject.tags.invisible) {
         drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false, filled: true}, color: 'rgba(255,255,255,0.2)'}, camera)
       } else {
         drawTools.drawObject(ctx, currentObject, camera)

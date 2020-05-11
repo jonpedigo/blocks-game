@@ -17,7 +17,7 @@ export default function onObjectCollide(agent, collider, result, removeObjects, 
     agent.lastPowerUpId = null
   }
 
-  if(agent.tags['victim'] && collider.tags['monster']) {
+  if(agent.tags['monsterVictim'] && collider.tags['monster']) {
     window.local.emit('onMonsterDestroyVictim', agent, collider)
     if(agent.spawnPointX >= 0 && agent.tags['respawn']) {
       respawnObjects.push(agent)

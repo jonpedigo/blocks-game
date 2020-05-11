@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import { SwatchesPicker } from 'react-color';
 import HeroContextMenu from './HeroContextMenu.jsx';
+import TagMenu from './TagMenu.jsx';
 import modals from './modals.js'
 
 function init(editor, props) {
@@ -203,7 +204,6 @@ class contextMenuEl extends React.Component{
     return <Menu onClick={this._handleObjectMenuClick}>
       <MenuItem key="drag">Drag</MenuItem>
       <MenuItem key="resize">Resize</MenuItem>
-      <MenuItem key="delete">Delete</MenuItem>
       <MenuItem key="copy">Copy</MenuItem>
       <SubMenu title="Dialogue">
         <MenuItem key="add-dialogue">Add Dialogue</MenuItem>
@@ -224,17 +224,24 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-position-above">Position Name above</MenuItem>
         <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
+      <SubMenu title="Tags">
+        <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
+      </SubMenu>
       <SubMenu title="Advanced">
         <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
         {objectHighlighted.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
-        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <SubMenu title="Hero Update">
           <MenuItem key="trigger-collision">When collided</MenuItem>
           <MenuItem key="trigger-interact">When X is pressed</MenuItem>
         </SubMenu>
+        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <MenuItem key="add-compendium">Add To Compendium</MenuItem>
+        <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
+        <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
       </SubMenu>
+      <MenuItem key="delete">Delete</MenuItem>
     </Menu>
   }
 }

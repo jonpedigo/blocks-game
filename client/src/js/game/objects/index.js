@@ -33,6 +33,8 @@ class Objects{
     const {x, y } = OBJECTS.getSpawnCoords(object)
     object.x = x
     object.y = y
+    object.velocityX = 0
+    object.velocityY = 0
   }
 
   getSpawnCoords(object) {
