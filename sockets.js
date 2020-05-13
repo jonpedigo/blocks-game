@@ -260,6 +260,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onStartQuest', hero, questId)
   })
 
+  socket.on('completeQuest', (hero, questId) => {
+    io.emit('onCompleteQuest', hero, questId)
+  })
+
   socket.on('openHeroModal', (hero, modalTitle, modalBody) => {
     io.emit('onOpenHeroModal', hero, modalTitle, modalBody)
   })

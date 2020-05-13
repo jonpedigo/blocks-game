@@ -1,9 +1,8 @@
 import onHeroUpdate from './onHeroUpdate'
 import onTalk from './onTalk'
-import onGiveQuest from './onGiveQuest'
-import onCompleteQuest from './onCompleteQuest'
 import onBehavior from './onBehavior'
 import onCombat from './onCombat'
+import { startQuest, completeQuest } from './quests'
 
 export default function onHeroTrigger(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   const isInteraction = options.fromInteractButton
@@ -47,22 +46,22 @@ export default function onHeroTrigger(hero, collider, result, removeObjects, res
 
   if(collider.tags && collider.tags['questGiver'] && collider.questGivingId && hero.quests && hero.questState && hero.questState[collider.questGivingId] && !hero.questState[collider.questGivingId].started && !hero.questState[collider.questGivingId].completed) {
     if(collider.tags['giveQuestOnHeroCollide'] && !isInteraction) {
-      onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      startQuest(hero, collider.questGivingId)
       triggered = true
     }
     if(collider.tags['giveQuestOnHeroInteract'] && isInteraction) {
-      onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      startQuest(hero, collider.questGivingId)
       triggered = true
     }
   }
 
   if(collider.tags && collider.tags['questCompleter'] && collider.questCompleterId && hero.quests && hero.questState && hero.questState[collider.questCompleterId] && hero.questState[collider.questCompleterId].started && !hero.questState[collider.questCompleterId].completed) {
     if(collider.tags['completeQuestOnHeroCollide'] && !isInteraction) {
-      onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      completeQuest(hero, collider.questCompleterId)
       triggered = true
     }
     if(collider.tags['completeQuestOnHeroInteract'] && isInteraction) {
-      onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      completeQuest(hero, collider.questCompleterId)
       triggered = true
     }
   }

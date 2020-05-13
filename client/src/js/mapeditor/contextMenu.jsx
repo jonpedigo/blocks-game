@@ -129,6 +129,10 @@ class contextMenuEl extends React.Component{
       if(key === 'enter-quest-giver-id') {
         modals.editProperty(objectHighlighted, 'questGivingId', objectHighlighted.questGivingId || '')
       }
+
+      if(key === 'enter-quest-completer-id') {
+        modals.editProperty(objectHighlighted, 'questCompleterId', objectHighlighted.questCompleterId || '')
+      }
     }
 
     this._handleMapMenuClick = ({ key }) => {

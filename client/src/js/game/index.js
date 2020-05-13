@@ -9,7 +9,7 @@ import timeouts from './timeouts'
 import world from './world.js'
 
 import onTalk from './heros/onTalk'
-import onGiveQuest from './heros/onGiveQuest'
+import { startQuest } from './heros/quests'
 
 import './objects'
 import './heros'
@@ -456,7 +456,7 @@ class Game{
       }
       if(object.tags.giveQuestOnStart) {
         GAME.heroList.forEach((hero) => {
-          onGiveQuest(hero, object, {}, [], [], { fromStart: true })
+          startQuest(hero, object.questGivingId)
         })
       }
     })

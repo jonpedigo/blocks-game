@@ -43,6 +43,17 @@ MAP.onStartQuest = function(hero, questId) {
   }
 }
 
+MAP.onCompleteQuest = function(hero, questId) {
+  const quest = hero.quests[questId]
+  if(hero.id === HERO.id && quest) {
+    if(quest.completionMessage.length) {
+      modals.openModal(quest.id + ' Complete!', quest.completionMessage)
+    } else {
+      modals.openQuestToast(quest.id + ' completed')
+    }
+  }
+}
+
 MAP.onRender = function(delta) {
   render.update()
   if(PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {
