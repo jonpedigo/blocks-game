@@ -72,8 +72,6 @@ function init() {
     }
   })
 
-
-
   window.syncGameStateToggle = document.getElementById('sync-game-state')
 
   window.resetObjects = function() {

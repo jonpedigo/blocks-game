@@ -1,3 +1,17 @@
+function editProperty(object, property, currentValue) {
+  PAGE.typingMode = true
+  openEditPropertyModal(property, currentValue, (result) => {
+    if(result && result.value && result.value.length) {
+      if(object.tags.hero) {
+        window.socket.emit('editHero', {id: object.id, [property]: result.value})
+      } else {
+        window.socket.emit('editObjects', [{id: object.id, [property]: result.value}])
+      }
+    }
+    PAGE.typingMode = false
+  })
+}
+
 function writeDialogue(object, dialogueIndex, cb) {
   PAGE.typingMode = true
   openWriteDialogueModal(object, object.heroDialogue[dialogueIndex], (result) => {
@@ -34,6 +48,45 @@ function nameObject(object, cb) {
   })
 }
 
+function editQuest(hero, quest, cb) {
+  PAGE.typingMode = true
+  openQuestModal(quest, ({value}) => {
+    const id = value[0]
+    const startMessage = value[1]
+    const hint = value[2]
+    const completionMessage = value[3]
+
+    const quest = {
+      id,
+      startMessage,
+      hint,
+      completionMessage,
+    }
+
+    const state = {
+      completed: false,
+      started: false,
+      active: false,
+    }
+
+    let quests = hero.quests
+    if(!quests) {
+      quests = {}
+    }
+    quests[id] = quest
+
+    let questState = hero.questState
+    if(!questState) {
+      questState = {}
+    }
+    questState[id] = state
+
+    window.socket.emit('editHero', { id: hero.id, quests, questState })
+    PAGE.typingMode = false
+  })
+
+}
+
 function openNameObjectModal(object, cb) {
   Swal.fire({
     title: 'Name object',
@@ -60,7 +113,6 @@ function openNameObjectModal(object, cb) {
 }
 
 function openWriteDialogueModal(object, dialogueStart = "", cb) {
-  console.log(dialogueStart)
   Swal.fire({
     title: 'What does this object say?',
     showClass: {
@@ -86,7 +138,50 @@ function openWriteDialogueModal(object, dialogueStart = "", cb) {
   }).then(cb)
 }
 
+function openQuestModal(quest = { id: '', startMessage: '', hint: '', completionMessage: ''}, cb) {
+  Swal.fire({
+    title: 'Quest Editor',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    html:`<div class='swal-modal-input-label'>Name of Quest</div><input autocomplete="new-password" class='swal-modal-input' id='quest-id' value='${quest.id}'></input>
+    <div class='swal-modal-input-label'>Start Message</div><textarea class='swal-modal-input' id='start-message'>${quest.startMessage}</textarea>
+    <div class='swal-modal-input-label'>Quest Hint</div><input class='swal-modal-input' id='quest-hint' value='${quest.hint}'>
+    <div class='swal-modal-input-label'>Completion Message</div><textarea class='swal-modal-input' id='completion-message'>${quest.completionMessage}</textarea>`,
+    preConfirm: (result) => {
+      return [
+        document.getElementById('quest-id').value,
+        document.getElementById('start-message').value,
+        document.getElementById('quest-hint').value,
+        document.getElementById('completion-message').value,
+      ]
+    }
+  }).then(cb)
+}
+
+function openEditPropertyModal(property, currentValue, cb) {
+  Swal.fire({
+    title: 'Edit ' + property,
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputValue: currentValue,
+    inputAttributes: {
+      autocapitalize: 'off'
+    }
+  }).then(cb)
+}
+
 export default {
+  editProperty,
+  editQuest,
   writeDialogue,
   nameObject,
 }

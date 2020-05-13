@@ -19,6 +19,29 @@ p {
   font-size: $paragraph-font-size;
 }
 
+.swal2-title {
+  font-family: Courier;
+}
+
+.swal-modal-input-label {
+  font-size: 20px;
+  margin-top: 30px;
+  margin-bottom: 5px;
+  font-family: Courier;
+}
+
+.swal-modal-input {
+  width: 500px;
+  max-width: 80%;
+  height: 20px;
+  font-size:20px;
+  font-family: Courier;
+}
+
+textarea.swal-modal-input{
+  height: 60px;
+}
+
 body {
   margin: 0px;
   overflow-y: hidden;

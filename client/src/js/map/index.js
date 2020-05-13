@@ -1,6 +1,7 @@
 import render from './render'
 import cameraTool from './camera.js'
 import constellation from './constellation.js'
+import modals from './modals.js'
 
 window.MAP = {
   canvas: null,
@@ -29,6 +30,17 @@ MAP.onPageLoaded = function() {
   document.body.appendChild(MAP.canvas);
 
   MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
+}
+
+MAP.onStartQuest = function(hero, questId) {
+  const quest = hero.quests[questId]
+  if(hero.id === HERO.id && quest) {
+    if(quest.startMessage.length) {
+      modals.openModal(quest.id + ' Started!', quest.startMessage)
+    } else {
+      modals.openQuestToast(quest.id + ' started')
+    }
+  }
 }
 
 MAP.onRender = function(delta) {

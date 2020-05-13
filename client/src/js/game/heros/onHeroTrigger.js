@@ -3,22 +3,14 @@ import onTalk from './onTalk'
 import onGiveQuest from './onGiveQuest'
 import onCompleteQuest from './onCompleteQuest'
 import onBehavior from './onBehavior'
+import onCombat from './onCombat'
 
 export default function onHeroTrigger(hero, collider, result, removeObjects, respawnObjects, options = { fromInteractButton: false }) {
   const isInteraction = options.fromInteractButton
   let triggered = false
 
-  if(collider.tags['updateHeroOnHeroCollide'] && !isInteraction) {
-    onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options)
-    triggered = true
-  } else {
-    if(collider.ownerId !== hero.id){
-     // if it collides with anything that it doesn't own..
-     hero.lastHeroUpdateId = null
-    }
-  }
-  if(collider.tags['updateHeroOnHeroInteract'] && isInteraction) {
-    onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options)
+  if(!isInteraction) {
+    onCombat(hero, collider, result, removeObjects, respawnObjects, options)
     triggered = true
   }
 
@@ -31,32 +23,48 @@ export default function onHeroTrigger(hero, collider, result, removeObjects, res
     triggered = true
   }
 
-  if(collider.tags['talkOnHeroCollide'] && !isInteraction) {
-    onTalk(hero, collider, result, removeObjects, respawnObjects, options)
-    triggered = true
-  }
-  
-  if(collider.tags['talkOnHeroInteract'] && isInteraction) {
-    onTalk(hero, collider, result, removeObjects, respawnObjects, options)
+  if(collider.tags['updateHeroOnHeroCollide'] && !isInteraction) {
+    onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options)
     triggered = true
   }
 
-  if(collider.tags['giveQuestOnHeroCollide'] && !isInteraction) {
-    onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
-    triggered = true
-  }
-  if(collider.tags['giveQuestOnHeroInteract'] && isInteraction) {
-    onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
+  if(collider.tags['updateHeroOnHeroInteract'] && isInteraction) {
+    onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options)
     triggered = true
   }
 
-  if(collider.tags['completeQuestOnHeroCollide'] && !isInteraction) {
-    onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
-    triggered = true
+  if(collider.tags && collider.tags['talker'] && collider.heroDialogue && collider.heroDialogue.length) {
+    if(collider.tags['talkOnHeroCollide'] && !isInteraction) {
+      onTalk(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
+
+    if(collider.tags['talkOnHeroInteract'] && isInteraction) {
+      onTalk(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
   }
-  if(collider.tags['completeQuestOnHeroInteract'] && isInteraction) {
-    onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
-    triggered = true
+
+  if(collider.tags && collider.tags['questGiver'] && collider.questGivingId && hero.quests && hero.questState && hero.questState[collider.questGivingId] && !hero.questState[collider.questGivingId].started && !hero.questState[collider.questGivingId].completed) {
+    if(collider.tags['giveQuestOnHeroCollide'] && !isInteraction) {
+      onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
+    if(collider.tags['giveQuestOnHeroInteract'] && isInteraction) {
+      onGiveQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
+  }
+
+  if(collider.tags && collider.tags['questCompleter'] && collider.questCompleterId && hero.quests && hero.questState && hero.questState[collider.questCompleterId] && hero.questState[collider.questCompleterId].started && !hero.questState[collider.questCompleterId].completed) {
+    if(collider.tags['completeQuestOnHeroCollide'] && !isInteraction) {
+      onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
+    if(collider.tags['completeQuestOnHeroInteract'] && isInteraction) {
+      onCompleteQuest(hero, collider, result, removeObjects, respawnObjects, options)
+      triggered = true
+    }
   }
 
   if(collider.tags && triggered && collider.tags['destroyAfterTrigger']) {

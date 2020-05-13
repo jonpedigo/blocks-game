@@ -15,10 +15,14 @@ function setDefault() {
     destroyAfterTrigger: false,
   }
 
-  window.behaviorTags = {
-    monster: false,
+  window.combatTags = {
     monsterDestroyer: false,
     monsterVictim: false,
+    monster: false,
+    respawn: false,
+  }
+
+  window.behaviorTags = {
     coin: false,
     behaviorOnHeroCollide: false,
     behaviorOnHeroInteract: false,
@@ -84,6 +88,7 @@ function setDefault() {
     ...window.physicsTags,
     ...window.spawnZoneTags,
     ...window.behaviorTags,
+    ...window.combatBehaviorTags,
     ...window.triggerTags,
     ...window.heroUpdateTags,
     ...window.dialogueTags,
@@ -91,6 +96,15 @@ function setDefault() {
     ...window.movementTags,
     ...window.graphicalTags,
     fresh: false,
+  }
+
+  window.heroTags = {
+    gravity: false,
+    hero: true,
+    default: false,
+    monsterDestroyer: false,
+    obstacle: false,
+    filled: true,
   }
 
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))

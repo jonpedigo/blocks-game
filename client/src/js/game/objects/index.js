@@ -142,6 +142,10 @@ class Objects{
       relativeY: object.relativeY,
       relativeId: object.relativeId,
       parentId: object.parentId,
+      name: object.name,
+      namePos: object.namePos,
+      questGivingId: object.questGivingId,
+      questCompleterId: object.questCompleterId,
 
       // sub objects
       changeWithDirection: object.changeWithDirection,

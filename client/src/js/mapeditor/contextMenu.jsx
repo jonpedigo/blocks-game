@@ -49,7 +49,7 @@ class contextMenuEl extends React.Component{
 
     this._handleObjectMenuClick = ({ key }) => {
       const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
-      const { objectHighlighted, copiedObject } = editor
+      const { objectHighlighted } = editor
 
       if(key === "name-object") {
         modals.nameObject(objectHighlighted)
@@ -125,11 +125,15 @@ class contextMenuEl extends React.Component{
       if(key === 'copy-id') {
         PAGE.copyToClipBoard(objectHighlighted.id)
       }
+
+      if(key === 'enter-quest-giver-id') {
+        modals.editProperty(objectHighlighted, 'questGivingId', objectHighlighted.questGivingId || '')
+      }
     }
 
     this._handleMapMenuClick = ({ key }) => {
       const { editor } = this.props;
-      const { objectHighlighted, recievedObject } = editor
+      const { objectHighlighted } = editor
 
       if(key === 'create-object') {
         OBJECTS.create({...objectHighlighted, tags: {obstacle: true}})
@@ -163,19 +167,41 @@ class contextMenuEl extends React.Component{
     } else {
       this.setState({ hide: true })
     }
-  };
+  }
 
   _setContextMenuPosition({ top, left }) {
-    const { editor } = this.props;
-    editor.contextMenu.style.left = `${left}px`;
-    editor.contextMenu.style.top = `${top}px`;
-    this._toggleContextMenu('show');
-  };
+    const { editor } = this.props
+    editor.contextMenu.style.left = `${left}px`
+    editor.contextMenu.style.top = `${top}px`
+    this._toggleContextMenu('show')
+  }
+
+  _renderObjectQuestMenu() {
+    const { editor } = this.props
+    const { objectHighlighted } = editor
+    const { questGiver, questCompleter } = objectHighlighted.tags
+
+    const list = []
+
+    if(questGiver) {
+      list.push(<MenuItem key="enter-quest-giver-id">Enter giving quest name</MenuItem>)
+    }
+
+    if(questCompleter) {
+      list.push(<MenuItem key="enter-quest-completer-id">Enter completing quest name</MenuItem>)
+    }
+
+    if(list.length) {
+      return <SubMenu title="Quests">{list}</SubMenu>
+    } else {
+      return null
+    }
+  }
 
   render() {
-    const { hide, isColoring, chosenColor } = this.state;
+    const { hide, isColoring } = this.state;
     const { editor } = this.props;
-    const { objectHighlighted, recievedObject, copiedObject } = editor
+    const { objectHighlighted } = editor
 
     if(hide) {
       editor.contextMenuVisible = false
@@ -212,7 +238,6 @@ class contextMenuEl extends React.Component{
         <MenuItem key='create-object'>Create object</MenuItem>
         <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
         <MenuItem key='select-color'>Set world background color</MenuItem>
-        { recievedObject && <MenuItem key='add-recieved-object'>Add recieved object</MenuItem> }
         <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
       </Menu>
@@ -241,6 +266,7 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-position-above">Position Name above</MenuItem>
         <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
+      {this._renderObjectQuestMenu()}
       <SubMenu title="Advanced">
         <SubMenu title="Tags">
           <TagMenu objectHighlighted={objectHighlighted}></TagMenu>

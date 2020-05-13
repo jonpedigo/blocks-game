@@ -210,8 +210,8 @@ class Game{
     window.local.emit('onGridLoaded')
 
     if(game.compendium) window.compendium = game.compendium
-    GAME.hero = game.hero
-    GAME.hero.id = 'default hero'
+    GAME.defaultHero = game.defaultHero || game.hero
+    GAME.defaultHero.id = 'default hero'
 
     // let storedGameState = localStorage.getItem('gameStates')
     // if(storedGameState) storedGameState = storedGameState[game.id]
@@ -432,7 +432,21 @@ class Game{
 
     // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
     localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
-    HERO.spawn(GAME.heros[HERO.id])
+
+    GAME.heroList.forEach((hero) => {
+      HERO.spawn(hero)
+      hero.questState = {}
+      if(hero.quests) {
+        Object.keys(hero.quests).forEach((questId) => {
+          hero.questState[questId] = {
+            started: false,
+            active: false,
+            completed: false,
+          }
+        })
+      }
+    })
+
     GAME.objects.forEach((object) => {
       OBJECTS.respawn(object)
       if(object.tags.talkOnStart) {
@@ -455,18 +469,19 @@ class Game{
       objects: game.objects.filter((object) => !object.spawned),
       world: game.world,
       grid: game.grid,
+      // defaultHero: game.defaultHero,
     }))
 
     if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
       for(var heroId in game.heros) {
         if(game.heros[heroId].tags.default) {
-          gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
+          gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
         }
       }
-      if(!gameCopy.hero && game.heros[heroId]) gameCopy.hero = JSON.parse(JSON.stringify(game.heros[heroId]))
-      else if(!gameCopy.hero && game.heroList.length) gameCopy.hero = JSON.parse(JSON.stringify(game.heroList[0]))
-      else if(!gameCopy.hero && game.hero) gameCopy.hero = game.hero
-      else if(!gameCopy.hero) return alert('could not find a game hero')
+      if(!gameCopy.defaultHero && game.heros[heroId]) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
+      else if(!gameCopy.defaultHero && game.heroList.length) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heroList[0]))
+      else if(!gameCopy.defaultHero && game.defaultHero) gameCopy.defaultHero = game.hero
+      else if(!gameCopy.defaultHero) return alert('could not find a game hero')
     }
 
     let idValue = document.getElementById('game-id').value
@@ -487,9 +502,9 @@ class Game{
       return props
     })
 
-    gameCopy.hero = HERO.getProperties(gameCopy.hero)
-    window.removeFalsey(gameCopy.hero)
-    window.removeFalsey(gameCopy.hero.tags, true)
+    gameCopy.defaultHero = HERO.getProperties(gameCopy.defaultHero)
+    window.removeFalsey(gameCopy.defaultHero)
+    window.removeFalsey(gameCopy.defaultHero.tags, true)
 
     return gameCopy
   }

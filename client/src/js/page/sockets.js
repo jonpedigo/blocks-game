@@ -229,11 +229,23 @@ function init() {
   })
 
   // EDITOR CALLS THIS
-  window.socket.on('onDeleteHero', (id) => {
-    if(PAGE.role.isPlayEditor && window.editingHero.id == id) {
+  window.socket.on('onDeleteHero', (hero) => {
+    if(PAGE.role.isPlayEditor && window.editingHero.id == hero.id) {
       window.setEditingHero({})
     }
-    window.local.emit('onDeleteHero', id)
+    window.local.emit('onDeleteHero', hero)
+  })
+
+  window.socket.on('onDeleteQuest', (heroId, questId) => {
+    window.local.emit('onDeleteQuest', heroId, questId)
+  })
+
+  window.socket.on('onStartQuest', (hero, questId) => {
+    window.local.emit('onStartQuest', hero, questId)
+  })
+
+  window.socket.on('onOpenHeroModal', (hero, modalTitle, modalBody) => {
+    window.local.emit('onOpenHeroModal', hero, modalTitle, modalBody)
   })
 
   window.socket.on('onCopyGame', (game) => {

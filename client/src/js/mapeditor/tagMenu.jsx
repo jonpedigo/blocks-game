@@ -52,6 +52,9 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Dialogue">
         {this._renderTagMenuItems(window.dialogueTags)}
       </SubMenu>
+      <SubMenu title="Combat">
+        {this._renderTagMenuItems(window.combatTags)}
+      </SubMenu>
       <SubMenu title="Spawn Zone">
         {this._renderTagMenuItems(window.spawnZoneTags)}
       </SubMenu>

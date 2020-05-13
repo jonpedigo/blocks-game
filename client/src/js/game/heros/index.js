@@ -53,15 +53,6 @@ class Hero{
     	jumpVelocity: -480,
     	// spawnPointX: (40) * 20,
     	// spawnPointY: (40) * 20,
-    	tags: {
-        obstacle: false,
-        hero: true,
-        isPlayer: true,
-        monsterDestroyer: false,
-        gravity: false,
-        filled: true,
-        default: false,
-      },
     	zoomMultiplier: 1.875,
       // x: window.grid.startX + (window.grid.width * window.grid.nodeSize)/2,
       // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
@@ -80,15 +71,17 @@ class Hero{
         right: false,
         left: false,
       },
+      quests: {},
+      questState: {},
     }
 
     window.local.on('onGridLoaded', () => {
+      window.defaultHero.tags = {...window.heroTags}
       window.defaultHero.x = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
       window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
 
       window.defaultHero.subObjects = {
         heroInteractTriggerArea: {
-          id: 'ata-'+window.uniqueID(),
           x: 0, y: 0, width: 40, height: 40,
           changeWithDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
@@ -180,8 +173,8 @@ class Hero{
   resetToDefault(hero, useGame) {
     HERO.deleteHero(hero)
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-    if(GAME.hero && useGame) {
-      newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.hero)))
+    if(GAME.defaultHero && useGame) {
+      newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.defaultHero)))
     }
     if(!hero.id) {
       alert('hero getting reset without id')
@@ -276,9 +269,9 @@ class Hero{
       console.log('failed to find hero with id' + HERO.id)
     }
 
-    if(!GAME.world.globalTags.isAsymmetric && GAME.hero) {
-      delete GAME.hero.id
-      hero = JSON.parse(JSON.stringify(GAME.hero))
+    if(!GAME.world.globalTags.isAsymmetric && GAME.defaultHero) {
+      delete GAME.defaultHero.id
+      hero = JSON.parse(JSON.stringify(GAME.defaultHero))
       HERO.respawn(hero)
       return hero
     }
@@ -297,6 +290,7 @@ class Hero{
       velocityY: hero.velocityY,
       velocityX: hero.velocityX,
       lastHeroUpdateId: hero.lastHeroUpdateId,
+      lastDialogueId: hero.lastDialogueId,
       directions: hero.directions,
       gridX: hero.gridX,
       gridY: hero.gridY,
@@ -315,6 +309,7 @@ class Hero{
       gridWidth: hero.gridWidth,
       updateHistory: hero.updateHistory,
       onGround: hero.onGround,
+      questState: hero.questState,
       customState: hero.customState,
     }
 
@@ -350,6 +345,7 @@ class Hero{
       relativeY: hero.relativeY,
       relativeId: hero.relativeId,
       parentId: hero.parentId,
+      quests: hero.quests,
       customProps: hero.customProps,
     }
 
@@ -382,7 +378,8 @@ class Hero{
       lives: hero.lives,
       score: hero.score,
       removed: hero.removed,
-      custom: hero.custom,
+      questState: hero.questState,
+      customMapState: hero.customMapState,
     }
 
     if(hero.subObjects) {
@@ -411,18 +408,14 @@ class Hero{
   }
 
   onRespawnHero(hero) {
-    console.log(hero)
     HERO.respawn(GAME.heros[hero.id])
-    console.log(hero)
   }
 
   addHero(hero) {
     GAME.heros[hero.id] = hero
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        if(!subObject.id) {
-          subObject.id = key + window.uniqueID()
-        }
+        subObject.id = key + window.uniqueID()
         PHYSICS.addObject(subObject)
       })
     }
@@ -435,6 +428,11 @@ class Hero{
 
   onDeleteHero(hero) {
     HERO.deleteHero(hero)
+  }
+
+  onDeleteQuest(heroId, questId) {
+    const hero = GAME.heros[heroId]
+    if(hero.quests) delete hero.quests[questId]
   }
 
   deleteHero(hero) {

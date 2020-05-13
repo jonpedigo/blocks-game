@@ -231,7 +231,7 @@ function updateGridHighlight(location) {
     smallestObject = hero
   })
 
-  if(smallestObject) MAPEDITOR.objectHighlighted = smallestObject
+  if(smallestObject) MAPEDITOR.objectHighlighted = JSON.parse(JSON.stringify(smallestObject))
 
   MAPEDITOR.objectHighlightedChildren = []
   if(MAPEDITOR.objectHighlighted.id) {
@@ -264,7 +264,7 @@ function onCopy(object) {
 
 function onDelete(object) {
   if(object.tags.hero) {
-    window.socket.emit('deleteHero', object.id)
+    window.socket.emit('deleteHero', object)
     window.objectHighlighted = null
   } else if(object.id) {
     window.socket.emit('deleteObject', object)
