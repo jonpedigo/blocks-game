@@ -156,10 +156,10 @@ function onUpdate(hero, keysDown, delta) {
 
 function onKeyDown(keyCode, hero) {
   if(32 === keyCode) {
-    if(hero.chat && hero.chat.length) {
-      hero.chat.shift()
-      if(!hero.chat.length) {
-        hero.flags.showChat = false
+    if(hero.dialogue && hero.dialogue.length) {
+      hero.dialogue.shift()
+      if(!hero.dialogue.length) {
+        hero.flags.showDialogue = false
         hero.flags.paused = false
         hero.onGround = false
       }

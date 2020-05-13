@@ -34,7 +34,7 @@
 // satisfying death animations? satisfing death states or idk.. things?
 
 // switch tag fresh to an _fresh ( actually just go through all object state and make sure its consistent, there are others such as !!!target!!!<---( please make _ ) that could be an underscore property )
-// lastPowerUpId, velocity? , i gridX, width, etc
+// lastHeroUpdateId, velocity? , i gridX, width, etc
 //--------
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
 // Smarter rendering

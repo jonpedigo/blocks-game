@@ -11,23 +11,45 @@ function setDefault() {
     zombie: false,
   }
 
-  window.triggerBehaviorTags = {
+  window.triggerTags = {
+    destroyAfterTrigger: false,
+  }
+
+  window.behaviorTags = {
     monster: false,
     monsterDestroyer: false,
     monsterVictim: false,
     coin: false,
-    deleteAfter: false,
-    requireActionButton: false,
+    behaviorOnHeroCollide: false,
+    behaviorOnHeroInteract: false,
+    // behaviorOnDestroy: false,
   }
 
-  window.behaviorTags = {
+  window.spawnZoneTags = {
     spawnZone: false,
+    // spawnOnStart: false,
+    // spawnOnHeroCollide: false,
+    // spawnOnHeroInteract: false,
+    // spawnOnDestroy: false,
+  }
+
+  window.dialogueTags = {
+    talker: false,
+    talkOnStart: false,
+    talkOnHeroCollide: false,
+    talkOnHeroInteract: false,
+    // talkOnDestroy: false,
+    oneTimeTalker: false,
   }
 
   window.heroUpdateTags = {
     heroUpdate: false,
-    oneTimeUpdate: false,
-    revertAfterTimeout: false,
+    oneTimeHeroUpdate: false,
+    revertHeroUpdateAfterTimeout: false,
+    incrementRevertHeroUpdateTimeout: false,
+    updateHeroOnHeroCollide: false,
+    updateHeroOnHeroInteract: false,
+    // updateHeroOnDestroy: false,
   }
 
   window.physicsTags = {
@@ -40,6 +62,18 @@ function setDefault() {
     heroPushable: false,
   }
 
+  window.questTags = {
+    questGiver: false,
+    giveQuestOnStart: false,
+    giveQuestOnHeroCollide: false,
+    giveQuestOnHeroInteract: false,
+    // giveQuestOnDestroy: false,
+    questCompleter: false,
+    completeQuestOnHeroCollide: false,
+    completeQuestOnHeroInteract: false,
+    // completeQuestOnDestroy: false,
+  }
+
   window.graphicalTags = {
     glowing: false,
     filled: false,
@@ -48,16 +82,18 @@ function setDefault() {
 
   window.defaultTags = {
     ...window.physicsTags,
-    ...window.collisionBehaviorTags,
+    ...window.spawnZoneTags,
     ...window.behaviorTags,
+    ...window.triggerTags,
     ...window.heroUpdateTags,
+    ...window.dialogueTags,
+    ...window.questTags,
     ...window.movementTags,
     ...window.graphicalTags,
     fresh: false,
   }
 
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))
-
 }
 
 export default {

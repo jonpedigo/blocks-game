@@ -8,6 +8,9 @@ import tags from './tags.js'
 import timeouts from './timeouts'
 import world from './world.js'
 
+import onTalk from './heros/onTalk'
+import onGiveQuest from './heros/onGiveQuest'
+
 import './objects'
 import './heros'
 
@@ -430,6 +433,19 @@ class Game{
     // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
     localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
     HERO.spawn(GAME.heros[HERO.id])
+    GAME.objects.forEach((object) => {
+      OBJECTS.respawn(object)
+      if(object.tags.talkOnStart) {
+        GAME.heroList.forEach((hero) => {
+          onTalk(hero, object, {}, [], [], { fromStart: true })
+        })
+      }
+      if(object.tags.giveQuestOnStart) {
+        GAME.heroList.forEach((hero) => {
+          onGiveQuest(hero, object, {}, [], [], { fromStart: true })
+        })
+      }
+    })
     GAME.gameState.paused = false
     GAME.gameState.started = true
   }

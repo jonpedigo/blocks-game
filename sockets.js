@@ -304,8 +304,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('askHeroToNameObject', (object, heroId) => {
     io.emit('onAskHeroToNameObject', object, heroId)
   })
-  socket.on('askHeroToWriteChat', (object, heroId) => {
-    io.emit('onAskHeroToWriteChat', object, heroId)
+  socket.on('askHeroToWriteDialogue', (object, heroId) => {
+    io.emit('onAskHeroToWriteDialogue', object, heroId)
   })
 
   socket.on('hostLog', (msg, arg1, arg2, arg3) => {

@@ -205,12 +205,12 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveObject', (object) => {
-    GAME.removeObject(object)
+    OBJECTS.removeObject(object)
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onRemoveHero', (hero) => {
-    GAME.removeObject(hero)
+    HERO.removeHero(hero)
   })
 
   // CLIENT HOST OR EDITOR CALL THIS
@@ -258,8 +258,8 @@ function init() {
     // ctx.fillRect(10, 10, object.width, object.height);
   })
 
-  window.socket.on('onAskHeroToWriteChat', async (object, heroId) => {
-    window.local.emit('onAskHeroToWriteChat', object, heroId)
+  window.socket.on('onAskHeroToWriteDialogue', async (object, heroId) => {
+    window.local.emit('onAskHeroToWriteDialogue', object, heroId)
   })
 
   window.socket.on('onGameSaved', (id) => {

@@ -82,7 +82,7 @@ class Objects{
       velocityX: object.velocityX,
       target: object.target,
       path: object.path,
-      lastPowerUpId: object.lastPowerUpId,
+      lastHeroUpdateId: object.lastHeroUpdateId,
       direction: object.direction,
       fresh: object.fresh,
       gridX: object.gridX,
@@ -110,6 +110,18 @@ class Objects{
     return state
   }
 
+  isInteractable(object) {
+    if((object.tags['completeQuestOnHeroInteract'] && object.tags['questCompleter']) || (object.tags['giveQuestOnHeroInteract'] && object.tags['questGiver'])) return true
+
+    if(object.tags['spawnOnHeroInteract'] && object.tags.spawnZone) return true
+
+    if(object.tags['updateHeroOnHeroInteract'] && object.tags.heroUpdate) return true
+
+    if(object.tags['talkOnHeroInteract'] && object.tags.talker) return true
+
+    return false
+  }
+
   getProperties(object) {
     let properties = {
       id: object.id,
@@ -122,6 +134,8 @@ class Objects{
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       heroUpdate: object.heroUpdate,
+      heroDialogue: object.heroDialogue,
+      heroQuest: object.heroQuest,
       objectUpdate: object.objectUpdate,
       pathfindingLimit: object.pathfindingLimit,
       relativeX: object.relativeX,
@@ -130,7 +144,6 @@ class Objects{
       parentId: object.parentId,
 
       // sub objects
-      actionTriggerArea: object.actionTriggerArea,
       changeWithDirection: object.changeWithDirection,
       relativeWidth: object.relativeWidth,
       relativeHeight: object.relativeHeight,

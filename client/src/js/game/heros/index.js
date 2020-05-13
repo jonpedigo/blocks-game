@@ -1,4 +1,4 @@
-import onEffectHero from './onEffectHero'
+import onHeroTrigger from './onHeroTrigger'
 import ghost from './ghost.js'
 import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
@@ -13,12 +13,12 @@ class Hero{
   }
 
   onHeroInteract(hero, interactor, result, removeObjects, respawnObjects) {
-    onEffectHero(hero, interactor, result, removeObjects, respawnObjects, { fromInteractButton: true })
+    onHeroTrigger(hero, interactor, result, removeObjects, respawnObjects, { fromInteractButton: true })
   }
 
   onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
-    if(collider.tags['requireActionButton'] || collider.ownerId === hero.id) return
-    onEffectHero(hero, collider, result, removeObjects, respawnObjects, { fromInteractButton: false })
+    if(collider.ownerId === hero.id) return
+    onHeroTrigger(hero, collider, result, removeObjects, respawnObjects, { fromInteractButton: false })
   }
 
   getHeroId() {
@@ -67,9 +67,9 @@ class Hero{
       // y: window.grid.startY + (window.grid.height * window.grid.nodeSize)/2,
       lives: 10,
       score: 0,
-      chat: [],
+      dialogue: [],
       flags : {
-        showChat: false,
+        showDialogue: false,
         showScore: false,
         showLives: false,
         paused: false,
@@ -87,16 +87,15 @@ class Hero{
       window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
 
       window.defaultHero.subObjects = {
-        actionTriggerArea: {
+        heroInteractTriggerArea: {
           id: 'ata-'+window.uniqueID(),
           x: 0, y: 0, width: 40, height: 40,
-          actionTriggerArea: true,
           changeWithDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
           relativeHeight: GAME.grid.nodeSize * 2,
           relativeX: -GAME.grid.nodeSize,
           relativeY: -GAME.grid.nodeSize,
-          tags: { obstacle: false, invisible: true, stationary: true },
+          tags: { obstacle: false, invisible: true, stationary: true, heroInteractTriggerArea: true },
         },
         // spear: {
         //   id: 'spear-'+window.uniqueID(),
@@ -297,7 +296,7 @@ class Hero{
       _deltaX: hero._deltaX,
       velocityY: hero.velocityY,
       velocityX: hero.velocityX,
-      lastPowerUpId: hero.lastPowerUpId,
+      lastHeroUpdateId: hero.lastHeroUpdateId,
       directions: hero.directions,
       gridX: hero.gridX,
       gridY: hero.gridY,
@@ -307,8 +306,8 @@ class Hero{
       animationZoomMultiplier: hero.animationZoomMultiplier,
       animationZoomTarget: hero.animationZoomTarget,
       endAnimation: hero.endAnimation,
-      chat: hero.chat,
-      chatName: hero.chatName,
+      dialogue: hero.dialogue,
+      dialogueName: hero.dialogueName,
       _parentId: hero._parentId,
       _skipNextGravity: hero._skipNextGravity,
       interactableObject: hero.interactableObject,
@@ -373,7 +372,7 @@ class Hero{
       width: hero.width,
       height: hero.height,
       interactableObject: hero.interactableObject,
-      chat: hero.chat,
+      dialogue: hero.dialogue,
       flags: hero.flags,
       directions: hero.directions,
       zoomMultiplier: hero.zoomMultiplier,

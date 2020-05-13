@@ -1,21 +1,19 @@
 function writeDialogue(object, dialogueIndex, cb) {
   PAGE.typingMode = true
-  openWriteDialogueModal(object, object.heroUpdate.chat[dialogueIndex], (result) => {
+  openWriteDialogueModal(object, object.heroDialogue[dialogueIndex], (result) => {
     if(result && result.value[0] && result.value[0].length) {
-      if(!object.heroUpdate) object.heroUpdate = {}
-      if(!object.heroUpdate.chat) object.heroUpdate.chat = []
-      object.tags.heroUpdate = true
-      object.heroUpdate.chat[dialogueIndex] = result.value[0]
-      if(!object.heroUpdate.flags) object.heroUpdate.flags = {}
-      object.heroUpdate.flags.showChat = true
-      object.heroUpdate.flags.paused = true
+      if(!object.heroDialogue) object.heroDialogue = []
+      object.tags.talker = true
+      object.heroDialogue[dialogueIndex] = result.value[0]
       if(result.value[1]) {
-        object.tags.requireActionButton = true
+        object.tags.talkOnHeroInteract = false
+        object.tags.talkOnHeroCollide = true
       } else {
-        object.tags.requireActionButton = false
+        object.tags.talkOnHeroInteract = true
+        object.tags.talkOnHeroCollide = false
       }
       if(cb) cb(object)
-      else window.socket.emit('editObjects', [{id: object.id, heroUpdate: object.heroUpdate, tags: object.tags}])
+      else window.socket.emit('editObjects', [{id: object.id, heroDialogue: object.heroDialogue, tags: object.tags}])
     }
     PAGE.typingMode = false
   })
@@ -78,7 +76,7 @@ function openWriteDialogueModal(object, dialogueStart = "", cb) {
       autocapitalize: 'off',
     },
     inputValue: dialogueStart,
-    html:"<input id='press-x' type='checkbox'>Press X to activate dialogue</input>",
+    html:"<input id='press-x' type='checkbox'>Activate dialogue on collision</input>",
     preConfirm: (result) => {
       return [
         result,

@@ -64,27 +64,17 @@ class contextMenuEl extends React.Component{
         window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: null}])
       }
 
-      if(key === 'trigger-collision') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: false }}])
-      }
-      if(key === 'trigger-interact') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { requireActionButton: true }}])
-      }
-
       if(key === "add-dialogue") {
-        if(!objectHighlighted.heroUpdate){
-          objectHighlighted.heroUpdate = {}
+        if(!objectHighlighted.heroDialogue) {
+          objectHighlighted.heroDialogue = []
         }
-        if(!objectHighlighted.heroUpdate.chat) {
-          objectHighlighted.heroUpdate.chat = []
-        }
-        objectHighlighted.heroUpdate.chat.push('')
-        modals.writeDialogue(objectHighlighted, objectHighlighted.heroUpdate.chat.length-1)
+        objectHighlighted.heroDialogue.push('')
+        modals.writeDialogue(objectHighlighted, objectHighlighted.heroDialogue.length-1)
       }
 
       if(key.indexOf("remove-dialogue") === 0) {
         let dialogueIndex = key[key.length-1]
-        objectHighlighted.heroUpdate.chat.splice(dialogueIndex, 1)
+        objectHighlighted.heroDialogue.splice(dialogueIndex, 1)
         window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
       }
 
@@ -103,6 +93,10 @@ class contextMenuEl extends React.Component{
 
       if(key === 'delete') {
         onDelete(objectHighlighted)
+      }
+
+      if(key === 'remove') {
+        window.socket.emit('removeObject', objectHighlighted)
       }
 
       if(key === 'copy') {
@@ -230,10 +224,10 @@ class contextMenuEl extends React.Component{
       <MenuItem key="copy">Copy</MenuItem>
       <SubMenu title="Dialogue">
         <MenuItem key="add-dialogue">Add Dialogue</MenuItem>
-        {objectHighlighted.heroUpdate && objectHighlighted.heroUpdate.chat && objectHighlighted.heroUpdate.chat.map((dialogue, i) => {
+        {objectHighlighted.heroDialogue && objectHighlighted.heroDialogue.map((dialogue, i) => {
           return <MenuItem key={"edit-dialogue-"+i}>{'Edit Dialogue ' + (i+1)}</MenuItem>
         })}
-        {objectHighlighted.heroUpdate && objectHighlighted.heroUpdate.chat && objectHighlighted.heroUpdate.chat.map((dialogue, i) => {
+        {objectHighlighted.heroDialogue && objectHighlighted.heroDialogue.map((dialogue, i) => {
           return <MenuItem key={"remove-dialogue-"+i}>{'Remove Dialogue ' + (i+1)}</MenuItem>
         })}
       </SubMenu>
@@ -255,16 +249,12 @@ class contextMenuEl extends React.Component{
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
         {objectHighlighted.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
-        <SubMenu title="Hero Update">
-          <MenuItem key="trigger-collision">When collided</MenuItem>
-          <MenuItem key="trigger-interact">When X is pressed</MenuItem>
-        </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="add-compendium">Add To Compendium</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
       </SubMenu>
-      <MenuItem key="delete">Delete</MenuItem>
+      { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
     </Menu>
   }
 }

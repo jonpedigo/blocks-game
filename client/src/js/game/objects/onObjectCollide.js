@@ -9,12 +9,12 @@ export default function onObjectCollide(agent, collider, result, removeObjects, 
   }
 
   if(collider.tags['objectUpdate'] && collider.objectUpdate && shouldEffect(po.gameObject, collider)) {
-    if(agent.lastPowerUpId !== collider.id) {
+    if(agent.lastHeroUpdateId !== collider.id) {
       window.mergeDeep(agent, {...collider.objectUpdate})
-      agent.lastPowerUpId = collider.id
+      agent.lastHeroUpdateId = collider.id
     }
   } else {
-    agent.lastPowerUpId = null
+    agent.lastHeroUpdateId = null
   }
 
   if(agent.tags['monsterVictim'] && collider.tags['monster']) {

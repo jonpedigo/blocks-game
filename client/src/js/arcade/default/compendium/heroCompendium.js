@@ -31,7 +31,7 @@ const heroCompendium = {
    chatter: {
      chat: ['Hello'],
      flags : {
-       showChat: true,
+       showDialogue: true,
        paused: true,
      }
    },

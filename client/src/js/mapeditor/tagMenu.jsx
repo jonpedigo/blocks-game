@@ -41,10 +41,19 @@ export default class TagMenu extends React.Component{
         {this._renderTagMenuItems(window.behaviorTags)}
       </SubMenu>
       <SubMenu title="Trigger Behavior">
-        {this._renderTagMenuItems(window.triggerBehaviorTags)}
+        {this._renderTagMenuItems(window.triggerTags)}
       </SubMenu>
       <SubMenu title="Hero Update">
         {this._renderTagMenuItems(window.heroUpdateTags)}
+      </SubMenu>
+      <SubMenu title="Quest">
+        {this._renderTagMenuItems(window.questTags)}
+      </SubMenu>
+      <SubMenu title="Dialogue">
+        {this._renderTagMenuItems(window.dialogueTags)}
+      </SubMenu>
+      <SubMenu title="Spawn Zone">
+        {this._renderTagMenuItems(window.spawnZoneTags)}
       </SubMenu>
       <SubMenu title="Graphical">
         {this._renderTagMenuItems(window.graphicalTags)}

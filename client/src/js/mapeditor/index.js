@@ -121,7 +121,7 @@ class MapEditor{
     }
   }
 
-  onAskHeroToWriteChat(object, heroId) {
+  onAskHeroToWriteDialogue(object, heroId) {
     if(PAGE.role.isPlayer && !PAGE.role.isGhost && HERO.id === heroId) {
       modals.writeDialogue(object)
     }
@@ -147,7 +147,7 @@ function handleMouseDown(event) {
     if(MAPEDITOR.pathfindingLimit) {
       const { pathfindingLimit, objectHighlighted } = MAPEDITOR
       gridUtil.snapDragToGrid(pathfindingLimit, {dragging: true})
-      editHighlightedObject({id: objectHighlighted.id, pathfindingLimit, path: null})
+      networkEditObject(objectHighlighted, {id: objectHighlighted.id, pathfindingLimit, path: null})
       document.body.style.cursor = "default";
       MAPEDITOR.isSettingPathfindingLimit = false
       MAPEDITOR.pathfindingLimit = null
@@ -172,7 +172,7 @@ function handleMouseDown(event) {
 }
 
 function networkEditObject(object, update) {
-  if(object.tags.hero) {
+  if(object.tags && object.tags.hero) {
     window.socket.emit('editHero', update)
   } else {
     window.socket.emit('editObjects', [update])
