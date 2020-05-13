@@ -38,7 +38,7 @@ MAP.onStartQuest = function(hero, questId) {
     if(quest.startMessage.length) {
       modals.openModal(quest.id + ' Started!', quest.startMessage)
     } else {
-      modals.openQuestToast(quest.id + ' started')
+      modals.openQuestToast('quest started: ' + quest.id)
     }
   }
 }
@@ -49,7 +49,7 @@ MAP.onCompleteQuest = function(hero, questId) {
     if(quest.completionMessage.length) {
       modals.openModal(quest.id + ' Complete!', quest.completionMessage)
     } else {
-      modals.openQuestToast(quest.id + ' completed')
+      modals.openQuestToast('quest completed: ' + quest.id)
     }
   }
 }

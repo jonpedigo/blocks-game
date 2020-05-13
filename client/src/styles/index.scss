@@ -19,6 +19,24 @@ p {
   font-size: $paragraph-font-size;
 }
 
+body {
+  font-family: Courier;
+}
+
+.Toastify__toast-container {
+  z-index: 0;
+
+  .Toastify__toast--default {
+    background: #333;
+    color: white;
+
+    .Toastify__toast-body {
+      text-align: center;
+      font-family: Courier;
+    }
+  }
+}
+
 .swal2-title {
   font-family: Courier;
 }

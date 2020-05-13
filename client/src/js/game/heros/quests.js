@@ -12,10 +12,10 @@ function completeQuest(hero, questId) {
   questState.started = true
   questState.completed = true
   questState.active = false
+  window.socket.emit('completeQuest', hero, questId)
   if(quest.nextQuestId) {
     startQuest(hero, quest.nextQuestId)
   }
-  window.socket.emit('completeQuest', hero, questId)
 }
 
 export {

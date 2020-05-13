@@ -415,14 +415,13 @@ class Game{
 
     let initialGameState = localStorage.getItem('initialGameState')
     if(!initialGameState) {
-      console.log('game stopped, but no initial game state set')
+      return console.log('game stopped, but no initial game state set')
     }
 
-    if(initialGameState) {
-      initialGameState = JSON.parse(initialGameState)
-      GAME.unload()
-      GAME.loadAndJoin(initialGameState)
-    } else console.log('NO STATE TO RESTORE AFTER STOPPING')
+    initialGameState = JSON.parse(initialGameState)
+    GAME.unload()
+    GAME.loadAndJoin(initialGameState)
+    window.local.emit('onGameStopped')
   }
 
   onGameStart() {
@@ -462,6 +461,7 @@ class Game{
     })
     GAME.gameState.paused = false
     GAME.gameState.started = true
+    window.local.emit('onGameStarted')
   }
 
   cleanForSave(game) {

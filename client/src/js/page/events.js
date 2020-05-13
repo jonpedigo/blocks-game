@@ -64,6 +64,10 @@ class EventEmitter {
         event.push(MAP[eventName])
       }
 
+      if(!PAGE.role.isPlayEditor && PLAYERUI[eventName]) {
+        event.push(PLAYERUI[eventName])
+      }
+
       if(eventName === 'onRender' && !PAGE.role.isPlayEditor){
         if(ARCADE.defaultCustomGame && ARCADE.defaultCustomGame[eventName]) {
           event.push(ARCADE.defaultCustomGame[eventName])

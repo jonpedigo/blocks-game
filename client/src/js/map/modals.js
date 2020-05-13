@@ -1,14 +1,33 @@
+const queue = [];
+
+function nextInQueue(result) {
+  queue.shift()
+  if(queue.length) {
+    queue[0](result).then(nextInQueue)
+  }
+}
+
+function addToQueue(next) {
+  if(queue.length) {
+    queue.push(next)
+  } else {
+    queue.push(next().then(nextInQueue))
+  }
+}
+
 function openModal(title, body, icon) {
-  return Swal.fire({
-    icon,
-    showClass: {
-      popup: 'animated fadeInDown faster'
-    },
-    hideClass: {
-      popup: 'animated fadeOutUp faster'
-    },
-    title: title,
-    text: body,
+  addToQueue(() => {
+    return Swal.fire({
+      icon,
+      showClass: {
+        popup: 'animated fadeInDown faster'
+      },
+      hideClass: {
+        popup: 'animated fadeOutUp faster'
+      },
+      title: title,
+      text: body,
+    })
   })
 }
 

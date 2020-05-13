@@ -53,14 +53,14 @@ function editQuest(hero, quest, cb) {
   openQuestModal(quest, ({value}) => {
     const id = value[0]
     const startMessage = value[1]
-    const hint = value[2]
+    const goal = value[2]
     const completionMessage = value[3]
     const nextQuestId = value[4]
 
     const quest = {
       id,
       startMessage,
-      hint,
+      goal,
       completionMessage,
       nextQuestId
     }
@@ -140,7 +140,7 @@ function openWriteDialogueModal(object, dialogueStart = "", cb) {
   }).then(cb)
 }
 
-function openQuestModal(quest = { id: '', startMessage: '', hint: '', completionMessage: '', nextQuestId: ''}, cb) {
+function openQuestModal(quest = { id: '', startMessage: '', goal: '', completionMessage: '', nextQuestId: ''}, cb) {
   Swal.fire({
     title: 'Quest Editor',
     showClass: {
@@ -151,14 +151,14 @@ function openQuestModal(quest = { id: '', startMessage: '', hint: '', completion
     },
     html:`<div class='swal-modal-input-label'>Name of Quest</div><input autocomplete="new-password" class='swal-modal-input' id='quest-id' value='${quest.id}'></input>
     <div class='swal-modal-input-label'>Start Message</div><textarea class='swal-modal-input' id='start-message'>${quest.startMessage}</textarea>
-    <div class='swal-modal-input-label'>Quest Hint</div><input class='swal-modal-input' id='quest-hint' value='${quest.hint}'>
+    <div class='swal-modal-input-label'>Quest Goal</div><input class='swal-modal-input' id='quest-goal' value='${quest.goal}'>
     <div class='swal-modal-input-label'>Completion Message</div><textarea class='swal-modal-input' id='completion-message'>${quest.completionMessage}</textarea>
     <div class='swal-modal-input-label'>Start this quest on completion</div><input autocomplete="new-password" class='swal-modal-input' id='next-quest-id' value='${quest.nextQuestId}'></input>`,
     preConfirm: (result) => {
       return [
         document.getElementById('quest-id').value,
         document.getElementById('start-message').value,
-        document.getElementById('quest-hint').value,
+        document.getElementById('quest-goal').value,
         document.getElementById('completion-message').value,
         document.getElementById('next-quest-id').value,
       ]
