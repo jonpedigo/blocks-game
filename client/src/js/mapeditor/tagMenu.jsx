@@ -8,11 +8,7 @@ export default class TagMenu extends React.Component{
     this._handleTagMenuClick = ({ key }) => {
       const { objectHighlighted } = this.props;
 
-      if(objectHighlighted.tags.hero) {
-
-      } else {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }}])
-      }
+      window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }}])
     }
   }
 

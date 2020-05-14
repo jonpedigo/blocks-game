@@ -278,6 +278,14 @@ function init() {
     window.local.emit('onAskHeroToWriteDialogue', object, heroId)
   })
 
+  window.socket.on('onAddGameTag', (tagName) => {
+    window.local.emit('onAddGameTag', tagName)
+  })
+
+  window.socket.on('onUpdateGameCustomInputBehavior', (tagName) => {
+    window.local.emit('onUpdateGameCustomInputBehavior', tagName)
+  })
+
   window.socket.on('onGameSaved', (id) => {
     window.local.emit('onGameSaved', id)
   })

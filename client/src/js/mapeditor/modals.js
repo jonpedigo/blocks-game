@@ -89,6 +89,51 @@ function editQuest(hero, quest, cb) {
 
 }
 
+function addGameTag() {
+  Swal.fire({
+    title: 'What is the name of the new group?',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+  }).then((result) => {
+    if(result && result.value && result.value.length) {
+      window.socket.emit('addGameTag', result.value)
+    }
+  })
+}
+
+function addCustomInputBehavior(behaviorProp) {
+  Swal.fire({
+    title: `What is the name of the new ${behaviorProp}?`,
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+  }).then((result) => {
+    if(result && result.value && result.value.length) {
+      const behaviorObject = {
+        behaviorProp,
+        behaviorName: result.value,
+      }
+      console.log(result.value, behaviorProp)
+      window.socket.emit('updateGameCustomInputBehavior', [...GAME.customInputBehavior, behaviorObject])
+    }
+  })
+}
+
 function openNameObjectModal(object, cb) {
   Swal.fire({
     title: 'Name object',
@@ -184,6 +229,8 @@ function openEditPropertyModal(property, currentValue, cb) {
 }
 
 export default {
+  addCustomInputBehavior,
+  addGameTag,
   editProperty,
   editQuest,
   writeDialogue,

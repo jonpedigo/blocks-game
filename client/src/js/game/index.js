@@ -31,6 +31,7 @@ class Game{
     world.setDefault()
     gameState.setDefault()
     tags.setDefault()
+    input.setDefault()
     timeouts.setDefault()
 
     input.onPageLoaded()
@@ -209,6 +210,18 @@ class Game{
     GAME.grid = game.grid
     window.local.emit('onGridLoaded')
 
+    tags.setDefault()
+    if(game.tags) {
+      tags.addGameTags(game.tags)
+      GAME.tags = game.tags
+    } else GAME.tags = {}
+
+    input.setDefault()
+    if(game.customInputBehavior) {
+      input.addCustomInputBehavior(game.customInputBehavior)
+      GAME.customInputBehavior = game.customInputBehavior
+    } else GAME.customInputBehavior = []
+
     if(game.compendium) window.compendium = game.compendium
     GAME.defaultHero = game.defaultHero || game.hero
     GAME.defaultHero.id = 'default hero'
@@ -314,6 +327,17 @@ class Game{
     gridUtil.snapObjectToGrid(GAME.heros[HERO.id])
     GAME.heros[HERO.id].width = GAME.grid.nodeSize
     GAME.heros[HERO.id].height = GAME.grid.nodeSize
+  }
+
+  onAddGameTag(tagName) {
+    GAME.tags[tagName] = false
+    tags.addGameTags({[tagName]: false})
+  }
+
+  onUpdateGameCustomInputBehavior(customInputBehavior) {
+    input.setDefault()
+    input.addCustomInputBehavior(customInputBehavior)
+    GAME.customInputBehavior = customInputBehavior
   }
 
   addObstacle(object) {
@@ -464,11 +488,20 @@ class Game{
     window.local.emit('onGameStarted')
   }
 
+  findRelativeXY(object, relative) {
+    return {
+      relativeX: relative.x - object.x,
+      relativeY: relative.y - object.y
+    }
+  }
+
   cleanForSave(game) {
     let gameCopy = JSON.parse(JSON.stringify({
       objects: game.objects.filter((object) => !object.spawned),
       world: game.world,
       grid: game.grid,
+      tags: game.tags,
+      customInputBehavior: game.customInputBehavior,
       // defaultHero: game.defaultHero,
     }))
 

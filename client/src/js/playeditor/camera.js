@@ -427,7 +427,7 @@ function render() {
       drawBorder(ctx, {x: currentHero.x - (HERO.cameraWidth * currentHero.zoomMultiplier)/2 + currentHero.width/2, y: currentHero.y - (HERO.cameraHeight * currentHero.zoomMultiplier)/2 + currentHero.height/2, width: (HERO.cameraWidth * currentHero.zoomMultiplier), height: (HERO.cameraHeight * currentHero.zoomMultiplier)})
     }
 
-    if(currentHero.reachablePlatformHeight && currentHero.tags.gravity) {
+    if(currentHero.reachablePlatformHeight && currentHero.tags.gravityY) {
       let y = (currentHero.y + currentHero.height)
       let x = currentHero.x - currentHero.reachablePlatformWidth
       let width = (currentHero.reachablePlatformWidth * 2) + (currentHero.width)

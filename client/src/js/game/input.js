@@ -1,5 +1,41 @@
 let lastJump = 0
 
+function setDefault() {
+  window.heroArrowKeyBehaviors = [
+    'flatDiagonal',
+    'velocity',
+    'skating',
+    'flatRecent',
+    'none'
+  ]
+
+  window.heroActionButtonBehaviors = [
+    'dropWall',
+    'shootBullet',
+    'none'
+  ]
+
+  window.heroSpaceBarBehaviors = [
+    'jump',
+    'none',
+  ]
+}
+
+function addCustomInputBehavior(behaviorList) {
+  behaviorList.forEach((behavior) => {
+    const { behaviorProp, behaviorName } = behavior
+    if(behaviorProp === 'spaceBarBehavior') {
+      window.heroSpaceBarBehaviors.unshift(behaviorName)
+    }
+    if(behaviorProp === 'actionButtonBehavior') {
+      window.heroActionButtonBehaviors.unshift(behaviorName)
+    }
+    if(behaviorProp === 'arrowKeysBehavior') {
+      window.heroArrowKeyBehaviors.unshift(behaviorName)
+    }
+  })
+}
+
 function onPageLoaded(){
   GAME.keysDown = {}
   // this is the one for the host
@@ -88,8 +124,8 @@ function onUpdate(hero, keysDown, delta) {
   function positionInput() {
 
     if(hero.arrowKeysBehavior === 'flatDiagonal') {
-      if(!hero.tags.gravity) {
-        if (38 in keysDown && !hero.tags.gravity) { // Player holding up
+      if(hero.spaceBarBehavior !== 'jump') {
+        if (38 in keysDown && hero.spaceBarBehavior !== 'jump') { // Player holding up
           hero.velocityY = -hero.speed
         } else if (40 in keysDown) { // Player holding down
           hero.velocityY = hero.speed
@@ -109,11 +145,11 @@ function onUpdate(hero, keysDown, delta) {
 
     if(hero.arrowKeysBehavior === 'flatRecent') {
       hero.velocityX = 0
-      if(!hero.tags.gravity) {
+      if(hero.spaceBarBehavior !== 'jump') {
         hero.velocityY = 0
       }
 
-      if (38 in keysDown && hero.inputDirection == 'up' && !hero.tags.gravity) { // Player holding up
+      if (38 in keysDown && hero.inputDirection == 'up' && hero.spaceBarBehavior !== 'jump') { // Player holding up
         hero.velocityY = -Math.ceil(hero.speed * delta) * 100
         return
       }
@@ -133,7 +169,7 @@ function onUpdate(hero, keysDown, delta) {
         return
       }
 
-      if (38 in keysDown && !hero.tags.gravity) { // Player holding up
+      if (38 in keysDown && hero.spaceBarBehavior !== 'jump') { // Player holding up
         hero.velocityY = -Math.ceil(hero.speed * delta) * 100
       }
 
@@ -169,7 +205,7 @@ function onKeyDown(keyCode, hero) {
   if(hero.flags.paused || GAME.gameState.paused) return
 
   if(32 === keyCode) {
-    if(hero.onGround && hero.tags.gravity) {
+    if(hero.onGround && hero.spaceBarBehavior === 'jump') {
       hero.velocityY = hero.jumpVelocity
       lastJump = Date.now();
     }
@@ -204,6 +240,8 @@ function onKeyDown(keyCode, hero) {
 }
 
 export default {
+  addCustomInputBehavior,
+  setDefault,
   onPageLoaded,
   onUpdate,
   onKeyDown,

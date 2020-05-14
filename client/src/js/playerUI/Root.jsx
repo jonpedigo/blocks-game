@@ -31,8 +31,6 @@ export default class Root extends React.Component{
         if(quest.startMessage.length) {
           modals.openModal(quest.id + ' Started!', quest.startMessage)
         } else {
-          console.log('happening?')
-          console.trace('?')
           toast('quest started: ' + quest.id , {
              position:"top-right",
              autoClose: 6000,

@@ -99,7 +99,7 @@ function setDefault() {
   }
 
   window.heroTags = {
-    gravity: false,
+    gravityY: false,
     hero: true,
     default: false,
     monsterDestroyer: false,
@@ -110,6 +110,11 @@ function setDefault() {
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 }
 
+function addGameTags(tags) {
+  Object.assign(window.tags, tags)
+}
+
 export default {
-  setDefault
+  setDefault,
+  addGameTags,
 }

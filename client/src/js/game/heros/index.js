@@ -483,9 +483,12 @@ class Hero{
   resetReachablePlatformHeight(hero) {
     let velocity = hero.jumpVelocity
     if(Math.abs(hero.jumpVelocity) > Math.abs(hero.velocityMax)) velocity = Math.abs(hero.velocityMax)
-    let gravity = 1000
-    let delta = (0 - velocity)/gravity
-    let height = (velocity * delta) +  ((gravity * (delta * delta))/2)
+
+    let gravityVelocityY = GAME.world.gravityVelocityY
+    if(!gravityVelocityY) gravityVelocityY = 1000
+
+    let delta = (0 - velocity)/gravityVelocityY
+    let height = (velocity * delta) +  ((gravityVelocityY * (delta * delta))/2)
     return height
   }
 
@@ -497,8 +500,11 @@ class Hero{
 
     let deltaVelocityYToUse = hero.jumpVelocity
     if(Math.abs(hero.jumpVelocity) > Math.abs(hero.velocityMax)) deltaVelocityYToUse = Math.abs(hero.velocityMax)
-    let gravity = 1000
-    let deltaInAir = (0 - deltaVelocityYToUse)/gravity
+
+    let gravityVelocityY = GAME.world.gravityVelocityY
+    if(!gravityVelocityY) gravityVelocityY = 1000
+
+    let deltaInAir = (0 - deltaVelocityYToUse)/gravityVelocityY
     let width = (velocityX * deltaInAir)
     return width * 2
   }

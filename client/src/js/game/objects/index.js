@@ -16,7 +16,7 @@ class Objects{
   }
 
   onGameLoaded() {
-    window.defaultObject.tags = JSON.parse(JSON.stringify(window.tags))
+    window.defaultObject.tags = window.tags
   }
 
   onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
@@ -356,7 +356,7 @@ class Objects{
   onEditObjects(editedObjects) {
     editedObjects.forEach((obj) => {
       // slow down that gravity boi!
-      if(GAME.objectsById[obj.id].tags.gravity === true && obj.tags.gravity === false) {
+      if(GAME.objectsById[obj.id].tags.gravityY === true && obj.tags.gravityY === false) {
         obj.velocityY = 0
       }
       let objectById = GAME.objectsById[obj.id]
@@ -415,6 +415,13 @@ class Objects{
       OBJECTS.addObject(object)
     })
     window.local.emit('onUpdatePFgrid')
+  }
+
+  findRelativeXY(object, relative) {
+    return {
+      relativeX: relative.x - object.x,
+      relativeY: relative.y - object.y
+    }
   }
 }
 

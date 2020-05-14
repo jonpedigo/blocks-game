@@ -408,7 +408,6 @@ function attachToParent(object) {
     object.y += parent._deltaY
   } else delete object.parentId
 
-  //// idk temporary parentId
   parent = GAME.objectsById[object._parentId] || GAME.heros[object._parentId]
   if(parent) {
     object.x += parent._deltaX

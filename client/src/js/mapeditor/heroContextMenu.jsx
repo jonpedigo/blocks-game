@@ -54,6 +54,10 @@ export default class HeroContextMenu extends React.Component{
         let questId = key.substr(deleteQuestPrefix.length)
         window.socket.emit('deleteQuest', objectHighlighted.id, questId)
       }
+
+      if(key[0] === '{') {
+        this._handleInputBehaviorMenuClick(key)
+      }
     }
 
     this._handleTagMenuClick = ({ key }) => {
@@ -61,6 +65,18 @@ export default class HeroContextMenu extends React.Component{
       const { objectHighlighted } = editor;
 
       window.socket.emit('editHero', {id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }})
+    }
+
+    this._handleInputBehaviorMenuClick = (key) => {
+      const { editor } = this.props;
+      const { objectHighlighted } = editor;
+
+      const data = JSON.parse(key)
+      if(data.new) {
+        modals.addCustomInputBehavior(data.behaviorProp)
+      } else if(data.behaviorName && data.behaviorProp) {
+        window.socket.emit('editHero', {id: objectHighlighted.id, [data.behaviorProp]: data.behaviorName })
+      }
     }
   }
 
@@ -92,6 +108,26 @@ export default class HeroContextMenu extends React.Component{
     })
   }
 
+  _renderInputBehaviorMenu(behaviorProp, behaviorList) {
+    const { editor } = this.props;
+    const { objectHighlighted } = editor;
+
+    const newBehavior = <MenuItem key={JSON.stringify({behaviorProp, new: true})}>Add new behavior</MenuItem>
+
+    return [...behaviorList.map((behaviorName) => {
+      const key = {
+        behaviorProp,
+        behaviorName
+      }
+
+      if(objectHighlighted[behaviorProp] && objectHighlighted[behaviorProp] === behaviorName) {
+        return <MenuItem key={JSON.stringify(key)}>{behaviorName}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
+      } else {
+        return <MenuItem key={JSON.stringify(key)}>{behaviorName}</MenuItem>
+      }
+    }), newBehavior]
+  }
+
   render() {
     const { editor } = this.props
     const { objectHighlighted } = editor
@@ -113,6 +149,17 @@ export default class HeroContextMenu extends React.Component{
         <Menu onClick={this._handleTagMenuClick}>
           {this._renderTagMenuItems(window.heroTags)}
         </Menu>
+      </SubMenu>
+      <SubMenu title="Input">
+        <SubMenu title="Arrow Keys">
+          {this._renderInputBehaviorMenu('arrowKeysBehavior', window.heroArrowKeyBehaviors)}
+        </SubMenu>
+        <SubMenu title="Z Key">
+          {this._renderInputBehaviorMenu('actionButtonBehavior', window.heroActionButtonBehaviors)}
+        </SubMenu>
+        <SubMenu title="Space Bar">
+          {this._renderInputBehaviorMenu('spaceBarBehavior', window.heroSpaceBarBehaviors)}
+        </SubMenu>
       </SubMenu>
       <SubMenu title="Advanced">
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>

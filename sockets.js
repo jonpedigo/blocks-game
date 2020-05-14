@@ -128,6 +128,22 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onEditGameState', gameState)
   })
 
+  socket.on('addGameTag', (tagName) => {
+    if(!currentGame.tags) {
+      currentGame.tags = {}
+    }
+    currentGame.tags[tagName] = false
+    io.emit('onAddGameTag', tagName)
+  })
+
+  socket.on('updateGameCustomInputBehavior', (customInputBehavior) => {
+    if(!currentGame.customInputBehavior) {
+      currentGame.customInputBehavior = {}
+    }
+    currentGame.customInputBehavior = customInputBehavior
+    io.emit('onUpdateGameCustomInputBehavior', customInputBehavior)
+  })
+
   socket.on('startGame', () => {
     io.emit('onStartGame')
   })

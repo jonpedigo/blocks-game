@@ -78,12 +78,15 @@ function updatePosition(object, delta) {
   //   }
   // }
 
+  let gravityVelocityY = GAME.world.gravityVelocityY
+  if(!gravityVelocityY) gravityVelocityY = 1000
+
   if(object._skipNextGravity) {
     object._skipNextGravity = false
-  } else if(object.tags && object.tags.gravity) {
-    let distance = (object.velocityY * delta) +  ((1000 * (delta * delta))/2)
+  } else if(object.tags && object.tags.gravityY) {
+    let distance = (object.velocityY * delta) +  ((gravityVelocityY * (delta * delta))/2)
     object.y += distance
-    object.velocityY += (1000 * delta)
+    object.velocityY += (gravityVelocityY * delta)
   }
 
   if(object.velocityY) {
@@ -94,7 +97,7 @@ function updatePosition(object, delta) {
       object.velocityY = object.velocityMax * -1
     }
 
-    if(object.tags && !object.tags.gravity) {
+    if(object.tags && !object.tags.gravityY) {
       object.y += object.velocityY * delta
     }
   }

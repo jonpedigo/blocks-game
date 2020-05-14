@@ -163,6 +163,18 @@ class contextMenuEl extends React.Component{
         this.openColorPicker()
       }
     }
+
+    this._handleGameTagMenuClick = ({key}) => {
+      const { editor } = this.props;
+      const { objectHighlighted } = editor
+      
+      if(key === 'create-game-tag') {
+        modals.addGameTag()
+        return
+      }
+
+      window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }}])
+    }
   }
 
   _toggleContextMenu(command) {
@@ -200,6 +212,20 @@ class contextMenuEl extends React.Component{
     } else {
       return null
     }
+  }
+
+  _renderGameTagsMenu() {
+    const { editor } = this.props;
+    const { objectHighlighted } = editor
+
+    const tagList = Object.keys(GAME.tags)
+    return tagList.map((tag) => {
+      if(objectHighlighted.tags && objectHighlighted.tags[tag]) {
+        return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
+      } else {
+        return <MenuItem key={tag}>{tag}</MenuItem>
+      }
+    })
   }
 
   render() {
@@ -271,6 +297,12 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
       {this._renderObjectQuestMenu()}
+      <SubMenu title="Group">
+        <Menu onClick={this._handleGameTagMenuClick}>
+          <MenuItem key="create-game-tag">Create new group</MenuItem>
+          {this._renderGameTagsMenu()}
+        </Menu>
+      </SubMenu>
       <SubMenu title="Tags">
         <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
       </SubMenu>
