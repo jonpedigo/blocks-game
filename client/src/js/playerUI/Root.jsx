@@ -1,6 +1,7 @@
 import React from 'react'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import modals from './modals.js';
 
 export default class Root extends React.Component{
   constructor(props) {
@@ -22,6 +23,38 @@ export default class Root extends React.Component{
       }, () => {
         this._showActiveQuestGoalToast()
       })
+    }
+
+    this.onStartQuest = function(hero, questId) {
+      const quest = hero.quests[questId]
+      if(hero.id === HERO.id && quest) {
+        if(quest.startMessage.length) {
+          modals.openModal(quest.id + ' Started!', quest.startMessage)
+        } else {
+          console.log('happening?')
+          console.trace('?')
+          toast('quest started: ' + quest.id , {
+             position:"top-right",
+             autoClose: 6000,
+             newestOnTop:true,
+          })
+        }
+      }
+    }
+
+    this.onCompleteQuest = function(hero, questId) {
+      const quest = hero.quests[questId]
+      if(hero.id === HERO.id && quest) {
+        if(quest.completionMessage.length) {
+          modals.openModal(quest.id + ' Complete!', quest.completionMessage)
+        } else {
+          toast('quest completed: ' + quest.id , {
+             position:"top-right",
+             autoClose: 6000,
+             newestOnTop:true,
+          })
+        }
+      }
     }
   }
 
@@ -74,10 +107,10 @@ export default class Root extends React.Component{
         <ToastContainer
           position="top-center"
           autoClose={false}
-          closeOnClick={false}
-          closeButton={false}
           hideProgressBar={true}
+          closeOnClick={false}
           newestOnTop={false}
+          closeButton={false}
           draggable={false}
           transition={Slide}
         />

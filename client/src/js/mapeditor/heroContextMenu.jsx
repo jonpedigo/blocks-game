@@ -109,12 +109,12 @@ export default class HeroContextMenu extends React.Component{
         {this._renderEditQuestList(objectHighlighted.quests)}
         {this._renderDeleteQuestList(objectHighlighted.quests)}
       </SubMenu>
-      <SubMenu title="Advanced">
-        <SubMenu title="Tags">
+      <SubMenu title="Tags">
         <Menu onClick={this._handleTagMenuClick}>
           {this._renderTagMenuItems(window.heroTags)}
         </Menu>
-        </SubMenu>
+      </SubMenu>
+      <SubMenu title="Advanced">
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>

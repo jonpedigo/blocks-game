@@ -33,6 +33,14 @@ class PlayerUI {
       PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
     }
   }
+
+  onStartQuest(hero, questId) {
+    PLAYERUI.ref.onStartQuest(hero, questId)
+  }
+
+  onCompleteQuest(hero, questId) {
+    PLAYERUI.ref.onCompleteQuest(hero, questId)
+  }
 }
 
 window.PLAYERUI = new PlayerUI()

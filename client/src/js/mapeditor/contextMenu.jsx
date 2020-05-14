@@ -271,10 +271,10 @@ class contextMenuEl extends React.Component{
         <MenuItem key="name-position-none">Dont show name on map</MenuItem>
       </SubMenu>
       {this._renderObjectQuestMenu()}
+      <SubMenu title="Tags">
+        <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
+      </SubMenu>
       <SubMenu title="Advanced">
-        <SubMenu title="Tags">
-          <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
-        </SubMenu>
         <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
         <MenuItem key="set-parent">Set parent</MenuItem>
         <MenuItem key="set-relative">Set relative</MenuItem>
