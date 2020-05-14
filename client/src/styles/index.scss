@@ -36,6 +36,10 @@ body {
   }
 }
 
+.swal-wide{
+  width:850px !important;
+}
+
 .swal2-title {
   font-family: Courier;
 }
@@ -132,6 +136,11 @@ button.button {
 
 button.selected{
   background: #c21e56;
+}
+
+#code-editor {
+  width: 100%;
+  height: 600px;
 }
 
 #editor {

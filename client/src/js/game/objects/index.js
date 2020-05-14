@@ -5,14 +5,24 @@ import gridUtil from '../../utils/grid.js'
 
 class Objects{
   constructor() {
+    window.defaultSubObject = {
+      relativeX: 0, relativeY: 0
+    }
+
     window.defaultObject = {
       velocityX: 0,
       velocityY: 0,
       velocityMax: 100,
       speed: 100,
       color: '#525252',
-      // cant put objects in it cuz of some pass by reference BS...
+      subObjects: {},
     }
+  }
+
+  onGridLoaded() {
+    window.defaultSubObject.width = GAME.grid.nodeSize
+    window.defaultSubObject.height = GAME.grid.nodeSize
+    window.defaultSubObject.tags = JSON.parse(JSON.stringify(window.subObjectTags))
   }
 
   onGameLoaded() {
@@ -101,9 +111,9 @@ class Objects{
 
     if(object.subObjects) {
       state.subObjects = {}
-      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
-        state.subObjects[key] = OBJECTS.getState(subObject)
-        window.removeFalsey(state.subObjects[key])
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        state.subObjects[subObjectName] = OBJECTS.getState(subObject)
+        window.removeFalsey(state.subObjects[subObjectName])
       })
     }
 
@@ -135,7 +145,6 @@ class Objects{
       spawnPointY: object.spawnPointY,
       heroUpdate: object.heroUpdate,
       heroDialogue: object.heroDialogue,
-      heroQuest: object.heroQuest,
       objectUpdate: object.objectUpdate,
       pathfindingLimit: object.pathfindingLimit,
       relativeX: object.relativeX,
@@ -147,6 +156,8 @@ class Objects{
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
 
+      subObjects: object.subObjects,
+
       // sub objects
       changeWithDirection: object.changeWithDirection,
       relativeWidth: object.relativeWidth,
@@ -154,20 +165,19 @@ class Objects{
 
       //spawn objects
       initialSpawnPool: object.initialSpawnPool,
-      spawnObject: object.spawnObject,
       spawnWaitTime: object.spawnWaitTime,
 
       //compendium
       compendiumId: object.compendiumId,
       fromCompendiumId: object.compendiumId,
 
-      custom: object.custom,
+      customProps: object.customProps,
     }
 
     if(object.subObjects) {
       properties.subObjects = {}
-      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
-        properties.subObjects[key] = OBJECTS.getProperties(subObject)
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        properties.subObjects[subObjectName] = OBJECTS.getProperties(subObject)
       })
     }
 
@@ -189,12 +199,12 @@ class Objects{
 
     if(object.subObjects) {
       mapState.subObjects = {}
-      OBJECTS.forAllSubObjects(object.subObjects, (subObject, key) => {
-        mapState.subObjects[key] = {}
-        mapState.subObjects[key].x = subObject.x
-        mapState.subObjects[key].y = subObject.y
-        mapState.subObjects[key].width = subObject.width
-        mapState.subObjects[key].height = subObject.height
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].x = subObject.x
+        mapState.subObjects[subObjectName].y = subObject.y
+        mapState.subObjects[subObjectName].width = subObject.width
+        mapState.subObjects[subObjectName].height = subObject.height
       })
     }
 
@@ -376,15 +386,43 @@ class Objects{
   addObject(object) {
     object.tags = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultTags)), object.tags)
     GAME.objectsById[object.id] = object
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        OBJECTS.addSubObject(object, subObject, subObjectName)
+      })
+    }
     PHYSICS.addObject(object)
+  }
+
+  addSubObject(object, subObject, subObjectName) {
+    subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
+    subObject.ownerId = object.id
+    subObject.id = subObjectName + '-' + window.uniqueID()
+    object.subObjects[subObjectName] = subObject
+    if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.addObject(subObject)
+  }
+
+  deleteSubObject(object, subObject, subObjectName) {
+    if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.removeObject(subObject)
+    delete object.subObjects[subObjectName]
   }
 
   removeObject(object) {
     GAME.objectsById[object.id].removed = true
+    OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+      subObject.removed = true
+    })
     window.local.emit('onUpdatePFgrid')
   }
 
   onDeleteObject(object) {
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        OBJECTS.deleteSubObject(object, subObject, subObjectName)
+      })
+    }
+
+    PHYSICS.removeObject(object)
     let spliceIndex
     GAME.objects.forEach((obj, i) => {
       if(obj.id == object.id) {
@@ -394,9 +432,18 @@ class Objects{
     if(spliceIndex >= 0) {
       GAME.objects.splice(spliceIndex, 1)
     }
-    PHYSICS.removeObject(object)
     delete GAME.objectsById[object.id]
     window.local.emit('onUpdatePFgrid')
+  }
+
+  onDeleteObjectSubObject(object, subObjectName) {
+    const subObject = object.subObjects[subObjectName]
+    OBJECTS.deleteSubObject(GAME.objectsById[object.id], subObject, subObjectName)
+  }
+
+  onAddObjectSubObject(object, subObject, subObjectName) {
+    if(!GAME.objectsById[object.id].subObjects) GAME.objectsById[object.id].subObjects = {}
+    OBJECTS.addSubObject(GAME.objectsById[object.id], subObject, subObjectName)
   }
 
   onNetworkUpdateObjects(objectsUpdated) {

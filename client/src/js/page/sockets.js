@@ -223,6 +223,19 @@ function init() {
     window.local.emit('onDeleteObject', object)
   })
 
+  window.socket.on('onDeleteObjectSubObject', (object, subObjectName) => {
+    window.local.emit('onDeleteObjectSubObject', object, subObjectName)
+  })
+  window.socket.on('onDeleteHeroSubObject', (hero, subObjectName) => {
+    window.local.emit('onDeleteHeroSubObject', hero, subObjectName)
+  })
+  window.socket.on('onAddObjectSubObject', (object, subObject, subObjectName) => {
+    window.local.emit('onAddObjectSubObject', object, subObject, subObjectName)
+  })
+  window.socket.on('onAddHeroSubObject', (hero, subObject, subObjectName) => {
+    window.local.emit('onAddHeroSubObject', hero, subObject, subObjectName)
+  })
+
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
     window.local.emit('onUpdateGrid', grid)

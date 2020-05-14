@@ -54,13 +54,11 @@ class MapEditor{
       handleMouseOut(event)
     })
 
-    contextMenu.init(MAPEDITOR, {
-      onStartResize,
-      onStartDrag,
-      onDelete,
-      onCopy,
-      onStartSetPathfindingLimit,
-    })
+    // MAPEDITOR.JSONEditorElement = document.createElement('div')
+    // MAPEDITOR.JSONEditorElement.id = 'mapEditorJSONEditor'
+    // document.body.appendChild(MAPEDITOR.JSONEditorElement)
+
+    contextMenu.init(MAPEDITOR)
 
     keyInput.init()
   }
@@ -75,9 +73,53 @@ class MapEditor{
     }
   }
 
+  onStartResize(object) {
+    MAPEDITOR.resizingObject = JSON.parse(JSON.stringify(object))
+  }
+
+  onStartSetPathfindingLimit(object) {
+    MAPEDITOR.isSettingPathfindingLimit = true
+    document.body.style.cursor = "crosshair";
+  }
+
+  onStartDrag(object) {
+    MAPEDITOR.draggingObject = JSON.parse(JSON.stringify(object))
+  }
+
+  onCopy(object) {
+    MAPEDITOR.copiedObject = JSON.parse(JSON.stringify(object))
+    delete MAPEDITOR.copiedObject.id
+  }
+
+  onDelete(object) {
+    if(object.tags.hero) {
+      window.socket.emit('deleteHero', object)
+      window.objectHighlighted = null
+    } else if(object.id) {
+      window.socket.emit('deleteObject', object)
+      window.objectHighlighted = null
+    } else {
+      console.error('trying to delete object without id')
+    }
+  }
+
   onRender() {
     let ctx = MAPEDITOR.ctx
     let camera = MAPEDITOR.camera
+
+    if(!GAME.gameState.started && GAME.heros[HERO.id]) {
+      const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
+      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+    }
+
+    if(!GAME.gameState.started) {
+      GAME.objects.forEach((object) => {
+        if(object.tags.invisible) {
+          drawTools.drawObject(ctx, {...object, tags: {invisible: false }, color: 'rgba(255,255,255,0.2)'}, camera)
+        }
+      })
+    }
 
     const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = MAPEDITOR
 
@@ -241,36 +283,6 @@ function updateGridHighlight(location) {
       MAPEDITOR.objectHighlighted = parent
       MAPEDITOR.objectHighlightedChildren = children
     }
-  }
-}
-
-function onStartResize(object) {
-  MAPEDITOR.resizingObject = JSON.parse(JSON.stringify(object))
-}
-
-function onStartSetPathfindingLimit(object) {
-  MAPEDITOR.isSettingPathfindingLimit = true
-  document.body.style.cursor = "crosshair";
-}
-
-function onStartDrag(object) {
-  MAPEDITOR.draggingObject = JSON.parse(JSON.stringify(object))
-}
-
-function onCopy(object) {
-  MAPEDITOR.copiedObject = JSON.parse(JSON.stringify(object))
-  delete MAPEDITOR.copiedObject.id
-}
-
-function onDelete(object) {
-  if(object.tags.hero) {
-    window.socket.emit('deleteHero', object)
-    window.objectHighlighted = null
-  } else if(object.id) {
-    window.socket.emit('deleteObject', object)
-    window.objectHighlighted = null
-  } else {
-    console.error('trying to delete object without id')
   }
 }
 

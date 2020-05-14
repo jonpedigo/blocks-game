@@ -1,3 +1,40 @@
+function addNewSubObject(object) {
+  PAGE.typingMode = true
+  openNameSubObjectModal((result) => {
+    if(result && result.value && result.value.length) {
+      // const editedCode = JSON.parse(result.value)
+      if(object.tags.hero) {
+        window.socket.emit('addHeroSubObject', object, {}, result.value)
+      } else {
+        window.socket.emit('addObjectSubObject', object, {}, result.value)
+      }
+    }
+    PAGE.typingMode = false
+  })
+}
+
+function editObjectCode(object, title, code) {
+  PAGE.typingMode = true
+  openEditCodeModal(title, code, (result) => {
+    if(result && result.value) {
+      const editedCode = JSON.parse(result.value)
+      window.socket.emit('editObjects', [{id: object.id, ...editedCode }])
+    }
+    PAGE.typingMode = false
+  })
+}
+
+function editHeroCode(hero, title, code) {
+  PAGE.typingMode = true
+  openEditCodeModal(title, code, (result) => {
+    if(result && result.value) {
+      const editedCode = JSON.parse(result.value)
+      window.socket.emit('editHero', {id: hero.id, ...editedCode })
+    }
+    PAGE.typingMode = false
+  })
+}
+
 function editProperty(object, property, currentValue) {
   PAGE.typingMode = true
   openEditPropertyModal(property, currentValue, (result) => {
@@ -15,7 +52,7 @@ function editProperty(object, property, currentValue) {
 function writeDialogue(object, dialogueIndex, cb) {
   PAGE.typingMode = true
   openWriteDialogueModal(object, object.heroDialogue[dialogueIndex], (result) => {
-    if(result && result.value[0] && result.value[0].length) {
+    if(result && result.value && result.value[0] && result.value[0].length) {
       if(!object.heroDialogue) object.heroDialogue = []
       object.tags.talker = true
       object.heroDialogue[dialogueIndex] = result.value[0]
@@ -109,6 +146,22 @@ function addGameTag() {
   })
 }
 
+function openNameSubObjectModal(cb) {
+  Swal.fire({
+    title: 'What is the name of the Sub Object?',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+  }).then(cb)
+}
+
 function addCustomInputBehavior(behaviorProp) {
   Swal.fire({
     title: `What is the name of the new ${behaviorProp}?`,
@@ -132,6 +185,31 @@ function addCustomInputBehavior(behaviorProp) {
       window.socket.emit('updateGameCustomInputBehavior', [...GAME.customInputBehavior, behaviorObject])
     }
   })
+}
+
+function openEditCodeModal(title, code, cb) {
+  Swal.fire({
+    title,
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    customClass: 'swal-wide',
+    html:"<div id='code-editor'></div>",
+    preConfirm: () => {
+      return codeEditor.getValue()
+    }
+  }).then(cb)
+
+  const codeEditor = ace.edit("code-editor");
+  codeEditor.setTheme("ace/theme/monokai");
+  codeEditor.session.setMode("ace/mode/json");
+  codeEditor.setValue(JSON.stringify(code, null, '\t'))
+  codeEditor.setOptions({
+    fontSize: "12pt",
+  });
 }
 
 function openNameObjectModal(object, cb) {
@@ -231,6 +309,9 @@ function openEditPropertyModal(property, currentValue, cb) {
 export default {
   addCustomInputBehavior,
   addGameTag,
+  addNewSubObject,
+  editObjectCode,
+  editHeroCode,
   editProperty,
   editQuest,
   writeDialogue,

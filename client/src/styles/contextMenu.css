@@ -7,6 +7,10 @@
   box-shadow: 0 0 4px #222;
 }
 
+.bold-menu-item {
+  font-weight: bold;
+}
+
 .rc-menu {
   outline: none;
   margin: 0;

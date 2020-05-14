@@ -1,5 +1,12 @@
+// Template sub objects ( from compendium )
+// PATHFINDING editor, compendium
+// LEVEL UP
+// PARTICLE GRAPHICS, BETTER GRAPHICS...
+// World templates
+// input modifiers....'disable up arrow', 'on ice', 'flat'
+// more space bar actions -> 'double jump', 'dash'
+
 // ( Force anticipated add )
-// local client events, complete list...
 
 ////////////////////////////////////////////////////
 
@@ -22,10 +29,8 @@
 // can hero update have a general id? which means effects the hero that collided with it or interacted with it?
 // Thats how it exists right now ^^ but can something STORE an id to effect. An object id or hero id. It stores the id so when triggered it find the given object! ohh my...
 
-// why no just call init onPageLoaded
 // implement lodash
 
-// game/group tags? ( non functional )
 // Hole punch tool ( CLICK TO SEPERATE OBJECT INTO TWO AND PUNCH HOLE IN IT) OR // If im adding an object and it collides with another object I want it to like morph around it
 
 // Pathfinding for something larger than one grid node
@@ -52,14 +57,9 @@
 // Maybe make a diagonal wall..
 // path goals AKA patrol
 // path 1, path 2, path 3 with conditions
-// 'take it easy' tag AKA pathfind less often
+// 'with patience' tag AKA pathfind less often
 // 'dont backtrack' tag where they remember where they went
 
-///////
-// EVENTS MISSING -- UNLOAD GAME ( for switching between games, and new games ) or I just need stronger defaults..
-// HOST EVENT FOR RESET OBJECT STATE AKA CLEANUP? Delete objects, reset values to their initial state values
-// BETTER RELATIONSHIP BETWEEN DEFAULT STATE AND initialize/load
-////
 // (Snap to grid Toggle)
 // — bring velocity to zero for hero
 // — speed up hero
@@ -73,7 +73,6 @@
 // I already have world MODIFIERS, those are the worlds I have just created. Make them world modifiers instead of loaded world?
 // Switch tools based on actions!
 // Make default clicking actions on the canvas universal regardless of tool.
-// right click -> edit object
 // set editor to recently added object
 // only if user has clicked a special action on the right tool bar will the map clicking behavior change
 

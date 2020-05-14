@@ -488,13 +488,6 @@ class Game{
     window.local.emit('onGameStarted')
   }
 
-  findRelativeXY(object, relative) {
-    return {
-      relativeX: relative.x - object.x,
-      relativeY: relative.y - object.y
-    }
-  }
-
   cleanForSave(game) {
     let gameCopy = JSON.parse(JSON.stringify({
       objects: game.objects.filter((object) => !object.spawned),

@@ -83,7 +83,7 @@ class Hero{
       window.defaultHero.subObjects = {
         heroInteractTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
-          changeWithDirection: false,
+          relativeToDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
           relativeHeight: GAME.grid.nodeSize * 2,
           relativeX: -GAME.grid.nodeSize,
@@ -97,7 +97,7 @@ class Hero{
         //   relativeY: -GAME.grid.nodeSize,
         //   relativeWidth: -GAME.grid.nodeSize * .75,
         //   relativeHeight: 0,
-        //   changeWithDirection: true,
+        //   relativeToDirection: true,
         //   tags: { monsterDestroyer: true, obstacle: false },
         // }
       }
@@ -315,9 +315,9 @@ class Hero{
 
     if(hero.subObjects) {
       state.subObjects = {}
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        state.subObjects[key] = OBJECTS.getState(subObject)
-        window.removeFalsey(state.subObjects[key])
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
+        state.subObjects[subObjectName] = OBJECTS.getState(subObject)
+        window.removeFalsey(state.subObjects[subObjectName])
       })
     }
 
@@ -351,9 +351,9 @@ class Hero{
 
     if(hero.subObjects) {
       properties.subObjects = {}
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        properties.subObjects[key] = OBJECTS.getProperties(subObject)
-        window.removeFalsey(properties.subObjects[key])
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
+        properties.subObjects[subObjectName] = OBJECTS.getProperties(subObject)
+        window.removeFalsey(properties.subObjects[subObjectName])
       })
     }
 
@@ -384,12 +384,12 @@ class Hero{
 
     if(hero.subObjects) {
       mapState.subObjects = {}
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        mapState.subObjects[key] = {}
-        mapState.subObjects[key].x = subObject.x
-        mapState.subObjects[key].y = subObject.y
-        mapState.subObjects[key].width = subObject.width
-        mapState.subObjects[key].height = subObject.height
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
+        mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].x = subObject.x
+        mapState.subObjects[subObjectName].y = subObject.y
+        mapState.subObjects[subObjectName].width = subObject.width
+        mapState.subObjects[subObjectName].height = subObject.height
       })
     }
 
@@ -397,6 +397,10 @@ class Hero{
   }
 
   onEditHero(updatedHero) {
+    if(updatedHero.arrowKeysBehavior) {
+      updatedHero.velocityX = 0
+      updatedHero.velocityY = 0
+    }
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }
 
@@ -414,15 +418,17 @@ class Hero{
   addHero(hero) {
     GAME.heros[hero.id] = hero
     if(hero.subObjects) {
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        subObject.id = key + window.uniqueID()
-        PHYSICS.addObject(subObject)
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
+        OBJECTS.addSubObject(hero, subObject, subObjectName)
       })
     }
     PHYSICS.addObject(hero)
   }
 
   removeHero(hero) {
+    OBJECTS.forAllSubObjects(object.subObjects, (subObjecty) => {
+      subObject.removed = true
+    })
     GAME.heros[hero.id].removed = true
   }
 
@@ -437,17 +443,27 @@ class Hero{
 
   deleteHero(hero) {
     if(hero.subObjects) {
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, key) => {
-        PHYSICS.removeObject(subObject)
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
+        OBJECTS.deleteSubObject(hero, subObject, subObjectName)
       })
     }
+
     PHYSICS.removeObject(GAME.heros[hero.id])
     delete GAME.heros[hero.id]
   }
 
+  onDeleteHeroSubObject(hero, subObjectName) {
+    const subObject = hero.subObjects[subObjectName]
+    OBJECTS.deleteSubObject(GAME.heros[hero.id], subObject, subObjectName)
+  }
+
+  onAddHeroSubObject(hero, subObject, subObjectName) {
+    OBJECTS.addSubObject(GAME.heros[hero.id], subObject, subObjectName)
+  }
+
   onNetworkUpdateHero(updatedHero) {
     if(!PAGE.gameLoaded) return
-    HERO.resetReachablePlatformArea(updatedHero)
+    if(PAGE.role.isPlayEditor) HERO.resetReachablePlatformArea(updatedHero)
     if(!PAGE.role.isHost) {
       window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
       if(PAGE.role.isPlayer && HERO.id === updatedHero.id) {

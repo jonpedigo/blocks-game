@@ -6,18 +6,18 @@ export default class TagMenu extends React.Component{
     super(props)
 
     this._handleTagMenuClick = ({ key }) => {
-      const { objectHighlighted } = this.props;
+      const { objectSelected } = this.props;
 
-      window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }}])
+      window.socket.emit('editObjects', [{id: objectSelected.id, tags: { [key]: !objectSelected.tags[key] }}])
     }
   }
 
   _renderTagMenuItems(tags) {
-    const { objectHighlighted } = this.props;
+    const { objectSelected } = this.props;
 
     const tagList = Object.keys(tags)
     return tagList.map((tag) => {
-      if(objectHighlighted.tags && objectHighlighted.tags[tag]) {
+      if(objectSelected.tags && objectSelected.tags[tag]) {
         return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
       } else {
         return <MenuItem key={tag}>{tag}</MenuItem>

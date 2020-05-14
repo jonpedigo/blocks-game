@@ -114,12 +114,6 @@ function update() {
       drawTools.drawBorder(ctx, {x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
     }
   }
-
-  if(!GAME.gameState.started && GAME.heros[HERO.id]) {
-    const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
-    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
-  }
 }
 
 export default {

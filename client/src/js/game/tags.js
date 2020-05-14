@@ -1,6 +1,5 @@
 function setDefault() {
   window.movementTags = {
-    // MOVEMENT
     pacer: false,
     spelunker: false,
     lemmings: false,
@@ -99,12 +98,20 @@ function setDefault() {
   }
 
   window.heroTags = {
-    gravityY: false,
     hero: true,
+    filled: true,
+    gravityY: false,
     default: false,
     monsterDestroyer: false,
     obstacle: false,
-    filled: true,
+  }
+
+  window.subObjectTags = {
+    subObject: true,
+    heroInteractTriggerArea: false,
+    objectInteractTriggerArea: false,
+    relativeToDirection: false,
+    potential: false,
   }
 
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))

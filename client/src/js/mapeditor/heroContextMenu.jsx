@@ -1,5 +1,6 @@
 import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
+import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import modals from './modals.js'
 
 const editQuestPrefix = 'edit-quest-'
@@ -10,19 +11,19 @@ export default class HeroContextMenu extends React.Component{
     super(props)
 
     this._handleHeroMenuClick = ({ key }) => {
-      const { editor, onStartResize, onStartDrag, onDelete, openColorPicker } = this.props;
-      const { objectHighlighted } = editor
+      const { objectSelected, openColorPicker } = this.props;
+      const { onStartResize, onStartDrag, onDelete } = MAPEDITOR
 
       if(key === 'resize') {
-        onStartResize(objectHighlighted)
+        onStartResize(objectSelected)
       }
 
       if(key === 'drag') {
-        onStartDrag(objectHighlighted)
+        onStartDrag(objectSelected)
       }
 
       if(key === 'delete') {
-        onDelete(objectHighlighted)
+        onDelete(objectSelected)
       }
 
       if(key === 'select-color') {
@@ -30,52 +31,58 @@ export default class HeroContextMenu extends React.Component{
       }
 
       if(key === 'respawn') {
-        window.socket.emit('respawnHero', objectHighlighted)
+        window.socket.emit('respawnHero', objectSelected)
       }
 
       if(key === 'toggle-filled') {
-        window.socket.emit('editHero', {id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }})
+        window.socket.emit('editHero', {id: objectSelected.id, tags: { filled: !objectSelected.tags.filled }})
       }
 
       if(key === 'copy-id') {
-        PAGE.copyToClipBoard(objectHighlighted.id)
+        PAGE.copyToClipBoard(objectSelected.id)
       }
 
       if(key === 'add-quest') {
-        modals.editQuest(objectHighlighted)
+        modals.editQuest(objectSelected)
       }
 
       if(key.indexOf(editQuestPrefix) === 0) {
         let questId = key.substr(editQuestPrefix.length)
-        modals.editQuest(objectHighlighted, objectHighlighted.quests[questId])
+        modals.editQuest(objectSelected, objectSelected.quests[questId])
       }
 
       if(key.indexOf(deleteQuestPrefix) === 0) {
         let questId = key.substr(deleteQuestPrefix.length)
-        window.socket.emit('deleteQuest', objectHighlighted.id, questId)
+        window.socket.emit('deleteQuest', objectSelected.id, questId)
       }
 
       if(key[0] === '{') {
         this._handleInputBehaviorMenuClick(key)
       }
+
+      if(key === 'edit-properties-json') {
+        modals.editHeroCode(objectSelected, 'Editing Hero Properties', HERO.getProperties(objectSelected));
+      }
+
+      if(key === 'edit-state-json') {
+        modals.editHeroCode(objectSelected, 'Editing Hero State', HERO.getState(objectSelected));
+      }
     }
 
     this._handleTagMenuClick = ({ key }) => {
-      const { editor } = this.props;
-      const { objectHighlighted } = editor;
+      const { objectSelected } = this.props;
 
-      window.socket.emit('editHero', {id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }})
+      window.socket.emit('editHero', {id: objectSelected.id, tags: { [key]: !objectSelected.tags[key] }})
     }
 
     this._handleInputBehaviorMenuClick = (key) => {
-      const { editor } = this.props;
-      const { objectHighlighted } = editor;
+      const { objectSelected } = this.props;
 
       const data = JSON.parse(key)
       if(data.new) {
         modals.addCustomInputBehavior(data.behaviorProp)
       } else if(data.behaviorName && data.behaviorProp) {
-        window.socket.emit('editHero', {id: objectHighlighted.id, [data.behaviorProp]: data.behaviorName })
+        window.socket.emit('editHero', {id: objectSelected.id, [data.behaviorProp]: data.behaviorName })
       }
     }
   }
@@ -95,12 +102,11 @@ export default class HeroContextMenu extends React.Component{
   }
 
   _renderTagMenuItems(tags) {
-    const { editor } = this.props;
-    const { objectHighlighted } = editor;
+    const { objectSelected } = this.props
 
     const tagList = Object.keys(tags)
     return tagList.map((tag) => {
-      if(objectHighlighted.tags && objectHighlighted.tags[tag]) {
+      if(objectSelected.tags && objectSelected.tags[tag]) {
         return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
       } else {
         return <MenuItem key={tag}>{tag}</MenuItem>
@@ -109,8 +115,7 @@ export default class HeroContextMenu extends React.Component{
   }
 
   _renderInputBehaviorMenu(behaviorProp, behaviorList) {
-    const { editor } = this.props;
-    const { objectHighlighted } = editor;
+    const { objectSelected } = this.props
 
     const newBehavior = <MenuItem key={JSON.stringify({behaviorProp, new: true})}>Add new behavior</MenuItem>
 
@@ -120,7 +125,7 @@ export default class HeroContextMenu extends React.Component{
         behaviorName
       }
 
-      if(objectHighlighted[behaviorProp] && objectHighlighted[behaviorProp] === behaviorName) {
+      if(objectSelected[behaviorProp] && objectSelected[behaviorProp] === behaviorName) {
         return <MenuItem key={JSON.stringify(key)}>{behaviorName}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
       } else {
         return <MenuItem key={JSON.stringify(key)}>{behaviorName}</MenuItem>
@@ -129,8 +134,7 @@ export default class HeroContextMenu extends React.Component{
   }
 
   render() {
-    const { editor } = this.props
-    const { objectHighlighted } = editor
+    const { objectSelected } = this.props
 
     return <Menu onClick={this._handleHeroMenuClick}>
       <MenuItem key='drag'>Drag</MenuItem>
@@ -138,12 +142,12 @@ export default class HeroContextMenu extends React.Component{
       <MenuItem key='respawn'>Respawn</MenuItem>
       <SubMenu title="Color">
         <MenuItem key="select-color">Color Picker</MenuItem>
-        <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
+        <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
       </SubMenu>
       <SubMenu title="Quests">
         <MenuItem key="add-quest">Add Quest</MenuItem>
-        {this._renderEditQuestList(objectHighlighted.quests)}
-        {this._renderDeleteQuestList(objectHighlighted.quests)}
+        {this._renderEditQuestList(objectSelected.quests)}
+        {this._renderDeleteQuestList(objectSelected.quests)}
       </SubMenu>
       <SubMenu title="Tags">
         <Menu onClick={this._handleTagMenuClick}>
@@ -165,6 +169,9 @@ export default class HeroContextMenu extends React.Component{
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
+      </SubMenu>
+      <SubMenu title="Sub Objects">
+        <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>
       <MenuItem key='delete'>Delete</MenuItem>
     </Menu>

@@ -19,7 +19,7 @@ export default function spawnZoneIntelligence(object) {
         width: object.width,
         height: object.height,
         id: 'spawned-' + window.uniqueID(),
-        ...object.spawnObject,
+        ...object.subObjects.spawner,
         spawned: true,
       }
       // let x = gridUtil.getRandomGridWithinXY(object.x, object.x+width)

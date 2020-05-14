@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import { SwatchesPicker } from 'react-color';
 import HeroContextMenu from './heroContextMenu.jsx';
-import TagMenu from './tagMenu.jsx';
+import ObjectContextMenu from './objectContextMenu.jsx';
 import modals from './modals.js'
 
 function init(editor, props) {
-  editor.contextMenu = document.getElementById('context-menu')
-  editor.contextMenuVisible = false
+  MAPEDITOR.contextMenu = document.getElementById('context-menu')
+  MAPEDITOR.contextMenuVisible = false
 
   // Mount React App
   ReactDOM.render(
-    React.createElement(contextMenuEl, { editor, ...props, ref: ref => editor.contextMenuRef = ref }),
-    editor.contextMenu
+    React.createElement(contextMenuEl, { editor, ...props, ref: ref => MAPEDITOR.contextMenuRef = ref }),
+    MAPEDITOR.contextMenu
   )
 }
 
@@ -21,7 +21,7 @@ class contextMenuEl extends React.Component{
   constructor(props) {
     super(props)
 
-    props.editor.canvas.addEventListener("contextmenu", e => {
+    MAPEDITOR.canvas.addEventListener("contextmenu", e => {
       e.preventDefault();
       const origin = {
         left: e.pageX,
@@ -32,115 +32,29 @@ class contextMenuEl extends React.Component{
     });
 
     window.addEventListener("click", e => {
-      if(e.target.innerText === 'Color Picker' || e.target.innerText === 'Set world background color') {
-
+      if(e.target.innerText === 'Color Picker' || e.target.innerText === 'Set world background color' || e.target.className.indexOf('dont-close-menu') >= 0) {
       } else {
         this._toggleContextMenu("hide");
       }
     });
 
     this.state = {
-      hide: true
+      hide: true,
+      objectSelected: {},
+      subObjectSelected: {},
+      subObjectSelectedName: null,
+      isColoring: false,
     }
 
     this.openColorPicker = () => {
       this.setState({ isColoring: true })
     }
 
-    this._handleObjectMenuClick = ({ key }) => {
-      const { editor, onStartResize, onStartDrag, onDelete, onCopy, onStartSetPathfindingLimit } = this.props;
-      const { objectHighlighted } = editor
-
-      if(key === "name-object") {
-        modals.nameObject(objectHighlighted)
-      }
-      if(key === 'name-position-center') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: 'center'}])
-      }
-      if(key === 'name-position-above') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: 'above'}])
-      }
-      if(key === 'name-position-none') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, namePosition: null}])
-      }
-
-      if(key === "add-dialogue") {
-        if(!objectHighlighted.heroDialogue) {
-          objectHighlighted.heroDialogue = []
-        }
-        objectHighlighted.heroDialogue.push('')
-        modals.writeDialogue(objectHighlighted, objectHighlighted.heroDialogue.length-1)
-      }
-
-      if(key.indexOf("remove-dialogue") === 0) {
-        let dialogueIndex = key[key.length-1]
-        objectHighlighted.heroDialogue.splice(dialogueIndex, 1)
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, heroUpdate: objectHighlighted.heroUpdate}])
-      }
-
-      if(key.indexOf("edit-dialogue") === 0) {
-        let dialogueIndex = key[key.length-1]
-        modals.writeDialogue(objectHighlighted, dialogueIndex)
-      }
-
-      if(key === 'resize') {
-        onStartResize(objectHighlighted)
-      }
-
-      if(key === 'drag') {
-        onStartDrag(objectHighlighted)
-      }
-
-      if(key === 'delete') {
-        onDelete(objectHighlighted)
-      }
-
-      if(key === 'remove') {
-        window.socket.emit('removeObject', objectHighlighted)
-      }
-
-      if(key === 'copy') {
-        onCopy(objectHighlighted)
-      }
-
-      if(key === 'select-color') {
-        this.openColorPicker()
-      }
-
-      if(key === 'toggle-filled') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { filled: !objectHighlighted.tags.filled }}])
-      }
-
-      if(key === 'toggle-visible') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { invisible: false, obstacle: true }}])
-      }
-      if(key === 'toggle-invisible') {
-        window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { invisible: true, obstacle: false }}])
-      }
-
-      if(key === 'set-pathfinding-limit') {
-        onStartSetPathfindingLimit(objectHighlighted)
-      }
-
-      if(key === 'copy-id') {
-        PAGE.copyToClipBoard(objectHighlighted.id)
-      }
-
-      if(key === 'enter-quest-giver-id') {
-        modals.editProperty(objectHighlighted, 'questGivingId', objectHighlighted.questGivingId || '')
-      }
-
-      if(key === 'enter-quest-completer-id') {
-        modals.editProperty(objectHighlighted, 'questCompleterId', objectHighlighted.questCompleterId || '')
-      }
-    }
-
     this._handleMapMenuClick = ({ key }) => {
-      const { editor } = this.props;
-      const { objectHighlighted } = editor
+      const { objectSelected } = this.state
 
       if(key === 'create-object') {
-        OBJECTS.create({...objectHighlighted, tags: {obstacle: true}})
+        OBJECTS.create({...objectSelected, tags: {obstacle: true}})
       }
 
       if(key === 'toggle-pause-game') {
@@ -156,7 +70,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'set-world-respawn-point') {
-        window.socket.emit('updateWorld', {worldSpawnPointX: objectHighlighted.x, worldSpawnPointY:  objectHighlighted.y})
+        window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
       }
 
       if(key === 'select-color') {
@@ -165,105 +79,88 @@ class contextMenuEl extends React.Component{
     }
 
     this._handleGameTagMenuClick = ({key}) => {
-      const { editor } = this.props;
-      const { objectHighlighted } = editor
-      
+      const { objectSelected } = this.state
+
       if(key === 'create-game-tag') {
         modals.addGameTag()
         return
       }
 
-      window.socket.emit('editObjects', [{id: objectHighlighted.id, tags: { [key]: !objectHighlighted.tags[key] }}])
+      window.socket.emit('editObjects', [{id: objectSelected.id, tags: { [key]: !objectSelected.tags[key] }}])
+    }
+
+    this._selectSubObject = (subObject, name) => {
+      MAPEDITOR.objectHighlighted = subObject
+      this.setState({
+        subObjectSelected: subObject,
+        subObjectSelectedName: name,
+      })
     }
   }
 
   _toggleContextMenu(command) {
     if(command === "show") {
-      this.setState({ hide: false })
+      this.setState({ hide: false, objectSelected: MAPEDITOR.objectHighlighted })
     } else {
-      this.setState({ hide: true })
+      this.setState({ hide: true, subObjectSelected: {}, subObjectSelectedName: null })
     }
   }
 
   _setContextMenuPosition({ top, left }) {
-    const { editor } = this.props
-    editor.contextMenu.style.left = `${left}px`
-    editor.contextMenu.style.top = `${top}px`
+    MAPEDITOR.contextMenu.style.left = `${left}px`
+    MAPEDITOR.contextMenu.style.top = `${top}px`
     this._toggleContextMenu('show')
   }
 
-  _renderObjectQuestMenu() {
-    const { editor } = this.props
-    const { objectHighlighted } = editor
-    const { questGiver, questCompleter } = objectHighlighted.tags
-
-    const list = []
-
-    if(questGiver) {
-      list.push(<MenuItem key="enter-quest-giver-id">Enter giving quest name</MenuItem>)
-    }
-
-    if(questCompleter) {
-      list.push(<MenuItem key="enter-quest-completer-id">Enter completing quest name</MenuItem>)
-    }
-
-    if(list.length) {
-      return <SubMenu title="Quests">{list}</SubMenu>
-    } else {
-      return null
-    }
-  }
-
-  _renderGameTagsMenu() {
-    const { editor } = this.props;
-    const { objectHighlighted } = editor
-
-    const tagList = Object.keys(GAME.tags)
-    return tagList.map((tag) => {
-      if(objectHighlighted.tags && objectHighlighted.tags[tag]) {
-        return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
-      } else {
-        return <MenuItem key={tag}>{tag}</MenuItem>
-      }
-    })
-  }
-
   render() {
-    const { hide, isColoring } = this.state;
-    const { editor } = this.props;
-    const { objectHighlighted } = editor
+    const { hide, isColoring, objectSelected, subObjectSelected, subObjectSelectedName } = this.state;
 
     if(hide) {
-      editor.contextMenuVisible = false
+      MAPEDITOR.contextMenuVisible = false
       return null
     }
 
+    // turn this into a modal?
     if(isColoring) {
       return <SwatchesPicker
-        color={ objectHighlighted.color }
+        color={ objectSelected.color }
         onChange={ (color) => {
           this.setState({
             isColoring: false,
           })
-          objectHighlighted.color = color.hex
-          if(!objectHighlighted.id) {
+          objectSelected.color = color.hex
+          if(!objectSelected.id) {
             window.socket.emit('updateWorld', {backgroundColor: color.hex})
-          } else if(objectHighlighted.tags.hero) {
-            window.socket.emit('editHero', {id: objectHighlighted.id, color: color.hex})
+          } else if(objectSelected.tags.hero) {
+            window.socket.emit('editHero', {id: objectSelected.id, color: color.hex})
           } else {
-            window.socket.emit('editObjects', [{id: objectHighlighted.id, color: color.hex}])
+            window.socket.emit('editObjects', [{id: objectSelected.id, color: color.hex}])
           }
         }}
       />
     }
 
-    editor.contextMenuVisible = true
+    MAPEDITOR.contextMenuVisible = true
 
-    if(objectHighlighted.tags && objectHighlighted.tags.hero) {
-      return <HeroContextMenu editor={editor} onStartResize={this.props.onStartResize} onStartDrag={this.props.onStartDrag} onDelete={this.props.onDelete} openColorPicker={this.openColorPicker}/>
+    if(subObjectSelected && subObjectSelectedName) {
+      return <ObjectContextMenu
+        objectName={subObjectSelectedName}
+        objectSelected={subObjectSelected}
+        openColorPicker={this.openColorPicker}
+        selectSubObject={this._selectSubObject}
+        subObject
+        />
     }
 
-    if(!objectHighlighted.id) {
+    if(objectSelected.tags && objectSelected.tags.hero) {
+      return <HeroContextMenu
+        objectSelected={objectSelected}
+        openColorPicker={this.openColorPicker}
+        selectSubObject={this._selectSubObject}
+      />
+    }
+
+    if(!objectSelected.id) {
       return <Menu onClick={this._handleMapMenuClick}>
         <MenuItem key='create-object'>Create object</MenuItem>
         <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
@@ -273,51 +170,12 @@ class contextMenuEl extends React.Component{
       </Menu>
     }
 
-    return <Menu onClick={this._handleObjectMenuClick}>
-      <MenuItem key="drag">Drag</MenuItem>
-      <MenuItem key="resize">Resize</MenuItem>
-      <MenuItem key="copy">Copy</MenuItem>
-      <SubMenu title="Dialogue">
-        <MenuItem key="add-dialogue">Add Dialogue</MenuItem>
-        {objectHighlighted.heroDialogue && objectHighlighted.heroDialogue.map((dialogue, i) => {
-          return <MenuItem key={"edit-dialogue-"+i}>{'Edit Dialogue ' + (i+1)}</MenuItem>
-        })}
-        {objectHighlighted.heroDialogue && objectHighlighted.heroDialogue.map((dialogue, i) => {
-          return <MenuItem key={"remove-dialogue-"+i}>{'Remove Dialogue ' + (i+1)}</MenuItem>
-        })}
-      </SubMenu>
-      <SubMenu title="Color">
-        <MenuItem key="select-color">Color Picker</MenuItem>
-        <MenuItem key="toggle-filled">{ objectHighlighted.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
-      </SubMenu>
-      <SubMenu title="Name">
-        <MenuItem key="name-object">Give Name</MenuItem>
-        <MenuItem key="name-position-center">Position Name in Center</MenuItem>
-        <MenuItem key="name-position-above">Position Name above</MenuItem>
-        <MenuItem key="name-position-none">Dont show name on map</MenuItem>
-      </SubMenu>
-      {this._renderObjectQuestMenu()}
-      <SubMenu title="Group">
-        <Menu onClick={this._handleGameTagMenuClick}>
-          <MenuItem key="create-game-tag">Create new group</MenuItem>
-          {this._renderGameTagsMenu()}
-        </Menu>
-      </SubMenu>
-      <SubMenu title="Tags">
-        <TagMenu objectHighlighted={objectHighlighted}></TagMenu>
-      </SubMenu>
-      <SubMenu title="Advanced">
-        <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
-        <MenuItem key="set-parent">Set parent</MenuItem>
-        <MenuItem key="set-relative">Set relative</MenuItem>
-        {objectHighlighted.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
-        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-        <MenuItem key="add-compendium">Add To Compendium</MenuItem>
-        <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
-        <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
-      </SubMenu>
-      { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
-    </Menu>
+    return <ObjectContextMenu
+      objectName={objectSelected.name}
+      objectSelected={objectSelected}
+      openColorPicker={this.openColorPicker}
+      selectSubObject={this._selectSubObject}
+    />
   }
 }
 
