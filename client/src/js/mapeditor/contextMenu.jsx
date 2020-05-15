@@ -43,11 +43,11 @@ class contextMenuEl extends React.Component{
       objectSelected: {},
       subObjectSelected: {},
       subObjectSelectedName: null,
-      isColoring: false,
+      coloringObject: null,
     }
 
-    this.openColorPicker = () => {
-      this.setState({ isColoring: true })
+    this.openColorPicker = (coloringObject) => {
+      this.setState({ coloringObject  })
     }
 
     this._handleMapMenuClick = ({ key }) => {
@@ -113,28 +113,27 @@ class contextMenuEl extends React.Component{
   }
 
   render() {
-    const { hide, isColoring, objectSelected, subObjectSelected, subObjectSelectedName } = this.state;
+    const { hide, coloringObject, objectSelected, subObjectSelected, subObjectSelectedName } = this.state;
+    const { networkEditObject } = MAPEDITOR
 
     if(hide) {
       MAPEDITOR.contextMenuVisible = false
       return null
     }
 
-    // turn this into a modal?
-    if(isColoring) {
+    if(coloringObject) {
       return <SwatchesPicker
-        color={ objectSelected.color }
+        color={ coloringObject.color }
         onChange={ (color) => {
           this.setState({
-            isColoring: false,
+            coloringObject: null,
           })
-          objectSelected.color = color.hex
-          if(!objectSelected.id) {
+          coloringObject.color = color.hex
+          if(!coloringObject.id && !coloringObject.tags.subObject) {
             window.socket.emit('updateWorld', {backgroundColor: color.hex})
-          } else if(objectSelected.tags.hero) {
-            window.socket.emit('editHero', {id: objectSelected.id, color: color.hex})
           } else {
-            window.socket.emit('editObjects', [{id: objectSelected.id, color: color.hex}])
+            console.log(coloringObject)
+            networkEditObject(coloringObject, {color: color.hex})
           }
         }}
       />
@@ -144,7 +143,6 @@ class contextMenuEl extends React.Component{
 
     if(subObjectSelected && subObjectSelectedName) {
       return <ObjectContextMenu
-        objectName={subObjectSelectedName}
         objectSelected={subObjectSelected}
         openColorPicker={this.openColorPicker}
         selectSubObject={this._selectSubObject}
@@ -171,7 +169,6 @@ class contextMenuEl extends React.Component{
     }
 
     return <ObjectContextMenu
-      objectName={objectSelected.name}
       objectSelected={objectSelected}
       openColorPicker={this.openColorPicker}
       selectSubObject={this._selectSubObject}

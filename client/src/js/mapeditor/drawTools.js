@@ -27,7 +27,7 @@ function drawFilledObject(ctx, object, camera) {
   ctx.fillRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
 }
 
-function drawLine(ctx, vertice, camera) {
+function drawVertice(ctx, vertice, camera) {
   if(vertice.glow) {
     ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   }
@@ -45,10 +45,10 @@ function drawLine(ctx, vertice, camera) {
 
   if(vertice.glow) {
     ctx.filter = "none";
-    drawLine(ctx, {...vertice, glow: false}, camera)
+    drawVertice(ctx, {...vertice, glow: false}, camera)
   }
   if(vertice.color) {
-    ctx.strokeStyle = "#999";
+    ctx.strokeStyle = window.defaultObject.color;
   }
   if(vertice.thickness) {
     ctx.lineWidth = 1
@@ -57,7 +57,7 @@ function drawLine(ctx, vertice, camera) {
 
 function drawBorder(ctx, object, camera, options = { thickness: 1 }) {
   getObjectVertices(ctx, object, camera, options).forEach((vertice) => {
-    drawLine(ctx, vertice, camera)
+    drawVertice(ctx, vertice, camera)
   })
 }
 
@@ -73,12 +73,35 @@ function drawObject(ctx, object, camera, options = {showInvisible: false}) {
   } else {
     drawBorder(ctx, object, camera);
   }
+  ctx.fillStyle = window.defaultObject.color
+}
+
+function drawLine(ctx, pointA, pointB, options, camera) {
+  if(options.color) {
+    ctx.strokeStyle = options.color;
+  }
+  if(options.thickness) {
+    ctx.lineWidth = options.thickness
+  }
+
+  ctx.beginPath();
+  ctx.moveTo( (pointA.x * camera.multiplier - camera.x), (pointA.y * camera.multiplier - camera.y));
+  ctx.lineTo( (pointB.x * camera.multiplier - camera.x), (pointB.y * camera.multiplier - camera.y));
+  ctx.stroke();
+
+  if(options.color) {
+    ctx.strokeStyle = window.defaultObject.color;
+  }
+  if(options.thickness) {
+    ctx.lineWidth = 1
+  }
 }
 
 export default {
   getObjectVertices,
   drawObject,
   drawLine,
+  drawVertice,
   drawBorder,
   drawFilledObject,
 }

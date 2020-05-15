@@ -19,15 +19,7 @@ export default class SelectSubObjectMenu extends React.Component{
 
       if(key.indexOf(deleteSubObjectPrefix) === 0) {
         const subObjectName = key.substr(deleteSubObjectPrefix.length)
-        if(objectSelected.tags.hero) {
-          window.socket.emit('deleteHeroSubObject', objectSelected, subObjectName)
-        } else {
-          window.socket.emit('deleteObjectSubObject', objectSelected, subObjectName)
-        }
-      }
-
-      if(key === 'add-new-subobject') {
-        modals.addNewSubObject(objectSelected)
+        window.socket.emit('deleteSubObject', objectSelected, subObjectName)
       }
     }
   }
@@ -54,9 +46,7 @@ export default class SelectSubObjectMenu extends React.Component{
     const { objectSelected } = this.props;
 
     return <Menu onClick={this._handleSelectSubObjectMenuClick}>
-      <MenuItem key={'add-new-subobject'}>Add new sub object</MenuItem>
       {this._renderSelectSubObjectMenuItems(objectSelected.subObjects)}
-      {this._renderRemoveSubObjectMenuItems(objectSelected.subObjects)}
     </Menu>
   }
 }

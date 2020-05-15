@@ -394,17 +394,45 @@ class Objects{
     PHYSICS.addObject(object)
   }
 
-  addSubObject(object, subObject, subObjectName) {
+  addSubObject(owner, subObject, subObjectName) {
     subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
-    subObject.ownerId = object.id
+    subObject.ownerId = owner.id
+    subObject.subObjectName = subObjectName
     subObject.id = subObjectName + '-' + window.uniqueID()
-    object.subObjects[subObjectName] = subObject
+    owner.subObjects[subObjectName] = subObject
     if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.addObject(subObject)
   }
 
-  deleteSubObject(object, subObject, subObjectName) {
+  deleteSubObject(owner, subObject, subObjectName) {
     if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.removeObject(subObject)
-    delete object.subObjects[subObjectName]
+    delete owner.subObjects[subObjectName]
+  }
+
+  getOwner(subObject) {
+    let owner = OBJECTS.getObjectOrHeroById(subObject.ownerId)
+    if(!owner) {
+      owner = OBJECTS.getRelative(subObject.relativeId)
+    }
+    if(!owner) {
+      owner = OBJECTS.getParent(subObject.parentId)
+    }
+    return owner
+  }
+
+  getParent(subObject) {
+    return OBJECTS.getObjectOrHeroById(subObject.parentId)
+  }
+
+  getRelative(subObject) {
+    return OBJECTS.getObjectOrHeroById(subObject.relativeId)
+  }
+
+  getObjectOrHeroById(id) {
+    let object = GAME.objectsById[id]
+    if(object) return object
+
+    let hero = GAME.heros[id]
+    if(hero) return hero
   }
 
   removeObject(object) {
@@ -436,14 +464,38 @@ class Objects{
     window.local.emit('onUpdatePFgrid')
   }
 
-  onDeleteObjectSubObject(object, subObjectName) {
-    const subObject = object.subObjects[subObjectName]
-    OBJECTS.deleteSubObject(GAME.objectsById[object.id], subObject, subObjectName)
+  onDeleteSubObject(owner, subObjectName) {
+    const subObject = owner.subObjects[subObjectName]
+    if(owner.tags.hero) {
+      OBJECTS.deleteSubObject(GAME.heros[owner.id], subObject, subObjectName)
+    } else {
+      OBJECTS.deleteSubObject(GAME.objectsById[owner.id], subObject, subObjectName)
+    }
   }
 
-  onAddObjectSubObject(object, subObject, subObjectName) {
-    if(!GAME.objectsById[object.id].subObjects) GAME.objectsById[object.id].subObjects = {}
-    OBJECTS.addSubObject(GAME.objectsById[object.id], subObject, subObjectName)
+  onAddSubObject(owner, subObject, subObjectName) {
+    if(owner.tags.hero) {
+      if(!GAME.heros[owner.id].subObjects) GAME.heros[owner.id].subObjects = {}
+      OBJECTS.addSubObject(GAME.heros[owner.id], subObject, subObjectName)
+    } else {
+      if(!GAME.objectsById[owner.id].subObjects) GAME.objectsById[owner.id].subObjects = {}
+      OBJECTS.addSubObject(GAME.objectsById[owner.id], subObject, subObjectName)
+    }
+  }
+
+  onRemoveSubObject(ownerId, subObjectName) {
+    OBJECTS.removeSubObject(ownerId, subObjectName)
+  }
+
+  removeSubObject(ownerId, subObjectName) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    owner.subObjects[subObjectName].removed = true
+    console.log(owner.subObjects[subObjectName])
+  }
+
+  onEditSubObject(ownerId, subObjectName, update) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    window.mergeDeep(owner.subObjects[subObjectName], update)
   }
 
   onNetworkUpdateObjects(objectsUpdated) {
@@ -464,10 +516,10 @@ class Objects{
     window.local.emit('onUpdatePFgrid')
   }
 
-  findRelativeXY(object, relative) {
+  getRelativeXY(object, relative) {
     return {
-      relativeX: relative.x - object.x,
-      relativeY: relative.y - object.y
+      relativeX: object.x - relative.x,
+      relativeY: object.y - relative.y
     }
   }
 }

@@ -7,8 +7,9 @@ export default class TagMenu extends React.Component{
 
     this._handleTagMenuClick = ({ key }) => {
       const { objectSelected } = this.props;
+      const { networkEditObject } = MAPEDITOR
 
-      window.socket.emit('editObjects', [{id: objectSelected.id, tags: { [key]: !objectSelected.tags[key] }}])
+      networkEditObject(objectSelected, { tags: { [key]: !objectSelected.tags[key] }})
     }
   }
 
@@ -26,6 +27,8 @@ export default class TagMenu extends React.Component{
   }
 
   render() {
+    const { subObject } = this.props
+
     return <Menu onClick={this._handleTagMenuClick}>
       <SubMenu title="Physics">
         {this._renderTagMenuItems(window.physicsTags)}
@@ -57,6 +60,9 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Graphical">
         {this._renderTagMenuItems(window.graphicalTags)}
       </SubMenu>
+      {subObject && <SubMenu title="Sub Object">
+        {this._renderTagMenuItems(window.subObjectTags)}
+      </SubMenu>}
     </Menu>
   }
 }

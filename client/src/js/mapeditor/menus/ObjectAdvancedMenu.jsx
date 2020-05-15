@@ -8,7 +8,7 @@ export default class ObjectAdvancedMenu extends React.Component{
 
     this._handleObjectAdvancedMenuClick = ({ key }) => {
       const { objectSelected } = this.props
-      const { onStartSetPathfindingLimit } = MAPEDITOR
+      const { onStartSetPathfindingLimit, networkEditObject } = MAPEDITOR
 
       if(key === 'set-pathfinding-limit') {
         onStartSetPathfindingLimit(objectSelected)
@@ -25,6 +25,10 @@ export default class ObjectAdvancedMenu extends React.Component{
       if(key === 'edit-state-json') {
         modals.editObjectCode(objectSelected, 'Editing Object State', OBJECTS.getState(objectSelected));
       }
+
+      if(key === 'add-new-subobject') {
+        modals.addNewSubObject(objectSelected)
+      }
     }
   }
 
@@ -37,6 +41,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       <MenuItem key="set-relative">Set relative</MenuItem>
       <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
       <MenuItem key="add-compendium">Add To Compendium</MenuItem>
+      <MenuItem key={'add-new-subobject'}>Add new sub object</MenuItem>
       <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
       <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
     </Menu>

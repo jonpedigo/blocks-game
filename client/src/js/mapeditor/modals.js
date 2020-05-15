@@ -1,13 +1,9 @@
-function addNewSubObject(object) {
+function addNewSubObject(owner) {
   PAGE.typingMode = true
   openNameSubObjectModal((result) => {
     if(result && result.value && result.value.length) {
       // const editedCode = JSON.parse(result.value)
-      if(object.tags.hero) {
-        window.socket.emit('addHeroSubObject', object, {}, result.value)
-      } else {
-        window.socket.emit('addObjectSubObject', object, {}, result.value)
-      }
+      window.socket.emit('addSubObject', owner, {}, result.value)
     }
     PAGE.typingMode = false
   })
@@ -18,18 +14,7 @@ function editObjectCode(object, title, code) {
   openEditCodeModal(title, code, (result) => {
     if(result && result.value) {
       const editedCode = JSON.parse(result.value)
-      window.socket.emit('editObjects', [{id: object.id, ...editedCode }])
-    }
-    PAGE.typingMode = false
-  })
-}
-
-function editHeroCode(hero, title, code) {
-  PAGE.typingMode = true
-  openEditCodeModal(title, code, (result) => {
-    if(result && result.value) {
-      const editedCode = JSON.parse(result.value)
-      window.socket.emit('editHero', {id: hero.id, ...editedCode })
+      MAPEDITOR.networkEditObject(object, editedCode)
     }
     PAGE.typingMode = false
   })
@@ -39,11 +24,7 @@ function editProperty(object, property, currentValue) {
   PAGE.typingMode = true
   openEditPropertyModal(property, currentValue, (result) => {
     if(result && result.value && result.value.length) {
-      if(object.tags.hero) {
-        window.socket.emit('editHero', {id: object.id, [property]: result.value})
-      } else {
-        window.socket.emit('editObjects', [{id: object.id, [property]: result.value}])
-      }
+      MAPEDITOR.networkEditObject(object, { [property]: result.value})
     }
     PAGE.typingMode = false
   })
@@ -64,7 +45,7 @@ function writeDialogue(object, dialogueIndex, cb) {
         object.tags.talkOnHeroCollide = false
       }
       if(cb) cb(object)
-      else window.socket.emit('editObjects', [{id: object.id, heroDialogue: object.heroDialogue, tags: object.tags}])
+      else MAPEDITOR.networkEditObject(object, { heroDialogue: object.heroDialogue, tags: object.tags})
     }
     PAGE.typingMode = false
   })
@@ -79,7 +60,7 @@ function nameObject(object, cb) {
       if(result.value[1]) object.namePosition = "center"
       if(result.value[2]) object.namePosition = "above"
       if(cb) cb(object)
-      else window.socket.emit('editObjects', [{id: object.id, name: object.name, namePosition: object.namePosition}])
+      else MAPEDITOR.networkEditObject(object, { name: object.name, namePosition: object.namePosition})
     }
     PAGE.typingMode = false
   })
@@ -311,7 +292,6 @@ export default {
   addGameTag,
   addNewSubObject,
   editObjectCode,
-  editHeroCode,
   editProperty,
   editQuest,
   writeDialogue,

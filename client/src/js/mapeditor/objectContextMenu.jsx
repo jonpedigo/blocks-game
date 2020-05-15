@@ -8,6 +8,7 @@ import QuestMenu from './menus/QuestMenu.jsx';
 import NameMenu from './menus/NameMenu.jsx';
 import ObjectAdvancedMenu from './menus/ObjectAdvancedMenu.jsx';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
+import RelativeMenu from './menus/RelativeMenu.jsx';
 import modals from './modals.js'
 
 export default class ObjectContextMenu extends React.Component{
@@ -15,11 +16,16 @@ export default class ObjectContextMenu extends React.Component{
     super(props)
 
     this._handleObjectMenuClick = ({ key }) => {
-      const { onStartResize, onStartDrag, onDelete, onCopy } = MAPEDITOR
-      const { selectSubObject, objectSelected } = this.props;
+      const { startResize, onStartDrag, deleteObject, onCopy } = MAPEDITOR
+      const { selectSubObject, objectSelected, subObject } = this.props;
+      const { removeObject } = MAPEDITOR
 
       if(key === 'resize') {
-        onStartResize(objectSelected)
+        if(subObject) {
+          startResize(objectSelected, { snapToGrid: false, allowRectangle: true })
+        } else {
+          startResize(objectSelected)
+        }
       }
 
       if(key === 'drag') {
@@ -27,11 +33,11 @@ export default class ObjectContextMenu extends React.Component{
       }
 
       if(key === 'delete') {
-        onDelete(objectSelected)
+        deleteObject(objectSelected)
       }
 
       if(key === 'remove') {
-        window.socket.emit('removeObject', objectSelected)
+        removeObject(objectSelected)
       }
 
       if(key === 'copy') {
@@ -41,46 +47,50 @@ export default class ObjectContextMenu extends React.Component{
   }
 
   _renderObjectQuestMenu() {
-    const { objectSelected } = this.props
+    const { objectSelected, subObject } = this.props
     const { questGiver, questCompleter } = objectSelected.tags
 
     if(questGiver || questCompleter) {
       return <SubMenu title="Quest">
-      <QuestMenu objectSelected={objectSelected} subObject/>
+      <QuestMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
     }
   }
 
   render() {
-    const { objectSelected, objectName, subObject } = this.props
+    const { objectSelected, subObject } = this.props
 
     return <Menu onClick={this._handleObjectMenuClick}>
-      {objectName && <MenuItem className="bold-menu-item">{objectName}</MenuItem>}
+      {objectSelected.name && <MenuItem className="bold-menu-item">{objectSelected.name}</MenuItem>}
+      {objectSelected.subObjectName && <MenuItem className="bold-menu-item">{objectSelected.subObjectName}</MenuItem>}
       {!subObject && <MenuItem key="drag">Drag</MenuItem>}
       <MenuItem key="resize">Resize</MenuItem>
       <MenuItem key="copy">Copy</MenuItem>
+      {(objectSelected.ownerId || objectSelected.relativeId) && <SubMenu title="Relative">
+        <RelativeMenu objectSelected={objectSelected} subObject={subObject}/>
+      </SubMenu>}
       <SubMenu title="Dialogue">
-        <DialogueMenu objectSelected={objectSelected} subObject/>
+        <DialogueMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
       <SubMenu title="Color">
-        <ColorMenu objectSelected={objectSelected} openColorPicker={this.props.openColorPicker} subObject></ColorMenu>
+        <ColorMenu objectSelected={objectSelected} openColorPicker={this.props.openColorPicker} subObject={subObject}></ColorMenu>
       </SubMenu>
       <SubMenu title="Name">
-        <NameMenu objectSelected={objectSelected} subObject/>
+        <NameMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
       {this._renderObjectQuestMenu()}
       <SubMenu title="Group">
-        <GameTagMenu objectSelected={objectSelected} subObject/>
+        <GameTagMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
       <SubMenu title="Tags">
-        <TagMenu objectSelected={objectSelected} subObject></TagMenu>
+        <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
       </SubMenu>
       <SubMenu title="Advanced">
-        <ObjectAdvancedMenu objectSelected={objectSelected} subObject/>
+        <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
-      <SubMenu title="Sub Objects">
-        <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject} subObject/>
-      </SubMenu>
+      {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
+        <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
+      </SubMenu>}
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
     </Menu>
   }

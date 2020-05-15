@@ -189,17 +189,17 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onDeleteObject', object)
   })
 
-  socket.on('deleteObjectSubObject', (object, subObjectName) => {
-    io.emit('onDeleteObjectSubObject', object, subObjectName)
+  socket.on('deleteSubObject', (owner, subObjectName) => {
+    io.emit('onDeleteSubObject', owner, subObjectName)
   })
-  socket.on('deleteHeroSubObject', (hero, subObjectName) => {
-    io.emit('onDeleteHeroSubObject', hero, subObjectName)
+  socket.on('addSubObject', (owner, subObject, subObjectName) => {
+    io.emit('onAddSubObject', owner, subObject, subObjectName)
   })
-  socket.on('addObjectSubObject', (object, subObject, subObjectName) => {
-    io.emit('onAddObjectSubObject', object, subObject, subObjectName)
+  socket.on('removeSubObject', (ownerId, subObjectName) => {
+    io.emit('onRemoveSubObject', ownerId, subObjectName)
   })
-  socket.on('addHeroSubObject', (hero, subObject, subObjectName) => {
-    io.emit('onAddHeroSubObject', hero, subObject, subObjectName)
+  socket.on('editSubObject', (ownerId, subObjectName, update) => {
+    io.emit('onEditSubObject', ownerId, subObjectName, update)
   })
 
   socket.on('askObjects', () => {

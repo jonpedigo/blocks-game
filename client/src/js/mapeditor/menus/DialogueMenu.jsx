@@ -8,6 +8,7 @@ export default class DialogueMenu extends React.Component{
 
     this._handleDialogueMenuClick = ({ key }) => {
       const { objectSelected } = this.props
+      const { networkEditObject } = MAPEDITOR
 
       if(key === "add-dialogue") {
         if(!objectSelected.heroDialogue) {
@@ -20,7 +21,7 @@ export default class DialogueMenu extends React.Component{
       if(key.indexOf("remove-dialogue") === 0) {
         let dialogueIndex = key[key.length-1]
         objectSelected.heroDialogue.splice(dialogueIndex, 1)
-        window.socket.emit('editObjects', [{id: objectSelected.id, heroUpdate: objectSelected.heroUpdate}])
+        networkEditObject(objectSelected, {heroDialogue: objectSelected.heroDialogue})
       }
 
       if(key.indexOf("edit-dialogue") === 0) {

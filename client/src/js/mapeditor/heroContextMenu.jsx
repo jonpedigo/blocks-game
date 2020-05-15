@@ -12,10 +12,10 @@ export default class HeroContextMenu extends React.Component{
 
     this._handleHeroMenuClick = ({ key }) => {
       const { objectSelected, openColorPicker } = this.props;
-      const { onStartResize, onStartDrag, onDelete } = MAPEDITOR
+      const { startResize, onStartDrag, deleteObject, removeObject } = MAPEDITOR
 
       if(key === 'resize') {
-        onStartResize(objectSelected)
+        startResize(objectSelected)
       }
 
       if(key === 'drag') {
@@ -23,11 +23,15 @@ export default class HeroContextMenu extends React.Component{
       }
 
       if(key === 'delete') {
-        onDelete(objectSelected)
+        deleteObject(objectSelected)
+      }
+
+      if(key === 'remove') {
+        removeObject(objectSelected)
       }
 
       if(key === 'select-color') {
-        openColorPicker()
+        openColorPicker(objectSelected)
       }
 
       if(key === 'respawn') {
@@ -35,7 +39,7 @@ export default class HeroContextMenu extends React.Component{
       }
 
       if(key === 'toggle-filled') {
-        window.socket.emit('editHero', {id: objectSelected.id, tags: { filled: !objectSelected.tags.filled }})
+        networkEditObject(objectSelected, { tags: { filled: !objectSelected.tags.filled }})
       }
 
       if(key === 'copy-id') {
@@ -61,28 +65,34 @@ export default class HeroContextMenu extends React.Component{
       }
 
       if(key === 'edit-properties-json') {
-        modals.editHeroCode(objectSelected, 'Editing Hero Properties', HERO.getProperties(objectSelected));
+        modals.editObjectCode(objectSelected, 'Editing Hero Properties', HERO.getProperties(objectSelected));
       }
 
       if(key === 'edit-state-json') {
-        modals.editHeroCode(objectSelected, 'Editing Hero State', HERO.getState(objectSelected));
+        modals.editObjectCode(objectSelected, 'Editing Hero State', HERO.getState(objectSelected));
+      }
+
+      if(key === 'add-new-subobject') {
+        modals.addNewSubObject(objectSelected)
       }
     }
 
     this._handleTagMenuClick = ({ key }) => {
       const { objectSelected } = this.props;
+      const { networkEditObject } = MAPEDITOR
 
-      window.socket.emit('editHero', {id: objectSelected.id, tags: { [key]: !objectSelected.tags[key] }})
+      networkEditObject(objectSelected, { tags: { [key]: !objectSelected.tags[key] }})
     }
 
     this._handleInputBehaviorMenuClick = (key) => {
       const { objectSelected } = this.props;
+      const { networkEditObject } = MAPEDITOR
 
       const data = JSON.parse(key)
       if(data.new) {
         modals.addCustomInputBehavior(data.behaviorProp)
       } else if(data.behaviorName && data.behaviorProp) {
-        window.socket.emit('editHero', {id: objectSelected.id, [data.behaviorProp]: data.behaviorName })
+        networkEditObject(objectSelected, { [data.behaviorProp]: data.behaviorName })
       }
     }
   }
@@ -167,13 +177,14 @@ export default class HeroContextMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Advanced">
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <MenuItem key={'add-new-subobject'}>Add new sub object</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
       </SubMenu>
-      <SubMenu title="Sub Objects">
+      {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
-      </SubMenu>
-      <MenuItem key='delete'>Delete</MenuItem>
+      </SubMenu>}
+      { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
     </Menu>
   }
 }

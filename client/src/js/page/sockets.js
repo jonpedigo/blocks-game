@@ -223,17 +223,17 @@ function init() {
     window.local.emit('onDeleteObject', object)
   })
 
-  window.socket.on('onDeleteObjectSubObject', (object, subObjectName) => {
-    window.local.emit('onDeleteObjectSubObject', object, subObjectName)
+  window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
+    window.local.emit('onRemoveSubObject', ownerId, subObjectName)
   })
-  window.socket.on('onDeleteHeroSubObject', (hero, subObjectName) => {
-    window.local.emit('onDeleteHeroSubObject', hero, subObjectName)
+  window.socket.on('onDeleteSubObject', (owner, subObjectName) => {
+    window.local.emit('onDeleteSubObject', owner, subObjectName)
   })
-  window.socket.on('onAddObjectSubObject', (object, subObject, subObjectName) => {
-    window.local.emit('onAddObjectSubObject', object, subObject, subObjectName)
+  window.socket.on('onAddSubObject', (owner, subObject, subObjectName) => {
+    window.local.emit('onAddSubObject', owner, subObject, subObjectName)
   })
-  window.socket.on('onAddHeroSubObject', (hero, subObject, subObjectName) => {
-    window.local.emit('onAddHeroSubObject', hero, subObject, subObjectName)
+  window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
+    window.local.emit('onEditSubObject', ownerId, subObjectName, update)
   })
 
   // EDITOR CALLS THIS

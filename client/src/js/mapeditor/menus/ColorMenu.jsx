@@ -8,20 +8,21 @@ export default class ColorMenu extends React.Component{
 
     this._handleColorMenuClick = ({ key }) => {
       const { objectSelected, openColorPicker } = this.props
+      const { networkEditObject } = MAPEDITOR
 
       if(key === 'select-color') {
-        this.openColorPicker()
+        openColorPicker(objectSelected)
       }
 
       if(key === 'toggle-filled') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, tags: { filled: !objectSelected.tags.filled }}])
+        networkEditObject(objectSelected, { tags: { filled: !objectSelected.tags.filled }})
       }
 
       if(key === 'toggle-visible') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, tags: { invisible: false, obstacle: true }}])
+        networkEditObject(objectSelected, { tags: { invisible: false, obstacle: true }})
       }
       if(key === 'toggle-invisible') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, tags: { invisible: true, obstacle: false }}])
+        networkEditObject(objectSelected, { tags: { invisible: true, obstacle: false }})
       }
     }
   }

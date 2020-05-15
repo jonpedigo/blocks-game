@@ -57,6 +57,7 @@ class Game{
             PHYSICS.updatePosition(hero, delta)
             PHYSICS.prepareObjectsAndHerosForCollisionsPhase(hero, [], [])
             PHYSICS.heroCorrection(hero, [], [])
+            PHYSICS.postPhysics([], [])
           })
           return
         }

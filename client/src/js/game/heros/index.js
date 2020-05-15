@@ -452,15 +452,6 @@ class Hero{
     delete GAME.heros[hero.id]
   }
 
-  onDeleteHeroSubObject(hero, subObjectName) {
-    const subObject = hero.subObjects[subObjectName]
-    OBJECTS.deleteSubObject(GAME.heros[hero.id], subObject, subObjectName)
-  }
-
-  onAddHeroSubObject(hero, subObject, subObjectName) {
-    OBJECTS.addSubObject(GAME.heros[hero.id], subObject, subObjectName)
-  }
-
   onNetworkUpdateHero(updatedHero) {
     if(!PAGE.gameLoaded) return
     if(PAGE.role.isPlayEditor) HERO.resetReachablePlatformArea(updatedHero)

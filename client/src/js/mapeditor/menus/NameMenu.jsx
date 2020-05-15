@@ -8,18 +8,19 @@ export default class NameMenu extends React.Component{
 
     this._handleNameMenuClick = ({ key }) => {
       const { objectSelected } = this.props
+      const { networkEditObject } = MAPEDITOR
 
       if(key === "name-object") {
         modals.nameObject(objectSelected)
       }
       if(key === 'name-position-center') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, namePosition: 'center'}])
+        networkEditObject(objectSelected, { namePosition: 'center'})
       }
       if(key === 'name-position-above') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, namePosition: 'above'}])
+        networkEditObject(objectSelected, { namePosition: 'above'})
       }
       if(key === 'name-position-none') {
-        window.socket.emit('editObjects', [{id: objectSelected.id, namePosition: null}])
+        networkEditObject(objectSelected, { namePosition: null})
       }
     }
   }

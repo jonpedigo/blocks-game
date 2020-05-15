@@ -62,6 +62,11 @@ function update() {
     if(MAP.camera.clipping || collisionsUtil.checkObject(viewBoundaries, object)) {
       drawTools.drawObject(ctx, object, camera)
     }
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        drawTools.drawObject(ctx, subObject, camera)
+      })
+    }
   })
 
   GAME.heroList.forEach((hero) => {

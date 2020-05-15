@@ -26,6 +26,7 @@ window.PHYSICS = {
   prepareObjectsAndHerosForMovementPhase,
   prepareObjectsAndHerosForCollisionsPhase,
   updatePosition,
+  postPhysics,
 }
 
 function correctAndEffectAllObjectAndHeros (delta) {
@@ -312,6 +313,7 @@ function removeAndRespawn(removeObjects, respawnObjects) {
 }
 
 export default {
+  postPhysics,
   correctAndEffectAllObjectAndHeros,
   updatePosition,
   prepareObjectsAndHerosForMovementPhase,

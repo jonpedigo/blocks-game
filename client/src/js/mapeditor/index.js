@@ -1,12 +1,16 @@
 import gridUtil from '../utils/grid.js'
 import collisionsUtil from '../utils/collisions'
 import contextMenu from './contextMenu.jsx'
-import drawTools from './drawTools';
 import selectionTools from './selectionTools';
 import keyInput from './keyInput';
+import render from './render';
 
 class MapEditor{
   constructor() {
+    this.initState()
+  }
+
+  initState() {
     this.clickStart = {
       x: null,
       y: null,
@@ -26,14 +30,11 @@ class MapEditor{
     this.objectHighlighted = null
     this.resizingObject = null
     this.draggingObject = null
+    this.draggingRelativeObject = null
+    this.snapToGrid = true
+    this.allowRectangle = false
     this.pathfindingLimit = null
     this.isSettingPathfindingLimit = false
-
-    this.canvas = null
-    this.camera = null
-    this.ctx =null
-
-    window.defaultMapEditor = JSON.parse(JSON.stringify(this))
   }
 
   set(ctx, canvas, camera) {
@@ -73,7 +74,9 @@ class MapEditor{
     }
   }
 
-  onStartResize(object) {
+  startResize(object, options = { snapToGrid: true, allowRectangle: false }) {
+    MAPEDITOR.snapToGrid = options.snapToGrid
+    MAPEDITOR.allowRectangle = options.allowRectangle
     MAPEDITOR.resizingObject = JSON.parse(JSON.stringify(object))
   }
 
@@ -86,69 +89,18 @@ class MapEditor{
     MAPEDITOR.draggingObject = JSON.parse(JSON.stringify(object))
   }
 
+  startRelativeDrag(object, options = { snapToGrid: false }) {
+    MAPEDITOR.snapToGrid = options.snapToGrid
+    MAPEDITOR.draggingRelativeObject = JSON.parse(JSON.stringify(object))
+  }
+
   onCopy(object) {
     MAPEDITOR.copiedObject = JSON.parse(JSON.stringify(object))
     delete MAPEDITOR.copiedObject.id
   }
 
-  onDelete(object) {
-    if(object.tags.hero) {
-      window.socket.emit('deleteHero', object)
-      window.objectHighlighted = null
-    } else if(object.id) {
-      window.socket.emit('deleteObject', object)
-      window.objectHighlighted = null
-    } else {
-      console.error('trying to delete object without id')
-    }
-  }
-
   onRender() {
-    let ctx = MAPEDITOR.ctx
-    let camera = MAPEDITOR.camera
-
-    if(!GAME.gameState.started && GAME.heros[HERO.id]) {
-      const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
-      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
-    }
-
-    if(!GAME.gameState.started) {
-      GAME.objects.forEach((object) => {
-        if(object.tags.invisible) {
-          drawTools.drawObject(ctx, {...object, tags: {invisible: false }, color: 'rgba(255,255,255,0.2)'}, camera)
-        }
-      })
-    }
-
-    const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit } = MAPEDITOR
-
-    if(objectHighlighted) {
-      let color = 'rgba(255,255,255,0.2)'
-      if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
-        color = 'rgba(255,255,255,0.6)'
-      }
-      drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
-    }
-
-    if(objectHighlightedChildren) {
-      let color = 'rgba(255,255,255,0.1)'
-      objectHighlightedChildren.forEach((object) => {
-        if(object.tags && object.tags.invisible) {
-          color = 'rgba(255,255,255,0.4)'
-        }
-        drawTools.drawFilledObject(ctx, {...object, color}, camera)
-      })
-    }
-
-    let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject
-    if(currentObject) {
-      if(currentObject.tags && currentObject.tags.invisible) {
-        drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false, filled: true}, color: 'rgba(255,255,255,0.2)'}, camera)
-      } else {
-        drawTools.drawObject(ctx, currentObject, camera)
-      }
-    }
+    render.update()
   }
 
   onSendHeroMapEditor(remoteState, heroId) {
@@ -168,6 +120,42 @@ class MapEditor{
       modals.writeDialogue(object)
     }
   }
+
+  networkEditObject(object, update) {
+    if(object.tags.subObject && object.subObjectName && object.ownerId) {
+      const owner = OBJECTS.getOwner(object)
+      window.socket.emit('editSubObject', object.ownerId, object.subObjectName, update)
+    } else if(object.tags.hero) {
+      window.socket.emit('editHero', {id: object.id, ...update})
+    } else {
+      window.socket.emit('editObjects', [{id: object.id, ...update}])
+    }
+  }
+
+  deleteObject(object) {
+    if(object.tags.subObject && object.subObjectName && object.ownerId) {
+      const owner = OBJECTS.getOwner(object)
+      window.socket.emit('deleteSubObject', owner, object.subObjectName)
+    } else if(object.tags.hero) {
+      window.socket.emit('deleteHero', object)
+    } else if(object.id) {
+      window.socket.emit('deleteObject', object)
+    } else {
+      console.error('trying to delete object without id')
+    }
+
+    window.objectHighlighted = null
+  }
+
+  removeObject(object) {
+    if(object.tags.subObject && object.subObjectName && object.ownerId) {
+      window.socket.emit('removeSubObject', object.ownerId, object.subObjectName)
+    } else if(object.tags.hero) {
+      window.socket.emit('removeHero', object)
+    } else {
+      window.socket.emit('removeObject', object)
+    }
+  }
 }
 
 function handleMouseUp(event) {
@@ -177,7 +165,7 @@ function handleMouseUp(event) {
 }
 
 function handleMouseDown(event) {
-  const { camera } = MAPEDITOR
+  const { camera, networkEditObject } = MAPEDITOR
 
   MAPEDITOR.clickStart.x = ((event.offsetX + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
@@ -210,15 +198,15 @@ function handleMouseDown(event) {
       networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY})
     }
     MAPEDITOR.draggingObject = null
+  } else if(MAPEDITOR.draggingRelativeObject) {
+    const { draggingRelativeObject } = MAPEDITOR
+    const owner = OBJECTS.getOwner(draggingRelativeObject)
+    const { relativeX, relativeY } = OBJECTS.getRelativeXY(draggingRelativeObject, owner)
+    networkEditObject(draggingRelativeObject, {id: draggingRelativeObject.id, relativeX, relativeY})
+    MAPEDITOR.draggingRelativeObject = null
   }
-}
 
-function networkEditObject(object, update) {
-  if(object.tags && object.tags.hero) {
-    window.socket.emit('editHero', update)
-  } else {
-    window.socket.emit('editObjects', [update])
-  }
+  MAPEDITOR.snapToGrid = true
 }
 
 function handleMouseOut(event) {
@@ -237,7 +225,9 @@ function handleMouseMove(event) {
   MAPEDITOR.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
   MAPEDITOR.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
 
-  if(MAPEDITOR.copiedObject) {
+  if(MAPEDITOR.draggingRelativeObject) {
+    updateDraggingObject(MAPEDITOR.draggingRelativeObject)
+  } else if(MAPEDITOR.copiedObject) {
     updateDraggingObject(MAPEDITOR.copiedObject)
   } else if(MAPEDITOR.isSettingPathfindingLimit) {
     if(MAPEDITOR.pathfindingLimit) {
@@ -299,12 +289,13 @@ function updateResizingObject(object, options = { allowTiny : true }) {
     tinySize = object.width
   }
 
-  if(tinySize) {
-    gridUtil.snapTinyObjectToGrid(object, tinySize)
-  } else {
-    gridUtil.snapDragToGrid(object)
+  if(MapEditor.snapToGrid) {
+    if(tinySize) {
+      gridUtil.snapTinyObjectToGrid(object, tinySize)
+    } else {
+      gridUtil.snapDragToGrid(object)
+    }
   }
-
 }
 
 function updateDraggingObject(object) {
@@ -317,10 +308,12 @@ function updateDraggingObject(object) {
     tinySize = object.width
   }
 
-  if(tinySize) {
-    gridUtil.snapTinyObjectToGrid(object, tinySize)
-  } else {
-    gridUtil.snapDragToGrid(object)
+  if(MAPEDITOR.snapToGrid) {
+    if(tinySize) {
+      gridUtil.snapTinyObjectToGrid(object, tinySize)
+    } else {
+      gridUtil.snapDragToGrid(object)
+    }
   }
 }
 
