@@ -1,3 +1,4 @@
+import Swal from 'sweetalert2';
 import sockets from './sockets.js'
 import events from './events.js'
 import testArcade from '../../../../data/spencer1.json'
