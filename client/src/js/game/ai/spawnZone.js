@@ -20,7 +20,7 @@ export default function spawnZoneIntelligence(object) {
       object.spawnPool = object.spawnPoolInitial
     }
 
-    if((object.spawnedIds.length < object.spawnLimit || object.spawnLimit < 0) && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0)) {
+    if((object.spawnedIds.length < object.spawnLimit || object.spawnLimit < 0) && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0 || object.spawnPool < 0)) {
       let newObject = {
         x: object.x,
         y: object.y,
@@ -40,7 +40,7 @@ export default function spawnZoneIntelligence(object) {
 
       let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
       object.spawnedIds.push(createdObject[0].id)
-      if(object.spawnPool) object.spawnPool--
+      object.spawnPool--
 
       object.spawnWait = true
       GAME.addTimeout('spawnWait-' + window.uniqueID(), object.spawnWaitTimer || 10, () => {

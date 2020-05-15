@@ -63,6 +63,7 @@ function setDefault() {
     noHeroAllowed: false,
     movingPlatform: false,
     heroPushable: false,
+    skipHeroGravityOnCollide: false,
   }
 
   window.questTags = {

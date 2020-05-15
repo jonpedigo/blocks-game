@@ -3,7 +3,7 @@
 // LEVEL UP
 // PARTICLE GRAPHICS, BETTER GRAPHICS...
 // World templates
-// input modifiers....'disable up arrow', 'on ice', 'flat'
+// input modifiers....'on ice', 'flat'
 // more space bar actions -> 'double jump', 'dash'
 
 // ( Force anticipated add )
@@ -96,8 +96,6 @@
 // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
 // a try catch that if theres an error, the editor asks for a version of the game from like 1 minute ago
 // everytime I switch out of a menu, I want the selected radio buttons to be reset to default
-
-// refactor camera for multipliers to work best.... ( mainly on map Editor )
 
 // JUICE IDEAS
 /*Trails,

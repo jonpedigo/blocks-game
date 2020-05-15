@@ -43,20 +43,20 @@ function onPageLoaded(){
   GAME.heroInputs = {}
 
   window.addEventListener("keydown", function (e) {
-    const character = keycode(e.keyCode)
+    const key = keycode(e.keyCode)
 
     if(PAGE.role.isGhost) {
       if(HERO.id === 'ghost') onKeyDown(key, GAME.heros[HERO.id])
     } else if(PAGE.role.isPlayer) {
       if(!PAGE.typingMode) {
-        GAME.keysDown[character] = true
+        GAME.keysDown[key] = true
       }
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
         GAME.heroInputs[HERO.id] = GAME.keysDown
         onKeyDown(key, GAME.heros[HERO.id])
       } else {
-        window.socket.emit('sendHeroKeyDown', character, HERO.id)
+        window.socket.emit('sendHeroKeyDown', key, HERO.id)
       }
     }
   }, false)
@@ -191,7 +191,7 @@ function onUpdate(hero, keysDown, delta) {
 }
 
 function onKeyDown(key, hero) {
-  if('space' === keyCode) {
+  if('space' === key) {
     if(hero.dialogue && hero.dialogue.length) {
       hero.dialogue.shift()
       if(!hero.dialogue.length) {
@@ -204,7 +204,7 @@ function onKeyDown(key, hero) {
 
   if(hero.flags.paused || GAME.gameState.paused) return
 
-  if('space' === keyCode) {
+  if('space' === key) {
     if(hero.onGround && hero.spaceBarBehavior === 'jump') {
       hero.velocityY = hero.jumpVelocity
       lastJump = Date.now();
@@ -212,31 +212,31 @@ function onKeyDown(key, hero) {
   }
 
   if(hero.arrowKeysBehavior === 'grid') {
-    if ('up' === keyCode) { // Player holding up
+    if ('up' === key) { // Player holding up
       hero.y -= GAME.grid.nodeSize
-    } else if ('down' === keyCode) { // Player holding down
+    } else if ('down' === key) { // Player holding down
       hero.y += GAME.grid.nodeSize
-    } else if ('left' === keyCode) { // Player holding left
+    } else if ('left' === key) { // Player holding left
       hero.x -= GAME.grid.nodeSize
-    } else if ('right' === keyCode) { // Player holding right
+    } else if ('right' === key) { // Player holding right
       hero.x += GAME.grid.nodeSize
     }
   }
 
-  if ('up' === keyCode) { // Player holding up
+  if ('up' === key) { // Player holding up
     hero.inputDirection = 'up'
   }
-  if ('down' === keyCode) { // Player holding down
+  if ('down' === key) { // Player holding down
     hero.inputDirection = 'down'
   }
-  if ('left' === keyCode) { // Player holding left
+  if ('left' === key) { // Player holding left
     hero.inputDirection = 'left'
   }
-  if ('right' === keyCode) { // Player holding right
+  if ('right' === key) { // Player holding right
     hero.inputDirection = 'right'
   }
 
-  window.local.emit('onKeyDown', keyCode, hero)
+  window.local.emit('onKeyDown', key, hero)
 }
 
 export default {

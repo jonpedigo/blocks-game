@@ -22,7 +22,7 @@ export default class Relative extends React.Component{
   render() {
     return <Menu onClick={this._handleRelativeClick}>
       <MenuItem key="position">Position</MenuItem>
-      <MenuItem key="position-grid">Position Grid</MenuItem>
+      <MenuItem key="position-grid">Position On Grid</MenuItem>
     </Menu>
   }
 }

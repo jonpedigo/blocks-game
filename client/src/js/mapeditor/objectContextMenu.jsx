@@ -23,10 +23,14 @@ export default class ObjectContextMenu extends React.Component{
 
       if(key === 'resize') {
         if(subObject) {
-          startResize(objectSelected, { snapToGrid: false, allowRectangle: true })
+          startResize(objectSelected, { snapToGrid: false })
         } else {
           startResize(objectSelected)
         }
+      }
+
+      if(key === 'resize-grid') {
+        startResize(objectSelected, { snapToGrid: true })
       }
 
       if(key === 'drag') {
@@ -77,6 +81,7 @@ export default class ObjectContextMenu extends React.Component{
       {objectSelected.subObjectName && <MenuItem className="bold-menu-item">{objectSelected.subObjectName}</MenuItem>}
       {!subObject && <MenuItem key="drag">Drag</MenuItem>}
       <MenuItem key="resize">Resize</MenuItem>
+      {subObject && <MenuItem key="resize-grid">Resize On Grid</MenuItem>}
       <MenuItem key="copy">Copy</MenuItem>
       {(objectSelected.ownerId || objectSelected.relativeId) && <SubMenu title="Relative">
         <RelativeMenu objectSelected={objectSelected} subObject={subObject}/>

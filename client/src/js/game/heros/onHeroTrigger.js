@@ -13,6 +13,10 @@ export default function onHeroTrigger(hero, collider, result, removeObjects, res
     triggered = true
   }
 
+  if(collider.tags['skipHeroGravityOnCollide']) {
+    hero._skipNextGravity = true
+  }
+
   if(collider.tags['behaviorOnHeroCollide'] && !isInteraction) {
     onBehavior(hero, collider, result, removeObjects, respawnObjects, options)
     triggered = true

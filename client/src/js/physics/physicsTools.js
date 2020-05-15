@@ -20,7 +20,9 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
     }
     if(body.gameObject.removed) continue
     if(heroPO.collides(body, result)) {
-      window.local.emit('onHeroCollide', heroPO.gameObject, body.gameObject, result, removeObjects, respawnObjects)
+      const collider = body.gameObject
+
+      window.local.emit('onHeroCollide', heroPO.gameObject, collider, result, removeObjects, respawnObjects)
     }
   }
 
@@ -135,7 +137,6 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
         hero.y = hero._initialY
         heroPO.x = hero._initialX
         heroPO.y = hero._initialY
-        console.log('illegal')
       } else {
         if(heroPO.x > hero._initialX) {
           hero.directions.right = true
@@ -394,10 +395,44 @@ function containObjectWithinGridBoundaries(object) {
 
 function attachSubObjects(object, subObjects) {
   OBJECTS.forAllSubObjects(subObjects, (subObject) => {
-    if(subObject.relativeX) subObject.x = object.x + subObject.relativeX
-    if(subObject.relativeY) subObject.y = object.y + subObject.relativeY
     if(subObject.relativeWidth) subObject.width = object.width + (subObject.relativeWidth)
     if(subObject.relativeHeight) subObject.height = object.height + (subObject.relativeHeight)
+
+    // up
+    if(typeof subObject.relativeX === 'number') subObject.x = object.x + subObject.relativeX
+    if(typeof subObject.relativeY === 'number') subObject.y = object.y + subObject.relativeY
+
+    subObject.width = subObject.originalWidth
+    subObject.height = subObject.originalHeight
+    if(subObject.tags.relativeToDirection && GAME.gameState.started) {
+      if(object.tags.hero) {
+        const direction = object.inputDirection
+
+        // right
+        if(direction === 'right') {
+          subObject.x = object.x + object.width + subObject.relativeY + subObject.originalHeight
+          subObject.y = object.y + subObject.relativeX
+
+          subObject.width = subObject.originalHeight
+          subObject.height = subObject.originalWidth
+        }
+
+        // down
+        if(direction === 'down') {
+          subObject.x = object.x + object.width - subObject.relativeX - subObject.width
+          subObject.y = object.y - subObject.relativeY
+        }
+
+        // left
+        if(direction === 'left') {
+          subObject.x = object.x + subObject.relativeY
+          subObject.y = object.y + object.height - subObject.relativeX - subObject.originalWidth
+
+          subObject.width = subObject.originalHeight
+          subObject.height = subObject.originalWidth
+        }
+      }
+    }
   })
 }
 

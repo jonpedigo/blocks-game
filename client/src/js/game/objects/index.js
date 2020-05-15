@@ -158,6 +158,8 @@ class Objects{
       questCompleterId: object.questCompleterId,
 
       subObjects: object.subObjects,
+      originalHeight: object.originalHeight,
+      originalWidth: object.originalWidth,
 
       // sub objects
       changeWithDirection: object.changeWithDirection,
@@ -169,7 +171,7 @@ class Objects{
       spawnWaitTimer: object.spawnWaitTimer,
       spawnLimit: object.spawnLimit,
       spawnSubObjectName: object.spawnSubObjectName,
-      
+
       powerUpTimer: object.powerUpTimer,
 
       //compendium
@@ -404,6 +406,9 @@ class Objects{
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
     subObject.id = subObjectName + '-' + window.uniqueID()
+    if(!subObject.originalWidth) subObject.originalWidth  = subObject.width
+    if(!subObject.originalHeight) subObject.originalHeight = subObject.height
+
     owner.subObjects[subObjectName] = subObject
     if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.addObject(subObject)
   }
@@ -501,6 +506,8 @@ class Objects{
   onEditSubObject(ownerId, subObjectName, update) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     window.mergeDeep(owner.subObjects[subObjectName], update)
+    subObject.originalWidth = subObject.width
+    subObject.originalHeight = subObject.height
   }
 
   onNetworkUpdateObjects(objectsUpdated) {

@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 const queue = [];
 
 function nextInQueue(result) {

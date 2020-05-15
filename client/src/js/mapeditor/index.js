@@ -288,7 +288,7 @@ function updateResizingObject(object, options = { allowTiny : true }) {
     tinySize = object.width
   }
 
-  if(MapEditor.snapToGrid) {
+  if(MAPEDITOR.snapToGrid) {
     if(tinySize) {
       gridUtil.snapTinyObjectToGrid(object, tinySize)
     } else {

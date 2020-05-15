@@ -64,6 +64,7 @@ function update() {
     }
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        if(subObject.tags.potential) return
         drawTools.drawObject(ctx, subObject, camera)
       })
     }
@@ -73,6 +74,7 @@ function update() {
     drawTools.drawObject(ctx, hero, camera);
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
+        if(subObject.tags.potential) return 
         drawTools.drawObject(ctx, subObject, camera)
       })
     }

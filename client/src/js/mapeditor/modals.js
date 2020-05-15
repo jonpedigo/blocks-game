@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 function addNewSubObject(owner) {
   PAGE.typingMode = true
   openNameSubObjectModal((result) => {

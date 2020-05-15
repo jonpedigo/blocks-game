@@ -150,7 +150,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        subObject.ownerId = object.id
+        if(subObject.tags.potential) return
         everything.push(subObject)
       })
     }
