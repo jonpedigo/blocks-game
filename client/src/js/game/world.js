@@ -19,6 +19,7 @@ function setDefault() {
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
     storeEntireGameState: false,
+    overrideCustomGameCode: false,
   }
 
   window.local.on('onGridLoaded', () => {

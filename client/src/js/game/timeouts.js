@@ -16,15 +16,19 @@ function onUpdate(delta) {
 
 function addTimeout(id, numberOfSeconds, fx) {
   if(PAGE.role.isHost) {
-    let timeout = {
-      id,
-      timeRemaining: numberOfSeconds,
-      totalTime: numberOfSeconds,
-      fx,
-      resetTotal: 0,
+    if(numberOfSeconds <= 0) {
+      fx()
+    } else {
+      let timeout = {
+        id,
+        timeRemaining: numberOfSeconds,
+        totalTime: numberOfSeconds,
+        fx,
+        resetTotal: 0,
+      }
+      GAME.timeouts.push(timeout)
+      GAME.timeoutsById[id] = timeout
     }
-    GAME.timeouts.push(timeout)
-    GAME.timeoutsById[id] = timeout
   }
 }
 

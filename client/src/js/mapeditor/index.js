@@ -32,7 +32,6 @@ class MapEditor{
     this.draggingObject = null
     this.draggingRelativeObject = null
     this.snapToGrid = true
-    this.allowRectangle = false
     this.pathfindingLimit = null
     this.isSettingPathfindingLimit = false
   }
@@ -74,9 +73,8 @@ class MapEditor{
     }
   }
 
-  startResize(object, options = { snapToGrid: true, allowRectangle: false }) {
+  startResize(object, options = { snapToGrid: true }) {
     MAPEDITOR.snapToGrid = options.snapToGrid
-    MAPEDITOR.allowRectangle = options.allowRectangle
     MAPEDITOR.resizingObject = JSON.parse(JSON.stringify(object))
   }
 
@@ -260,6 +258,7 @@ function updateGridHighlight(location) {
   let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects)
 
   collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
+    if(hero.removed) return
     smallestObject = hero
   })
 

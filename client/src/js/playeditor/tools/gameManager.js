@@ -254,7 +254,7 @@ window.setAllObjectSpawnPointToCurrent = function() {
 
 function resetSpawnZone(object) {
   object.spawnedIds = []
-  object.spawnPool = object.initialSpawnPool
+  object.spawnPool = object.spawnPoolInitial
   object.spawnWait = false
 }
 

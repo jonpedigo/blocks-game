@@ -50,7 +50,7 @@ class Arcade{
       try {
         ARCADE.setLiveCustomFx(customFx)
       } catch (e) {
-        console.log(e)
+        PAGE.removeLog(e)
       }
     }
 

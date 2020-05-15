@@ -135,6 +135,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
         hero.y = hero._initialY
         heroPO.x = hero._initialX
         heroPO.y = hero._initialY
+        console.log('illegal')
       } else {
         if(heroPO.x > hero._initialX) {
           hero.directions.right = true

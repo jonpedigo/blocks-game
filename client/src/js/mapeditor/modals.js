@@ -22,7 +22,17 @@ function editObjectCode(object, title, code) {
 
 function editProperty(object, property, currentValue) {
   PAGE.typingMode = true
-  openEditPropertyModal(property, currentValue, (result) => {
+  openEditTextModal(property, currentValue, (result) => {
+    if(result && result.value && result.value.length) {
+      MAPEDITOR.networkEditObject(object, { [property]: result.value})
+    }
+    PAGE.typingMode = false
+  })
+}
+
+function editPropertyNumber(object, property, currentValue, options = {}) {
+  PAGE.typingMode = true
+  openEditNumberModal(property, currentValue, options, (result) => {
     if(result && result.value && result.value.length) {
       MAPEDITOR.networkEditObject(object, { [property]: result.value})
     }
@@ -270,7 +280,7 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
   }).then(cb)
 }
 
-function openEditPropertyModal(property, currentValue, cb) {
+function openEditTextModal(property, currentValue, cb) {
   Swal.fire({
     title: 'Edit ' + property,
     showClass: {
@@ -287,12 +297,32 @@ function openEditPropertyModal(property, currentValue, cb) {
   }).then(cb)
 }
 
+function openEditNumberModal(property, currentValue = 0, options = { range: false, min: null, max: null, step: 1 }, cb) {
+  Swal.fire({
+    title: 'Edit ' + property,
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: options.range ? 'range' : 'number',
+    inputAttributes: {
+      min: options.min,
+      max: options.max,
+      step: options.step,
+    },
+    inputValue: currentValue
+  }).then(cb)
+}
+
 export default {
   addCustomInputBehavior,
   addGameTag,
   addNewSubObject,
   editObjectCode,
   editProperty,
+  editPropertyNumber,
   editQuest,
   writeDialogue,
   nameObject,

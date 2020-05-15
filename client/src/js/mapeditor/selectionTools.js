@@ -30,6 +30,7 @@ function findSmallestObjectInArea(area, objects) {
   let smallestObject
   for(let i = 0; i < objects.length; i++) {
     let object = objects[i]
+    if(object.removed) continue
     collisions.checkObject(area, object, () => {
       if(!smallestObject) smallestObject = object
       else if(object.width < smallestObject.width) {

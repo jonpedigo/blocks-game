@@ -28,9 +28,13 @@ class EventEmitter {
           if(ARCADE.defaultCustomGame && ARCADE.defaultCustomGame[eventName]) {
             event.push(ARCADE.defaultCustomGame[eventName])
           }
-          if(ARCADE.customGame && ARCADE.customGame[eventName]) {
-            event.push(ARCADE.customGame[eventName])
+
+          if(!GAME.world.overrideCustomGameCode) {
+            if(ARCADE.customGame && ARCADE.customGame[eventName]) {
+              event.push(ARCADE.customGame[eventName])
+            }
           }
+
           if(ARCADE.liveCustomGame && ARCADE.liveCustomGame[eventName]) {
             event.push(ARCADE.liveCustomGame[eventName])
           }

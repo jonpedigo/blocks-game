@@ -1,3 +1,8 @@
+//lastHeroUpdateId
+//heroUpdate
+//powerUpTimer
+//updateHistory
+
 export default function onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options) {
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     if(collider.id !== hero.lastHeroUpdateId) {
@@ -12,7 +17,6 @@ export default function onHeroUpdate(hero, collider, result, removeObjects, resp
 }
 
 function heroUpdate (hero, collider, heroUpdate) {
-  if(!hero.timeouts) hero.timeouts = {}
   if(!hero.updateHistory) {
     hero.updateHistory = []
   }
@@ -23,9 +27,9 @@ function heroUpdate (hero, collider, heroUpdate) {
 
   if(collider.tags['revertHeroUpdateAfterTimeout'] && GAME.timeoutsById[timeoutId] && GAME.timeoutsById[timeoutId].timeRemaining > 0) {
     if(collider.tags['incrementRevertHeroUpdateTimeout']) {
-      GAME.incrementTimeout(timeoutId, collider.powerUpTimer || 3)
+      GAME.incrementTimeout(timeoutId, collider.powerUpTimer || 10)
     } else {
-      GAME.resetTimeout(timeoutId, collider.powerUpTimer || 3)
+      GAME.resetTimeout(timeoutId, collider.powerUpTimer || 10)
     }
     return
   }

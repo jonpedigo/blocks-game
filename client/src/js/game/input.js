@@ -1,4 +1,5 @@
 let lastJump = 0
+import keycode from 'keycode'
 
 function setDefault() {
   window.heroArrowKeyBehaviors = [
@@ -42,25 +43,26 @@ function onPageLoaded(){
   GAME.heroInputs = {}
 
   window.addEventListener("keydown", function (e) {
+    const character = keycode(e.keyCode)
 
     if(PAGE.role.isGhost) {
-      if(HERO.id === 'ghost') onKeyDown(e.keyCode, GAME.heros[HERO.id])
+      if(HERO.id === 'ghost') onKeyDown(key, GAME.heros[HERO.id])
     } else if(PAGE.role.isPlayer) {
       if(!PAGE.typingMode) {
-        GAME.keysDown[e.keyCode] = true
+        GAME.keysDown[character] = true
       }
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
         GAME.heroInputs[HERO.id] = GAME.keysDown
-        onKeyDown(e.keyCode, GAME.heros[HERO.id])
+        onKeyDown(key, GAME.heros[HERO.id])
       } else {
-        window.socket.emit('sendHeroKeyDown', e.keyCode, HERO.id)
+        window.socket.emit('sendHeroKeyDown', character, HERO.id)
       }
     }
   }, false)
 
   window.addEventListener("keyup", function (e) {
-	   delete GAME.keysDown[e.keyCode]
+	   delete GAME.keysDown[keycode(e.keyCode)]
   }, false)
 }
 
@@ -68,10 +70,10 @@ function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
 
   /*
-    left arrow	37
-    up arrow	38
-    right arrow	39
-    down arrow	40
+    left arrow	'left'
+    up arrow	'up'
+    right arrow	'right'
+    down arrow	'down'
     w 87
     a 65
     s 83
@@ -80,28 +82,28 @@ function onUpdate(hero, keysDown, delta) {
   /// DEFAULT GAME FX
   if(hero.flags.paused || GAME.gameState.paused) return
 
-  if (38 in keysDown) { // Player holding up
+  if ('up' in keysDown) { // Player holding up
     if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accY -= (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityY -= (hero.speed) * delta;
     }
   }
-  if (40 in keysDown) { // Player holding down
+  if ('down' in keysDown) { // Player holding down
     if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accY += (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityY += (hero.speed) * delta;
     }
   }
-  if (37 in keysDown) { // Player holding left
+  if ('left' in keysDown) { // Player holding left
     if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accX -= (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityX -= (hero.speed) * delta;
     }
   }
-  if (39 in keysDown) { // Player holding right
+  if ('right' in keysDown) { // Player holding right
     if(hero.arrowKeysBehavior === 'acc' || hero.arrowKeysBehavior === 'acceleration') {
       hero.accX += (hero.speed) * delta;
     } else if (hero.arrowKeysBehavior === 'velocity') {
@@ -124,65 +126,63 @@ function onUpdate(hero, keysDown, delta) {
   function positionInput() {
 
     if(hero.arrowKeysBehavior === 'flatDiagonal') {
-      if(hero.spaceBarBehavior !== 'jump') {
-        if (38 in keysDown && hero.spaceBarBehavior !== 'jump') { // Player holding up
-          hero.velocityY = -hero.speed
-        } else if (40 in keysDown) { // Player holding down
-          hero.velocityY = hero.speed
-        } else {
-          hero.velocityY = 0
-        }
+      if ('up' in keysDown && !hero.tags.disableUpKeyMovement) { // Player holding up
+        hero._flatVelocityY = -hero.speed
+      } else if ('down' in keysDown) { // Player holding down
+        hero._flatVelocityY = hero.speed
+      } else {
+        hero._flatVelocityY = 0
       }
 
-      if (37 in keysDown) { // Player holding left
-        hero.velocityX = -hero.speed
-      } else if (39 in keysDown) { // Player holding right
-        hero.velocityX = hero.speed
+      if ('left' in keysDown) { // Player holding left
+        hero._flatVelocityX = -hero.speed
+      } else if ('right' in keysDown) { // Player holding right
+        hero._flatVelocityX = hero.speed
       } else {
-        hero.velocityX = 0
+        hero._flatVelocityX = 0
       }
     }
 
     if(hero.arrowKeysBehavior === 'flatRecent') {
-      hero.velocityX = 0
-      if(hero.spaceBarBehavior !== 'jump') {
-        hero.velocityY = 0
+      hero._flatVelocityX = 0
+      if(!hero.tags.disableUpKeyMovement) {
+        hero._flatVelocityY = 0
       }
 
-      if (38 in keysDown && hero.inputDirection == 'up' && hero.spaceBarBehavior !== 'jump') { // Player holding up
-        hero.velocityY = -Math.ceil(hero.speed * delta) * 100
+      if ('up' in keysDown && hero.inputDirection == 'up' && !hero.tags.disableUpKeyMovement) { // Player holding up
+        hero._flatVelocityY = -Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (40 in keysDown && hero.inputDirection == 'down') { // Player holding down
-        hero.velocityY = Math.ceil(hero.speed * delta) * 100
+      if ('down' in keysDown && hero.inputDirection == 'down') { // Player holding down
+        hero._flatVelocityY = Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (37 in keysDown && hero.inputDirection == 'left') { // Player holding left
-        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
+      if ('left' in keysDown && hero.inputDirection == 'left') { // Player holding left
+        hero._flatVelocityX = -Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (39 in keysDown && hero.inputDirection == 'right') { // Player holding right
-        hero.velocityX = Math.ceil(hero.speed * delta) * 100
+      if ('right' in keysDown && hero.inputDirection == 'right') { // Player holding right
+        hero._flatVelocityX = Math.ceil(hero.speed * delta) * 100
         return
       }
 
-      if (38 in keysDown && hero.spaceBarBehavior !== 'jump') { // Player holding up
-        hero.velocityY = -Math.ceil(hero.speed * delta) * 100
+      if ('up' in keysDown && !hero.tags.disableUpKeyMovement) { // Player holding up
+        hero._flatVelocityY = -Math.ceil(hero.speed * delta) * 100
       }
 
-      if (40 in keysDown) { // Player holding down
-        hero.velocityY = Math.ceil(hero.speed * delta) * 100
+      if ('down' in keysDown) { // Player holding down
+        hero._flatVelocityY = Math.ceil(hero.speed * delta) * 100
       }
 
-      if (37 in keysDown) { // Player holding left
-        hero.velocityX = -Math.ceil(hero.speed * delta) * 100
+      if ('left' in keysDown) { // Player holding left
+        hero._flatVelocityX = -Math.ceil(hero.speed * delta) * 100
       }
 
-      if (39 in keysDown) { // Player holding right
-        hero.velocityX = Math.ceil(hero.speed * delta) * 100
+      if ('right' in keysDown) { // Player holding right
+        hero._flatVelocityX = Math.ceil(hero.speed * delta) * 100
       }
     }
   }
@@ -190,8 +190,8 @@ function onUpdate(hero, keysDown, delta) {
   positionInput()
 }
 
-function onKeyDown(keyCode, hero) {
-  if(32 === keyCode) {
+function onKeyDown(key, hero) {
+  if('space' === keyCode) {
     if(hero.dialogue && hero.dialogue.length) {
       hero.dialogue.shift()
       if(!hero.dialogue.length) {
@@ -204,7 +204,7 @@ function onKeyDown(keyCode, hero) {
 
   if(hero.flags.paused || GAME.gameState.paused) return
 
-  if(32 === keyCode) {
+  if('space' === keyCode) {
     if(hero.onGround && hero.spaceBarBehavior === 'jump') {
       hero.velocityY = hero.jumpVelocity
       lastJump = Date.now();
@@ -212,27 +212,27 @@ function onKeyDown(keyCode, hero) {
   }
 
   if(hero.arrowKeysBehavior === 'grid') {
-    if (38 === keyCode) { // Player holding up
+    if ('up' === keyCode) { // Player holding up
       hero.y -= GAME.grid.nodeSize
-    } else if (40 === keyCode) { // Player holding down
+    } else if ('down' === keyCode) { // Player holding down
       hero.y += GAME.grid.nodeSize
-    } else if (37 === keyCode) { // Player holding left
+    } else if ('left' === keyCode) { // Player holding left
       hero.x -= GAME.grid.nodeSize
-    } else if (39 === keyCode) { // Player holding right
+    } else if ('right' === keyCode) { // Player holding right
       hero.x += GAME.grid.nodeSize
     }
   }
 
-  if (38 === keyCode) { // Player holding up
+  if ('up' === keyCode) { // Player holding up
     hero.inputDirection = 'up'
   }
-  if (40 === keyCode) { // Player holding down
+  if ('down' === keyCode) { // Player holding down
     hero.inputDirection = 'down'
   }
-  if (37 === keyCode) { // Player holding left
+  if ('left' === keyCode) { // Player holding left
     hero.inputDirection = 'left'
   }
-  if (39 === keyCode) { // Player holding right
+  if ('right' === keyCode) { // Player holding right
     hero.inputDirection = 'right'
   }
 

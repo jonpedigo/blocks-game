@@ -17,11 +17,11 @@ export default class CustomGame{
 
   }
 
-  onKeyDown(keyCode, hero) {
+  onKeyDown(key, hero) {
     if(hero.flags.paused || GAME.gameState.paused) return
     // for keyCode 88 ( x ) can conflict with interact engine - && !hero.interactableObject
 
-    if(keyCode === 90) {
+    if(keyCode === 'z') {
       if(hero.actionButtonBehavior === 'shootBullet') {
         action.shootBullet(hero)
       }

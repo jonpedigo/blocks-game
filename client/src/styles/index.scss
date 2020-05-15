@@ -20,6 +20,7 @@ p {
 }
 
 body {
+  overscroll-behavior-x: none;
 }
 
 .Toastify__toast-container {

@@ -41,6 +41,7 @@
     "generate-maze-by-clustering": "0.0.4",
     "html-webpack-plugin": "^3.2.0",
     "jsoneditor": "^7.0.4",
+    "keycode": "^2.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",

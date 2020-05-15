@@ -26,7 +26,7 @@ export default class CustomGame{
     GAME.heros[HERO.id].lives = 3
   }
 
-  onKeyDown(keyCode, hero) {
+  onKeyDown(key, hero) {
     if(hero.flags.paused || GAME.gameState.paused) return
   }
 

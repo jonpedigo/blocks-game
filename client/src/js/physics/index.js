@@ -63,6 +63,9 @@ function updatePosition(object, delta) {
     else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
     object.x += object.velocityX * delta
   }
+  if(object._flatVelocityX) {
+    object.x += object._flatVelocityX * delta
+  }
 
   // if(object.accY) {
   //   object.velocityY += ( object.accY )
@@ -102,6 +105,7 @@ function updatePosition(object, delta) {
       object.y += object.velocityY * delta
     }
   }
+  if(object._flatVelocityY) object.y += object._flatVelocityY * delta
 
   if(object.tags && object.tags['stationary']) {
     object.velocityY = 0
@@ -132,6 +136,8 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
+    delete object._flatVelocityX
+    delete object._flatVelocityY
     object.interactableObject = null
   })
 }
@@ -222,7 +228,7 @@ function postPhysics(removeObjects, respawnObjects) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult, removeObjects, respawnObjects)
-      if(input && 88 in input) {
+      if(input && 'x' in input) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult, removeObjects, respawnObjects)
       }
       // bad for JSON

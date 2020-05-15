@@ -8,7 +8,7 @@ window.templateGameString = `class CustomGame{
 
   }
 
-  onKeyDown(keyCode, hero) {
+  onKeyDown(key, hero) {
     if(hero.flags.paused || GAME.gameState.paused) return
 
   }

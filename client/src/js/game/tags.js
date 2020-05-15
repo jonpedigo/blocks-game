@@ -114,6 +114,10 @@ function setDefault() {
     potential: false,
   }
 
+  window.keyInputTags = {
+    disableUpKeyMovement: false,
+  }
+
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 }
 

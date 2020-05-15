@@ -103,6 +103,7 @@ class Objects{
       gridWidth: object.gridWidth,
       onGround: object.onGround,
       removed: object.removed,
+      spawned: object.spawned,
       spawnedIds: object.spawnedIds,
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
@@ -164,8 +165,12 @@ class Objects{
       relativeHeight: object.relativeHeight,
 
       //spawn objects
-      initialSpawnPool: object.initialSpawnPool,
-      spawnWaitTime: object.spawnWaitTime,
+      spawnPoolInitial: object.spawnPoolInitial,
+      spawnWaitTimer: object.spawnWaitTimer,
+      spawnLimit: object.spawnLimit,
+      spawnSubObjectName: object.spawnSubObjectName,
+      
+      powerUpTimer: object.powerUpTimer,
 
       //compendium
       compendiumId: object.compendiumId,

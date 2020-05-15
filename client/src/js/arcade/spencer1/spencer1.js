@@ -16,7 +16,8 @@ export default class CustomGame{
 
   }
 
-  onKeyDown(keyCode, hero) {
+  onKeyDown(key, hero) {
+    console.log(keyCode)
     if(hero.flags.paused || GAME.gameState.paused) return
   }
 

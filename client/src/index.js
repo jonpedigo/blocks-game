@@ -8,6 +8,14 @@
 
 // ( Force anticipated add )
 
+// tag idea -> attachAsRelativeOnCollide, attachAsParentOnCollide, (attachAsPermanentParentOnCollide,
+// stopGravityOnCollide??
+// give tag on collide, give tag when attached
+// remove tag on collide, remove tag when attached
+//
+
+// call hero updates power ups again
+
 ////////////////////////////////////////////////////
 
 // attack button ( like papa bear spears!! )
@@ -95,6 +103,8 @@
 /*Trails,
 	long trail
 	leaving trail ( drops )
+
+have layered border, just draw another version at +2 and +4 and +6, -2 etc..
 
 Shakes
 	Object Shakes

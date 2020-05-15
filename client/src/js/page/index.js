@@ -58,25 +58,30 @@ class Page{
   }
 
   setupRemoteLogging() {
-    if(PAGE.role.isHost) {
-      let log = console.log
-      console.log = function(msg, arg1, arg2, arg3) {
-        let args = [msg, arg1, arg2, arg3].filter(i => !!i)
-        window.socket.emit('hostLog', ...args)
-        log(...args)
-      }
-      let error = console.error
-      console.error = function(msg, arg1, arg2, arg3) {
-        let args = [msg, arg1, arg2, arg3].filter(i => !!i)
-        window.socket.emit('hostLog', ...args)
-        error(...args)
-      }
-      window.addEventListener('error', function(e) {
-        window.socket.emit('hostLog', 'ERROR', e.message
-              , '\n', e.filename, ':', e.lineno, (e.colno ? ':' + e.colno : '')
-              , e.error && e.error.stack ? '\n' : '', e.error ? e.error.stack : undefined
-          );
-      }, false);
+    // if(PAGE.role.isHost) {
+    //   let log = console.log
+    //   console.log = function(msg, arg1, arg2, arg3) {
+    //     let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+    //     window.socket.emit('hostLog', ...args)
+    //     log(...args)
+    //   }
+    //   let error = console.error
+    //   console.error = function(msg, arg1, arg2, arg3) {
+    //     let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+    //     window.socket.emit('hostLog', ...args)
+    //     error(...args)
+    //   }
+    //   window.addEventListener('error', function(e) {
+    //     window.socket.emit('hostLog', 'ERROR', e.message
+    //           , '\n', e.filename, ':', e.lineno, (e.colno ? ':' + e.colno : '')
+    //           , e.error && e.error.stack ? '\n' : '', e.error ? e.error.stack : undefined
+    //       );
+    //   }, false);
+    // }
+    PAGE.remoteLog = function(msg, arg1, arg2, arg3) {
+      let args = [msg, arg1, arg2, arg3].filter(i => !!i)
+      window.socket.emit('hostLog', ...args)
+      console.log(...args)
     }
   }
 
@@ -89,7 +94,7 @@ class Page{
   load() {
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
-    //PAGE.setupRemoteLogging()
+    PAGE.setupRemoteLogging()
     HERO.getHeroId()
 
     events.init()

@@ -41,6 +41,8 @@ class Hero{
     	height: 40,
     	velocityX: 0,
     	velocityY: 0,
+      _flatVelocityX: 0,
+      _flatVelocityY: 0,
     	velocityMax: 400,
       color: 'white',
     	// accY: 0,
@@ -289,6 +291,8 @@ class Hero{
       _deltaX: hero._deltaX,
       velocityY: hero.velocityY,
       velocityX: hero.velocityX,
+      _flatVelocityX: hero._flatVelocityX,
+      _flatVelocityY: hero._flatVelocityY,
       lastHeroUpdateId: hero.lastHeroUpdateId,
       lastDialogueId: hero.lastDialogueId,
       directions: hero.directions,
@@ -475,7 +479,7 @@ class Hero{
     // dont do keydown event for hosts hero since we've already done locally
     if(PAGE.role.isPlayer && heroId == HERO.id) return
     let hero = GAME.heros[heroId]
-    input.onKeyDown(keyCode, hero)
+    input.onKeyDown(key, hero)
   }
 
   resetReachablePlatformArea(hero) {

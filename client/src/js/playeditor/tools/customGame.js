@@ -9,6 +9,9 @@ function init() {
     window.resetCodeEditor()
   })
 
+  window.overrideCustomGameCodeToggle = document.getElementById("override-custom-game").addEventListener('change', (e) => {
+    window.socket.emit('updateWorld', { overrideCustomGameCode: e.target.checked})
+  })
 
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/monokai");

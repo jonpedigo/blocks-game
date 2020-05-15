@@ -174,6 +174,11 @@ export default class HeroContextMenu extends React.Component{
         <SubMenu title="Space Bar">
           {this._renderInputBehaviorMenu('spaceBarBehavior', window.heroSpaceBarBehaviors)}
         </SubMenu>
+        <SubMenu title="Modifiers">
+          <Menu onClick={this._handleTagMenuClick}>
+            {this._renderTagMenuItems(window.keyInputTags)}
+          </Menu>
+        </SubMenu>
       </SubMenu>
       <SubMenu title="Advanced">
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>

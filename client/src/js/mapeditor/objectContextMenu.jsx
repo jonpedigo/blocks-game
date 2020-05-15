@@ -5,6 +5,7 @@ import ColorMenu from './menus/ColorMenu.jsx';
 import GameTagMenu from './menus/GameTagMenu.jsx';
 import DialogueMenu from './menus/DialogueMenu.jsx';
 import QuestMenu from './menus/QuestMenu.jsx';
+import SpawnZoneMenu from './menus/SpawnZoneMenu.jsx';
 import NameMenu from './menus/NameMenu.jsx';
 import ObjectAdvancedMenu from './menus/ObjectAdvancedMenu.jsx';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
@@ -57,6 +58,17 @@ export default class ObjectContextMenu extends React.Component{
     }
   }
 
+  _renderObjectSpawnZoneMenu() {
+    const { objectSelected, subObject } = this.props
+    const { spawnZone } = objectSelected.tags
+
+    if(spawnZone) {
+      return <SubMenu title="Spawn Zone">
+      <SpawnZoneMenu objectSelected={objectSelected} subObject={subObject}/>
+      </SubMenu>
+    }
+  }
+
   render() {
     const { objectSelected, subObject } = this.props
 
@@ -79,6 +91,7 @@ export default class ObjectContextMenu extends React.Component{
         <NameMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
       {this._renderObjectQuestMenu()}
+      {this._renderObjectSpawnZoneMenu()}
       <SubMenu title="Group">
         <GameTagMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>

@@ -29,6 +29,15 @@ export default class ObjectAdvancedMenu extends React.Component{
       if(key === 'add-new-subobject') {
         modals.addNewSubObject(objectSelected)
       }
+
+      if(key === 'set-world-respawn-point') {
+        window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
+      }
+
+      if(key === 'turn-into-spawn-zone') {
+        window.socket.emit('addSubObject', objectSelected, { tags: { potential: true }}, 'spawner')
+        networkEditObject(objectSelected, { tags: {spawnZone: true}, spawnLimit: 0, spawnPoolInitial: 1, spawnSubObjectName: 'spawner' })
+      }
     }
   }
 
@@ -41,9 +50,11 @@ export default class ObjectAdvancedMenu extends React.Component{
       <MenuItem key="set-relative">Set relative</MenuItem>
       <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
       <MenuItem key="add-compendium">Add To Compendium</MenuItem>
-      <MenuItem key={'add-new-subobject'}>Add new sub object</MenuItem>
+      <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
+      <MenuItem key='turn-into-spawn-zone'>Turn into spawn zone</MenuItem>
       <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
       <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
+      <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
     </Menu>
   }
 }
