@@ -50,7 +50,7 @@ function update() {
 
   //reset background
 	ctx.fillStyle = 'black';
-  if(GAME.world.backgroundColor) {
+  if(GAME.world.backgroundColor && GAME.gameState.started) {
     ctx.fillStyle = GAME.world.backgroundColor
   }
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -71,7 +71,12 @@ function update() {
   })
 
   GAME.heroList.forEach((hero) => {
-    drawTools.drawObject(ctx, hero, camera);
+    if(!GAME.gameState.started) {
+      drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
+    } else {
+      drawTools.drawObject(ctx, hero, camera);
+    }
+
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
         if(subObject.tags.potential) return

@@ -26,12 +26,20 @@ export default class ObjectAdvancedMenu extends React.Component{
         modals.editObjectCode(objectSelected, 'Editing Object State', OBJECTS.getState(objectSelected));
       }
 
+      if(key === 'edit-all-json') {
+        modals.editObjectCode(objectSelected, 'Editing Object', OBJECTS.getState(objectSelected));
+      }
+
       if(key === 'add-new-subobject') {
         modals.addNewSubObject(objectSelected)
       }
 
       if(key === 'set-world-respawn-point') {
         window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
+      }
+
+      if(key === 'set-object-respawn-point') {
+        networkEditObject(objectSelected, { spawnPointX: objectSelected.x, spawnPointY: objectSelected.y })
       }
 
       if(key === 'turn-into-spawn-zone') {
@@ -54,7 +62,9 @@ export default class ObjectAdvancedMenu extends React.Component{
       <MenuItem key='turn-into-spawn-zone'>Turn into spawn zone</MenuItem>
       <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
       <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
-      <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
+      <MenuItem key="edit-all-json">Edit All JSON</MenuItem>
+      <MenuItem key='set-object-respawn-point'>Set current position as object respawn point</MenuItem>
+      <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
     </Menu>
   }
 }

@@ -1,10 +1,10 @@
 #context-menu {
   /* width: 120px; */
   position: fixed;
-  background: #222;
+  background: #19191a;
   color: white;
   z-index: 1;
-  box-shadow: 0 0 4px #222;
+  box-shadow: 0 0 4px #19191a;
 }
 
 .top-menu-item {
@@ -47,14 +47,14 @@
 }
 .rc-menu-item-active,
 .rc-menu-submenu-active > .rc-menu-submenu-title {
-  background-color: #222;
+  background-color: #19191a;
 }
 .rc-menu-item-selected {
-  background-color: #222;
+  background-color: #19191a;
   transform: translateZ(0);
 }
 .rc-menu-submenu-selected {
-  background-color: #222;
+  background-color: #19191a;
 }
 .rc-menu > li.rc-menu-submenu {
   padding: 0;
@@ -114,7 +114,7 @@
   padding-left: 20px;
 }
 .rc-menu-submenu > .rc-menu {
-  background-color: #222;
+  background-color: #19191a;
 }
 .rc-menu .rc-menu-submenu-title .anticon,
 .rc-menu .rc-menu-item .anticon {
@@ -129,7 +129,7 @@
   margin-left: 8px;
 }
 .rc-menu-horizontal {
-  background-color: #222;
+  background-color: #19191a;
   border: none;
   box-shadow: none;
   white-space: nowrap;
@@ -146,7 +146,7 @@
 }
 .rc-menu-horizontal > .rc-menu-submenu-active,
 .rc-menu-horizontal > .rc-menu-item-active {
-  background-color: #222;
+  background-color: #19191a;
   color: white;
 }
 .rc-menu-horizontal:after {

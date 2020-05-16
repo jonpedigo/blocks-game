@@ -293,7 +293,7 @@ function objectCorrection(po, final) {
     } else {
       object.x = po.x
       object.y = po.y
-      if(hero.tags.rotateable) {
+      if(object.tags.rotateable) {
         object.x -= object.width/2
         object.y -= object.height/2
       }
@@ -402,46 +402,90 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
-function attachSubObjects(object, subObjects) {
+function attachSubObjects(owner, subObjects) {
   OBJECTS.forAllSubObjects(subObjects, (subObject) => {
-    if(subObject.relativeWidth) subObject.width = object.width + (subObject.relativeWidth)
-    if(subObject.relativeHeight) subObject.height = object.height + (subObject.relativeHeight)
+    if(subObject.relativeWidth) subObject.width = owner.width + (subObject.relativeWidth)
+    if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
-    // up
-    if(typeof subObject.relativeX === 'number') subObject.x = object.x + subObject.relativeX
-    if(typeof subObject.relativeY === 'number') subObject.y = object.y + subObject.relativeY
+    subObject.x = owner.x
+    subObject.y = owner.y
 
-    subObject.width = subObject.originalWidth
-    subObject.height = subObject.originalHeight
     if(subObject.tags.relativeToDirection && GAME.gameState.started) {
-      if(object.tags.hero) {
-        const direction = object.inputDirection
+      const direction = owner.inputDirection
+      let radians = 0
 
-        // right
-        if(direction === 'right') {
-          subObject.x = object.x + object.width + subObject.relativeY + subObject.originalHeight
-          subObject.y = object.y + subObject.relativeX
-
-          subObject.width = subObject.originalHeight
-          subObject.height = subObject.originalWidth
-        }
-
-        // down
-        if(direction === 'down') {
-          subObject.x = object.x + object.width - subObject.relativeX - subObject.width
-          subObject.y = object.y - subObject.relativeY
-        }
-
-        // left
-        if(direction === 'left') {
-          subObject.x = object.x + subObject.relativeY
-          subObject.y = object.y + object.height - subObject.relativeX - subObject.originalWidth
-
-          subObject.width = subObject.originalHeight
-          subObject.height = subObject.originalWidth
-        }
+      if(direction === 'right') {
+        radians = degreesToRadians(90)
       }
+
+      // down
+      if(direction === 'down') {
+        radians = degreesToRadians(180)
+      }
+
+      // left
+      if(direction === 'left') {
+        radians = degreesToRadians(270)
+      }
+
+      var rotatedX = Math.cos(radians) * ((subObject.relativeX + subObject.width) - (owner.width/2)) - Math.sin(radians) * ((subObject.relativeY + subObject.height) - (owner.height/2))  + (owner.width/2);
+
+      var rotatedY = Math.sin(radians) * ((subObject.relativeY + subObject.width) - (owner.width/2)) + Math.cos(radians) * ((subObject.relativeY + subObject.height) -  (owner.height/2)) +  ( owner.height/2);
+
+      console.log(Math.sin(radians), Math.cos(radians))
+      // console.log(rotatedX, rotatedY)
+      const goalX = owner.width - subObject.relativeX - subObject.width
+      const goalY = owner.height - subObject.relativeY - subObject.height
+      // console.log('goals', goalX, goalY)
+
+      // subObject.x = owner.x + owner.width - subObject.relativeX - subObject.width
+      // subObject.y = owner.y + owner.height - subObject.relativeY - subObject.height
+
+      subObject.x += rotatedX
+      subObject.y += rotatedY
+      // subObject.x = owner.x
+      //     + (Math.cos(radians) * subObject.relativeX) + (-Math.sin(radians) *  subObject.relativeY);
+      //
+      // subObject.y = owner.y
+      //     + (Math.sin(radians) * subObject.relativeX) + (Math.cos(radians) *  subObject.relativeY);
+
+      // console.log(Math.sin(radians) * owner.height, Math.cos(radians) * owner.height)
+
+      subObject.angle = radians
+      subObject.tags.rotateable = true
+      // if(object.tags.hero) {
+      //   const direction = object.inputDirection
+      //
+      //   // right
+      //   if(direction === 'right') {
+      //     subObject.x = object.x + object.width + subObject.relativeY + subObject.originalHeight
+      //     subObject.y = object.y + subObject.relativeX
+      //
+      //     subObject.width = subObject.originalHeight
+      //     subObject.height = subObject.originalWidth
+      //   }
+      //
+      //   // down
+      //   if(direction === 'down') {
+      //     subObject.x = object.x + object.width - subObject.relativeX - subObject.width
+      //     subObject.y = object.y - subObject.relativeY
+      //   }
+      //
+      //   // left
+      //   if(direction === 'left') {
+      //     subObject.x = object.x + subObject.relativeY
+      //     subObject.y = object.y + object.height - subObject.relativeX - subObject.originalWidth
+      //
+      //     subObject.width = subObject.originalHeight
+      //     subObject.height = subObject.originalWidth
+      //   }
+      // }
     }
+
+    // no ROTATE!
+    // if(typeof subObject.relativeX === 'number') subObject.x = owner.x + subObject.relativeX
+    // if(typeof subObject.relativeY === 'number') subObject.y = owner.y + subObject.relativeY
+
   })
 }
 

@@ -6,7 +6,7 @@
 @import 'variables';
 @import 'animate';
 @import 'contextMenu.css';
-@import './dark.scss';
+@import './dark.min.css';
 
 html {
   // font-size: $root-font-size;
@@ -28,7 +28,7 @@ body {
   z-index: 0;
 
   .Toastify__toast--default {
-    background: #333;
+    background: #19191a;
     color: white;
 
     .Toastify__toast-body {

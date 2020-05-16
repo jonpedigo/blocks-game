@@ -9,19 +9,30 @@ export default class TagMenu extends React.Component{
       const { objectSelected } = this.props;
       const { networkEditObject } = MAPEDITOR
 
+      // LOCAL TAGS ALLOWS US TO SEE WHAT TAGS WE HAVE ADDED W CHECKMARSK!!
+      this.setState({ localTags: {
+        ...this.state.localTags,
+        [key]: !this.state.localTags[key]
+      }})
+
       networkEditObject(objectSelected, { tags: { [key]: !objectSelected.tags[key] }})
+    }
+
+    this.state = {
+      localTags: this.props.objectSelected.tags
     }
   }
 
   _renderTagMenuItems(tags) {
-    const { objectSelected } = this.props;
+    const { objectSelected } = this.props
+    const { localTags } = this.state
 
     const tagList = Object.keys(tags)
     return tagList.map((tag) => {
-      if(objectSelected.tags && objectSelected.tags[tag]) {
-        return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
+      if(objectSelected.tags && objectSelected.tags[tag] || localTags[tag]) {
+        return <MenuItem className='dont-close-menu' key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
       } else {
-        return <MenuItem key={tag}>{tag}</MenuItem>
+        return <MenuItem className='dont-close-menu' key={tag}>{tag}</MenuItem>
       }
     })
   }

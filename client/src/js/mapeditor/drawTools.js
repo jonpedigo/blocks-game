@@ -24,6 +24,11 @@ function getObjectVertices(ctx, object, camera, options = {}) {
 
 function drawFilledObject(ctx, object, camera) {
   if(object.color) ctx.fillStyle = object.color
+  else if(GAME.world.defaultObjectColor) {
+    ctx.fillStyle = GAME.world.defaultObjectColor
+  }
+  else ctx.fillStyle = '#525252'
+
   ctx.fillRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
 }
 
@@ -31,9 +36,11 @@ function drawVertice(ctx, vertice, camera) {
   if(vertice.glow) {
     ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   }
-  if(vertice.color) {
-    ctx.strokeStyle = vertice.color;
-  }
+
+  if(vertice.color) ctx.strokeStyle = vertice.color
+  else if(GAME.world.defaultObjectColor) ctx.strokeStyle = GAME.world.defaultObjectColor
+  else ctx.strokeStyle = '#525252'
+
   if(vertice.thickness) {
     ctx.lineWidth = vertice.thickness
   }
@@ -48,7 +55,7 @@ function drawVertice(ctx, vertice, camera) {
     drawVertice(ctx, {...vertice, glow: false}, camera)
   }
   if(vertice.color) {
-    ctx.strokeStyle = window.defaultObject.color;
+    ctx.strokeStyle = '#525252';
   }
   if(vertice.thickness) {
     ctx.lineWidth = 1
@@ -87,9 +94,8 @@ function drawObject(ctx, object, camera, options = {showInvisible: false}) {
 }
 
 function drawLine(ctx, pointA, pointB, options, camera) {
-  if(options.color) {
-    ctx.strokeStyle = options.color;
-  }
+  if(options.color) ctx.strokeStyle = options.color
+
   if(options.thickness) {
     ctx.lineWidth = options.thickness
   }

@@ -72,8 +72,16 @@ export default class HeroContextMenu extends React.Component{
         modals.editObjectCode(objectSelected, 'Editing Hero State', HERO.getState(objectSelected));
       }
 
+      if(key === 'edit-all-json') {
+        modals.editObjectCode(objectSelected, 'Editing Hero', objectSelected);
+      }
+
       if(key === 'add-new-subobject') {
         modals.addNewSubObject(objectSelected)
+      }
+
+      if(key === 'set-world-respawn-point') {
+        window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
       }
     }
 
@@ -180,16 +188,18 @@ export default class HeroContextMenu extends React.Component{
           </Menu>
         </SubMenu>
       </SubMenu>
-      <SubMenu title="Advanced">
-        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-        <MenuItem key={'add-new-subobject'}>Add new sub object</MenuItem>
-        <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
-        <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
-      </SubMenu>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
+      <SubMenu title="Advanced">
+        <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
+        <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
+        <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
+        <MenuItem key="edit-all-json">Edit All JSON</MenuItem>
+        <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
+      </SubMenu>
     </Menu>
   }
 }

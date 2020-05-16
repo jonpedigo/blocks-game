@@ -32,7 +32,7 @@ class contextMenuEl extends React.Component{
     });
 
     window.addEventListener("click", e => {
-      if(e.target.innerText === 'Color Picker' || e.target.innerText === 'Set world background color' || e.target.className.indexOf('dont-close-menu') >= 0) {
+      if(e.target.className.indexOf('dont-close-menu') >= 0) {
       } else {
         this._toggleContextMenu("hide");
       }
@@ -73,8 +73,11 @@ class contextMenuEl extends React.Component{
         window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
       }
 
-      if(key === 'select-color') {
-        this.openColorPicker()
+      if(key === 'select-world-background-color') {
+        this.openColorPicker('worldBackground')
+      }
+      if(key === 'select-default-object-color') {
+        this.openColorPicker('defaultObject')
       }
     }
 
@@ -107,8 +110,26 @@ class contextMenuEl extends React.Component{
   }
 
   _setContextMenuPosition({ top, left }) {
+    // THIS ADJUSTS THE SIZE OF THE CONTEXT MENU IF ITS TOO CLOSE TO THE EDGES
+    if(MAPEDITOR.objectHighlighted.id) {
+      const heightDesired = 350
+      const widthDesired = 450
+
+      const bottomDistance = window.innerHeight - top
+      const rightDistance = window.innerWidth - left
+
+      if(bottomDistance < heightDesired) {
+        top = window.innerHeight - heightDesired
+      }
+
+      if(rightDistance < widthDesired) {
+        left = window.innerWidth - widthDesired
+      }
+    }
+
     MAPEDITOR.contextMenu.style.left = `${left}px`
     MAPEDITOR.contextMenu.style.top = `${top}px`
+
     this._toggleContextMenu('show')
   }
 
@@ -128,11 +149,11 @@ class contextMenuEl extends React.Component{
           this.setState({
             coloringObject: null,
           })
-          coloringObject.color = color.hex
-          if(!coloringObject.id && !coloringObject.tags.subObject) {
+          if(coloringObject == 'worldBackground') {
             window.socket.emit('updateWorld', {backgroundColor: color.hex})
+          } if(coloringObject == 'defaultObject') {
+            window.socket.emit('updateWorld', {defaultObjectColor: color.hex})
           } else {
-            console.log(coloringObject)
             networkEditObject(coloringObject, {color: color.hex})
           }
         }}
@@ -162,7 +183,8 @@ class contextMenuEl extends React.Component{
       return <Menu onClick={this._handleMapMenuClick}>
         <MenuItem key='create-object'>Create object</MenuItem>
         <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
-        <MenuItem key='select-color'>Set world background color</MenuItem>
+        <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
+        <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
       </Menu>

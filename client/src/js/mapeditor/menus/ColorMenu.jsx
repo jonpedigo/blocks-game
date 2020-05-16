@@ -31,7 +31,7 @@ export default class ColorMenu extends React.Component{
     const { objectSelected } = this.props
 
     return <Menu onClick={this._handleColorMenuClick}>
-      <MenuItem key="select-color">Color Picker</MenuItem>
+      <MenuItem className='dont-close-menu' key="select-color">Color Picker</MenuItem>
       <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
       {objectSelected.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
     </Menu>

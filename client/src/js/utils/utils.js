@@ -83,3 +83,8 @@ window.removeFalsey = function(object, removeFalse) {
     if((object[key] === false && removeFalse) || object[key] === null || object[key] === undefined) delete object[key]
   })
 }
+
+window.degreesToRadians = function(degrees) {
+  var pi = Math.PI;
+  return degrees * (pi/180);
+}

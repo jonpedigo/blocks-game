@@ -14,7 +14,6 @@ class Objects{
       velocityY: 0,
       velocityMax: 100,
       speed: 100,
-      color: '#525252',
       subObjects: {},
     }
   }
@@ -505,8 +504,8 @@ class Objects{
   onEditSubObject(ownerId, subObjectName, update) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     window.mergeDeep(owner.subObjects[subObjectName], update)
-    owner.subObjects[subObjectName].originalWidth = subObject.width
-    owner.subObjects[subObjectName].originalHeight = subObject.height
+    owner.subObjects[subObjectName].originalWidth = owner.subObjects[subObjectName].width
+    owner.subObjects[subObjectName].originalHeight = owner.subObjects[subObjectName].height
   }
 
   onNetworkUpdateObjects(objectsUpdated) {

@@ -103,13 +103,13 @@ export default class ObjectContextMenu extends React.Component{
       <SubMenu title="Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
       </SubMenu>
-      <SubMenu title="Advanced">
-        <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>
-      </SubMenu>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
+      <SubMenu title="Advanced">
+        <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>
+      </SubMenu>
     </Menu>
   }
 }
