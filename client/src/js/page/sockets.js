@@ -21,6 +21,26 @@ function init() {
   ///////////////////////////////
 
   if(PAGE.role.isHost) {
+    window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
+      window.local.emit('onRemoveSubObject', ownerId, subObjectName)
+    })
+    window.socket.on('onAddSubObject', (owner, subObject, subObjectName) => {
+      window.local.emit('onAddSubObject', owner, subObject, subObjectName)
+    })
+    window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
+      window.local.emit('onEditSubObject', ownerId, subObjectName, update)
+    })
+
+    // CLIENT HOST OR EDITOR CALL THIS
+    window.socket.on('onRemoveObject', (object) => {
+      OBJECTS.removeObject(object)
+    })
+
+    // CLIENT HOST OR EDITOR CALL THIS
+    window.socket.on('onRemoveHero', (hero) => {
+      HERO.removeHero(hero)
+    })
+
     window.socket.on('onAskJoinGame', (heroId) => {
       window.local.emit('onAskJoinGame', heroId)
     })
@@ -203,15 +223,6 @@ function init() {
     }
   })
 
-  // CLIENT HOST OR EDITOR CALL THIS
-  window.socket.on('onRemoveObject', (object) => {
-    OBJECTS.removeObject(object)
-  })
-
-  // CLIENT HOST OR EDITOR CALL THIS
-  window.socket.on('onRemoveHero', (hero) => {
-    HERO.removeHero(hero)
-  })
 
   // CLIENT HOST OR EDITOR CALL THIS
   window.socket.on('onDeleteObject', (object) => {
@@ -223,17 +234,8 @@ function init() {
     window.local.emit('onDeleteObject', object)
   })
 
-  window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
-    window.local.emit('onRemoveSubObject', ownerId, subObjectName)
-  })
   window.socket.on('onDeleteSubObject', (owner, subObjectName) => {
     window.local.emit('onDeleteSubObject', owner, subObjectName)
-  })
-  window.socket.on('onAddSubObject', (owner, subObject, subObjectName) => {
-    window.local.emit('onAddSubObject', owner, subObject, subObjectName)
-  })
-  window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
-    window.local.emit('onEditSubObject', ownerId, subObjectName, update)
   })
 
   // EDITOR CALLS THIS

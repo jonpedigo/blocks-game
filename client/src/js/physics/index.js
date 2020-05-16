@@ -1,4 +1,6 @@
 import { Collisions } from 'collisions';
+import decomp from 'poly-decomp';
+
 import {
   attachToParent,
   attachToRelative,
@@ -27,6 +29,31 @@ window.PHYSICS = {
   prepareObjectsAndHerosForCollisionsPhase,
   updatePosition,
   postPhysics,
+  draw: drawSystem
+}
+
+let cameraSet = false
+function drawSystem(ctx, camera) {
+  if(!cameraSet) {
+    ctx.scale(camera.multiplier, camera.multiplier)
+    cameraSet = true
+  }
+  // console.log(camera.x)
+  // ctx.setTransform(0,0,0,0, camera.x, camera.y)
+
+  ctx.fillStyle = '#000000'
+	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+  // ctx.canvas.width = 1000
+  // ctx.canvas.height = 1000
+	ctx.strokeStyle = '#FFFFFF'
+	ctx.beginPath()
+	system.draw(ctx)
+	ctx.stroke()
+
+  ctx.strokeStyle = '#00FF00'
+  ctx.beginPath()
+  // system.drawBVH(ctx)
+  ctx.stroke()
 }
 
 function correctAndEffectAllObjectAndHeros (delta) {
@@ -173,8 +200,18 @@ function prepareObjectsAndHerosForCollisionsPhase() {
     physicsObject.id = object.id
     physicsObject.gameObject = object
 
-    if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
-      physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
+    if(object.tags.rotateable) {
+      if(physicsObject._angle !== object.angle) {
+        physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
+      }
+      physicsObject.angle = object.angle
+      physicsObject.x = object.x + object.width/2
+      physicsObject.y = object.y + object.height/2
+    } else {
+      if(physicsObject.angle) physicsObject.angle = null
+      if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
+        physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
+      }
     }
   })
 

@@ -49,6 +49,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "pathfinder": "^0.3.0-1",
     "pathfinding": "^0.4.18",
+    "poly-decomp": "^0.3.0",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "rc-menu": "^8.0.3",

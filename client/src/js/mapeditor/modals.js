@@ -81,6 +81,7 @@ function nameObject(object, cb) {
 function editQuest(hero, quest, cb) {
   PAGE.typingMode = true
   openQuestModal(quest, ({value}) => {
+    if(!value) return
     const id = value[0]
     const startMessage = value[1]
     const goal = value[2]

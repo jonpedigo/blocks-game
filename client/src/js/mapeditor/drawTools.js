@@ -62,18 +62,28 @@ function drawBorder(ctx, object, camera, options = { thickness: 1 }) {
 }
 
 function drawObject(ctx, object, camera, options = {showInvisible: false}) {
+  ctx.save()
+  if(object.tags && object.tags.rotateable) {
+    ctx.beginPath();
+    ctx.translate((object.x * camera.multiplier) - camera.x + ((object.width/2) * camera.multiplier), (object.y * camera.multiplier) - camera.y + ((object.height/2) * camera.multiplier));
+    ctx.rotate(object.angle);
+    object = {...object, x: -(object.width/2), y: -(object.height/2)}
+    camera = {...camera, x: 0, y: 0}
+  }
+
+
   if(object.tags && object.tags.invisible) {
    if(options.showInvisible) {
      ctx.globalAlpha = 0.2;
      drawFilledObject(ctx, object, camera);
-     ctx.globalAlpha = 1.0;
    }
   } else if(object.tags && object.tags.filled) {
     drawFilledObject(ctx, object, camera);
   } else {
     drawBorder(ctx, object, camera);
   }
-  ctx.fillStyle = window.defaultObject.color
+
+  ctx.restore()
 }
 
 function drawLine(ctx, pointA, pointB, options, camera) {

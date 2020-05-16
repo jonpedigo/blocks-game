@@ -74,7 +74,7 @@ function update() {
     drawTools.drawObject(ctx, hero, camera);
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-        if(subObject.tags.potential) return 
+        if(subObject.tags.potential) return
         drawTools.drawObject(ctx, subObject, camera)
       })
     }
@@ -121,6 +121,8 @@ function update() {
       drawTools.drawBorder(ctx, {x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
     }
   }
+
+  // PHYSICS.draw(ctx, camera)
 }
 
 export default {

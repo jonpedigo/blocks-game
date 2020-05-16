@@ -500,14 +500,13 @@ class Objects{
   removeSubObject(ownerId, subObjectName) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     owner.subObjects[subObjectName].removed = true
-    console.log(owner.subObjects[subObjectName])
   }
 
   onEditSubObject(ownerId, subObjectName, update) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     window.mergeDeep(owner.subObjects[subObjectName], update)
-    subObject.originalWidth = subObject.width
-    subObject.originalHeight = subObject.height
+    owner.subObjects[subObjectName].originalWidth = subObject.width
+    owner.subObjects[subObjectName].originalHeight = subObject.height
   }
 
   onNetworkUpdateObjects(objectsUpdated) {

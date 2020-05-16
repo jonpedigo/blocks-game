@@ -64,6 +64,7 @@ function setDefault() {
     movingPlatform: false,
     heroPushable: false,
     skipHeroGravityOnCollide: false,
+    rotateable: false,
   }
 
   window.questTags = {
@@ -105,6 +106,7 @@ function setDefault() {
     default: false,
     monsterDestroyer: false,
     obstacle: false,
+    rotateable: false,
   }
 
   window.subObjectTags = {

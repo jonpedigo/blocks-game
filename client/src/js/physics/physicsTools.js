@@ -150,6 +150,10 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
         }
         hero.x = heroPO.x
         hero.y = heroPO.y
+        if(hero.tags.rotateable) {
+          hero.x -= hero.width/2
+          hero.y -= hero.height/2
+        }
       }
     }
   }
@@ -281,13 +285,18 @@ function objectCorrection(po, final) {
   }
 
   if(final) {
+    const object = po.gameObject
     // just give up correction and prevent any movement from these mother fuckers
     if(illegal) {
-      po.gameObject.x = po.gameObject._initialX
-      po.gameObject.y = po.gameObject._initialY
+      object.x = object._initialX
+      object.y = object._initialY
     } else {
-      po.gameObject.x = po.x
-      po.gameObject.y = po.y
+      object.x = po.x
+      object.y = po.y
+      if(hero.tags.rotateable) {
+        object.x -= object.width/2
+        object.y -= object.height/2
+      }
     }
   }
 }

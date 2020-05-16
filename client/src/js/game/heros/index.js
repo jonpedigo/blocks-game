@@ -350,6 +350,7 @@ class Hero{
       relativeId: hero.relativeId,
       parentId: hero.parentId,
       quests: hero.quests,
+      angle: hero.angle,
       customProps: hero.customProps,
     }
 
@@ -383,6 +384,7 @@ class Hero{
       score: hero.score,
       removed: hero.removed,
       questState: hero.questState,
+      angle: hero.angle,
       customMapState: hero.customMapState,
     }
 
