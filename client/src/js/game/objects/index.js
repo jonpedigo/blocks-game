@@ -532,6 +532,12 @@ class Objects{
       relativeY: object.y - relative.y
     }
   }
+  getRelativeCenterXY(object, relative) {
+    return {
+      relativeX: (object.x + object.width/2) - (relative.x + relative.width/2),
+      relativeY: (object.y + object.height/2) - (relative.y + relative.height/2)
+    }
+  }
 }
 
 window.OBJECTS = new Objects()

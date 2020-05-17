@@ -114,6 +114,7 @@ function setDefault() {
     heroInteractTriggerArea: false,
     objectInteractTriggerArea: false,
     relativeToDirection: false,
+    relativeToAngle: false,
     potential: false,
   }
 

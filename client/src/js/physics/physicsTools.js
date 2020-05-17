@@ -25,10 +25,6 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
       window.local.emit('onHeroCollide', heroPO.gameObject, collider, result, removeObjects, respawnObjects)
     }
   }
-
-  // in case there was respawns or something
-  heroPO.x = hero.x
-  heroPO.y = hero.y
 }
 
 /////////////////////////////////////////////////////
@@ -95,9 +91,11 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
             hero._skipNextGravity = true
           } else {
             if(hero.velocityY > 0) hero.velocityY = 0
+            if(hero.velocityAngle) hero.velocityAngle *= .09
           }
         } else if(result.overlap_y < 0){
           if(hero.velocityY < 0) hero.velocityY = 0
+          if(hero.velocityAngle) hero.velocityAngle *= .09
         }
         heroPO.y -= result.overlap_y
       }
@@ -105,8 +103,10 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
       function correctHeroX() {
         if(result.overlap_x > 0) {
           hero.velocityX = 0
+          if(hero.velocityAngle) hero.velocityAngle *= .09
         } else if(result.overlap_x < 0){
           hero.velocityX = 0
+          if(hero.velocityAngle) hero.velocityAngle *= .09
         }
         heroPO.x -= result.overlap_x
       }
@@ -402,90 +402,59 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
+
+function rotatePoint(point, center, radian){
+  // console.log(point.x - center.x)
+    var rotatedX = Math.cos(radian) * (point.x - center.x) - Math.sin(radian) * (point.y-center.y) + center.x;
+
+    var rotatedY = Math.sin(radian) * (point.x - center.x) + Math.cos(radian) * (point.y - center.y) + center.y;
+
+    return {rotatedX, rotatedY}
+}
+
+
+
 function attachSubObjects(owner, subObjects) {
   OBJECTS.forAllSubObjects(subObjects, (subObject) => {
     if(subObject.relativeWidth) subObject.width = owner.width + (subObject.relativeWidth)
     if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
-    subObject.x = owner.x
-    subObject.y = owner.y
-
-    if(subObject.tags.relativeToDirection && GAME.gameState.started) {
+    if((subObject.tags.relativeToDirection || subObject.tags.relativeToAngle) && GAME.gameState.started) {
       const direction = owner.inputDirection
+
       let radians = 0
 
-      if(direction === 'right') {
-        radians = degreesToRadians(90)
+      if(subObject.tags.relativeToAngle) {
+        radians = owner.angle
+      } else if(subObject.tags.relativeToDirection) {
+        if(direction === 'right') {
+          radians = degreesToRadians(90)
+        }
+
+        // down
+        if(direction === 'down') {
+          radians = degreesToRadians(180)
+        }
+
+        // left
+        if(direction === 'left') {
+          radians = degreesToRadians(270)
+        }
       }
 
-      // down
-      if(direction === 'down') {
-        radians = degreesToRadians(180)
-      }
 
-      // left
-      if(direction === 'left') {
-        radians = degreesToRadians(270)
-      }
+      var rotatedRelativeX = Math.cos(radians) * (subObject.relativeX) - Math.sin(radians) * (subObject.relativeY);
+      var rotatedRelativeY = Math.sin(radians) * (subObject.relativeX) + Math.cos(radians) * (subObject.relativeY);
 
-      var rotatedX = Math.cos(radians) * ((subObject.relativeX + subObject.width) - (owner.width/2)) - Math.sin(radians) * ((subObject.relativeY + subObject.height) - (owner.height/2))  + (owner.width/2);
-
-      var rotatedY = Math.sin(radians) * ((subObject.relativeY + subObject.width) - (owner.width/2)) + Math.cos(radians) * ((subObject.relativeY + subObject.height) -  (owner.height/2)) +  ( owner.height/2);
-
-      console.log(Math.sin(radians), Math.cos(radians))
-      // console.log(rotatedX, rotatedY)
-      const goalX = owner.width - subObject.relativeX - subObject.width
-      const goalY = owner.height - subObject.relativeY - subObject.height
-      // console.log('goals', goalX, goalY)
-
-      // subObject.x = owner.x + owner.width - subObject.relativeX - subObject.width
-      // subObject.y = owner.y + owner.height - subObject.relativeY - subObject.height
-
-      subObject.x += rotatedX
-      subObject.y += rotatedY
-      // subObject.x = owner.x
-      //     + (Math.cos(radians) * subObject.relativeX) + (-Math.sin(radians) *  subObject.relativeY);
-      //
-      // subObject.y = owner.y
-      //     + (Math.sin(radians) * subObject.relativeX) + (Math.cos(radians) *  subObject.relativeY);
-
-      // console.log(Math.sin(radians) * owner.height, Math.cos(radians) * owner.height)
+      subObject.x = owner.x + owner.width/2 + rotatedRelativeX - subObject.width/2
+      subObject.y = owner.y + owner.height/2 + rotatedRelativeY - subObject.height/2
 
       subObject.angle = radians
       subObject.tags.rotateable = true
-      // if(object.tags.hero) {
-      //   const direction = object.inputDirection
-      //
-      //   // right
-      //   if(direction === 'right') {
-      //     subObject.x = object.x + object.width + subObject.relativeY + subObject.originalHeight
-      //     subObject.y = object.y + subObject.relativeX
-      //
-      //     subObject.width = subObject.originalHeight
-      //     subObject.height = subObject.originalWidth
-      //   }
-      //
-      //   // down
-      //   if(direction === 'down') {
-      //     subObject.x = object.x + object.width - subObject.relativeX - subObject.width
-      //     subObject.y = object.y - subObject.relativeY
-      //   }
-      //
-      //   // left
-      //   if(direction === 'left') {
-      //     subObject.x = object.x + subObject.relativeY
-      //     subObject.y = object.y + object.height - subObject.relativeX - subObject.originalWidth
-      //
-      //     subObject.width = subObject.originalHeight
-      //     subObject.height = subObject.originalWidth
-      //   }
-      // }
+    } else {
+      if(typeof subObject.relativeX === 'number') subObject.x = owner.x + owner.width/2 + subObject.relativeX - subObject.width/2
+      if(typeof subObject.relativeY === 'number') subObject.y = owner.y + owner.height/2 + subObject.relativeY - subObject.height/2
     }
-
-    // no ROTATE!
-    // if(typeof subObject.relativeX === 'number') subObject.x = owner.x + subObject.relativeX
-    // if(typeof subObject.relativeY === 'number') subObject.y = owner.y + subObject.relativeY
-
   })
 }
 

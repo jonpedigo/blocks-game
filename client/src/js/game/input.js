@@ -7,6 +7,7 @@ function setDefault() {
     'velocity',
     'skating',
     'flatRecent',
+    'angleAndVelocity',
     'none'
   ]
 
@@ -109,6 +110,28 @@ function onUpdate(hero, keysDown, delta) {
     } else if (hero.arrowKeysBehavior === 'velocity') {
       hero.velocityX += (hero.speed) * delta;
     }
+  }
+
+  if(hero.arrowKeysBehavior === 'angleAndVelocity') {
+    if(typeof hero.angle !== 'number') hero.angle = 0
+    if(typeof hero.velocityAngle !== 'number') hero.velocityAngle = 0
+
+    if ('up' in keysDown) { // Player holding up
+      hero.velocityAngle += (hero.speed) * delta;
+    }
+    if ('down' in keysDown) { // Player holding down
+      hero.velocityAngle -= (hero.speed) * delta;
+    }
+    if ('left' in keysDown) { // Player holding left
+      hero.angle -= 1 * delta;
+    }
+    if ('right' in keysDown) { // Player holding right
+      hero.angle += 1 * delta
+    }
+
+    const angleCorrection = window.degreesToRadians(90)
+    hero.velocityX = hero.velocityAngle * Math.cos(hero.angle - angleCorrection)
+    hero.velocityY = hero.velocityAngle * Math.sin(hero.angle - angleCorrection)
   }
 
   if(hero.arrowKeysBehavior === 'skating') {

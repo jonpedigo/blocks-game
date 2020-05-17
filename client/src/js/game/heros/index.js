@@ -122,6 +122,7 @@ class Hero{
     hero.y = y
     hero.velocityX = 0
     hero.velocityY = 0
+    hero.velocityAngle = 0
   }
 
   getSpawnCoords(hero) {
@@ -145,6 +146,7 @@ class Hero{
   respawn(hero) {
     hero.velocityX = 0
     hero.velocityY = 0
+    hero.velocityAngle = 0
 
     /// send objects that are possibly camping at their spawn point back to their spawn point
     if(PAGE.role.isHost && GAME && GAME.world && GAME.world.globalTags.noCamping) {

@@ -137,6 +137,7 @@ function updatePosition(object, delta) {
   if(object.tags && object.tags['stationary']) {
     object.velocityY = 0
     object.velocityX = 0
+    object.velocityAngle = 0
     object.accY = 0
     object.accX = 0
     object.x = object._initialX
@@ -205,6 +206,9 @@ function prepareObjectsAndHerosForCollisionsPhase() {
         physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
       }
       physicsObject.angle = object.angle
+      object._nonRotatedX = object.x
+      object._nonRotatedY = object.y
+
       physicsObject.x = object.x + object.width/2
       physicsObject.y = object.y + object.height/2
     } else {

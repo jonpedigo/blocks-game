@@ -57,7 +57,7 @@ function update() {
 
   if(draggingRelativeObject) {
     const owner = OBJECTS.getOwner(draggingRelativeObject)
-    drawTools.drawLine(ctx, owner, draggingRelativeObject, {color: 'white', thickness: 5 }, camera)
+    drawTools.drawLine(ctx, { x: owner.x + owner.width/2, y: owner.y + owner.height/2 }, { x: draggingRelativeObject.x + draggingRelativeObject.width/2, y: draggingRelativeObject.y + draggingRelativeObject.height/2 }, {color: 'white', thickness: 5 }, camera)
   }
 }
 

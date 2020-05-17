@@ -199,8 +199,8 @@ function handleMouseDown(event) {
   } else if(MAPEDITOR.draggingRelativeObject) {
     const { draggingRelativeObject } = MAPEDITOR
     const owner = OBJECTS.getOwner(draggingRelativeObject)
-    const { relativeX, relativeY } = OBJECTS.getRelativeXY(draggingRelativeObject, owner)
-    networkEditObject(draggingRelativeObject, {id: draggingRelativeObject.id, relativeX, relativeY})
+    const { relativeX, relativeY } = OBJECTS.getRelativeCenterXY(draggingRelativeObject, owner)
+    networkEditObject(draggingRelativeObject, {id: draggingRelativeObject.id, relativeX, relativeY })
     MAPEDITOR.draggingRelativeObject = null
   }
 

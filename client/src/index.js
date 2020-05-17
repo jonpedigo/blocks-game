@@ -1,3 +1,27 @@
+// MAIN CODE THINGS TO UPDATE
+// HOST_GAME
+// CLIENT_GAME
+// revise physics system structure, allow like 'center point' to be changed and have it be used by default.
+// ^^ so that rotation isnt a hack
+// Rotational velocity also needs to be default.
+// re organize parent, relative, owner, etc. What do these really all mean and why??
+
+// event system is NOT named right. onDete vs delete for example. I think that ones good, but like... 'startQuest'
+// like whats our patterns. Is it Host Sends event through network -> Host picks up event through network?
+
+//https://github.com/semibran/canvas-paint
+//https://github.com/scrapjs/canvas-paint
+
+//http://literallycanvas.com/
+
+// IF A VISUAL ARTIST GETS ON THE MIC HERE...
+//https://github.com/jakubfiala/atrament.js
+
+// HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
+//https://zimjs.com/bits/physics.html
+//----
+
+
 // Template sub objects ( from compendium )
 // PATHFINDING editor, compendium
 // LEVEL UP
