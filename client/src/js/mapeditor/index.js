@@ -4,6 +4,7 @@ import contextMenu from './contextMenu.jsx'
 import selectionTools from './selectionTools';
 import keyInput from './keyInput';
 import render from './render';
+import Camera from '../map/camera'
 
 class MapEditor{
   constructor() {
@@ -34,6 +35,7 @@ class MapEditor{
     this.snapToGrid = true
     this.pathfindingLimit = null
     this.isSettingPathfindingLimit = false
+    this.paused = false
   }
 
   set(ctx, canvas, camera) {
@@ -42,25 +44,42 @@ class MapEditor{
     MAPEDITOR.camera = camera
 
     canvas.addEventListener("mousedown", (e) => {
-      handleMouseDown(event)
+      if(!MAPEDITOR.paused) handleMouseDown(event)
     })
     canvas.addEventListener("mousemove", (e) => {
-      handleMouseMove(event)
+      if(!MAPEDITOR.paused) handleMouseMove(event)
     })
     canvas.addEventListener("mouseup", (e) => {
-      handleMouseUp(event)
+       if(!MAPEDITOR.paused) handleMouseUp(event)
     })
     canvas.addEventListener("mouseout", (e) => {
-      handleMouseOut(event)
+       if(!MAPEDITOR.paused) handleMouseOut(event)
     })
 
-    // MAPEDITOR.JSONEditorElement = document.createElement('div')
-    // MAPEDITOR.JSONEditorElement.id = 'mapEditorJSONEditor'
-    // document.body.appendChild(MAPEDITOR.JSONEditorElement)
-
     contextMenu.init(MAPEDITOR)
-
     keyInput.init()
+  }
+
+  openConstructEditor(object) {
+    CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
+    CONSTRUCTEDITOR.start(object)
+
+    MAPEDITOR.initState()
+    MAPEDITOR.pause()
+
+    const removeListener = window.local.on('onConstructEditorFinished', (constructParts) => {
+      console.log(constructParts)
+      MAPEDITOR.resume()
+      removeListener()
+    })
+  }
+
+  pause() {
+    MAPEDITOR.paused = true
+  }
+
+  resume() {
+    MAPEDITOR.paused = false
   }
 
   onUpdate(delta) {
@@ -89,6 +108,9 @@ class MapEditor{
 
   startRelativeDrag(object, options = { snapToGrid: false }) {
     MAPEDITOR.snapToGrid = options.snapToGrid
+    const owner = OBJECTS.getOwner(object)
+    object.angle = 0
+    owner.angle = 0
     MAPEDITOR.draggingRelativeObject = JSON.parse(JSON.stringify(object))
   }
 

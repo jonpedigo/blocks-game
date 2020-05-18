@@ -1,86 +1,93 @@
 function camera() {
-
   this.x = 0
   this.y = 0
   this.limitX = null
   this.limitY = null
   this.centerX = null
   this.centerY = null
+  this.hasHitLimit = false
+  this.allowOcclusion = true
 
-this.setLimit = function(limitX = null, limitY = null, centerX = this.x, centerY = this.y) {
-  this.centerX = centerX
-  this.centerY = centerY
+  this.setLimit = function(limitX = null, limitY = null, centerX = this.x, centerY = this.y) {
+    this.centerX = centerX
+    this.centerY = centerY
 
-  this.limitX = limitX
-  this.limitY = limitY
-}
+    this.limitX = limitX
+    this.limitY = limitY
+  }
 
-this.clearLimit = function() {
-  this.centerX = null
-  this.centerY = null
+  this.setLimitRect = function(x, y, width, height) {
+    this.centerX = x + width/2
+    this.centerY = y + height/2
+    this.limitX = width/2
+    this.limitY = height/2
+  }
 
-  this.limitX = null
-  this.limitY = null
-}
+  this.clearLimit = function() {
+    this.centerX = null
+    this.centerY = null
 
-this.setHeroX = function (ctx, hero = GAME.heros[HERO.id]) {
-  this.x = (((hero.x + hero.width/2)*this.multiplier)) - MAP.canvas.width/2
-}
-this.setHeroY = function(ctx, hero = GAME.heros[HERO.id]) {
-  this.y = (((hero.y + hero.height/2)*this.multiplier)) - MAP.canvas.height/2
-}
+    this.limitX = null
+    this.limitY = null
+  }
+
+  this.setHeroX = function (hero = GAME.heros[HERO.id]) {
+    this.x = (((hero.x + hero.width/2)*this.multiplier)) - MAP.canvas.width/2
+  }
+  this.setHeroY = function(hero = GAME.heros[HERO.id]) {
+    this.y = (((hero.y + hero.height/2)*this.multiplier)) - MAP.canvas.height/2
+  }
 
 
-this.get = function(){
-  return camera
-}
+  this.get = function(){
+    return camera
+  }
 
-this.set = function(ctx, hero) {
-  this.multiplier = hero.zoomMultiplier / MAP.canvasMultiplier
+  this.set = function(hero) {
+    this.multiplier = hero.zoomMultiplier / MAP.canvasMultiplier
 
-  if(hero.animationZoomMultiplier) {
-    this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
+    if(hero.animationZoomMultiplier) {
+      this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
+      this.multiplier = 1/this.multiplier
+      this.setHeroX(hero)
+      this.setHeroY(hero)
+      // dont trap on zoom animation...
+      return
+    }
     this.multiplier = 1/this.multiplier
-    this.setHeroX(ctx, hero)
-    this.setHeroY(ctx, hero)
-    // dont trap on zoom animation...
-    return
-  }
-  this.multiplier = 1/this.multiplier
-  this.clipping = false
+    this.hasHitLimit = false
 
-  if (this.limitX) {
-    const potentialX = ((hero.x + hero.width/2)*this.multiplier)
-    if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
-      this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
-      this.clipping = true
-    } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
-      this.x = (((this.centerX - this.limitX)*this.multiplier))
-      this.clipping = true
+    if (this.limitX) {
+      const potentialX = ((hero.x + hero.width/2)*this.multiplier)
+      if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
+        this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
+        this.hasHitLimit = true
+      } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
+        this.x = (((this.centerX - this.limitX)*this.multiplier))
+        this.hasHitLimit = true
+      } else {
+        this.setHeroX(hero)
+      }
     } else {
-      this.setHeroX(ctx, hero)
+      this.setHeroX(hero)
     }
-  } else {
-    this.setHeroX(ctx, hero)
-  }
 
-  if (this.limitY) {
-    const potentialY = ((hero.y + hero.height/2)*this.multiplier)
+    if (this.limitY) {
+      const potentialY = ((hero.y + hero.height/2)*this.multiplier)
 
-    if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
-      this.y = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
-      this.clipping = true
-    } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (MAP.canvas.height/2))) {
-      this.y = ((this.centerY - this.limitY)*this.multiplier)
-      this.clipping = true
+      if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
+        this.y = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
+        this.hasHitLimit = true
+      } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (MAP.canvas.height/2))) {
+        this.y = ((this.centerY - this.limitY)*this.multiplier)
+        this.hasHitLimit = true
+      } else {
+        this.setHeroY(hero)
+      }
     } else {
-      this.setHeroY(ctx, hero)
+      this.setHeroY(hero)
     }
-  } else {
-    this.setHeroY(ctx, hero)
   }
-
-}
 }
 
 export default camera

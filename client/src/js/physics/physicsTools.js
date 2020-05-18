@@ -419,7 +419,7 @@ function attachSubObjects(owner, subObjects) {
     if(subObject.relativeWidth) subObject.width = owner.width + (subObject.relativeWidth)
     if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
-    if((subObject.tags.relativeToDirection || subObject.tags.relativeToAngle) && GAME.gameState.started) {
+    if((subObject.tags.relativeToDirection || subObject.tags.relativeToAngle)) {
       const direction = owner.inputDirection
 
       let radians = 0

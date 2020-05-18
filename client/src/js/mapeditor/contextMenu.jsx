@@ -22,13 +22,15 @@ class contextMenuEl extends React.Component{
     super(props)
 
     MAPEDITOR.canvas.addEventListener("contextmenu", e => {
-      e.preventDefault();
-      const origin = {
-        left: e.pageX,
-        top: e.pageY
-      };
-      this._setContextMenuPosition(origin);
-      return false;
+      if(!MAPEDITOR.paused) {
+        e.preventDefault();
+        const origin = {
+          left: e.pageX,
+          top: e.pageY
+        };
+        this._setContextMenuPosition(origin);
+        return false;
+      }
     });
 
     window.addEventListener("click", e => {

@@ -19,6 +19,17 @@
 
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 //https://zimjs.com/bits/physics.html
+
+// combine outlined rects so there no overlap
+//https://stackoverflow.com/questions/25670455/html5-canvas-merging-to-rectangles-to-form-a-new-shape
+
+//https://turfjs.org/docs/
+
+// if I Want to DO THE PAINTBRUSH TOOL ..I need to 'smooth lines'
+// https://github.com/literallycanvas/literallycanvas-core/blob/master/src/shapes.js
+
+// you wanna make some good cursors
+//https://www.w3schools.com/cssref/playit.asp?filename=playcss_cursor&preval=alias
 //----
 
 
@@ -157,8 +168,9 @@ import './js/page/index.js'
 import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
+import './js/constructEditor/index.js'
 import './js/map/index.js'
-import './js//physics/index.js'
+import './js/physics/index.js'
 import './js/mapeditor/index.js'
 import './js/playerUI/index.js'
 import './styles/index.scss'

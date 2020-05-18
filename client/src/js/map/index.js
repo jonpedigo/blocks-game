@@ -1,11 +1,11 @@
 import render from './render'
-import cameraTool from './camera.js'
+import Camera from './camera.js'
 import constellation from './constellation.js'
 
 window.MAP = {
   canvas: null,
   ctx: null,
-  camera: new cameraTool()
+  camera: new Camera()
 }
 
 MAP.onPageLoaded = function() {

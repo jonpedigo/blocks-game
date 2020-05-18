@@ -8,7 +8,7 @@ export default class ObjectAdvancedMenu extends React.Component{
 
     this._handleObjectAdvancedMenuClick = ({ key }) => {
       const { objectSelected } = this.props
-      const { onStartSetPathfindingLimit, networkEditObject } = MAPEDITOR
+      const { onStartSetPathfindingLimit, networkEditObject, openConstructEditor } = MAPEDITOR
 
       if(key === 'set-pathfinding-limit') {
         onStartSetPathfindingLimit(objectSelected)
@@ -46,6 +46,11 @@ export default class ObjectAdvancedMenu extends React.Component{
         window.socket.emit('addSubObject', objectSelected, { tags: { potential: true }}, 'spawner')
         networkEditObject(objectSelected, { tags: {spawnZone: true}, spawnLimit: 0, spawnPoolInitial: 1, spawnSubObjectName: 'spawner' })
       }
+
+      if(key === 'open-construct-editor') {
+        openConstructEditor(objectSelected)
+      }
+
     }
   }
 
@@ -65,6 +70,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       <MenuItem key="edit-all-json">Edit All JSON</MenuItem>
       <MenuItem key='set-object-respawn-point'>Set current position as object respawn point</MenuItem>
       <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
+      <MenuItem key='open-construct-editor'>Open construct editor</MenuItem>
     </Menu>
   }
 }

@@ -12,6 +12,10 @@ export default class SelectSubObjectMenu extends React.Component{
     this._handleSelectSubObjectMenuClick = ({ key }) => {
       const { objectSelected, selectSubObject } = this.props;
 
+      if(key === 'add-new-subobject') {
+        modals.addNewSubObject(objectSelected)
+      }
+
       if(key.indexOf(selectSubObjectPrefix) === 0) {
         const subObjectName = key.substr(selectSubObjectPrefix.length)
         selectSubObject(objectSelected.subObjects[subObjectName], subObjectName)
@@ -47,6 +51,7 @@ export default class SelectSubObjectMenu extends React.Component{
 
     return <Menu onClick={this._handleSelectSubObjectMenuClick}>
       {this._renderSelectSubObjectMenuItems(objectSelected.subObjects)}
+      <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
     </Menu>
   }
 }

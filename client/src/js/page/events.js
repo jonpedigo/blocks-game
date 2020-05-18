@@ -91,6 +91,10 @@ class EventEmitter {
       if(MAPEDITOR[eventName]) {
         event.push(MAPEDITOR[eventName])
       }
+
+      if(CONSTRUCTEDITOR[eventName]) {
+        event.push(CONSTRUCTEDITOR[eventName])
+      }
     }
 
     if( event ) {

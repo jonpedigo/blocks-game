@@ -3,44 +3,16 @@ import feedback from './feedback.js'
 import drawTools from '../mapeditor/drawTools.js'
 import collisionsUtil from '../utils/collisions.js'
 
-function drawNameCenter(ctx, object, camera) {
-  ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 20*(camera.multiplier)
-  if(fontSize < 12) fontSize = 12
-  ctx.font = `${fontSize}px Courier New`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  let lineWidth = (object.width - fontSize)*camera.multiplier
-  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
-  window.wrapText(ctx, object.name, (object.x+(object.width/2))*camera.multiplier - camera.x, ((object.y+(object.height/2))*camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
-}
-
-function drawNameAbove(ctx, object, camera) {
-  ctx.fillStyle = "rgb(250, 250, 250)";
-  let fontSize = 20*(camera.multiplier)
-  if(fontSize < 12) fontSize = 12
-  ctx.font = `${fontSize}px Courier New`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  let lineWidth = (object.width - fontSize)*camera.multiplier
-  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
-  window.wrapText(ctx, object.name, (object.x + (object.width/2))*camera.multiplier - camera.x, object.y*camera.multiplier - camera.y - height, lineWidth, fontSize)
-}
-
-function drawObject(ctx, object, withNames = false) {
-  if(object.color) ctx.fillStyle = object.color
-  ctx.fillRect((object.x*camera.multiplier - camera.x), (object.y*camera.multiplier - camera.y), (object.width*camera.multiplier), (object.height*camera.multiplier));
-  // ctx.fillStyle = 'white';
-  if(withNames) {
-    drawName(ctx, object)
-  }
-}
-
 function update() {
-  const { ctx, camera, canvas } = MAP
+  const { ctx, canvas } = MAP
+  let camera = MAP.camera
 
   //set camera so we render everything in the right place
-  camera.set(ctx, GAME.heros[HERO.id])
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  } else {
+    camera.set(GAME.heros[HERO.id])
+  }
 
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
@@ -50,28 +22,30 @@ function update() {
 
   //reset background
 	ctx.fillStyle = 'black';
-  if(GAME.world.backgroundColor && GAME.gameState.started) {
+  if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
     ctx.fillStyle = GAME.world.backgroundColor
   }
+
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
     if(object.removed) return
-    if(MAP.camera.clipping || collisionsUtil.checkObject(viewBoundaries, object)) {
+
+    if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
       drawTools.drawObject(ctx, object, camera)
-    }
-    if(object.subObjects) {
-      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.tags.potential) return
-        drawTools.drawObject(ctx, subObject, camera)
-      })
+      if(object.subObjects) {
+        OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+          if(subObject.tags.potential) return
+          drawTools.drawObject(ctx, subObject, camera)
+        })
+      }
     }
   })
 
   GAME.heroList.forEach((hero) => {
-    if(!GAME.gameState.started) {
+    if(!GAME.gameState.started && !MAPEDITOR.paused) {
       drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
     } else {
       drawTools.drawObject(ctx, hero, camera);

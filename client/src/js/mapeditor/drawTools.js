@@ -1,3 +1,41 @@
+function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalLineWidth = .4, specialLineWidth = .6, color = 'white'}, camera) {
+  let height = nodeSize * gridHeight
+  let width = nodeSize * gridWidth
+
+  ctx.strokeStyle = "#999";
+  if(color) {
+    ctx.strokeStyle = color;
+  }
+  for(var x = 0; x <= gridWidth; x++) {
+    ctx.lineWidth = normalLineWidth
+    if(x % 10 === 0) {
+      ctx.lineWidth = specialLineWidth
+    }
+    drawVertice(ctx, {a: {
+      x: startX + (x * nodeSize),
+      y: startY,
+    },
+    b: {
+      x: startX + (x * nodeSize),
+      y: startY + height,
+    }}, camera)
+  }
+  for(var y = 0; y <= gridHeight; y++) {
+    ctx.lineWidth = normalLineWidth
+    if(y % 10 === 0) {
+      ctx.lineWidth = specialLineWidth
+    }
+    drawVertice(ctx, {a: {
+      x: startX,
+      y: startY + (y * nodeSize),
+    },
+    b: {
+      x: startX + width,
+      y: startY + (y * nodeSize),
+    }}, camera)
+  }
+}
+
 function getObjectVertices(ctx, object, camera, options = {}) {
   let prev = []
   if(object.removed) return prev
@@ -84,7 +122,7 @@ function drawObject(ctx, object, camera, options = {showInvisible: false}) {
      ctx.globalAlpha = 0.2;
      drawFilledObject(ctx, object, camera);
    }
-  } else if(object.tags && object.tags.filled) {
+  } else if(!object.tags || (object.tags && object.tags.filled)) {
     drawFilledObject(ctx, object, camera);
   } else {
     drawBorder(ctx, object, camera);
@@ -120,4 +158,5 @@ export default {
   drawVertice,
   drawBorder,
   drawFilledObject,
+  drawGrid,
 }
