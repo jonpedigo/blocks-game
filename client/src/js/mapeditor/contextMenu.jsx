@@ -148,16 +148,16 @@ class contextMenuEl extends React.Component{
       return <SwatchesPicker
         color={ coloringObject.color }
         onChange={ (color) => {
-          this.setState({
-            coloringObject: null,
-          })
           if(coloringObject == 'worldBackground') {
             window.socket.emit('updateWorld', {backgroundColor: color.hex})
-          } if(coloringObject == 'defaultObject') {
+          } else if(coloringObject == 'defaultObject') {
             window.socket.emit('updateWorld', {defaultObjectColor: color.hex})
           } else {
             networkEditObject(coloringObject, {color: color.hex})
           }
+          this.setState({
+            coloringObject: null,
+          })
         }}
       />
     }

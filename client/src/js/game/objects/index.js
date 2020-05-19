@@ -39,6 +39,7 @@ class Objects{
   }
 
   respawn(object) {
+    let originalX = object.x
     const {x, y } = OBJECTS.getSpawnCoords(object)
     object.x = x
     object.y = y
@@ -160,6 +161,17 @@ class Objects{
       originalHeight: object.originalHeight,
       originalWidth: object.originalWidth,
 
+      //
+      constructParts: object.constructParts && object.constructParts.map((part) => {
+        return {
+          x: part.x,
+          y: part.y,
+          color: part.color,
+          height: part.height,
+          width: part.width,
+        }
+      }),
+
       // sub objects
       changeWithDirection: object.changeWithDirection,
       relativeWidth: object.relativeWidth,
@@ -201,6 +213,17 @@ class Objects{
       name: object.name,
       namePos: object.namePos,
       removed: object.removed,
+      spawnPointX: object.spawnPointX,
+      spawnPointY: object.spawnPointY,
+      constructParts: object.constructParts && object.constructParts.map((part) => {
+        return {
+          x: part.x,
+          y: part.y,
+          color: part.color,
+          height: part.height,
+          width: part.width,
+        }
+      }),
     }
 
     if(object.subObjects) {
@@ -369,15 +392,37 @@ class Objects{
     return objects
   }
 
+  editObject(object, update) {
+    // slow down that gravity boi!
+    if(object.tags.gravityY === true && update.tags && update.tags.gravityY === false) {
+      update.velocityY = 0
+    }
+
+    if(update.constructParts) {
+      if(object.constructParts) {
+        object.constructParts.forEach((part) => {
+          PHYSICS.removeObject(part)
+        })
+      } else {
+        PHYSICS.removeObject(object)
+      }
+      update.constructParts.forEach((part) => {
+        part.id = window.uniqueID()
+        part.ownerId = object.id
+        PHYSICS.addObject(part)
+      })
+    } else if(object.constructParts) {
+      PHYSICS.addObject(object)
+    }
+
+    object.path = null
+    window.mergeDeep(object, update)
+  }
+
   onEditObjects(editedObjects) {
     editedObjects.forEach((obj) => {
-      // slow down that gravity boi!
-      if(GAME.objectsById[obj.id].tags.gravityY === true && obj.tags.gravityY === false) {
-        obj.velocityY = 0
-      }
       let objectById = GAME.objectsById[obj.id]
-      obj.path = null
-      window.mergeDeep(objectById, obj)
+      OBJECTS.editObject(objectById, obj)
     })
 
     GAME.resetPaths = true
@@ -397,7 +442,15 @@ class Objects{
         OBJECTS.addSubObject(object, subObject, subObjectName)
       })
     }
-    PHYSICS.addObject(object)
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        part.id = window.uniqueID()
+        part.ownerId = object.id
+        PHYSICS.addObject(part)
+      })
+    } else {
+      PHYSICS.addObject(object)
+    }
   }
 
   addSubObject(owner, subObject, subObjectName) {
@@ -452,14 +505,23 @@ class Objects{
     window.local.emit('onUpdatePFgrid')
   }
 
-  onDeleteObject(object) {
+  unloadObject(object) {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
         OBJECTS.deleteSubObject(object, subObject, subObjectName)
       })
     }
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        PHYSICS.removeObject(part)
+      })
+    } else {
+      PHYSICS.removeObject(object)
+    }
+  }
 
-    PHYSICS.removeObject(object)
+  deleteObject(object) {
+    OBJECTS.unloadObject(object)
     let spliceIndex
     GAME.objects.forEach((obj, i) => {
       if(obj.id == object.id) {
@@ -470,6 +532,10 @@ class Objects{
       GAME.objects.splice(spliceIndex, 1)
     }
     delete GAME.objectsById[object.id]
+  }
+
+  onDeleteObject(object) {
+    OBJECTS.deleteObject(object)
     window.local.emit('onUpdatePFgrid')
   }
 

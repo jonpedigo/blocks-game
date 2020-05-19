@@ -1,7 +1,6 @@
 import Swal from 'sweetalert2';
 import sockets from './sockets.js'
 import events from './events.js'
-import testArcade from '../../../../data/spencer1.json'
 import loop from './loop.js'
 
 class Page{
@@ -116,11 +115,17 @@ class Page{
   ///////////////////////////////
   askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
-      let game = testArcade
-      GAME.loadGridWorldObjectsCompendiumState(game)
-      GAME.heros = []
-      HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
-      window.local.emit('onGameLoaded')
+      let gameId = 'spencer1'
+      if(PAGE.getParameterByName('gameId')) {
+        gameId = PAGE.getParameterByName('gameId')
+      }
+      window.networkSocket.on('onGetGame', (game) => {
+        GAME.loadGridWorldObjectsCompendiumState(game)
+        GAME.heros = []
+        HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
+        window.local.emit('onGameLoaded')
+      })
+      window.networkSocket.emit('getGame', gameId)
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
       window.socket.emit('askRestoreCurrentGame')

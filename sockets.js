@@ -48,7 +48,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       else console.log('game: ' + game.id + ' saved')
     });
     io.emit('onGameSaved', game.id)
-    currentGame = game
+    currentGame = JSON.parse(JSON.stringify(game))
   })
 
   // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
@@ -65,13 +65,13 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   // this is for when we are editing and we want to send this world to all people
   socket.on('setGame', (id) => {
     getGame(id, (game) => {
-      currentGame = game
+      currentGame = JSON.parse(JSON.stringify(game))
       io.emit('onSetGame', game)
     })
   })
 
   socket.on('setGameJSON', (game) => {
-    currentGame = game
+    currentGame = JSON.parse(JSON.stringify(game))
     io.emit('onSetGameJSON', game)
   })
 
@@ -79,7 +79,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('copyGame', (id) => {
     getGame(id, (game) => {
       game.id = currentGame.id
-      currentGame = game
+      currentGame = JSON.parse(JSON.stringify(game))
       io.emit('onCopyGame', game)
     })
   })
@@ -260,7 +260,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     })
   })
   socket.on('editHero', (hero) => {
-    currentGame.heros[hero.id] = hero
+    window.mergeDeep(currentGame.heros[hero.id], hero)
     io.emit('onEditHero', hero)
   })
   socket.on('resetHeroToDefault', (hero) => {

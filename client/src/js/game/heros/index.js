@@ -275,7 +275,9 @@ class Hero{
 
     if(!GAME.world.globalTags.isAsymmetric && GAME.defaultHero) {
       delete GAME.defaultHero.id
+      const id = hero.id
       hero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      hero.id = id
       HERO.respawn(hero)
       return hero
     }

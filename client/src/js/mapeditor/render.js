@@ -1,6 +1,7 @@
 import drawTools from './drawTools';
 
 function update() {
+  if(MAPEDITOR.paused) return
   let ctx = MAPEDITOR.ctx
   let camera = MAPEDITOR.camera
 
@@ -34,6 +35,12 @@ function update() {
     // } else {
       drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
     // }
+
+    if(!GAME.gameState.started) {
+      const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
+      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+    }
   }
 
   if(objectHighlightedChildren) {
@@ -52,6 +59,9 @@ function update() {
       drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false, filled: true}, color: 'rgba(255,255,255,0.2)'}, camera)
     } else {
       drawTools.drawObject(ctx, currentObject, camera)
+      if(currentObject.constructParts) {
+        drawTools.drawConstructParts(ctx, camera, currentObject)
+      }
     }
   }
 

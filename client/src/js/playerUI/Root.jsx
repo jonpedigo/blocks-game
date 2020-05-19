@@ -100,6 +100,8 @@ export default class Root extends React.Component{
   }
 
   render() {
+    if(CONSTRUCTEDITOR.open) return null
+    
     return (
       <div className="PlayerUI">
         <ToastContainer

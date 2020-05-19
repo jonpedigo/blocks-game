@@ -308,11 +308,11 @@ class Game{
     }
 
     GAME.objects.forEach((object) => {
-      PHYSICS.removeObject(object)
+      OBJECTS.unloadObject(object)
     })
     GAME.heroList.forEach(({id}) => {
       let hero = GAME.heros[id]
-      PHYSICS.removeObject(hero)
+      HERO.deleteHero(hero)
     })
 
     GAME.gameState = null
@@ -407,7 +407,13 @@ class Game{
       if(obj.removed) return
 
       if(obj.tags && obj.tags.obstacle || obj.tags.onlyHeroAllowed) {
-        GAME.addObstacle(obj)
+        if(obj.constructParts) {
+          obj.constructParts.forEach((part) => {
+            GAME.addObstacle({...part, tags: obj.tags})
+          })
+        } else {
+          GAME.addObstacle(obj)
+        }
       }
     })
   }

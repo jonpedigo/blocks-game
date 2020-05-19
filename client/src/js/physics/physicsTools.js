@@ -1,5 +1,39 @@
 import { Polygon } from 'collisions';
 
+function shouldCheckConstructPart(part) {
+  if(PHYSICS.correctedConstructs[part.ownerId]) return false
+  else return true
+}
+
+function cancelConstructPart(correctedPart, owner, partPO) {
+  owner.x = owner._initialX
+  owner.y = owner._initialY
+
+  owner.constructParts.forEach((part) => {
+    if(part.id == correctedPart.id) return
+    PHYSICS.objects[part.id].constructPart.x = part._initialX
+    PHYSICS.objects[part.id].constructPart.y = part._initialY
+  })
+
+  PHYSICS.correctedConstructs[owner.id] = true
+}
+
+function correctConstructPart(correctedPart, owner, partPO) {
+  const correctionX = partPO.x - correctedPart.x
+  const correctionY = partPO.y - correctedPart.y
+
+  owner.x = owner._initialX + correctionX
+  owner.y = owner._initialY + correctionY
+
+  owner.constructParts.forEach((part) => {
+    PHYSICS.objects[part.id].constructPart.x += correctionX
+    PHYSICS.objects[part.id].constructPart.y += correctionY
+  })
+
+  PHYSICS.correctedConstructs[owner.id] = true
+  // PHYSICS.system.update()
+}
+
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -279,23 +313,33 @@ function objectCorrection(po, final) {
     } else if(result.overlap_x === -1){
       po.gameObject.velocityX = 0
     }
-
     po.x = correction.x
     po.y = correction.y
   }
 
   if(final) {
+
     const object = po.gameObject
-    // just give up correction and prevent any movement from these mother fuckers
-    if(illegal) {
-      object.x = object._initialX
-      object.y = object._initialY
+
+    if(po.constructPart) {
+      // just give up correction and prevent any movement from these mother fucker
+      if(illegal) {
+        cancelConstructPart(po.constructPart, po.gameObject, po)
+      } else {
+        correctConstructPart(po.constructPart, po.gameObject, po)
+      }
     } else {
-      object.x = po.x
-      object.y = po.y
-      if(object.tags.rotateable) {
-        object.x -= object.width/2
-        object.y -= object.height/2
+      // just give up correction and prevent any movement from these mother fuckers
+      if(illegal) {
+        object.x = object._initialX
+        object.y = object._initialY
+      } else {
+        object.x = po.x
+        object.y = po.y
+        if(object.tags.rotateable) {
+          object.x -= object.width/2
+          object.y -= object.height/2
+        }
       }
     }
   }
@@ -510,4 +554,5 @@ export {
   objectCorrection,
   objectCollisionEffects,
   containObjectWithinGridBoundaries,
+  shouldCheckConstructPart,
 }

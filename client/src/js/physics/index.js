@@ -12,6 +12,7 @@ import {
   objectCorrection,
   objectCollisionEffects,
   containObjectWithinGridBoundaries,
+  shouldCheckConstructPart,
 } from './physicsTools.js'
 
 const objects = {}
@@ -167,6 +168,14 @@ function prepareObjectsAndHerosForMovementPhase() {
     delete object._flatVelocityX
     delete object._flatVelocityY
     object.interactableObject = null
+
+    PHYSICS.correctedConstructs = {}
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        part._initialX = part.x
+        part._initialY = part.y
+      })
+    }
   })
 }
 
@@ -190,31 +199,44 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       return
     }
 
-    if(!PHYSICS.objects[object.id]) {
-      console.log('physics object not found for id: ' + object.id)
-      return
-    }
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        if(!PHYSICS.objects[part.id]) {
+          console.log('physics object not found for part : ' + part.id)
+          return
+        }
 
-    let physicsObject = PHYSICS.objects[object.id]
-    physicsObject.x = object.x
-    physicsObject.y = object.y
-    physicsObject.id = object.id
-    physicsObject.gameObject = object
-
-    if(object.tags.rotateable) {
-      if(physicsObject._angle !== object.angle) {
-        physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
-      }
-      physicsObject.angle = object.angle
-      object._nonRotatedX = object.x
-      object._nonRotatedY = object.y
-
-      physicsObject.x = object.x + object.width/2
-      physicsObject.y = object.y + object.height/2
+        let physicsObject = PHYSICS.objects[part.id]
+        physicsObject.x = part.x + (object.x - object._initialX)
+        physicsObject.y = part.y + (object.y - object._initialY)
+        physicsObject.id = part.id
+        physicsObject.gameObject = object
+        physicsObject.constructPart = part
+      })
     } else {
-      if(physicsObject.angle) physicsObject.angle = null
-      if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
-        physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
+      if(!PHYSICS.objects[object.id]) {
+        console.log('physics object not found for id: ' + object.id)
+        return
+      }
+
+      let physicsObject = PHYSICS.objects[object.id]
+      physicsObject.x = object.x
+      physicsObject.y = object.y
+      physicsObject.id = object.id
+      physicsObject.gameObject = object
+
+      if(object.tags.rotateable) {
+        if(physicsObject._angle !== object.angle) {
+          physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
+        }
+        physicsObject.angle = object.angle
+        physicsObject.x = object.x + object.width/2
+        physicsObject.y = object.y + object.height/2
+      } else {
+        if(physicsObject.angle) physicsObject.angle = null
+        if(Math.floor(Math.abs(object.width)) !== Math.floor(Math.abs(physicsObject._max_x - physicsObject._min_x)) || Math.floor(Math.abs(object.height)) !== Math.floor(Math.abs(physicsObject._max_y - physicsObject._min_y))) {
+          physicsObject.setPoints([ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
+        }
       }
     }
   })
@@ -255,6 +277,7 @@ function objectPhysics(removeObjects, respawnObjects) {
       if(po.gameObject.relativeId) continue
       if(po.gameObject.removed) continue
       if(po.gameObject.tags.hero) continue
+      if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
       objectCorrection(po, final)
     }
   }

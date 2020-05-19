@@ -63,12 +63,16 @@ class MapEditor{
   openConstructEditor(object) {
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
     CONSTRUCTEDITOR.start(object)
+    window.socket.emit('editGameState', { paused: true })
 
     MAPEDITOR.initState()
     MAPEDITOR.pause()
 
-    const removeListener = window.local.on('onConstructEditorFinished', (constructParts) => {
-      console.log(constructParts)
+    const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
+      if(constructParts) {
+        window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY:y, x, y, width, height}])
+      }
+      window.socket.emit('editGameState', { paused: false })
       MAPEDITOR.resume()
       removeListener()
     })
@@ -212,7 +216,9 @@ function handleMouseDown(event) {
     MAPEDITOR.resizingObject = null
   } else if(MAPEDITOR.draggingObject) {
     const { draggingObject } = MAPEDITOR
-    if(GAME.gameState.started) {
+    if(draggingObject.constructParts) {
+      networkEditObject(draggingObject, {id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts})
+    } else if(GAME.gameState.started) {
       networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, y: draggingObject.y})
     } else {
       networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY})
@@ -281,7 +287,7 @@ function updateGridHighlight(location) {
 
   collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
     if(hero.removed) return
-    smallestObject = hero
+    smallestObject = JSON.parse(JSON.stringify(hero))
   })
 
   if(smallestObject) MAPEDITOR.objectHighlighted = JSON.parse(JSON.stringify(smallestObject))
@@ -290,7 +296,9 @@ function updateGridHighlight(location) {
   if(MAPEDITOR.objectHighlighted.id) {
     // see if grid high light has children or is child
     const { parent, children } = selectionTools.getObjectRelations(MAPEDITOR.objectHighlighted, GAME)
-    if(children.length && parent.id === MAPEDITOR.objectHighlighted.id) {
+    if(parent.constructParts) {
+      MAPEDITOR.objectHighlighted = parent
+    } else if(children.length && parent.id === MAPEDITOR.objectHighlighted.id) {
       MAPEDITOR.objectHighlighted = parent
       MAPEDITOR.objectHighlightedChildren = children
     }
@@ -321,6 +329,10 @@ function updateResizingObject(object, options = { allowTiny : true }) {
 
 function updateDraggingObject(object) {
   const { mousePos } = MAPEDITOR
+
+  const startX = object.x
+  const startY = object.y
+
   object.x = mousePos.x
   object.y = mousePos.y
 
@@ -335,6 +347,17 @@ function updateDraggingObject(object) {
     } else {
       gridUtil.snapDragToGrid(object)
     }
+  }
+
+  const diffX = object.x - startX
+  const diffY = object.y - startY
+
+  if(object.constructParts) {
+    object.constructParts.forEach((part) => {
+      part.x+= diffX
+      part.y+= diffY
+      return part
+    })
   }
 }
 

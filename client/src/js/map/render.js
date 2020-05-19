@@ -3,6 +3,39 @@ import feedback from './feedback.js'
 import drawTools from '../mapeditor/drawTools.js'
 import collisionsUtil from '../utils/collisions.js'
 
+function drawNameCenter(ctx, object, camera) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 20*(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width - fontSize)*camera.multiplier
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, object.name, (object.x+(object.width/2))*camera.multiplier - camera.x, ((object.y+(object.height/2))*camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
+}
+
+function drawNameAbove(ctx, object, camera) {
+  ctx.fillStyle = "rgb(250, 250, 250)";
+  let fontSize = 20*(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width - fontSize)*camera.multiplier
+  let { width, height } = window.measureWrapText(ctx, object.name, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, object.name, (object.x + (object.width/2))*camera.multiplier - camera.x, object.y*camera.multiplier - camera.y - height, lineWidth, fontSize)
+}
+
+function drawObject(ctx, object, withNames = false) {
+  if(object.color) ctx.fillStyle = object.color
+  ctx.fillRect((object.x*camera.multiplier - camera.x), (object.y*camera.multiplier - camera.y), (object.width*camera.multiplier), (object.height*camera.multiplier));
+  // ctx.fillStyle = 'white';
+  if(withNames) {
+    drawName(ctx, object)
+  }
+}
+
 function update() {
   const { ctx, canvas } = MAP
   let camera = MAP.camera
@@ -22,8 +55,10 @@ function update() {
 
   //reset background
 	ctx.fillStyle = 'black';
+  canvas.style.backgroundColor = 'black'
   if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
     ctx.fillStyle = GAME.world.backgroundColor
+    canvas.style.backgroundColor = GAME.world.backgroundColor
   }
 
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -34,7 +69,11 @@ function update() {
     if(object.removed) return
 
     if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
-      drawTools.drawObject(ctx, object, camera)
+      if(object.constructParts) {
+        drawTools.drawConstructParts(ctx, camera, object)
+      } else {
+        drawTools.drawObject(ctx, object, camera)
+      }
       if(object.subObjects) {
         OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
           if(subObject.tags.potential) return

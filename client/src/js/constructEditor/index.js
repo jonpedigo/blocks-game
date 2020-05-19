@@ -1,9 +1,11 @@
 import Grid from './grid'
 import gridUtil from '../utils/grid'
 import drawTools from '../mapeditor/drawTools'
+import keyInput from './keyInput'
 
 class ConstructEditor {
   constructor() {
+    keyInput.init()
     this.initState()
   }
 
@@ -21,25 +23,37 @@ class ConstructEditor {
     this.cameraController = {
       x: null,
       y: null,
+      width: 0,
+      height: 0,
       zoomMultiplier: null,
     }
   }
 
-  finish() {
+  cancel() {
+    window.local.emit('onConstructEditorClose', false)
+    this.close()
+  }
+
+  close() {
     this.open = false
-    const constructParts = this.combineNodesIntoRectangles()
-    window.local.emit('onConstructEditorFinished', constructParts)
-    this.initState()
-
     document.body.style.cursor = 'default';
-
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
+    this.canvas.removeEventListener('mouseup', this._mouseUpListener)
+    this.initState()
+  }
+
+  finish() {
+    const constructParts = this.combineNodesIntoRectangles()
+    const { x, y, width, height } = this.getBoundingBox(constructParts)
+    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
+    this.close()
   }
 
   start(object) {
     this.initState()
     this.open = true
+    this.tags = object.tags
     this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, GAME.grid.nodeSize)
     this.spawnPointX = object.spawnPointX
     this.spawnPointY = object.spawnPointY
@@ -48,11 +62,24 @@ class ConstructEditor {
     const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
     this.camera.setLimitRect(gridObject)
 
-    this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier: ((object.width/this.grid.nodeSize) + 20)/16 }
+    let gridWidth = (object.width/this.grid.nodeSize)
+    let gridHeight = (object.height/this.grid.nodeSize)
+    if(gridWidth < 40) gridWidth = 40
+    if(gridHeight < 40) gridHeight = 40
+    const zoomMultiplierX = (gridWidth)/16
+    const zoomMultiplierY = (gridHeight)/16
+    let zoomMultiplier = zoomMultiplierX
+    if(zoomMultiplierY > zoomMultiplier) zoomMultiplier = zoomMultiplierY
+
+    const width = zoomMultiplier * HERO.cameraWidth
+    const height = zoomMultiplier * HERO.cameraHeight
+    this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier}
     this.camera.set(this.cameraController)
 
     this._mouseDownListener = (e) => {
-      if(!this.paused) this.handleMouseDown(event)
+      if(e.which === 1) {
+        if(!this.paused) this.handleMouseDown(event)
+      }
     }
     this.canvas.addEventListener("mousedown", this._mouseDownListener)
 
@@ -61,23 +88,39 @@ class ConstructEditor {
     }
     this.canvas.addEventListener("mousemove", this._mouseMoveListener)
 
-    document.body.style.cursor = 'none';
+    this._mouseUpListener = (e) => {
+      if(!this.paused) this.handleMouseUp(event)
+    }
+    this.canvas.addEventListener("mouseup", this._mouseUpListener)
+
+    document.body.style.cursor = 'crosshair';
+  }
+
+  handleMouseUp() {
+    this.painting = false
   }
 
   handleMouseDown(event) {
-    const { camera, selectedColor, grid } = this
-    const { gridX, gridY } = grid.getGridXYfromXY(this.mousePos.x, this.mousePos.y, { closest: false })
-
-    this.fillNode(gridX, gridY, 'red')
+    const { camera, grid } = this
+    this.painting = true
+    this.paintNodeXY(this.mousePos.x, this.mousePos.y)
   }
 
   handleMouseMove(event) {
     const { camera } = this
 
+    if(this.painting) this.paintNodeXY(this.mousePos.x, this.mousePos.y)
+
     this.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
     this.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
 
     this.updateNodeHighlight(this.mousePos)
+  }
+
+  paintNodeXY(x, y) {
+    const { selectedColor, grid } = this
+    const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
+    this.fillNode(gridX, gridY, 'red')
   }
 
   set(ctx, canvas, camera) {
@@ -131,7 +174,7 @@ class ConstructEditor {
 
     this.grid.forEachNode((node) => {
       if(node.data.filled) {
-        const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'filled', true)
+        const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
           const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
           const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
@@ -147,7 +190,7 @@ class ConstructEditor {
     rectangles.forEach((rect1) => {
       rectangles.forEach((rect2) => {
         if(!rect1.claimed && !rect2.claimed && rect1.x === rect2.x && rect1.width === rect2.width) {
-          if(rect1.y + rect1.height === rect2.y) {
+          if(rect1.y + rect1.height === rect2.y && rect1.color === rect2.color) {
             let higherRect = rect1
             let lowerRect = rect2
             higherRect.height += lowerRect.height
@@ -158,6 +201,27 @@ class ConstructEditor {
     })
 
     return rectangles.filter((rect) => !rect.claimed)
+  }
+
+  getBoundingBox(rectangles) {
+    let minX = this.grid.x + this.grid.width
+    let minY = this.grid.y + this.grid.height
+    let maxX = this.grid.x
+    let maxY = this.grid.y
+
+    rectangles.forEach((rect) => {
+      if(rect.x < minX) minX = rect.x
+      if(rect.y < minY) minY = rect.y
+      if(rect.x + rect.width > maxX) maxX = rect.x + rect.width
+      if(rect.y + rect.height > maxY) maxY = rect.y + rect.height
+    })
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY
+    }
   }
 
   unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
@@ -190,20 +254,41 @@ class ConstructEditor {
     this.nodeHighlighted = mouseLocation
   }
 
-  onRender() {
-    if(!CONSTRUCTEDITOR.open) return
+  onUpdate(delta) {
+    const { open , grid, camera, cameraController, tags } = CONSTRUCTEDITOR
+    if(!open) return
 
-    const {ctx, canvas, camera, grid, nodeHighlighted } = CONSTRUCTEDITOR
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'
+    keyInput.update(delta)
+
+    camera.set(cameraController)
+  }
+
+  onRender() {
+    const {ctx, canvas, camera, grid, nodeHighlighted, tags, open } = CONSTRUCTEDITOR
+    if(!open) return
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     drawTools.drawGrid(ctx, grid, camera)
 
     grid.forEachNode((node) => {
       if(node.data.filled) {
-        drawTools.drawObject(ctx, {...node, color: node.data.color}, camera)
+        drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
       }
     })
+
+    if(!tags.filled) {
+      ctx.globalCompositeOperation='destination-out';
+
+      grid.forEachNode((node) => {
+        if(node.data.filled) {
+          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width }, camera)
+        }
+      })
+
+      ctx.globalCompositeOperation='source-over';
+    }
 
     if(nodeHighlighted) {
       drawTools.drawObject(ctx, nodeHighlighted, camera)

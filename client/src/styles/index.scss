@@ -21,6 +21,9 @@ p {
 }
 
 body {
+  margin: 0px;
+  overflow-y: hidden;
+  background: #333;
   overscroll-behavior-x: none;
 }
 
@@ -63,12 +66,6 @@ body {
 
 textarea.swal-modal-input{
   height: 60px;
-}
-
-body {
-  margin: 0px;
-  overflow-y: hidden;
-  background: #0f0f0f;
 }
 
 .play-button {

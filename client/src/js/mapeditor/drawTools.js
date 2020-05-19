@@ -1,4 +1,19 @@
-function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalLineWidth = .4, specialLineWidth = .6, color = 'white'}, camera) {
+function drawConstructParts(ctx, camera, object) {
+  object.constructParts.forEach((part) => {
+    drawObject(ctx, {...part, tags: object.tags }, camera)
+  })
+
+  // this punches out outlines inside of object
+  if(!object.tags.filled) {
+    ctx.globalCompositeOperation='destination-out';
+    object.constructParts.forEach((part) => {
+      drawObject(ctx, part, camera)
+    })
+    ctx.globalCompositeOperation='source-over';
+  }
+}
+
+function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalLineWidth = .25, specialLineWidth = .6, color = 'white'}, camera) {
   let height = nodeSize * gridHeight
   let width = nodeSize * gridWidth
 
@@ -34,6 +49,8 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalL
       y: startY + (y * nodeSize),
     }}, camera)
   }
+
+  ctx.lineWidth = 1
 }
 
 function getObjectVertices(ctx, object, camera, options = {}) {
@@ -60,15 +77,26 @@ function getObjectVertices(ctx, object, camera, options = {}) {
   return prev
 }
 
-function drawFilledObject(ctx, object, camera) {
-  if(object.color) ctx.fillStyle = object.color
-  else if(GAME.world.defaultObjectColor) {
-    ctx.fillStyle = GAME.world.defaultObjectColor
-  }
-  else ctx.fillStyle = '#525252'
+function drawFilledObject(ctx, object, camera, options = {}) {
+  if(options.strokeRect) {
+    if(object.color) ctx.strokeStyle = object.color
+    else if(GAME.world.defaultObjectColor) {
+      ctx.strokeStyle = GAME.world.defaultObjectColor
+    }
+    else ctx.strokeStyle = '#525252'
 
-  ctx.fillRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
+    ctx.strokeRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
+  } else {
+    if(object.color) ctx.fillStyle = object.color
+    else if(GAME.world.defaultObjectColor) {
+      ctx.fillStyle = GAME.world.defaultObjectColor
+    }
+    else ctx.fillStyle = '#525252'
+
+    ctx.fillRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
+  }
 }
+
 
 function drawVertice(ctx, vertice, camera) {
   if(vertice.glow) {
@@ -106,7 +134,7 @@ function drawBorder(ctx, object, camera, options = { thickness: 1 }) {
   })
 }
 
-function drawObject(ctx, object, camera, options = {showInvisible: false}) {
+function drawObject(ctx, object, camera, options = {showInvisible: false, strokeRect: false }) {
   ctx.save()
   if(object.tags && object.tags.rotateable) {
     ctx.beginPath();
@@ -120,12 +148,12 @@ function drawObject(ctx, object, camera, options = {showInvisible: false}) {
   if(object.tags && object.tags.invisible) {
    if(options.showInvisible) {
      ctx.globalAlpha = 0.2;
-     drawFilledObject(ctx, object, camera);
+     drawFilledObject(ctx, object, camera, options);
    }
   } else if(!object.tags || (object.tags && object.tags.filled)) {
-    drawFilledObject(ctx, object, camera);
+    drawFilledObject(ctx, object, camera, options);
   } else {
-    drawBorder(ctx, object, camera);
+    drawFilledObject(ctx, object, camera, {...options, strokeRect: true});
   }
 
   ctx.restore()
@@ -152,6 +180,7 @@ function drawLine(ctx, pointA, pointB, options, camera) {
 }
 
 export default {
+  drawConstructParts,
   getObjectVertices,
   drawObject,
   drawLine,

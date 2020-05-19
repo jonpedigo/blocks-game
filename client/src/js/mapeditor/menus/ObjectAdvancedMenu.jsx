@@ -27,7 +27,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       }
 
       if(key === 'edit-all-json') {
-        modals.editObjectCode(objectSelected, 'Editing Object', OBJECTS.getState(objectSelected));
+        modals.editObjectCode(objectSelected, 'Editing Object', objectSelected);
       }
 
       if(key === 'add-new-subobject') {
