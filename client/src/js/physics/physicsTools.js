@@ -252,6 +252,8 @@ function objectCorrection(po, final) {
   let potentials = po.potentials()
   let illegal = false
   for(const body of potentials) {
+    // for construct parts
+    if(po.gameObject === body.gameObject) continue
     if(!body.gameObject) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue

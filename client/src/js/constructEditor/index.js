@@ -1,7 +1,11 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+
 import Grid from './grid'
 import gridUtil from '../utils/grid'
 import drawTools from '../mapeditor/drawTools'
 import keyInput from './keyInput'
+import ConstructEditorUI from './ConstructEditorUI.jsx'
 
 class ConstructEditor {
   constructor() {
@@ -128,6 +132,21 @@ class ConstructEditor {
     this.canvas = canvas
     this.camera = camera
     this.camera.allowOcclusion = false
+
+    const initialProps = {
+      ref: ref => PLAYERUI.ref = ref
+    }
+
+    const container = document.createElement('div')
+    container.id = 'ConstructEditorUIContainer'
+    document.body.appendChild(container)
+    CONSTRUCTEDITOR.container = container
+
+    // Mount React App
+    ReactDOM.render(
+      React.createElement(ConstructEditorUI, initialProps),
+      container
+    )
   }
 
   initializeGridNodes(object) {

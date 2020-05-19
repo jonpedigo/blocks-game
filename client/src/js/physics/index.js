@@ -158,6 +158,7 @@ function prepareObjectsAndHerosForMovementPhase() {
   let everything = [...GAME.objects]
   let allHeros = getAllHeros()
   everything.push(...allHeros)
+  PHYSICS.correctedConstructs = {}
 
   everything.forEach((object, i) => {
     object._deltaX = 0
@@ -169,7 +170,6 @@ function prepareObjectsAndHerosForMovementPhase() {
     delete object._flatVelocityY
     object.interactableObject = null
 
-    PHYSICS.correctedConstructs = {}
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part._initialX = part.x
