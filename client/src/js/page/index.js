@@ -2,6 +2,7 @@ import Swal from 'sweetalert2';
 import sockets from './sockets.js'
 import events from './events.js'
 import loop from './loop.js'
+import modals from '../mapeditor/modals.js'
 
 class Page{
   constructor() {
@@ -113,12 +114,23 @@ class Page{
   /////// ON INITIALIZE GAME
   ///////////////////////////////
   ///////////////////////////////
-  askCurrentGame(cb) {
+  async askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
       let gameId = 'spencer1'
       if(PAGE.getParameterByName('gameId')) {
         gameId = PAGE.getParameterByName('gameId')
       }
+      if(gameId === 'load') {
+        modals.openEditCodeModal('Paste JSON code here', {}, (result) => {
+          const game = JSON.parse(result.value)
+          GAME.loadGridWorldObjectsCompendiumState(game)
+          GAME.heros = []
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
+          window.local.emit('onGameLoaded')
+        })
+        return
+      }
+
       window.networkSocket.on('onGetGame', (game) => {
         GAME.loadGridWorldObjectsCompendiumState(game)
         GAME.heros = []

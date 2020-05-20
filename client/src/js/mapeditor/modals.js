@@ -329,4 +329,5 @@ export default {
   editQuest,
   writeDialogue,
   nameObject,
+  openEditCodeModal,
 }

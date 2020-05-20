@@ -1,3 +1,9 @@
+// most recently chosen colors
+// toggle grid on and off
+// fill tool
+// CLOCK WISE parts, SCROLL THROUGH ENTIRE OBJECT COUNTERCLOCKWISE. Only those hit by counter clickwise are physics objects, the rest are aesthetic
+// right now it just checks for widest objects, also check for tallest objects and pick between the two
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -330,7 +336,7 @@ class ConstructEditor {
     const {ctx, canvas, camera, grid, nodeHighlighted, tags, open, tool, selectedColor } = CONSTRUCTEDITOR
     if(!open) return
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     drawTools.drawGrid(ctx, grid, camera)

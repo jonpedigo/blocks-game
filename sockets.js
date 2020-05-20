@@ -260,7 +260,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     })
   })
   socket.on('editHero', (hero) => {
-    window.mergeDeep(currentGame.heros[hero.id], hero)
+    // window.mergeDeep(currentGame.heros[hero.id], hero)
     io.emit('onEditHero', hero)
   })
   socket.on('resetHeroToDefault', (hero) => {

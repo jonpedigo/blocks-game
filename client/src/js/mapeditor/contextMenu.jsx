@@ -81,6 +81,13 @@ class contextMenuEl extends React.Component{
       if(key === 'select-default-object-color') {
         this.openColorPicker('defaultObject')
       }
+
+      if(key === 'copy-game-JSON-to-clipboard') {
+        let saveGame = GAME.cleanForSave(GAME)
+        console.log(saveGame)
+        var copyText = JSON.stringify(saveGame);
+        PAGE.copyToClipBoard(copyText)
+      }
     }
 
     this._handleGameTagMenuClick = ({key}) => {
@@ -189,6 +196,7 @@ class contextMenuEl extends React.Component{
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
+        <MenuItem key='copy-game-JSON-to-clipboard'>Copy Game JSON to clipboard</MenuItem>
       </Menu>
     }
 
