@@ -67,6 +67,7 @@ function update() {
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
     if(object.removed) return
+    if(object.id === CONSTRUCTEDITOR.objectId) return
 
     if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
       if(object.constructParts) {

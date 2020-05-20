@@ -1,0 +1,33 @@
+.ConstructEditor {
+  position: fixed;
+
+  &__color-picker {
+    position: fixed;
+    left: 90px;
+    top: 20px;
+    cursor: default;
+  }
+
+  &__menu-list {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+  }
+
+  &__menu-item {
+    height: 40px;
+    width: 40px;
+    background: white;
+    font-size: 35px;
+    padding: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+
+    &--text {
+      font-size: 20px;
+      font-family: Courier;
+      width: auto;
+
+    }
+  }
+}

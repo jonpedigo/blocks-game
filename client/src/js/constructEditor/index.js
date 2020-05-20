@@ -5,12 +5,15 @@ import Grid from './grid'
 import gridUtil from '../utils/grid'
 import drawTools from '../mapeditor/drawTools'
 import keyInput from './keyInput'
-import ConstructEditorUI from './ConstructEditorUI.jsx'
+import Root from './Root.jsx'
 
 class ConstructEditor {
   constructor() {
     keyInput.init()
     this.initState()
+
+    this.cancel = this.cancel.bind(this)
+    this.finish = this.finish.bind(this)
   }
 
   initState() {
@@ -31,6 +34,10 @@ class ConstructEditor {
       height: 0,
       zoomMultiplier: null,
     }
+    this.objectId = null
+    this.painting = false
+    this.erasing = false
+    this.selectedColor = null
   }
 
   cancel() {
@@ -44,6 +51,7 @@ class ConstructEditor {
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
     this.canvas.removeEventListener('mouseup', this._mouseUpListener)
+    this.ref.close()
     this.initState()
   }
 
@@ -56,6 +64,7 @@ class ConstructEditor {
 
   start(object) {
     this.initState()
+    this.objectId = object.id
     this.open = true
     this.tags = object.tags
     this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, GAME.grid.nodeSize)
@@ -97,34 +106,47 @@ class ConstructEditor {
     }
     this.canvas.addEventListener("mouseup", this._mouseUpListener)
 
-    document.body.style.cursor = 'crosshair';
+    this.ref.open(object.color || GAME.world.defaultObjectColor || '#525252')
   }
 
   handleMouseUp() {
     this.painting = false
+    this.erasing = false
   }
 
   handleMouseDown(event) {
-    const { camera, grid } = this
-    this.painting = true
-    this.paintNodeXY(this.mousePos.x, this.mousePos.y)
+    const { camera, grid, tool } = this
+    if(tool === 'paintBrush') {
+      this.painting = true
+      this.paintNodeXY(this.mousePos.x, this.mousePos.y)
+    } else if(tool === 'eraser') {
+      this.erasing = true
+      this.unfillNodeXY(this.mousePos.x, this.mousePos.y)
+    } else if(tool === 'eyeDropper') {
+      const color = this.getColorFromNodeXY(this.mousePos.x, this.mousePos.y)
+      this.selectedColor = color || GAME.world.defaultObjectColor || '#525252'
+      this.ref.setColor(this.selectedColor)
+    }
   }
 
   handleMouseMove(event) {
-    const { camera } = this
+    const { camera, tool } = this
 
     if(this.painting) this.paintNodeXY(this.mousePos.x, this.mousePos.y)
+    if(this.erasing) this.unfillNodeXY(this.mousePos.x, this.mousePos.y)
 
     this.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
-    this.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
+    this.mousePos.y = ((event.offsetY + 24 + camera.y) / camera.multiplier)
 
     this.updateNodeHighlight(this.mousePos)
   }
 
-  paintNodeXY(x, y) {
-    const { selectedColor, grid } = this
-    const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
-    this.fillNode(gridX, gridY, 'red')
+  selectColor(color) {
+    this.selectedColor = color
+  }
+
+  toolChange(tool) {
+    this.tool = tool
   }
 
   set(ctx, canvas, camera) {
@@ -134,17 +156,21 @@ class ConstructEditor {
     this.camera.allowOcclusion = false
 
     const initialProps = {
-      ref: ref => PLAYERUI.ref = ref
+      ref: ref => CONSTRUCTEDITOR.ref = ref,
+      selectColor: this.selectColor.bind(this),
+      toolChange: this.toolChange.bind(this),
+      cancelConstruct: this.cancel,
+      finishConstruct: this.finish,
     }
 
     const container = document.createElement('div')
-    container.id = 'ConstructEditorUIContainer'
+    container.id = 'ConstructEditorContainer'
     document.body.appendChild(container)
     CONSTRUCTEDITOR.container = container
 
     // Mount React App
     ReactDOM.render(
-      React.createElement(ConstructEditorUI, initialProps),
+      React.createElement(Root, initialProps),
       container
     )
   }
@@ -243,6 +269,12 @@ class ConstructEditor {
     }
   }
 
+  paintNodeXY(x, y) {
+    const { selectedColor, grid } = this
+    const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
+    this.fillNode(gridX, gridY, selectedColor)
+  }
+
   unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
     for(let gridX = startGridX; gridX < endGridX + 1; gridX++) {
       for(let gridY = startGridY; gridY < endGridY + 1; gridY++) {
@@ -255,10 +287,22 @@ class ConstructEditor {
     this.grid.updateNode(gridX, gridY, {filled: false, color: null})
   }
 
+  unfillNodeXY(x, y) {
+    const { grid } = this
+    const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
+    this.unfillNode(gridX, gridY)
+  }
+
+  getColorFromNodeXY(x, y) {
+    const { grid } = this
+    const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
+    let color = this.grid.nodes[gridX][gridY].data.color
+    return color
+  }
+
   fillNode(gridX, gridY, color) {
     this.grid.updateNode(gridX, gridY, {filled: true, color})
   }
-
 
   updateNodeHighlight(location) {
     const { x,y } = gridUtil.snapXYToGrid(location.x, location.y, { closest: false })
@@ -283,7 +327,7 @@ class ConstructEditor {
   }
 
   onRender() {
-    const {ctx, canvas, camera, grid, nodeHighlighted, tags, open } = CONSTRUCTEDITOR
+    const {ctx, canvas, camera, grid, nodeHighlighted, tags, open, tool, selectedColor } = CONSTRUCTEDITOR
     if(!open) return
 
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
@@ -310,7 +354,13 @@ class ConstructEditor {
     }
 
     if(nodeHighlighted) {
-      drawTools.drawObject(ctx, nodeHighlighted, camera)
+      if(tool === 'paintBrush') {
+        drawTools.drawObject(ctx, nodeHighlighted, camera)
+      } else if(tool === 'eraser'){
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
+      } else {
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: 'rgba(255,255,255, 0.2)'}, camera)
+      }
     }
   }
 }
