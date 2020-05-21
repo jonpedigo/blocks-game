@@ -164,11 +164,13 @@ class Objects{
       //
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
+          id: part.id,
           x: part.x,
           y: part.y,
           color: part.color,
           height: part.height,
           width: part.width,
+          ownerId: part.ownerId,
         }
       }),
 
@@ -217,6 +219,7 @@ class Objects{
       spawnPointY: object.spawnPointY,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
+          ownerId: part.ownerId,
           x: part.x,
           y: part.y,
           color: part.color,

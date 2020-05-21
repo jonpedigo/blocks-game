@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import '../../styles/dark.min.css';
 
 function addNewSubObject(owner) {
   PAGE.typingMode = true

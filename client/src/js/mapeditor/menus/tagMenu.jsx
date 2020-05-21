@@ -32,7 +32,6 @@ export default class TagMenu extends React.Component{
 
     const tagList = Object.keys(tags)
     return tagList.map((tag) => {
-      if(tag === 'obstacle') console.log(tag, localTags[tag])
       if(localTags[tag]) {
         return <MenuItem className='dont-close-menu' key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>
       } else {

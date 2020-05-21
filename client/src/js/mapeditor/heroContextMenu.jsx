@@ -83,6 +83,14 @@ export default class HeroContextMenu extends React.Component{
       if(key === 'set-world-respawn-point') {
         window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
       }
+
+      if(key === 'set-hero-to-game-default') {
+        window.socket.emit('resetHeroToGameDefault', objectSelected)
+      }
+
+      if(key === 'set-hero-to-core-default') {
+        window.socket.emit('resetHeroToDefault', objectSelected)
+      }
     }
 
     this._handleTagMenuClick = ({ key }) => {
@@ -194,6 +202,8 @@ export default class HeroContextMenu extends React.Component{
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
       <SubMenu title="Advanced">
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
+        <MenuItem key="reset-to-default">Reset To Game Default</MenuItem>
+        <MenuItem key="reset-to-core-default">Reset To Core Default</MenuItem>
         <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>

@@ -58,10 +58,11 @@ class MapEditor{
 
     contextMenu.init(MAPEDITOR)
     keyInput.init()
+
+    CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
   }
 
   openConstructEditor(object) {
-    CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
     CONSTRUCTEDITOR.start(object)
     window.socket.emit('editGameState', { paused: true })
 
