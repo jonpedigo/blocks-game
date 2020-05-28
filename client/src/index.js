@@ -10,30 +10,24 @@
 // event system is NOT named right. onDelete vs delete for example. I think that ones good, but like... 'startQuest'
 // like whats our patterns. Is it Host Sends event through network -> Host picks up event through network?
 
-// IF A VISUAL ARTIST GETS ON THE MIC HERE...
-//https://github.com/jakubfiala/atrament.js
-
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 //https://zimjs.com/bits/physics.html
-
-// if I Want to DO THE PAINTBRUSH TOOL ..I need to 'smooth lines'
-// https://github.com/literallycanvas/literallycanvas-core/blob/master/src/shapes.js
-
-// you wanna make some good cursors
-//https://www.w3schools.com/cssref/playit.asp?filename=playcss_cursor&preval=alias
 //----
 
 /*
 
-COMPENDIUM INTERFACE FOR US
 CUSTOM TRIGGER SYSTEM
+COMPENDIUM INTERFACE FOR US
 PHYSICS EDITOR
 PIXEL EDITOR
 
+DIALOGUE TREE EDITOR
+PARTICLE EFFECTS
+
+LEVEL UP SYSTEM
+
 PATHFINDING editor / advancements
 WORLD EDITOR
-PARTICLE EFFECTS
-DIALOGUE TREE EDITOR
 INVENTORY SYSTEM
 GRID MANAGEMENT
 
@@ -44,7 +38,6 @@ MORE tags
 INPUT SUMMARY/INDEX
 ——
 DESIGN CHECKPOINT SYSTEM
-LEVEL UP SYSTEM
 Hero update editor?
 — some of these satisfy the need to ‘change the hero in the middle of the game’, what we really want is
 

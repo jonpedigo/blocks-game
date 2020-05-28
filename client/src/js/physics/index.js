@@ -289,7 +289,7 @@ function postPhysics() {
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
+      window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
       if(input && 'x' in input) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
       }
@@ -363,7 +363,7 @@ function removeAndRespawn() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
     if(hero._destroyedBy) {
-      window.local.emit('onDestroy', hero, hero._destroyedBy)
+      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
       delete hero._destroyedBy
     }
 
@@ -380,7 +380,7 @@ function removeAndRespawn() {
 
   GAME.objects.forEach((object) => {
     if(object._destroyedBy) {
-      window.local.emit('onDestroy', object, object._destroyedBy)
+      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
       delete object._destroyedBy
     }
 
