@@ -29,7 +29,7 @@ export default class CustomGame{
 
   }
 
-  onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroCollide(hero, collider, result) {
     if(collider.id === 'object-1271882112670-0') {
         setTimeout(() => {
             GAME.objectsById['object-990554355304-0'].spawnPool = 3
@@ -37,11 +37,11 @@ export default class CustomGame{
     }
   }
 
-  onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroInteract(hero, collider, result) {
 
   }
 
-  onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
+  onObjectCollide(agent, collider, result) {
 
   }
 

@@ -28,8 +28,8 @@ class Objects{
     window.defaultObject.tags = window.tags
   }
 
-  onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
-    onObjectCollide(agent, collider, result, removeObjects, respawnObjects)
+  onObjectCollide(agent, collider, result) {
+    onObjectCollide(agent, collider, result)
   }
 
   forAllSubObjects(subObjects, fx) {

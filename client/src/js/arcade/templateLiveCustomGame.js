@@ -26,15 +26,15 @@ window.templateGameString = `class CustomGame{
 
   }
 
-  onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroCollide(hero, collider, result) {
 
   }
 
-  onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroInteract(hero, collider, result) {
 
   }
 
-  onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
+  onObjectCollide(agent, collider, result) {
 
   }
 

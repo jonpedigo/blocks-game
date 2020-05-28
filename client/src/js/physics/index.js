@@ -59,13 +59,11 @@ function drawSystem(ctx, camera) {
 
 function correctAndEffectAllObjectAndHeros (delta) {
   // update physics system
-  let removeObjects = []
-  let respawnObjects = []
   prepareObjectsAndHerosForCollisionsPhase()
-  heroPhysics(removeObjects, respawnObjects)
-  objectPhysics(removeObjects, respawnObjects)
-  postPhysics(removeObjects, respawnObjects)
-  removeAndRespawn(removeObjects, respawnObjects)
+  heroPhysics()
+  objectPhysics()
+  postPhysics()
+  removeAndRespawn()
 }
 
 function updatePosition(object, delta) {
@@ -244,16 +242,16 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   system.update()
 }
 
-function heroPhysics(removeObjects, respawnObjects) {
+function heroPhysics() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
-    heroCollisionEffects(hero, removeObjects, respawnObjects)
+    heroCollisionEffects(hero)
     if(hero.relativeId) return
-    heroCorrection(hero, removeObjects, respawnObjects)
+    heroCorrection(hero)
   })
 }
 
-function objectPhysics(removeObjects, respawnObjects) {
+function objectPhysics() {
   for(let id in PHYSICS.objects){
     let po = PHYSICS.objects[id]
     // console.log(po)
@@ -263,7 +261,7 @@ function objectPhysics(removeObjects, respawnObjects) {
     }
     if(po.gameObject.removed) continue
     if(po.gameObject.tags.hero) continue
-    objectCollisionEffects(po, removeObjects, respawnObjects)
+    objectCollisionEffects(po)
   }
 
   correctionPhase()
@@ -283,7 +281,7 @@ function objectPhysics(removeObjects, respawnObjects) {
   }
 }
 
-function postPhysics(removeObjects, respawnObjects) {
+function postPhysics() {
   let allHeros = getAllHeros()
   // GET DELTA
   allHeros.forEach((hero) => {
@@ -291,9 +289,9 @@ function postPhysics(removeObjects, respawnObjects) {
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult, removeObjects, respawnObjects)
+      window.local.emit('onInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
       if(input && 'x' in input) {
-        window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult, removeObjects, respawnObjects)
+        window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
       }
       // bad for JSON
       delete hero.interactableObjectResult
@@ -320,7 +318,6 @@ function postPhysics(removeObjects, respawnObjects) {
       hero._deltaY = hero.y - hero._initialY
     }
   })
-
 
   // THEN ATTACH CHILDREN OBJECTS TO PARENT
   GAME.objects.forEach((object, i) => {
@@ -362,22 +359,39 @@ function postPhysics(removeObjects, respawnObjects) {
   })
 }
 
-function removeAndRespawn(removeObjects, respawnObjects) {
-  removeObjects.forEach((gameObject) => {
-    // remove locally first
-    gameObject.removed = true
-    if(gameObject.tags.hero) {
-      HERO.removeHero(gameObject)
-    } else {
-      OBJECTS.removeObject(gameObject)
+function removeAndRespawn() {
+  let allHeros = getAllHeros()
+  allHeros.forEach((hero) => {
+    if(hero._destroyedBy) {
+      window.local.emit('onDestroy', hero, hero._destroyedBy)
+      delete hero._destroyedBy
+    }
+
+    if(hero._respawn) {
+      HERO.respawn(hero)
+      delete hero._respawn
+    }
+    if(hero._remove) {
+      hero.removed = true
+      HERO.removeHero(hero)
+      delete hero._remove
     }
   })
 
-  respawnObjects.forEach((gameObject) => {
-    if(gameObject.id.indexOf('hero') > -1) {
-      HERO.respawn(gameObject)
-    } else if(gameObject.spawnPointX >= 0){
-      OBJECTS.respawn(gameObject)
+  GAME.objects.forEach((object) => {
+    if(object._destroyedBy) {
+      window.local.emit('onDestroy', object, object._destroyedBy)
+      delete object._destroyedBy
+    }
+
+    if(object._respawn) {
+      OBJECTS.respawn(object)
+      delete object._respawn
+    }
+    if(object._remove) {
+      object.removed = true
+      OBJECTS.removeObject(object)
+      delete object._remove
     }
   })
 }

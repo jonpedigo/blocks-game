@@ -43,7 +43,7 @@ export default function spawnZoneIntelligence(object) {
       object.spawnPool--
 
       object.spawnWait = true
-      GAME.addTimeout('spawnWait-' + window.uniqueID(), object.spawnWaitTimer || 10, () => {
+      object.spawnWaitTimerId = GAME.addTimeout('spawnWait-' + window.uniqueID(), object.spawnWaitTimer || 10, () => {
         object.spawnWait = false
       })
     }

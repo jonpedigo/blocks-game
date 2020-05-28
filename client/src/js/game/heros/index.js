@@ -12,13 +12,13 @@ class Hero{
     this.setDefault()
   }
 
-  onHeroInteract(hero, interactor, result, removeObjects, respawnObjects) {
-    onHeroTrigger(hero, interactor, result, removeObjects, respawnObjects, { fromInteractButton: true })
+  onHeroInteract(hero, interactor, result) {
+    onHeroTrigger(hero, interactor, result, { fromInteractButton: true })
   }
 
-  onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroCollide(hero, collider, result) {
     if(collider.ownerId === hero.id) return
-    onHeroTrigger(hero, collider, result, removeObjects, respawnObjects, { fromInteractButton: false })
+    onHeroTrigger(hero, collider, result, { fromInteractButton: false })
   }
 
   getHeroId() {

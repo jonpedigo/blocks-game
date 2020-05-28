@@ -3,7 +3,7 @@
 //powerUpTimer
 //updateHistory
 
-export default function onHeroUpdate(hero, collider, result, removeObjects, respawnObjects, options) {
+export default function onHeroUpdate(hero, collider, result, options) {
   if(collider.tags && collider.tags['heroUpdate'] && collider.heroUpdate) {
     if(collider.id !== hero.lastHeroUpdateId) {
       heroUpdate(hero, collider, collider.heroUpdate)

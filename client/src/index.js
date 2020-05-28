@@ -99,7 +99,6 @@ questStart
 questComplete
 spawnToggle
 spawnOne
-spawnAll
 spawnHold
 spawnRelease
 movementToggle
@@ -112,6 +111,8 @@ timerToggle
 disableTrigger
 enableTrigger
 toggleTrigger
+addTag
+removeTag
 
 heroUpdate
 skipHeroGravity

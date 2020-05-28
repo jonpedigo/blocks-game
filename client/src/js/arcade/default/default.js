@@ -39,7 +39,7 @@ export default class CustomGame{
 
   }
 
-  onObjectCollide(agent, collider, result, removeObjects, respawnObjects, hero) {
+  onObjectCollide(agent, collider, result) {
 
   }
 
@@ -107,11 +107,11 @@ export default class CustomGame{
     }
   }
 
-  onHeroCollide(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroCollide(hero, collider, result) {
 
   }
 
-  onHeroInteract(hero, collider, result, removeObjects, respawnObjects) {
+  onHeroInteract(hero, collider, result) {
 
   }
 }

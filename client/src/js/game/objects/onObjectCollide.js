@@ -1,10 +1,10 @@
-export default function onObjectCollide(agent, collider, result, removeObjects, respawnObjects) {
+export default function onObjectCollide(agent, collider, result) {
   if(agent.tags['monsterDestroyer'] && collider.tags['monster']) {
-    window.local.emit('onDestroyMonster', agent, collider, result, removeObjects, respawnObjects)
+    collider._destroyedBy = agent
     if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
-      respawnObjects.push(collider)
+      collider._respawn = true
     } else {
-      removeObjects.push(collider)
+      collider._remove = true
     }
   }
 
@@ -18,16 +18,16 @@ export default function onObjectCollide(agent, collider, result, removeObjects, 
   }
 
   if(agent.tags['monsterVictim'] && collider.tags['monster']) {
-    window.local.emit('onMonsterDestroyVictim', agent, collider)
+    agent._destroyedBy = collider
     if(agent.spawnPointX >= 0 && agent.tags['respawn']) {
-      respawnObjects.push(agent)
+      agent._respawn = true
     } else {
-      removeObjects.push(agent)
+      agent._remove = true
     }
   }
 
   if(collider.tags && agent.tags && collider.tags['bullet'] && agent.tags['monster']) {
-    removeObjects.push(agent)
+    agent._remove = true
     hero.score++
   }
 

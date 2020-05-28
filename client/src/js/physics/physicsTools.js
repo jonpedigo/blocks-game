@@ -41,7 +41,7 @@ function correctConstructPart(correctedPart, owner, partPO) {
 /////////////////////////////////////////////////////
 // HERO EFFECTS ON COLLISION
 /////////////////////////////////////////////////////
-function heroCollisionEffects(hero, removeObjects, respawnObjects) {
+function heroCollisionEffects(hero) {
   const result = PHYSICS.objects[hero.id].createResult()
   const potentials = PHYSICS.objects[hero.id].potentials()
   let illegal = false
@@ -56,7 +56,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
     if(heroPO.collides(body, result)) {
       const collider = body.gameObject
 
-      window.local.emit('onHeroCollide', heroPO.gameObject, collider, result, removeObjects, respawnObjects)
+      window.local.emit('onHeroCollide', heroPO.gameObject, collider, result)
     }
   }
 }
@@ -68,7 +68,7 @@ function heroCollisionEffects(hero, removeObjects, respawnObjects) {
 /////////////////////////////////////////////////////
 // GAME.heros[HERO.id] CORRECTIONS
 /////////////////////////////////////////////////////
-function heroCorrection(hero, removeObjects, respawnObjects) {
+function heroCorrection(hero) {
   hero.onGround = false
 
   PHYSICS.system.update()
@@ -119,7 +119,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
       function correctHeroY() {
         if(result.overlap_y > 0) {
           hero.onGround = true
-          if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result, removeObjects, respawnObjects)
+          if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result)
           if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
             hero._parentId = landingObject.gameObject.id
             hero._skipNextGravity = true
@@ -201,7 +201,7 @@ function heroCorrection(hero, removeObjects, respawnObjects) {
 /////////////////////////////////////////////////////
 // OBJECTS COLLIDING WITH OTHER OBJECTS
 /////////////////////////////////////////////////////
-function objectCollisionEffects(po, removeObjects, respawnObjects) {
+function objectCollisionEffects(po) {
 
   let potentials = po.potentials()
   let result = po.createResult()
@@ -231,7 +231,7 @@ function objectCollisionEffects(po, removeObjects, respawnObjects) {
         }
       }
 
-      window.local.emit('onObjectCollide', agent, collider, result, removeObjects, respawnObjects)
+      window.local.emit('onObjectCollide', agent, collider, result)
     }
   }
 }

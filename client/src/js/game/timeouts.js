@@ -8,6 +8,7 @@ function onUpdate(delta) {
     timeout.timeRemaining -= delta
     if(timeout.timeRemaining <= 0) {
       if(timeout.fx) timeout.fx()
+      else console.log('timeout without fx...')
       return false
     }
     return true
@@ -28,6 +29,7 @@ function addTimeout(id, numberOfSeconds, fx) {
       }
       GAME.timeouts.push(timeout)
       GAME.timeoutsById[id] = timeout
+      return id
     }
   }
 }

@@ -1,4 +1,4 @@
-export default function onTalk(hero, collider, result, removeObjects, respawnObjects, options) {
+export default function onTalk(hero, collider, result, options) {
   if(collider.id !== hero.lastDialogueId) {
     if(!options.fromInteractButton) hero.lastDialogueId = collider.id
     hero.dialogue = collider.heroDialogue.slice()

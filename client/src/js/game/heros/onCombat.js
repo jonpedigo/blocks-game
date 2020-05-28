@@ -1,15 +1,15 @@
-export default function onCombat(hero, collider, result, removeObjects, respawnObjects, options) {
+export default function onCombat(hero, collider, result, options) {
   if(collider.tags && collider.tags['monster']) {
     if(hero.tags['monsterDestroyer']) {
-      window.local.emit('onHeroDestroyMonster', hero, collider, result, removeObjects, respawnObjects, options)
+      collider._destroyedBy = hero
       if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
-        respawnObjects.push(collider)
+        collider._respawn = true
       } else {
-        removeObjects.push(collider)
+        collider._remove = true
       }
     } else {
       // hero.lives--
-      respawnObjects.push(hero)
+      hero._respawn = true
     }
   }
 }
