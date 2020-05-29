@@ -104,6 +104,16 @@ function init() {
     window.socket.on('onStartGame', () => {
       window.local.emit('onGameStart')
     })
+
+    window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
+      window.local.emit('onDeleteTrigger', ownerId, triggerId)
+    })
+    window.socket.on('onAddTrigger', (ownerId, trigger) => {
+      window.local.emit('onAddTrigger', ownerId, trigger)
+    })
+    window.socket.on('onEditTrigger', (ownerId, triggerId, trigger) => {
+      window.local.emit('onEditTrigger', ownerId, triggerId, trigger)
+    })
   }
 
   if(PAGE.role.isGhost) {

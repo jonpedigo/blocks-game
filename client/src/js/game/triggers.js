@@ -1,30 +1,32 @@
 import { startQuest, completeQuest } from './heros/quests'
 import onTalk from './heros/onTalk'
 
-// trigger
-// id
-// event
-// effect
-// threshold
-// effect value
-// mutation
-// subobject id
-// remoteId
-// remoteTag
-// initialTriggerPool
+// PROPS
+// id,
+// event,
+// effect,
+// effectValue,
+// eventThreshold,
+// subObjectName,
+// remoteId,
+// remoteTag,
+// initialPool,
 
+// mutationJSON,
 
+// STATE
+// pool
 // eventCount
-// triggerPool
+// disabled
 
---
+// --
 // ADD trigger/edit TRIGGER
 // event
 // effect
 
 // OPTIONAL
 // trigger X times
-// trigger threshold
+// trigger eventThreshold
 // remote tag
 // remote id
 
@@ -35,33 +37,34 @@ import onTalk from './heros/onTalk'
 // morph - subobject name
 // add subHERO
 
-function init() {
+function onPageLoaded() {
   window.triggerEvents = [
     'onHeroCollide',
     'onHeroLand',
     'onHeroInteract',
     'onHeroDestroyed',
+    // 'OnObjectSpawn',
     'onObjectDestroyed',
-    // 'OnTimerEnd',
-    // 'OnDestroy',
-    // 'OnHeroDestroy',
-    // 'OnSpawn',
     'onObjectCollide',
     'onObjectInteractable',
+    // 'onNoticeHero',
+    // 'onNoticeObject'
+    // 'onObjectNoticed',
+    // 'onHeroNoticed,
     'onQuestStart',
     'onQuestComplete',
     // 'onQuestFail',
-    // 'onAwake',
+    // 'onObjectAwake',
+    // 'OnTimerEnd',
     'onGameStart',
-    // 'OnAwareOfHero',
-    // 'OnAwareOfObject,
-    // 'onCustomEvent',
   ]
 
   window.triggerEffects = [
     'remove',
     'respawn',
+    'destroy',
     'mutate',
+    'goToStarView',
     // 'morph',
     // 'coreBehavior',
     // 'duplicate',
@@ -94,55 +97,86 @@ function init() {
 
 function checkRemoteIdOrTagMatch(trigger, object) {
   if(trigger.remoteId && trigger.remoteId === object.id) {
-    trigger.eventCount
+    return true
   } else if(trigger.remoteTag && object.tags[trigger.remoteTag]) {
-    trigger.eventCount
+    return true
   }
 }
 
-function addTrigger(object, trigger) {
+function deleteTrigger(object, triggerId) {
+  if(GAME.gameState.started) object.triggers[triggerId].removeEventListener()
+  delete object.triggers[triggerId]
+}
+
+function addTrigger(owner, trigger) {
   const event = trigger.event
   trigger.triggerPool = trigger.triggerPoolInitial
 
-  window.local.on(event, (agent, subject) => {
-    let fx = () => {}
-    if(event.indexOf('Object')) {
-      fx = () => triggerEffect(trigger, object)
-      checkRemoteIdOrTagMatch(trigger, agent)
-      if(!trigger.remoteId && !trigger.remoteTag && agent.id === object.id) {
-        console.log('basic object event trigger')
-        trigger.eventCount
+  if(!owner.triggers) owner.triggers = {}
+
+  owner.triggers[trigger.id] = trigger
+  Object.assign(owner.triggers[trigger.id], {
+    pool: trigger.initialPool || 1,
+    eventCount: 0,
+    disabled: false,
+  })
+  owner.triggers[trigger.id].removeEventListener = window.local.on(event, (object, subject) => {
+    let fx = () => triggerEffect(trigger, owner, subject)
+    let eventMatch = false
+
+    if(owner.tags.hero) {
+      if(event.indexOf('Hero') >= 0) {
+        if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
+        if(!trigger.remoteId && !trigger.remoteTag && object.id === owner.id) {
+          eventMatch = true
+        }
+      }
+
+      if(event.indexOf('Object') >= 0) {
+        fx = () => triggerEffect(trigger, owner, object)
+        if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
+      }
+    } else {
+      if(event.indexOf('Object') >= 0) {
+        // if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
+        if(!trigger.remoteId && !trigger.remoteTag && object.id === owner.id) {
+          eventMatch = true
+        }
+      }
+
+      if(event.indexOf('Hero') >= 0) {
+        fx = () => triggerEffect(trigger, owner, object)
+        // if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
+        if(!trigger.remoteId && !trigger.remoteTag && subject.id === owner.id) {
+          eventMatch = true
+        }
       }
     }
 
-    if(event.indexOf('Hero')) {
-      fx = () => triggerEffect(trigger, object, agent)
-      checkRemoteIdOrTagMatch(trigger, subject)
-      if(!trigger.remoteId && !trigger.remoteTag && subject.id === object.id) {
-        console.log('basic hero event trigger')
-        trigger.eventCount
+    if(event.indexOf('Game') >= 0 || event.indexOf('Quest') >= 0) {
+      eventMatch = true
+    }
+
+    if(eventMatch) {
+      if(trigger.pool == 0) return
+      trigger.eventCount++
+      if(!trigger.eventThreshold) {
+        fx()
+        if(trigger.pool > 0) trigger.pool--
+      } else if(trigger.eventCount >= trigger.eventThreshold) {
+        fx()
+        if(trigger.pool > 0) trigger.pool--
       }
-    }
-
-    if(event.indexOf('Game')) {
-      fx = () => triggerEffect(trigger, object)
-      trigger.eventCount
-    }
-
-    if(!trigger.threshold) {
-      fx()
-    } else if(trigger.times === trigger.threshold) {
-      console.log('TRIGGERD', trigger.id)
-      fx()
     }
   })
 }
 
-function triggerEffect(trigger, owner, hero) {
+function triggerEffect(trigger, object, subject) {
   const { effect, effectValue } = trigger
 
   if(effect === 'mutate') {
-    window.mergeDeep(owner, trigger.mutation)
+    console.log('mutating')
+    // window.mergeDeep(owner, trigger.mutationJSON)
   }
 
   // if(effect === 'talkToHero' && hero) {
@@ -156,6 +190,10 @@ function triggerEffect(trigger, owner, hero) {
   // if(effect === 'heroQuestComplete' && hero) {
   //   completeQuest(hero, effectValue)
   // }
+
+  if(effect === 'destroy') {
+    object._destroy = true
+  }
 
   if(effect === 'respawn') {
     OBJECTS.respawnObject(object)
@@ -193,6 +231,10 @@ function triggerEffect(trigger, owner, hero) {
     let tag = effectValue
     object.tags[tag] = !object.tags[tag]
   }
+}
 
-
+export default {
+  onPageLoaded,
+  addTrigger,
+  deleteTrigger,
 }

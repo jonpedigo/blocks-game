@@ -53,9 +53,6 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Behavior">
         {this._renderTagMenuItems(window.behaviorTags)}
       </SubMenu>
-      <SubMenu title="Trigger Behavior">
-        {this._renderTagMenuItems(window.triggerTags)}
-      </SubMenu>
       <SubMenu title="Hero Update">
         {this._renderTagMenuItems(window.heroUpdateTags)}
       </SubMenu>
@@ -77,6 +74,9 @@ export default class TagMenu extends React.Component{
       {subObject && <SubMenu title="Sub Object">
         {this._renderTagMenuItems(window.subObjectTags)}
       </SubMenu>}
+      <SubMenu title="Other">
+        {this._renderTagMenuItems(window.otherTags)}
+      </SubMenu>
     </Menu>
   }
 }

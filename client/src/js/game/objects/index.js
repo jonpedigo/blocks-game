@@ -2,6 +2,7 @@ import onObjectCollide from './onObjectCollide'
 import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
+import triggers from '../triggers.js'
 
 class Objects{
   constructor() {
@@ -118,19 +119,22 @@ class Objects{
       })
     }
 
+    if(object.triggers) {
+      state.triggers = {}
+      Object.keys(object.triggers).forEach((triggerId) => {
+        const { pool, eventCount, disabled } = object.triggers[triggerId]
+
+        state.triggers[triggerId] = {
+          pool,
+          eventCount,
+          disabled,
+        }
+
+        window.removeFalsey(state.triggers[triggerId])
+      })
+    }
+
     return state
-  }
-
-  isInteractable(object) {
-    if((object.tags['completeQuestOnHeroInteract'] && object.tags['questCompleter']) || (object.tags['giveQuestOnHeroInteract'] && object.tags['questGiver'])) return true
-
-    if(object.tags['spawnOnHeroInteract'] && object.tags.spawnZone) return true
-
-    if(object.tags['updateHeroOnHeroInteract'] && object.tags.heroUpdate) return true
-
-    if(object.tags['talkOnHeroInteract'] && object.tags.talker) return true
-
-    return false
   }
 
   getProperties(object) {
@@ -201,6 +205,28 @@ class Objects{
       })
     }
 
+    if(object.triggers) {
+      properties.triggers = {}
+      Object.keys(object.triggers).forEach((triggerId) => {
+        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, remoteId, remoteTag, initialPool } = object.triggers[triggerId]
+
+        properties.triggers[triggerId] = {
+          id,
+          event,
+          effect,
+          effectValue,
+          eventThreshold,
+          mutationJSON,
+          subObjectName,
+          remoteId,
+          remoteTag,
+          initialPool,
+        }
+
+        window.removeFalsey(properties.triggers[triggerId])
+      })
+    }
+
     return properties
   }
 
@@ -241,6 +267,20 @@ class Objects{
     }
 
     return mapState
+  }
+
+  isInteractable(object) {
+    if((object.tags['completeQuestOnHeroInteract'] && object.tags['questCompleter']) || (object.tags['giveQuestOnHeroInteract'] && object.tags['questGiver'])) return true
+
+    if(object.tags['spawnOnHeroInteract'] && object.tags.spawnZone) return true
+
+    if(object.tags['updateHeroOnHeroInteract'] && object.tags.heroUpdate) return true
+
+    if(object.tags['talkOnHeroInteract'] && object.tags.talker) return true
+
+    if(object.tags['showInteractBorder']) return true
+
+    return false
   }
 
   anticipatedAdd(hero) {
@@ -453,6 +493,13 @@ class Objects{
       })
     } else {
       PHYSICS.addObject(object)
+    }
+
+    if(object.triggers) {
+      Object.keys(object.triggers).forEach((triggerId) => {
+        const trigger = object.triggers[triggerId]
+        triggers.addTrigger(object, trigger)
+      })
     }
   }
 

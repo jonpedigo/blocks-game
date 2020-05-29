@@ -71,7 +71,7 @@ class MapEditor{
 
     const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
       if(constructParts) {
-        window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY:y, x, y, width, height}])
+        window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height}])
       }
       window.socket.emit('editGameState', { paused: false })
       MAPEDITOR.resume()
@@ -222,7 +222,7 @@ function handleMouseDown(event) {
     } else if(GAME.gameState.started) {
       networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, y: draggingObject.y})
     } else {
-      networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.spawnPointY})
+      networkEditObject(draggingObject, {id: draggingObject.id, x: draggingObject.x, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y})
     }
     MAPEDITOR.draggingObject = null
   } else if(MAPEDITOR.draggingRelativeObject) {

@@ -3,6 +3,7 @@ import pathfinding from '../utils/pathfinding.js'
 
 import ai from './ai'
 import input from './input.js'
+import triggers from './triggers.js'
 import gameState from './gameState.js'
 import tags from './tags.js'
 import timeouts from './timeouts'
@@ -34,6 +35,7 @@ class Game{
     input.setDefault()
     timeouts.setDefault()
 
+    triggers.onPageLoaded()
     input.onPageLoaded()
   }
 
@@ -437,6 +439,18 @@ class Game{
   }
   addOrResetTimeout(id, numberOfSeconds, fx) {
     timeouts.addOrResetTimeout(id, numberOfSeconds, fx)
+  }
+
+  onAddTrigger(ownerId, trigger) {
+    triggers.addTrigger(OBJECTS.getObjectOrHeroById(ownerId), trigger)
+  }
+  onEditTrigger(ownerId, triggerId, trigger) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    triggers.deleteTrigger(owner, triggerId)
+    triggers.addTrigger(owner, trigger)
+  }
+  onDeleteTrigger(ownerId, triggerId) {
+    triggers.deleteTrigger(OBJECTS.getObjectOrHeroById(ownerId), triggerId)
   }
 
   onStopGame() {

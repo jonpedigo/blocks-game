@@ -1,6 +1,7 @@
 import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
+import TriggerMenu from './menus/TriggerMenu.jsx';
 import modals from './modals.js'
 
 const editQuestPrefix = 'edit-quest-'
@@ -84,11 +85,11 @@ export default class HeroContextMenu extends React.Component{
         window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
       }
 
-      if(key === 'set-hero-to-game-default') {
+      if(key === 'reset-to-game-default') {
         window.socket.emit('resetHeroToGameDefault', objectSelected)
       }
 
-      if(key === 'set-hero-to-core-default') {
+      if(key === 'reset-to-core-default') {
         window.socket.emit('resetHeroToDefault', objectSelected)
       }
     }
@@ -179,6 +180,9 @@ export default class HeroContextMenu extends React.Component{
         <Menu onClick={this._handleTagMenuClick}>
           {this._renderTagMenuItems(window.heroTags)}
         </Menu>
+      </SubMenu>
+      <SubMenu title="Triggers">
+        <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Input">
         <SubMenu title="Arrow Keys">

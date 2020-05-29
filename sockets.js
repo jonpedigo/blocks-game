@@ -162,7 +162,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('anticipateObject', (object) => {
     io.emit('onAnticipateObject', object)
   })
-
   socket.on('updateObjectsComplete', (updatedobjects) => {
     currentGame.objects = updatedobjects
     io.emit('onUpdateObjects', currentGame.objects)
@@ -188,7 +187,28 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   	// }
     io.emit('onDeleteObject', object)
   })
+  socket.on('askObjects', () => {
+    socket.emit('onAddObjects', currentGame.objects)
+  })
+  socket.on('addObjects', (addedobjects) => {
+    currentGame.objects.push(...addedobjects)
+    io.emit('onAddObjects', addedobjects)
+  })
 
+
+  //// TRIGGERS
+  socket.on('deleteTrigger', (ownerId, triggerId) => {
+    io.emit('onDeleteTrigger', ownerId, triggerId)
+  })
+  socket.on('addTrigger', (ownerId, trigger) => {
+    io.emit('onAddTrigger', ownerId, trigger)
+  })
+  socket.on('editTrigger', (ownerId, triggerId, trigger) => {
+    io.emit('onEditTrigger', ownerId, triggerId, trigger)
+  })
+
+
+  /// SUB OBJECTS
   socket.on('deleteSubObject', (owner, subObjectName) => {
     io.emit('onDeleteSubObject', owner, subObjectName)
   })
@@ -202,13 +222,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onEditSubObject', ownerId, subObjectName, update)
   })
 
-  socket.on('askObjects', () => {
-    socket.emit('onAddObjects', currentGame.objects)
-  })
-  socket.on('addObjects', (addedobjects) => {
-    currentGame.objects.push(...addedobjects)
-    io.emit('onAddObjects', addedobjects)
-  })
 
   ///////////////////////////
   ///////////////////////////

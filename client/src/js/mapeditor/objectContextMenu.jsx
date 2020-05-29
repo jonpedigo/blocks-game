@@ -10,6 +10,7 @@ import NameMenu from './menus/NameMenu.jsx';
 import ObjectAdvancedMenu from './menus/ObjectAdvancedMenu.jsx';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import RelativeMenu from './menus/RelativeMenu.jsx';
+import TriggerMenu from './menus/TriggerMenu.jsx';
 import modals from './modals.js'
 
 export default class ObjectContextMenu extends React.Component{
@@ -99,6 +100,9 @@ export default class ObjectContextMenu extends React.Component{
       {this._renderObjectSpawnZoneMenu()}
       <SubMenu title="Group">
         <GameTagMenu objectSelected={objectSelected} subObject={subObject}/>
+      </SubMenu>
+      <SubMenu title="Triggers">
+        <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>

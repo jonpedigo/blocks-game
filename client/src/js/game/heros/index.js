@@ -4,6 +4,7 @@ import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import input from '../input.js'
+import triggers from '../triggers.js'
 
 class Hero{
   constructor() {
@@ -75,6 +76,8 @@ class Hero{
       },
       quests: {},
       questState: {},
+      triggers: {},
+      triggerState: {},
     }
 
     window.local.on('onGridLoaded', () => {
@@ -329,6 +332,21 @@ class Hero{
       })
     }
 
+    if(hero.triggers) {
+      state.triggers = {}
+      Object.keys(hero.triggers).forEach((triggerId) => {
+        const { pool, eventCount, disabled } = hero.triggers[triggerId]
+
+        state.triggers[triggerId] = {
+          pool,
+          eventCount,
+          disabled,
+        }
+
+        window.removeFalsey(state.triggers[triggerId])
+      })
+    }
+
     return state
   }
 
@@ -363,6 +381,28 @@ class Hero{
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         properties.subObjects[subObjectName] = OBJECTS.getProperties(subObject)
         window.removeFalsey(properties.subObjects[subObjectName])
+      })
+    }
+
+    if(hero.triggers) {
+      properties.triggers = {}
+      Object.keys(hero.triggers).forEach((triggerId) => {
+        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, remoteId, remoteTag, initialPool } = hero.triggers[triggerId]
+
+        properties.triggers[triggerId] = {
+          id,
+          event,
+          effect,
+          effectValue,
+          eventThreshold,
+          mutationJSON,
+          subObjectName,
+          remoteId,
+          remoteTag,
+          initialPool,
+        }
+
+        window.removeFalsey(properties.triggers[triggerId])
       })
     }
 
@@ -430,6 +470,12 @@ class Hero{
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         OBJECTS.addSubObject(hero, subObject, subObjectName)
+      })
+    }
+    if(hero.triggers) {
+      Object.keys(hero.triggers).forEach((triggerId) => {
+        const trigger = hero.triggers[triggerId]
+        triggers.addTrigger(hero, trigger)
       })
     }
     PHYSICS.addObject(hero)

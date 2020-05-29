@@ -10,8 +10,9 @@ function setDefault() {
     zombie: false,
   }
 
-  window.triggerTags = {
-    destroyAfterTrigger: false,
+  window.otherTags = {
+    removeAfterTrigger: false,
+    showInteractBorder: false,
   }
 
   window.combatTags = {
