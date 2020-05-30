@@ -442,7 +442,9 @@ class Game{
   }
 
   onAddTrigger(ownerId, trigger) {
-    triggers.addTrigger(OBJECTS.getObjectOrHeroById(ownerId), trigger)
+    const { event } = trigger
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    triggers.addTrigger(owner, trigger)
   }
   onEditTrigger(ownerId, triggerId, trigger) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)

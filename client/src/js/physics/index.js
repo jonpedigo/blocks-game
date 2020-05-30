@@ -369,8 +369,6 @@ function removeAndRespawn() {
         hero._respawn = true
       } else hero._remove = true
       delete hero._destroy
-    }
-    if(hero._destroyedBy) {
       delete hero._destroyedBy
     }
 
@@ -387,14 +385,12 @@ function removeAndRespawn() {
 
   GAME.objects.forEach((object) => {
     if(object._destroy) {
+      console.log(object.tags.seed, object._destroyedBy)
       window.local.emit('onObjectDestroyed', object, object._destroyedBy)
       if(object.tags.respawn) {
         object._respawn = true
       } else object._remove = true
       delete object._destroy
-    }
-
-    if(object._destroyedBy) {
       delete object._destroyedBy
     }
 

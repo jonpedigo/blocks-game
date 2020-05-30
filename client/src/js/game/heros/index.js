@@ -387,7 +387,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, remoteId, remoteTag, initialPool } = hero.triggers[triggerId]
+        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -397,8 +397,10 @@ class Hero{
           eventThreshold,
           mutationJSON,
           subObjectName,
-          remoteId,
-          remoteTag,
+          objectId,
+          objectTag,
+          subjectId,
+          subjectTag,
           initialPool,
         }
 

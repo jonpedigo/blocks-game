@@ -1,38 +1,6 @@
 import { startQuest, completeQuest } from './heros/quests'
 import onTalk from './heros/onTalk'
 
-// PROPS
-// id,
-// event,
-// effect,
-// effectValue,
-// eventThreshold,
-// subObjectName,
-// remoteId,
-// remoteTag,
-// initialPool,
-
-// mutationJSON,
-
-// STATE
-// pool
-// eventCount
-// disabled
-
-// --
-// ADD trigger/edit TRIGGER
-// event
-// effect
-
-// OPTIONAL
-// trigger X times
-// trigger eventThreshold
-// remote tag
-// remote id
-
-// SEPERATE MODAL
-// mutation JSON
-
 // LATER
 // morph - subobject name
 // add subHERO
@@ -95,10 +63,11 @@ function onPageLoaded() {
   ]
 }
 
-function checkRemoteIdOrTagMatch(trigger, object) {
-  if(trigger.remoteId && trigger.remoteId === object.id) {
+function checkIdOrTagMatch(id, tag, object) {
+  if(id && id === object.id) {
     return true
-  } else if(trigger.remoteTag && object.tags[trigger.remoteTag]) {
+  }
+  if(tag && object.tags[tag]) {
     return true
   }
 }
@@ -121,35 +90,37 @@ function addTrigger(owner, trigger) {
     disabled: false,
   })
   owner.triggers[trigger.id].removeEventListener = window.local.on(event, (object, subject) => {
-    let fx = () => triggerEffect(trigger, owner, subject)
+    let fx = () => triggerEffect(trigger, owner.id, object, subject)
     let eventMatch = false
 
-    if(owner.tags.hero) {
-      if(event.indexOf('Hero') >= 0) {
-        if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
-        if(!trigger.remoteId && !trigger.remoteTag && object.id === owner.id) {
-          eventMatch = true
-        }
-      }
+    let { objectId, objectTag, subjectId, subjectTag } = trigger
 
-      if(event.indexOf('Object') >= 0) {
-        fx = () => triggerEffect(trigger, owner, object)
-        if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
+    if(owner.tags.hero) {
+      if(!subjectId && !subjectTag && event.indexOf('Object') >= 0) {
+        subjectId = owner.id
+      }
+      if(!objectId && !objectTag && event.indexOf('Hero') >= 0) {
+        objectId = owner.id
       }
     } else {
-      if(event.indexOf('Object') >= 0) {
-        // if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
-        if(!trigger.remoteId && !trigger.remoteTag && object.id === owner.id) {
-          eventMatch = true
-        }
+      if(!objectId && !objectTag && event.indexOf('Object') >= 0) {
+        objectId = owner.id
       }
+      if(!subjectId && !subjectTag && event.indexOf('Hero') >= 0) {
+        subjectId = owner.id
+      }
+    }
 
-      if(event.indexOf('Hero') >= 0) {
-        fx = () => triggerEffect(trigger, owner, object)
-        // if(checkRemoteIdOrTagMatch(trigger, object)) eventMatch = true
-        if(!trigger.remoteId && !trigger.remoteTag && subject.id === owner.id) {
-          eventMatch = true
-        }
+    if(event.indexOf('Object') >= 0 || event.indexOf('Hero') >= 0) {
+      // just check object
+      if((objectId || objectTag) && !subjectId && !subjectTag && checkIdOrTagMatch(objectId, objectTag, object)) {
+        eventMatch = true
+      // just check subject
+      } else if((subjectId || subjectTag) && !objectId && !objectTag && checkIdOrTagMatch(subjectId, subjectTag, subject)) {
+        eventMatch = true
+      // check subject and object
+      } else if((subjectId || subjectTag) && (objectId || objectTag) && checkIdOrTagMatch(objectId, objectTag, object) && checkIdOrTagMatch(subjectId, subjectTag, subject)) {
+        eventMatch = true
       }
     }
 
@@ -171,12 +142,12 @@ function addTrigger(owner, trigger) {
   })
 }
 
-function triggerEffect(trigger, object, subject) {
+function triggerEffect(trigger, ownerId, object, subject) {
   const { effect, effectValue } = trigger
+  const owner = OBJECTS.getObjectOrHeroById(ownerId)
 
-  if(effect === 'mutate') {
-    console.log('mutating')
-    // window.mergeDeep(owner, trigger.mutationJSON)
+  if(effect === 'mutate' && trigger.mutationJSON) {
+    window.mergeDeep(owner, trigger.mutationJSON)
   }
 
   // if(effect === 'talkToHero' && hero) {
@@ -192,44 +163,50 @@ function triggerEffect(trigger, object, subject) {
   // }
 
   if(effect === 'destroy') {
-    object._destroy = true
+    if(object && subject && object.id === owner.id) {
+      object._destroyedBy = subject
+    }
+    if(object && subject && subject.id === owner.id) {
+      subject._destroyedBy = object
+    }
+    owner._destroy = true
   }
 
   if(effect === 'respawn') {
-    OBJECTS.respawnObject(object)
+    OBJECTS.respawnObject(owner)
   }
   if(effect === 'remove') {
-    OBJECTS.removeObject(object)
+    OBJECTS.removeObject(owner)
   }
 
   if(effect === 'spawnTotalIncrement') {
-    object.spawnTotal += effectValue || 1
+    owner.spawnTotal += effectValue || 1
   }
 
   //
   // if(effect === 'spawnTotalRemove') {
-  //   object.spawnTotal = -1
+  //   owner.spawnTotal = -1
   // }
 
   if(effect === 'spawnPoolIncrement') {
-    object.spawnPool += effectValue || 1
-    // object.spawnWait=false
-    // if(object.spawnWaitTimerId) delete GAME.timeoutsById[object.spawnWaitTimerId]
+    owner.spawnPool += effectValue || 1
+    // owner.spawnWait=false
+    // if(owner.spawnWaitTimerId) delete GAME.timeoutsById[owner.spawnWaitTimerId]
   }
 
   if(effect === 'tagAdd') {
     let tag = effectValue
-    object.tags[tag] = false
+    owner.tags[tag] = false
   }
 
   if(effect === 'tagRemove') {
     let tag = effectValue
-    object.tags[tag] = true
+    owner.tags[tag] = true
   }
 
   if(effect === 'tagToggle') {
     let tag = effectValue
-    object.tags[tag] = !object.tags[tag]
+    owner.tags[tag] = !owner.tags[tag]
   }
 }
 

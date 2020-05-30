@@ -208,7 +208,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, remoteId, remoteTag, initialPool } = object.triggers[triggerId]
+        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -218,8 +218,10 @@ class Objects{
           eventThreshold,
           mutationJSON,
           subObjectName,
-          remoteId,
-          remoteTag,
+          objectId,
+          objectTag,
+          subjectId,
+          subjectTag,
           initialPool,
         }
 
@@ -478,7 +480,7 @@ class Objects{
   }
 
   addObject(object) {
-    object.tags = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultTags)), object.tags)
+    object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, object: true})), object.tags)
     GAME.objectsById[object.id] = object
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {

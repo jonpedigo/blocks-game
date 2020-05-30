@@ -18,22 +18,26 @@ function editTrigger(owner, trigger) {
     if(!value) return
     const id = value[0]
     const effectValue = value[1]
-    const subObjectName = value[2]
-    const remoteTag = value[3]
-    const remoteId = value[4]
-    const initialPool = Number(value[5])
-    const eventThreshold = Number(value[6])
+    const objectTag = value[2]
+    const objectId = value[3]
+    const subjectTag = value[4]
+    const subjectId = value[5]
+    const subObjectName = value[6]
+    const initialPool = Number(value[7])
+    const eventThreshold = Number(value[8])
 
     const triggerUpdate = {
       id,
       effectValue,
       subObjectName,
-      remoteTag,
-      remoteId,
+      objectTag,
+      objectId,
+      subjectTag,
+      subjectId,
       initialPool,
       eventThreshold
     }
-    window.removeFalsey(triggerUpdate)
+    window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
 
     const oldId = trigger.id
     Object.assign(trigger, triggerUpdate)
@@ -48,6 +52,18 @@ function addNewSubObject(owner) {
   openNameSubObjectModal((result) => {
     if(result && result.value && result.value.length) {
       window.socket.emit('addSubObject', owner, {}, result.value)
+    }
+    PAGE.typingMode = false
+  })
+}
+
+function editMutationJSON(owner, trigger) {
+  PAGE.typingMode = true
+  openEditCodeModal('Edit Mutation JSON', trigger.mutationJSON || {}, (result) => {
+    if(result && result.value) {
+      const editedCode = JSON.parse(result.value)
+      trigger.mutationJSON = editedCode
+      window.socket.emit('editTrigger', owner.id, trigger.id, trigger)
     }
     PAGE.typingMode = false
   })
@@ -340,7 +356,7 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
 }
 
 function openTriggerModal(trigger, cb) {
-  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', remoteId: '', remoteTag: '', initialPool: 1, eventThreshold: -1}, trigger)
+  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', objectId: '', objectTag: '', subjectId: '', subjectTag: '', initialPool: 1, eventThreshold: -1}, trigger)
   Swal.fire({
     title: 'Trigger Editor',
     showClass: {
@@ -351,18 +367,22 @@ function openTriggerModal(trigger, cb) {
     },
     html:`<div class='swal-modal-input-label'>Trigger Id</div><input autocomplete="new-password" class='swal-modal-input' id='trigger-id' value='${newTrigger.id}'></input>
     <div class='swal-modal-input-label'>Effect Value</div><input class='swal-modal-input' id='effect-value' value='${newTrigger.effectValue}'>
+    <div class='swal-modal-input-label'>Object Tag</div><input class='swal-modal-input' id='object-tag' value='${newTrigger.objectTag}'>
+    <div class='swal-modal-input-label'>Object Id</div><input class='swal-modal-input' id='object-id' value='${newTrigger.objectId}'>
+    <div class='swal-modal-input-label'>Subject Tag</div><input class='swal-modal-input' id='subject-tag' value='${newTrigger.subjectTag}'>
+    <div class='swal-modal-input-label'>Subject Id</div><input class='swal-modal-input' id='subject-id' value='${newTrigger.subjectId}'>
     <div class='swal-modal-input-label'>Sub Object Name</div><input class='swal-modal-input' id='sub-object-name' value='${newTrigger.subObjectName}'>
-    <div class='swal-modal-input-label'>Remote Tag</div><input class='swal-modal-input' id='remote-tag' value='${newTrigger.remoteTag}'>
-    <div class='swal-modal-input-label'>Remote Id</div><input class='swal-modal-input' id='remote-id' value='${newTrigger.remoteId}'>
     <div class='swal-modal-input-label'>Initial Pool</div><input type="number" class='swal-modal-input' id='initial-pool' value='${newTrigger.initialPool}'>
     <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>`,
     preConfirm: (result) => {
       return [
         document.getElementById('trigger-id').value,
         document.getElementById('effect-value').value,
+        document.getElementById('object-tag').value,
+        document.getElementById('object-id').value,
+        document.getElementById('subject-tag').value,
+        document.getElementById('subject-id').value,
         document.getElementById('sub-object-name').value,
-        document.getElementById('remote-tag').value,
-        document.getElementById('remote-id').value,
         document.getElementById('initial-pool').value,
         document.getElementById('event-threshold').value,
       ]
@@ -414,6 +434,7 @@ export default {
   editProperty,
   editPropertyNumber,
   editQuest,
+  editMutationJSON,
   writeDialogue,
   nameObject,
   openEditCodeModal,
