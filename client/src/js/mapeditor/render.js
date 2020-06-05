@@ -5,12 +5,6 @@ function update() {
   let ctx = MAPEDITOR.ctx
   let camera = MAPEDITOR.camera
 
-  if(!GAME.gameState.started && GAME.heros[HERO.id]) {
-    const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
-    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
-  }
-
   if(!GAME.gameState.started) {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
@@ -22,6 +16,12 @@ function update() {
   }
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
+
+  if(!GAME.gameState.started && GAME.heros[HERO.id] && (objectHighlighted && objectHighlighted.id === HERO.id)) {
+    const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
+    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+  }
 
   if(objectHighlighted) {
     let color = 'rgba(255,255,255,0.2)'
