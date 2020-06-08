@@ -122,7 +122,6 @@ function heroCorrection(hero) {
           if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result)
           if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
             hero._parentId = landingObject.gameObject.id
-            hero._skipNextGravity = true
           } else {
             if(hero.velocityY > 0) hero.velocityY = 0
             if(hero.velocityAngle) hero.velocityAngle *= .09

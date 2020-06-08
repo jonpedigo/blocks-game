@@ -61,8 +61,10 @@ class Game{
             PHYSICS.heroCorrection(hero, [], [])
             PHYSICS.postPhysics([], [])
           })
-          return
         }
+
+        if(GAME.gameState.started) {
+
         //////////////////////////////
         //////////////////////////////
         //////////////////////////////
@@ -131,7 +133,7 @@ class Game{
         // PHYSICS EVENTS AND CORRECTIONS PHASES - END
         //////////////////////////////
         //////////////////////////////
-
+        }
         // XXXXXX
 
         //////////////////////////////
@@ -465,6 +467,8 @@ class Game{
 
     let initialGameState = localStorage.getItem('initialGameState')
     if(!initialGameState) {
+      GAME.unload()
+      GAME.loadAndJoin(GAME)
       return console.log('game stopped, but no initial game state set')
     }
 
@@ -577,8 +581,29 @@ class Game{
   }
 
   onReloadGame(game) {
+    // for demo
+    let animationZoomTarget
+    let animationZoomMultiplier
+    if(PAGE.role.isHost && HERO.id && GAME.heros[HERO.id].animationZoomTarget) {
+      const hero = GAME.heros[HERO.id]
+      animationZoomTarget = hero.animationZoomTarget;
+      animationZoomMultiplier = hero.animationZoomMultiplier;
+    }
+
     GAME.unload()
     GAME.loadAndJoin(game)
+
+    const removeEventListener = window.local.on('onGameLoaded', () => {
+      // for demo
+      if(animationZoomTarget) {
+        GAME.heros[HERO.id].animationZoomTarget = animationZoomTarget
+      }
+      if(animationZoomMultiplier) {
+        GAME.heros[HERO.id].animationZoomMultiplier = animationZoomMultiplier
+      }
+      removeEventListener()
+    })
+
   }
 
   onUpdateGrid(grid) {

@@ -160,6 +160,7 @@ class contextMenuEl extends React.Component{
           } else if(coloringObject == 'defaultObject') {
             window.socket.emit('updateWorld', {defaultObjectColor: color.hex})
           } else {
+            coloringObject.tags.filled = true
             networkEditObject(coloringObject, {color: color.hex})
           }
           this.setState({

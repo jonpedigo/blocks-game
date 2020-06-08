@@ -294,7 +294,7 @@ function updateGridHighlight(location) {
   if(smallestObject) MAPEDITOR.objectHighlighted = JSON.parse(JSON.stringify(smallestObject))
 
   MAPEDITOR.objectHighlightedChildren = []
-  if(MAPEDITOR.objectHighlighted.id) {
+  if(MAPEDITOR.objectHighlighted.id || MAPEDITOR.objectHighlighted.ownerId) {
     // see if grid high light has children or is child
     const { parent, children } = selectionTools.getObjectRelations(MAPEDITOR.objectHighlighted, GAME)
     if(parent.constructParts) {

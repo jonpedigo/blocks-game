@@ -9,8 +9,6 @@ export default class TagMenu extends React.Component{
       const { objectSelected } = this.props;
       const { networkEditObject } = MAPEDITOR
 
-      console.log(!this.state.localTags[key])
-
       // LOCAL TAGS ALLOWS US TO SEE WHAT TAGS WE HAVE ADDED W CHECKMARSK!!
       this.setState({ localTags: {
         ...this.state.localTags,
