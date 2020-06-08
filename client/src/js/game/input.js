@@ -1,4 +1,3 @@
-let lastJump = 0
 import keycode from 'keycode'
 
 function setDefault() {
@@ -18,7 +17,8 @@ function setDefault() {
   ]
 
   window.heroSpaceBarBehaviors = [
-    'jump',
+    'groundJump',
+    'floatJump',
     'none',
   ]
 }
@@ -228,9 +228,28 @@ function onKeyDown(key, hero) {
   if(hero.flags.paused || GAME.gameState.paused) return
 
   if('space' === key) {
-    if(hero.onGround && hero.spaceBarBehavior === 'jump') {
+    if(hero.onGround && hero.spaceBarBehavior === 'groundJump') {
       hero.velocityY = hero.jumpVelocity
-      lastJump = Date.now();
+      // lastJump = Date.now();
+    }
+
+    if(hero.spaceBarBehavior === 'floatJump') {
+      if(hero._floatable === false && hero.onGround) {
+        if(GAME.timeoutsById[hero.id + '-floatable']) GAME.completeTimeout(hero.id + '-floatable')
+      }
+
+      if(hero._floatable === true) {
+        hero.velocityY = hero.jumpVelocity
+        GAME.addTimeout(hero.id + '-floatable', hero.floatJumpTimeout || .6, () => {
+          hero._floatable = true
+        })
+        hero._floatable = false
+        // lastJump = Date.now();
+      }
+
+      if(hero._floatable === undefined || hero._floatable === null || !GAME.timeoutsById[hero.id + '-floatable']) {
+        hero._floatable = true
+      }
     }
   }
 

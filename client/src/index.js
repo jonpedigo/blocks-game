@@ -211,6 +211,12 @@ Engine trail on a car u know what I mean?
 REGARDING PHYSICS, SOMETHING EARLIER ON THE i LIST ( objects ) loose the battle for corrections. They correct for everything else first
 just make sure to set something to stationary if its not supposed to be move, or else it will be subject to spawn ( i ) order
 */
+
+// https://opengameart.org/content/colored-16x16-fantasy-tileset
+// http://timefantasy.net/
+// https://www.oryxdesignlab.com/sprites
+// https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
+
 import './js/utils/utils.js'
 import './js/page/index.js'
 import './js/game/index.js'

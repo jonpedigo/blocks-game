@@ -440,6 +440,9 @@ class Game{
   addOrResetTimeout(id, numberOfSeconds, fx) {
     timeouts.addOrResetTimeout(id, numberOfSeconds, fx)
   }
+  completeTimeout(id) {
+    timeouts.completeTimeout(id)
+  }
 
   onAddTrigger(ownerId, trigger) {
     const { event } = trigger

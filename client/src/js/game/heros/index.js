@@ -300,6 +300,7 @@ class Hero{
       velocityX: hero.velocityX,
       _flatVelocityX: hero._flatVelocityX,
       _flatVelocityY: hero._flatVelocityY,
+      _floatable: hero._floatable,
       lastHeroUpdateId: hero.lastHeroUpdateId,
       lastDialogueId: hero.lastDialogueId,
       directions: hero.directions,

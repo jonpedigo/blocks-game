@@ -54,6 +54,10 @@ function incrementTimeout(id, numberOfSeconds) {
   GAME.timeoutsById[id].totalTime+= numberOfSeconds
 }
 
+function completeTimeout(id) {
+  GAME.timeoutsById[id].timeRemaining = 0
+}
+
 export default {
   setDefault,
   onUpdate,
