@@ -107,12 +107,8 @@ function writeDialogue(object, dialogueIndex, cb) {
       if(!object.heroDialogue) object.heroDialogue = []
       object.tags.talker = true
       object.heroDialogue[dialogueIndex] = result.value[0]
-      if(result.value[1]) {
-        object.tags.talkOnHeroInteract = false
-        object.tags.talkOnHeroCollide = true
-      } else {
+      if(object.tags.talkOnHeroInteract == false && object.tags.talkOnHeroCollide == false) {
         object.tags.talkOnHeroInteract = true
-        object.tags.talkOnHeroCollide = false
       }
       if(cb) cb(object)
       else MAPEDITOR.networkEditObject(object, { heroDialogue: object.heroDialogue, tags: object.tags})
@@ -319,11 +315,9 @@ function openWriteDialogueModal(object, dialogueStart = "", cb) {
       autocapitalize: 'off',
     },
     inputValue: dialogueStart,
-    html:"<input id='press-x' type='checkbox'>Activate dialogue on collision</input>",
     preConfirm: (result) => {
       return [
-        result,
-        document.getElementById('press-x').checked,
+        result
       ]
     }
   }).then(cb)
