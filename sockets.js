@@ -164,7 +164,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
   socket.on('updateObjectsComplete', (updatedobjects) => {
     currentGame.objects = updatedobjects
-    io.emit('onUpdateObjects', currentGame.objects)
+    io.emit('onUpdateObjectsComplete', currentGame.objects)
   })
   socket.on('updateObjects', (updatedobjects) => {
     io.emit('onUpdateObjects', updatedobjects)

@@ -70,6 +70,25 @@ function onPageLoaded(){
 function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
 
+  if(!GAME.gameState.started && 'shift' in keysDown) {
+    if ('up' in keysDown) { // Player holding up
+      hero.y -= GAME.grid.nodeSize
+    }
+    if ('down' in keysDown) { // Player holding down
+      hero.y += GAME.grid.nodeSize
+    }
+
+    if ('left' in keysDown) { // Player holding left
+      hero.x -= GAME.grid.nodeSize
+    }
+
+    if ('right' in keysDown) { // Player holding right
+      hero.x += GAME.grid.nodeSize
+    }
+
+    return
+  }
+
   /*
     left arrow	'left'
     up arrow	'up'

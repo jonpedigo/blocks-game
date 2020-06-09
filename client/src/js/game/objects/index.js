@@ -636,6 +636,17 @@ class Objects{
     }
   }
 
+  onNetworkUpdateObjectsComplete(objectsUpdated) {
+    if(!PAGE.gameLoaded) return
+    console.log('>')
+    if(!PAGE.role.isHost) {
+      GAME.objects = objectsUpdated
+      GAME.objects.forEach((object) => {
+        GAME.objectsById[object.id] = object
+      })
+    }
+  }
+
   onNetworkAddObjects(objectsAdded) {
     GAME.objects.push(...objectsAdded)
     objectsAdded.forEach((object) => {

@@ -85,7 +85,7 @@ function update() {
   })
 
   GAME.heroList.forEach((hero) => {
-    if(!GAME.gameState.started && !MAPEDITOR.paused) {
+    if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
       drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
     } else {
       drawTools.drawObject(ctx, hero, camera);

@@ -135,6 +135,11 @@ function init() {
   })
 
   // host CALLS THIS
+  window.socket.on('onUpdateObjectsComplete', (objectsUpdated) => {
+    window.local.emit('onNetworkUpdateObjectsComplete', objectsUpdated)
+  })
+
+  // host CALLS THIS
   window.socket.on('onUpdateObjects', (objectsUpdated) => {
     window.local.emit('onNetworkUpdateObjects', objectsUpdated)
       // old interpolation code
