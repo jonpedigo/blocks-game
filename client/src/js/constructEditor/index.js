@@ -83,8 +83,8 @@ class ConstructEditor {
 
     let gridWidth = (object.width/this.grid.nodeSize)
     let gridHeight = (object.height/this.grid.nodeSize)
-    if(gridWidth < 40) gridWidth = 40
-    if(gridHeight < 40) gridHeight = 40
+    if(gridWidth < GAME.grid.nodeSize) gridWidth = GAME.grid.nodeSize
+    if(gridHeight < GAME.grid.nodeSize) gridHeight = GAME.grid.nodeSize
     const zoomMultiplierX = (gridWidth)/16
     const zoomMultiplierY = (gridHeight)/16
     let zoomMultiplier = zoomMultiplierX

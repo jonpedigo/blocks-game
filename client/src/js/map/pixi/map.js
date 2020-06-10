@@ -2,6 +2,7 @@
 import * as PIXI from 'pixi.js'
 import tileset from './tileset.json'
 import { flameEmitter } from './particles'
+import tinycolor from 'tinycolor2'
 
 const GRID_SIZE = 40
 const STAGE_WIDTH = window.innerWidth;
@@ -10,7 +11,12 @@ const STAGE_HEIGHT = window.innerHeight;
 const textures = {};
 let stage
 
-window.PIXIMAP = {}
+window.PIXIMAP = {
+  textures: {},
+  initialized: false,
+  app: null,
+  stage: null,
+}
 
 const initPixiApp = (canvasRef, onLoad) => {
   // init pixi app and textures
@@ -50,6 +56,8 @@ const initPixiApp = (canvasRef, onLoad) => {
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
       textures['spencer-1'] = texture
+      PIXIMAP.textures = textures
+      PIXIMAP.initialized = true
       onLoad(app, textures)
     })
   })
@@ -58,33 +66,37 @@ const initPixiApp = (canvasRef, onLoad) => {
 const initPixiObject = (gameObject) => {
   if (gameObject.invisible) return
 
-  if (gameObject.sprite) {
-    //   const bunny = new PIXI.Sprite(textures['entarkia-1']);
-    let sprite = new PIXI.Sprite(textures[gameObject.sprite])
-    sprite.x = (gameObject.x) * MAP.camera.multiplier
-    sprite.y = (gameObject.y) * MAP.camera.multiplier
-    sprite.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
-    sprite.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
-    sprite.name = gameObject.id
-    // sprite.oldSprite = gameObject.sprite
-    // if(gameObject.tint) sprite.tint = gameObject.tint
-    const addedChild = PIXIMAP.app.stage.addChild(sprite)
-    // if (gameObject.emitter) {
-    //   let emitter = flameEmitter({stage, startPos: {x: gameObject.x, y: gameObject.y }})
-    //   stage.emitters.push(emitter)
-    //   addedChild.emitter = emitter
-    // }
+  if(!gameObject.sprite) {
+    gameObject.sprite = 'tree-1'
+  }
+
+  let sprite = new PIXI.Sprite(textures[gameObject.sprite])
+  sprite.x = (gameObject.x) * MAP.camera.multiplier
+  sprite.y = (gameObject.y) * MAP.camera.multiplier
+  sprite.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
+  sprite.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  sprite.name = gameObject.id
+  // sprite.oldSprite = gameObject.sprite
+  if(gameObject.color) sprite.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+  const addedChild = PIXIMAP.app.stage.addChild(sprite)
+  if (gameObject.emitter) {
+    let emitter = flameEmitter({stage, startPos: {x: gameObject.x * MAP.camera.multiplier, y: gameObject.y * MAP.camera.multiplier}})
+    stage.emitters.push(emitter)
+    addedChild.emitter = emitter
   }
 }
 
 const updatePixiObject = (gameObject) => {
   const pixiChild = stage.getChildByName(gameObject.id)
-  if(!pixiChild) return
+  if(!pixiChild) {
+    initPixiObject(gameObject)
+    return
+  }
 
   // remove if its invisible now
-  if (gameObject.invisible){
+  if (gameObject.tags.invisible || gameObject.removed){
     if(pixiChild.emitter) pixiChild.emitter.emit = false
-    stage.removeChild(pixiChild)
+    pixiChild.visible = false
     return
   }
 
@@ -94,13 +106,48 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
-  // change to new x
   pixiChild.x = (gameObject.x) * MAP.camera.multiplier
   pixiChild.y = (gameObject.y) * MAP.camera.multiplier
   pixiChild.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
   pixiChild.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+}
 
-  //TODO: remove and add pixi item if character has changed
+PIXIMAP.initializePixiObjectsFromGame = function() {
+  GAME.objects.forEach((object) => {
+    object.sprite = 'tree-1'
+    initPixiObject(object)
+  })
+  GAME.heroList.forEach((hero) => {
+    hero.sprite = 'entarkia-1'
+    initPixiObject(hero)
+  })
+}
+
+PIXIMAP.onAssetsLoaded = function() {
+  PIXIMAP.initializePixiObjectsFromGame()
+}
+
+PIXIMAP.onGameLoaded = function() {
+  GAME.world.usePixiMap = true
+  if(GAME.world.usePixiMap && !PIXIMAP.initialized) {
+    initPixiApp(MAP.canvas, (app, textures) => {
+      window.local.emit('onAssetsLoaded')
+    })
+  } else if(PIXIMAP.initialized) {
+    PIXIMAP.stage.removeChildren()
+    PIXIMAP.initializePixiObjectsFromGame()
+  }
+}
+
+PIXIMAP.onDeleteObject = function(object) {
+  const pixiChild = stage.getChildByName(object.id)
+  stage.removeChild(pixiChild)
+}
+
+PIXIMAP.onDeleteSubObject = function(object) {
+  const pixiChild = stage.getChildByName(object.id)
+  stage.removeChild(pixiChild)
 }
 
 export default {

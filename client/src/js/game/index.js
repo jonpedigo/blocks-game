@@ -671,8 +671,8 @@ class Game{
     window.local.emit('onUpdatePFgrid')
 
     if(PAGE.role.isPlayEditor) {
-      window.worldeditor.update(GAME.world)
-      window.worldeditor.expandAll()
+      // window.worldeditor.update(GAME.world)
+      // window.worldeditor.expandAll()
     }
   }
 

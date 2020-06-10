@@ -84,6 +84,8 @@ class Hero{
       window.defaultHero.tags = {...window.heroTags}
       window.defaultHero.x = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
       window.defaultHero.y = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
+      window.defaultHero.width = GAME.grid.nodeSize
+      window.defaultHero.height = GAME.grid.nodeSize
 
       window.defaultHero.subObjects = {
         heroInteractTriggerArea: {
@@ -366,6 +368,7 @@ class Hero{
       tags: hero.tags,
       zoomMultiplier: hero.zoomMultiplier,
       color: hero.color,
+      sprite: hero.sprite,
       lives: hero.lives,
       spawnPointX: hero.spawnPointX,
       spawnPointY: hero.spawnPointY,

@@ -16,6 +16,7 @@ function setDefault() {
       isAsymmetric: false,
       shouldRestoreHero: false,
     },
+    usePixiMap: false,
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
     storeEntireGameState: false,

@@ -30,26 +30,7 @@ MAP.onPageLoaded = function() {
   MAP.canvas.id = 'game-canvas'
   document.body.appendChild(MAP.canvas);
 
-  pixiMap.initPixiApp(MAP.canvas, (app, textures) => {
-
-  })
-
-  if(PIXIMAP.app.view) {
-    MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
-  } else {
-    MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
-  }
-}
-
-MAP.onGameLoaded = function() {
-  GAME.objects.forEach((object) => {
-    object.sprite = 'entarkia-1'
-    pixiMap.initPixiObject(object)
-  })
-  GAME.heroList.forEach((hero) => {
-    hero.sprite = 'tree-1'
-    pixiMap.initPixiObject(hero)
-  })
+  MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
 }
 
 MAP.onRender = function(delta) {
@@ -65,7 +46,8 @@ MAP.onRender = function(delta) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if(PIXIMAP.app) {
+  if(GAME.world.usePixiMap && PIXIMAP.initialized) {
+    MAP.canvas.style.backgroundColor = ''
     PIXIMAP.stage.pivot.x = MAP.camera.x
     PIXIMAP.stage.pivot.y = MAP.camera.y
     GAME.objects.forEach((object) => {

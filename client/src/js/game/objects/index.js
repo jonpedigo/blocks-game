@@ -146,6 +146,7 @@ class Objects{
       height: object.height,
       tags: object.tags,
       color: object.color,
+      sprite: object.sprite,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       heroUpdate: object.heroUpdate,

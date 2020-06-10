@@ -21,8 +21,8 @@ function update() {
 
   if(!GAME.gameState.started && GAME.heros[HERO.id] && (objectHighlighted && objectHighlighted.id === HERO.id)) {
     const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
-    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: GAME.grid.nodeSize, color: 'white'}, camera)
+    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: GAME.grid.nodeSize, height: 1, color: 'white'}, camera)
   }
 
   if(objectHighlighted) {
@@ -40,8 +40,8 @@ function update() {
 
     if(!GAME.gameState.started) {
       const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
-      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: GAME.grid.nodeSize, color: 'white'}, camera)
+      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: GAME.grid.nodeSize, height: 1, color: 'white'}, camera)
     }
   }
 
