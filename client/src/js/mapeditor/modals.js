@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2';
-import '../../styles/dark.min.css';
 
 function addTrigger(owner, event) {
   PAGE.typingMode = true

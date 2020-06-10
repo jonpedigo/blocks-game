@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2';
-import '../../styles/dark.min.css';
 
 const queue = [];
 
