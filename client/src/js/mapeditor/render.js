@@ -1,9 +1,11 @@
 import drawTools from './drawTools';
 
 function update() {
+
   if(MAPEDITOR.paused) return
   let ctx = MAPEDITOR.ctx
   let camera = MAPEDITOR.camera
+  if(!ctx) return
 
   if(!GAME.gameState.started) {
     ctx.setLineDash([5, 15]);

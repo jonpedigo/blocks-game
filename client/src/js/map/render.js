@@ -40,13 +40,6 @@ function update() {
   const { ctx, canvas } = MAP
   let camera = MAP.camera
 
-  //set camera so we render everything in the right place
-  if(CONSTRUCTEDITOR.open) {
-    camera = CONSTRUCTEDITOR.camera
-  } else {
-    camera.set(GAME.heros[HERO.id])
-  }
-
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
 

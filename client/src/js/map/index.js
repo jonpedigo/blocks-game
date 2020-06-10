@@ -1,6 +1,8 @@
 import render from './render'
 import Camera from './camera.js'
 import constellation from './constellation.js'
+import pixiMap from './pixi/map'
+import * as PIXI from 'pixi.js'
 
 window.MAP = {
   canvas: null,
@@ -26,13 +28,57 @@ MAP.onPageLoaded = function() {
   }
 
   MAP.canvas.id = 'game-canvas'
-  document.body.appendChild(MAP.canvas);
+  // document.body.appendChild(MAP.canvas);
 
-  MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
+  pixiMap.initPixiApp(MAP.canvas, (app, textures) => {
+    // for (let i = 0; i < 25; i++) {
+    //   const bunny = new PIXI.Sprite(textures['entarkia-1']);
+    //    bunny.anchor.set(0.5);
+    //    bunny.x = (i % 5) * 40;
+    //    bunny.y = Math.floor(i / 5) * 40;
+    //    app.stage.addChild(bunny);
+    // }
+  })
+
+  if(PIXIMAP.app.view) {
+    MAPEDITOR.set(PIXIMAP.app.view.getContext('2d'), PIXIMAP.app.view, MAP.camera)
+  } else {
+    MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
+  }
+}
+
+MAP.onGameLoaded = function() {
+  GAME.objects.forEach((object) => {
+    object.sprite = 'entarkia-1'
+    pixiMap.initPixiObject(object)
+  })
+  GAME.heroList.forEach((hero) => {
+    hero.sprite = 'tree-1'
+    pixiMap.initPixiObject(hero)
+  })
 }
 
 MAP.onRender = function(delta) {
-  render.update()
+  let camera = MAP.camera
+
+  //set camera so we render everything in the right place
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  } else {
+    camera.set(GAME.heros[HERO.id])
+  }
+
+  // render.update()
+
+  PIXIMAP.stage.pivot.x = MAP.camera.x
+  PIXIMAP.stage.pivot.y = MAP.camera.y
+
+  GAME.objects.forEach((object) => {
+    pixiMap.updatePixiObject(object)
+  })
+  GAME.heroList.forEach((hero) => {
+    pixiMap.updatePixiObject(hero)
+  })
   if(PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {
     constellation.onRender()
   }
