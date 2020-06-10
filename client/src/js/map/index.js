@@ -28,20 +28,14 @@ MAP.onPageLoaded = function() {
   }
 
   MAP.canvas.id = 'game-canvas'
-  // document.body.appendChild(MAP.canvas);
+  document.body.appendChild(MAP.canvas);
 
   pixiMap.initPixiApp(MAP.canvas, (app, textures) => {
-    // for (let i = 0; i < 25; i++) {
-    //   const bunny = new PIXI.Sprite(textures['entarkia-1']);
-    //    bunny.anchor.set(0.5);
-    //    bunny.x = (i % 5) * 40;
-    //    bunny.y = Math.floor(i / 5) * 40;
-    //    app.stage.addChild(bunny);
-    // }
+
   })
 
   if(PIXIMAP.app.view) {
-    MAPEDITOR.set(PIXIMAP.app.view.getContext('2d'), PIXIMAP.app.view, MAP.camera)
+    MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
   } else {
     MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
   }
@@ -59,8 +53,9 @@ MAP.onGameLoaded = function() {
 }
 
 MAP.onRender = function(delta) {
-  let camera = MAP.camera
+  const { ctx, canvas } = MAP
 
+  let camera = MAP.camera
   //set camera so we render everything in the right place
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
@@ -68,17 +63,21 @@ MAP.onRender = function(delta) {
     camera.set(GAME.heros[HERO.id])
   }
 
-  // render.update()
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  PIXIMAP.stage.pivot.x = MAP.camera.x
-  PIXIMAP.stage.pivot.y = MAP.camera.y
+  if(PIXIMAP.app) {
+    PIXIMAP.stage.pivot.x = MAP.camera.x
+    PIXIMAP.stage.pivot.y = MAP.camera.y
+    GAME.objects.forEach((object) => {
+      pixiMap.updatePixiObject(object)
+    })
+    GAME.heroList.forEach((hero) => {
+      pixiMap.updatePixiObject(hero)
+    })
+  } else {
+    render.update()
+  }
 
-  GAME.objects.forEach((object) => {
-    pixiMap.updatePixiObject(object)
-  })
-  GAME.heroList.forEach((hero) => {
-    pixiMap.updatePixiObject(hero)
-  })
   if(PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {
     constellation.onRender()
   }

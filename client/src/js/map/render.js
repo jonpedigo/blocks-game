@@ -42,7 +42,6 @@ function update() {
 
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
-
   ctx.filter = "drop-shadow(4px 4px 8px #fff)";
   ctx.filter = "none"
 
@@ -53,9 +52,7 @@ function update() {
     ctx.fillStyle = GAME.world.backgroundColor
     canvas.style.backgroundColor = GAME.world.backgroundColor
   }
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
     if(object.removed) return
