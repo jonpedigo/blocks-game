@@ -86,6 +86,8 @@ function onUpdate(hero, keysDown, delta) {
       hero.x += GAME.grid.nodeSize
     }
 
+    hero._skipPosUpdate = true
+
     return
   }
 
@@ -255,6 +257,7 @@ function onKeyDown(key, hero) {
     if(hero.spaceBarBehavior === 'floatJump') {
       if(hero._floatable === false && hero.onGround) {
         if(GAME.timeoutsById[hero.id + '-floatable']) GAME.completeTimeout(hero.id + '-floatable')
+        hero._floatable = true
       }
 
       if(hero._floatable === true) {

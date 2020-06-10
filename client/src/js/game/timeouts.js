@@ -35,7 +35,6 @@ function addTimeout(id, numberOfSeconds, fx) {
 }
 
 function addOrResetTimeout(id, numberOfSeconds, fx) {
-
   if(!GAME.timeoutsById[id] || (GAME.timeoutsById[id] && GAME.timeoutsById[id].timeRemaining <= 0)) {
     GAME.addTimeout(id, numberOfSeconds, fx)
   } else {
@@ -62,6 +61,7 @@ export default {
   setDefault,
   onUpdate,
   addTimeout,
+  completeTimeout,
   incrementTimeout,
   resetTimeout,
   addOrResetTimeout,

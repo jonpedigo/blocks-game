@@ -61,8 +61,7 @@ function update() {
     canvas.style.backgroundColor = GAME.world.backgroundColor
   }
 
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {

@@ -68,6 +68,7 @@ function correctAndEffectAllObjectAndHeros (delta) {
 
 function updatePosition(object, delta) {
   if(object.removed || object.relativeId) return
+  if(object._skipPosUpdate) return
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -164,6 +165,7 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
+    delete object._skipPosUpdate
     delete object._flatVelocityX
     delete object._flatVelocityY
     object.interactableObject = null

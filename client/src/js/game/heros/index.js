@@ -531,7 +531,7 @@ class Hero{
     GAME.heroInputs[heroId] = input
   }
 
-  onSendHeroKeyDown(keyCode, heroId) {
+  onSendHeroKeyDown(key, heroId) {
     // dont do keydown event for hosts hero since we've already done locally
     if(PAGE.role.isPlayer && heroId == HERO.id) return
     let hero = GAME.heros[heroId]

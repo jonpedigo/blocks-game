@@ -17,7 +17,7 @@ export default class CustomGame{
 
   }
 
-  onGameStart() {
+  onStartGame() {
     GAME.gameState.paused = false
     GAME.gameState.started = true
     GAME.gameState.startTime = Date.now()

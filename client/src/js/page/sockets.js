@@ -102,7 +102,7 @@ function init() {
 
     // EDITOR CALLS THIS
     window.socket.on('onStartGame', () => {
-      window.local.emit('onGameStart')
+      window.local.emit('onStartGame')
     })
 
     window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {

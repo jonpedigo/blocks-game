@@ -24,7 +24,7 @@ function onPageLoaded() {
     // 'onQuestFail',
     // 'onObjectAwake',
     // 'OnTimerEnd',
-    'onGameStart',
+    'onStartGame',
   ]
 
   window.triggerEffects = [

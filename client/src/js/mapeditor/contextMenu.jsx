@@ -170,6 +170,13 @@ class contextMenuEl extends React.Component{
       />
     }
 
+    if(GAME.gameState.started && !PAGE.role.isAdmin) {
+      return <Menu onClick={this._handleMapMenuClick}>
+        <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
+        <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
+      </Menu>
+    }
+
     MAPEDITOR.contextMenuVisible = true
 
     if(subObjectSelected && subObjectSelectedName) {
@@ -195,7 +202,6 @@ class contextMenuEl extends React.Component{
         <MenuItem key='set-world-respawn-point'>Set as world respawn point</MenuItem>
         <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
-        <MenuItem key='toggle-pause-game'>{ GAME.gameState.paused ? 'Unpause game' : 'Pause game' }</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
         <MenuItem key='copy-game-JSON-to-clipboard'>Copy Game JSON to clipboard</MenuItem>
       </Menu>

@@ -478,7 +478,7 @@ class Game{
     window.local.emit('onGameStopped')
   }
 
-  onGameStart() {
+  onStartGame() {
     if(GAME.gameState.started) {
       return console.log('trying to start game that has already started')
     }
@@ -515,7 +515,7 @@ class Game{
     })
     GAME.gameState.paused = false
     GAME.gameState.started = true
-    window.local.emit('onGameStarted')
+    window.local.emit('onStartGameed')
   }
 
   cleanForSave(game) {

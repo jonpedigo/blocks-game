@@ -13,7 +13,7 @@ export default class CustomGame{
 
   }
 
-  onGameStart() {
+  onStartGame() {
 
   }
 

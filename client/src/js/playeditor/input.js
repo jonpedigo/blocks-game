@@ -61,28 +61,6 @@ function init(hero){
         }
       }
 
-      //n
-      if(keysDown['78']){
-        let oe = window.objecteditor.get()
-        modals.nameObject(oe, (object) => {
-          window.objecteditor.saved = false
-          window.objecteditor.update(object)
-          window.updateObjectEditorNotifier()
-        })
-        e.preventDefault()
-      }
-
-      //b
-      if(keysDown['66']){
-        let oe = window.objecteditor.get()
-        modals.writeDialogue(oe, (object) => {
-          window.objecteditor.saved = false
-          window.objecteditor.update(object)
-          window.updateObjectEditorNotifier()
-        })
-        e.preventDefault()
-      }
-
       // q and a zoom in and out
       if(e.keyCode === 81) {
         window.scaleMultiplier = window.scaleMultiplier * 1.1
