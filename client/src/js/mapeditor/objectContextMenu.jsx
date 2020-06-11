@@ -1,5 +1,6 @@
 import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
+import SpriteChooser from './SpriteChooser.js';
 import TagMenu from './menus/tagMenu.jsx';
 import ColorMenu from './menus/ColorMenu.jsx';
 import GameTagMenu from './menus/GameTagMenu.jsx';
@@ -49,6 +50,10 @@ export default class ObjectContextMenu extends React.Component{
       if(key === 'copy') {
         onCopy(objectSelected)
       }
+
+      if(key === 'chooseSprite') {
+        SpriteChooser.open(objectSelected)
+      }
     }
   }
 
@@ -84,6 +89,7 @@ export default class ObjectContextMenu extends React.Component{
       {!objectSelected.constructParts && <MenuItem key="resize">Resize</MenuItem>}
       {subObject && <MenuItem key="resize-grid">Resize On Grid</MenuItem>}
       <MenuItem key="copy">Copy</MenuItem>
+      {GAME.world.usePixiMap && <MenuItem key="chooseSprite">Change Sprite</MenuItem>}
       {(objectSelected.ownerId || objectSelected.relativeId) && <SubMenu title="Relative">
         <RelativeMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>}

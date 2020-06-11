@@ -48,6 +48,7 @@ MAP.onRender = function(delta) {
 
   if(GAME.world.usePixiMap && PIXIMAP.initialized) {
     MAP.canvas.style.backgroundColor = ''
+    PIXIMAP.app.renderer.backgroundColor = GAME.world.backgroundColor
     PIXIMAP.stage.pivot.x = MAP.camera.x
     PIXIMAP.stage.pivot.y = MAP.camera.y
     GAME.objects.forEach((object) => {
