@@ -75,17 +75,19 @@ const addGameObjectToStage = (gameObject, stage) => {
     sprite = new PIXI.TilingSprite(texture, gameObject.width * MAP.camera.multiplier, gameObject.height * MAP.camera.multiplier)
   } else {
     sprite = new PIXI.Sprite(texture)
-    sprite.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
-    sprite.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+    sprite.transform.scale.x = (gameObject.width/texture._frame.width) * MAP.camera.multiplier
+    sprite.transform.scale.y = (gameObject.height/texture._frame.height) * MAP.camera.multiplier
   }
-  // if(gameObject.angle) {
-  //   sprite.rotation = gameObject.angle
-  //   sprite.pivot.x = gameObject.height/2 * MAP.camera.multiplier
-  //   sprite.pivot.y = gameObject.height/2 * MAP.camera.multiplier
-  // }
 
-  sprite.x = (gameObject.x) * MAP.camera.multiplier
-  sprite.y = (gameObject.y) * MAP.camera.multiplier
+  if(gameObject.tags.rotateable) {
+    sprite.anchor.set(0.5, 0.5)
+    sprite.rotation = gameObject.angle || 0
+    sprite.x = (gameObject.x + gameObject.width/2) * MAP.camera.multiplier
+    sprite.y = (gameObject.y + gameObject.height/2) * MAP.camera.multiplier
+  } else {
+    sprite.x = (gameObject.x) * MAP.camera.multiplier
+    sprite.y = (gameObject.y) * MAP.camera.multiplier
+  }
 
   sprite.name = gameObject.id
   // sprite.oldSprite = gameObject.sprite
@@ -153,9 +155,16 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
-  pixiChild.x = (gameObject.x) * MAP.camera.multiplier
-  pixiChild.y = (gameObject.y) * MAP.camera.multiplier
-  // if(gameObject.angle) pixiChild.rotation = gameObject.angle
+
+  if(gameObject.tags.rotateable) {
+    pixiChild.anchor.set(0.5, 0.5)
+    pixiChild.rotation = gameObject.angle || 0
+    pixiChild.x = (gameObject.x + gameObject.width/2) * MAP.camera.multiplier
+    pixiChild.y = (gameObject.y + gameObject.height/2) * MAP.camera.multiplier
+  } else {
+    pixiChild.x = (gameObject.x) * MAP.camera.multiplier
+    pixiChild.y = (gameObject.y) * MAP.camera.multiplier
+  }
   if(!gameObject.tags.tilingSprite) {
     pixiChild.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
     pixiChild.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier

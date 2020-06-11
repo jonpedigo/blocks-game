@@ -226,7 +226,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       physicsObject.gameObject = object
 
       if(object.tags.rotateable) {
-        if(physicsObject._angle !== object.angle) {
+        if(object.angle === 0 || physicsObject._angle !== object.angle) {
           physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
         }
         physicsObject.angle = object.angle
