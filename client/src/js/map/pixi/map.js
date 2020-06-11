@@ -63,30 +63,77 @@ const initPixiApp = (canvasRef, onLoad) => {
   })
 }
 
-const initPixiObject = (gameObject) => {
-  if (gameObject.invisible) return
 
+const addGameObjectToStage = (gameObject, stage) => {
   if(!gameObject.sprite) {
     gameObject.sprite = 'tree-1'
   }
 
-  let sprite = new PIXI.Sprite(textures[gameObject.sprite])
+  const texture = textures[gameObject.sprite]
+  let sprite
+  if(gameObject.tags.tilingSprite) {
+    sprite = new PIXI.TilingSprite(texture, gameObject.width * MAP.camera.multiplier, gameObject.height * MAP.camera.multiplier)
+  } else {
+    sprite = new PIXI.Sprite(texture)
+    sprite.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
+    sprite.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  }
+  // if(gameObject.angle) {
+  //   sprite.rotation = gameObject.angle
+  //   sprite.pivot.x = gameObject.height/2 * MAP.camera.multiplier
+  //   sprite.pivot.y = gameObject.height/2 * MAP.camera.multiplier
+  // }
+
   sprite.x = (gameObject.x) * MAP.camera.multiplier
   sprite.y = (gameObject.y) * MAP.camera.multiplier
-  sprite.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
-  sprite.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+
   sprite.name = gameObject.id
   // sprite.oldSprite = gameObject.sprite
   if(gameObject.color) sprite.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
-  const addedChild = PIXIMAP.app.stage.addChild(sprite)
+  const addedChild = stage.addChild(sprite)
   if (gameObject.emitter) {
     let emitter = flameEmitter({stage, startPos: {x: gameObject.x * MAP.camera.multiplier, y: gameObject.y * MAP.camera.multiplier}})
     stage.emitters.push(emitter)
     addedChild.emitter = emitter
   }
 }
+const initPixiObject = (gameObject) => {
+  if (gameObject.invisible) return
+
+  if(gameObject.constructParts) {
+    const container = new PIXI.Container()
+    gameObject.constructParts.forEach((part) => {
+      addGameObjectToStage({tags: gameObject.tags, ...part}, container)
+    })
+    container.name = gameObject.id
+    PIXIMAP.stage.addChild(container)
+    return
+  }
+
+  if(gameObject.subObjects) {
+    OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
+      if(subObject.tags.potential) return
+      addGameObjectToStage(subObject, PIXIMAP.stage)
+    })
+  }
+
+  addGameObjectToStage(gameObject, PIXIMAP.stage)
+}
 
 const updatePixiObject = (gameObject) => {
+  if(gameObject.constructParts) {
+    gameObject.constructParts.forEach((part) => {
+      updatePixiObject({tags: gameObject.tags, ...part})
+    })
+    return
+  }
+  if(gameObject.subObjects) {
+    OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
+      if(subObject.tags.potential) return
+      updatePixiObject(subObject)
+    })
+  }
+
   const pixiChild = stage.getChildByName(gameObject.id)
   if(!pixiChild) {
     initPixiObject(gameObject)
@@ -100,7 +147,7 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
-  if(gameObject.sprite != pixiChild.texture.id){
+  if(gameObject.sprite != pixiChild.texture.id) {
     stage.removeChild(pixiChild)
     initPixiObject(gameObject)
     return
@@ -108,8 +155,11 @@ const updatePixiObject = (gameObject) => {
 
   pixiChild.x = (gameObject.x) * MAP.camera.multiplier
   pixiChild.y = (gameObject.y) * MAP.camera.multiplier
-  pixiChild.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
-  pixiChild.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  // if(gameObject.angle) pixiChild.rotation = gameObject.angle
+  if(!gameObject.tags.tilingSprite) {
+    pixiChild.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
+    pixiChild.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  }
   if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
 }
 
