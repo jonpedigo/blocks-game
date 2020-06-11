@@ -357,7 +357,7 @@ class Objects{
       newObject.spawnPointX = newObject.x
       newObject.spawnPointY = newObject.y
 
-      if(!GAME.world.globalTags.calculatePathCollisions) {
+      if(!GAME.world.tags.calculatePathCollisions) {
         GAME.addObstacle(newObject)
       }
 

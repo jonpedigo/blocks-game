@@ -9,18 +9,18 @@ function setDefault() {
     proceduralBoundaries: null,
     worldSpawnPointX: null,
     worldSpawnPointY: null,
-    globalTags: {
+    tags: {
       calculatePathCollisions: true,
       noCamping: false,
       targetOnSight: false,
       isAsymmetric: false,
       shouldRestoreHero: false,
+      usePixiMap: false,
+      storeEntireGameState: false,
+      overrideCustomGameCode: false,
     },
-    usePixiMap: false,
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
-    storeEntireGameState: false,
-    overrideCustomGameCode: false,
   }
 
   window.local.on('onGridLoaded', () => {

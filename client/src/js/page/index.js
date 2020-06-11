@@ -38,6 +38,10 @@ class Page{
       PAGE.role.isPlayer = true
       PAGE.role.isGhost = true
     }
+
+    if(PAGE.getParameterByName('admin')) {
+      PAGE.role.isAdmin = true
+    }
   }
 
   logRole() {
@@ -178,7 +182,7 @@ class Page{
                 let game = {
                   id: newGameId,
                   world: JSON.parse(JSON.stringify(window.defaultWorld)),
-                  hero: JSON.parse(JSON.stringify(window.defaultHero)),
+                  // defaultHero: JSON.parse(JSON.stringify(window.defaultHero)),
                   objects: [],
                   grid: JSON.parse(JSON.stringify(window.defaultGrid)),
                 }

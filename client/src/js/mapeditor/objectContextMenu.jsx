@@ -89,7 +89,7 @@ export default class ObjectContextMenu extends React.Component{
       {!objectSelected.constructParts && <MenuItem key="resize">Resize</MenuItem>}
       {subObject && <MenuItem key="resize-grid">Resize On Grid</MenuItem>}
       <MenuItem key="copy">Copy</MenuItem>
-      {GAME.world.usePixiMap && <MenuItem key="chooseSprite">Change Sprite</MenuItem>}
+      {GAME.world.tags.usePixiMap && <MenuItem key="chooseSprite">Change Sprite</MenuItem>}
       {(objectSelected.ownerId || objectSelected.relativeId) && <SubMenu title="Relative">
         <RelativeMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>}

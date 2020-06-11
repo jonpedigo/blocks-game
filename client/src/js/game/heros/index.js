@@ -78,6 +78,7 @@ class Hero{
       questState: {},
       triggers: {},
       triggerState: {},
+      tags: {},
     }
 
     window.local.on('onGridLoaded', () => {
@@ -154,7 +155,7 @@ class Hero{
     hero.velocityAngle = 0
 
     /// send objects that are possibly camping at their spawn point back to their spawn point
-    if(PAGE.role.isHost && GAME && GAME.world && GAME.world.globalTags.noCamping) {
+    if(PAGE.role.isHost && GAME && GAME.world && GAME.world.tags.noCamping) {
       GAME.objects.forEach((obj) => {
         if(obj.removed) return
 
@@ -269,7 +270,7 @@ class Hero{
 
   summonFromGameData(hero) {
     // if we have decided to restore position, find hero in hero list
-    if(GAME.world.globalTags.shouldRestoreHero && GAME.heros && hero) {
+    if(GAME.world.tags.shouldRestoreHero && GAME.heros && hero) {
       GAME.heroList.forEach((currentHero) => {
         if(currentHero.id == hero.id) {
           return currentHero
@@ -278,7 +279,7 @@ class Hero{
       console.log('failed to find hero with id' + HERO.id)
     }
 
-    if(!GAME.world.globalTags.isAsymmetric && GAME.defaultHero) {
+    if(!GAME.world.tags.isAsymmetric && GAME.defaultHero) {
       delete GAME.defaultHero.id
       const id = hero.id
       hero = JSON.parse(JSON.stringify(GAME.defaultHero))

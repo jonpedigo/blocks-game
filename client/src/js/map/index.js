@@ -46,18 +46,7 @@ MAP.onRender = function(delta) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if(GAME.world.usePixiMap && PIXIMAP.initialized) {
-    MAP.canvas.style.backgroundColor = ''
-    PIXIMAP.app.renderer.backgroundColor = GAME.world.backgroundColor
-    PIXIMAP.stage.pivot.x = MAP.camera.x
-    PIXIMAP.stage.pivot.y = MAP.camera.y
-    GAME.objects.forEach((object) => {
-      pixiMap.updatePixiObject(object)
-    })
-    GAME.heroList.forEach((hero) => {
-      pixiMap.updatePixiObject(hero)
-    })
-  } else {
+  if(!GAME.world.tags.usePixiMap) {
     render.update()
   }
 

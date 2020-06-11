@@ -8,6 +8,7 @@ import gameState from './gameState.js'
 import tags from './tags.js'
 import timeouts from './timeouts'
 import world from './world.js'
+import grid from './grid.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
@@ -31,6 +32,7 @@ class Game{
   onPageLoaded() {
     world.setDefault()
     gameState.setDefault()
+    grid.setDefault()
     tags.setDefault()
     input.setDefault()
     timeouts.setDefault()
@@ -164,7 +166,7 @@ class Game{
       }
     }
 
-    if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.globalTags.calculatePathCollisions) {
+    if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.tags.calculatePathCollisions) {
       GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
@@ -228,7 +230,7 @@ class Game{
     } else GAME.customInputBehavior = []
 
     if(game.compendium) window.compendium = game.compendium
-    GAME.defaultHero = game.defaultHero || game.hero
+    GAME.defaultHero = game.defaultHero || game.hero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
 
     // let storedGameState = localStorage.getItem('gameStates')
@@ -346,7 +348,7 @@ class Game{
   }
 
   addObstacle(object) {
-    if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.globalTags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+    if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
       // pretend we are dealing with a 0,0 plane
       let x = object.x - GAME.grid.startX
       let y = object.y - GAME.grid.startY
@@ -528,7 +530,7 @@ class Game{
       // defaultHero: game.defaultHero,
     }))
 
-    if(!gameCopy.world.globalTags.shouldRestoreHero && !gameCopy.world.globalTags.isAsymmetric && game.heros) {
+    if(!gameCopy.world.tags.shouldRestoreHero && !gameCopy.world.tags.isAsymmetric && game.heros) {
       for(var heroId in game.heros) {
         if(game.heros[heroId].tags.default) {
           gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
@@ -649,8 +651,8 @@ class Game{
         if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
-      if(key === 'globalTags' || key === 'editorTags') {
-        for(let tag in updatedWorld.globalTags) {
+      if(key === 'tags' || key === 'editorTags') {
+        for(let tag in updatedWorld.tags) {
           if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -677,7 +679,7 @@ class Game{
   }
 
   onUpdatePFgrid() {
-    if(!GAME.world.globalTags.calculatePathCollisions) {
+    if(!GAME.world.tags.calculatePathCollisions) {
       GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }

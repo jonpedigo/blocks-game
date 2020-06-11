@@ -8,7 +8,7 @@ function init() {
   document.getElementById('tool-'+TOOLS.WORLD_EDITOR).appendChild(worldjsoneditor);
   window.worldeditor = new JSONEditor(worldjsoneditor, { modes: ['tree', 'code'], search: false, onChangeJSON: (world) => {
     // this is what sync should mean. Does every edit send immediately?
-    sendWorldUpdate( { globalTags: world.globalTags }, { dontResetEditor: true });
+    sendWorldUpdate( { tags: world.tags }, { dontResetEditor: true });
   }});
 
   window.selectorGameToggle = document.getElementById('set-game-boundaries')

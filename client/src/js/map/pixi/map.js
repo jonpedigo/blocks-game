@@ -179,8 +179,8 @@ PIXIMAP.onAssetsLoaded = function() {
 }
 
 PIXIMAP.onGameLoaded = function() {
-  GAME.world.usePixiMap = true
-  if(GAME.world.usePixiMap && !PIXIMAP.initialized) {
+  // GAME.world.tags.usePixiMap = true
+  if(GAME.world.tags.usePixiMap && !PIXIMAP.initialized) {
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
     })
@@ -198,6 +198,21 @@ PIXIMAP.onDeleteObject = function(object) {
 PIXIMAP.onDeleteSubObject = function(object) {
   const pixiChild = stage.getChildByName(object.id)
   stage.removeChild(pixiChild)
+}
+
+PIXIMAP.onRender = function() {
+  if(PIXIMAP.initialized) {
+    MAP.canvas.style.backgroundColor = ''
+    PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
+    PIXIMAP.stage.pivot.x = MAP.camera.x
+    PIXIMAP.stage.pivot.y = MAP.camera.y
+    GAME.objects.forEach((object) => {
+      updatePixiObject(object)
+    })
+    GAME.heroList.forEach((hero) => {
+      updatePixiObject(hero)
+    })
+  }
 }
 
 export default {

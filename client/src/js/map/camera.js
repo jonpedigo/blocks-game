@@ -57,7 +57,7 @@ function camera() {
     this.multiplier = 1/this.multiplier
     this.hasHitLimit = false
 
-    if (this.limitX >= 0) {
+    if (this.limitX !== null && this.limitX >= 0) {
       const potentialX = ((hero.x + hero.width/2)*this.multiplier)
       if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
         this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
@@ -72,7 +72,7 @@ function camera() {
       this.setHeroX(hero)
     }
 
-    if (this.limitY >= 0) {
+    if (this.limitY !== null && this.limitY >= 0) {
       const potentialY = ((hero.y + hero.height/2)*this.multiplier)
 
       if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
