@@ -4,10 +4,6 @@ import tileset from './tileset.json'
 import { flameEmitter } from './particles'
 import tinycolor from 'tinycolor2'
 
-const GRID_SIZE = 40
-const STAGE_WIDTH = window.innerWidth;
-const STAGE_HEIGHT = window.innerHeight;
-
 const textures = {};
 let stage
 
@@ -36,6 +32,18 @@ const initPixiApp = (canvasRef, onLoad) => {
       emitter.update(2 * 0.001);
     })
   });
+
+  if(PAGE.role.isPlayer) {
+    function onResize() {
+      MAP.canvasMultiplier = window.innerWidth/640;
+      const width = 640 * MAP.canvasMultiplier;
+      const height = 320 * MAP.canvasMultiplier;
+      app.renderer.resize(width, height);
+    }
+    window.addEventListener("resize", onResize);
+    onResize()
+  }
+
   app.loader.add('assets/images/tileset.png').load(() => {
     tileset.forEach((tile) => {
       let baseTexture = new PIXI.BaseTexture('assets/images/tileset.png');
@@ -72,7 +80,9 @@ const addGameObjectToStage = (gameObject, stage) => {
   const texture = textures[gameObject.sprite]
   let sprite
   if(gameObject.tags.tilingSprite) {
-    sprite = new PIXI.TilingSprite(texture, gameObject.width * MAP.camera.multiplier, gameObject.height * MAP.camera.multiplier)
+    sprite = new PIXI.TilingSprite(texture, gameObject.width, gameObject.height)
+    sprite.transform.scale.x = MAP.camera.multiplier
+    sprite.transform.scale.y = MAP.camera.multiplier
   } else {
     sprite = new PIXI.Sprite(texture)
     sprite.transform.scale.x = (gameObject.width/texture._frame.width) * MAP.camera.multiplier
@@ -99,6 +109,7 @@ const addGameObjectToStage = (gameObject, stage) => {
     addedChild.emitter = emitter
   }
 }
+
 const initPixiObject = (gameObject) => {
   if (gameObject.invisible) return
 
@@ -150,11 +161,11 @@ const updatePixiObject = (gameObject) => {
   }
 
   if(gameObject.sprite != pixiChild.texture.id) {
+    const parent = pixiChild.parent
     stage.removeChild(pixiChild)
-    initPixiObject(gameObject)
+    addGameObjectToStage(gameObject, parent)
     return
   }
-
 
   if(gameObject.tags.rotateable) {
     pixiChild.anchor.set(0.5, 0.5)
@@ -165,20 +176,23 @@ const updatePixiObject = (gameObject) => {
     pixiChild.x = (gameObject.x) * MAP.camera.multiplier
     pixiChild.y = (gameObject.y) * MAP.camera.multiplier
   }
-  if(!gameObject.tags.tilingSprite) {
-    pixiChild.transform.scale.x = (gameObject.width/8) * MAP.camera.multiplier
-    pixiChild.transform.scale.y = (gameObject.height/8) * MAP.camera.multiplier
+  if(gameObject.tags.tilingSprite) {
+    pixiChild.transform.scale.x = MAP.camera.multiplier
+    pixiChild.transform.scale.y = MAP.camera.multiplier
+  } else {
+    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * MAP.camera.multiplier
+    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * MAP.camera.multiplier
   }
   if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {
   GAME.objects.forEach((object) => {
-    object.sprite = 'tree-1'
+    if(!object.sprite) object.sprite = 'tree-1'
     initPixiObject(object)
   })
   GAME.heroList.forEach((hero) => {
-    hero.sprite = 'entarkia-1'
+    if(!hero.sprite) hero.sprite = 'entarkia-1'
     initPixiObject(hero)
   })
 }

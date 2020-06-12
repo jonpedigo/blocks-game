@@ -2,6 +2,7 @@ import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import TriggerMenu from './menus/TriggerMenu.jsx';
+import SpriteMenu from './menus/SpriteMenu.jsx';
 import modals from './modals.js'
 
 const editQuestPrefix = 'edit-quest-'
@@ -184,6 +185,7 @@ export default class HeroContextMenu extends React.Component{
       <SubMenu title="Triggers">
         <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
+      {GAME.world.tags.usePixiMap && <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>}
       <SubMenu title="Input">
         <SubMenu title="Arrow Keys">
           {this._renderInputBehaviorMenu('arrowKeysBehavior', window.heroArrowKeyBehaviors)}
