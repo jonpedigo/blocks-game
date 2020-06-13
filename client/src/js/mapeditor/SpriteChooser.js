@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import Swal from 'sweetalert2';
 import tinycolor from 'tinycolor2';
 
-function open(object) {
+function open(object, spriteName) {
   Swal.fire({
     title: 'Select sprite',
     showClass: {
@@ -16,14 +16,14 @@ function open(object) {
     inputAttributes: {
       id: 'pixi-sprite-chosen',
       autocapitalize: 'off',
-      value: object.sprite,
+      value: object[spriteName],
     },
     width: '840px'
   }).then((result) => {
     if(result.value) {
       const { networkEditObject } = MAPEDITOR
       app.destroy(true)
-      networkEditObject(object, { sprite: result.value })
+      networkEditObject(object, { [spriteName]: result.value })
     }
   })
 
@@ -53,6 +53,7 @@ function open(object) {
     if(x + width > appWidth) {
       y += rowMaxHeight
       rowMaxHeight = 0
+      sprite.x = 0
       x = 0
     } else {
       x+= width

@@ -85,6 +85,7 @@ function setDefault() {
     filled: false,
     invisible: false,
     tilingSprite: false,
+    inputDirectionSprites: false,
   }
 
   window.defaultTags = {

@@ -3,6 +3,7 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import TriggerMenu from './menus/TriggerMenu.jsx';
 import SpriteMenu from './menus/SpriteMenu.jsx';
+import TagMenu from './menus/tagMenu.jsx';
 import modals from './modals.js'
 
 const editQuestPrefix = 'edit-quest-'
@@ -169,7 +170,7 @@ export default class HeroContextMenu extends React.Component{
       <MenuItem key='resize'>Resize</MenuItem>
       <MenuItem key='respawn'>Respawn</MenuItem>
       <SubMenu title="Color">
-        <MenuItem key="select-color">Color Picker</MenuItem>
+        <MenuItem key="select-color" className='dont-close-menu'>Color Picker</MenuItem>
         <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
       </SubMenu>
       <SubMenu title="Quests">
@@ -207,6 +208,9 @@ export default class HeroContextMenu extends React.Component{
       </SubMenu>}
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
       <SubMenu title="Advanced">
+        <SubMenu title="Tags">
+          <TagMenu objectSelected={objectSelected}></TagMenu>
+        </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="reset-to-default">Reset To Game Default</MenuItem>
         <MenuItem key="reset-to-core-default">Reset To Core Default</MenuItem>

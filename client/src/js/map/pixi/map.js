@@ -47,6 +47,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   app.loader.add('assets/images/tileset.png').load(() => {
     tileset.forEach((tile) => {
       let baseTexture = new PIXI.BaseTexture('assets/images/tileset.png');
+      baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
       let texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(tile.x, tile.y, tile.width, tile.height));
       texture.id = tile.id
       textures[tile.id] = texture
@@ -73,8 +74,11 @@ const initPixiApp = (canvasRef, onLoad) => {
 
 
 const addGameObjectToStage = (gameObject, stage) => {
-  if(!gameObject.sprite) {
-    gameObject.sprite = 'tree-1'
+  if(gameObject.defaultSprite) {
+    gameObject.sprite = gameObject.defaultSprite
+  } else {
+    gameObject.defaultSprite = 'tree-1'
+    gameObject.sprite = gameObject.defaultSprite
   }
 
   const texture = textures[gameObject.sprite]
@@ -160,12 +164,42 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
-  if(gameObject.sprite != pixiChild.texture.id) {
-    const parent = pixiChild.parent
-    stage.removeChild(pixiChild)
-    addGameObjectToStage(gameObject, parent)
-    return
+  // console.log(gameObject.sprite, pixiChild.texture.id)
+
+  if(gameObject.tags.inputDirectionSprites) {
+    if(gameObject.inputDirection === 'right') {
+      if(gameObject.rightSprite) {
+        gameObject.sprite = gameObject.rightSprite
+      } else gameObject.sprite = gameObject.defaultSprite
+    }
+    if(gameObject.inputDirection === 'left') {
+      if(gameObject.leftSprite) {
+        gameObject.sprite = gameObject.leftSprite
+      } else gameObject.sprite = gameObject.defaultSprite
+    }
+    if(gameObject.inputDirection === 'up') {
+      if(gameObject.upSprite) {
+        gameObject.sprite = gameObject.upSprite
+      } else gameObject.sprite = gameObject.defaultSprite
+    }
+    if(gameObject.inputDirection === 'down') {
+      if(gameObject.downSprite) {
+        gameObject.sprite = gameObject.downSprite
+      } else gameObject.sprite = gameObject.defaultSprite
+    }
+  } else {
+    if(gameObject.defaultSprite != gameObject.sprite) {
+      gameObject.sprite = gameObject.defaultSprite
+    }
   }
+
+  if(gameObject.sprite != pixiChild.texture.id) {
+    pixiChild.texture = PIXIMAP.textures[gameObject.sprite]
+  }
+
+  // if(gameObject.tags.phyiscsDirectionSprites) {
+  //
+  // }
 
   if(gameObject.tags.rotateable) {
     pixiChild.anchor.set(0.5, 0.5)

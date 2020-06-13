@@ -11,29 +11,23 @@ export default class SpriteMenu extends React.Component{
       const { objectSelected } = this.props
       const { networkEditObject } = MAPEDITOR
 
-      if(key === 'name-position-center') {
-        networkEditObject(objectSelected, { namePosition: 'center'})
-      }
-      if(key === 'name-position-above') {
-        networkEditObject(objectSelected, { namePosition: 'above'})
-      }
-      if(key === 'name-position-none') {
-        networkEditObject(objectSelected, { namePosition: null})
-      }
+      const data = JSON.parse(key)
 
-      if(key === 'chooseSprite') {
-        SpriteChooser.open(objectSelected)
+      if(data.action === 'chooseSprite') {
+        SpriteChooser.open(objectSelected, data.spriteName)
       }
     }
   }
 
   render() {
+    const { objectSelected } = this.props
+
     return <Menu onClick={this._handleSpriteMenuClick}>
-      <MenuItem key="chooseSprite">Select Default Sprite</MenuItem>
-      <MenuItem key="chooseSprite">Select Left Sprite</MenuItem>
-      <MenuItem key="chooseSprite">Select Right Sprite</MenuItem>
-      <MenuItem key="chooseSprite">Select Up Sprite</MenuItem>
-      <MenuItem key="chooseSprite">Select Down Sprite</MenuItem>
+      {!objectSelected.tags.inputDirectionSprites && <MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'defaultSprite'})}>Select Default Sprite</MenuItem>}
+      {objectSelected.tags.inputDirectionSprites && <MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'leftSprite'})}>Select Left Sprite</MenuItem>}
+      {objectSelected.tags.inputDirectionSprites &&<MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'rightSprite'})}>Select Right Sprite</MenuItem>}
+      {objectSelected.tags.inputDirectionSprites &&<MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'upSprite'})}>Select Up Sprite</MenuItem>}
+      {objectSelected.tags.inputDirectionSprites &&<MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'downSprite'})}>Select Down Sprite</MenuItem>}
     </Menu>
   }
 }
