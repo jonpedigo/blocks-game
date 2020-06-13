@@ -1,5 +1,6 @@
 // how pixi loads and draws game items for a basic map setup
 import * as PIXI from 'pixi.js'
+import { GlowFilter } from 'pixi-filters'
 import tileset from './tileset.json'
 import { flameEmitter } from './particles'
 import tinycolor from 'tinycolor2'
@@ -19,11 +20,12 @@ const initPixiApp = (canvasRef, onLoad) => {
   const app = new PIXI.Application({
     width: canvasRef.width, height: canvasRef.height,
   });
-  document.body.appendChild(app.view);
+  document.getElementById('GameContainer').appendChild(app.view);
 
   stage = app.stage
   PIXIMAP.stage = stage
   PIXIMAP.app = app
+  MAP.canvas.style.position = 'fixed'
 
   app.stage.emitters = []
   app.ticker.add(function(delta) {
@@ -218,6 +220,12 @@ const updatePixiObject = (gameObject) => {
     pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * MAP.camera.multiplier
   }
   if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+
+  if(HERO.id && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
+    pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
+  } else {
+    if(pixiChild.filters && pixiChild.filters.length) pixiChild.filters = []
+  }
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {

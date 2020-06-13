@@ -1,4 +1,5 @@
 import React from 'react'
+import DialogueBox from './DialogueBox.jsx'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import modals from './modals.js';
@@ -101,7 +102,10 @@ export default class Root extends React.Component{
 
   render() {
     if(CONSTRUCTEDITOR.open) return null
-    
+    if(!GAME.gameState || !GAME.gameState.loaded) return null
+
+    const hero = GAME.heros[HERO.id]
+
     return (
       <div className="PlayerUI">
         <ToastContainer
@@ -114,6 +118,7 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
+        {hero.dialogue && hero.dialogue.length && <DialogueBox/>}
       </div>
     )
   }

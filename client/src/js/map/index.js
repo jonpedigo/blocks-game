@@ -28,7 +28,7 @@ MAP.onPageLoaded = function() {
   }
 
   MAP.canvas.id = 'game-canvas'
-  document.body.appendChild(MAP.canvas);
+  document.getElementById('GameContainer').appendChild(MAP.canvas);
 
   MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
 }

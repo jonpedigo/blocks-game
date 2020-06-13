@@ -52,7 +52,7 @@ function update() {
     ctx.fillStyle = GAME.world.backgroundColor
     canvas.style.backgroundColor = GAME.world.backgroundColor
   }
-  
+
   let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
   GAME.objects.forEach((object) => {
     if(object.removed) return
@@ -110,7 +110,7 @@ function update() {
     ctx.fillText('Ghost View Id: ' + HERO.id, 10, 40)
   }
 
-  chat.render(ctx);
+  // chat.render(ctx);
 	feedback.draw(ctx);
 
   if(GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && !GAME.heros[HERO.id].flags.showDialogue) {

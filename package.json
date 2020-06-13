@@ -20,6 +20,7 @@
   ],
   "author": "Jon Pedigo <pedigojon@gmail.com>",
   "license": "MIT",
+  "devDependencies": {},
   "dependencies": {
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
@@ -47,6 +48,7 @@
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "pathfinding": "^0.4.18",
+    "pixi-filters": "^3.1.1",
     "pixi-particles": "^4.2.1",
     "pixi.js": "^5.2.4",
     "poly-decomp": "^0.3.0",
@@ -56,6 +58,7 @@
     "react": "^16.13.1",
     "react-color": "^2.18.0",
     "react-dom": "^16.13.1",
+    "react-textfit": "^1.1.0",
     "react-toastify": "^6.0.4",
     "sass-loader": "^8.0.0",
     "socket.io": "^2.3.0",

@@ -246,7 +246,10 @@ function onKeyDown(key, hero) {
     }
   }
 
-  if(hero.flags.paused || GAME.gameState.paused) return
+  if(hero.flags.paused || GAME.gameState.paused) {
+    window.local.emit('onKeyDown', key, hero)
+    return
+  }
 
   if('space' === key) {
     if(hero.onGround && hero.spaceBarBehavior === 'groundJump') {

@@ -20,7 +20,7 @@ class PlayerUI {
 
     const container = document.createElement('div')
     container.id = 'PlayerUIContainer'
-    document.body.appendChild(container)
+    document.getElementById('GameContainer').appendChild(container)
     PLAYERUI.container = container
 
     // Mount React App
@@ -31,6 +31,20 @@ class PlayerUI {
 
     if(!PLAYERUI.updateStateInterval) {
       PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
+    }
+  }
+
+  onKeyDown(key, hero) {
+    if(hero.id === HERO.id) {
+      PLAYERUI.ref.onUpdateState()
+    }
+  }
+
+  onNetworkUpdateHero(hero) {
+    if(hero.id === HERO.id) {
+      if(GAME.heros[hero.id].dialogue !== hero.dialogue) {
+        PLAYERUI.ref.onUpdateState()
+      }
     }
   }
 

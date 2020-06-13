@@ -7,7 +7,12 @@
 @import 'animate';
 @import 'contextMenu.css';
 @import './ConstructEditor.scss';
+@import './PlayerUI.scss';
 @import './dark.min.css';
+
+#GameContainer {
+  position: relative;
+}
 
 html {
   // font-size: $root-font-size;
@@ -97,8 +102,7 @@ textarea.swal-modal-input{
 }
 
 #game-canvas, #playeditor-canvas {
-  position: fixed;
-  left: 0px;
+  display: inline;
 }
 
 .is-edit-live {

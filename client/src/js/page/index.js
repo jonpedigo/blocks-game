@@ -7,6 +7,10 @@ import modals from '../mapeditor/modals.js'
 class Page{
   constructor() {
     this.role = {}
+
+    const gameContainer = document.createElement('div')
+    gameContainer.id = 'GameContainer'
+    document.body.appendChild(gameContainer)
   }
 
   establishRoleFromQuery() {
