@@ -1,0 +1,78 @@
+#ScenarioEditorContainer {
+  position: fixed;
+  width: 400px;
+  left: 0;
+  top: 0;
+  background-color: #19191a;
+  color: white;
+  font-family: Courier;
+  height: 100%;
+}
+
+.ScenarioEditor {
+  overflow-y: scroll;
+	height: 100%;
+
+  .ScenarioButton {
+    cursor: pointer;
+    background-color: #333;
+    padding: 5px;
+    border: 1px solid #3a3a3a;
+
+    &:hover {
+      background-color: #555;
+    }
+  }
+}
+
+.ScenarioItem {
+  flex: 1;
+  display: block;
+  border: 1px solid white;
+  padding-bottom: 20px;
+  position: relative;
+
+  &__identifier {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: white;
+    color: black;
+    padding: 2px;
+    font-weight: 800;
+    font-size: 24px;
+  }
+
+  &__type {
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: #333;
+  }
+
+  &__summary {
+    height: 38px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    text-align: left;
+
+  }
+
+  &__body {
+    margin-top: 10px;
+    padding: 20px 40px;
+  }
+
+  &__dialogue {
+    margin-bottom: 20px;
+  }
+
+  &__next {
+    width: 220px;
+    display: 'inline-block';
+  }
+}
+
+.ScenarioMenu {
+  width: 100%;
+}

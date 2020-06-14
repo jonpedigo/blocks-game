@@ -98,6 +98,10 @@ class EventEmitter {
       if(CONSTRUCTEDITOR[eventName]) {
         event.push(CONSTRUCTEDITOR[eventName])
       }
+
+      if(SCENARIOEDITOR[eventName]) {
+        event.push(SCENARIOEDITOR[eventName])
+      }
     }
 
     if( event ) {

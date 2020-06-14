@@ -255,6 +255,11 @@ PIXIMAP.onGameLoaded = function() {
   }
 }
 
+PIXIMAP.onDeleteHero = function(object) {
+  const pixiChild = stage.getChildByName(object.id)
+  stage.removeChild(pixiChild)
+}
+
 PIXIMAP.onDeleteObject = function(object) {
   const pixiChild = stage.getChildByName(object.id)
   stage.removeChild(pixiChild)

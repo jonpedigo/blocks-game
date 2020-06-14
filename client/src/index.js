@@ -16,7 +16,6 @@
 
 /*
 
-CUSTOM TRIGGER SYSTEM
 COMPENDIUM INTERFACE FOR US
 PHYSICS EDITOR
 PIXEL EDITOR
@@ -113,7 +112,6 @@ skipHeroGravity
 
 ////////////////////////////////////////////////////
 
-// attack button ( like papa bear spears!! )
 // set game boundaries to delete objects
 // TRUE zelda camera work
 // death by jump
@@ -217,18 +215,22 @@ just make sure to set something to stationary if its not supposed to be move, or
 // https://www.oryxdesignlab.com/sprites
 // https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
 
+// use d3 for a series of incredible satisfying game data charts at the end of the game for everyone to process it all
+
+// turn all copy to clipboard functions into DOWNLOAD JSON 
+
 import './js/utils/utils.js'
 import './js/page/index.js'
 import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
+import './js/scenarioeditor/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'
 import './js/playerUI/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
-
 
 PAGE.load()
