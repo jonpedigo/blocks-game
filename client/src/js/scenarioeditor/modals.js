@@ -41,7 +41,6 @@ function openEditCodeModal(title, code, cb) {
 
 function openWriteDialogueModal(dialogueStart = "", cb) {
   Swal.fire({
-    title: 'Write the dialogue',
     showClass: {
       popup: 'animated fadeInDown faster'
     },

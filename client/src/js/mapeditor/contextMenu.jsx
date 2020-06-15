@@ -82,11 +82,10 @@ class contextMenuEl extends React.Component{
         this.openColorPicker('defaultObject')
       }
 
-      if(key === 'copy-game-JSON-to-clipboard') {
+      if(key === 'download-game-JSON')  {
         let saveGame = GAME.cleanForSave(GAME)
         console.log(saveGame)
-        var copyText = JSON.stringify(saveGame);
-        PAGE.copyToClipBoard(copyText)
+        PAGE.downloadObjectAsJson(saveGame, GAME.id)
       }
     }
 
@@ -203,7 +202,7 @@ class contextMenuEl extends React.Component{
         <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
-        <MenuItem key='copy-game-JSON-to-clipboard'>Copy Game JSON to clipboard</MenuItem>
+        <MenuItem key='download-game-JSON'>Download Game JSON</MenuItem>
       </Menu>
     }
 
