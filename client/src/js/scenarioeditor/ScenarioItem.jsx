@@ -32,6 +32,10 @@ export default class ScenarioItem extends React.Component{
     }
   }
 
+  getItemValue() {
+    return this.state.scenarioItem
+  }
+
   _updateNextOptions() {
     const { scenarioList } = this.props;
 
@@ -50,7 +54,7 @@ export default class ScenarioItem extends React.Component{
 
     let initial = ''
     if(scenarioItem.type === 'dialogue') {
-      initial = scenarioItem.value
+      initial = scenarioItem.text
     }
     if(scenarioItem.type === 'branchChoice') {
       initial = scenarioItem.options[index].text
@@ -60,7 +64,7 @@ export default class ScenarioItem extends React.Component{
 
       if(scenarioItem.type === 'dialogue') {
         this.setState({
-          scenarioItem: {...scenarioItem, value: result.value}
+          scenarioItem: {...scenarioItem, text: result.value}
         })
       }
 
@@ -79,7 +83,6 @@ export default class ScenarioItem extends React.Component{
     if(scenarioItem.type === 'branchChoice') {
       scenarioItem.options[index].next = event.value
     }
-    scenarioItem.next = event.value
     this.setState({scenarioItem})
   };
 
@@ -95,7 +98,7 @@ export default class ScenarioItem extends React.Component{
     const { scenarioItem } = this.state;
     return <div className="ScenarioItem__dialogue">
       <i className="fa fas fa-edit ScenarioButton" onClick={this._openWriteDialogueModal}/>
-      Dialogue: <div className="ScenarioItem__summary">{scenarioItem.value}</div>
+      Dialogue: <div className="ScenarioItem__summary">{scenarioItem.text}</div>
       {this._renderNextSelect(scenarioItem.next, this._selectNext)}
     </div>
   }

@@ -40,12 +40,19 @@ export default class Root extends React.Component {
         ]
       },
       selectedType: null,
+      scenarioItemRefs: [],
     }
 
     this.open = this.open.bind(this)
     this.close = this.close.bind(this)
+    this.download = this.download.bind(this)
     this._selectType = this._selectType.bind(this)
     this._onAddItem = this._onAddItem.bind(this)
+  }
+
+  componentDidMount() {
+    const { scenario } = this.state
+    this._generateRefs(scenario.items)
   }
 
   _selectType(event) {
@@ -91,6 +98,18 @@ export default class Root extends React.Component {
     const newScenarioItems = scenario.items.slice()
     newScenarioItems.push(scenarioItem)
     this.setState({scenario: { ...scenario, items: newScenarioItems }})
+    this._generateRefs(newScenarioItems)
+  }
+
+  _generateRefs(items) {
+    const scenarioItemRefs = []
+    items.forEach(() => {
+      scenarioItemRefs.push(React.createRef())
+    })
+
+    this.setState({
+      scenarioItemRefs
+    })
   }
 
   open(initialScenario) {
@@ -106,12 +125,18 @@ export default class Root extends React.Component {
     })
   }
 
-  _onDeleteItem() {
+  download() {
+    const { scenario, scenarioItemRefs } = this.state;
+    const scenarioItems = scenario.items.map((item, index) => {
+      return scenarioItemRefs[index].current.getItemValue()
+    })
 
+    scenario.items = scenarioItems
+    PAGE.downloadObjectAsJson(scenario, 'scenario')
   }
 
   render() {
-    const { open, scenario, selectedType } = this.state
+    const { open, scenario, selectedType, scenarioItemRefs } = this.state
 
     // if(!open) return null
 
@@ -124,14 +149,14 @@ export default class Root extends React.Component {
             options={typeOptions}
             styles={window.reactSelectStyle}/></div>
         <i className="ScenarioButton fa fas fa-plus" onClick={this._onAddItem}></i>
-        <i className="ScenarioButton fa fas fa-download" onClick={this.close}></i>
-
+        <i className="ScenarioButton fa fas fa-download" onClick={this.download}></i>
         </div>
         {scenario.items.map((scenarioItem, index) => {
-          return <ScenarioItem key={scenarioItem.id} scenarioList={scenario.items} scenarioItem={scenarioItem} onDelete={() => {
+          return <ScenarioItem ref={scenarioItemRefs[index]} key={scenarioItem.id} scenarioList={scenario.items} scenarioItem={scenarioItem} onDelete={() => {
               const newScenarioItems = scenario.items.slice()
               newScenarioItems.splice(index, 1)
               this.setState({scenario: { ...scenario, items: newScenarioItems }})
+              this._generateRefs(newScenarioItems)
             }}/>
         })}
       </div>
