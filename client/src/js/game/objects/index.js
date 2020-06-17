@@ -214,7 +214,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = object.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, otherObjectId, otherObjectTag, initialPool } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -224,10 +224,10 @@ class Objects{
           eventThreshold,
           mutationJSON,
           subObjectName,
-          objectId,
-          objectTag,
-          subjectId,
-          subjectTag,
+          mainObjectId,
+          mainObjectTag,
+          otherObjectId,
+          otherObjectTag,
           initialPool,
         }
 

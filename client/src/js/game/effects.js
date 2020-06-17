@@ -19,7 +19,14 @@ function processEffect(effect, object, effector) {
   // }
 
   if(effectName === 'dialogue') {
-    object.dialogue = effect.text
+    object.dialogue = [effectValue]
+    object.flags.showDialogue = true
+    object.flags.paused = true
+    if(effector.name) {
+      object.dialogueName = effector.name
+    } else {
+      object.dialogueName = null
+    }
   }
 
   if(effectName === 'destroy') {

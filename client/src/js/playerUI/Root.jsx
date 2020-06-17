@@ -118,7 +118,7 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
-        {hero.dialogue && hero.dialogue.length > 0 && <DialogueBox/>}
+        {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox/>}
       </div>
     )
   }

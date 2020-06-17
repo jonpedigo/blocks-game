@@ -519,7 +519,7 @@ class Game{
     })
     GAME.gameState.paused = false
     GAME.gameState.started = true
-    window.local.emit('onStartGameed')
+    window.local.emit('onStartedGame')
   }
 
   cleanForSave(game) {

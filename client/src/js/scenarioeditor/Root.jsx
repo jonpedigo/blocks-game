@@ -37,7 +37,8 @@ export default class Root extends React.Component {
         {id: 'b', type: 'branchChoice', options: [
                   { text: '', next: 'sequential' }
                 ]},
-        ]
+        ],
+        pauseGame: false,
       },
       selectedType: null,
       scenarioItemRefs: [],
@@ -78,7 +79,7 @@ export default class Root extends React.Component {
     const scenarioItem = {id: this._findNextId(), type: selectedType }
 
     if(selectedType === 'dialogue') {
-      scenarioItem.text = ''
+      scenarioItem.effectValue = ''
       scenarioItem.next = 'sequential'
     }
     if(selectedType === 'branchCondition') {

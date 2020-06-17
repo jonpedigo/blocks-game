@@ -399,7 +399,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = hero.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, otherObjectId, otherObjectTag, initialPool } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -409,10 +409,10 @@ class Hero{
           eventThreshold,
           mutationJSON,
           subObjectName,
-          objectId,
-          objectTag,
-          subjectId,
-          subjectTag,
+          mainObjectId,
+          mainObjectTag,
+          otherObjectId,
+          otherObjectTag,
           initialPool,
         }
 
@@ -497,7 +497,7 @@ class Hero{
   }
 
   removeHero(hero) {
-    OBJECTS.forAllSubObjects(object.subObjects, (subObjecty) => {
+    OBJECTS.forAllSubObjects(hero.subObjects, (subObjecty) => {
       subObject.removed = true
     })
     GAME.heros[hero.id].removed = true

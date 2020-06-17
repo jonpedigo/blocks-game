@@ -54,10 +54,10 @@ export default class ScenarioItem extends React.Component{
 
     let initial = ''
     if(scenarioItem.type === 'dialogue') {
-      initial = scenarioItem.text
+      initial = scenarioItem.effectValue
     }
     if(scenarioItem.type === 'branchChoice') {
-      initial = scenarioItem.options[index].text
+      initial = scenarioItem.options[index].effectValue
     }
 
     modals.openWriteDialogueModal(initial, (result) => {
@@ -69,7 +69,7 @@ export default class ScenarioItem extends React.Component{
       }
 
       if(scenarioItem.type === 'branchChoice') {
-        scenarioItem.options[index].text = result.value
+        scenarioItem.options[index].effectValue = result.value
         this.setState({scenarioItem})
       }
     })
@@ -98,7 +98,7 @@ export default class ScenarioItem extends React.Component{
     const { scenarioItem } = this.state;
     return <div className="ScenarioItem__dialogue">
       <i className="fa fas fa-edit ScenarioButton" onClick={this._openWriteDialogueModal}/>
-      Dialogue: <div className="ScenarioItem__summary">{scenarioItem.text}</div>
+      Dialogue: <div className="ScenarioItem__summary">{scenarioItem.effectValue}</div>
       {this._renderNextSelect(scenarioItem.next, this._selectNext)}
     </div>
   }
@@ -112,7 +112,7 @@ export default class ScenarioItem extends React.Component{
           <i className="fa fas fa-edit ScenarioButton" onClick={() => {
             this._openWriteDialogueModal(index)
           }}/>
-          Text:<div className="ScenarioItem__summary">{option.text}</div>
+        Text:<div className="ScenarioItem__summary">{option.effectValue}</div>
           {this._renderNextSelect(option.next, (event) => {
             this._selectNext(event, index)
           })}
