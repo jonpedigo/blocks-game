@@ -387,7 +387,6 @@ function removeAndRespawn() {
 
   GAME.objects.forEach((object) => {
     if(object._destroy) {
-      console.log(object.tags.seed, object._destroyedBy)
       window.local.emit('onObjectDestroyed', object, object._destroyedBy)
       if(object.tags.respawn) {
         object._respawn = true

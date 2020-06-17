@@ -56,6 +56,7 @@ function onPageLoaded() {
     // 'disableTrigger',
     // 'enableTrigger',
     // 'toggleTrigger',
+    // 'increaseFacingVelocity',
     'tagAdd',
     'tagRemove',
     'tagToggle',

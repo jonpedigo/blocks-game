@@ -217,7 +217,75 @@ just make sure to set something to stationary if its not supposed to be move, or
 
 // use d3 for a series of incredible satisfying game data charts at the end of the game for everyone to process it all
 
-// turn all copy to clipboard functions into DOWNLOAD JSON 
+// sure I could allow for clicking to create an effect, to build a wall, etc.
+// then I would have to create a composable menu. Where I can add an item to the menu by giving a player a power
+// this complicates things, what does this have to do with the objects in the game? how does one take away this 'power'
+// If I can avoid a composable menu then I can make sure all powers essentially have to do with subObjects or inventory, not some other 3rd list of 'menu powers'
+
+// Menu power can perhaps be given to those that have god like powers. This is what it means to have a supernatural power is to be able to edit the game without having the correct tool and your avatar being there
+// perhaps the best way to create a 'power' system is to have a powerups array attached to whatever object. this power up array is applied to your game object before it goes through physics and logics
+// or I create a 'getTags', getColor, getAll(), getPos, getPhysics, getBehaviors, or just get() would be nice so I didnt have to organize all this crap...
+// remove any powerup with tag, remove any powerup with physics increase....? Not sure
+// these powerups could also all be global and all they would really have is a condition for them to be active. a POWERUP function.
+// conditions - require level, require area, require subobject, require subobject equipped
+// apply powerup to subObject based off of.... its owner?
+// its almost like this is TOO MUCH...
+
+// design question. How would I allow a ritual to occur without me supervising. If you do X and Y in this place ( or at this time ), then this effect occurs
+
+// lord have meRCY
+// basically I think overall what we have here is
+// I need eventHooks and conditionHooks
+// this cause EFFECTS, and effects need context ( what is causing effect, and what is being effected )
+// whats the fuckin context, how do I determine the context
+
+// MORPH is permanent and transformative
+// MUTATE is permanent and transitionary
+// MOD is temporary
+// OTHER EFFECTS are common mutations, etc
+// (apply effect to owner if possible)
+
+// basically every event has a POSSIBLE CONTEXT that needs to be filled in
+// you can require specific contexts id == tag === in order for the hook to be valid ( or not )
+
+// then depending on the context of that event you can add effects and mods to the subjects and objects of the event
+// you can also add effects to ANY OBJECT OR HERO U WANT OR HERO TAGS OR OBJECT TAGS
+
+//////
+// events know their context ahead of time ( i need to make a sheet )
+// events can have CONDITIONS for its context in order to trigger
+// you can add effects to the subject or object in the context
+// as many as you want
+// dialogue is just an effect
+// questStarting is just an effect
+// questEnding is just an effect
+
+// CONDITIONS
+// is inside tag
+// has tag or is owned by tag
+// has tag
+// has id
+// matches JSON
+
+// condition passes only when negative
+
+// FOR MODS
+// revert when condition is false
+// revert after timer
+// revert when destroyed
+
+// STEPS FORWARD
+// Add dialogue/choice to effects
+// add context to scenario/events
+// add effects to scenario
+// add conditions to scenario interface
+// add mod to effects with mod JSON
+// revert mods/create mod function that mods heros and objects before accessing properties
+// create compendium with objects, heros, scenarios, mods/mutates
+
+// the trigger system available right now is basically just a scenario where the first option is an effect
+// some tags right now are event -> condition -> effect combos BUILT INTO CODEBASE
+// overall IM TOO EXCITED AND I HAVE A LOT TO CODE
 
 import './js/utils/utils.js'
 import './js/page/index.js'

@@ -187,7 +187,7 @@ export default class HeroContextMenu extends React.Component{
         <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
       {GAME.world.tags.usePixiMap && <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>}
-      <SubMenu title="Input">
+      <SubMenu title="Controls">
         <SubMenu title="Arrow Keys">
           {this._renderInputBehaviorMenu('arrowKeysBehavior', window.heroArrowKeyBehaviors)}
         </SubMenu>

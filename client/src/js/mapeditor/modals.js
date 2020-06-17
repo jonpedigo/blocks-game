@@ -37,6 +37,7 @@ function editTrigger(owner, trigger) {
       eventThreshold
     }
     window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
+    //TODO: MAKE SURE THIS REMOVES EMPTY PROPERTIES!!
 
     const oldId = trigger.id
     Object.assign(trigger, triggerUpdate)

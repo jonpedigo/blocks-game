@@ -113,6 +113,7 @@ class ConstructEditor {
     this.canvas.addEventListener("mouseup", this._mouseUpListener)
 
     this.ref.open(object.color || GAME.world.defaultObjectColor || '#525252')
+    this.selectColor(object.color)
   }
 
   handleMouseUp() {

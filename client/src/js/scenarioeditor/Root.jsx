@@ -138,7 +138,7 @@ export default class Root extends React.Component {
   render() {
     const { open, scenario, selectedType, scenarioItemRefs } = this.state
 
-    // if(!open) return null
+    if(!open) return null
 
     return (
       <div className="ScenarioEditor">
