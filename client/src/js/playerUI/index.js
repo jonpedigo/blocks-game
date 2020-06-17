@@ -9,11 +9,8 @@ class PlayerUI {
     this.updateStateInterval = null
   }
 
-  onGameLoaded() {
+  onPageLoaded() {
     // this.container = container
-
-    const hero = GAME.heros[HERO.id]
-
     const initialProps = {
       ref: ref => PLAYERUI.ref = ref
     }
@@ -28,7 +25,9 @@ class PlayerUI {
       React.createElement(Root, initialProps),
       container
     )
+  }
 
+  onGameLoaded() {
     if(!PLAYERUI.updateStateInterval) {
       PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
     }
@@ -41,7 +40,7 @@ class PlayerUI {
   }
 
   onNetworkUpdateHero(hero) {
-    if(hero.id === HERO.id) {
+    if(hero.id === HERO.id && GAME.heros[hero.id]) {
       if(GAME.heros[hero.id].dialogue !== hero.dialogue) {
         PLAYERUI.ref.onUpdateState()
       }

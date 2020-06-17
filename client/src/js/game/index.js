@@ -195,6 +195,7 @@ class Game{
 
   onGameLoaded() {
     GAME.gameState.loaded = true
+    GAME.gameState.paused = false
   }
 
   loadAndJoin(game) {
@@ -449,7 +450,7 @@ class Game{
   }
 
   onAddTrigger(ownerId, trigger) {
-    const { event } = trigger
+    const { eventName } = trigger
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     triggers.addTrigger(owner, trigger)
   }
@@ -477,6 +478,7 @@ class Game{
     initialGameState = JSON.parse(initialGameState)
     GAME.unload()
     GAME.loadAndJoin(initialGameState)
+    GAME.gameState.paused = true
     window.local.emit('onGameStopped')
   }
 

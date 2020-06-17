@@ -1,11 +1,11 @@
 import Swal from 'sweetalert2';
 
-function addTrigger(owner, event) {
+function addTrigger(owner, eventName) {
   PAGE.typingMode = true
   openSelectEffect((result) => {
     if(result && result.value) {
-      const effect = window.triggerEffects[result.value]
-      window.socket.emit('addTrigger', owner.id, { id: 'trigger-' + window.uniqueID(), event, effect })
+      const effectName = window.triggerEffects[result.value]
+      window.socket.emit('addTrigger', owner.id, { id: 'trigger-' + window.uniqueID(), eventName, effectName })
     }
     PAGE.typingMode = false
   })
@@ -41,6 +41,10 @@ function editTrigger(owner, trigger) {
 
     const oldId = trigger.id
     Object.assign(trigger, triggerUpdate)
+
+    triggerUpdate.mutationJSON = trigger.mutationJSON
+    triggerUpdate.eventName = trigger.eventName
+    triggerUpdate.effectName = trigger.effectName
 
     window.socket.emit('editTrigger', owner.id, oldId, trigger)
     PAGE.typingMode = false

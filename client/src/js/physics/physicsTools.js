@@ -150,9 +150,9 @@ function heroCorrection(hero) {
       // it was hard to tell which correction to prioritize. Basically now
       // I prioritize the correction that DOES NOT IMPEDE the heros current direction
       if(round === 1) {
-        if(hero.directions && hero.directions.up || hero.directions.down) {
+        if(hero.directions && (hero.directions.up || hero.directions.down)) {
           correctHeroX()
-        } else if(hero.directions && hero.directions.left || hero.directions.right) {
+        } else if(hero.directions && (hero.directions.left || hero.directions.right)) {
           correctHeroY()
         }
       } else {

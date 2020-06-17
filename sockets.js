@@ -347,8 +347,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateCustomGameFx', customGameFx)
   })
 
-  socket.on('customFxEvent', (eventIn) => {
-    io.emit('onCustomFxEvent', eventIn)
+  socket.on('customFxEvent', (eventName) => {
+    io.emit('onCustomFxEvent', eventName)
   })
 
   socket.on('sendHeroMapEditor', (mapEditor, heroId) => {

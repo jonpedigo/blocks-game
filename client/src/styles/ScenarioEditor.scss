@@ -1,16 +1,15 @@
 #ScenarioEditorContainer {
   position: fixed;
-  width: 400px;
   left: 0;
   top: 0;
-  background-color: #19191a;
   color: white;
   font-family: Courier;
   height: 100%;
-  display: none;
 }
 
 .ScenarioEditor {
+  width: 400px;
+  background-color: #19191a;
   overflow-y: scroll;
 	height: 100%;
 
@@ -101,6 +100,10 @@
   &__next {
     width: 220px;
     display: 'inline-block';
+  }
+
+  &:last-child {
+    margin-bottom: 300px;
   }
 }
 

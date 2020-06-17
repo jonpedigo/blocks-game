@@ -316,6 +316,7 @@ class Hero{
       animationZoomMultiplier: hero.animationZoomMultiplier,
       animationZoomTarget: hero.animationZoomTarget,
       endAnimation: hero.endAnimation,
+      sequence: hero.sequence,
       dialogue: hero.dialogue,
       dialogueName: hero.dialogueName,
       _parentId: hero._parentId,
@@ -398,12 +399,12 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, event, effect, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = hero.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, objectId, objectTag, subjectId, subjectTag, initialPool } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
-          event,
-          effect,
+          eventName,
+          effectName,
           effectValue,
           eventThreshold,
           mutationJSON,

@@ -106,6 +106,12 @@ class Page{
     PAGE.setupRemoteLogging()
     HERO.getHeroId()
 
+    window.onbeforeunload = function (event) {
+      if(PAGE.role.isHost && GAME.gameState && GAME.gameState.started) {
+        return "Please stop game before leaving page"
+      }
+    }
+
     events.init()
     sockets.init()
     window.local.emit('onPageLoaded')

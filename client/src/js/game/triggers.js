@@ -1,9 +1,38 @@
 import { startQuest, completeQuest } from './heros/quests'
-import onTalk from './heros/onTalk'
+import effects from './effects'
 
 // LATER
 // morph - subobject name
 // add subHERO
+
+// SO WHAT IM GOING TO DO IS IM GOING TO
+// objects can have sequences, heros can have sequences, and the game can have sequences
+// a context can consist of 0, 1, or 2 objects.
+// I want to know what the context of a sequence is or what the context of a trigger is right?
+// The context of a trigger changes what it can effect. If it has both an object and a subject you can select those in the interface
+// for every effect or condition you can survey or effect the subject, the object, an object id or a group of objects with a tag
+
+/*
+ effect
+ {
+  subjects: [] // subject, object, tag, id
+  effects: [] // effect name + effect value + mutationJSON + other such as revert option
+ }
+*/
+
+/*
+ condition
+ {
+  list: [
+    { subject: // subject, object, tag, id,
+      condition: // JSON match, is within tag, is within id, is during time
+    }
+  }
+  pass:
+  fail:
+ }
+*/
+
 
 function onPageLoaded() {
   window.triggerEvents = [
@@ -33,6 +62,8 @@ function onPageLoaded() {
     'destroy',
     'mutate',
     'goToStarView',
+    'dialogue',
+    'emitEvent',
     // 'morph',
     // 'coreBehavior',
     // 'duplicate',
@@ -79,7 +110,7 @@ function deleteTrigger(object, triggerId) {
 }
 
 function addTrigger(owner, trigger) {
-  const event = trigger.event
+  const eventName = trigger.eventName
   trigger.triggerPool = trigger.triggerPoolInitial
 
   if(!owner.triggers) owner.triggers = {}
@@ -90,29 +121,29 @@ function addTrigger(owner, trigger) {
     eventCount: 0,
     disabled: false,
   })
-  owner.triggers[trigger.id].removeEventListener = window.local.on(event, (object, subject) => {
-    let fx = () => triggerEffect(trigger, owner.id, object, subject)
+  owner.triggers[trigger.id].removeEventListener = window.local.on(eventName, (object, subject) => {
+    let fx = () => triggerEffect(trigger, owner, object, subject)
     let eventMatch = false
 
     let { objectId, objectTag, subjectId, subjectTag } = trigger
 
     if(owner.tags.hero) {
-      if(!subjectId && !subjectTag && event.indexOf('Object') >= 0) {
+      if(!subjectId && !subjectTag && eventName.indexOf('Object') >= 0) {
         subjectId = owner.id
       }
-      if(!objectId && !objectTag && event.indexOf('Hero') >= 0) {
+      if(!objectId && !objectTag && eventName.indexOf('Hero') >= 0) {
         objectId = owner.id
       }
     } else {
-      if(!objectId && !objectTag && event.indexOf('Object') >= 0) {
+      if(!objectId && !objectTag && eventName.indexOf('Object') >= 0) {
         objectId = owner.id
       }
-      if(!subjectId && !subjectTag && event.indexOf('Hero') >= 0) {
+      if(!subjectId && !subjectTag && eventName.indexOf('Hero') >= 0) {
         subjectId = owner.id
       }
     }
 
-    if(event.indexOf('Object') >= 0 || event.indexOf('Hero') >= 0) {
+    if(eventName.indexOf('Object') >= 0 || eventName.indexOf('Hero') >= 0) {
       // just check object
       if((objectId || objectTag) && !subjectId && !subjectTag && checkIdOrTagMatch(objectId, objectTag, object)) {
         eventMatch = true
@@ -125,7 +156,7 @@ function addTrigger(owner, trigger) {
       }
     }
 
-    if(event.indexOf('Game') >= 0 || event.indexOf('Quest') >= 0) {
+    if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0) {
       eventMatch = true
     }
 
@@ -143,72 +174,16 @@ function addTrigger(owner, trigger) {
   })
 }
 
-function triggerEffect(trigger, ownerId, object, subject) {
-  const { effect, effectValue } = trigger
-  const owner = OBJECTS.getObjectOrHeroById(ownerId)
-
-  if(effect === 'mutate' && trigger.mutationJSON) {
-    window.mergeDeep(owner, trigger.mutationJSON)
+function triggerEffect(trigger, owner, object, subject) {
+  const { effectName, effectValue } = trigger
+  let effector
+  if(object && subject && object.id === owner.id) {
+    effector = subject
   }
-
-  // if(effect === 'talkToHero' && hero) {
-  //   onTalk(hero, owner)
-  // }
-  //
-  // if(effect === 'heroQuestStart' && hero) {
-  //   startQuest(hero, effectValue)
-  // }
-  //
-  // if(effect === 'heroQuestComplete' && hero) {
-  //   completeQuest(hero, effectValue)
-  // }
-
-  if(effect === 'destroy') {
-    if(object && subject && object.id === owner.id) {
-      object._destroyedBy = subject
-    }
-    if(object && subject && subject.id === owner.id) {
-      subject._destroyedBy = object
-    }
-    owner._destroy = true
+  if(object && subject && subject.id === owner.id) {
+    effector = object
   }
-
-  if(effect === 'respawn') {
-    OBJECTS.respawnObject(owner)
-  }
-  if(effect === 'remove') {
-    OBJECTS.removeObject(owner)
-  }
-
-  if(effect === 'spawnTotalIncrement') {
-    owner.spawnTotal += effectValue || 1
-  }
-
-  //
-  // if(effect === 'spawnTotalRemove') {
-  //   owner.spawnTotal = -1
-  // }
-
-  if(effect === 'spawnPoolIncrement') {
-    owner.spawnPool += effectValue || 1
-    // owner.spawnWait=false
-    // if(owner.spawnWaitTimerId) delete GAME.timeoutsById[owner.spawnWaitTimerId]
-  }
-
-  if(effect === 'tagAdd') {
-    let tag = effectValue
-    owner.tags[tag] = false
-  }
-
-  if(effect === 'tagRemove') {
-    let tag = effectValue
-    owner.tags[tag] = true
-  }
-
-  if(effect === 'tagToggle') {
-    let tag = effectValue
-    owner.tags[tag] = !owner.tags[tag]
-  }
+  effects.processEffect(trigger, owner, effector)
 }
 
 export default {

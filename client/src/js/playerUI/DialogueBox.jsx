@@ -8,6 +8,6 @@ export default class DialogueBox extends React.Component{
 
   render() {
     const hero = GAME.heros[HERO.id]
-    return <Textfit id='fitty' className="DialogueBox">{hero.dialogue && hero.dialogue[0]}</Textfit>
+    return <div className="DialogueBox">{hero.dialogue && hero.dialogue[0]}</div>
   }
 }
