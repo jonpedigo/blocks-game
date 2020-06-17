@@ -47,8 +47,8 @@ MAP.onRender = function(delta) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if(!GAME.gameState.paused && !GAME.world.tags.usePixiMap) {
-    render.update()
+  if((!GAME.gameState.paused || CONSTRUCTEDITOR.open) && !GAME.world.tags.usePixiMap) {
+    render.update(camera)
   }
 
   if(hero && PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {

@@ -36,9 +36,8 @@ function drawObject(ctx, object, withNames = false) {
   }
 }
 
-function update() {
+function update(camera) {
   const { ctx, canvas } = MAP
-  let camera = MAP.camera
 
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
