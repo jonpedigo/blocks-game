@@ -8,6 +8,8 @@ export default class DialogueBox extends React.Component{
 
   render() {
     const hero = GAME.heros[HERO.id]
-    return <div className="DialogueBox">{hero.dialogue && hero.dialogue[0]}</div>
+    return <Textfit id='fitty' max={22} className="DialogueBox">{hero.dialogue && hero.dialogue[0]}
+      <i className="DialogueBox__arrow fa fas fa-sort-down"></i>
+    </Textfit>
   }
 }

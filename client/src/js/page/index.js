@@ -1,4 +1,4 @@
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/src/sweetalert2.js';
 import sockets from './sockets.js'
 import events from './events.js'
 import loop from './loop.js'

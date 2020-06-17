@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/src/sweetalert2.js';
 import tinycolor from 'tinycolor2';
 
 function open(object, spriteName) {

@@ -105,7 +105,7 @@ export default class Root extends React.Component{
     if(!GAME.gameState || !GAME.gameState.loaded) return null
 
     const hero = GAME.heros[HERO.id]
-    
+
     return (
       <div className="PlayerUI">
         <ToastContainer
@@ -118,7 +118,7 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
-        {hero.dialogue && hero.dialogue.length && <DialogueBox/>}
+        {hero.dialogue && hero.dialogue.length > 0 && <DialogueBox/>}
       </div>
     )
   }
