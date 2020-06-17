@@ -118,6 +118,7 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
+      <div style={{color: 'white'}}>{JSON.stringify(hero)}</div>
         {hero.dialogue && hero.dialogue.length && <DialogueBox/>}
       </div>
     )
