@@ -95,9 +95,15 @@ export default class Root extends React.Component {
       scenarioItem.next = 'sequential'
     }
     if(selectedType === 'branchCondition') {
-      scenarioItem.JSON = ''
+      scenarioItem.conditionJSON = {}
+      scenarioItem.conditionType = 'matchJSON' // 'inArea', 'duringTime', 'hasTag'
       scenarioItem.passNext = ''
       scenarioItem.failNext = ''
+      scenarioItem.passWithOneMatch = false
+      scenarioItem.testingMainObject = true
+      scenarioItem.testingOtherObject = false
+      scenarioItem.testingIds = []
+      scenarioItem.testingTags = []
     }
     if(selectedType === 'branchChoice') {
       scenarioItem.options = [

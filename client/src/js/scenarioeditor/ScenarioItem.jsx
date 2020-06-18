@@ -7,6 +7,12 @@ const initialNextOptions = [
   { value: 'end', label: 'End Scenario' },
 ];
 
+const conditionTypeOptions = [
+  { value: 'matchJSON', label: 'matchJSON' },
+  { value: 'inArea', label: 'inArea' },
+  { value: 'hasTag', label: 'hasTag' },
+]
+
 export default class ScenarioItem extends React.Component{
   constructor(props) {
     super(props)
@@ -20,6 +26,8 @@ export default class ScenarioItem extends React.Component{
     this._selectNext = this._selectNext.bind(this)
     this._addOption = this._addOption.bind(this)
     this._openWriteDialogueModal = this._openWriteDialogueModal.bind(this)
+    this._openEditCodeModal = this._openEditCodeModal.bind(this)
+    this._onChangeConditionType = this._onChangeConditionType.bind(this)
   }
 
   componentDidMount() {
@@ -49,6 +57,23 @@ export default class ScenarioItem extends React.Component{
     })
   }
 
+  _openEditCodeModal() {
+    const { scenarioItem } = this.state;
+
+    modals.openEditCodeModal('edit condition JSON', scenarioItem.conditionJSON, (result) => {
+      if(result && result.value) {
+        scenarioItem.conditionJSON = JSON.parse(result.value)
+        this.setState({scenarioItem})
+      }
+    })
+  }
+
+  _onChangeConditionType(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.conditionType = event.value
+    this.setState({scenarioItem})
+  }
+
   _openWriteDialogueModal(index) {
     const { scenarioItem } = this.state;
 
@@ -75,13 +100,16 @@ export default class ScenarioItem extends React.Component{
     })
   }
 
-  _selectNext(event, index) {
+  _selectNext(event, prop) {
     const { scenarioItem } = this.state;
     if(scenarioItem.type === 'dialogue') {
       scenarioItem.next = event.value
     }
     if(scenarioItem.type === 'branchChoice') {
-      scenarioItem.options[index].next = event.value
+      scenarioItem.options[prop].next = event.value
+    }
+    if(scenarioItem.type === 'branchCondition') {
+      scenarioItem[prop] = event.value
     }
     this.setState({scenarioItem})
   };
@@ -122,14 +150,45 @@ export default class ScenarioItem extends React.Component{
     </div>
   }
 
-  _renderNextSelect(nextValue, onChange) {
+  _renderCondition() {
+    const { scenarioItem } = this.state;
+
+    const conditionTypeChooser = <div className="ScenarioItem__condition-type-chooser">
+      Type: <Select
+        value={{value: scenarioItem.conditionType, label: scenarioItem.conditionType}}
+        onChange={this._onChangeConditionType}
+        options={conditionTypeOptions}
+        styles={window.reactSelectStyle}
+        theme={window.reactSelectTheme}/>
+    </div>
+
+    let chosenConditionForm
+    if(scenarioItem.conditionType === 'matchJSON') {
+      chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditCodeModal}/>
+        <div className="ScenarioItem__summary ScenarioItem__summary--json">{JSON.stringify(scenarioItem.conditionJSON)}</div>
+      </div>
+    }
+    
+    return <div className="ScenarioItem__condition">
+          {conditionTypeChooser}
+          {chosenConditionForm}
+          {this._renderNextSelect(scenarioItem.passNext, (event) => {
+            this._selectNext(event, 'passNext')
+          }, 'Pass Next:')}
+          {this._renderNextSelect(scenarioItem.failNext, (event) => {
+            this._selectNext(event, 'failNext')
+          }, 'Fail Next:')}
+        </div>
+  }
+
+  _renderNextSelect(nextValue, onChange, title) {
     const { scenarioItem, nextOptions } = this.state;
 
     const selectedNext = nextOptions.filter((option) => {
       if(option.value === nextValue) return true
     })[0]
 
-    return <div className="ScenarioItem__next">Next: <Select
+    return <div className="ScenarioItem__next">{title || 'Next:'}<Select
       value={selectedNext}
       onChange={onChange}
       options={nextOptions}
