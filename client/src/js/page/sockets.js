@@ -300,15 +300,19 @@ function init() {
     window.local.emit('onChangeGame', game)
   })
 
-  window.socket.on('onAskHeroToNameObject', async (object, heroId) => {
+  window.socket.on('onAskHeroToNameObject', (object, heroId) => {
     window.local.emit('onAskHeroToNameObject', object, heroId)
     // let ctx = document.getElementById('swal-canvas').getContext('2d')
     // ctx.fillStyle = object.color
     // ctx.fillRect(10, 10, object.width, object.height);
   })
 
-  window.socket.on('onAskHeroToWriteDialogue', async (object, heroId) => {
+  window.socket.on('onAskHeroToWriteDialogue', (object, heroId) => {
     window.local.emit('onAskHeroToWriteDialogue', object, heroId)
+  })
+
+  window.socket.on('onHeroChooseOption', (heroId, optionId) => {
+    window.local.emit('onHeroChooseOption', heroId, optionId)
   })
 
   window.socket.on('onAddGameTag', (tagName) => {

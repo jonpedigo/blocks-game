@@ -118,7 +118,8 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
-        {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox/>}
+      {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue}/>}
+      {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions}/>}
       </div>
     )
   }

@@ -367,6 +367,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onAskHeroToWriteDialogue', object, heroId)
   })
 
+  socket.on('heroChooseOption', (heroId, optionId) => {
+    io.emit('onHeroChooseOption', heroId, optionId)
+  })
+
   socket.on('hostLog', (msg, arg1, arg2, arg3) => {
     let args = [msg, arg1, arg2, arg3].filter(i => !!i)
     io.emit('onHostLog', ...args)

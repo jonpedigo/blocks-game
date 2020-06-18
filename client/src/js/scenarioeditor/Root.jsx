@@ -1,6 +1,7 @@
 import React from 'react'
 import ScenarioItem from './ScenarioItem.jsx'
 import Select from 'react-select';
+import modals from './modals';
 
 window.reactSelectStyle = {control: styles => ({ ...styles, backgroundColor: '#19191a', color: 'white' }),
 option: styles => ({ ...styles, backgroundColor: '#19191a', color: 'white' }),
@@ -33,12 +34,13 @@ export default class Root extends React.Component {
       open: false,
       scenario: {
         items: [
-        {id: 'a', type: 'dialogue', text: 'hello', next: 'sequential'},
+        {id: 'a', type: 'dialogue', effectValue: 'hello', next: 'sequential'},
         {id: 'b', type: 'branchChoice', options: [
-                  { text: '', next: 'sequential' }
+                  { effectValue: '', next: 'sequential' }
                 ]},
         ],
         pauseGame: false,
+        id: 'scenario-' + window.uniqueID(),
       },
       selectedType: null,
       scenarioItemRefs: [],
@@ -49,11 +51,21 @@ export default class Root extends React.Component {
     this.download = this.download.bind(this)
     this._selectType = this._selectType.bind(this)
     this._onAddItem = this._onAddItem.bind(this)
+    this._openEditIdModal = this._openEditIdModal.bind(this)
   }
 
   componentDidMount() {
     const { scenario } = this.state
     this._generateRefs(scenario.items)
+  }
+
+  _openEditIdModal() {
+    const { scenario } = this.state
+
+    modals.openEditTextModal('scenario id', scenario.id, (result) => {
+      scenario.id = result.value
+      this.setState({ scenario })
+    })
   }
 
   _selectType(event) {
@@ -139,7 +151,7 @@ export default class Root extends React.Component {
   render() {
     const { open, scenario, selectedType, scenarioItemRefs } = this.state
 
-    if(!open) return null
+    // if(!open) return null
 
     return (
       <div className="ScenarioEditor">
@@ -151,6 +163,7 @@ export default class Root extends React.Component {
             styles={window.reactSelectStyle}/></div>
         <i className="ScenarioButton fa fas fa-plus" onClick={this._onAddItem}></i>
         <i className="ScenarioButton fa fas fa-download" onClick={this.download}></i>
+        <div className="ScenarioButton fa fas fa-edit" onClick={this._openEditIdModal}></div>
         </div>
         {scenario.items.map((scenarioItem, index) => {
           return <ScenarioItem ref={scenarioItemRefs[index]} key={scenarioItem.id} scenarioList={scenario.items} scenarioItem={scenarioItem} onDelete={() => {

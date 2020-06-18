@@ -40,6 +40,7 @@ function onPageLoaded() {
     'onHeroLand',
     'onHeroInteract',
     'onHeroDestroyed',
+    // 'onHeroChooseOption',
     // 'OnObjectSpawn',
     'onObjectDestroyed',
     'onObjectCollide',
@@ -54,44 +55,6 @@ function onPageLoaded() {
     // 'onObjectAwake',
     // 'OnTimerEnd',
     'onStartGame',
-  ]
-
-  window.triggerEffects = [
-    'remove',
-    'respawn',
-    'destroy',
-    'mutate',
-    'goToStarView',
-    'dialogue',
-    'emitEvent',
-    // 'morph',
-    // 'coreBehavior',
-    // 'duplicate',
-    // 'talkToHero',
-    // 'heroQuestStart',
-    // 'heroQuestComplete',
-    // 'heroPowerup',
-    'spawnPoolIncrement',
-    'spawnTotalIncrement',
-    // 'spawnTotalRemove',
-    // 'spawnHold',
-    // 'spawnRelease',
-    // 'spawnToggle',
-    // 'movementToggle',
-    // 'movementRelease',
-    // 'movementHold',
-    // 'timerStart',
-    // 'timerHold',
-    // 'timerRelease',
-    // 'timerToggle',
-    // 'disableTrigger',
-    // 'enableTrigger',
-    // 'toggleTrigger',
-    // 'increaseFacingVelocity',
-    'tagAdd',
-    'tagRemove',
-    'tagToggle',
-    //'emitCustomEvent',
   ]
 }
 
@@ -146,17 +109,16 @@ function addTrigger(owner, trigger) {
       }
     }
 
-
     // now that we have potential main/others object ids/tags, we try to match them with the REAL main/other objects from the event
     if(eventName.indexOf('Object') >= 0 || eventName.indexOf('Hero') >= 0) {
       // just check object
-      if((mainObjectId || mainObjectTag) && !otherObjectId && !otherObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, otherObject)) {
+      if((mainObjectId || mainObjectTag) && !otherObjectId && !otherObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject)) {
         eventMatch = true
         // just check otherObject
       } else if((otherObjectId || otherObjectTag) && !mainObjectId && !mainObjectTag && checkIdOrTagMatch(otherObjectId, otherObjectTag, otherObject)) {
         eventMatch = true
         // check otherObject and object
-      } else if((otherObjectId || otherObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, otherObject) && checkIdOrTagMatch(otherObjectId, otherObjectTag, otherObject)) {
+      } else if((otherObjectId || otherObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject) && checkIdOrTagMatch(otherObjectId, otherObjectTag, otherObject)) {
         eventMatch = true
       }
     }
@@ -210,11 +172,8 @@ function triggerEffectSmart(trigger, owner, mainObject, otherObject) {
     }
   }
 
-
   effects.processEffect(trigger, effected, effector)
 }
-
-
 
 export default {
   onPageLoaded,

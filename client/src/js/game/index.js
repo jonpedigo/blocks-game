@@ -12,6 +12,7 @@ import grid from './grid.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
+import { processSequence } from './sequence'
 
 import './objects'
 import './heros'
@@ -74,6 +75,10 @@ class Game{
         //////////////////////////////
         //////////////////////////////
         //// TIMEOUT
+        GAME.gameState.sequenceQueue.forEach((sequence) => {
+          processSequence(sequence)
+        })
+
         timeouts.onUpdate(delta)
         //////////////////////////////
         //// HEROS
@@ -231,6 +236,7 @@ class Game{
     } else GAME.customInputBehavior = []
 
     if(game.compendium) window.compendium = game.compendium
+
     GAME.defaultHero = game.defaultHero || game.hero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
 
@@ -246,6 +252,7 @@ class Game{
     if(game.gameState && game.gameState.loaded) {
       GAME.gameState = game.gameState
       if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      GAME.gameState.sequenceQueue = []
     } else {
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
@@ -269,6 +276,7 @@ class Game{
 
     // grid
     GAME.world = game.world
+    if(!GAME.world.sequences) GAME.world.sequences = {}
     GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
     GAME.updateGridObstacles()
     GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -699,6 +707,10 @@ class Game{
     }, [])
     GAME.objects = []
     GAME.objectsById = {}
+  }
+
+  addSequence(sequence) {
+    GAME.world.sequences[sequence.id] = sequence
   }
 }
 

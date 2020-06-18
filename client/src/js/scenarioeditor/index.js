@@ -13,7 +13,7 @@ class ScenarioEditor {
     this.ref.open()
   }
 
-  onGameLoaded() {
+  onPageLoaded() {
     const initialProps = {
       ref: ref => SCENARIOEDITOR.ref = ref
     }

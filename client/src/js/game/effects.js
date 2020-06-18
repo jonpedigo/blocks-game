@@ -1,9 +1,49 @@
 import onTalk from './heros/onTalk'
+import { startSequence } from './sequence'
 
-function processEffect(effect, object, effector) {
+  window.triggerEffects = [
+    'remove',
+    'respawn',
+    'destroy',
+    'mutate',
+    // 'goToStarView',
+    'dialogue',
+    // 'emitEvent',
+    'startSequence',
+    // 'morph',
+    // 'coreBehavior',
+    // 'duplicate',
+    // 'talkToHero',
+    // 'heroQuestStart',
+    // 'heroQuestComplete',
+    // 'heroPowerup',
+    // 'spawnPoolIncrement',
+    // 'spawnTotalIncrement',
+    // 'spawnTotalRemove',
+    // 'spawnHold',
+    // 'spawnRelease',
+    // 'spawnToggle',
+    // 'movementToggle',
+    // 'movementRelease',
+    // 'movementHold',
+    // 'timerStart',
+    // 'timerHold',
+    // 'timerRelease',
+    // 'timerToggle',
+    // 'disableTrigger',
+    // 'enableTrigger',
+    // 'toggleTrigger',
+    // 'increaseFacingVelocity',
+    'tagAdd',
+    'tagRemove',
+    'tagToggle',
+    //'emitCustomEvent',
+  ]
+
+function processEffect(effect, effected, effector) {
   const { effectName, effectValue, mutationJSON } = effect
   if(effectName === 'mutate' && mutationJSON) {
-    window.mergeDeep(object, mutationJSON)
+    window.mergeDeep(effected, mutationJSON)
   }
 
   // if(effectName === 'talkToHero' && hero) {
@@ -19,56 +59,64 @@ function processEffect(effect, object, effector) {
   // }
 
   if(effectName === 'dialogue') {
-    object.dialogue = [effectValue]
-    object.flags.showDialogue = true
-    object.flags.paused = true
+    effected.dialogue = [effectValue]
+    effected.flags.showDialogue = true
+    effected.flags.paused = true
     if(effector.name) {
-      object.dialogueName = effector.name
+      effected.dialogueName = effector.name
     } else {
-      object.dialogueName = null
+      effected.dialogueName = null
     }
   }
 
   if(effectName === 'destroy') {
-    object._destroyedBy = effector
-    object._destroy = true
+    effected._destroyedBy = effector
+    effected._destroy = true
   }
 
   if(effectName === 'respawn') {
-    OBJECTS.respawnObject(object)
+    OBJECTS.respawnObject(effected)
   }
   if(effectName === 'remove') {
-    OBJECTS.removeObject(object)
+    OBJECTS.removeObject(effected)
   }
 
   if(effectName === 'spawnTotalIncrement') {
-    object.spawnTotal += effectValue || 1
+    effected.spawnTotal += effectValue || 1
   }
 
   //
   // if(effectName === 'spawnTotalRemove') {
-  //   object.spawnTotal = -1
+  //   effected.spawnTotal = -1
   // }
 
   if(effectName === 'spawnPoolIncrement') {
-    object.spawnPool += effectValue || 1
-    // object.spawnWait=false
-    // if(object.spawnWaitTimerId) delete GAME.timeoutsById[object.spawnWaitTimerId]
+    effected.spawnPool += effectValue || 1
+    // effected.spawnWait=false
+    // if(effected.spawnWaitTimerId) delete GAME.timeoutsById[effected.spawnWaitTimerId]
   }
 
   if(effectName === 'tagAdd') {
     let tag = effectValue
-    object.tags[tag] = false
+    effected.tags[tag] = false
   }
 
   if(effectName === 'tagRemove') {
     let tag = effectValue
-    object.tags[tag] = true
+    effected.tags[tag] = true
   }
 
   if(effectName === 'tagToggle') {
     let tag = effectValue
-    object.tags[tag] = !object.tags[tag]
+    effected.tags[tag] = !effected.tags[tag]
+  }
+
+  if(effectName === 'startSequence') {
+    const context = {
+      mainObject: effected,
+      otherObject: effector,
+    }
+    startSequence(effectValue, context)
   }
 }
 

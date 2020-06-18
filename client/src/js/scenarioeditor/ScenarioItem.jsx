@@ -64,7 +64,7 @@ export default class ScenarioItem extends React.Component{
 
       if(scenarioItem.type === 'dialogue') {
         this.setState({
-          scenarioItem: {...scenarioItem, text: result.value}
+          scenarioItem: {...scenarioItem, effectValue: result.value}
         })
       }
 
@@ -89,7 +89,7 @@ export default class ScenarioItem extends React.Component{
   _addOption() {
     const { scenarioItem } = this.state;
     const newOptions = scenarioItem.options.slice()
-    newOptions.push({ text: '', next: 'sequential' })
+    newOptions.push({ effectValue: '', next: 'sequential' })
     scenarioItem.options = newOptions
     this.setState(scenarioItem)
   }

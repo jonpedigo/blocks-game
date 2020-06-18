@@ -6,6 +6,10 @@
   text-align: center;
 }
 
+.DialogueBox--options {
+  overflow-y: scroll;
+}
+
 .DialogueBox {
   background-color: #19191a;
   font-family: Courier;
@@ -28,6 +32,14 @@
     bottom: 8px;
     right: 8px;
     animation: blinker 1s step-start infinite;
+  }
+
+  &__option {
+    padding: 5px 0px;
+    cursor: pointer;
+    &:hover {
+      background-color: #333;
+    }
   }
 }
 

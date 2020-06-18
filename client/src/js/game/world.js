@@ -19,6 +19,7 @@ function setDefault() {
       storeEntireGameState: false,
       overrideCustomGameCode: false,
     },
+    sequences: {},
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
   }

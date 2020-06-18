@@ -52,6 +52,7 @@ function heroCollisionEffects(hero) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
+    if(body.gameObject.ownerId == hero.id) continue
     if(body.gameObject.removed) continue
     if(heroPO.collides(body, result)) {
       const collider = body.gameObject
@@ -211,6 +212,7 @@ function objectCollisionEffects(po) {
       continue
     }
     if(body.gameObject.removed) continue
+    if(po.gameObject.ownerId === body.gameObject.id) continue
     if(po.collides(body, result)) {
       let collider = body.gameObject
       let agent = po.gameObject
@@ -230,6 +232,7 @@ function objectCollisionEffects(po) {
         }
       }
 
+      // subobjects and construct parts dont collider with their owners
       window.local.emit('onObjectCollide', agent, collider, result)
     }
   }
