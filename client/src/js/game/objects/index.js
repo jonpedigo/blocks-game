@@ -214,7 +214,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, otherObjectId, otherObjectTag, initialPool } = object.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -226,9 +226,9 @@ class Objects{
           subObjectName,
           mainObjectId,
           mainObjectTag,
-          otherObjectId,
-          otherObjectTag,
-          initialPool,
+          guestObjectId,
+          guestObjectTag,
+          initialTriggerPool,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

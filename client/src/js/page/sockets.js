@@ -273,12 +273,12 @@ function init() {
     window.local.emit('onDeleteQuest', heroId, questId)
   })
 
-  window.socket.on('onStartQuest', (hero, questId) => {
-    window.local.emit('onStartQuest', hero, questId)
+  window.socket.on('onHeroStartQuest', (hero, questId) => {
+    window.local.emit('onHeroStartQuest', hero, questId)
   })
 
-  window.socket.on('onCompleteQuest', (hero, questId) => {
-    window.local.emit('onCompleteQuest', hero, questId)
+  window.socket.on('onHeroCompleteQuest', (hero, questId) => {
+    window.local.emit('onHeroCompleteQuest', hero, questId)
   })
 
   window.socket.on('onOpenHeroModal', (hero, modalTitle, modalBody) => {

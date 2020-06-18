@@ -41,7 +41,7 @@ function startSequence(sequenceId, context) {
   }
 
   sequence.mainObject = context.mainObject
-  sequence.otherObject = context.otherObject
+  sequence.guestObject = context.guestObject
   sequence.remoteObject = context.remoteObject
   sequence.currentItemId = sequence.items[0].id
   sequence.itemMap = mapSequenceItems(items)
@@ -54,10 +54,10 @@ function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
 
   let effected = sequence.mainObject
-  let effector = sequence.otherObject
+  let effector = sequence.guestObject
 
   if(item.mainObject) effected = item.mainObject
-  if(item.otherObject) effector = item.otherObject
+  if(item.guestObject) effector = item.guestObject
 
   if(item.type === 'dialogue') {
     item.effectName = 'dialogue'

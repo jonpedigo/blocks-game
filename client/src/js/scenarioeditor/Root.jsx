@@ -101,7 +101,7 @@ export default class Root extends React.Component {
       scenarioItem.failNext = ''
       scenarioItem.passWithOneMatch = false
       scenarioItem.testingMainObject = true
-      scenarioItem.testingOtherObject = false
+      scenarioItem.testingGuestObject = false
       scenarioItem.testingIds = []
       scenarioItem.testingTags = []
     }

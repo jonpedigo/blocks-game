@@ -26,7 +26,7 @@ export default class Root extends React.Component{
       })
     }
 
-    this.onStartQuest = function(hero, questId) {
+    this.onHeroStartQuest = function(hero, questId) {
       const quest = hero.quests[questId]
       if(hero.id === HERO.id && quest) {
         if(quest.startMessage.length) {
@@ -41,7 +41,7 @@ export default class Root extends React.Component{
       }
     }
 
-    this.onCompleteQuest = function(hero, questId) {
+    this.onHeroCompleteQuest = function(hero, questId) {
       const quest = hero.quests[questId]
       if(hero.id === HERO.id && quest) {
         if(quest.completionMessage.length) {

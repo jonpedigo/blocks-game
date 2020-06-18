@@ -168,7 +168,7 @@ export default class ScenarioItem extends React.Component{
         <div className="ScenarioItem__summary ScenarioItem__summary--json">{JSON.stringify(scenarioItem.conditionJSON)}</div>
       </div>
     }
-    
+
     return <div className="ScenarioItem__condition">
           {conditionTypeChooser}
           {chosenConditionForm}

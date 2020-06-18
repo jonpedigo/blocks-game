@@ -114,7 +114,7 @@ function processEffect(effect, effected, effector) {
   if(effectName === 'startSequence') {
     const context = {
       mainObject: effected,
-      otherObject: effector,
+      guestObject: effector,
     }
     startSequence(effectValue, context)
   }

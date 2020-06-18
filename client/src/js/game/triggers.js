@@ -35,27 +35,27 @@ import effects from './effects'
 
 
 function onPageLoaded() {
-  window.triggerEvents = [
-    'onHeroCollide',
-    'onHeroLand',
-    'onHeroInteract',
-    'onHeroDestroyed',
+  window.triggerEvents = {
+    onHeroCollide: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroLand: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroInteract: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroDestroyed: { mainObject: 'hero', guestObject: 'anything', guestObjectOptional: true },
+    onHeroStartQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
+    onHeroCompleteQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
+    onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
+    onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
+    onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
+    onStartGame: { mainObject: null, guestObject: null },
+  }
     // 'onHeroChooseOption',
     // 'OnObjectSpawn',
-    'onObjectDestroyed',
-    'onObjectCollide',
-    'onObjectInteractable',
     // 'onNoticeHero',
     // 'onNoticeObject'
     // 'onObjectNoticed',
     // 'onHeroNoticed,
-    'onQuestStart',
-    'onQuestComplete',
     // 'onQuestFail',
     // 'onObjectAwake',
     // 'OnTimerEnd',
-    'onStartGame',
-  ]
 }
 
 function checkIdOrTagMatch(id, tag, object) {
@@ -72,53 +72,52 @@ function deleteTrigger(object, triggerId) {
   delete object.triggers[triggerId]
 }
 
-function addTrigger(owner, trigger) {
+function addTrigger(ownerObject, trigger) {
   const eventName = trigger.eventName
-  trigger.triggerPool = trigger.triggerPoolInitial
 
-  if(!owner.triggers) owner.triggers = {}
+  if(!ownerObject.triggers) ownerObject.triggers = {}
 
-  owner.triggers[trigger.id] = trigger
-  Object.assign(owner.triggers[trigger.id], {
-    pool: trigger.initialPool || 1,
+  ownerObject.triggers[trigger.id] = trigger
+  Object.assign(ownerObject.triggers[trigger.id], {
+    triggerPool: trigger.initialTriggerPool || 1,
     eventCount: 0,
     disabled: false,
   })
 
-  owner.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, otherObject) => {
-    let fx = () => triggerEffectSmart(trigger, owner, mainObject, otherObject)
+  ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
+    let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
     let eventMatch = false
 
-    let { mainObjectId, mainObjectTag, otherObjectId, otherObjectTag } = trigger
+    let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = trigger
 
-    // the code below attempts to automatically determine the main object or the other object
+    // the code below attempts to automatically determine the main object or the guest object
     // based on the name of the event
-    if(owner.tags.hero) {
-      if(!otherObjectId && !otherObjectTag && eventName.indexOf('Object') >= 0) {
-        otherObjectId = owner.id
+    if(ownerObject.tags.hero) {
+      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Object') >= 0) {
+        guestObjectId = ownerObject.id
       }
       if(!mainObjectId && !mainObjectTag && eventName.indexOf('Hero') >= 0) {
-        mainObjectId = owner.id
+        mainObjectId = ownerObject.id
       }
     } else {
       if(!mainObjectId && !mainObjectTag && eventName.indexOf('Object') >= 0) {
-        mainObjectId = owner.id
+        mainObjectId = ownerObject.id
       }
-      if(!otherObjectId && !otherObjectTag && eventName.indexOf('Hero') >= 0) {
-        otherObjectId = owner.id
+      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Hero') >= 0) {
+        guestObjectId = ownerObject.id
       }
     }
 
-    // now that we have potential main/others object ids/tags, we try to match them with the REAL main/other objects from the event
+    // now that we have potential main/guests object ids/tags, we try to match them with the REAL main/guest objects from the event
     if(eventName.indexOf('Object') >= 0 || eventName.indexOf('Hero') >= 0) {
       // just check object
-      if((mainObjectId || mainObjectTag) && !otherObjectId && !otherObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject)) {
+      if((mainObjectId || mainObjectTag) && !guestObjectId && !guestObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject)) {
         eventMatch = true
-        // just check otherObject
-      } else if((otherObjectId || otherObjectTag) && !mainObjectId && !mainObjectTag && checkIdOrTagMatch(otherObjectId, otherObjectTag, otherObject)) {
+        // just check guestObject
+      } else if((guestObjectId || guestObjectTag) && !mainObjectId && !mainObjectTag && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
         eventMatch = true
-        // check otherObject and object
-      } else if((otherObjectId || otherObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject) && checkIdOrTagMatch(otherObjectId, otherObjectTag, otherObject)) {
+        // check guestObject and object
+      } else if((guestObjectId || guestObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject) && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
         eventMatch = true
       }
     }
@@ -128,49 +127,67 @@ function addTrigger(owner, trigger) {
     }
 
     if(eventMatch) {
-      if(trigger.pool == 0) return
+      if(trigger.triggerPool == 0) return
       trigger.eventCount++
       if(!trigger.eventThreshold) {
         fx()
-        if(trigger.pool > 0) trigger.pool--
+        if(trigger.triggerPool > 0) trigger.triggerPool--
       } else if(trigger.eventCount >= trigger.eventThreshold) {
         fx()
-        if(trigger.pool > 0) trigger.pool--
+        if(trigger.triggerPool > 0) trigger.triggerPool--
       }
     }
   })
 }
 
-function triggerEffectSmart(trigger, owner, mainObject, otherObject) {
+function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
   const { effectName, effectValue } = trigger
 
-  // when the trigger is remote, the main object will not be the owner, it will be another remote object
-  let effected = owner
-  let effector = otherObject
+  // the default effected is the ownerObject of the trigger
+  let effected
+  let effector
 
-  // the default effected is the owner of the trigger
-  // this finds if the owner is the mainObject or the otherObject
-  // the remaining one will be the effector
-  if(mainObject && otherObject && mainObject.id === owner.id) {
-    effector = otherObject
+  if(trigger.effectedObject === 'ownerObject') {
+    effected = ownerObject
+  } else if(trigger.effectedObject === 'mainObject') {
+    effected = mainObject
+  } else if(trigger.effectedObject === 'guestObject') {
+    effected = guestObject
+  } else {
+    effected = ownerObject
   }
-  if(mainObject && otherObject && otherObject.id === owner.id) {
+
+  if(trigger.effectorObject === 'ownerObject') {
+    effector = ownerObject
+  } else if(trigger.effectorObject === 'mainObject') {
     effector = mainObject
+  } else if(trigger.effectorObject === 'guestObject') {
+    effector = guestObject
+  // this finds if the effected is the mainObject or the guestObject
+  // the non effected one will be the effector
+  } else if(mainObject && guestObject && mainObject.id === effected.id) {
+    effector = guestObject
+  } else if(mainObject && guestObject && guestObject.id === effected.id) {
+    effector = mainObject
+  } else {
+    // if the ownerObject is neither, this object is remote
+    // we use the default effector, the guest object
+    effector = guestObject
   }
 
   // every thing else below could be considered a 'smart trigger effect'
   // if its a ddialogue effect its only for heros and therefore we can bypass the default plan
-  if(true || trigger.smart) {
-    if(effectName === 'dialogue') {
-      if(mainObject.tags.hero) {
-        effected = mainObject
-        effector = otherObject
-      } else if(otherObject.tags.hero) {
-        effected = otherObject
-        effector = mainObject
-      }
-    }
-  }
+  // if(true || trigger.smart) {
+  //   if(effectName === 'dialogue') {
+  //     if(mainObject.tags.hero) {
+  //       effected = mainObject
+  //       effector = guestObject
+  //     } else if(guestObject.tags.hero) {
+  //       effected = guestObject
+  //       effector = mainObject
+  //     }
+  //   }
+  // }
 
   effects.processEffect(trigger, effected, effector)
 }

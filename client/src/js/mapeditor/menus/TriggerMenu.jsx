@@ -60,7 +60,7 @@ export default class TriggerMenu extends React.Component{
 
     const items = []
 
-    window.triggerEvents.forEach((eventName) => {
+    Object.keys(window.triggerEvents).forEach((eventName) => {
       items.push(<SubMenu key={eventName} title={eventName}>
           <MenuItem key={JSON.stringify({eventName, action: 'add'})}>Add Effect</MenuItem>
           {this._renderEventEffects(eventName)}

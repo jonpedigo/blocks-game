@@ -47,12 +47,12 @@ class PlayerUI {
     }
   }
 
-  onStartQuest(hero, questId) {
-    PLAYERUI.ref.onStartQuest(hero, questId)
+  onHeroStartQuest(hero, questId) {
+    PLAYERUI.ref.onHeroStartQuest(hero, questId)
   }
 
-  onCompleteQuest(hero, questId) {
-    PLAYERUI.ref.onCompleteQuest(hero, questId)
+  onHeroCompleteQuest(hero, questId) {
+    PLAYERUI.ref.onHeroCompleteQuest(hero, questId)
   }
 }
 

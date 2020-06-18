@@ -19,11 +19,13 @@ function editTrigger(owner, trigger) {
     const effectValue = value[1]
     const mainObjectTag = value[2]
     const mainObjectId = value[3]
-    const otherObjectTag = value[4]
-    const otherObjectId = value[5]
+    const guestObjectTag = value[4]
+    const guestObjectId = value[5]
     const subObjectName = value[6]
-    const initialPool = Number(value[7])
+    const initialTriggerPool = Number(value[7])
     const eventThreshold = Number(value[8])
+    const effectedObject = value[9]
+    const effectorObject = value[10]
 
     const triggerUpdate = {
       id,
@@ -31,10 +33,12 @@ function editTrigger(owner, trigger) {
       subObjectName,
       mainObjectTag,
       mainObjectId,
-      otherObjectTag,
-      otherObjectId,
-      initialPool,
-      eventThreshold
+      guestObjectTag,
+      guestObjectId,
+      initialTriggerPool,
+      eventThreshold,
+      effectedObject,
+      effectorObject,
     }
     window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
     //TODO: MAKE SURE THIS REMOVES EMPTY PROPERTIES!!
@@ -354,7 +358,7 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
 }
 
 function openTriggerModal(trigger, cb) {
-  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', otherObjectId: '', otherObjectTag: '', initialPool: 1, eventThreshold: -1}, trigger)
+  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'guestObject', effectorObject: "auto"}, trigger)
   Swal.fire({
     title: 'Trigger Editor',
     showClass: {
@@ -367,22 +371,35 @@ function openTriggerModal(trigger, cb) {
     <div class='swal-modal-input-label'>Effect Value</div><input class='swal-modal-input' id='effect-value' value='${newTrigger.effectValue}'>
     <div class='swal-modal-input-label'>Main Object Tag</div><input class='swal-modal-input' id='main-object-tag' value='${newTrigger.mainObjectTag}'>
     <div class='swal-modal-input-label'>Main Object Id</div><input class='swal-modal-input' id='main-object-id' value='${newTrigger.mainObjectId}'>
-    <div class='swal-modal-input-label'>Other Object Tag</div><input class='swal-modal-input' id='other-object-tag' value='${newTrigger.otherObjectTag}'>
-    <div class='swal-modal-input-label'>Other Object Id</div><input class='swal-modal-input' id='other-object-id' value='${newTrigger.otherObjectId}'>
+    <div class='swal-modal-input-label'>Guest Object Tag</div><input class='swal-modal-input' id='guest-object-tag' value='${newTrigger.guestObjectTag}'>
+    <div class='swal-modal-input-label'>Guest Object Id</div><input class='swal-modal-input' id='guest-object-id' value='${newTrigger.guestObjectId}'>
     <div class='swal-modal-input-label'>Sub Object Name</div><input class='swal-modal-input' id='sub-object-name' value='${newTrigger.subObjectName}'>
-    <div class='swal-modal-input-label'>Initial Pool</div><input type="number" class='swal-modal-input' id='initial-pool' value='${newTrigger.initialPool}'>
-    <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>`,
+    <div class='swal-modal-input-label'>Trigger Pool</div><input type="number" class='swal-modal-input' id='initial-trigger-pool' value='${newTrigger.initialTriggerPool}'>
+    <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>
+    <div class='swal-modal-input-label'>Effected</div><select id='effected-object' class='swal-modal-input' value='${newTrigger.effectedObject}'>
+      <option value="ownerObject">Owner Object</option>
+      <option value="mainObject">Main Object</option>
+      <option value="guestObject">Guest Object</option>
+    </select>
+    <div class='swal-modal-input-label'>Effector</div><select class='swal-modal-input' id='effector-object' value='${newTrigger.effectorObject}'>
+      <option value="auto">Auto</option>
+      <option value="ownerObject">Owner Object</option>
+      <option value="mainObject">Main Object</option>
+      <option value="guestObject">Guest Object</option>
+    </select>`,
     preConfirm: (result) => {
       return [
         document.getElementById('trigger-id').value,
         document.getElementById('effect-value').value,
         document.getElementById('main-object-tag').value,
         document.getElementById('main-object-id').value,
-        document.getElementById('other-object-tag').value,
-        document.getElementById('other-object-id').value,
+        document.getElementById('guest-object-tag').value,
+        document.getElementById('guest-object-id').value,
         document.getElementById('sub-object-name').value,
-        document.getElementById('initial-pool').value,
+        document.getElementById('initial-trigger-pool').value,
         document.getElementById('event-threshold').value,
+        document.getElementById('effector-object').value,
+        document.getElementById('effected-object').value,
       ]
     }
   }).then(cb)
