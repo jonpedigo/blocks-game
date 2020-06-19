@@ -1,6 +1,21 @@
 import onTalk from './heros/onTalk'
 import { startSequence } from './sequence'
 
+  // { effectName: remove, anything: true, hero: false, object: false, world: false, spawnZone: false, timer: false
+  //allowed: [anything, hero, object, world, spawnZone, timer]
+  // requirements: {
+  // effector: false,
+  // position: false,
+  // JSON: false,
+  // effectValue: false,
+  // tag: false,
+  // eventName: false,
+  // id: false,
+  // number: false,
+  // smallText: false,
+  // largeText: false
+  //}
+ //}
   window.triggerEffects = [
     'remove',
     'respawn',
@@ -34,6 +49,8 @@ import { startSequence } from './sequence'
     // 'enableTrigger',
     // 'toggleTrigger',
     // 'increaseFacingVelocity',
+    // 'pathfindTo',
+    // 'moveTo',
     'tagAdd',
     'tagRemove',
     'tagToggle',
