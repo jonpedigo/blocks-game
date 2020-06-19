@@ -86,7 +86,8 @@ window.removeFalsey = function(object, removeFalse) {
 
 window.removeProps = function(object, options) {
   Object.keys(object).forEach((key) => {
-    if((object[key] === false && options.false) || (object[key] === null && options.null) || (object[key] === undefined && options.undefined) || (object[key] == '' && options.empty) || (object[key] == [] && options.empty)) {
+    if((object[key] === false && options.false) || (object[key] === null && options.null) || (object[key] === undefined && options.undefined) || (object[key] === '' && options.empty) || (object[key] === [] && options.empty)) {
+      console.log('delete', key)
       delete object[key]
     }
   })

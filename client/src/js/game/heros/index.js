@@ -399,7 +399,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool } = hero.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedObject } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -414,6 +414,8 @@ class Hero{
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
+          effectedObject,
+          effectorObject,
         }
 
         window.removeFalsey(properties.triggers[triggerId])
@@ -480,14 +482,14 @@ class Hero{
     HERO.respawn(GAME.heros[hero.id])
   }
 
-  addHero(hero) {
+  addHero(hero, options = {}) {
     GAME.heros[hero.id] = hero
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         OBJECTS.addSubObject(hero, subObject, subObjectName)
       })
     }
-    if(hero.triggers) {
+    if(!options.skipEventListeners && hero.triggers) {
       Object.keys(hero.triggers).forEach((triggerId) => {
         const trigger = hero.triggers[triggerId]
         triggers.addTrigger(hero, trigger)
@@ -516,6 +518,12 @@ class Hero{
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         OBJECTS.deleteSubObject(hero, subObject, subObjectName)
+      })
+    }
+
+    if(hero.triggers) {
+      Object.keys(hero.triggers).forEach((triggerId) => {
+        triggers.removeTriggerEventListener(hero, triggerId)
       })
     }
 

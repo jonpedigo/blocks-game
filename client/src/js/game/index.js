@@ -187,7 +187,7 @@ class Game{
   }
 
   onHeroJoinedGame(hero) {
-    HERO.addHero(hero)
+    HERO.addHero(hero, { skipEventListeners: true })
     if(hero.id == HERO.id) {
       window.local.emit('onHeroFound', hero)
     }
@@ -328,6 +328,12 @@ class Game{
     GAME.heroList.forEach(({id}) => {
       let hero = GAME.heros[id]
       HERO.deleteHero(hero)
+    })
+
+    GAME.gameState.sequenceQueue.forEach((sequence) => {
+      sequence.eventListeners.forEach((remove) => {
+        remove()
+      })
     })
 
     GAME.gameState = null

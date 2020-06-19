@@ -72,6 +72,10 @@ function deleteTrigger(object, triggerId) {
   delete object.triggers[triggerId]
 }
 
+function removeTriggerEventListener(object, triggerId) {
+  object.triggers[triggerId].removeEventListener()
+}
+
 function addTrigger(ownerObject, trigger) {
   const eventName = trigger.eventName
 
@@ -196,4 +200,5 @@ export default {
   onPageLoaded,
   addTrigger,
   deleteTrigger,
+  removeTriggerEventListener,
 }

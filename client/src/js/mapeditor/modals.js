@@ -44,13 +44,12 @@ function editTrigger(owner, trigger) {
     //TODO: MAKE SURE THIS REMOVES EMPTY PROPERTIES!!
 
     const oldId = trigger.id
-    Object.assign(trigger, triggerUpdate)
 
     triggerUpdate.mutationJSON = trigger.mutationJSON
     triggerUpdate.eventName = trigger.eventName
     triggerUpdate.effectName = trigger.effectName
 
-    window.socket.emit('editTrigger', owner.id, oldId, trigger)
+    window.socket.emit('editTrigger', owner.id, oldId, triggerUpdate)
     PAGE.typingMode = false
   })
 }
@@ -251,7 +250,6 @@ function addCustomInputBehavior(behaviorProp) {
         behaviorProp,
         behaviorName: result.value,
       }
-      console.log(result.value, behaviorProp)
       window.socket.emit('updateGameCustomInputBehavior', [...GAME.customInputBehavior, behaviorObject])
     }
   })

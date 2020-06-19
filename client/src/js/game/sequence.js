@@ -44,6 +44,7 @@ function startSequence(sequenceId, context) {
   sequence.guestObject = context.guestObject
   sequence.remoteObject = context.remoteObject
   sequence.currentItemId = sequence.items[0].id
+  sequence.eventListeners = []
   sequence.itemMap = mapSequenceItems(items)
   delete sequence.items
 
@@ -86,6 +87,7 @@ function processSequence(sequence) {
         }
       }
     })
+    sequence.eventListeners.push(removeEventListener)
   }
 
   if(item.next === 'end') {

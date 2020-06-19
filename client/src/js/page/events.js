@@ -9,8 +9,10 @@ class EventEmitter {
   }
 
   emit(eventName, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
-    let event = this.events[eventName];
-    if(!event) event = []
+    let event
+    if(this.events[eventName]) {
+      event = this.events[eventName].slice()
+    } else event = []
 
     if(!this.mockSocket) {
       if(eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
@@ -119,7 +121,9 @@ class EventEmitter {
     this.events[eventName].push(fn);
 
     return () => {
-      this.events[eventName] = this.events[eventName].filter(eventFn => fn !== eventFn);
+      this.events[eventName] = this.events[eventName].filter(eventFn => {
+        return fn !== eventFn
+      });
     }
   }
 }

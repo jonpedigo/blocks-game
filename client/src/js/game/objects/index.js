@@ -214,7 +214,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool } = object.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedObject } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -229,6 +229,8 @@ class Objects{
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
+          effectorObject,
+          effectedObject,
         }
 
         window.removeFalsey(properties.triggers[triggerId])
@@ -522,6 +524,13 @@ class Objects{
 
     owner.subObjects[subObjectName] = subObject
     if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.addObject(subObject)
+
+    if(subObject.triggers) {
+      Object.keys(subObject.triggers).forEach((triggerId) => {
+        const trigger = subObject.triggers[triggerId]
+        triggers.addTrigger(subObject, trigger)
+      })
+    }
   }
 
   deleteSubObject(owner, subObject, subObjectName) {
@@ -577,6 +586,11 @@ class Objects{
     } else {
       PHYSICS.removeObject(object)
     }
+    if(object.triggers) {
+      Object.keys(object.triggers).forEach((triggerId) => {
+        triggers.removeTriggerEventListener(object, triggerId)
+      })
+    }
   }
 
   deleteObject(object) {
@@ -604,6 +618,12 @@ class Objects{
       OBJECTS.deleteSubObject(GAME.heros[owner.id], subObject, subObjectName)
     } else {
       OBJECTS.deleteSubObject(GAME.objectsById[owner.id], subObject, subObjectName)
+    }
+
+    if(subObject.triggers) {
+      Object.keys(subObject.triggers).forEach((triggerId) => {
+        triggers.removeTriggerEventListener(object, triggerId)
+      })
     }
   }
 
