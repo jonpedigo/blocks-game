@@ -27,6 +27,7 @@ class Objects{
 
   onGameLoaded() {
     window.defaultObject.tags = window.tags
+    window.mergeDeep(window.defaultObject.tags, window.plainObjectTags)
   }
 
   onObjectCollide(agent, collider, result) {
@@ -214,7 +215,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, mutationJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedObject } = object.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, effectJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedObject } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -222,7 +223,7 @@ class Objects{
           effectName,
           effectValue,
           eventThreshold,
-          mutationJSON,
+          effectJSON,
           subObjectName,
           mainObjectId,
           mainObjectTag,
@@ -350,11 +351,11 @@ class Objects{
     let alertAboutCollision
     let hasBeenWarned = false
 
-    objects = objects.map((newObject, i) => {
+    objects = objects.map((newObject) => {
       newObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultObject)), newObject)
 
       if(!newObject.id){
-        newObject.id = 'object-' + window.uniqueID() + '-' + i;
+        newObject.id = 'object-' + window.uniqueID();
       }
 
       if(newObject.compendiumId) {

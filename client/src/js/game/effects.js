@@ -25,13 +25,15 @@ import { startSequence } from './sequence'
     'dialogue',
     // 'emitEvent',
     'startSequence',
+    // 'disableSequence'
+    // 'enableSequence'
     // 'morph',
     // 'coreBehavior',
     // 'duplicate',
     // 'talkToHero',
     // 'heroQuestStart',
     // 'heroQuestComplete',
-    // 'heroPowerup',
+    // 'heroMod',
     // 'spawnPoolIncrement',
     // 'spawnTotalIncrement',
     // 'spawnTotalRemove',
@@ -45,22 +47,33 @@ import { startSequence } from './sequence'
     // 'timerHold',
     // 'timerRelease',
     // 'timerToggle',
-    // 'disableTrigger',
-    // 'enableTrigger',
-    // 'toggleTrigger',
-    // 'increaseFacingVelocity',
+    // 'triggerDisable',
+    // 'triggerEnable',
+    // 'triggerToggle',
+    // 'increaseInputDirectionVelocity',
+    // 'increaseMovementDirectionVelocity',
     // 'pathfindTo',
     // 'moveTo',
+    // 'attachToEffectorAsParent'
+    // 'attachToEffectorAsRelative'
     'tagAdd',
     'tagRemove',
     'tagToggle',
     //'emitCustomEvent',
+    // skipHeroGravity
+    // skipHeroPosUpdate
   ]
 
+  // — speed up hero
+  // — slow down hero
+  // — increase speed parameter
+  // — decrease speed parameter
+  // stop player (velocity)
+
 function processEffect(effect, effected, effector) {
-  const { effectName, effectValue, mutationJSON } = effect
-  if(effectName === 'mutate' && mutationJSON) {
-    window.mergeDeep(effected, mutationJSON)
+  const { effectName, effectValue, effectJSON } = effect
+  if(effectName === 'mutate' && effectJSON) {
+    window.mergeDeep(effected, effectJSON)
   }
 
   // if(effectName === 'talkToHero' && hero) {
@@ -76,13 +89,17 @@ function processEffect(effect, effected, effector) {
   // }
 
   if(effectName === 'dialogue') {
-    effected.dialogue = [effectValue]
-    effected.flags.showDialogue = true
-    effected.flags.paused = true
-    if(effector.name) {
-      effected.dialogueName = effector.name
+    if(effected.tags.hero) {
+      effected.dialogue = [effectValue]
+      effected.flags.showDialogue = true
+      effected.flags.paused = true
+      if(effector.name) {
+        effected.dialogueName = effector.name
+      } else {
+        effected.dialogueName = null
+      }
     } else {
-      effected.dialogueName = null
+      console.log('cannot dialogue effect non hero')
     }
   }
 

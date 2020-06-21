@@ -88,6 +88,12 @@ function setDefault() {
     inputDirectionSprites: false,
   }
 
+  window.descriptiveTags = {
+    fresh: false,
+    spawned: false,
+    removed: false,
+  }
+
   window.defaultTags = {
     ...window.physicsTags,
     ...window.spawnZoneTags,
@@ -99,7 +105,11 @@ function setDefault() {
     ...window.questTags,
     ...window.movementTags,
     ...window.graphicalTags,
-    fresh: false,
+    ...window.descriptiveTags,
+  }
+
+  window.plainObjectTags = {
+    plain: true,
   }
 
   window.heroTags = {
@@ -126,6 +136,13 @@ function setDefault() {
   }
 
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))
+
+  window.allTags = {
+    ...window.tags,
+    ...window.keyInputTags,
+    ...window.heroTags,
+    ...window.subObjectTags,
+  }
 }
 
 function addGameTags(tags) {

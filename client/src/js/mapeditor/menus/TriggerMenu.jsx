@@ -24,8 +24,8 @@ export default class TriggerMenu extends React.Component{
         window.socket.emit('deleteTrigger', objectSelected.id, data.trigger.id)
       }
 
-      if(data.action === 'editMutationJSON') {
-        modals.editMutationJSON(objectSelected, data.trigger)
+      if(data.action === 'editEffectJSON') {
+        modals.editEffectJSON(objectSelected, data.trigger)
       }
     }
   }
@@ -47,7 +47,7 @@ export default class TriggerMenu extends React.Component{
           <MenuItem key={JSON.stringify({action: 'delete', trigger})}>{`Delete ${trigger.effectName}`}</MenuItem>)
 
         if(trigger.effectName === 'mutate') {
-          items.push(<MenuItem key={JSON.stringify({action: 'editMutationJSON', trigger})}>{`Edit mutation JSON`}</MenuItem>)
+          items.push(<MenuItem key={JSON.stringify({action: 'editEffectJSON', trigger})}>{`Edit Effect JSON`}</MenuItem>)
         }
       }
     })

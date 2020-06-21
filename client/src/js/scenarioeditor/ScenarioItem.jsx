@@ -5,12 +5,14 @@ import Select from 'react-select';
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },
   { value: 'end', label: 'End Scenario' },
+  { value: 'disable', label: 'Disable Scenario' },
 ];
 
 const conditionTypeOptions = [
   { value: 'matchJSON', label: 'matchJSON' },
   { value: 'inArea', label: 'inArea' },
   { value: 'hasTag', label: 'hasTag' },
+  { value: 'hasMod', label: 'hasMod' },
 ]
 
 export default class ScenarioItem extends React.Component{
@@ -25,6 +27,9 @@ export default class ScenarioItem extends React.Component{
 
     this._selectNext = this._selectNext.bind(this)
     this._addOption = this._addOption.bind(this)
+    this._onAddConditionTestId = this._onAddConditionTestId.bind(this)
+    this._onAddConditionTestTag = this._onAddConditionTestTag.bind(this)
+    this._onToggleValue = this._onToggleValue.bind(this)
     this._openWriteDialogueModal = this._openWriteDialogueModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
@@ -122,6 +127,24 @@ export default class ScenarioItem extends React.Component{
     this.setState(scenarioItem)
   }
 
+  _onAddConditionTestId(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.testIds = event.map(({value}) => value)
+    this.setState(scenarioItem)
+  }
+
+  _onAddConditionTestTag(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.testTags = event.map(({value}) => value)
+    this.setState(scenarioItem)
+  }
+
+  _onToggleValue(value) {
+    const { scenarioItem } = this.state;
+    scenarioItem[value] = !scenarioItem[value]
+    this.setState(scenarioItem)
+  }
+
   _renderDialogue() {
     const { scenarioItem } = this.state;
     return <div className="ScenarioItem__dialogue">
@@ -169,9 +192,34 @@ export default class ScenarioItem extends React.Component{
       </div>
     }
 
+    const selectConditionTestIds = <div className="ScenarioItem__test">Test Ids:<Select
+      value={scenarioItem.testIds.map((id) => { return {value: id, label: id} })}
+      onChange={this._onAddConditionTestId}
+      options={GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))}
+      styles={window.reactSelectStyle}
+      isMulti
+      theme={window.reactSelectTheme}/>
+    </div>
+
+    const selectConditionTestTags = <div className="ScenarioItem__test">Test Tags:<Select
+      value={scenarioItem.testTags.map((tags) => { return { value: tags, label: tags} })}
+      onChange={this._onAddConditionTestTag}
+      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
+      styles={window.reactSelectStyle}
+      isMulti
+      theme={window.reactSelectTheme}/>
+    </div>
+
     return <div className="ScenarioItem__condition">
           {conditionTypeChooser}
-          {chosenConditionForm}
+          <div className="ScenarioItem__condition-body">
+            {chosenConditionForm}
+            <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('testMainObject')} value={scenarioItem.testMainObject} type="checkbox"></input>Test Main Object</div>
+            <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('testGuestObject')} value={scenarioItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
+            {selectConditionTestIds}
+            {selectConditionTestTags}
+            <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('allTestedMustPass')} value={scenarioItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
+          </div>
           {this._renderNextSelect(scenarioItem.passNext, (event) => {
             this._selectNext(event, 'passNext')
           }, 'Pass Next:')}

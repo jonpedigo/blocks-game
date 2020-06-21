@@ -98,6 +98,19 @@
     background-color:#222;
   }
 
+  &__condition-input {
+    input {
+      margin-left: 0;
+    }
+    display: block;
+    margin: 15px 0px;
+  }
+
+  &__condition-body {
+    background-color:#222;
+    margin-bottom: 40px;
+  }
+
   &__text-input {
     background-color: #19191a;
     color: white;
@@ -106,9 +119,9 @@
     font-size: 22px;
   }
 
-  &__next {
+  &__tester, &__next {
     width: 220px;
-    display: 'inline-block';
+    display: inline-block;
   }
 
   &:last-child {

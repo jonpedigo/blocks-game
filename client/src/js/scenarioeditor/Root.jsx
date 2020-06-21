@@ -33,12 +33,7 @@ export default class Root extends React.Component {
     this.state = {
       open: false,
       scenario: {
-        items: [
-        {id: 'a', type: 'dialogue', effectValue: 'hello', next: 'sequential'},
-        {id: 'b', type: 'branchChoice', options: [
-                  { effectValue: '', next: 'sequential' }
-                ]},
-        ],
+        items: [],
         pauseGame: false,
         id: 'scenario-' + window.uniqueID(),
       },
@@ -75,6 +70,8 @@ export default class Root extends React.Component {
   _findNextId() {
     const { scenario } = this.state
 
+    if(scenario.items.length == 0) return alphaarray[0]
+
     let largestIndex = 0
     scenario.items.forEach((item) => {
       let index = alphaarray.indexOf(item.id)
@@ -96,14 +93,14 @@ export default class Root extends React.Component {
     }
     if(selectedType === 'branchCondition') {
       scenarioItem.conditionJSON = {}
-      scenarioItem.conditionType = 'matchJSON' // 'inArea', 'duringTime', 'hasTag'
-      scenarioItem.passNext = ''
-      scenarioItem.failNext = ''
-      scenarioItem.passWithOneMatch = false
-      scenarioItem.testingMainObject = true
-      scenarioItem.testingGuestObject = false
-      scenarioItem.testingIds = []
-      scenarioItem.testingTags = []
+      scenarioItem.conditionType = 'matchJSON' // 'insideOfObjectWithTag', 'duringTime', 'hasTag', 'hasSubObjectWithName'
+      scenarioItem.allTestedMustPass = false
+      scenarioItem.testMainObject = false
+      scenarioItem.testGuestObject = false
+      scenarioItem.testIds = []
+      scenarioItem.testTags = []
+      scenarioItem.passNext = 'sequential'
+      scenarioItem.failNext = 'sequential'
     }
     if(selectedType === 'branchChoice') {
       scenarioItem.options = [

@@ -16,7 +16,7 @@ import effects from './effects'
  effect
  {
   subjects: [] // subject, object, tag, id
-  effects: [] // effect name + effect value + mutationJSON + other such as revert option
+  effects: [] // effect name + effect value + effectJSON + other such as revert option
  }
 */
 
@@ -49,13 +49,19 @@ function onPageLoaded() {
   }
     // 'onHeroChooseOption',
     // 'OnObjectSpawn',
-    // 'onNoticeHero',
-    // 'onNoticeObject'
     // 'onObjectNoticed',
+    // 'onObjectNotice',
+    // 'onHeroCanInteract'
     // 'onHeroNoticed,
+    // 'onHeroNotice,
     // 'onQuestFail',
     // 'onObjectAwake',
-    // 'OnTimerEnd',
+    // 'onTimerEnd',
+    // 'onHeroEnter'
+    // 'onObjectEnter'
+    // 'onHeroLeave'
+    // 'onObjectLeave'
+    // 'onUpdate' -> for sequences with conditions
 }
 
 function checkIdOrTagMatch(id, tag, object) {

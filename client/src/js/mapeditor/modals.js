@@ -45,7 +45,7 @@ function editTrigger(owner, trigger) {
 
     const oldId = trigger.id
 
-    triggerUpdate.mutationJSON = trigger.mutationJSON
+    triggerUpdate.effectJSON = trigger.effectJSON
     triggerUpdate.eventName = trigger.eventName
     triggerUpdate.effectName = trigger.effectName
 
@@ -64,12 +64,12 @@ function addNewSubObject(owner) {
   })
 }
 
-function editMutationJSON(owner, trigger) {
+function editEffectJSON(owner, trigger) {
   PAGE.typingMode = true
-  openEditCodeModal('Edit Mutation JSON', trigger.mutationJSON || {}, (result) => {
+  openEditCodeModal('Edit Effect JSON', trigger.effectJSON || {}, (result) => {
     if(result && result.value) {
       const editedCode = JSON.parse(result.value)
-      trigger.mutationJSON = editedCode
+      trigger.effectJSON = editedCode
       window.socket.emit('editTrigger', owner.id, trigger.id, trigger)
     }
     PAGE.typingMode = false
@@ -357,6 +357,8 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
 
 function openTriggerModal(trigger, cb) {
   const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'guestObject', effectorObject: "auto"}, trigger)
+
+  console.log(trigger, newTrigger)
   Swal.fire({
     title: 'Trigger Editor',
     showClass: {
@@ -396,11 +398,14 @@ function openTriggerModal(trigger, cb) {
         document.getElementById('sub-object-name').value,
         document.getElementById('initial-trigger-pool').value,
         document.getElementById('event-threshold').value,
-        document.getElementById('effector-object').value,
         document.getElementById('effected-object').value,
+        document.getElementById('effector-object').value,
       ]
     }
   }).then(cb)
+
+  document.getElementById('effected-object').value = trigger.effectedObject
+  document.getElementById('effector-object').value = trigger.effectorObject
 }
 
 function openEditTextModal(property, currentValue, cb) {
@@ -447,7 +452,7 @@ export default {
   editProperty,
   editPropertyNumber,
   editQuest,
-  editMutationJSON,
+  editEffectJSON,
   writeDialogue,
   nameObject,
   openEditCodeModal,
