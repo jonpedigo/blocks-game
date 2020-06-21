@@ -89,6 +89,7 @@ function processEffect(effect, effected, effector) {
   // }
 
   if(effectName === 'dialogue') {
+    console.log(effect, effected, effector)
     if(effected.tags.hero) {
       effected.dialogue = [effectValue]
       effected.flags.showDialogue = true

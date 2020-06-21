@@ -94,6 +94,7 @@ export default class Root extends React.Component {
     if(selectedType === 'branchCondition') {
       scenarioItem.conditionJSON = {}
       scenarioItem.conditionType = 'matchJSON' // 'insideOfObjectWithTag', 'duringTime', 'hasTag', 'hasSubObjectWithName'
+      scenarioItem.conditionValue = ''
       scenarioItem.allTestedMustPass = false
       scenarioItem.testMainObject = false
       scenarioItem.testGuestObject = false

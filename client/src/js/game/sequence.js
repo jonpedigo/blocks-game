@@ -1,5 +1,19 @@
 import effects from './effects'
+import collisions from '../utils/collisions'
 import _ from 'lodash'
+
+function endSequence(sequence) {
+  const { pauseGame, items } = sequence
+
+  if(pauseGame) {
+    GAME.gameState.paused = false
+  }
+
+  GAME.gameState.sequenceQueue = GAME.gameState.sequenceQueue.filter((s) => {
+    if(s.id === sequence.id) return false
+    return true
+  })
+}
 
 function mapSequenceItems(sequenceItems) {
   return sequenceItems.slice().reduce((map, item, index) => {
@@ -156,12 +170,122 @@ function processSequence(sequence) {
           return testMatchJSONCondition(conditionJSON, testObject)
         })
       }
+    }
 
-      if(pass) {
-        sequence.currentItemId = item.passNext
-      } else {
-        sequence.currentItemId = item.failNext
+    if(item.conditionType === 'insideOfObjectWithTag') {
+      const tag = item.conditionValue
+
+      let areaObjects = []
+      if(GAME.objectsByTag[tag]) {
+        areaObjects = areaObjects.concat(GAME.objectsByTag[tag])
       }
+      if(GAME.herosByTag[tag]) {
+        areaObjects = areaObjects.concat(GAME.herosByTag[tag])
+      }
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return areaObjects.some((areaObject) => {
+            return testIsWithinObject(areaObject, testObject)
+          })
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return areaObjects.some((areaObject) => {
+            return testIsWithinObject(areaObject, testObject)
+          })
+        })
+      }
+    }
+
+    if(item.conditionType === 'hasTag') {
+      const tag = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.tags[tag]
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.tags[tag]
+        })
+      }
+    }
+
+    if(item.conditionType === 'hasCompletedQuest') {
+      const quest = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.questState[quest] && testObject.questState[quest].completed
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.questState[quest] && testObject.questState[quest].completed
+        })
+      }
+    }
+
+    if(item.conditionType === 'hasStartedQuest') {
+      const quest = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.questState[quest] && testObject.questState[quest].started
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.questState[quest] && testObject.questState[quest].started
+        })
+      }
+    }
+
+    if(item.conditionType === 'hasSubObject') {
+      const name = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.subObjects[name]
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.subObjects[name]
+        })
+      }
+    }
+
+    if(item.conditionType === 'isSubObjectEquipped') {
+      const name = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
+        })
+      }
+    }
+
+    if(item.conditionType === 'isSubObjectInInventory') {
+      const name = item.conditionValue
+
+      if(allTestedMustPass) {
+        pass = testObjects.every((testObject) => {
+          return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+        })
+      } else {
+        pass = testObjects.some((testObject) => {
+          return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+        })
+      }
+    }
+
+    if(pass) {
+      sequence.currentItemId = item.passNext
+    } else {
+      sequence.currentItemId = item.failNext
     }
   }
 
@@ -172,21 +296,12 @@ function processSequence(sequence) {
   }
 }
 
-function endSequence(sequence) {
-  const { pauseGame, items } = sequence
-
-  if(pauseGame) {
-    GAME.gameState.paused = false
-  }
-
-  GAME.gameState.sequenceQueue = GAME.gameState.sequenceQueue.filter((s) => {
-    if(s.id === sequence.id) return false
-    return true
-  })
-}
-
 function testMatchJSONCondition(JSON, testObject) {
   return _.isMatch(testObject, JSON)
+}
+
+function testIsWithinObject(object, testObject) {
+  return collisions.checkObject(object, testObject)
 }
 
 export {

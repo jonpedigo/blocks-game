@@ -44,6 +44,7 @@ TIMERS
 MODS <---- !
 GRID MANAGEMENT <---- !
 PHYSICS EDITOR <---- !
+  // turn into live property editor essentially ( combine with spawn zone and timer editor ? )
 PATHFINDING editor / advancements <---- !
 // path goals AKA patrol
 // path 1, path 2, path 3 with conditions
@@ -101,6 +102,7 @@ Target/Homing awareness area
 // 'dont backtrack' tag where they remember where they went
 // planet gravity! Would be cool to have..
 
+// notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
 
 // INVERT GAME, for example, when you get pacman powers
@@ -163,6 +165,8 @@ Engine trail on a car u know what I mean?
 // auto save game state to DB, restore game state
 
 // () => syntax in react PLEASE so no more binding
+
+// dev dependencies to try to lower packet size
 
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 // https://zimjs.com/bits/physics.html

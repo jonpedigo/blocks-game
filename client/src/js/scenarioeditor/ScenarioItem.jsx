@@ -10,9 +10,15 @@ const initialNextOptions = [
 
 const conditionTypeOptions = [
   { value: 'matchJSON', label: 'matchJSON' },
-  { value: 'inArea', label: 'inArea' },
+  { value: 'insideOfObjectWithTag', label: 'insideOfObjectWithTag' },
   { value: 'hasTag', label: 'hasTag' },
   { value: 'hasMod', label: 'hasMod' },
+  { value: 'hasSubObject', label: 'hasSubObject' },
+  { value: 'isSubObjectEquipped', label: 'isSubObjectEquipped' },
+  { value: 'isSubObjectInInventory', label: 'isSubObjectInInventory' },
+  { value: 'hasCompletedQuest', label: 'hasCompletedQuest' },
+  { value: 'hasStartedQuest', label: 'hasStartedQuest' },
+  { value: 'duringTime', label: 'duringTime' },
 ]
 
 export default class ScenarioItem extends React.Component{
@@ -32,6 +38,7 @@ export default class ScenarioItem extends React.Component{
     this._onToggleValue = this._onToggleValue.bind(this)
     this._openWriteDialogueModal = this._openWriteDialogueModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
+    this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
   }
 
@@ -68,6 +75,17 @@ export default class ScenarioItem extends React.Component{
     modals.openEditCodeModal('edit condition JSON', scenarioItem.conditionJSON, (result) => {
       if(result && result.value) {
         scenarioItem.conditionJSON = JSON.parse(result.value)
+        this.setState({scenarioItem})
+      }
+    })
+  }
+
+  _openEditConditionValueModal() {
+    const { scenarioItem } = this.state;
+
+    modals.openEditTextModal('edit condition value', scenarioItem.conditionValue, (result) => {
+      if(result && result.value) {
+        scenarioItem.conditionValue = result.value
         this.setState({scenarioItem})
       }
     })
@@ -174,11 +192,12 @@ export default class ScenarioItem extends React.Component{
   }
 
   _renderCondition() {
-    const { scenarioItem } = this.state;
+    const { scenarioItem } = this.state
+    const { conditionType } = scenarioItem
 
     const conditionTypeChooser = <div className="ScenarioItem__condition-type-chooser">
       Type: <Select
-        value={{value: scenarioItem.conditionType, label: scenarioItem.conditionType}}
+        value={{value: conditionType, label: conditionType}}
         onChange={this._onChangeConditionType}
         options={conditionTypeOptions}
         styles={window.reactSelectStyle}
@@ -186,9 +205,29 @@ export default class ScenarioItem extends React.Component{
     </div>
 
     let chosenConditionForm
-    if(scenarioItem.conditionType === 'matchJSON') {
+    if(conditionType === 'matchJSON') {
       chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditCodeModal}/>
         <div className="ScenarioItem__summary ScenarioItem__summary--json">{JSON.stringify(scenarioItem.conditionJSON)}</div>
+      </div>
+    }
+    if(conditionType === 'insideOfObjectWithTag' || conditionType === 'hasTag') {
+      chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditConditionValueModal}/>
+        Tag: <div className="ScenarioItem__summary ScenarioItem__summary--json">{scenarioItem.conditionValue}</div>
+      </div>
+    }
+    if(conditionType === 'hasSubObject' || conditionType === 'isSubObjectEquipped' || conditionType === 'isSubObjectInInventory') {
+      chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditConditionValueModal}/>
+        Sub Object name: <div className="ScenarioItem__summary ScenarioItem__summary--json">{scenarioItem.conditionValue}</div>
+      </div>
+    }
+    if(conditionType === 'hasCompletedQuest' || conditionType === 'hasStartedQuest') {
+      chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditConditionValueModal}/>
+        Quest name: <div className="ScenarioItem__summary ScenarioItem__summary--json">{scenarioItem.conditionValue}</div>
+      </div>
+    }
+    if(conditionType === 'hasMod') {
+      chosenConditionForm = <div className="ScenarioItem__condition-form"><i className="fa fas fa-edit ScenarioButton" onClick={this._openEditConditionValueModal}/>
+        Mod: <div className="ScenarioItem__summary ScenarioItem__summary--json">{scenarioItem.conditionValue}</div>
       </div>
     }
 
