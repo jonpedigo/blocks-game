@@ -4,11 +4,9 @@
 // TODO
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-// add the rest of condition types
-// add effects to scenario
 // add mod to effects with mod JSON
 // revert mods/create mod function that mods heros and objects before accessing properties
-// create compendium with objects, heros, scenarios, mods/mutates
+// create compendium with objects, heros, sequences, mods/mutates
 
 NOTES FOR MODS
 // revert when condition is false
@@ -181,7 +179,7 @@ import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
-import './js/scenarioeditor/index.js'
+import './js/sequenceeditor/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'

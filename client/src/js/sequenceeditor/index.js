@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 
-class ScenarioEditor {
+class SequenceEditor {
   constructor() {
     this.container = null
     this.ref = null
@@ -15,13 +15,13 @@ class ScenarioEditor {
 
   onPageLoaded() {
     const initialProps = {
-      ref: ref => SCENARIOEDITOR.ref = ref
+      ref: ref => SEQUENCEEDITOR.ref = ref
     }
 
     const container = document.createElement('div')
-    container.id = 'ScenarioEditorContainer'
+    container.id = 'SequenceEditorContainer'
     document.body.appendChild(container)
-    SCENARIOEDITOR.container = container
+    SEQUENCEEDITOR.container = container
 
     // Mount React App
     ReactDOM.render(
@@ -31,4 +31,4 @@ class ScenarioEditor {
   }
 }
 
-window.SCENARIOEDITOR = new ScenarioEditor()
+window.SEQUENCEEDITOR = new SequenceEditor()

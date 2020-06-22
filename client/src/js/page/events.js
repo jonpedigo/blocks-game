@@ -101,8 +101,8 @@ class EventEmitter {
         event.push(CONSTRUCTEDITOR[eventName])
       }
 
-      if(SCENARIOEDITOR[eventName]) {
-        event.push(SCENARIOEDITOR[eventName])
+      if(SEQUENCEEDITOR[eventName]) {
+        event.push(SEQUENCEEDITOR[eventName])
       }
     }
 

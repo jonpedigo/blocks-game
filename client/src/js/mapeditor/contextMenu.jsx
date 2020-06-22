@@ -82,6 +82,10 @@ class contextMenuEl extends React.Component{
         this.openColorPicker('defaultObject')
       }
 
+      if(key === 'open-sequence-editor') {
+        SEQUENCEEDITOR.open()
+      }
+
       if(key === 'download-game-JSON')  {
         let saveGame = GAME.cleanForSave(GAME)
         console.log(saveGame)
@@ -139,6 +143,16 @@ class contextMenuEl extends React.Component{
     MAPEDITOR.contextMenu.style.top = `${top}px`
 
     this._toggleContextMenu('show')
+  }
+
+
+  _renderAdvancedWorldMenu() {
+    const { objectSelected, subObject } = this.props
+
+    return <SubMenu title="Advanced">
+      <MenuItem key='download-game-JSON'>Download Game JSON</MenuItem>
+      <MenuItem key='open-sequence-editor'>Open Sequence Editor</MenuItem>
+    </SubMenu>
   }
 
   render() {
@@ -202,7 +216,7 @@ class contextMenuEl extends React.Component{
         <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
-        <MenuItem key='download-game-JSON'>Download Game JSON</MenuItem>
+        {this._renderAdvancedWorldMenu()}
       </Menu>
     }
 
