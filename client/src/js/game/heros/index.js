@@ -326,6 +326,7 @@ class Hero{
       gridWidth: hero.gridWidth,
       updateHistory: hero.updateHistory,
       onGround: hero.onGround,
+      angle: hero.angle,
       questState: hero.questState,
       customState: hero.customState,
     }
@@ -384,7 +385,6 @@ class Hero{
       relativeId: hero.relativeId,
       parentId: hero.parentId,
       quests: hero.quests,
-      angle: hero.angle,
       customProps: hero.customProps,
     }
 
@@ -404,16 +404,16 @@ class Hero{
         properties.triggers[triggerId] = {
           id,
           eventName,
+          eventThreshold,
           effectName,
           effectValue,
-          eventThreshold,
           effectJSON,
+          initialTriggerPool,
           subObjectName,
           mainObjectId,
           mainObjectTag,
           guestObjectId,
           guestObjectTag,
-          initialTriggerPool,
           effectedObject,
           effectorObject,
         }

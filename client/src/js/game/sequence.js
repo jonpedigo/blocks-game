@@ -1,5 +1,5 @@
 import effects from './effects'
-import collisions from '../utils/collisions'
+import { testCondition } from './conditions'
 import _ from 'lodash'
 
 function endSequence(sequence) {
@@ -65,6 +65,8 @@ function mapSequenceItems(sequenceItems) {
 function startSequence(sequenceId, context) {
   const sequence = {...GAME.world.sequences[sequenceId]}
 
+  if(sequence.state && sequence.state.disabled) return console.log('sequence disabled', sequenceId)
+
   if(!sequence) return console.log('no sequence with id ', sequenceId)
 
   const { pauseGame, items } = sequence
@@ -85,7 +87,7 @@ function startSequence(sequenceId, context) {
 
 function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
-
+  if(!item) return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
   if(item.mainObject) defaultEffected = item.mainObject
@@ -179,149 +181,25 @@ function processSequence(sequence) {
       return newArr
     }, []))
 
-    let pass = false
-    if(item.conditionType === 'matchJSON') {
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testMatchJSONCondition(conditionJSON, testObject)
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testMatchJSONCondition(conditionJSON, testObject)
-        })
-      }
-    }
+    const pass = testCondition(item, testObjects, { allTestedMustPass })
 
-    if(item.conditionType === 'insideOfObjectWithTag') {
-      const tag = item.conditionValue
-
-      let areaObjects = []
-      if(GAME.objectsByTag[tag]) {
-        areaObjects = areaObjects.concat(GAME.objectsByTag[tag])
-      }
-      if(GAME.herosByTag[tag]) {
-        areaObjects = areaObjects.concat(GAME.herosByTag[tag])
-      }
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return areaObjects.some((areaObject) => {
-            return testIsWithinObject(areaObject, testObject)
-          })
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return areaObjects.some((areaObject) => {
-            return testIsWithinObject(areaObject, testObject)
-          })
-        })
-      }
-    }
-
-    if(item.conditionType === 'hasTag') {
-      const tag = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.tags[tag]
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.tags[tag]
-        })
-      }
-    }
-
-    if(item.conditionType === 'hasCompletedQuest') {
-      const quest = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.questState[quest] && testObject.questState[quest].completed
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.questState[quest] && testObject.questState[quest].completed
-        })
-      }
-    }
-
-    if(item.conditionType === 'hasStartedQuest') {
-      const quest = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.questState[quest] && testObject.questState[quest].started
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.questState[quest] && testObject.questState[quest].started
-        })
-      }
-    }
-
-    if(item.conditionType === 'hasSubObject') {
-      const name = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.subObjects[name]
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.subObjects[name]
-        })
-      }
-    }
-
-    if(item.conditionType === 'isSubObjectEquipped') {
-      const name = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
-        })
-      }
-    }
-
-    if(item.conditionType === 'isSubObjectInInventory') {
-      const name = item.conditionValue
-
-      if(allTestedMustPass) {
-        pass = testObjects.every((testObject) => {
-          return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
-        })
-      } else {
-        pass = testObjects.some((testObject) => {
-          return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
-        })
-      }
-    }
+    console.log('passing?', pass)
 
     if(pass) {
       sequence.currentItemId = item.passNext
     } else {
       sequence.currentItemId = item.failNext
     }
+
   }
+
+  console.log('processing', sequence.currentItemId, sequence.id)
 
   if(item.next === 'end') {
     endSequence(sequence)
   } else if(item.next) {
     sequence.currentItemId = item.next
   }
-}
-
-function testMatchJSONCondition(JSON, testObject) {
-  return _.isMatch(testObject, JSON)
-}
-
-function testIsWithinObject(object, testObject) {
-  return collisions.checkObject(object, testObject)
 }
 
 window.getObjectsByTag = function() {
@@ -343,5 +221,5 @@ window.getObjectsByTag = function() {
 
 export {
   processSequence,
-  startSequence
+  startSequence,
 }

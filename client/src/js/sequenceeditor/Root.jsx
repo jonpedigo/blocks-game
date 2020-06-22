@@ -102,7 +102,7 @@ export default class Root extends React.Component {
     }
     if(selectedType === 'branchCondition') {
       sequenceItem.conditionJSON = {}
-      sequenceItem.conditionType = 'matchJSON' // 'insideOfObjectWithTag', 'duringTime', 'hasTag', 'hasSubObjectWithName'
+      sequenceItem.conditionType = 'matchJSON' // 'insideOfObject', 'duringTime', 'hasTag', 'hasSubObjectWithName'
       sequenceItem.conditionValue = ''
       sequenceItem.allTestedMustPass = false
       sequenceItem.testMainObject = false
@@ -167,7 +167,7 @@ export default class Root extends React.Component {
 
   openSequence(id) {
     this.setState({
-      sequence: GAME.world.sequences[id]
+      sequence: JSON.parse(JSON.stringify(GAME.world.sequences[id]))
     })
     this._generateRefs(GAME.world.sequences[id].items)
   }

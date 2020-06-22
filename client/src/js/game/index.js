@@ -12,7 +12,8 @@ import grid from './grid.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
-import { processSequence } from './sequence'
+import { processSequence, testMatchJSONCondition, testIsWithinObject } from './sequence'
+import { testCondition } from './conditions'
 
 import './objects'
 import './heros'
@@ -253,6 +254,8 @@ class Game{
       GAME.gameState = game.gameState
       if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       GAME.gameState.sequenceQueue = []
+      GAME.gameState.timeouts = []
+      GAME.gameState.timeoutsById = {}
     } else {
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
@@ -334,6 +337,10 @@ class Game{
       sequence.eventListeners.forEach((remove) => {
         remove()
       })
+    })
+
+    GAME.gameState.activeModList.forEach((mod) => {
+      if(mod.removeEventListener) mod.removeEventListener()
     })
 
     GAME.gameState = null
@@ -718,6 +725,73 @@ class Game{
   addSequence(sequence) {
     GAME.world.sequences[sequence.id] = sequence
   }
+
+  startMod(ownerId, mod) {
+    mod.ownerId = ownerId
+    mod = JSON.parse(JSON.stringify(mod))
+
+    GAME.gameState.activeModList.push(mod)
+
+    if(mod.modRevertType && mod.modRevertType.length && mod.modRevertType !== 'none') {
+      if(mod.modRevertType === 'onEvent') {
+        mod.removeEventListener = window.local.on(mod.modValue, (mainObject) => {
+          if(mainObject.id === mod.ownerId) mod._remove = true
+          mod.removeEventListener()
+        })
+      }
+      if(mod.modRevertType === 'onTimer') {
+        GAME.addTimeout(window.uniqueID(), mod.modValue || 10, () => {
+          mod._remove = true
+        })
+      }
+    }
+  }
+
+  updateActiveMods() {
+    GAME.gameState.activeMods = {}
+    /*
+    {
+      modId:
+      modJSON: {},
+      modValue:
+      ownerId:
+      conditionType
+      conditionValue
+      oppositePass
+
+      modRevertType // onEvent, onTimer
+      ( if theres a mainObject check if the event main object is equal to the mod owner )
+    }
+    */
+    GAME.gameState.activeModList = GAME.gameState.activeModList.filter(mod => {
+      const testObject = GAME.getObjectOrHeroById(mod.ownerId)
+      if(mod._remove) {
+        if(mod.removeEventListener) mod.removeEventListener()
+        return false
+      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
+        if(testCondition(mod, testObject, { passOnFail: mod.oppositePass })) {
+          return true
+        }
+        if(mod.removeEventListener) mod.removeEventListener()
+        return false
+      }
+      return true
+    })
+
+    GAME.gameState.activeModList.forEach((mod) => {
+      if(!GAME.gameState.activeMods[mod.ownerId]) GAME.gameState.activeMods[mod.ownerId] = []
+      GAME.gameState.activeMods[mod.ownerId].push(mod)
+    })
+  }
+}
+
+window.mod = function(object) {
+  const activeMods = GAME.gameState.activeMods[object.id]
+  const objectCopy = JSON.parse(JSON.stringify(object))
+  activeMods.forEach((mod) => {
+    window.mergeDeep(objectCopy, mod)
+  })
+  return objectCopy
 }
 
 window.GAME = new Game()

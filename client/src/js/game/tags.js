@@ -86,6 +86,7 @@ function setDefault() {
     invisible: false,
     tilingSprite: false,
     inputDirectionSprites: false,
+    // invisibleOnHeroCollide
   }
 
   window.descriptiveTags = {

@@ -85,6 +85,9 @@ import { startSequence } from './sequence'
     // 'emitCustomEvent',
     // skipHeroGravity
     // skipHeroPosUpdate
+    // play sound FX
+    // stop music
+    // start music
   }
 
   // — speed up hero
@@ -152,7 +155,7 @@ function processEffect(effect, effected, effector) {
   if(effectName === 'spawnPoolIncrement') {
     effected.spawnPool += effectValue || 1
     // effected.spawnWait=false
-    // if(effected.spawnWaitTimerId) delete GAME.timeoutsById[effected.spawnWaitTimerId]
+    // if(effected.spawnWaitTimerId) delete GAME.gameState.timeoutsById[effected.spawnWaitTimerId]
   }
 
   if(effectName === 'tagAdd') {

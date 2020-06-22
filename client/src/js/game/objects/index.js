@@ -568,9 +568,11 @@ class Objects{
 
   removeObject(object) {
     GAME.objectsById[object.id].removed = true
-    OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
-      subObject.removed = true
-    })
+    if(object.subObjects) {
+        OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
+        subObject.removed = true
+      })
+    }
     window.local.emit('onUpdatePFgrid')
   }
 

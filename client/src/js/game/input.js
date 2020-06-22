@@ -259,7 +259,7 @@ function onKeyDown(key, hero) {
 
     if(hero.spaceBarBehavior === 'floatJump') {
       if(hero._floatable === false && hero.onGround) {
-        if(GAME.timeoutsById[hero.id + '-floatable']) GAME.completeTimeout(hero.id + '-floatable')
+        if(GAME.gameState.timeoutsById[hero.id + '-floatable']) GAME.completeTimeout(hero.id + '-floatable')
         hero._floatable = true
       }
 
@@ -272,7 +272,7 @@ function onKeyDown(key, hero) {
         // lastJump = Date.now();
       }
 
-      if(hero._floatable === undefined || hero._floatable === null || !GAME.timeoutsById[hero.id + '-floatable']) {
+      if(hero._floatable === undefined || hero._floatable === null || !GAME.gameState.timeoutsById[hero.id + '-floatable']) {
         hero._floatable = true
       }
     }

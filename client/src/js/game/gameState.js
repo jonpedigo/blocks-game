@@ -4,6 +4,10 @@ function setDefault() {
     started: false,
     loaded: false,
     sequenceQueue: [],
+    timeouts: [],
+    timeoutsById: {},
+    activeMods: {},
+    activeModList: [],
   }
   if(!localStorage.getItem('gameStates')) {
     localStorage.setItem('gameStates', JSON.stringify({}))

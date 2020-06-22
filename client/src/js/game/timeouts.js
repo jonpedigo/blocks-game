@@ -1,10 +1,12 @@
 function setDefault() {
-  GAME.timeouts = []
-  GAME.timeoutsById = {}
+  if(GAME.gameState) {
+    GAME.gameState.timeouts = []
+    GAME.gameState.timeoutsById = {}
+  }
 }
 
 function onUpdate(delta) {
-  GAME.timeouts = GAME.timeouts.filter((timeout) => {
+  GAME.gameState.timeouts = GAME.gameState.timeouts.filter((timeout) => {
     timeout.timeRemaining -= delta
     if(timeout.timeRemaining <= 0) {
       if(timeout.fx) timeout.fx()
@@ -27,15 +29,15 @@ function addTimeout(id, numberOfSeconds, fx) {
         fx,
         resetTotal: 0,
       }
-      GAME.timeouts.push(timeout)
-      GAME.timeoutsById[id] = timeout
+      GAME.gameState.timeouts.push(timeout)
+      GAME.gameState.timeoutsById[id] = timeout
       return id
     }
   }
 }
 
 function addOrResetTimeout(id, numberOfSeconds, fx) {
-  if(!GAME.timeoutsById[id] || (GAME.timeoutsById[id] && GAME.timeoutsById[id].timeRemaining <= 0)) {
+  if(!GAME.gameState.timeoutsById[id] || (GAME.gameState.timeoutsById[id] && GAME.gameState.timeoutsById[id].timeRemaining <= 0)) {
     GAME.addTimeout(id, numberOfSeconds, fx)
   } else {
     GAME.resetTimeout(id, numberOfSeconds)
@@ -43,18 +45,18 @@ function addOrResetTimeout(id, numberOfSeconds, fx) {
 }
 
 function resetTimeout(id, numberOfSeconds) {
-  GAME.timeoutsById[id].timeRemaining = numberOfSeconds
-  GAME.timeoutsById[id].totalTime = numberOfSeconds
-  GAME.timeoutsById[id].resetTotal++
+  GAME.gameState.timeoutsById[id].timeRemaining = numberOfSeconds
+  GAME.gameState.timeoutsById[id].totalTime = numberOfSeconds
+  GAME.gameState.timeoutsById[id].resetTotal++
 }
 
 function incrementTimeout(id, numberOfSeconds) {
-  GAME.timeoutsById[id].timeRemaining+= numberOfSeconds
-  GAME.timeoutsById[id].totalTime+= numberOfSeconds
+  GAME.gameState.timeoutsById[id].timeRemaining+= numberOfSeconds
+  GAME.gameState.timeoutsById[id].totalTime+= numberOfSeconds
 }
 
 function completeTimeout(id) {
-  GAME.timeoutsById[id].timeRemaining = 0
+  GAME.gameState.timeoutsById[id].timeRemaining = 0
 }
 
 export default {

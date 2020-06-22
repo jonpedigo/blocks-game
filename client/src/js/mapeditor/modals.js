@@ -356,7 +356,7 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
 }
 
 function openTriggerModal(trigger, cb) {
-  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'guestObject', effectorObject: "auto"}, trigger)
+  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'ownerObject', effectorObject: "auto"}, trigger)
 
   Swal.fire({
     title: 'Trigger Editor',

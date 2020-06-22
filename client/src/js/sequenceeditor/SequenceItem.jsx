@@ -5,12 +5,12 @@ import Select from 'react-select';
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },
   { value: 'end', label: 'End Sequence' },
-  { value: 'disable', label: 'Disable Sequence' },
+  // { value: 'disable', label: 'Disable Sequence' },
 ];
 
 const conditionTypeOptions = [
   { value: 'matchJSON', label: 'matchJSON' },
-  { value: 'insideOfObjectWithTag', label: 'insideOfObjectWithTag' },
+  { value: 'insideOfObject', label: 'insideOfObject' },
   { value: 'hasTag', label: 'hasTag' },
   { value: 'hasMod', label: 'hasMod' },
   { value: 'hasSubObject', label: 'hasSubObject' },
@@ -330,7 +330,7 @@ export default class SequenceItem extends React.Component{
         <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.conditionJSON)}</div>
       </div>
     }
-    if(conditionType === 'insideOfObjectWithTag' || conditionType === 'hasTag') {
+    if(conditionType === 'insideOfObject' || conditionType === 'hasTag') {
       chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
         Tag: <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
       </div>

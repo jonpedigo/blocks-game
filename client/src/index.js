@@ -27,7 +27,7 @@ TAG
 Tag is Event + Condition + Effect with ONE CLICK! Easy to add. Common Triggers should become Tags
 
 SEQUENCE
-Sequence is ( Condition, Effect, Choice, Dialogue ) in any order you want
+Sequence is ( Condition, Effect, Choice, UI ) in any order you want
 
 MORPH is permanent and transformative
 MUTATE is permanent and transitionary
@@ -38,22 +38,31 @@ MOD is temporary
 // BIG FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-TIMERS
 MODS <---- !
+
+TIMERS
+
 GRID MANAGEMENT <---- !
+WORLD EDITOR <---- !
+  //zoom to Set to game boundary size
+  // zoom to all objects
+
+***TEST GAME LIMITS FOR GRID SIZE / PATHFINDING SIZES
+
 PHYSICS EDITOR <---- !
   // turn into live property editor essentially ( combine with spawn zone and timer editor ? )
+SPAWN ZONE EDITOR <---- !
+
 PATHFINDING editor / advancements <---- !
+// pathfinding editor should fit inside of the sequence editor
 // path goals AKA patrol
 // path 1, path 2, path 3 with conditions
 // Set Target, Set Pathfinding Target
 // Pathfinding for something larger than one grid node
 // Perhaps not PATHFINDING but… targeting.
-WORLD EDITOR <---- !
-  //zoom to Set to game boundary size
-  // zoom to all objects
+
 COMPENDIUM <---- !
-SPAWN ZONE EDITOR <---- !
+
 PUZZLE INTERFACES <---- !
 JUICE ( may require new graphics engine ) <---- !
 
@@ -61,6 +70,7 @@ Finish feature list
 
 !!!!!!!! !!!! READY FOR BETA !!!! !!!!!!
 
+SOUND FX
 HOOKS
   // hook into events and prevent them from happening with conditions
 PIXEL EDITOR
@@ -69,7 +79,10 @@ LEVEL UP SYSTEM
 INVENTORY SYSTEM
   //Set all objects to the middle ( FULL MIGRATION )
   // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
-LEVELS
+
+LEVELS ( sub worlds )
+PROCEDURAL
+
 COMPOSABLE CONTEXT MENU POWERS
 GAME RESULTS PAGE
 GAME LOBBY PAGE
@@ -99,13 +112,28 @@ Target/Homing awareness area
 // 'with patience' tag AKA pathfind less often
 // 'dont backtrack' tag where they remember where they went
 // planet gravity! Would be cool to have..
+// 3d sound effects system from papa bear
 
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
 
-// INVERT GAME, for example, when you get pacman powers
+// INVENTORY NOTES
+// max inventory
+// destroy last object when full
+// prevent add when full
+// swap oldest object when full
+// swap last object when full
+
+// OTHER INTERFACE NOTES
+// can we have a 'Game Editor' in React or a 'Hero Editor'
+// One thing that is inside the context menu that maybe shouldnt be is the quests
+// Quest editor would show me the default hero's quest list and I could sort through it and edit it very easily
+// But why just quests? Why not design all of the heros properties they start with
+// OK so.. the other things on the 'GAME' object that ill want to edit is the World, the Grid
+// world editor and default hero editor
 
 // JUICE IDEAS
+// INVERT GAME, for example, when you get pacman powers
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
 // lazy scroll that is not not immediate! Smoother...
 // optimize shadow feature, not all vertices!
@@ -164,6 +192,8 @@ Engine trail on a car u know what I mean?
 
 // () => syntax in react PLEASE so no more binding
 
+// gameState => worldState
+
 // dev dependencies to try to lower packet size
 
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
@@ -172,6 +202,9 @@ Engine trail on a car u know what I mean?
 // http://timefantasy.net/
 // https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
 // THINK ABOUT ADDING A BASIC GRAPHICS LIBRARY FOR SQUARES AND ALL THE JUICE REGARDING THE SQUARES
+
+// MARKETING IDEA
+// Make a game for their birthday
 
 import './js/utils/utils.js'
 import './js/page/index.js'
