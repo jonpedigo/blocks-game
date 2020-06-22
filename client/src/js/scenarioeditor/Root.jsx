@@ -98,6 +98,7 @@ export default class Root extends React.Component {
       scenarioItem.allTestedMustPass = false
       scenarioItem.testMainObject = false
       scenarioItem.testGuestObject = false
+      scenarioItem.testWorldObject = false
       scenarioItem.testIds = []
       scenarioItem.testTags = []
       scenarioItem.passNext = 'sequential'
@@ -110,6 +111,14 @@ export default class Root extends React.Component {
     }
     if(selectedType === 'effect') {
       scenarioItem.effectName = ''
+      scenarioItem.effectJSON = {}
+      scenarioItem.effectValue = ''
+      scenarioItem.effectedMainObject = false
+      scenarioItem.effectedGuestObject = false
+      scenarioItem.effectedWorldObject = false
+      scenarioItem.effectedIds = []
+      scenarioItem.effectedTags = []
+      scenarioItem.next = 'sequential'
     }
 
     const newScenarioItems = scenario.items.slice()

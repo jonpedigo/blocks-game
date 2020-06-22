@@ -86,32 +86,64 @@ function startSequence(sequenceId, context) {
 function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
 
-  let effected = sequence.mainObject
-  let effector = sequence.guestObject
-  if(item.mainObject) effected = item.mainObject
-  if(item.guestObject) effector = item.guestObject
+  let defaultEffected = sequence.mainObject
+  let defaultEffector = sequence.guestObject
+  if(item.mainObject) defaultEffected = item.mainObject
+  if(item.guestObject) defaultEffector = item.guestObject
 
   if(item.type === 'dialogue') {
     item.effectName = 'dialogue'
-    effects.processEffect(item, effected, effector)
+    effects.processEffect(item, defaultEffected, defaultEffector)
+  }
+
+  if(item.type === 'effect') {
+    const { effectJSON, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedIds, effectedTags } = item
+
+    let effectedObjects = []
+    if(effectedMainObject) effectedObjects.push(sequence.mainObject)
+    if(effectedGuestObject) effectedObjects.push(sequence.guestObject)
+    if(effectedWorldObject) effectedObjects.push(GAME.world)
+
+    window.getObjectsByTag()
+
+    effectedObjects = effectedObjects.concat(effectedIds.map((id) => {
+      if(GAME.objectsById[id]) return GAME.objectsById[id]
+      if(GAME.heros[id]) return GAME.heros[id]
+    }))
+
+    effectedObjects = effectedObjects.concat(effectedTags.reduce((arr, tag) => {
+      let newArr = arr
+      if(GAME.objectsByTag[tag]) {
+        newArr = newArr.concat(GAME.objectsByTag[tag])
+      }
+      if(GAME.herosByTag[tag]) {
+        newArr = newArr.concat(GAME.herosByTag[tag])
+      }
+      return newArr
+    }, []))
+
+    let effector = defaultEffector
+    effectedObjects.forEach((effected) => {
+      effects.processEffect(item, effected, effector)
+    })
   }
 
   if(item.type === 'branchChoice') {
-    effected.choiceOptions = item.options.slice()
-    effected.flags.showDialogue = true
-    effected.flags.paused = true
-    if(effector.name) {
-      effected.dialogueName = effector.name
+    defaultEffected.choiceOptions = item.options.slice()
+    defaultEffected.flags.showDialogue = true
+    defaultEffected.flags.paused = true
+    if(defaultEffector.name) {
+      defaultEffected.dialogueName = defaultEffector.name
     } else {
-      effected.dialogueName = null
+      defaultEffected.dialogueName = null
     }
     const removeEventListener = window.local.on('onHeroChooseOption', (heroId, choiceId) => {
-      if(effected.id === heroId && sequence.itemMap[choiceId]) {
+      if(defaultEffected.id === heroId && sequence.itemMap[choiceId]) {
         removeEventListener()
-        effected.flags.showDialogue = false
-        effected.flags.paused = false
-        effected.dialogueName = null
-        effected.choiceOptions = null
+        defaultEffected.flags.showDialogue = false
+        defaultEffected.flags.paused = false
+        defaultEffected.dialogueName = null
+        defaultEffected.choiceOptions = null
         sequence.currentItemId = sequence.itemMap[choiceId].next
         if(sequence.currentItemId === 'end') {
           endSequence(sequence)
@@ -122,31 +154,19 @@ function processSequence(sequence) {
   }
 
   if(item.type === 'branchCondition') {
-    const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testIds, testTags } = item
+    const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
 
     let testObjects = []
     if(testMainObject) testObjects.push(sequence.mainObject)
     if(testGuestObject) testObjects.push(sequence.guestObject)
+    if(testWorldObject) testObjects.push(GAME.world)
 
     testObjects = testObjects.concat(testIds.map((id) => {
       if(GAME.objectsById[id]) return GAME.objectsById[id]
       if(GAME.heros[id]) return GAME.heros[id]
     }))
 
-    GAME.objectsByTag = GAME.objects.reduce((map, object) => {
-      Object.keys(object.tags).forEach((tag) => {
-        if(!map[tag]) map[tag] = []
-        if(object.tags[tag] === true) map[tag].push(object)
-      })
-      return map
-    }, {})
-    GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
-      Object.keys(hero.tags).forEach((tag) => {
-        if(!map[tag]) map[tag] = []
-        if(hero.tags[tag] === true) map[tag].push(hero)
-      })
-      return map
-    }, {})
+    window.getObjectsByTag()
 
     testObjects = testObjects.concat(testTags.reduce((arr, tag) => {
       let newArr = arr
@@ -302,6 +322,23 @@ function testMatchJSONCondition(JSON, testObject) {
 
 function testIsWithinObject(object, testObject) {
   return collisions.checkObject(object, testObject)
+}
+
+window.getObjectsByTag = function() {
+  GAME.objectsByTag = GAME.objects.reduce((map, object) => {
+    Object.keys(object.tags).forEach((tag) => {
+      if(!map[tag]) map[tag] = []
+      if(object.tags[tag] === true) map[tag].push(object)
+    })
+    return map
+  }, {})
+  GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
+    Object.keys(hero.tags).forEach((tag) => {
+      if(!map[tag]) map[tag] = []
+      if(hero.tags[tag] === true) map[tag].push(hero)
+    })
+    return map
+  }, {})
 }
 
 export {

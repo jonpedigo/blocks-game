@@ -35,11 +35,15 @@ export default class ScenarioItem extends React.Component{
     this._addOption = this._addOption.bind(this)
     this._onAddConditionTestId = this._onAddConditionTestId.bind(this)
     this._onAddConditionTestTag = this._onAddConditionTestTag.bind(this)
+    this._onAddEffectedId = this._onAddEffectedId.bind(this)
+    this._onAddEffectedTag = this._onAddEffectedTag.bind(this)
     this._onToggleValue = this._onToggleValue.bind(this)
     this._openWriteDialogueModal = this._openWriteDialogueModal.bind(this)
+    this._openEditTextModal = this._openEditTextModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
     this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
+    this._onChangeEffectName = this._onChangeEffectName.bind(this)
   }
 
   componentDidMount() {
@@ -69,12 +73,27 @@ export default class ScenarioItem extends React.Component{
     })
   }
 
+  _openEditTextModal() {
+    const { scenarioItem } = this.state;
+
+    modals.openEditTextModal('edit effect value', scenarioItem.effectValue, (result) => {
+      if(result && result.value) {
+        scenarioItem.effectValue = result.value
+        this.setState({scenarioItem})
+      }
+    })
+  }
+
   _openEditCodeModal() {
     const { scenarioItem } = this.state;
 
     modals.openEditCodeModal('edit condition JSON', scenarioItem.conditionJSON, (result) => {
       if(result && result.value) {
-        scenarioItem.conditionJSON = JSON.parse(result.value)
+        if(scenarioItem.type === 'branchCondition') {
+          scenarioItem.conditionJSON = JSON.parse(result.value)
+        } else if(scenarioItem.type === 'effect') {
+          scenarioItem.effectJSON = JSON.parse(result.value)
+        }
         this.setState({scenarioItem})
       }
     })
@@ -97,11 +116,17 @@ export default class ScenarioItem extends React.Component{
     this.setState({scenarioItem})
   }
 
+  _onChangeEffectName(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.effectName = event.value
+    this.setState({scenarioItem})
+  }
+
   _openWriteDialogueModal(index) {
     const { scenarioItem } = this.state;
 
     let initial = ''
-    if(scenarioItem.type === 'dialogue') {
+    if(scenarioItem.type === 'dialogue' || scenarioItem.type === 'effect' ) {
       initial = scenarioItem.effectValue
     }
     if(scenarioItem.type === 'branchChoice') {
@@ -110,7 +135,7 @@ export default class ScenarioItem extends React.Component{
 
     modals.openWriteDialogueModal(initial, (result) => {
 
-      if(scenarioItem.type === 'dialogue') {
+      if(scenarioItem.type === 'dialogue' || scenarioItem.type === 'effect') {
         this.setState({
           scenarioItem: {...scenarioItem, effectValue: result.value}
         })
@@ -125,7 +150,7 @@ export default class ScenarioItem extends React.Component{
 
   _selectNext(event, prop) {
     const { scenarioItem } = this.state;
-    if(scenarioItem.type === 'dialogue') {
+    if(scenarioItem.type === 'dialogue' || scenarioItem.type === 'effect') {
       scenarioItem.next = event.value
     }
     if(scenarioItem.type === 'branchChoice') {
@@ -154,6 +179,18 @@ export default class ScenarioItem extends React.Component{
   _onAddConditionTestTag(event) {
     const { scenarioItem } = this.state;
     scenarioItem.testTags = event.map(({value}) => value)
+    this.setState(scenarioItem)
+  }
+
+  _onAddEffectedId(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.effectedIds = event.map(({value}) => value)
+    this.setState(scenarioItem)
+  }
+
+  _onAddEffectedTag(event) {
+    const { scenarioItem } = this.state;
+    scenarioItem.effectedTags = event.map(({value}) => value)
     this.setState(scenarioItem)
   }
 
@@ -188,6 +225,89 @@ export default class ScenarioItem extends React.Component{
         </div>
       })}
       <i className="fa fas fa-plus ScenarioButton" onClick={this._addOption}/>
+    </div>
+  }
+
+  _renderEffect() {
+    // effector: false,
+    // position: false,
+    // JSON: false,
+    // effectValue: false,
+    // tag: false,
+    // eventName: false,
+    // id: false,
+    // number: false,
+    // smallText: false,
+    // largeText: false
+    // heroOnly: false
+    // sequenceId: false
+    const { scenarioItem } = this.state
+    const { effectName } = scenarioItem
+
+    const effectChooser = <div className="ScenarioItem__condition-type-chooser">
+      Effect Name: <Select
+        value={{value: effectName, label: effectName}}
+        onChange={this._onChangeEffectName}
+        options={window.effectNameList.map(effectName => { return { value: effectName, label: effectName}})}
+        styles={window.reactSelectStyle}
+        theme={window.reactSelectTheme}/>
+    </div>
+
+    let chosenEffectForm = []
+    if(effectName.length) {
+      const effectData = window.triggerEffects[effectName]
+
+      const { effectValue } = scenarioItem
+      if(effectData.JSON) {
+        chosenEffectForm.push(<i className="fa fas fa-edit ScenarioButton" onClick={this._openEditCodeModal}/>)
+        chosenEffectForm.push(<div className="ScenarioItem__summary ScenarioItem__summary--json">{JSON.stringify(scenarioItem.effectJSON)}</div>)
+      }
+      if(effectData.smallText) {
+        chosenEffectForm.push(<i className="fa fas fa-edit ScenarioButton" onClick={this._openEditTextModal}/>)
+        chosenEffectForm.push(<div className="ScenarioItem__summary ScenarioItem__summary--json">{effectValue}</div>)
+      } else if(effectData.largeText) {
+        chosenEffectForm.push(<i className="fa fas fa-edit ScenarioButton" onClick={this._openWriteDialogueModal}/>)
+        chosenEffectForm.push(<div className="ScenarioItem__summary ScenarioItem__summary--json">{effectValue}</div>)
+      } else if(effectData.number) {
+
+      } else if(effectData.sequenceId) {
+        chosenEffectForm.push(<div className="ScenarioItem__effected">Sequence Id:<Select
+          value={{value: effectValue, label: effectValue}}
+          onChange={(event) => {
+            scenarioItem.sequenceId = event.value
+            this.setState({scenarioItem})
+          }}
+          options={Object.keys(GAME.world.sequences).map((id) => { return {value: id, label: id} })}
+          styles={window.reactSelectStyle}
+          theme={window.reactSelectTheme}/>
+        </div>)
+      } else if(effectData.tag) {
+        chosenEffectForm.push(this._renderTagSelect('effectTags', (event) => {
+          if(event) {
+            scenarioItem.effectTags = event.map(({value}) => value)
+            this.setState({scenarioItem})
+          }
+        }, 'Add Tags:'))
+      }
+
+      if(effectData.effector) {
+        chosenEffectForm.push(this._renderSingleIdSelect('effector', this._onChangeEffector, 'Effector:'))
+      }
+    }
+
+    return <div className="ScenarioItem__effect">
+      {effectChooser}
+      <div className="ScenarioItem__effect-body">
+        <div className="ScenarioItem__effect-form">
+          {chosenEffectForm}
+        </div>
+        <div className="ScenarioItem__effect-input"><input onClick={() => this._onToggleValue('effectedMainObject')} value={scenarioItem.effectedMainObject} type="checkbox"></input>Effect Main Object</div>
+        <div className="ScenarioItem__effect-input"><input onClick={() => this._onToggleValue('effectedGuestObject')} value={scenarioItem.effectedGuestObject} type="checkbox"></input>Effect Guest Object</div>
+        <div className="ScenarioItem__effect-input"><input onClick={() => this._onToggleValue('effectedWorldObject')} value={scenarioItem.effectedWorldObject} type="checkbox"></input>Effect World Object</div>
+        {this._renderIdSelect('effectedIds', this._onAddEffectedId, 'Effected Ids:')}
+        {this._renderTagSelect('effectedTags', this._onAddEffectedTag, 'Effected Tags:')}
+      </div>
+      {this._renderNextSelect(scenarioItem.next, this._selectNext)}
     </div>
   }
 
@@ -231,32 +351,15 @@ export default class ScenarioItem extends React.Component{
       </div>
     }
 
-    const selectConditionTestIds = <div className="ScenarioItem__test">Test Ids:<Select
-      value={scenarioItem.testIds.map((id) => { return {value: id, label: id} })}
-      onChange={this._onAddConditionTestId}
-      options={GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))}
-      styles={window.reactSelectStyle}
-      isMulti
-      theme={window.reactSelectTheme}/>
-    </div>
-
-    const selectConditionTestTags = <div className="ScenarioItem__test">Test Tags:<Select
-      value={scenarioItem.testTags.map((tags) => { return { value: tags, label: tags} })}
-      onChange={this._onAddConditionTestTag}
-      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
-      styles={window.reactSelectStyle}
-      isMulti
-      theme={window.reactSelectTheme}/>
-    </div>
-
     return <div className="ScenarioItem__condition">
           {conditionTypeChooser}
           <div className="ScenarioItem__condition-body">
             {chosenConditionForm}
             <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('testMainObject')} value={scenarioItem.testMainObject} type="checkbox"></input>Test Main Object</div>
             <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('testGuestObject')} value={scenarioItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
-            {selectConditionTestIds}
-            {selectConditionTestTags}
+            <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('testWorldObject')} value={scenarioItem.testWorldObject} type="checkbox"></input>Test World Object</div>
+            {this._renderIdSelect('testIds', this._onAddConditionTestId)}
+            {this._renderTagSelect('testTags', this._onAddConditionTestTag)}
             <div className="ScenarioItem__condition-input"><input onClick={() => this._onToggleValue('allTestedMustPass')} value={scenarioItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
           </div>
           {this._renderNextSelect(scenarioItem.passNext, (event) => {
@@ -281,6 +384,44 @@ export default class ScenarioItem extends React.Component{
       options={nextOptions}
       styles={window.reactSelectStyle}
       theme={window.reactSelectTheme}/></div>
+  }
+
+  _renderTagSelect(valueProp, onChange, title) {
+    const { scenarioItem } = this.state;
+
+    return <div className="ScenarioItem__test">{title || 'Test Tags:'}<Select
+      value={scenarioItem[valueProp] && scenarioItem[valueProp].map((tags) => { return { value: tags, label: tags} })}
+      onChange={onChange}
+      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
+      styles={window.reactSelectStyle}
+      isMulti
+      theme={window.reactSelectTheme}/>
+    </div>
+  }
+
+  _renderIdSelect(valueProp, onChange, title) {
+    const { scenarioItem } = this.state;
+
+    return <div className="ScenarioItem__test">{title || 'Test Ids:'}<Select
+      value={scenarioItem[valueProp] && scenarioItem[valueProp].map((id) => { return {value: id, label: id} })}
+      onChange={onChange}
+      options={GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))}
+      styles={window.reactSelectStyle}
+      isMulti
+      theme={window.reactSelectTheme}/>
+    </div>
+  }
+
+  _renderSingleIdSelect(valueProp, onChange, title) {
+    const { scenarioItem } = this.state;
+
+    return <div className="ScenarioItem__test">{title || 'Test Ids:'}<Select
+      value={scenarioItem[valueProp] && scenarioItem[valueProp].map((id) => { return {value: id, label: id} })}
+      onChange={onChange}
+      options={[{value: 'default', label: 'default'}, {value: 'mainObject', label: 'mainObject'}, {value: 'guestObject', label: 'guestObject'}, ...GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))]}
+      styles={window.reactSelectStyle}
+      theme={window.reactSelectTheme}/>
+    </div>
   }
 
   render() {

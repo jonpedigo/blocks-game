@@ -10,7 +10,7 @@ function openSelectEffect(cb) {
       popup: 'animated fadeOutUp faster'
     },
     input: 'select',
-    inputOptions: window.triggerEffects,
+    inputOptions: window.effectNameList,
   }).then(cb)
 }
 

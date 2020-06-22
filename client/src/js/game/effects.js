@@ -2,7 +2,7 @@ import onTalk from './heros/onTalk'
 import { startSequence } from './sequence'
 
   // { effectName: remove, anything: true, hero: false, object: false, world: false, spawnZone: false, timer: false
-  //allowed: [anything, hero, object, world, spawnZone, timer]
+  //allowed: [anything, plain, hero, object, world, spawnZone, timer]
   // requirements: {
   // effector: false,
   // position: false,
@@ -14,20 +14,46 @@ import { startSequence } from './sequence'
   // number: false,
   // smallText: false,
   // largeText: false
+  // heroOnly: false
   //}
  //}
-  window.triggerEffects = [
-    'remove',
-    'respawn',
-    'destroy',
-    'mutate',
+  window.triggerEffects = {
+    remove: {
+    },
+    respawn: {
+    },
+    destroy: {
+      effector: true,
+    },
+    mutate: {
+      JSON: true,
+    },
+    dialogue: {
+      heroOnly: true,
+      largeText: true,
+      effector: true,
+    },
+    startSequence: {
+      sequenceId: true,
+      effector: true,
+    },
+    tagAdd: {
+      tag: true,
+    },
+    tagRemove: {
+      tag: true,
+    },
+    tagToggle: {
+      tag: true,
+    },
+    // 'anticipatedAdd',
     // 'goToStarView',
-    'dialogue',
     // 'emitEvent',
-    'startSequence',
     // 'disableSequence'
     // 'enableSequence'
+    // 'stopSequence',
     // 'morph',
+    // 'mod',
     // 'coreBehavior',
     // 'duplicate',
     // 'talkToHero',
@@ -56,19 +82,18 @@ import { startSequence } from './sequence'
     // 'moveTo',
     // 'attachToEffectorAsParent'
     // 'attachToEffectorAsRelative'
-    'tagAdd',
-    'tagRemove',
-    'tagToggle',
-    //'emitCustomEvent',
+    // 'emitCustomEvent',
     // skipHeroGravity
     // skipHeroPosUpdate
-  ]
+  }
 
   // — speed up hero
   // — slow down hero
   // — increase speed parameter
   // — decrease speed parameter
   // stop player (velocity)
+
+  window.effectNameList = Object.keys(window.triggerEffects)
 
 function processEffect(effect, effected, effector) {
   const { effectName, effectValue, effectJSON } = effect
@@ -89,7 +114,6 @@ function processEffect(effect, effected, effector) {
   // }
 
   if(effectName === 'dialogue') {
-    console.log(effect, effected, effector)
     if(effected.tags.hero) {
       effected.dialogue = [effectValue]
       effected.flags.showDialogue = true
@@ -132,18 +156,36 @@ function processEffect(effect, effected, effector) {
   }
 
   if(effectName === 'tagAdd') {
-    let tag = effectValue
-    effected.tags[tag] = false
+    if(effect.effectTags) {
+      effect.effectTags.forEach((tag) => {
+        effected.tags[tag] = true
+      })
+    } else {
+      let tag = effectValue
+      effected.tags[tag] = true
+    }
   }
 
   if(effectName === 'tagRemove') {
-    let tag = effectValue
-    effected.tags[tag] = true
+    if(effect.effectTags) {
+      effect.effectTags.forEach((tag) => {
+        effected.tags[tag] = false
+      })
+    } else {
+      let tag = effectValue
+      effected.tags[tag] = false
+    }
   }
 
   if(effectName === 'tagToggle') {
-    let tag = effectValue
-    effected.tags[tag] = !effected.tags[tag]
+    if(effect.effectTags) {
+      effect.effectTags.forEach((tag) => {
+        effected.tags[tag] = !effected.tags[tag]
+      })
+    } else {
+      let tag = effectValue
+      effected.tags[tag] = !effected.tags[tag]
+    }
   }
 
   if(effectName === 'startSequence') {

@@ -4,7 +4,7 @@ function addTrigger(owner, eventName) {
   PAGE.typingMode = true
   openSelectEffect((result) => {
     if(result && result.value) {
-      const effectName = window.triggerEffects[result.value]
+      const effectName = window.effectNameList[result.value]
       window.socket.emit('addTrigger', owner.id, { id: 'trigger-' + window.uniqueID(), eventName, effectName })
     }
     PAGE.typingMode = false
@@ -191,7 +191,7 @@ function openSelectEffect(cb) {
       popup: 'animated fadeOutUp faster'
     },
     input: 'select',
-    inputOptions: window.triggerEffects,
+    inputOptions: window.effectNameList,
   }).then(cb)
 }
 
@@ -358,7 +358,6 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
 function openTriggerModal(trigger, cb) {
   const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'guestObject', effectorObject: "auto"}, trigger)
 
-  console.log(trigger, newTrigger)
   Swal.fire({
     title: 'Trigger Editor',
     showClass: {
@@ -404,8 +403,8 @@ function openTriggerModal(trigger, cb) {
     }
   }).then(cb)
 
-  document.getElementById('effected-object').value = trigger.effectedObject
-  document.getElementById('effector-object').value = trigger.effectorObject
+  document.getElementById('effected-object').value = newTrigger.effectedObject
+  document.getElementById('effector-object').value = newTrigger.effectorObject
 }
 
 function openEditTextModal(property, currentValue, cb) {
