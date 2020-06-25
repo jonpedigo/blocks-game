@@ -28,6 +28,14 @@ import { startSequence } from './sequence'
     mutate: {
       JSON: true,
     },
+    mod: {
+      JSON: true,
+      JSONlabel: 'Mod JSON: ',
+      condition: true,
+      smallText: true,
+      label: 'Mod name: ',
+      footer: 'Mod Condition:'
+    },
     dialogue: {
       heroOnly: true,
       largeText: true,

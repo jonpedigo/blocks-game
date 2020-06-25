@@ -1,12 +1,53 @@
 import collisions from '../utils/collisions'
 
-window.conditionTypes = {}
+window.conditionTypes = {
+  matchJSON: {
+    JSON: true,
+  },
+  insideOfObject: {
+    smallText: true,
+    label: 'Tag:'
+  },
+  hasTag: {
+    smallText: true,
+    label: 'Tag:'
+  },
+  hasCompletedQuest: {
+    smallText: true,
+    label: 'Quest Name:'
+  },
+  hasStartedQuest: {
+    smallText: true,
+    label: 'Quest Name:'
+  },
+  hasSubObject: {
+    smallText: true,
+    label: 'Sub Object Name:'
+  },
+  isSubObjectInInventory: {
+    smallText: true,
+    label: 'Sub Object Name:'
+  },
+  isSubObjectEquipped: {
+    smallText: true,
+    label: 'Sub Object Name:'
+  },
 
-function testCondition(condition, testObjects, options = { allTestedMustPass: false, oppositePass: false }) {
+  // reverts only for mods really
+  revertOnEvent: {
+    number: true,
+    event: true,
+  },
+  revertOnTimerEnd: {
+    number: true,
+  },
+}
+
+function testCondition(condition, testObjects, options = { allTestedMustPass: false, testPassReverse: false }) {
 
   if(!Array.isArray(testObjects)) testObjects = [testObjects]
 
-  const { allTestedMustPass, oppositePass } = options
+  const { allTestedMustPass, testPassReverse } = options
 
   let pass = false
   if(condition.conditionType === 'matchJSON') {
@@ -131,7 +172,7 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
     }
   }
 
-  if(oppositePass) return !pass
+  if(testPassReverse) return !pass
 
   return pass
 }

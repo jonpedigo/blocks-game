@@ -727,20 +727,22 @@ class Game{
   }
 
   startMod(ownerId, mod) {
-    mod.ownerId = ownerId
     mod = JSON.parse(JSON.stringify(mod))
+    mod.ownerId = ownerId
 
     GAME.gameState.activeModList.push(mod)
 
-    if(mod.modRevertType && mod.modRevertType.length && mod.modRevertType !== 'none') {
-      if(mod.modRevertType === 'onEvent') {
-        mod.removeEventListener = window.local.on(mod.modValue, (mainObject) => {
-          if(mainObject.id === mod.ownerId) mod._remove = true
-          mod.removeEventListener()
+    if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
+      if(mod.conditionType === 'onEvent') {
+        mod.removeEventListener = window.local.on(mod.revertEventName, (mainObject) => {
+          if(mainObject.id === mod.ownerId) {
+            mod._remove = true
+            mod.removeEventListener()
+          }
         })
       }
-      if(mod.modRevertType === 'onTimer') {
-        GAME.addTimeout(window.uniqueID(), mod.modValue || 10, () => {
+      if(mod.conditionType === 'onTimer') {
+        GAME.addTimeout(window.uniqueID(), mod.revertTimerValue || 10, () => {
           mod._remove = true
         })
       }
@@ -751,16 +753,16 @@ class Game{
     GAME.gameState.activeMods = {}
     /*
     {
-      modId:
-      modJSON: {},
-      modValue:
-      ownerId:
-      conditionType
-      conditionValue
-      oppositePass
+      //modname
+      effectJSON: {},
+      // other effect values
 
-      modRevertType // onEvent, onTimer
-      ( if theres a mainObject check if the event main object is equal to the mod owner )
+      conditionType // onEvent, onTimer
+      conditionEventName
+      conditionTimerValue
+      conditionValue
+      testPassReverse
+
     }
     */
     GAME.gameState.activeModList = GAME.gameState.activeModList.filter(mod => {
@@ -768,8 +770,8 @@ class Game{
       if(mod._remove) {
         if(mod.removeEventListener) mod.removeEventListener()
         return false
-      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
-        if(testCondition(mod, testObject, { passOnFail: mod.oppositePass })) {
+      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onEvent' && mod.conditionType !== 'onTimerEnd') {
+        if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
           return true
         }
         if(mod.removeEventListener) mod.removeEventListener()

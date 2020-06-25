@@ -156,6 +156,17 @@
       background-color:#222;
       margin-bottom: 40px;
     }
+
+    &--nested {
+      background-color:#333;
+      .SequenceItem__condition-body {
+        margin-bottom: 0px;
+        background-color:#333;
+        padding: 0px;
+        padding-bottom: 0px;
+        margin-bottom: 40px;
+      }
+    }
   }
 
   &__text-input {

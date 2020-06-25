@@ -9,19 +9,6 @@ const initialNextOptions = [
   // { value: 'disable', label: 'Disable Sequence' },
 ];
 
-const conditionTypeOptions = [
-  { value: 'matchJSON', label: 'matchJSON' },
-  { value: 'insideOfObject', label: 'insideOfObject' },
-  { value: 'hasTag', label: 'hasTag' },
-  { value: 'hasMod', label: 'hasMod' },
-  { value: 'hasSubObject', label: 'hasSubObject' },
-  { value: 'isSubObjectEquipped', label: 'isSubObjectEquipped' },
-  { value: 'isSubObjectInInventory', label: 'isSubObjectInInventory' },
-  { value: 'hasCompletedQuest', label: 'hasCompletedQuest' },
-  { value: 'hasStartedQuest', label: 'hasStartedQuest' },
-  { value: 'duringTime', label: 'duringTime' },
-]
-
 export default class SequenceItem extends React.Component{
   constructor(props) {
     super(props)
@@ -86,16 +73,12 @@ export default class SequenceItem extends React.Component{
     })
   }
 
-  _openEditCodeModal() {
+  _openEditCodeModal(label, value) {
     const { sequenceItem } = this.state;
 
-    modals.openEditCodeModal('edit condition JSON', sequenceItem.effectJSON || sequenceItem.conditionJSON, (result) => {
+    modals.openEditCodeModal(label, sequenceItem[value], (result) => {
       if(result && result.value) {
-        if(sequenceItem.type === 'sequenceCondition') {
-          sequenceItem.conditionJSON = JSON.parse(result.value)
-        } else if(sequenceItem.type === 'sequenceEffect') {
-          sequenceItem.effectJSON = JSON.parse(result.value)
-        }
+        sequenceItem[value] = JSON.parse(result.value)
         this.setState({sequenceItem})
       }
     })
@@ -261,8 +244,12 @@ export default class SequenceItem extends React.Component{
 
       const { effectValue, effectSequenceId } = sequenceItem
       if(effectData.JSON) {
-        chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={this._openEditCodeModal}/>)
+        chosenEffectForm.push(effectData.JSONlabel || '')
+        chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={() => this._openEditCodeModal('edit effect JSON', 'effectJSON')}/>)
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.effectJSON)}</div>)
+      }
+      if(effectData.label) {
+        chosenEffectForm.push(effectData.label)
       }
       if(effectData.smallText) {
         chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={this._openEditTextModal}/>)
@@ -295,6 +282,10 @@ export default class SequenceItem extends React.Component{
       if(effectData.effectorObject) {
         chosenEffectForm.push(this._renderSingleIdSelect('effector', this._onChangeEffector, 'Effector:'))
       }
+
+      if(effectData.condition) {
+        chosenEffectForm.push(this._renderCondition(true))
+      }
     }
 
     return <div className="SequenceItem__effect">
@@ -313,9 +304,13 @@ export default class SequenceItem extends React.Component{
     </div>
   }
 
-  _renderCondition() {
+  _renderCondition(nested) {
     const { sequenceItem } = this.state
     const { conditionType } = sequenceItem
+
+    const conditionTypeOptions = Object.keys(window.conditionTypes).map((conditionType) => {
+      return { value: conditionType, label: conditionType }
+    })
 
     const conditionTypeChooser = <div className="SequenceItem__condition-type-chooser">
       Type: <Select
@@ -326,34 +321,25 @@ export default class SequenceItem extends React.Component{
         theme={window.reactSelectTheme}/>
     </div>
 
+    const conditionData = window.conditionTypes[conditionType]
+
     let chosenConditionForm
-    if(conditionType === 'matchJSON') {
-      chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditCodeModal}/>
-        <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.conditionJSON)}</div>
-      </div>
-    }
-    if(conditionType === 'insideOfObject' || conditionType === 'hasTag') {
-      chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
-        Tag: <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
-      </div>
-    }
-    if(conditionType === 'hasSubObject' || conditionType === 'isSubObjectEquipped' || conditionType === 'isSubObjectInInventory') {
-      chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
-        Sub Object name: <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
-      </div>
-    }
-    if(conditionType === 'hasCompletedQuest' || conditionType === 'hasStartedQuest') {
-      chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
-        Quest name: <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
-      </div>
-    }
-    if(conditionType === 'hasMod') {
-      chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
-        Mod: <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
-      </div>
+    if(conditionData) {
+      if(conditionData.JSON) {
+        chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => this._openEditCodeModal('edit condition JSON', 'conditionJSON')}/>
+          {conditionData.label || ''} <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.conditionJSON)}</div>
+        </div>
+      }
+      if(conditionData.smallText) {
+        chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
+          {conditionData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
+        </div>
+      }
     }
 
-    return <div className="SequenceItem__condition">
+    return <div className={classnames("SequenceItem__condition", {"SequenceItem__condition--nested": nested})}>
+          {nested && <hr></hr>}
+          {nested && <h4>Mod Condition</h4>}
           {conditionTypeChooser}
           <div className="SequenceItem__condition-body">
             {chosenConditionForm}
@@ -363,11 +349,13 @@ export default class SequenceItem extends React.Component{
             {this._renderIdSelect('testIds', this._onAddConditionTestId)}
             {this._renderTagSelect('testTags', this._onAddConditionTestTag)}
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('allTestedMustPass')} checked={sequenceItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
+            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
+            {nested && <hr></hr>}
           </div>
-          {this._renderNextSelect(sequenceItem.passNext, (event) => {
+          {!nested && this._renderNextSelect(sequenceItem.passNext, (event) => {
             this._selectNext(event, 'passNext')
           }, 'Pass Next:')}
-          {this._renderNextSelect(sequenceItem.failNext, (event) => {
+          {!nested && this._renderNextSelect(sequenceItem.failNext, (event) => {
             this._selectNext(event, 'failNext')
           }, 'Fail Next:')}
         </div>
