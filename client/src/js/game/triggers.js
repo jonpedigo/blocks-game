@@ -29,7 +29,7 @@ function onPageLoaded() {
     // 'onHeroLeave'
     // 'onObjectLeave'
     // 'onUpdate' -> for sequences with conditions
-    // 'onTagDepleted', <-- ugh would be create instead of crazy event thresholds
+    // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
 }
 
 function checkIdOrTagMatch(id, tag, object) {
@@ -119,55 +119,22 @@ function addTrigger(ownerObject, trigger) {
 }
 
 function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
-  const { effectName, effectValue } = trigger
+  const effectedObjects = effects.getEffectedObjects(trigger, mainObject, guestObject, ownerObject)
 
-  // the default effected is the ownerObject of the trigger
-  let effected
-  let effector
-
-  if(trigger.effectedObject === 'ownerObject') {
-    effected = ownerObject
-  } else if(trigger.effectedObject === 'mainObject') {
-    effected = mainObject
-  } else if(trigger.effectedObject === 'guestObject') {
-    effected = guestObject
-  } else {
-    effected = ownerObject
+  let effector = guestObject
+  if(trigger.effectorObject) {
+    if(trigger.effectorObject === 'mainObject') {
+      effector = mainObject
+    } else if(trigger.effectorObject === 'guestObject') {
+      effector = guestObject
+    } else if(trigger.effectorObject === 'ownerObject') {
+      effector = ownerObject
+    }
   }
-
-  if(trigger.effectorObject === 'ownerObject') {
-    effector = ownerObject
-  } else if(trigger.effectorObject === 'mainObject') {
-    effector = mainObject
-  } else if(trigger.effectorObject === 'guestObject') {
-    effector = guestObject
-  // this finds if the effected is the mainObject or the guestObject
-  // the non effected one will be the effector
-  } else if(mainObject && guestObject && mainObject.id === effected.id) {
-    effector = guestObject
-  } else if(mainObject && guestObject && guestObject.id === effected.id) {
-    effector = mainObject
-  } else {
-    // if the ownerObject is neither, this object is remote
-    // we use the default effector, the guest object
-    effector = guestObject
-  }
-
-  // every thing else below could be considered a 'smart trigger effect'
-  // if its a ddialogue effect its only for heros and therefore we can bypass the default plan
-  // if(true || trigger.smart) {
-  //   if(effectName === 'dialogue') {
-  //     if(mainObject.tags.hero) {
-  //       effected = mainObject
-  //       effector = guestObject
-  //     } else if(guestObject.tags.hero) {
-  //       effected = guestObject
-  //       effector = mainObject
-  //     }
-  //   }
-  // }
-
-  effects.processEffect(trigger, effected, effector)
+  
+  effectedObjects.forEach((effected) => {
+    effects.processEffect(trigger, effected, effector)
+  })
 }
 
 export default {

@@ -215,23 +215,28 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, effectJSON, subObjectName, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedObject } = object.triggers[triggerId]
+        const { id, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
-          eventName,
           effectName,
           effectValue,
-          eventThreshold,
           effectJSON,
-          subObjectName,
+          effectorObject,
+          effectedMainObject,
+          effectedGuestObject,
+          effectedOwnerObject,
+          effectedIds,
+          effectedTags,
+          effectTags,
+          effectSequenceId,
+          eventName,
+          eventThreshold,
           mainObjectId,
           mainObjectTag,
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
-          effectorObject,
-          effectedObject,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

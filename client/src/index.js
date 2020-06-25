@@ -4,15 +4,13 @@
 // TODO
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-// add mod to effects with mod JSON
-// revert mods/create mod function that mods heros and objects before accessing properties
+// ADDING A MOD is kind of intense
+// 0. interface for the mods ( lets try to make one in both the sequence editor and something usable by the context menu/trigger system )
+// 1. apply the mod to the code base ( rendering, physics, event system, condition system, etc )
+// 2. test reverting with conditions and events/timers
+//
 // create compendium with objects, heros, sequences, mods/mutates
 
-NOTES FOR MODS
-// revert when condition is false
-// revert after timer
-// revert when destroyed
-// revert onEvent
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////

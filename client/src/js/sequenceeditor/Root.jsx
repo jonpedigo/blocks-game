@@ -16,6 +16,37 @@ input: styles => ({ ...styles, backgroundColor: '#19191a', color: 'white', borde
 singleValue: styles => ({ ...styles, backgroundColor: '#19191a', color: 'white' })
 }
 
+window.defaultSequenceCondition =  {
+  conditionJSON: {},
+  conditionType: 'matchJSON', // 'insideOfObject', 'duringTime', 'hasTag', 'hasSubObjectWithName',
+  conditionValue: '',
+  allTestedMustPass: false,
+  testMainObject: false,
+  testGuestObject: false,
+  testWorldObject: false,
+  testIds: [],
+  testTags: [],
+  passNext: 'sequential',
+  failNext: 'sequential'
+}
+
+window.defaultSequenceChoice = {
+  options: [
+    { text: '', next: 'sequential' }
+  ]
+}
+
+window.defaultSequenceEffect = {
+  effectName: '',
+  effectJSON: {},
+  effectValue: '',
+  effectedMainObject: true,
+  effectedGuestObject: false,
+  effectedWorldObject: false,
+  effectedIds: [],
+  effectedTags: [],
+}
+
 window.reactSelectTheme = theme => ({
       ...theme,
       borderRadius: 0,
@@ -27,10 +58,10 @@ window.reactSelectTheme = theme => ({
 const alphaarray = "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,a1,b1,c1,d1,e1,f1,g1,h1,i1,j1,k1,l1,m1,n1,o1,p1,q1,r1,s1,t1,u1,v1,w1,x1,y1,z1,a2,b2,c2,d2,e2,f2,g2,h2,i2,j2,k2,l2,m2,n2,o2,p2,q2,r2,s2,t2,u2,v2,w2,x2,y2,z2,a3,b3,c3,d3,e3,f3,g3,h3,i3,j3,k3,l3,m3,n3,o3,p3,q3,r3,s3,t3,u3,v3,w3,x3,y3,z3".split(",")
 
 const typeOptions = [
-  { value: 'dialogue', label: 'Dialogue' },
-  { value: 'effect', label: 'Effect' },
-  { value: 'branchCondition', label: 'Condition' },
-  { value: 'branchChoice', label: 'Choice' },
+  { value: 'sequenceDialogue', label: 'Dialogue' },
+  { value: 'sequenceEffect', label: 'Effect' },
+  { value: 'sequenceCondition', label: 'Condition' },
+  { value: 'sequenceChoice', label: 'Choice' },
 ];
 
 export default class Root extends React.Component {
@@ -96,37 +127,18 @@ export default class Root extends React.Component {
 
     const sequenceItem = {id: this._findNextId(), type: selectedType }
 
-    if(selectedType === 'dialogue') {
+    if(selectedType === 'sequenceDialogue') {
       sequenceItem.effectValue = ''
       sequenceItem.next = 'sequential'
     }
-    if(selectedType === 'branchCondition') {
-      sequenceItem.conditionJSON = {}
-      sequenceItem.conditionType = 'matchJSON' // 'insideOfObject', 'duringTime', 'hasTag', 'hasSubObjectWithName'
-      sequenceItem.conditionValue = ''
-      sequenceItem.allTestedMustPass = false
-      sequenceItem.testMainObject = false
-      sequenceItem.testGuestObject = false
-      sequenceItem.testWorldObject = false
-      sequenceItem.testIds = []
-      sequenceItem.testTags = []
-      sequenceItem.passNext = 'sequential'
-      sequenceItem.failNext = 'sequential'
+    if(selectedType === 'sequenceCondition') {
+      Object.assign(sequenceItem, window.defaultSequenceCondition)
     }
-    if(selectedType === 'branchChoice') {
-      sequenceItem.options = [
-        { text: '', next: 'sequential' }
-      ]
+    if(selectedType === 'sequenceChoice') {
+      Object.assign(sequenceItem, window.defaultSequenceChoice)
     }
-    if(selectedType === 'effect') {
-      sequenceItem.effectName = ''
-      sequenceItem.effectJSON = {}
-      sequenceItem.effectValue = ''
-      sequenceItem.effectedMainObject = false
-      sequenceItem.effectedGuestObject = false
-      sequenceItem.effectedWorldObject = false
-      sequenceItem.effectedIds = []
-      sequenceItem.effectedTags = []
+    if(selectedType === 'sequenceEffect') {
+      Object.assign(sequenceItem, window.defaultSequenceEffect)
       sequenceItem.next = 'sequential'
     }
 

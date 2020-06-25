@@ -16,8 +16,12 @@ export default class TriggerMenu extends React.Component{
         modals.addTrigger(objectSelected, data.eventName)
       }
 
-      if(data.action === 'edit') {
-        modals.editTrigger(objectSelected, data.trigger)
+      if(data.action === 'edit-event') {
+        modals.editTriggerEvent(objectSelected, data.trigger)
+      }
+
+      if(data.action === 'edit-effect') {
+        modals.editTriggerEffect(objectSelected, data.trigger)
       }
 
       if(data.action === 'delete') {
@@ -43,12 +47,10 @@ export default class TriggerMenu extends React.Component{
       const trigger = objectSelected.triggers[triggerId]
 
       if(trigger.eventName === eventName) {
-        items.push(<MenuItem key={JSON.stringify({action: 'edit', trigger})}>{`Edit ${trigger.effectName}`}</MenuItem>,
-          <MenuItem key={JSON.stringify({action: 'delete', trigger})}>{`Delete ${trigger.effectName}`}</MenuItem>)
-
-        if(trigger.effectName === 'mutate') {
-          items.push(<MenuItem key={JSON.stringify({action: 'editEffectJSON', trigger})}>{`Edit Effect JSON`}</MenuItem>)
-        }
+        items.push(
+          <MenuItem key={JSON.stringify({action: 'edit-effect', trigger})}>{`Edit ${trigger.id} Effect`}</MenuItem>,
+          <MenuItem key={JSON.stringify({action: 'edit-event', trigger})}>{`Edit ${trigger.id} Event`}</MenuItem>,
+          <MenuItem key={JSON.stringify({action: 'delete', trigger})}>{`Delete ${trigger.id}`}</MenuItem>)
       }
     })
 
@@ -62,7 +64,7 @@ export default class TriggerMenu extends React.Component{
 
     Object.keys(window.triggerEvents).forEach((eventName) => {
       items.push(<SubMenu key={eventName} title={eventName}>
-          <MenuItem key={JSON.stringify({eventName, action: 'add'})}>Add Effect</MenuItem>
+          <MenuItem key={JSON.stringify({eventName, action: 'add'})}>Add Trigger</MenuItem>
           {this._renderEventEffects(eventName)}
         </SubMenu>)
     })

@@ -1,7 +1,5 @@
-import Swal from 'sweetalert2/src/sweetalert2.js';
-
 function openSelectEffect(cb) {
-  Swal.fire({
+  swal.fire({
     title: 'Choose an effect',
     showClass: {
       popup: 'animated fadeInDown faster'
@@ -15,7 +13,7 @@ function openSelectEffect(cb) {
 }
 
 function openEditCodeModal(title, code, cb) {
-  Swal.fire({
+  swal.fire({
     title,
     showClass: {
       popup: 'animated fadeInDown faster'
@@ -40,7 +38,7 @@ function openEditCodeModal(title, code, cb) {
 }
 
 function openWriteDialogueModal(dialogueStart = "", cb) {
-  Swal.fire({
+  swal.fire({
     showClass: {
       popup: 'animated fadeInDown faster'
     },
@@ -56,7 +54,7 @@ function openWriteDialogueModal(dialogueStart = "", cb) {
 }
 
 function openEditTextModal(property, currentValue, cb) {
-  Swal.fire({
+  swal.fire({
     title: 'Edit ' + property,
     showClass: {
       popup: 'animated fadeInDown faster'
@@ -73,7 +71,7 @@ function openEditTextModal(property, currentValue, cb) {
 }
 
 function openEditNumberModal(property, currentValue = 0, options = { range: false, min: null, max: null, step: 1 }, cb) {
-  Swal.fire({
+  swal.fire({
     title: 'Edit ' + property,
     showClass: {
       popup: 'animated fadeInDown faster'

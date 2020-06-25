@@ -25,7 +25,7 @@ function mapSequenceItems(sequenceItems) {
         itemCopy.next = 'end'
       }
     }
-    if(itemCopy.type === 'branchChoice') {
+    if(itemCopy.type === 'sequenceChoice') {
       itemCopy.options = itemCopy.options.map((option) => {
         const optionCopy = {...option}
         if(optionCopy.next === 'sequential') {
@@ -41,7 +41,7 @@ function mapSequenceItems(sequenceItems) {
       })
     }
 
-    if(itemCopy.type === 'branchCondition') {
+    if(itemCopy.type === 'sequenceCondition') {
       if(itemCopy.failNext === 'sequential') {
         if(sequenceItems[index+1]) {
           itemCopy.failNext = sequenceItems[index+1].id
@@ -90,47 +90,29 @@ function processSequence(sequence) {
   if(!item) return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
-  if(item.mainObject) defaultEffected = item.mainObject
-  if(item.guestObject) defaultEffector = item.guestObject
 
-  if(item.type === 'dialogue') {
+  if(item.type === 'sequenceDialogue') {
     item.effectName = 'dialogue'
     effects.processEffect(item, defaultEffected, defaultEffector)
   }
 
-  if(item.type === 'effect') {
-    const { effectJSON, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedIds, effectedTags } = item
-
-    let effectedObjects = []
-    if(effectedMainObject) effectedObjects.push(sequence.mainObject)
-    if(effectedGuestObject) effectedObjects.push(sequence.guestObject)
-    if(effectedWorldObject) effectedObjects.push(GAME.world)
-
-    window.getObjectsByTag()
-
-    effectedObjects = effectedObjects.concat(effectedIds.map((id) => {
-      if(GAME.objectsById[id]) return GAME.objectsById[id]
-      if(GAME.heros[id]) return GAME.heros[id]
-    }))
-
-    effectedObjects = effectedObjects.concat(effectedTags.reduce((arr, tag) => {
-      let newArr = arr
-      if(GAME.objectsByTag[tag]) {
-        newArr = newArr.concat(GAME.objectsByTag[tag])
-      }
-      if(GAME.herosByTag[tag]) {
-        newArr = newArr.concat(GAME.herosByTag[tag])
-      }
-      return newArr
-    }, []))
+  if(item.type === 'sequenceEffect') {
+    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject)
 
     let effector = defaultEffector
+    if(item.effectorObject) {
+      if(item.effectorObject === 'mainObject') {
+        effector = item.mainObject
+      } else if(item.effectorObject === 'guestObject') {
+        effector = item.guestObject
+      }
+    }
     effectedObjects.forEach((effected) => {
       effects.processEffect(item, effected, effector)
     })
   }
 
-  if(item.type === 'branchChoice') {
+  if(item.type === 'sequenceChoice') {
     defaultEffected.choiceOptions = item.options.slice()
     defaultEffected.flags.showDialogue = true
     defaultEffected.flags.paused = true
@@ -155,7 +137,7 @@ function processSequence(sequence) {
     sequence.eventListeners.push(removeEventListener)
   }
 
-  if(item.type === 'branchCondition') {
+  if(item.type === 'sequenceCondition') {
     const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
 
     let testObjects = []

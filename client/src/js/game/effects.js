@@ -31,11 +31,11 @@ import { startSequence } from './sequence'
     dialogue: {
       heroOnly: true,
       largeText: true,
-      effector: true,
+      effectorObject: true,
     },
     startSequence: {
       sequenceId: true,
-      effector: true,
+      effectorObject: true,
     },
     tagAdd: {
       tag: true,
@@ -200,6 +200,37 @@ function processEffect(effect, effected, effector) {
   }
 }
 
+function getEffectedObjects(effect, mainObject, guestObject, ownerObject) {
+  const { effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags } = effect
+
+  let effectedObjects = []
+  if(effectedMainObject) effectedObjects.push(mainObject)
+  if(effectedGuestObject) effectedObjects.push(guestObject)
+  if(effectedOwnerObject) effectedObjects.push(ownerObject)
+  if(effectedWorldObject) effectedObjects.push(GAME.world)
+
+  window.getObjectsByTag()
+
+  if(effectedIds) effectedObjects = effectedObjects.concat(effectedIds.map((id) => {
+    if(GAME.objectsById[id]) return GAME.objectsById[id]
+    if(GAME.heros[id]) return GAME.heros[id]
+  }))
+
+  if(effectedTags) effectedObjects = effectedObjects.concat(effectedTags.reduce((arr, tag) => {
+    let newArr = arr
+    if(GAME.objectsByTag[tag]) {
+      newArr = newArr.concat(GAME.objectsByTag[tag])
+    }
+    if(GAME.herosByTag[tag]) {
+      newArr = newArr.concat(GAME.herosByTag[tag])
+    }
+    return newArr
+  }, []))
+
+  return effectedObjects
+}
+
 export default {
-  processEffect
+  processEffect,
+  getEffectedObjects
 }

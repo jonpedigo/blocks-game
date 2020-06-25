@@ -1,56 +1,64 @@
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import SequenceItem from '../sequenceeditor/SequenceItem.jsx'
 
-function addTrigger(owner, eventName) {
+function editTriggerEffect(owner, trigger, cb) {
   PAGE.typingMode = true
-  openSelectEffect((result) => {
+  openEditEffectModal(trigger, (result) => {
     if(result && result.value) {
-      const effectName = window.effectNameList[result.value]
-      window.socket.emit('addTrigger', owner.id, { id: 'trigger-' + window.uniqueID(), eventName, effectName })
+      const triggerUpdate = result.value
+      const oldId = trigger.id
+
+      window.socket.emit('editTrigger', owner.id, oldId, triggerUpdate)
+
+      if(cb) cb()
     }
     PAGE.typingMode = false
   })
 }
 
-function editTrigger(owner, trigger) {
+function addTrigger(owner, eventName) {
+  PAGE.typingMode = true
+  openAddTrigger((result) => {
+    if(result && result.value) {
+      const trigger = { id: result.value, eventName }
+      window.socket.emit('addTrigger', owner.id, trigger)
+      editTriggerEffect(owner, trigger, () => {
+        PAGE.typingMode = false
+      })
+    }
+  })
+}
+
+function editTriggerEvent(owner, trigger) {
   PAGE.typingMode = true
   openTriggerModal(trigger, ({value}) => {
+    PAGE.typingMode = false
+
     if(!value) return
     const id = value[0]
-    const effectValue = value[1]
-    const mainObjectTag = value[2]
-    const mainObjectId = value[3]
-    const guestObjectTag = value[4]
-    const guestObjectId = value[5]
-    const subObjectName = value[6]
-    const initialTriggerPool = Number(value[7])
-    const eventThreshold = Number(value[8])
-    const effectedObject = value[9]
-    const effectorObject = value[10]
+    const mainObjectTag = value[1]
+    const mainObjectId = value[2]
+    const guestObjectTag = value[3]
+    const guestObjectId = value[4]
+    const initialTriggerPool = Number(value[5])
+    const eventThreshold = Number(value[6])
 
     const triggerUpdate = {
+      ...trigger,
       id,
-      effectValue,
-      subObjectName,
       mainObjectTag,
       mainObjectId,
       guestObjectTag,
       guestObjectId,
       initialTriggerPool,
       eventThreshold,
-      effectedObject,
-      effectorObject,
     }
+
     window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
-    //TODO: MAKE SURE THIS REMOVES EMPTY PROPERTIES!!
 
-    const oldId = trigger.id
-
-    triggerUpdate.effectJSON = trigger.effectJSON
-    triggerUpdate.eventName = trigger.eventName
-    triggerUpdate.effectName = trigger.effectName
-
-    window.socket.emit('editTrigger', owner.id, oldId, triggerUpdate)
-    PAGE.typingMode = false
+    window.socket.emit('editTrigger', owner.id, trigger.id, triggerUpdate)
   })
 }
 
@@ -142,6 +150,8 @@ function nameObject(object, cb) {
 function editQuest(hero, quest, cb) {
   PAGE.typingMode = true
   openQuestModal(quest, ({value}) => {
+    PAGE.typingMode = false
+
     if(!value) return
     const id = value[0]
     const startMessage = value[1]
@@ -176,7 +186,6 @@ function editQuest(hero, quest, cb) {
     questState[id] = state
 
     window.socket.emit('editHero', { id: hero.id, quests, questState })
-    PAGE.typingMode = false
   })
 
 }
@@ -192,6 +201,22 @@ function openSelectEffect(cb) {
     },
     input: 'select',
     inputOptions: window.effectNameList,
+  }).then(cb)
+}
+
+function openAddTrigger(cb) {
+  Swal.fire({
+    title: 'What is the name of this trigger?',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
   }).then(cb)
 }
 
@@ -367,44 +392,24 @@ function openTriggerModal(trigger, cb) {
       popup: 'animated fadeOutUp faster'
     },
     html:`<div class='swal-modal-input-label'>Trigger Id</div><input autocomplete="new-password" class='swal-modal-input' id='trigger-id' value='${newTrigger.id}'></input>
-    <div class='swal-modal-input-label'>Effect Value</div><input class='swal-modal-input' id='effect-value' value='${newTrigger.effectValue}'>
     <div class='swal-modal-input-label'>Main Object Tag</div><input class='swal-modal-input' id='main-object-tag' value='${newTrigger.mainObjectTag}'>
     <div class='swal-modal-input-label'>Main Object Id</div><input class='swal-modal-input' id='main-object-id' value='${newTrigger.mainObjectId}'>
     <div class='swal-modal-input-label'>Guest Object Tag</div><input class='swal-modal-input' id='guest-object-tag' value='${newTrigger.guestObjectTag}'>
     <div class='swal-modal-input-label'>Guest Object Id</div><input class='swal-modal-input' id='guest-object-id' value='${newTrigger.guestObjectId}'>
-    <div class='swal-modal-input-label'>Sub Object Name</div><input class='swal-modal-input' id='sub-object-name' value='${newTrigger.subObjectName}'>
     <div class='swal-modal-input-label'>Trigger Pool</div><input type="number" class='swal-modal-input' id='initial-trigger-pool' value='${newTrigger.initialTriggerPool}'>
-    <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>
-    <div class='swal-modal-input-label'>Effected</div><select id='effected-object' class='swal-modal-input' value='${newTrigger.effectedObject}'>
-      <option value="ownerObject">Owner Object</option>
-      <option value="mainObject">Main Object</option>
-      <option value="guestObject">Guest Object</option>
-    </select>
-    <div class='swal-modal-input-label'>Effector</div><select class='swal-modal-input' id='effector-object' value='${newTrigger.effectorObject}'>
-      <option value="auto">Auto</option>
-      <option value="ownerObject">Owner Object</option>
-      <option value="mainObject">Main Object</option>
-      <option value="guestObject">Guest Object</option>
-    </select>`,
+    <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>`,
     preConfirm: (result) => {
       return [
         document.getElementById('trigger-id').value,
-        document.getElementById('effect-value').value,
         document.getElementById('main-object-tag').value,
         document.getElementById('main-object-id').value,
         document.getElementById('guest-object-tag').value,
         document.getElementById('guest-object-id').value,
-        document.getElementById('sub-object-name').value,
         document.getElementById('initial-trigger-pool').value,
         document.getElementById('event-threshold').value,
-        document.getElementById('effected-object').value,
-        document.getElementById('effector-object').value,
       ]
     }
   }).then(cb)
-
-  document.getElementById('effected-object').value = newTrigger.effectedObject
-  document.getElementById('effector-object').value = newTrigger.effectorObject
 }
 
 function openEditTextModal(property, currentValue, cb) {
@@ -443,6 +448,33 @@ function openEditNumberModal(property, currentValue = 0, options = { range: fals
   }).then(cb)
 }
 
+function openEditEffectModal(effect, cb) {
+  const newEffect = JSON.parse(JSON.stringify(window.defaultSequenceEffect))
+  Object.assign(newEffect, effect)
+  Swal.fire({
+    title: 'Edit Effect',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    html:`<div id='edit-effect-container'></div>`,
+    preConfirm: (result) => {
+      return ref.current.getItemValue()
+    }
+  }).then(cb)
+
+  newEffect.type = 'sequenceEffect'
+  // Mount React App
+  const ref = React.createRef()
+  ReactDOM.render(
+    React.createElement(SequenceItem, { sequenceItem: newEffect, ref, isTrigger: true }),
+    document.getElementById('edit-effect-container')
+  )
+
+}
+
 export default {
   addCustomInputBehavior,
   addGameTag,
@@ -456,5 +488,6 @@ export default {
   nameObject,
   openEditCodeModal,
   addTrigger,
-  editTrigger,
+  editTriggerEvent,
+  editTriggerEffect,
 }
