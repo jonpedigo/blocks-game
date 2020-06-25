@@ -25,7 +25,7 @@ function mapSequenceItems(sequenceItems) {
         itemCopy.next = 'end'
       }
     }
-    if(itemCopy.type === 'sequenceChoice') {
+    if(itemCopy.sequenceType === 'sequenceChoice') {
       itemCopy.options = itemCopy.options.map((option) => {
         const optionCopy = {...option}
         if(optionCopy.next === 'sequential') {
@@ -41,7 +41,7 @@ function mapSequenceItems(sequenceItems) {
       })
     }
 
-    if(itemCopy.type === 'sequenceCondition') {
+    if(itemCopy.sequenceType === 'sequenceCondition') {
       if(itemCopy.failNext === 'sequential') {
         if(sequenceItems[index+1]) {
           itemCopy.failNext = sequenceItems[index+1].id
@@ -91,12 +91,12 @@ function processSequence(sequence) {
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
 
-  if(item.type === 'sequenceDialogue') {
+  if(item.sequenceType === 'sequenceDialogue') {
     item.effectName = 'dialogue'
     effects.processEffect(item, defaultEffected, defaultEffector)
   }
 
-  if(item.type === 'sequenceEffect') {
+  if(item.sequenceType === 'sequenceEffect') {
     const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject)
 
     let effector = defaultEffector
@@ -105,14 +105,31 @@ function processSequence(sequence) {
         effector = item.mainObject
       } else if(item.effectorObject === 'guestObject') {
         effector = item.guestObject
+      } else if(item.effectorObject !== 'default') {
+        effector = GAME.objectsById[item.effectorObject]
+        if(!effector) {
+          effector = GAME.heros[item.effectorObject]
+        }
+        if(!effector) {
+          effector = defaultEffector
+        }
       }
     }
+
+    if(item.conditionType === 'insideOfObjectId') {
+      if(item.conditionValue === 'mainObject') {
+        item.conditionValue = item.mainObject.id
+      } else if(item.conditionValue === 'guestObject') {
+        item.conditionValue = item.guestObject.id
+      }
+    }
+
     effectedObjects.forEach((effected) => {
       effects.processEffect(item, effected, effector)
     })
   }
 
-  if(item.type === 'sequenceChoice') {
+  if(item.sequenceType === 'sequenceChoice') {
     defaultEffected.choiceOptions = item.options.slice()
     defaultEffected.flags.showDialogue = true
     defaultEffected.flags.paused = true
@@ -137,7 +154,7 @@ function processSequence(sequence) {
     sequence.eventListeners.push(removeEventListener)
   }
 
-  if(item.type === 'sequenceCondition') {
+  if(item.sequenceType === 'sequenceCondition') {
     const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
 
     let testObjects = []

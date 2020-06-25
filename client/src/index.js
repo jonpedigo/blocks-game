@@ -4,8 +4,8 @@
 // TODO
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
 // ADDING A MOD is kind of intense
-// 0. interface for the mods ( lets try to make one in both the sequence editor and something usable by the context menu/trigger system )
 // 1. apply the mod to the code base ( rendering, physics, event system, condition system, etc )
 // 2. test reverting with conditions and events/timers
 //

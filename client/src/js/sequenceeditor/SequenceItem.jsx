@@ -28,6 +28,7 @@ export default class SequenceItem extends React.Component{
     this._onToggleValue = this._onToggleValue.bind(this)
     this._openWriteDialogueModal = this._openWriteDialogueModal.bind(this)
     this._openEditTextModal = this._openEditTextModal.bind(this)
+    this._openEditNumberModal = this._openEditNumberModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
     this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
@@ -84,6 +85,17 @@ export default class SequenceItem extends React.Component{
     })
   }
 
+  _openEditNumberModal(value) {
+    const { sequenceItem } = this.state;
+
+    modals.openEditNumberModal(value, sequenceItem[value], {}, (result) => {
+      if(result && result.value) {
+        sequenceItem[value] = Number(result.value)
+        this.setState({sequenceItem})
+      }
+    })
+  }
+
   _openEditConditionValueModal() {
     const { sequenceItem } = this.state;
 
@@ -111,22 +123,22 @@ export default class SequenceItem extends React.Component{
     const { sequenceItem } = this.state;
 
     let initial = ''
-    if(sequenceItem.type === 'sequenceDialogue' || sequenceItem.type === 'sequenceEffect' ) {
+    if(sequenceItem.sequenceType === 'sequenceDialogue' || sequenceItem.sequenceType === 'sequenceEffect' ) {
       initial = sequenceItem.effectValue
     }
-    if(sequenceItem.type === 'sequenceChoice') {
+    if(sequenceItem.sequenceType === 'sequenceChoice') {
       initial = sequenceItem.options[index].effectValue
     }
 
     modals.openWriteDialogueModal(initial, (result) => {
 
-      if(sequenceItem.type === 'sequenceDialogue' || sequenceItem.type === 'sequenceEffect') {
+      if(sequenceItem.sequenceType === 'sequenceDialogue' || sequenceItem.sequenceType === 'sequenceEffect') {
         this.setState({
           sequenceItem: {...sequenceItem, effectValue: result.value}
         })
       }
 
-      if(sequenceItem.type === 'sequenceChoice') {
+      if(sequenceItem.sequenceType === 'sequenceChoice') {
         sequenceItem.options[index].effectValue = result.value
         this.setState({sequenceItem})
       }
@@ -135,13 +147,13 @@ export default class SequenceItem extends React.Component{
 
   _selectNext(event, prop) {
     const { sequenceItem } = this.state;
-    if(sequenceItem.type === 'sequenceDialogue' || sequenceItem.type === 'sequenceEffect') {
+    if(sequenceItem.sequenceType === 'sequenceDialogue' || sequenceItem.sequenceType === 'sequenceEffect') {
       sequenceItem.next = event.value
     }
-    if(sequenceItem.type === 'sequenceChoice') {
+    if(sequenceItem.sequenceType === 'sequenceChoice') {
       sequenceItem.options[prop].next = event.value
     }
-    if(sequenceItem.type === 'sequenceCondition') {
+    if(sequenceItem.sequenceType === 'sequenceCondition') {
       sequenceItem[prop] = event.value
     }
     this.setState({sequenceItem})
@@ -280,7 +292,11 @@ export default class SequenceItem extends React.Component{
       }
 
       if(effectData.effectorObject) {
-        chosenEffectForm.push(this._renderSingleIdSelect('effector', this._onChangeEffector, 'Effector:'))
+        chosenEffectForm.push(this._renderSingleIdSelect('effector', (event) => {
+         if(event.value) {
+           sequenceItem.effector = event.value
+           this.setState({sequenceItem})
+         }}, 'Effector:'))
       }
 
       if(effectData.condition) {
@@ -323,17 +339,49 @@ export default class SequenceItem extends React.Component{
 
     const conditionData = window.conditionTypes[conditionType]
 
-    let chosenConditionForm
+    let chosenConditionForm = []
     if(conditionData) {
       if(conditionData.JSON) {
-        chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => this._openEditCodeModal('edit condition JSON', 'conditionJSON')}/>
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => this._openEditCodeModal('edit condition JSON', 'conditionJSON')}/>
           {conditionData.label || ''} <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.conditionJSON)}</div>
-        </div>
+        </div>)
       }
       if(conditionData.smallText) {
-        chosenConditionForm = <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this._openEditConditionValueModal}/>
           {conditionData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
-        </div>
+        </div>)
+      }
+      if(conditionData.number) {
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this._openEditNumberModal('conditionValue') }}/>
+          {conditionData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
+        </div>)
+      }
+
+      if(conditionData.tag) {
+        chosenConditionForm.push(this._renderSingleTagSelect('conditionValue', (event) => {
+         if(event.value) {
+           sequenceItem.conditionValue = event.value
+           this.setState({sequenceItem})
+         }
+        }, 'Tag:'))
+      }
+
+      if(conditionData.id) {
+        chosenConditionForm.push(this._renderSingleIdSelect('conditionValue', (event) => {
+         if(event.value) {
+           sequenceItem.conditionValue = event.value
+           this.setState({sequenceItem})
+         }
+        }, 'Object:'))
+      }
+
+      if(conditionData.event) {
+        chosenConditionForm.push(this._renderSingleEventSelect('conditionEventName', (event) => {
+         if(event.value) {
+           sequenceItem.conditionEventName = event.value
+           this.setState({sequenceItem})
+         }
+        }))
       }
     }
 
@@ -379,6 +427,19 @@ export default class SequenceItem extends React.Component{
       theme={window.reactSelectTheme}/></div>
   }
 
+
+  _renderSingleEventSelect(valueProp, onChange, title) {
+    const { sequenceItem } = this.state;
+
+    return <div className="SequenceItem__test">{title || 'Event: '}<Select
+      value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
+      onChange={onChange}
+      options={Object.keys(window.triggerEvents).map(eventName => { return { value: eventName, label: eventName}})}
+      styles={window.reactSelectStyle}
+      theme={window.reactSelectTheme}/>
+    </div>
+  }
+
   _renderTagSelect(valueProp, onChange, title) {
     const { sequenceItem } = this.state;
 
@@ -416,9 +477,21 @@ export default class SequenceItem extends React.Component{
     }
 
     return <div className="SequenceItem__test">{title || 'Test Ids:'}<Select
-      value={sequenceItem[valueProp] && sequenceItem[valueProp].map((id) => { return {value: id, label: id} })}
+      value={{value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
       onChange={onChange}
       options={options}
+      styles={window.reactSelectStyle}
+      theme={window.reactSelectTheme}/>
+    </div>
+  }
+
+  _renderSingleTagSelect(valueProp, onChange, title) {
+    const { sequenceItem } = this.state;
+
+    return <div className="SequenceItem__test">{title || 'Test Tags:'}<Select
+      value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
+      onChange={onChange}
+      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
       styles={window.reactSelectStyle}
       theme={window.reactSelectTheme}/>
     </div>
@@ -429,15 +502,15 @@ export default class SequenceItem extends React.Component{
     const { onDelete, isTrigger } = this.props;
 
     return (
-      <div className={classnames("SequenceItem SequenceItem--" + sequenceItem.type, { "SequenceItem--trigger": isTrigger })}>
+      <div className={classnames("SequenceItem SequenceItem--" + sequenceItem.sequenceType, { "SequenceItem--trigger": isTrigger })}>
         {!isTrigger && <div className="SequenceItem__identifier">{sequenceItem.id}</div>}
-        {!isTrigger && <div className="SequenceItem__type">{sequenceItem.type}</div>}
+        {!isTrigger && <div className="SequenceItem__type">{sequenceItem.sequenceType}</div>}
         {!isTrigger && <i className="SequenceButton SequenceItem__delete fa fas fa-times" onClick={onDelete}></i>}
         <div className="SequenceItem__body">
-          {sequenceItem.type == 'sequenceDialogue' && this._renderDialogue()}
-          {sequenceItem.type == 'sequenceChoice' && this._renderChoice()}
-          {sequenceItem.type == 'sequenceCondition' && this._renderCondition()}
-          {sequenceItem.type == 'sequenceEffect' && this._renderEffect()}
+          {sequenceItem.sequenceType == 'sequenceDialogue' && this._renderDialogue()}
+          {sequenceItem.sequenceType == 'sequenceChoice' && this._renderChoice()}
+          {sequenceItem.sequenceType == 'sequenceCondition' && this._renderCondition()}
+          {sequenceItem.sequenceType == 'sequenceEffect' && this._renderEffect()}
         </div>
       </div>
     )

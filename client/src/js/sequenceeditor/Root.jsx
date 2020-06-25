@@ -18,7 +18,7 @@ singleValue: styles => ({ ...styles, backgroundColor: '#19191a', color: 'white' 
 
 window.defaultSequenceCondition =  {
   conditionJSON: {},
-  conditionType: 'matchJSON', // 'insideOfObject', 'duringTime', 'hasTag', 'hasSubObjectWithName',
+  conditionType: 'matchJSON', // 'insideOfObjectTag', 'duringTime', 'hasTag', 'hasSubObjectWithName',
   conditionValue: '',
   allTestedMustPass: false,
   testMainObject: false,

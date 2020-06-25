@@ -129,9 +129,27 @@ function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
       effector = guestObject
     } else if(trigger.effectorObject === 'ownerObject') {
       effector = ownerObject
+    } else if(trigger.effectorObject !== 'default') {
+      effector = GAME.objectsById[trigger.effectorObject]
+      if(!effector) {
+        effector = GAME.heros[trigger.effectorObject]
+      }
+      if(!effector) {
+        effector = defaultEffector
+      }
     }
   }
-  
+
+  if(trigger.conditionType === 'insideOfObjectId') {
+    if(trigger.conditionValue === 'mainObject') {
+      trigger.conditionValue = mainObject.id
+    } else if(trigger.conditionValue === 'guestObject') {
+      trigger.conditionValue = guestObject.id
+    } else if(trigger.conditionValue === 'ownerObject') {
+      trigger.conditionValue = ownerObject.id
+    }
+  }
+
   effectedObjects.forEach((effected) => {
     effects.processEffect(trigger, effected, effector)
   })

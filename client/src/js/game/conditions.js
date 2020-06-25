@@ -4,12 +4,16 @@ window.conditionTypes = {
   matchJSON: {
     JSON: true,
   },
-  insideOfObject: {
-    smallText: true,
+  insideOfObjectTag: {
+    tag: true,
     label: 'Tag:'
   },
+  insideOfObjectId: {
+    id: true,
+    label: 'Id:'
+  },
   hasTag: {
-    smallText: true,
+    tag: true,
     label: 'Tag:'
   },
   hasCompletedQuest: {
@@ -33,13 +37,14 @@ window.conditionTypes = {
     label: 'Sub Object Name:'
   },
 
-  // reverts only for mods really
+  // reverts only work for mods really ATM
   revertOnEvent: {
-    number: true,
+    // number: true,
     event: true,
   },
   revertOnTimerEnd: {
     number: true,
+    label: 'Timer seconds:'
   },
 }
 
@@ -62,8 +67,10 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
     }
   }
 
-  if(condition.conditionType === 'insideOfObject') {
+  if(condition.conditionType === 'insideOfObjectTag') {
     const tag = condition.conditionValue
+
+    window.getObjectsByTag()
 
     let areaObjects = []
     if(GAME.objectsByTag[tag]) {
@@ -87,6 +94,33 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
       })
     }
   }
+
+  if(condition.conditionType === 'insideOfObjectId') {
+    const id = condition.conditionValue
+
+    let areaObjects = []
+    if(GAME.objectsById[id]) {
+      areaObjects = areaObjects.concat(GAME.objectsById[id])
+    }
+    if(GAME.heros[id]) {
+      areaObjects = areaObjects.concat(GAME.heros[id])
+    }
+
+    if(allTestedMustPass) {
+      pass = testObjects.every((testObject) => {
+        return areaObjects.some((areaObject) => {
+          return testIsWithinObject(areaObject, testObject)
+        })
+      })
+    } else {
+      pass = testObjects.some((testObject) => {
+        return areaObjects.some((areaObject) => {
+          return testIsWithinObject(areaObject, testObject)
+        })
+      })
+    }
+  }
+
 
   if(condition.conditionType === 'hasTag') {
     const tag = condition.conditionValue

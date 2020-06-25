@@ -23,7 +23,7 @@ import { startSequence } from './sequence'
     respawn: {
     },
     destroy: {
-      effector: true,
+      effectorObject: true,
     },
     mutate: {
       JSON: true,

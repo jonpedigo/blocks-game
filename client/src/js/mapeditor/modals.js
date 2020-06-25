@@ -465,7 +465,7 @@ function openEditEffectModal(effect, cb) {
     }
   }).then(cb)
 
-  newEffect.type = 'sequenceEffect'
+  newEffect.sequenceType = 'sequenceEffect'
   // Mount React App
   const ref = React.createRef()
   ReactDOM.render(
