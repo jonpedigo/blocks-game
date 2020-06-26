@@ -146,7 +146,7 @@ function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfind
 function walkIntoWall(object) {
   const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
-  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
   if(object.direction === 'right'){
     if ( isGridWalkable(gridX + 1, gridY, options) ){
@@ -190,7 +190,7 @@ function walkIntoWall(object) {
 function exploreCave(object) {
   const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
-  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = [
@@ -258,7 +258,7 @@ function exploreCave(object) {
 function walkWithPurpose(object) {
   const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
-  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
   let random = Math.random()
 
@@ -325,7 +325,7 @@ function walkAround(object) {
     direction = object.direction
   }
 
-  let options = { pathfindingLimit: object.pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
   let random = Math.random()
 

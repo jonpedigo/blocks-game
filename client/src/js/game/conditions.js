@@ -48,7 +48,7 @@ window.conditionTypes = {
   },
 }
 
-function testCondition(condition, testObjects, options = { allTestedMustPass: false, testPassReverse: false }) {
+function testCondition(condition, testObjects, options = { allTestedMustPass: false, testPassReverse: false, testModdedVersion: false }) {
 
   if(!Array.isArray(testObjects)) testObjects = [testObjects]
 
@@ -58,11 +58,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
   if(condition.conditionType === 'matchJSON') {
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject)
+        return testMatchJSONCondition(conditionJSON, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject)
+        return testMatchJSONCondition(conditionJSON, testObject, options)
       })
     }
   }
@@ -83,13 +83,13 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
         return areaObjects.some((areaObject) => {
-          return testIsWithinObject(areaObject, testObject)
+          return testIsWithinObject(areaObject, testObject, options)
         })
       })
     } else {
       pass = testObjects.some((testObject) => {
         return areaObjects.some((areaObject) => {
-          return testIsWithinObject(areaObject, testObject)
+          return testIsWithinObject(areaObject, testObject, options)
         })
       })
     }
@@ -109,13 +109,13 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
         return areaObjects.some((areaObject) => {
-          return testIsWithinObject(areaObject, testObject)
+          return testIsWithinObject(areaObject, testObject, options)
         })
       })
     } else {
       pass = testObjects.some((testObject) => {
         return areaObjects.some((areaObject) => {
-          return testIsWithinObject(areaObject, testObject)
+          return testIsWithinObject(areaObject, testObject, options)
         })
       })
     }
@@ -127,11 +127,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.tags[tag]
+        return testHasTag(tag, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.tags[tag]
+        return testHasTag(tag, testObject, options)
       })
     }
   }
@@ -141,11 +141,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.questState[quest] && testObject.questState[quest].completed
+        return testHasCompletedQuest(quest, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.questState[quest] && testObject.questState[quest].completed
+        return testHasCompletedQuest(quest, testObject, options)
       })
     }
   }
@@ -155,11 +155,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.questState[quest] && testObject.questState[quest].started
+        return testHasStartedQuest(quest, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.questState[quest] && testObject.questState[quest].started
+        return testHasStartedQuest(quest, testObject, options)
       })
     }
   }
@@ -169,11 +169,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.subObjects[name]
+        return testHasSubObject(name, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.subObjects[name]
+        return testHasSubObject(name, testObject, options)
       })
     }
   }
@@ -183,11 +183,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
+        return testIsSubObjectEquipped(name, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
+        return testIsSubObjectEquipped(name, testObject, options)
       })
     }
   }
@@ -197,11 +197,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+        return testIsSubObjectInInvestory(name, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+        return testIsSubObjectInInvestory(name, testObject, options)
       })
     }
   }
@@ -212,12 +212,44 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 }
 
 
-function testMatchJSONCondition(JSON, testObject) {
+function testMatchJSONCondition(JSON, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
   return _.isMatch(testObject, JSON)
 }
 
-function testIsWithinObject(object, testObject) {
-  return collisions.checkObject(object, testObject)
+function testIsWithinObject(object, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return collisions.checkObject(object, testObject, options)
+}
+
+function testHasCompletedQuest(questName, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.questState[questName] && testObject.questState[questName].completed
+}
+
+function testHasStartedQuest(questName, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.questState[questName] && testObject.questState[questName].started
+}
+
+function testHasSubObject(name, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.subObjects[name]
+}
+
+function testIsSubObjectEquipped(name, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
+}
+
+function testIsSubObjectInInvestory(name, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+}
+
+function testHasTag(tag, testObject, options) {
+  if(options.testModdedVersion) testObject = testObject.mod()
+  return testObject.tags[tag]
 }
 
 export {

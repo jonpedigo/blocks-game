@@ -44,6 +44,7 @@ class Game{
   }
 
   onUpdate(delta) {
+    GAME.modCache = {}
     GAME.heroList = []
     HERO.forAll((hero) => {
       GAME.heroList.push(hero)
@@ -254,6 +255,7 @@ class Game{
       GAME.gameState = game.gameState
       if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       GAME.gameState.sequenceQueue = []
+      GAME.gameState.activeModList = []
       GAME.gameState.timeouts = []
       GAME.gameState.timeoutsById = {}
     } else {
@@ -785,15 +787,27 @@ class Game{
       GAME.gameState.activeMods[mod.ownerId].push(mod)
     })
   }
-}
 
-window.mod = function(object) {
-  const activeMods = GAME.gameState.activeMods[object.id]
-  const objectCopy = JSON.parse(JSON.stringify(object))
-  activeMods.forEach((mod) => {
-    window.mergeDeep(objectCopy, mod)
-  })
-  return objectCopy
+  mod(object) {
+    if(!object.id) return object
+    if(GAME.modCache[object.id]) return GAME.modCache[object.id]
+
+    const objectCopy = JSON.parse(JSON.stringify(object))
+    const activeMods = GAME.gameState.activeMods[objectCopy.id]
+    if(activeMods) activeMods.forEach((mod) => {
+      window.mergeDeep(objectCopy, mod)
+    })
+
+    if(objectCopy.subObjects) {
+      objectCopy.subObjects = Object.keys(objectCopy.subObjects).reduce((prev, subObjectName) => {
+        prev[subObjectName] = objectCopy.subObjects[subObjectName].mod()
+        return prev
+      }, {})
+    }
+
+    GAME.modCache[objectCopy.id] = objectCopy
+    return objectCopy
+  }
 }
 
 window.GAME = new Game()

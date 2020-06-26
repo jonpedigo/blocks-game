@@ -10,24 +10,24 @@ function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldY = object.y
 
   if(object.x > target.x) {
-    if(options.flat) object.velocityX = -object.speed || -100
+    if(options.flat) object.velocityX = -object.mod().speed || -100
     else {
-      object.velocityX -= (object.speed || 100) * delta
+      object.velocityX -= (object.mod().speed || 100) * delta
     }
   }
   if(object.x < target.x) {
-    if(options.flat) object.velocityX = object.speed || 100
-    else object.velocityX += (object.speed || 100) * delta
+    if(options.flat) object.velocityX = object.mod().speed || 100
+    else object.velocityX += (object.mod().speed || 100) * delta
   }
   let newX = object.x + object.velocityX * delta
 
   if(object.y > target.y) {
-    if(options.flat) object.velocityY = -object.speed || -100
-    else object.velocityY -= (object.speed || 100) * delta
+    if(options.flat) object.velocityY = -object.mod().speed || -100
+    else object.velocityY -= (object.mod().speed || 100) * delta
   }
   if(object.y < target.y) {
-    if(options.flat) object.velocityY = object.speed || 100
-    else object.velocityY += (object.speed || 100) * delta
+    if(options.flat) object.velocityY = object.mod().speed || 100
+    else object.velocityY += (object.mod().speed || 100) * delta
   }
   let newY = object.y + object.velocityY * delta
 
@@ -45,8 +45,8 @@ function moveOnPath(object, delta) {
   let pathX = (object.path[0].x * GAME.grid.nodeSize) + GAME.grid.startX
   let pathY = (object.path[0].y * GAME.grid.nodeSize) + GAME.grid.startY
 
-  let pathSpeedX = object.speed || -100
-  let pathSpeedY = object.speed || -100
+  let pathSpeedX = object.mod().speed || -100
+  let pathSpeedY = object.mod().speed || -100
 
   moveTowardsTarget(object, {x: pathX, y: pathY }, delta, { flat: true })
   let diffX = Math.abs(object.x - pathX)

@@ -398,6 +398,7 @@ export default class SequenceItem extends React.Component{
             {this._renderTagSelect('testTags', this._onAddConditionTestTag)}
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('allTestedMustPass')} checked={sequenceItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
+            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
             {nested && <hr></hr>}
           </div>
           {!nested && this._renderNextSelect(sequenceItem.passNext, (event) => {

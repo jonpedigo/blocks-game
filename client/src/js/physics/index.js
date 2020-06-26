@@ -72,7 +72,7 @@ function correctAndEffectAllObjectAndHeros (delta) {
 }
 
 function updatePosition(object, delta) {
-  if(object.removed || object.relativeId) return
+  if(object.removed || object.mod().relativeId) return
   if(object._skipPosUpdate) return
 
   // if(object.accX) {
@@ -119,7 +119,7 @@ function updatePosition(object, delta) {
 
   if(object._skipNextGravity) {
     object._skipNextGravity = false
-  } else if(object.tags && object.tags.gravityY) {
+  } else if(object.tags && object.mod().tags.gravityY) {
     let distance = (object.velocityY * delta) +  ((gravityVelocityY * (delta * delta))/2)
     object.y += distance
     object.velocityY += (gravityVelocityY * delta)
@@ -133,13 +133,13 @@ function updatePosition(object, delta) {
       object.velocityY = object.velocityMax * -1
     }
 
-    if(object.tags && !object.tags.gravityY) {
+    if(object.tags && !object.mod().tags.gravityY) {
       object.y += object.velocityY * delta
     }
   }
   if(object._flatVelocityY) object.y += object._flatVelocityY * delta
 
-  if(object.tags && object.tags['stationary']) {
+  if(object.tags && object.mod().tags['stationary']) {
     object.velocityY = 0
     object.velocityX = 0
     object.velocityAngle = 0
@@ -192,7 +192,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.tags.potential) return
+        if(subObject.mod().tags.potential) return
         everything.push(subObject)
       })
     }
@@ -230,7 +230,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       physicsObject.id = object.id
       physicsObject.gameObject = object
 
-      if(object.tags.rotateable) {
+      if(object.mod().tags.rotateable) {
         if(object.angle === 0 || physicsObject._angle !== object.angle) {
           physicsObject.setPoints([ [ -object.height/2, -object.height/2], [object.width/2, -object.height/2], [object.width/2, object.height/2] , [-object.width/2, object.height/2]])
         }
@@ -253,7 +253,7 @@ function heroPhysics() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
     heroCollisionEffects(hero)
-    if(hero.relativeId) return
+    if(hero.mod().relativeId) return
     heroCorrection(hero)
   })
 }
@@ -267,7 +267,7 @@ function objectPhysics() {
       continue
     }
     if(po.gameObject.removed) continue
-    if(po.gameObject.tags.hero) continue
+    if(po.gameObject.mod().tags.hero) continue
     objectCollisionEffects(po)
   }
 
@@ -279,9 +279,9 @@ function objectPhysics() {
     for(let id in PHYSICS.objects){
       let po = PHYSICS.objects[id]
       if(!po.gameObject) continue
-      if(po.gameObject.relativeId) continue
+      if(po.gameObject.mod().relativeId) continue
       if(po.gameObject.removed) continue
-      if(po.gameObject.tags.hero) continue
+      if(po.gameObject.mod().tags.hero) continue
       if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
       objectCorrection(po, final)
     }
@@ -308,7 +308,7 @@ function postPhysics() {
   // NON CHILD GO FIRST
   GAME.objects.forEach((object, i) => {
     if(object.removed) return
-    if(!object.parentId && !object._parentId) {
+    if(!object.mod().parentId && !object._parentId) {
       attachToParent(object)
       containObjectWithinGridBoundaries(object)
       object._deltaX = object.x - object._initialX
@@ -318,7 +318,7 @@ function postPhysics() {
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
-    if(!hero.parentId && !hero._parentId) {
+    if(!hero.mod().parentId && !hero._parentId) {
       attachToParent(hero)
       containObjectWithinGridBoundaries(hero)
       hero._deltaX = hero.x - hero._initialX
@@ -329,7 +329,7 @@ function postPhysics() {
   // THEN ATTACH CHILDREN OBJECTS TO PARENT
   GAME.objects.forEach((object, i) => {
     if(object.removed) return
-    if(object.parentId || object._parentId ) {
+    if(object.mod().parentId || object._parentId ) {
       attachToParent(object)
       containObjectWithinGridBoundaries(object)
     }
@@ -337,7 +337,7 @@ function postPhysics() {
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
-    if(hero.parentId || hero._parentId ) {
+    if(hero.mod().parentId || hero._parentId ) {
       attachToParent(hero)
       containObjectWithinGridBoundaries(hero)
     }
@@ -347,7 +347,7 @@ function postPhysics() {
   // ATTACH OBJECTS THAT ARE SEPERATE FROM BOUNDARIES
   GAME.objects.forEach((object, i) => {
     if(object.removed) return
-    if(object.relativeId) {
+    if(object.mod().relativeId) {
       attachToRelative(object)
     }
     if(object.subObjects) {
@@ -357,7 +357,7 @@ function postPhysics() {
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
-    if(hero.relativeId) {
+    if(hero.mod().relativeId) {
       attachToRelative(hero)
     }
     if(hero.subObjects) {
@@ -393,7 +393,7 @@ function removeAndRespawn() {
   GAME.objects.forEach((object) => {
     if(object._destroy) {
       window.local.emit('onObjectDestroyed', object, object._destroyedBy)
-      if(object.tags.respawn) {
+      if(object.mod().tags.respawn) {
         object._respawn = true
       } else object._remove = true
       delete object._destroy

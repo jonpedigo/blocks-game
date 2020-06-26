@@ -7,7 +7,7 @@
 // spawnSubObjectName
 
 export default function spawnZoneIntelligence(object) {
-  if(object.tags && object.tags['spawnZone']) {
+  if(object.tags && object.mod().tags['spawnZone']) {
     if(!object.spawnedIds) object.spawnedIds = []
 
     object.spawnedIds = object.spawnedIds.filter((id) => {

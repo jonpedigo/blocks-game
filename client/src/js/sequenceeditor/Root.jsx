@@ -125,7 +125,7 @@ export default class Root extends React.Component {
     const { sequence, selectedType } = this.state
     if(!selectedType) return
 
-    const sequenceItem = {id: this._findNextId(), type: selectedType }
+    const sequenceItem = {id: this._findNextId(), sequenceType: selectedType }
 
     if(selectedType === 'sequenceDialogue') {
       sequenceItem.effectValue = ''

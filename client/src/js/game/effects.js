@@ -130,7 +130,7 @@ function processEffect(effect, effected, effector) {
       effected.flags.showDialogue = true
       effected.flags.paused = true
       if(effector.name) {
-        effected.dialogueName = effector.name
+        effected.dialogueName = effector.mod().name
       } else {
         effected.dialogueName = null
       }

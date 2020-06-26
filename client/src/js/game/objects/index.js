@@ -51,8 +51,8 @@ class Objects{
 
   getSpawnCoords(object) {
     return {
-      x: object.spawnPointX,
-      y: object.spawnPointY
+      x: object.mod().spawnPointX,
+      y: object.mod().spawnPointY
     }
   }
 
@@ -68,11 +68,11 @@ class Objects{
     //   }
     // })
 
-    if(object.pathfindingLimit) {
+    if(object.mod().pathfindingLimit) {
       // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
       const { x, y } = gridUtil.snapXYToGrid(diffX, diffY)
-      object.pathfindingLimit.x += x
-      object.pathfindingLimit.y += y
+      object.mod().pathfindingLimit.x += x
+      object.mod().pathfindingLimit.y += y
       // grid.snapDragToGrid(object.pathfindingLimit, {dragging: true})
     }
 
@@ -287,15 +287,15 @@ class Objects{
   }
 
   isInteractable(object) {
-    if((object.tags['completeQuestOnHeroInteract'] && object.tags['questCompleter']) || (object.tags['giveQuestOnHeroInteract'] && object.tags['questGiver'])) return true
+    if((object.mod().tags['completeQuestOnHeroInteract'] && object.mod().tags['questCompleter']) || (object.mod().tags['giveQuestOnHeroInteract'] && object.mod().tags['questGiver'])) return true
 
-    if(object.tags['spawnOnHeroInteract'] && object.tags.spawnZone) return true
+    if(object.mod().tags['spawnOnHeroInteract'] && object.mod().tags.spawnZone) return true
 
-    if(object.tags['updateHeroOnHeroInteract'] && object.tags.heroUpdate) return true
+    if(object.mod().tags['updateHeroOnHeroInteract'] && object.mod().tags.heroUpdate) return true
 
-    if(object.tags['talkOnHeroInteract'] && object.tags.talker) return true
+    if(object.mod().tags['talkOnHeroInteract'] && object.mod().tags.talker) return true
 
-    if(object.tags['showInteractBorder']) return true
+    if(object.mod().tags['showInteractBorder']) return true
 
     return false
   }
@@ -547,20 +547,20 @@ class Objects{
   getOwner(subObject) {
     let owner = OBJECTS.getObjectOrHeroById(subObject.ownerId)
     if(!owner) {
-      owner = OBJECTS.getRelative(subObject.relativeId)
+      owner = OBJECTS.getRelative(subObject.mod().relativeId)
     }
     if(!owner) {
-      owner = OBJECTS.getParent(subObject.parentId)
+      owner = OBJECTS.getParent(subObject.mod().parentId)
     }
     return owner
   }
 
   getParent(subObject) {
-    return OBJECTS.getObjectOrHeroById(subObject.parentId)
+    return OBJECTS.getObjectOrHeroById(subObject.mod().parentId)
   }
 
   getRelative(subObject) {
-    return OBJECTS.getObjectOrHeroById(subObject.relativeId)
+    return OBJECTS.getObjectOrHeroById(subObject.mod().relativeId)
   }
 
   getObjectOrHeroById(id) {
@@ -697,8 +697,8 @@ class Objects{
   }
   getRelativeCenterXY(object, relative) {
     return {
-      relativeX: (object.x + object.width/2) - (relative.x + relative.width/2),
-      relativeY: (object.y + object.height/2) - (relative.y + relative.height/2)
+      relativeX: (object.x + object.mod().width/2) - (relative.x + relative.mod().width/2),
+      relativeY: (object.y + object.mod().height/2) - (relative.y + relative.mod().height/2)
     }
   }
 }

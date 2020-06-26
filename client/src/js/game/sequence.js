@@ -116,6 +116,9 @@ function processSequence(sequence) {
       }
     }
 
+    // inside of ObjectId is currently the only id selector that can also select main Object, guest Object, etc
+    // this converts the condition value to an id if its not already an id essentially
+    // this also exists when a trigger is fired
     if(item.conditionType === 'insideOfObjectId') {
       if(item.conditionValue === 'mainObject') {
         item.conditionValue = item.mainObject.id
@@ -203,16 +206,16 @@ function processSequence(sequence) {
 
 window.getObjectsByTag = function() {
   GAME.objectsByTag = GAME.objects.reduce((map, object) => {
-    Object.keys(object.tags).forEach((tag) => {
+    Object.keys(object.mod().tags).forEach((tag) => {
       if(!map[tag]) map[tag] = []
-      if(object.tags[tag] === true) map[tag].push(object)
+      if(object.mod().tags[tag] === true) map[tag].push(object)
     })
     return map
   }, {})
   GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
-    Object.keys(hero.tags).forEach((tag) => {
+    Object.keys(hero.mod().tags).forEach((tag) => {
       if(!map[tag]) map[tag] = []
-      if(hero.tags[tag] === true) map[tag].push(hero)
+      if(hero.mod().tags[tag] === true) map[tag].push(hero)
     })
     return map
   }, {})

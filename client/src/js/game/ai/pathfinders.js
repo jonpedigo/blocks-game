@@ -4,11 +4,11 @@ import gridUtil from '../../utils/grid.js'
 export default function pathfinderIntelligence(object) {
   let hero = GAME.heroList[0]
 
-  if(object.tags && object.tags['zombie']) {
+  if(object.tags && object.mod().tags['zombie']) {
     object.target = { x: hero.x, y: hero.y }
   }
 
-  if(object.tags && object.tags['homing']) {
+  if(object.tags && object.mod().tags['homing']) {
     if(!object.path || (object.path && !object.path.length)) {
       const { gridX, gridY } = gridUtil.convertToGridXY(object)
       object.gridX = gridX
@@ -24,11 +24,11 @@ export default function pathfinderIntelligence(object) {
       }, {
         x: hero.gridX,
         y: hero.gridY,
-      }, { pathfindingLimit: object.pathfindingLimit })
+      }, { pathfindingLimit: object.mod().pathfindingLimit })
     }
   }
 
-  if(object.tags && object.tags['wander']) {
+  if(object.tags && object.mod().tags['wander']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkAround(object)]
       const { gridX, gridY } = gridUtil.convertToGridXY(object)
@@ -37,7 +37,7 @@ export default function pathfinderIntelligence(object) {
     }
   }
 
-  if(object.tags && object.tags['pacer']) {
+  if(object.tags && object.mod().tags['pacer']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkWithPurpose(object)]
       const { gridX, gridY } = gridUtil.convertToGridXY(object)
@@ -46,7 +46,7 @@ export default function pathfinderIntelligence(object) {
     }
   }
 
-  if(object.tags && object.tags['spelunker']) {
+  if(object.tags && object.mod().tags['spelunker']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.exploreCave(object)]
       const { gridX, gridY } = gridUtil.convertToGridXY(object)
@@ -55,7 +55,7 @@ export default function pathfinderIntelligence(object) {
     }
   }
 
-  if(object.tags && object.tags['lemmings']) {
+  if(object.tags && object.mod().tags['lemmings']) {
     if(!object.path || (object.path && !object.path.length)) {
       object.path = [pathfinding.walkIntoWall(object)]
       const { gridX, gridY } = gridUtil.convertToGridXY(object)
@@ -64,7 +64,7 @@ export default function pathfinderIntelligence(object) {
     }
   }
 
-  if(object.tags && object.tags['goomba']) {
+  if(object.tags && object.mod().tags['goomba']) {
     if(object.velocityMax === 0) object.velocityMax = 100
 
     if(!object.direction) {
@@ -80,7 +80,7 @@ export default function pathfinderIntelligence(object) {
     }
   }
 
-  if(object.tags && object.tags['goombaSideways']) {
+  if(object.tags && object.mod().tags['goombaSideways']) {
     if(object.velocityMax === 0) object.velocityMax = 100
 
     if(!object.direction) {

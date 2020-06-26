@@ -93,14 +93,17 @@ function render(delta) {
 function mapNetworkUpdate() {
   window.socket.emit('updateObjects', GAME.objects.map(OBJECTS.getMapState))
   window.socket.emit('updateHeros', GAME.heroList.reduce((prev, hero) => {
-    prev[hero.id] = HERO.getMapState(hero)
+    prev[hero.id] = HERO.getMapState(hero.mod())
     return prev
   }, {}))
 }
 
 function completeNetworkUpdate() {
-  window.socket.emit('updateObjectsComplete', GAME.objects)
-  window.socket.emit('updateHerosComplete', GAME.heros)
+  window.socket.emit('updateObjectsComplete', GAME.objects.map(GAME.mod))
+  window.socket.emit('updateHerosComplete', GAME.heroList.reduce((prev, hero) => {
+    prev[hero.id] = hero.mod()
+    return prev
+  }, {}))
   window.socket.emit('updateGameState', GAME.gameState)
   window.socket.emit('updateWorldOnServerOnly', GAME.world)
   if(GAME.gameState.started && GAME.world.tags.storeEntireGameState) {

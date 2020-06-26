@@ -135,9 +135,9 @@ class Hero{
     let x = 960;
     let y = 960;
     // hero spawn point takes precedence
-    if(hero.spawnPointX && hero.spawnPointX >= 0 && hero.spawnPointY && hero.spawnPointY >= 0) {
-      x = hero.spawnPointX
-      y = hero.spawnPointY
+    if(hero.mod().spawnPointX && hero.mod().spawnPointX >= 0 && hero.mod().spawnPointY && hero.mod().spawnPointY >= 0) {
+      x = hero.mod().spawnPointX
+      y = hero.mod().spawnPointY
     } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0 && GAME.world.worldSpawnPointY && GAME.world.worldSpawnPointY >= 0) {
       x = GAME.world.worldSpawnPointX
       y = GAME.world.worldSpawnPointY
@@ -159,12 +159,12 @@ class Hero{
       GAME.objects.forEach((obj) => {
         if(obj.removed) return
 
-        if(obj.tags.zombie || obj.tags.homing) {
+        if(obj.mod().tags.zombie || obj.mod().tags.homing) {
           const { gridX, gridY } = gridUtil.convertToGridXY(obj)
           obj.gridX = gridX
           obj.gridY = gridY
 
-          const spawnGridPos = gridUtil.convertToGridXY({x: obj.spawnPointX, y: obj.spawnPointY})
+          const spawnGridPos = gridUtil.convertToGridXY({x: obj.mod().spawnPointX, y: obj.mod().spawnPointY})
 
           obj.path = pathfinding.findPath({
             x: gridX,
@@ -172,7 +172,7 @@ class Hero{
           }, {
             x: spawnGridPos.gridX,
             y: spawnGridPos.gridY,
-          }, obj.pathfindingLimit)
+          }, obj.mod().pathfindingLimit)
         }
       })
     }
@@ -239,8 +239,8 @@ class Hero{
     const value = {
       width: HERO.cameraWidth * hero.zoomMultiplier,
       height: HERO.cameraHeight * hero.zoomMultiplier,
-      centerX: hero.x + hero.width/2,
-      centerY: hero.y + hero.height/2,
+      centerX: hero.x + hero.mod().width/2,
+      centerY: hero.y + hero.mod().height/2,
     }
     value.x = value.centerX - value.width/2
     value.y = value.centerY - value.height/2
@@ -505,7 +505,7 @@ class Hero{
   }
 
   removeHero(hero) {
-    OBJECTS.forAllSubObjects(hero.subObjects, (subObjecty) => {
+    OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
       subObject.removed = true
     })
     GAME.heros[hero.id].removed = true

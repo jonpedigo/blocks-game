@@ -36,7 +36,7 @@ function checkIdOrTagMatch(id, tag, object) {
   if(id && id === object.id) {
     return true
   }
-  if(tag && object.tags[tag]) {
+  if(tag && object.mod().tags[tag]) {
     return true
   }
 }
@@ -70,7 +70,7 @@ function addTrigger(ownerObject, trigger) {
 
     // the code below attempts to automatically determine the main object or the guest object
     // based on the name of the event
-    if(ownerObject.tags.hero) {
+    if(ownerObject.mod().tags.hero) {
       if(!guestObjectId && !guestObjectTag && eventName.indexOf('Object') >= 0) {
         guestObjectId = ownerObject.id
       }
@@ -140,6 +140,9 @@ function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
     }
   }
 
+  // inside of ObjectId is currently the only id selector that can also select main Object, guest Object, etc
+  // this converts the condition value to an id if its not already an id essentially
+  // this also exists when a sequence item is processed
   if(trigger.conditionType === 'insideOfObjectId') {
     if(trigger.conditionValue === 'mainObject') {
       trigger.conditionValue = mainObject.id

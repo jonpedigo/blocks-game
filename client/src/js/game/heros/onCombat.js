@@ -1,8 +1,8 @@
 export default function onCombat(hero, collider, result, options) {
-  if(collider.tags && collider.tags['monster']) {
-    if(hero.tags['monsterDestroyer']) {
+  if(collider.tags && collider.mod().tags['monster']) {
+    if(hero.mod().tags['monsterDestroyer']) {
       collider._destroyedBy = hero
-      if(collider.spawnPointX >= 0 && collider.tags['respawn']) {
+      if(collider.mod().spawnPointX >= 0 && collider.d().motags['respawn']) {
         collider._respawn = true
       } else {
         collider._remove = true

@@ -94,7 +94,7 @@ function heroCorrection(hero) {
       if(body.gameObject.removed) continue
       let result = PHYSICS.objects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
-        if((body.gameObject.tags['obstacle'] && !body.gameObject.tags['heroPushable']) || body.gameObject.tags['noHeroAllowed']) {
+        if((body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['heroPushable']) || body.gameObject.mod().tags['noHeroAllowed']) {
           illegal = true
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
@@ -121,7 +121,7 @@ function heroCorrection(hero) {
         if(result.overlap_y > 0) {
           hero.onGround = true
           if(landingObject) window.local.emit('onHeroLand', hero, landingObject.gameObject, result)
-          if(landingObject && landingObject.gameObject.tags['movingPlatform']) {
+          if(landingObject && landingObject.gameObject.mod().tags['movingPlatform']) {
             hero._parentId = landingObject.gameObject.id
           } else {
             if(hero.velocityY > 0) hero.velocityY = 0
@@ -184,7 +184,7 @@ function heroCorrection(hero) {
         }
         hero.x = heroPO.x
         hero.y = heroPO.y
-        if(hero.tags.rotateable) {
+        if(hero.mod().tags.rotateable) {
           hero.x -= hero.width/2
           hero.y -= hero.height/2
         }
@@ -218,7 +218,7 @@ function objectCollisionEffects(po) {
       let agent = po.gameObject
 
       const isInteractable = OBJECTS.isInteractable(collider)
-      if(agent.tags['heroInteractTriggerArea'] && isInteractable) {
+      if(agent.mod().tags['heroInteractTriggerArea'] && isInteractable) {
         // sometimes the hero could be logged off
         let hero = GAME.heros[agent.ownerId]
         if(hero) {
@@ -263,7 +263,7 @@ function objectCorrection(po, final) {
     if(body.gameObject.removed) continue
     if(po.collides(body, result)) {
       // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
-      if(po.gameObject.tags['monster'] && body.gameObject.tags && body.gameObject.tags['onlyHeroAllowed']) {
+      if(po.gameObject.mod().tags['monster'] && body.gameObject.tags && body.gameObject.mod().tags['onlyHeroAllowed']) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -277,8 +277,8 @@ function objectCorrection(po, final) {
 
       // objects with NO path but SOME velocity get corrections
       let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY && po.gameObject.velocityY !== 0 || po.gameObject.velocityX && po.gameObject.velocityX !== 0))
-      let bothAreObstacles = po.gameObject.tags && po.gameObject.tags['obstacle'] && body.gameObject.tags && body.gameObject.tags['obstacle']
-      if(!po.gameObject.tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.tags['heroPushable'])) {
+      let bothAreObstacles = po.gameObject.tags && po.gameObject.mod().tags['obstacle'] && body.gameObject.tags && body.gameObject.mod().tags['obstacle']
+      if(!po.gameObject.mod().tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.mod().tags['heroPushable'])) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -290,7 +290,7 @@ function objectCorrection(po, final) {
         break;
       }
 
-      if(po.gameObject.tags && po.gameObject.tags['heroPushable'] && body.gameObject.tags && body.gameObject.tags['hero'] && !po.gameObject.tags['stationary']) {
+      if(po.gameObject.tags && po.gameObject.mod().tags['heroPushable'] && body.gameObject.tags && body.gameObject.mod().tags['hero'] && !po.gameObject.mod().tags['stationary']) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -340,7 +340,7 @@ function objectCorrection(po, final) {
       } else {
         object.x = po.x
         object.y = po.y
-        if(object.tags.rotateable) {
+        if(object.mod().tags.rotateable) {
           object.x -= object.width/2
           object.y -= object.height/2
         }
@@ -354,7 +354,7 @@ function containObjectWithinGridBoundaries(object) {
   let gameBoundaries = GAME.world.gameBoundaries
   if(gameBoundaries && gameBoundaries.x >= 0) {
     let objectToEdit = object
-    if(object.tags.fresh) {
+    if(object.mod().tags.fresh) {
       objectToEdit = JSON.parse(JSON.stringify(object))
     }
 
@@ -382,8 +382,8 @@ function containObjectWithinGridBoundaries(object) {
         objectToEdit.y = gameBoundaries.y + ((HERO.cameraHeight * hero.zoomMultiplier)/2)
         legal = false
       }
-      if(legal && object.tags.fresh){
-        object.tags.fresh = false
+      if(legal && object.mod().tags.fresh){
+        object.mod().tags.fresh = false
         object.path = null
       }
     } else if(gameBoundaries.behavior === 'pacmanFlip' || (gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') > -1)) {
@@ -404,8 +404,8 @@ function containObjectWithinGridBoundaries(object) {
         objectToEdit.y = gameBoundaries.y - objectToEdit.height
         legal = false
       }
-      if(legal && object.tags.fresh){
-        object.tags.fresh = false
+      if(legal && object.mod().tags.fresh){
+        object.mod().tags.fresh = false
         object.path = null
       }
     } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
@@ -428,8 +428,8 @@ function containObjectWithinGridBoundaries(object) {
         legal = false
       }
 
-      if(legal && object.tags.fresh){
-        object.tags.fresh = false
+      if(legal && object.mod().tags.fresh){
+        object.mod().tags.fresh = false
         object.path = null
       }
     }
@@ -467,14 +467,14 @@ function attachSubObjects(owner, subObjects) {
     if(subObject.relativeWidth) subObject.width = owner.width + (subObject.relativeWidth)
     if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
-    if((subObject.tags.relativeToDirection || subObject.tags.relativeToAngle)) {
+    if((subObject.mod().tags.relativeToDirection || subObject.mod().tags.relativeToAngle)) {
       const direction = owner.inputDirection
 
       let radians = 0
 
-      if(subObject.tags.relativeToAngle) {
+      if(subObject.mod().tags.relativeToAngle) {
         radians = owner.angle
-      } else if(subObject.tags.relativeToDirection) {
+      } else if(subObject.mod().tags.relativeToDirection) {
         if(direction === 'right') {
           radians = degreesToRadians(90)
         }
@@ -491,28 +491,28 @@ function attachSubObjects(owner, subObjects) {
       }
 
 
-      var rotatedRelativeX = Math.cos(radians) * (subObject.relativeX) - Math.sin(radians) * (subObject.relativeY);
-      var rotatedRelativeY = Math.sin(radians) * (subObject.relativeX) + Math.cos(radians) * (subObject.relativeY);
+      var rotatedRelativeX = Math.cos(radians) * (subObject.mod().relativeX) - Math.sin(radians) * (subObject.mod().relativeY);
+      var rotatedRelativeY = Math.sin(radians) * (subObject.mod().relativeX) + Math.cos(radians) * (subObject.mod().relativeY);
 
       subObject.x = owner.x + owner.width/2 + rotatedRelativeX - subObject.width/2
       subObject.y = owner.y + owner.height/2 + rotatedRelativeY - subObject.height/2
 
       subObject.angle = radians
-      subObject.tags.rotateable = true
+      subObject.mod().tags.rotateable = true
     } else {
-      if(typeof subObject.relativeX === 'number') subObject.x = owner.x + owner.width/2 + subObject.relativeX - subObject.width/2
-      if(typeof subObject.relativeY === 'number') subObject.y = owner.y + owner.height/2 + subObject.relativeY - subObject.height/2
+      if(typeof subObject.mod().relativeX === 'number') subObject.x = owner.x + owner.width/2 + subObject.mod().relativeX - subObject.width/2
+      if(typeof subObject.mod().relativeY === 'number') subObject.y = owner.y + owner.height/2 + subObject.mod().relativeY - subObject.height/2
     }
   })
 }
 
 function attachToParent(object) {
-  let parent = GAME.objectsById[object.parentId] || GAME.heros[object.parentId]
+  let parent = GAME.objectsById[object.mod().parentId] || GAME.heros[object.mod().parentId]
 
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
-  } else delete object.parentId
+  } else delete object.mod().parentId
 
   parent = GAME.objectsById[object._parentId] || GAME.heros[object._parentId]
   if(parent) {
@@ -522,12 +522,12 @@ function attachToParent(object) {
 }
 
 function attachToRelative(object) {
-  let relative = GAME.objectsById[object.relativeId] || GAME.heros[object.relativeId]
+  let relative = GAME.objectsById[object.mod().relativeId] || GAME.heros[object.mod().relativeId]
 
   if(relative) {
-    object.x = relative.x + object.relativeX
-    object.y = relative.y + object.relativeY
-  } else delete object.relativeId
+    object.x = relative.x + object.mod().relativeX
+    object.y = relative.y + object.mod().relativeY
+  } else delete object.mod().relativeId
 }
 
 function addObject(object) {
