@@ -76,6 +76,8 @@ const initPixiApp = (canvasRef, onLoad) => {
 
 
 const addGameObjectToStage = (gameObject, stage) => {
+  if(PAGE.role.isHost) gameObject = gameObject.mod()
+
   if(gameObject.defaultSprite) {
     gameObject.sprite = gameObject.defaultSprite
   } else {
@@ -117,6 +119,8 @@ const addGameObjectToStage = (gameObject, stage) => {
 }
 
 const initPixiObject = (gameObject) => {
+  if(PAGE.role.isHost) gameObject = gameObject.mod()
+
   if (gameObject.invisible) return
 
   if(gameObject.constructParts) {
@@ -140,6 +144,8 @@ const initPixiObject = (gameObject) => {
 }
 
 const updatePixiObject = (gameObject) => {
+  if(PAGE.role.isHost) gameObject = gameObject.mod()
+
   if(gameObject.constructParts) {
     gameObject.constructParts.forEach((part) => {
       updatePixiObject({tags: gameObject.tags, ...part})
@@ -221,7 +227,7 @@ const updatePixiObject = (gameObject) => {
   }
   if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
 
-  if(HERO.id && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
+  if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
     pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
   } else {
     if(pixiChild.filters && pixiChild.filters.length) pixiChild.filters = []
@@ -245,6 +251,7 @@ PIXIMAP.onAssetsLoaded = function() {
 
 PIXIMAP.onGameLoaded = function() {
   // GAME.world.tags.usePixiMap = true
+
   if(GAME.world.tags.usePixiMap && !PIXIMAP.initialized) {
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')

@@ -155,9 +155,7 @@ class Objects{
       rightSprite: object.rightSprite,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
-      heroUpdate: object.heroUpdate,
       heroDialogue: object.heroDialogue,
-      objectUpdate: object.objectUpdate,
       pathfindingLimit: object.pathfindingLimit,
       relativeX: object.relativeX,
       relativeY: object.relativeY,
@@ -215,7 +213,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = object.triggers[triggerId]
+        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -226,6 +224,7 @@ class Objects{
           effectedMainObject,
           effectedGuestObject,
           effectedOwnerObject,
+          effectedWorldObject,
           effectedIds,
           effectedTags,
           effectTags,
@@ -237,6 +236,12 @@ class Objects{
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
+          testPassReverse,
+          testModdedVersion,
+          conditionValue,
+          conditionType,
+          conditionJSON,
+          conditionEventName,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

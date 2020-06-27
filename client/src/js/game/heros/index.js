@@ -399,7 +399,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = hero.triggers[triggerId]
+        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -410,6 +410,7 @@ class Hero{
           effectedMainObject,
           effectedGuestObject,
           effectedOwnerObject,
+          effectedWorldObject,
           effectedIds,
           effectedTags,
           effectTags,
@@ -421,6 +422,12 @@ class Hero{
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
+          testPassReverse,
+          testModdedVersion,
+          conditionValue,
+          conditionType,
+          conditionJSON,
+          conditionEventName,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

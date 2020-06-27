@@ -44,7 +44,6 @@ class Game{
   }
 
   onUpdate(delta) {
-    GAME.modCache = {}
     GAME.heroList = []
     HERO.forAll((hero) => {
       GAME.heroList.push(hero)
@@ -80,6 +79,7 @@ class Game{
         GAME.gameState.sequenceQueue.forEach((sequence) => {
           processSequence(sequence)
         })
+        GAME.updateActiveMods()
 
         timeouts.onUpdate(delta)
         //////////////////////////////
@@ -753,6 +753,8 @@ class Game{
 
   updateActiveMods() {
     GAME.gameState.activeMods = {}
+    GAME.modCache = {}
+
     /*
     {
       //modname
@@ -768,7 +770,7 @@ class Game{
     }
     */
     GAME.gameState.activeModList = GAME.gameState.activeModList.filter(mod => {
-      const testObject = GAME.getObjectOrHeroById(mod.ownerId)
+      const testObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
       if(mod._remove) {
         if(mod.removeEventListener) mod.removeEventListener()
         return false
@@ -789,24 +791,67 @@ class Game{
   }
 
   mod(object) {
-    if(!object.id) return object
-    if(GAME.modCache[object.id]) return GAME.modCache[object.id]
-
-    const objectCopy = JSON.parse(JSON.stringify(object))
-    const activeMods = GAME.gameState.activeMods[objectCopy.id]
-    if(activeMods) activeMods.forEach((mod) => {
-      window.mergeDeep(objectCopy, mod)
-    })
-
-    if(objectCopy.subObjects) {
-      objectCopy.subObjects = Object.keys(objectCopy.subObjects).reduce((prev, subObjectName) => {
-        prev[subObjectName] = objectCopy.subObjects[subObjectName].mod()
-        return prev
-      }, {})
+    if(!object.id || !GAME.modCache) {
+      return object
+    }
+    if(GAME.modCache[object.id]) {
+      let cached = GAME.modCache[object.id]
+      cached.x = object.x
+      cached.y = object.y
     }
 
-    GAME.modCache[objectCopy.id] = objectCopy
-    return objectCopy
+    const activeMods = GAME.gameState.activeMods[object.id]
+
+    if(!activeMods) {
+      return object
+    } else if(activeMods) {
+      const objectCopy = {
+        ...object,
+        //moddable propertys
+        tags: JSON.parse(JSON.stringify(object.tags)),
+        speed: object.speed,
+        width: object.width,
+        height: object.height,
+        color: object.color,
+        actionButtonBehavior: object.actionButtonBehavior,
+        arrowKeysBehavior: object.arrowKeysBehavior,
+        spaceBarBehavior: object.spaceBarBehavior,
+        jumpVelocity: object.jumpVelocity,
+        velocityMax: object.velocityMax,
+        tags: object.tags,
+        zoomMultiplier: object.zoomMultiplier,
+        defaultSprite: object.defaultSprite,
+        upSprite: object.upSprite,
+        leftSprite: object.leftSprite,
+        downSprite: object.downSprite,
+        rightSprite: object.rightSprite,
+        spawnPointX: object.spawnPointX,
+        spawnPointY: object.spawnPointY,
+        relativeX: object.relativeX,
+        relativeY: object.relativeY,
+        relativeId: object.relativeId,
+        parentId: object.parentId,
+        name: object.name,
+        namePos: object.namePos,
+        heroDialogue: object.heroDialogue,
+        pathfindingLimit: object.pathfindingLimit,
+      }
+
+      activeMods.forEach((mod) => {
+        window.mergeDeep(objectCopy, mod.effectJSON)
+        console.log(objectCopy)
+      })
+
+      if(objectCopy.subObjects) {
+        objectCopy.subObjects = Object.keys(objectCopy.subObjects).reduce((prev, subObjectName) => {
+          prev[subObjectName] = objectCopy.subObjects[subObjectName].mod()
+          return prev
+        }, {})
+      }
+
+      GAME.modCache[objectCopy.id] = objectCopy
+      return objectCopy
+    }
   }
 }
 

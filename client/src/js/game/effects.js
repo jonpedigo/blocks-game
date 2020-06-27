@@ -32,8 +32,8 @@ import { startSequence } from './sequence'
       JSON: true,
       JSONlabel: 'Mod JSON: ',
       condition: true,
-      smallText: true,
-      label: 'Mod name: ',
+      // smallText: true,
+      // label: 'Mod name: ',
       footer: 'Mod Condition:'
     },
     dialogue: {
@@ -205,6 +205,10 @@ function processEffect(effect, effected, effector) {
       guestObject: effector,
     }
     startSequence(effectValue, context)
+  }
+
+  if(effectName === 'mod') {
+    GAME.startMod(effected.id, effect)
   }
 }
 

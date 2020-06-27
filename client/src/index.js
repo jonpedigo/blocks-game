@@ -68,6 +68,7 @@ Finish feature list
 
 !!!!!!!! !!!! READY FOR BETA !!!! !!!!!!
 
+CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
 SOUND FX
 HOOKS
   // hook into events and prevent them from happening with conditions
@@ -191,6 +192,7 @@ Engine trail on a car u know what I mean?
 // () => syntax in react PLEASE so no more binding
 
 // gameState => worldState
+// convert all 'guestObject', 'mainObject', 'ownerObject' things to just ID stores
 
 // dev dependencies to try to lower packet size
 
@@ -200,6 +202,7 @@ Engine trail on a car u know what I mean?
 // http://timefantasy.net/
 // https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
 // THINK ABOUT ADDING A BASIC GRAPHICS LIBRARY FOR SQUARES AND ALL THE JUICE REGARDING THE SQUARES
+// https://github.com/YarnSpinnerTool/YarnEditor
 
 // MARKETING IDEA
 // Make a game for their birthday

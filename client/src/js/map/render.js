@@ -39,6 +39,8 @@ function drawObject(ctx, object, withNames = false) {
 function update(camera) {
   const { ctx, canvas } = MAP
 
+  const clientHero = GAME.heros[HERO.id].mod()
+
   ctx.shadowBlur = 0;
   ctx.shadowColor = 'none';
   ctx.filter = "drop-shadow(4px 4px 8px #fff)";
@@ -52,8 +54,10 @@ function update(camera) {
     canvas.style.backgroundColor = GAME.world.backgroundColor
   }
 
-  let viewBoundaries = HERO.getViewBoundaries(GAME.heros[HERO.id])
+  let viewBoundaries = HERO.getViewBoundaries(clientHero)
   GAME.objects.forEach((object) => {
+    object = object.mod()
+
     if(object.removed) return
     if(object.id === CONSTRUCTEDITOR.objectId) return
 
@@ -73,6 +77,8 @@ function update(camera) {
   })
 
   GAME.heroList.forEach((hero) => {
+    hero = hero.mod()
+
     if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
       drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
     } else {
@@ -88,8 +94,9 @@ function update(camera) {
   })
 
   // dont show names if we zoom to the stars
-  if(!GAME.heros[HERO.id].animationZoomMultiplier) {
+  if(!clientHero.animationZoomMultiplier) {
     GAME.objects.forEach((obj) => {
+      obj = obj.mod()
       if(obj.name && !obj.removed) {
         if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
         if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
@@ -112,8 +119,8 @@ function update(camera) {
   // chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && !GAME.heros[HERO.id].flags.showDialogue) {
-    const { interactableObject } = GAME.heros[HERO.id]
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue) {
+    const { interactableObject } = clientHero
 
     if(interactableObject.tags.invisible) {
       ctx.fillStyle = "rgb(255, 255, 255)";

@@ -69,7 +69,7 @@ class EventEmitter {
       if(!PAGE.role.isPlayEditor && MAP[eventName]) {
         event.push(MAP[eventName])
       }
-      if(!PAGE.role.isPlayEditor && PIXIMAP.initialized && PIXIMAP[eventName]) {
+      if(!PAGE.role.isPlayEditor && PIXIMAP[eventName]) {
         event.push(PIXIMAP[eventName])
       }
 

@@ -238,6 +238,7 @@ export default class SequenceItem extends React.Component{
     // largeText: false
     // heroOnly: false
     // sequenceId: false
+    const { isTrigger } = this.props
     const { sequenceItem } = this.state
     const { effectName } = sequenceItem
 
@@ -310,8 +311,9 @@ export default class SequenceItem extends React.Component{
         <div className="SequenceItem__effect-form">
           {chosenEffectForm}
         </div>
+        {isTrigger && <div className="SequenceItem__effect-input"><input onChange={() => this._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedOwnerObject} type="checkbox"></input>Effect Owner Object</div>}
         <div className="SequenceItem__effect-input"><input onChange={() => this._onToggleValue('effectedMainObject')} checked={sequenceItem.effectedMainObject} type="checkbox"></input>Effect Main Object</div>
-        <div className="SequenceItem__effect-input"><input onChange={() => this._onToggleValue('effectedGuestObject')} checked={sequenceItem.effectedGuestObject} type="checkbox"></input>Effect Guest Object</div>
+        <div className="SequenceItem__effect-input"><input onChange={() => this._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedGuestObject} type="checkbox"></input>Effect Guest Object</div>
         <div className="SequenceItem__effect-input"><input onChange={() => this._onToggleValue('effectedWorldObject')} checked={sequenceItem.effectedWorldObject} type="checkbox"></input>Effect World Object</div>
         {this._renderIdSelect('effectedIds', this._onAddEffectedId, 'Effected Ids:')}
         {this._renderTagSelect('effectedTags', this._onAddEffectedTag, 'Effected Tags:')}
@@ -385,18 +387,21 @@ export default class SequenceItem extends React.Component{
       }
     }
 
+    const isMod = sequenceItem.effectName && sequenceItem.effectName === 'mod'
     return <div className={classnames("SequenceItem__condition", {"SequenceItem__condition--nested": nested})}>
           {nested && <hr></hr>}
           {nested && <h4>Mod Condition</h4>}
           {conditionTypeChooser}
           <div className="SequenceItem__condition-body">
             {chosenConditionForm}
-            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testMainObject')} checked={sequenceItem.testMainObject} type="checkbox"></input>Test Main Object</div>
-            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testGuestObject')} checked={sequenceItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
-            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testWorldObject')} checked={sequenceItem.testWorldObject} type="checkbox"></input>Test World Object</div>
-            {this._renderIdSelect('testIds', this._onAddConditionTestId)}
-            {this._renderTagSelect('testTags', this._onAddConditionTestTag)}
-            <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('allTestedMustPass')} checked={sequenceItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
+            {!isMod && <React.Fragment>
+              <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testMainObject')} checked={sequenceItem.testMainObject} type="checkbox"></input>Test Main Object</div>
+              <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testGuestObject')} checked={sequenceItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
+              <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testWorldObject')} checked={sequenceItem.testWorldObject} type="checkbox"></input>Test World Object</div>
+              {this._renderIdSelect('testIds', this._onAddConditionTestId)}
+              {this._renderTagSelect('testTags', this._onAddConditionTestTag)}
+              <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('allTestedMustPass')} checked={sequenceItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
+            </React.Fragment>}
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
             {nested && <hr></hr>}
