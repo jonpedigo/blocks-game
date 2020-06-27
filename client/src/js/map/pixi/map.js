@@ -142,7 +142,10 @@ const addGameObjectToStage = (gameObject, stage) => {
 const initPixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
-  if (gameObject.invisible) return
+  const isOutline = GAME.world.tags.useFlatColors && !gameObject.tags.filled
+  const isConstruct = GAME.world.tags.useFlatColors && gameObject.constructParts
+
+  if (gameObject.invisible || isOutline || isConstruct) return
 
   if(gameObject.constructParts) {
     const container = new PIXI.Container()
@@ -192,8 +195,10 @@ const updatePixiObject = (gameObject) => {
   }
 
   const isOutline = GAME.world.tags.useFlatColors && !gameObject.tags.filled
+  const isConstruct = GAME.world.tags.useFlatColors && gameObject.constructParts
+
   // remove if its invisible now
-  if (gameObject.tags.invisible || gameObject.removed || isOutline){
+  if (gameObject.tags.invisible || gameObject.removed || isOutline || isConstruct){
     if(pixiChild.emitter) pixiChild.emitter.emit = false
     pixiChild.visible = false
     return

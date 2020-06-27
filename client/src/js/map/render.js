@@ -55,11 +55,10 @@ function update(camera) {
 
   GAME.objects.forEach((object) => {
     object = object.mod()
-    if(!object.tags.filled) {
-      drawTools.drawObject(ctx, object, camera)
-    }
     if(object.constructParts) {
       drawTools.drawConstructParts(ctx, camera, object)
+    } else if(!object.tags.filled) {
+      drawTools.drawObject(ctx, object, camera)
     }
   })
 
