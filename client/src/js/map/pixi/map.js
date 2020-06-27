@@ -93,6 +93,10 @@ const initPixiApp = (canvasRef, onLoad) => {
 
 
 const addGameObjectToStage = (gameObject, stage) => {
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.defaultSprite) {
@@ -106,22 +110,22 @@ const addGameObjectToStage = (gameObject, stage) => {
   let sprite
   if(gameObject.tags.tilingSprite) {
     sprite = new PIXI.TilingSprite(texture, gameObject.width, gameObject.height)
-    sprite.transform.scale.x = MAP.camera.multiplier
-    sprite.transform.scale.y = MAP.camera.multiplier
+    sprite.transform.scale.x = camera.multiplier
+    sprite.transform.scale.y = camera.multiplier
   } else {
     sprite = new PIXI.Sprite(texture)
-    sprite.transform.scale.x = (gameObject.width/texture._frame.width) * MAP.camera.multiplier
-    sprite.transform.scale.y = (gameObject.height/texture._frame.height) * MAP.camera.multiplier
+    sprite.transform.scale.x = (gameObject.width/texture._frame.width) * camera.multiplier
+    sprite.transform.scale.y = (gameObject.height/texture._frame.height) * camera.multiplier
   }
 
   if(gameObject.tags.rotateable) {
     sprite.anchor.set(0.5, 0.5)
     sprite.rotation = gameObject.angle || 0
-    sprite.x = (gameObject.x + gameObject.width/2) * MAP.camera.multiplier
-    sprite.y = (gameObject.y + gameObject.height/2) * MAP.camera.multiplier
+    sprite.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+    sprite.y = (gameObject.y + gameObject.height/2) * camera.multiplier
   } else {
-    sprite.x = (gameObject.x) * MAP.camera.multiplier
-    sprite.y = (gameObject.y) * MAP.camera.multiplier
+    sprite.x = (gameObject.x) * camera.multiplier
+    sprite.y = (gameObject.y) * camera.multiplier
   }
 
   sprite.name = gameObject.id
@@ -129,7 +133,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   if(gameObject.color) sprite.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
   const addedChild = stage.addChild(sprite)
   if (gameObject.emitter) {
-    let emitter = flameEmitter({stage, startPos: {x: gameObject.x * MAP.camera.multiplier, y: gameObject.y * MAP.camera.multiplier}})
+    let emitter = flameEmitter({stage, startPos: {x: gameObject.x * camera.multiplier, y: gameObject.y * camera.multiplier}})
     stage.emitters.push(emitter)
     addedChild.emitter = emitter
   }
@@ -161,6 +165,11 @@ const initPixiObject = (gameObject) => {
 }
 
 const updatePixiObject = (gameObject) => {
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.constructParts) {
@@ -230,18 +239,18 @@ const updatePixiObject = (gameObject) => {
   if(gameObject.tags.rotateable) {
     pixiChild.anchor.set(0.5, 0.5)
     pixiChild.rotation = gameObject.angle || 0
-    pixiChild.x = (gameObject.x + gameObject.width/2) * MAP.camera.multiplier
-    pixiChild.y = (gameObject.y + gameObject.height/2) * MAP.camera.multiplier
+    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
   } else {
-    pixiChild.x = (gameObject.x) * MAP.camera.multiplier
-    pixiChild.y = (gameObject.y) * MAP.camera.multiplier
+    pixiChild.x = (gameObject.x) * camera.multiplier
+    pixiChild.y = (gameObject.y) * camera.multiplier
   }
   if(gameObject.tags.tilingSprite) {
-    pixiChild.transform.scale.x = MAP.camera.multiplier
-    pixiChild.transform.scale.y = MAP.camera.multiplier
+    pixiChild.transform.scale.x = camera.multiplier
+    pixiChild.transform.scale.y = camera.multiplier
   } else if(pixiChild.texture){
-    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * MAP.camera.multiplier
-    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * MAP.camera.multiplier
+    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
+    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
   }
   if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
 
@@ -305,11 +314,16 @@ PIXIMAP.onDeleteSubObject = function(object) {
 }
 
 PIXIMAP.onRender = function() {
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
   if(PIXIMAP.initialized) {
     MAP.canvas.style.backgroundColor = ''
     PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
-    PIXIMAP.stage.pivot.x = MAP.camera.x
-    PIXIMAP.stage.pivot.y = MAP.camera.y
+    PIXIMAP.stage.pivot.x = camera.x
+    PIXIMAP.stage.pivot.y = camera.y
     GAME.objects.forEach((object) => {
       updatePixiObject(object)
     })
