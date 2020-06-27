@@ -38,21 +38,49 @@ function drawObject(ctx, object, withNames = false) {
 
 function update(camera) {
   const { ctx, canvas } = MAP
-
   const clientHero = GAME.heros[HERO.id].mod()
 
-  ctx.shadowBlur = 0;
-  ctx.shadowColor = 'none';
-  ctx.filter = "drop-shadow(4px 4px 8px #fff)";
-  ctx.filter = "none"
+  // ctx.shadowBlur = 0;
+  // ctx.shadowColor = 'none';
+  // ctx.filter = "drop-shadow(4px 4px 8px #fff)";
+  // ctx.filter = "none"
 
-  //reset background
-	ctx.fillStyle = 'black';
-  canvas.style.backgroundColor = 'black'
-  if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
-    ctx.fillStyle = GAME.world.backgroundColor
-    canvas.style.backgroundColor = GAME.world.backgroundColor
+  // //reset background
+	// ctx.fillStyle = 'black';
+  // canvas.style.backgroundColor = 'black'
+  // if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
+  //   ctx.fillStyle = GAME.world.backgroundColor
+  //   canvas.style.backgroundColor = GAME.world.backgroundColor
+  // }
+
+  GAME.objects.forEach((object) => {
+    object = object.mod()
+    if(!object.tags.filled) {
+      drawTools.drawObject(ctx, object, camera)
+    }
+    if(object.constructParts) {
+      drawTools.drawConstructParts(ctx, camera, object)
+    }
+  })
+
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && !clientHero.interactableObject.tags.filled) {
+    const { interactableObject } = clientHero
+
+    if(interactableObject.tags.invisible) {
+      ctx.fillStyle = "rgb(255, 255, 255)";
+      let text = "Press X to interact"
+      ctx.textAlign = 'center'
+      // ctx.textBaseline = 'alphabetic'
+      ctx.font =`${18 * MAP.canvasMultiplier}pt Courier New`
+      // console.log(MAP.canvas.width/2 - (200 * MAP.canvasMultiplier), 240 * MAP.canvasMultiplier)
+      ctx.fillText(text, MAP.canvas.width/2, MAP.canvas.height - (36 * MAP.canvasMultiplier))
+    } else {
+      let thickness = 3
+      drawTools.drawBorder(ctx, {color: 'white', x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
+    }
   }
+
+  return
 
   let viewBoundaries = HERO.getViewBoundaries(clientHero)
   GAME.objects.forEach((object) => {
@@ -119,22 +147,7 @@ function update(camera) {
   // chat.render(ctx);
 	feedback.draw(ctx);
 
-  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue) {
-    const { interactableObject } = clientHero
 
-    if(interactableObject.tags.invisible) {
-      ctx.fillStyle = "rgb(255, 255, 255)";
-      let text = "Press X to interact"
-      ctx.textAlign = 'center'
-      // ctx.textBaseline = 'alphabetic'
-      ctx.font =`${18 * MAP.canvasMultiplier}pt Courier New`
-      // console.log(MAP.canvas.width/2 - (200 * MAP.canvasMultiplier), 240 * MAP.canvasMultiplier)
-      ctx.fillText(text, MAP.canvas.width/2, MAP.canvas.height - (36 * MAP.canvasMultiplier))
-    } else {
-      let thickness = 3
-      drawTools.drawBorder(ctx, {x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
-    }
-  }
 
   // PHYSICS.draw(ctx, camera)
 }

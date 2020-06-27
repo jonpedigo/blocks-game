@@ -500,7 +500,7 @@ class Objects{
   }
 
   addObject(object) {
-    object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, object: true})), object.tags)
+    object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
     GAME.objectsById[object.id] = object
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {

@@ -805,41 +805,38 @@ class Game{
     if(!activeMods) {
       return object
     } else if(activeMods) {
-      const objectCopy = {
-        ...object,
+      const objectCopy = _.cloneDeep(object)
         //moddable propertys
-        tags: JSON.parse(JSON.stringify(object.tags)),
-        speed: object.speed,
-        width: object.width,
-        height: object.height,
-        color: object.color,
-        actionButtonBehavior: object.actionButtonBehavior,
-        arrowKeysBehavior: object.arrowKeysBehavior,
-        spaceBarBehavior: object.spaceBarBehavior,
-        jumpVelocity: object.jumpVelocity,
-        velocityMax: object.velocityMax,
-        tags: object.tags,
-        zoomMultiplier: object.zoomMultiplier,
-        defaultSprite: object.defaultSprite,
-        upSprite: object.upSprite,
-        leftSprite: object.leftSprite,
-        downSprite: object.downSprite,
-        rightSprite: object.rightSprite,
-        spawnPointX: object.spawnPointX,
-        spawnPointY: object.spawnPointY,
-        relativeX: object.relativeX,
-        relativeY: object.relativeY,
-        relativeId: object.relativeId,
-        parentId: object.parentId,
-        name: object.name,
-        namePos: object.namePos,
-        heroDialogue: object.heroDialogue,
-        pathfindingLimit: object.pathfindingLimit,
-      }
+        // tags: JSON.parse(JSON.stringify(object.tags)),
+        // speed: object.speed,
+        // width: object.width,
+        // height: object.height,
+        // color: object.color,
+        // actionButtonBehavior: object.actionButtonBehavior,
+        // arrowKeysBehavior: object.arrowKeysBehavior,
+        // spaceBarBehavior: object.spaceBarBehavior,
+        // jumpVelocity: object.jumpVelocity,
+        // velocityMax: object.velocityMax,
+        // tags: object.tags,
+        // zoomMultiplier: object.zoomMultiplier,
+        // defaultSprite: object.defaultSprite,
+        // upSprite: object.upSprite,
+        // leftSprite: object.leftSprite,
+        // downSprite: object.downSprite,
+        // rightSprite: object.rightSprite,
+        // spawnPointX: object.spawnPointX,
+        // spawnPointY: object.spawnPointY,
+        // relativeX: object.relativeX,
+        // relativeY: object.relativeY,
+        // relativeId: object.relativeId,
+        // parentId: object.parentId,
+        // name: object.name,
+        // namePos: object.namePos,
+        // heroDialogue: object.heroDialogue,
+        // pathfindingLimit: object.pathfindingLimit,
 
       activeMods.forEach((mod) => {
         window.mergeDeep(objectCopy, mod.effectJSON)
-        console.log(objectCopy)
       })
 
       if(objectCopy.subObjects) {

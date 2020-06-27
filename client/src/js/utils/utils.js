@@ -1,3 +1,7 @@
+import lodash from 'lodash'
+
+window._ = lodash
+
 /**
  * Simple object check.
  * @param item
@@ -112,7 +116,6 @@ window.setFontAwesomeCursor = function(unicode, color) {
     var dataURL = canvas.toDataURL('image/png')
     document.body.style.cursor = 'url('+dataURL+'), auto';
   }
-
 
 // cool that I pulled this off put please remove someday
 Object.defineProperty(Object.prototype, 'mod', { value: function() {

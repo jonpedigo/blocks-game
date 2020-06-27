@@ -1,6 +1,6 @@
 // how pixi loads and draws game items for a basic map setup
 import * as PIXI from 'pixi.js'
-import { GlowFilter } from 'pixi-filters'
+import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import tileset from './tileset.json'
 import { flameEmitter } from './particles'
 import tinycolor from 'tinycolor2'
@@ -28,6 +28,12 @@ const initPixiApp = (canvasRef, onLoad) => {
   MAP.canvas.style.position = 'fixed'
 
   app.stage.emitters = []
+
+  // GAME.world.tags.useFlatColors = true
+  // if(GAME.world.tags.useFlatColors) {
+  //   app.stage.filters = [new ColorOverlayFilter(parseInt(tinycolor('red').toHex(), 16))]
+  // }
+
   app.ticker.add(function(delta) {
     // console.log(app.stage)
     app.stage.emitters.forEach((emitter) => {
@@ -55,7 +61,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load(() => {
+    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/outlinesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load(() => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -63,6 +69,17 @@ const initPixiApp = (canvasRef, onLoad) => {
       texture = PIXI.Texture.from('assets/images/entarkia-1.png');
       texture.id = 'entarkia-1'
       textures['entarkia-1'] = texture
+
+      texture = PIXI.Texture.from('assets/images/solidcolorsprite.png');
+      texture.id = 'solidcolorsprite'
+      textures['solidcolorsprite'] = texture
+      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
+
+      const baseTexture = new PIXI.BaseTexture('assets/images/outlinesprite.png');
+      baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
+      texture = new PIXI.Texture(baseTexture)
+      texture.id = 'outlinesprite'
+      textures['outlinesprite'] = texture
 
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
@@ -81,7 +98,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   if(gameObject.defaultSprite) {
     gameObject.sprite = gameObject.defaultSprite
   } else {
-    gameObject.defaultSprite = 'tree-1'
+    gameObject.defaultSprite = 'solidcolorsprite'
     gameObject.sprite = gameObject.defaultSprite
   }
 
@@ -165,8 +182,9 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
+  const isOutline = GAME.world.tags.useFlatColors && !gameObject.tags.filled
   // remove if its invisible now
-  if (gameObject.tags.invisible || gameObject.removed){
+  if (gameObject.tags.invisible || gameObject.removed || isOutline){
     if(pixiChild.emitter) pixiChild.emitter.emit = false
     pixiChild.visible = false
     return
@@ -205,9 +223,9 @@ const updatePixiObject = (gameObject) => {
     pixiChild.texture = PIXIMAP.textures[gameObject.sprite]
   }
 
-  // if(gameObject.tags.phyiscsDirectionSprites) {
-  //
-  // }
+  if(gameObject.tags.solidColor) {
+    pixiChild.texture = PIXIMAP.textures['solidcolorsprite']
+  }
 
   if(gameObject.tags.rotateable) {
     pixiChild.anchor.set(0.5, 0.5)
@@ -221,7 +239,7 @@ const updatePixiObject = (gameObject) => {
   if(gameObject.tags.tilingSprite) {
     pixiChild.transform.scale.x = MAP.camera.multiplier
     pixiChild.transform.scale.y = MAP.camera.multiplier
-  } else {
+  } else if(pixiChild.texture){
     pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * MAP.camera.multiplier
     pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * MAP.camera.multiplier
   }
@@ -230,7 +248,16 @@ const updatePixiObject = (gameObject) => {
   if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
     pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
   } else {
-    if(pixiChild.filters && pixiChild.filters.length) pixiChild.filters = []
+    removeFilter(pixiChild, GlowFilter)
+  }
+}
+
+function removeFilter(pixiChild, filterClass) {
+  if(pixiChild.filters) {
+    pixiChild.filters = pixiChild.filters.filter((filter) => {
+      if(filter instanceof filterClass) return false
+      return true
+    })
   }
 }
 
