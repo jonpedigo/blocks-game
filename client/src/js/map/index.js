@@ -1,5 +1,6 @@
 import render from './render'
 import Camera from './camera.js'
+import Shake from './cameraShake.js'
 import constellation from './constellation.js'
 import pixiMap from './pixi/index'
 
@@ -33,6 +34,33 @@ MAP.onPageLoaded = function() {
   MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
 }
 
+MAP.onWorldCameraEffect = function(type, options = {}) {
+  if(type === 'cameraShake') {
+    MAP.cameraEffect(type, options)
+  }
+}
+
+MAP.onHeroCameraEffect = function(type, heroId, options = {}) {
+  if(HERO.id === heroId) {
+    MAP.cameraEffect(type, options)
+  }
+}
+
+MAP.cameraEffect = function(type, options) {
+  if(type === 'cameraShake' && MAP._readyForShake !== false) {
+    MAP.camera.shakeAmplitude = options.amplitude || 32
+    const duration = options.duration || 2000
+    MAP.camera.xShake = new Shake(duration, options.frequency || 40)
+    MAP.camera.yShake = new Shake(duration, options.frequency || 40)
+    MAP.camera.xShake.start()
+    MAP.camera.yShake.start()
+    MAP._readyForShake = false
+    setTimeout(() => {
+      MAP._readyForShake = true
+    }, duration)
+  }
+}
+
 MAP.onRender = function(delta) {
   const { ctx, canvas } = MAP
   const hero = GAME.heros[HERO.id]
@@ -43,6 +71,13 @@ MAP.onRender = function(delta) {
     camera = CONSTRUCTEDITOR.camera
   } else {
     if(hero) camera.set(hero)
+  }
+
+  if(camera.xShake && camera.xShake.isShaking) {
+    camera.xShake.update()
+  }
+  if(camera.yShake && camera.yShake.isShaking) {
+    camera.yShake.update()
   }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -4,7 +4,7 @@ window.templateGameString = `class CustomGame{
 
   }
 
-  onStartGame() {
+  onGameStart() {
 
   }
 

@@ -145,7 +145,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('startGame', () => {
-    io.emit('onStartGame')
+    io.emit('onGameStart')
   })
 
   socket.on('stopGame', () => {
@@ -369,6 +369,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   socket.on('heroChooseOption', (heroId, optionId) => {
     io.emit('onHeroChooseOption', heroId, optionId)
+  })
+
+  socket.on('heroCameraEffect', (type, heroId, options) => {
+    io.emit('onHeroCameraEffect', type, heroId, options)
   })
 
   socket.on('hostLog', (msg, arg1, arg2, arg3) => {

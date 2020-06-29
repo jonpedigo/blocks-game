@@ -8,7 +8,7 @@ export default class CustomGame{
 
   }
 
-  onStartGame() {
+  onGameStart() {
 
   }
 

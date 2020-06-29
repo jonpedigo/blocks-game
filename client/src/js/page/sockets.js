@@ -101,8 +101,8 @@ function init() {
     })
 
     // EDITOR CALLS THIS
-    window.socket.on('onStartGame', () => {
-      window.local.emit('onStartGame')
+    window.socket.on('onGameStart', () => {
+      window.local.emit('onGameStart')
     })
 
     window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
@@ -337,6 +337,10 @@ function init() {
 
   window.socket.on('onGetCustomGameFx', (eventName) => {
     window.local.emit('onGetCustomGameFx', eventName)
+  })
+
+  window.socket.on('onHeroCameraEffect', (type, heroId, options) => {
+    window.local.emit('onHeroCameraEffect', type, heroId, options)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

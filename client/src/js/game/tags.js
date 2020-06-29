@@ -89,6 +89,14 @@ function setDefault() {
     // invisibleOnHeroCollide
   }
 
+  window.cameraTags = {
+    heroCameraShakeOnHeroCollide_quickrumble: false,
+    heroCameraShakeOnHeroCollide_longrumble: false,
+    heroCameraShakeOnHeroCollide_quick: false,
+    heroCameraShakeOnHeroCollide_short: false,
+    heroCameraShakeOnHeroCollide_long: false,
+  }
+
   window.descriptiveTags = {
     fresh: false,
     spawned: false,
@@ -107,6 +115,7 @@ function setDefault() {
     ...window.movementTags,
     ...window.graphicalTags,
     ...window.descriptiveTags,
+    ...window.cameraTags,
   }
 
   window.plainObjectTags = {

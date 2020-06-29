@@ -56,7 +56,7 @@ function init() {
     if (e.target.className && e.target.className.indexOf('unload-game-fx-only') != -1) {
       window.socket.emit('customFxEvent', 'onGameUnload')
     } else if (e.target.className && e.target.className.indexOf('start-game-fx-only') != -1) {
-      window.socket.emit('customFxEvent', 'onStartGame')
+      window.socket.emit('customFxEvent', 'onGameStart')
     } else if (e.target.className && e.target.className.indexOf('load-game-fx-only') != -1) {
       window.socket.emit('customFxEvent', 'onGameLoaded')
     }

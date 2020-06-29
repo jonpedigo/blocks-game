@@ -57,7 +57,7 @@ function camera() {
     } else {
       this.allowOcclusion = true
     }
-    
+
     this.multiplier = 1/this.multiplier
     this.hasHitLimit = false
 
@@ -90,6 +90,13 @@ function camera() {
       }
     } else {
       this.setHeroY(hero)
+    }
+
+    if(this.xShake && this.xShake.isShaking) {
+      this.x -= this.xShake.amplitude() * this.shakeAmplitude
+    }
+    if(this.yShake && this.yShake.isShaking) {
+      this.y -= this.yShake.amplitude() * this.shakeAmplitude
     }
   }
 }

@@ -5,6 +5,12 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+// GOALS
+1) Camera shake
+    other camera/world effects from PIXI
+2) Object Shake/Shatter/Warp
+3) Explode ( particles )
+
 // TRIGGER MENU.
    eventName
    mainObjectTag

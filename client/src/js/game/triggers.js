@@ -13,7 +13,7 @@ function onPageLoaded() {
     onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
-    onStartGame: { mainObject: null, guestObject: null },
+    onGameStart: { mainObject: null, guestObject: null },
   }
     // 'onHeroChooseOption',
     // 'OnObjectSpawn',
