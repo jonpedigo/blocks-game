@@ -4,14 +4,6 @@ import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import { flameEmitter } from './particles'
 
 const updatePixiObject = (gameObject, stage) => {
-  /////////////////////
-  /////////////////////
-  // SELECT CAMERA
-  let camera = MAP.camera
-  if(CONSTRUCTEDITOR.open) {
-    camera = CONSTRUCTEDITOR.camera
-  }
-
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   /////////////////////
@@ -119,31 +111,7 @@ const updatePixiObject = (gameObject, stage) => {
     }
   }
 
-  /////////////////////
-  /////////////////////
-  // ROTATION
-  if(gameObject.tags.rotateable) {
-    pixiChild.anchor.set(0.5, 0.5)
-    pixiChild.rotation = gameObject.angle || 0
-    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-  } else {
-    pixiChild.x = (gameObject.x) * camera.multiplier
-    pixiChild.y = (gameObject.y) * camera.multiplier
-  }
-
-
-  /////////////////////
-  /////////////////////
-  // SCALE
-  if(gameObject.tags.tilingSprite) {
-    pixiChild.transform.scale.x = camera.multiplier
-    pixiChild.transform.scale.y = camera.multiplier
-  } else if(pixiChild.texture){
-    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
-    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
-  }
-
+  updatePositionRotationScale(pixiChild, gameObject)
 
   /////////////////////
   /////////////////////
@@ -174,7 +142,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   }
 
   if(!pixiChild.emitter) {
-    addEmitterToChild(pixiChild, gameObject)
+    pixiChild = addEmitterToChild(pixiChild, gameObject)
   }
 
   /////////////////////
@@ -193,16 +161,83 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   }
 
   const emitter = pixiChild.emitter
-  emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+  // emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+
+
+  const emitterData = window.particleEmitters[emitter.type]
+
+  /////////////////////
+  /////////////////////
+  // ROTATION
+  if(gameObject.tags.rotateable) {
+    pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+    pixiChild.rotation = gameObject.angle || 0
+    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+  } else {
+    pixiChild.x = (gameObject.x) * camera.multiplier
+    pixiChild.y = (gameObject.y) * camera.multiplier
+  }
+
+  /////////////////////
+  /////////////////////
+  // SCALE
+  emitter.startScale.value = emitterData.scale.start * camera.multiplier
+  emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
 }
 
 function addEmitterToChild(pixiChild, gameObject) {
   pixiChild.visible = false
   gameObject.defaultSprite = 'invisiblesprite'
   gameObject.sprite = gameObject.defaultSprite
-  let emitter = flameEmitter({stage: PIXIMAP.stage, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
+  PIXIMAP.stage.removeChild(pixiChild)
+
+  const container = new PIXI.Container()
+  container.name = gameObject.id
+  PIXIMAP.stage.addChild(container)
+
+  let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
   PIXIMAP.stage.emitters.push(emitter)
-  pixiChild.emitter = emitter
+  container.emitter = emitter
+  container.emitter.type = 'flameEmitter'
+
+  console.log(emitter)
+  return container
+}
+
+function updatePositionRotationScale(pixiChild, gameObject) {
+  /////////////////////
+  /////////////////////
+  // SELECT CAMERA
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
+  /////////////////////
+  /////////////////////
+  // ROTATION
+  if(gameObject.tags.rotateable) {
+    pixiChild.anchor.set(0.5, 0.5)
+    pixiChild.rotation = gameObject.angle || 0
+    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+  } else {
+    pixiChild.x = (gameObject.x) * camera.multiplier
+    pixiChild.y = (gameObject.y) * camera.multiplier
+  }
+
+
+  /////////////////////
+  /////////////////////
+  // SCALE
+  if(gameObject.tags.tilingSprite) {
+    pixiChild.transform.scale.x = camera.multiplier
+    pixiChild.transform.scale.y = camera.multiplier
+  } else if(pixiChild.texture){
+    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
+    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
+  }
 }
 
 function addEmitterToStage(gameObject, stage) {
@@ -218,7 +253,7 @@ function addEmitterToStage(gameObject, stage) {
   // NAME SPRITE FOR LOOKUP
   addedChild.name = gameObject.id
 
-  addEmitterToChild(addedChild, gameObject)
+  addedChild = addEmitterToChild(addedChild, gameObject)
 
   updatePixiEmitter(addedChild, gameObject)
 }
