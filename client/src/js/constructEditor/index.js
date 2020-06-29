@@ -62,7 +62,10 @@ class ConstructEditor {
   }
 
   finish() {
-    const constructParts = this.combineNodesIntoRectangles()
+    let constructParts = this.combineNodesIntoRectangles()
+    constructParts.forEach((part) => {
+      part.id = window.uniqueID()
+    })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
     window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
     this.close()

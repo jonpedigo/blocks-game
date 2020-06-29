@@ -267,6 +267,7 @@ class Objects{
       spawnPointY: object.spawnPointY,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
+          id: part.id,
           ownerId: part.ownerId,
           x: part.x,
           y: part.y,
@@ -472,7 +473,6 @@ class Objects{
         PHYSICS.removeObject(object)
       }
       update.constructParts.forEach((part) => {
-        part.id = window.uniqueID()
         part.ownerId = object.id
         PHYSICS.addObject(part)
       })
@@ -481,17 +481,16 @@ class Objects{
     }
     object.path = null
     window.mergeDeep(object, update)
-
-    if(update.constructParts || object.constructParts) {
-      PIXIMAP.deleteObject(object)
-      PIXIMAP.addObject(object)
-    }
   }
 
   onEditObjects(editedObjects) {
     editedObjects.forEach((obj) => {
       let objectById = GAME.objectsById[obj.id]
       OBJECTS.editObject(objectById, obj)
+      if(obj.constructParts || objectById.constructParts) {
+        PIXIMAP.deleteObject(objectById)
+        PIXIMAP.addObject(objectById)
+      }
     })
 
     GAME.resetPaths = true
@@ -513,7 +512,6 @@ class Objects{
     }
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
-        part.id = window.uniqueID()
         part.ownerId = object.id
         PHYSICS.addObject(part)
       })

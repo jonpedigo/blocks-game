@@ -23,6 +23,10 @@ function init() {
   // just for host
   ///////////////////////////////
 
+  // EDITOR CALLS THIS
+  window.socket.on('onEditObjects', (editedObjects) => {
+    window.local.emit('onEditObjects', editedObjects)
+  })
   if(PAGE.role.isHost) {
     window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
       window.local.emit('onRemoveSubObject', ownerId, subObjectName)
@@ -71,11 +75,6 @@ function init() {
     window.socket.on('onRespawnHero', (hero) => {
       window.local.emit('onRespawnHero', hero)
     })
-
-    // EDITOR CALLS THIS
-  	window.socket.on('onEditObjects', (editedObjects) => {
-      window.local.emit('onEditObjects', editedObjects)
-  	})
 
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
