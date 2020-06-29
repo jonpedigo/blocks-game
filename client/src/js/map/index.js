@@ -1,8 +1,7 @@
 import render from './render'
 import Camera from './camera.js'
 import constellation from './constellation.js'
-import pixiMap from './pixi/map'
-import * as PIXI from 'pixi.js'
+import pixiMap from './pixi/index'
 
 window.MAP = {
   canvas: null,
@@ -28,6 +27,7 @@ MAP.onPageLoaded = function() {
   }
 
   MAP.canvas.id = 'game-canvas'
+  MAP.canvas.style.position = 'fixed'
   document.getElementById('GameContainer').appendChild(MAP.canvas);
 
   MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)
@@ -47,11 +47,13 @@ MAP.onRender = function(delta) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if((!GAME.gameState.paused || CONSTRUCTEDITOR.open)) {
+  if(PIXIMAP.assetsLoaded && (!GAME.gameState.paused || CONSTRUCTEDITOR.open)) {
     render.update(camera)
+  } else {
+    canvas.style.backgroundColor = '#333'
   }
 
-  if(hero && PAGE.role.isPlayer && GAME.heros[HERO.id].animationZoomMultiplier) {
+  if(hero && PAGE.role.isPlayer && GAME.heros[HERO.id] && GAME.heros[HERO.id].animationZoomMultiplier) {
     constellation.onRender()
   }
 }

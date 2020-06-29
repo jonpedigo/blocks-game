@@ -68,11 +68,11 @@ class Grid {
       return nodes[gridX][gridY + 1]
     }
 
-    if(direction === 'right' && nodes[gridX + 1][gridY]) {
+    if(direction === 'right' && nodes[gridX + 1] && nodes[gridX + 1][gridY]) {
       return nodes[gridX + 1][gridY]
     }
 
-    if(direction === 'left' && nodes[gridX - 1][gridY]) {
+    if(direction === 'left' && nodes[gridX - 1] && nodes[gridX - 1][gridY]) {
       return nodes[gridX - 1][gridY]
     }
   }

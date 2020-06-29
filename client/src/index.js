@@ -11,6 +11,14 @@
 //
 // create compendium with objects, heros, sequences, mods/mutates
 
+// TRIGGER MENU.
+   eventName
+   mainObjectTag
+   mainObjectId
+   guestObjectTag
+   guestObjectId
+   eventThreshold ( event value )
+   triggerPool
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -36,8 +44,6 @@ MOD is temporary
 // BIG FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-MODS <---- !
-
 TIMERS
 
 GRID MANAGEMENT <---- !
@@ -62,7 +68,7 @@ PATHFINDING editor / advancements <---- !
 COMPENDIUM <---- !
 
 PUZZLE INTERFACES <---- !
-JUICE ( may require new graphics engine ) <---- !
+JUICE <---- !
 
 Finish feature list
 
@@ -112,10 +118,18 @@ Target/Homing awareness area
 // 'dont backtrack' tag where they remember where they went
 // planet gravity! Would be cool to have..
 // 3d sound effects system from papa bear
+// Construct editor in top right ( global construct object that is just a stationary obstacle )
+// layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
+// EDITOR UI OPTIONS - admin toggle, global construct, which context menu, creator/player/lobby/waiting, run local simulation, power UI toggle,
+// change tag filled -> tag solid color outline
+// add sprites to construct editor
+// global compendium service that I can add to remove without copying and pasting JSON
 
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
 
+////////////////////////////////
+////////////////////////////////
 // INVENTORY NOTES
 // max inventory
 // destroy last object when full
@@ -123,6 +137,8 @@ Target/Homing awareness area
 // swap oldest object when full
 // swap last object when full
 
+////////////////////////////////
+////////////////////////////////
 // OTHER INTERFACE NOTES
 // can we have a 'Game Editor' in React or a 'Hero Editor'
 // One thing that is inside the context menu that maybe shouldnt be is the quests
@@ -131,7 +147,42 @@ Target/Homing awareness area
 // OK so.. the other things on the 'GAME' object that ill want to edit is the World, the Grid
 // world editor and default hero editor
 
+////////////////////////////////
+////////////////////////////////
+// PIXI FILTER NOTES
+
+TWIST filter
+Glow filter
+Outline filter
+
+—
+
+Rain graphic ?
+
+Displacement filter — underwater effect
++ underwater overlay graphic??
+
+Shockwave filter / Bulge pinch?
+
+Reflection filter
+
+Godray filter
+
+
+Many of these are really good CAMERA effects
+Dot filter
+Old Film filter
+Pixelate filter
+Color Matrix filter
+Cross Hatch filter
+Crt filter
+Zoom blur filter — Perhaps when you are like low on health??
+
+////////////////////////////////
+////////////////////////////////
+////////////////////////////////
 // JUICE IDEAS
+////////////////////////////////
 // INVERT GAME, for example, when you get pacman powers
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
 // lazy scroll that is not not immediate! Smoother...
@@ -194,7 +245,7 @@ Engine trail on a car u know what I mean?
 // gameState => worldState
 // convert all 'guestObject', 'mainObject', 'ownerObject' things to just ID stores
 
-// dev dependencies to try to lower packet size
+// dev dependencies to try to lower build file size
 
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 // https://zimjs.com/bits/physics.html

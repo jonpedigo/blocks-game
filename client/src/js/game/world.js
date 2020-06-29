@@ -15,7 +15,6 @@ function setDefault() {
       targetOnSight: false,
       isAsymmetric: false,
       shouldRestoreHero: false,
-      usePixiMap: false,
       storeEntireGameState: false,
       overrideCustomGameCode: false,
     },

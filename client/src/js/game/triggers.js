@@ -1,5 +1,6 @@
 import { startQuest, completeQuest } from './heros/quests'
 import effects from './effects'
+import { testEventMatch } from './conditions'
 
 function onPageLoaded() {
   window.triggerEvents = {
@@ -32,17 +33,8 @@ function onPageLoaded() {
     // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
 }
 
-function checkIdOrTagMatch(id, tag, object) {
-  if(id && id === object.id) {
-    return true
-  }
-  if(tag && object.mod().tags[tag]) {
-    return true
-  }
-}
-
 function deleteTrigger(object, triggerId) {
-  if(GAME.gameState.started) object.triggers[triggerId].removeEventListener()
+  if(object.triggers[triggerId].removeEventListener) object.triggers[triggerId].removeEventListener()
   delete object.triggers[triggerId]
 }
 
@@ -64,45 +56,7 @@ function addTrigger(ownerObject, trigger) {
 
   ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
-    let eventMatch = false
-
-    let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = trigger
-
-    // the code below attempts to automatically determine the main object or the guest object
-    // based on the name of the event
-    if(ownerObject.mod().tags.hero) {
-      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Object') >= 0) {
-        guestObjectId = ownerObject.id
-      }
-      if(!mainObjectId && !mainObjectTag && eventName.indexOf('Hero') >= 0) {
-        mainObjectId = ownerObject.id
-      }
-    } else {
-      if(!mainObjectId && !mainObjectTag && eventName.indexOf('Object') >= 0) {
-        mainObjectId = ownerObject.id
-      }
-      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Hero') >= 0) {
-        guestObjectId = ownerObject.id
-      }
-    }
-
-    // now that we have potential main/guests object ids/tags, we try to match them with the REAL main/guest objects from the event
-    if(eventName.indexOf('Object') >= 0 || eventName.indexOf('Hero') >= 0) {
-      // just check object
-      if((mainObjectId || mainObjectTag) && !guestObjectId && !guestObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject)) {
-        eventMatch = true
-        // just check guestObject
-      } else if((guestObjectId || guestObjectTag) && !mainObjectId && !mainObjectTag && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
-        eventMatch = true
-        // check guestObject and object
-      } else if((guestObjectId || guestObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject) && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
-        eventMatch = true
-      }
-    }
-
-    if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0) {
-      eventMatch = true
-    }
+    const eventMatch = testEventMatch(eventName, mainObject, guestObject, trigger, ownerObject)
 
     if(eventMatch) {
       if(trigger.triggerPool == 0) return

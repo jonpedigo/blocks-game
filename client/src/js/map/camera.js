@@ -49,11 +49,15 @@ function camera() {
     if(hero.animationZoomMultiplier) {
       this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
       this.multiplier = 1/this.multiplier
+      this.allowOcclusion = false
       this.setHeroX(hero)
       this.setHeroY(hero)
       // dont trap on zoom animation...
       return
+    } else {
+      this.allowOcclusion = true
     }
+    
     this.multiplier = 1/this.multiplier
     this.hasHitLimit = false
 

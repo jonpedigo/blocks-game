@@ -463,6 +463,7 @@ class Objects{
       update.velocityY = 0
     }
 
+    PIXIMAP.onDeleteObject(object)
     if(update.constructParts) {
       if(object.constructParts) {
         object.constructParts.forEach((part) => {
@@ -482,6 +483,7 @@ class Objects{
 
     object.path = null
     window.mergeDeep(object, update)
+    PIXIMAP.addObject(object)
   }
 
   onEditObjects(editedObjects) {
@@ -534,7 +536,7 @@ class Objects{
     if(!subObject.originalHeight) subObject.originalHeight = subObject.height
 
     owner.subObjects[subObjectName] = subObject
-    if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.addObject(subObject)
+    if(!subObject.tags.potential) PHYSICS.addObject(subObject)
 
     if(subObject.triggers) {
       Object.keys(subObject.triggers).forEach((triggerId) => {
@@ -545,7 +547,8 @@ class Objects{
   }
 
   deleteSubObject(owner, subObject, subObjectName) {
-    if(!subObject.tags.potential && subObjectName !== 'spawner') PHYSICS.removeObject(subObject)
+    PIXIMAP.deleteObject(subObject)
+    if(!subObject.tags.potential) PHYSICS.removeObject(subObject)
     delete owner.subObjects[subObjectName]
   }
 

@@ -41,6 +41,7 @@ window.conditionTypes = {
   revertOnEvent: {
     // number: true,
     event: true,
+    //
   },
   revertOnTimerEnd: {
     number: true,
@@ -252,6 +253,64 @@ function testHasTag(tag, testObject, options) {
   return testObject.tags[tag]
 }
 
+
+function testEventMatch(eventName, mainObject, guestObject, condition, ownerObject) {
+  let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = condition
+
+  let eventMatch = false
+
+  if(ownerObject) {
+    // the code below attempts to automatically determine the main object or the guest object
+    // based on the name of the event
+    if(ownerObject.mod().tags.hero) {
+      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Object') >= 0) {
+        guestObjectId = ownerObject.id
+      }
+      if(!mainObjectId && !mainObjectTag && eventName.indexOf('Hero') >= 0) {
+        mainObjectId = ownerObject.id
+      }
+    } else {
+      if(!mainObjectId && !mainObjectTag && eventName.indexOf('Object') >= 0) {
+        mainObjectId = ownerObject.id
+      }
+      if(!guestObjectId && !guestObjectTag && eventName.indexOf('Hero') >= 0) {
+        guestObjectId = ownerObject.id
+      }
+    }
+  }
+
+  // now that we have potential main/guests object ids/tags, we try to match them with the REAL main/guest objects from the event
+  if(eventName.indexOf('Object') >= 0 || eventName.indexOf('Hero') >= 0) {
+    // just check object
+    if((mainObjectId || mainObjectTag) && !guestObjectId && !guestObjectTag && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject)) {
+      eventMatch = true
+      // just check guestObject
+    } else if((guestObjectId || guestObjectTag) && !mainObjectId && !mainObjectTag && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
+      eventMatch = true
+      // check guestObject and object
+    } else if((guestObjectId || guestObjectTag) && (mainObjectId || mainObjectTag) && checkIdOrTagMatch(mainObjectId, mainObjectTag, mainObject) && checkIdOrTagMatch(guestObjectId, guestObjectTag, guestObject)) {
+      eventMatch = true
+    }
+  }
+
+  if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0) {
+    eventMatch = true
+  }
+
+  return eventMatch
+}
+
+function checkIdOrTagMatch(id, tag, object) {
+  if(id && id === object.id) {
+    return true
+  }
+  if(tag && object.mod().tags[tag]) {
+    return true
+  }
+}
+
+
 export {
+  testEventMatch,
   testCondition
 }

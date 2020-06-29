@@ -46,21 +46,68 @@ function update(camera) {
   // ctx.filter = "none"
 
   // //reset background
-	// ctx.fillStyle = 'black';
-  // canvas.style.backgroundColor = 'black'
-  // if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
-  //   ctx.fillStyle = GAME.world.backgroundColor
-  //   canvas.style.backgroundColor = GAME.world.backgroundColor
-  // }
+  canvas.style.backgroundColor = 'black'
+  if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
+    canvas.style.backgroundColor = GAME.world.backgroundColor
+  }
 
+  let viewBoundaries = HERO.getViewBoundaries(clientHero)
   GAME.objects.forEach((object) => {
     object = object.mod()
-    if(object.constructParts) {
-      drawTools.drawConstructParts(ctx, camera, object)
-    } else if(!object.tags.filled) {
-      drawTools.drawObject(ctx, object, camera)
+
+    if(object.removed) return
+    if(object.id === CONSTRUCTEDITOR.objectId) return
+    if(!object.tags.filled) {
+      if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
+        if(object.constructParts) {
+          drawTools.drawConstructParts(ctx, camera, object)
+        } else {
+          drawTools.drawObject(ctx, object, camera)
+        }
+      }
+    }
+
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        if(subObject.tags.potential) return
+        if(subObject.tags.removed) return
+        if(subObject.tags.filled) return
+        drawTools.drawObject(ctx, subObject, camera)
+      })
     }
   })
+
+  GAME.heroList.forEach((hero) => {
+    hero = hero.mod()
+    if(hero.tags.filled) return
+    if(hero.removed) return
+
+    if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
+      drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
+    } else {
+      drawTools.drawObject(ctx, hero, camera);
+    }
+
+    if(hero.subObjects) {
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
+        if(subObject.tags.potential) return
+        if(subObject.tags.removed) return
+        if(subObject.tags.filled) return
+        drawTools.drawObject(ctx, subObject, camera)
+      })
+    }
+  })
+
+  // dont show names if we zoom to the stars
+  if(!clientHero.animationZoomMultiplier) {
+    GAME.objects.forEach((obj) => {
+      obj = obj.mod()
+      if(obj.name && !obj.removed) {
+        if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
+        if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
+      }
+    })
+  }
 
   if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && !clientHero.interactableObject.tags.filled) {
     const { interactableObject } = clientHero
@@ -79,74 +126,16 @@ function update(camera) {
     }
   }
 
-  return
-
-  let viewBoundaries = HERO.getViewBoundaries(clientHero)
-  GAME.objects.forEach((object) => {
-    object = object.mod()
-
-    if(object.removed) return
-    if(object.id === CONSTRUCTEDITOR.objectId) return
-
-    if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
-      if(object.constructParts) {
-        drawTools.drawConstructParts(ctx, camera, object)
-      } else {
-        drawTools.drawObject(ctx, object, camera)
-      }
-      if(object.subObjects) {
-        OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-          if(subObject.tags.potential) return
-          drawTools.drawObject(ctx, subObject, camera)
-        })
-      }
-    }
-  })
-
-  GAME.heroList.forEach((hero) => {
-    hero = hero.mod()
-
-    if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
-      drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
-    } else {
-      drawTools.drawObject(ctx, hero, camera);
-    }
-
-    if(hero.subObjects) {
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-        if(subObject.tags.potential) return
-        drawTools.drawObject(ctx, subObject, camera)
-      })
-    }
-  })
-
-  // dont show names if we zoom to the stars
-  if(!clientHero.animationZoomMultiplier) {
-    GAME.objects.forEach((obj) => {
-      obj = obj.mod()
-      if(obj.name && !obj.removed) {
-        if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
-        if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
-      }
-    })
-  }
-
   ctx.textAlign = 'start'
 	ctx.textBaseline = 'alphabetic'
   ctx.font =`24pt Arial`
 	ctx.fillStyle="rgba(255,255,255,0.3)"
   ctx.fillText(Math.ceil(PAGE.fps), MAP.canvas.width - 50, 40)
 
-  if(PAGE.role.isGhost) {
-    ctx.font =`24pt Arial`
-    ctx.fillStyle="rgba(255,255,255,0.3)"
-    ctx.fillText('Ghost View Id: ' + HERO.id, 10, 40)
-  }
+  return
 
   // chat.render(ctx);
 	feedback.draw(ctx);
-
-
 
   // PHYSICS.draw(ctx, camera)
 }

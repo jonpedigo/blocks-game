@@ -12,8 +12,8 @@ import grid from './grid.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
-import { processSequence, testMatchJSONCondition, testIsWithinObject } from './sequence'
-import { testCondition } from './conditions'
+import { processSequence } from './sequence'
+import { testCondition, testEventMatch } from './conditions'
 
 import './objects'
 import './heros'
@@ -735,16 +735,18 @@ class Game{
     GAME.gameState.activeModList.push(mod)
 
     if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
-      if(mod.conditionType === 'onEvent') {
-        mod.removeEventListener = window.local.on(mod.revertEventName, (mainObject) => {
-          if(mainObject.id === mod.ownerId) {
+      if(mod.conditionType === 'onTrigger') {
+        mod.removeEventListener = window.local.on(mod.eventName, (mainObject, guestObject) => {
+          const ownerObject = OBJECTS.getObjectOrHeroById[mod.ownerId]
+          const eventMatch = testEventMatch(mod.eventName, mainObject, guestObject, mod, ownerObject)
+          if(eventMatch) {
             mod._remove = true
             mod.removeEventListener()
           }
         })
       }
       if(mod.conditionType === 'onTimer') {
-        GAME.addTimeout(window.uniqueID(), mod.revertTimerValue || 10, () => {
+        GAME.addTimeout(window.uniqueID(), mod.conditionValue || 10, () => {
           mod._remove = true
         })
       }
