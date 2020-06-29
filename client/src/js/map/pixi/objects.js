@@ -187,11 +187,9 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
       pixiChild.emitter.emit = false
       pixiChild.emitter.cleanup()
     }
-    pixiChild.visible = false
     return
   } else {
     if(pixiChild.emitter) pixiChild.emitter.emit = true
-    pixiChild.visible = true
   }
 
   const emitter = pixiChild.emitter
@@ -199,6 +197,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
 }
 
 function addEmitterToChild(pixiChild, gameObject) {
+  pixiChild.visible = false
   gameObject.defaultSprite = 'invisiblesprite'
   gameObject.sprite = gameObject.defaultSprite
   let emitter = flameEmitter({stage: PIXIMAP.stage, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})

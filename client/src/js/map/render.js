@@ -79,13 +79,14 @@ function update(camera) {
 
   GAME.heroList.forEach((hero) => {
     hero = hero.mod()
-    if(hero.tags.filled) return
     if(hero.removed) return
 
-    if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
-      drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
-    } else {
-      drawTools.drawObject(ctx, hero, camera);
+    if(!hero.tags.filled) {
+      if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
+        drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
+      } else {
+        drawTools.drawObject(ctx, hero, camera);
+      }
     }
 
     if(hero.subObjects) {
