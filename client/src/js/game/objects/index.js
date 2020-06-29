@@ -231,11 +231,11 @@ class Objects{
           effectSequenceId,
           eventName,
           eventThreshold,
+          initialTriggerPool,
           mainObjectId,
           mainObjectTag,
           guestObjectId,
           guestObjectTag,
-          initialTriggerPool,
           testPassReverse,
           testModdedVersion,
           conditionValue,
@@ -577,6 +577,8 @@ class Objects{
 
     let hero = GAME.heros[id]
     if(hero) return hero
+
+    console.log(id, object, hero)
   }
 
   removeObject(object) {

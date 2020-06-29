@@ -30,6 +30,17 @@ window.defaultSequenceCondition =  {
   failNext: 'sequential'
 }
 
+window.defaultSequenceWait = {
+  conditionType: 'onTimerEnd',
+  conditionValue: '',
+  conditionEventName: '',
+  mainObjectId: '',
+  mainObjectTag: '',
+  guestObjectId: '',
+  guestObjectTag: '',
+  next: ''
+}
+
 window.defaultSequenceChoice = {
   options: [
     { text: '', next: 'sequential' }
@@ -62,6 +73,7 @@ const typeOptions = [
   { value: 'sequenceEffect', label: 'Effect' },
   { value: 'sequenceCondition', label: 'Condition' },
   { value: 'sequenceChoice', label: 'Choice' },
+  { value: 'sequenceWait', label: 'Wait' },
 ];
 
 export default class Root extends React.Component {
@@ -139,6 +151,10 @@ export default class Root extends React.Component {
     }
     if(selectedType === 'sequenceEffect') {
       Object.assign(sequenceItem, window.defaultSequenceEffect)
+      sequenceItem.next = 'sequential'
+    }
+    if(selectedType === 'sequenceWait') {
+      Object.assign(sequenceItem, window.defaultSequenceWait)
       sequenceItem.next = 'sequential'
     }
 

@@ -135,8 +135,9 @@ const updatePixiObject = (gameObject, stage) => {
   /////////////////////
   /////////////////////
   // COLOR
-  if(gameObject.color) pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
-
+  if(gameObject.color) {
+    pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+  }
 
   /////////////////////
   /////////////////////

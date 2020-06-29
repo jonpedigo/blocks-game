@@ -109,6 +109,12 @@ export default class SequenceItem extends React.Component{
 
   _onChangeConditionType(event) {
     const { sequenceItem } = this.state;
+    const type = event.value
+    if(type === 'onTimerEnd' || type === 'onEvent') {
+      sequenceItem.sequenceType = 'sequenceWait'
+    } else {
+      sequenceItem.sequenceType = 'sequenceCondition'
+    }
     sequenceItem.conditionType = event.value
     this.setState({sequenceItem})
   }
@@ -194,6 +200,12 @@ export default class SequenceItem extends React.Component{
   _onToggleValue(value) {
     const { sequenceItem } = this.state;
     sequenceItem[value] = !sequenceItem[value]
+    this.setState(sequenceItem)
+  }
+
+  _onSetPropValue(prop, value) {
+    const { sequenceItem } = this.state;
+    sequenceItem[prop] = value
     this.setState(sequenceItem)
   }
 
@@ -387,6 +399,24 @@ export default class SequenceItem extends React.Component{
       }
     }
 
+    if(sequenceItem.conditionType === "onEvent") {
+      chosenConditionForm.push(<React.Fragment>
+          {this._renderSingleIdSelect('mainObjectId', (result) => {
+            this._onSetPropValue('mainObjectId', result.value)
+          }, 'Main Object Id:')}
+          {this._renderSingleIdSelect('guestObjectId', (result) => {
+            this._onSetPropValue('guestObjectId', result.value)
+          }, 'Guest Object Id:')}
+          {this._renderSingleTagSelect('mainObjectTag', (result) => {
+            this._onSetPropValue('mainObjectTag', result.value)
+          }, 'Main Object Tag:')}
+          {this._renderSingleTagSelect('guestObjectTag', (result) => {
+            this._onSetPropValue('guestObjectTag', result.value)
+          }, 'Guest Object Tag:')}
+        </React.Fragment>)
+    }
+
+    const isWait = sequenceItem.conditionType === 'onEvent' || sequenceItem.conditionType === 'onTimerEnd'
     const isMod = sequenceItem.effectName && sequenceItem.effectName === 'mod'
     return <div className={classnames("SequenceItem__condition", {"SequenceItem__condition--nested": nested})}>
           {nested && <hr></hr>}
@@ -394,7 +424,7 @@ export default class SequenceItem extends React.Component{
           {conditionTypeChooser}
           <div className="SequenceItem__condition-body">
             {chosenConditionForm}
-            {!isMod && <React.Fragment>
+            {!isMod && !isWait && <React.Fragment>
               <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testMainObject')} checked={sequenceItem.testMainObject} type="checkbox"></input>Test Main Object</div>
               <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testGuestObject')} checked={sequenceItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
               <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testWorldObject')} checked={sequenceItem.testWorldObject} type="checkbox"></input>Test World Object</div>
@@ -406,12 +436,15 @@ export default class SequenceItem extends React.Component{
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
             {nested && <hr></hr>}
           </div>
-          {!nested && this._renderNextSelect(sequenceItem.passNext, (event) => {
+          {!isWait && !nested && this._renderNextSelect(sequenceItem.passNext, (event) => {
             this._selectNext(event, 'passNext')
           }, 'Pass Next:')}
-          {!nested && this._renderNextSelect(sequenceItem.failNext, (event) => {
+          {!isWait && !nested && this._renderNextSelect(sequenceItem.failNext, (event) => {
             this._selectNext(event, 'failNext')
           }, 'Fail Next:')}
+          {isWait && this._renderNextSelect(sequenceItem.next, (event) => {
+            this._selectNext(event, 'next')
+          }, 'Next:')}
         </div>
   }
 
@@ -452,7 +485,7 @@ export default class SequenceItem extends React.Component{
     return <div className="SequenceItem__test">{title || 'Test Tags:'}<Select
       value={sequenceItem[valueProp] && sequenceItem[valueProp].map((tags) => { return { value: tags, label: tags} })}
       onChange={onChange}
-      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
+      options={Object.keys({...GAME.tags, ...window.allTags}).map(tag => { return { value: tag, label: tag}})}
       styles={window.reactSelectStyle}
       isMulti
       theme={window.reactSelectTheme}/>
@@ -478,7 +511,6 @@ export default class SequenceItem extends React.Component{
 
     const options = [{value: 'default', label: 'default'}, {value: 'mainObject', label: 'mainObject'}, {value: 'guestObject', label: 'guestObject'}, ...GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))]
     if(isTrigger) {
-      options.shift()
       options.unshift({value: 'ownerObject', label: 'ownerObject'})
     }
 
@@ -497,7 +529,7 @@ export default class SequenceItem extends React.Component{
     return <div className="SequenceItem__test">{title || 'Test Tags:'}<Select
       value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
       onChange={onChange}
-      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
+      options={Object.keys({...GAME.tags, ...window.allTags}).map(tag => { return { value: tag, label: tag}})}
       styles={window.reactSelectStyle}
       theme={window.reactSelectTheme}/>
     </div>
@@ -517,6 +549,7 @@ export default class SequenceItem extends React.Component{
           {sequenceItem.sequenceType == 'sequenceChoice' && this._renderChoice()}
           {sequenceItem.sequenceType == 'sequenceCondition' && this._renderCondition()}
           {sequenceItem.sequenceType == 'sequenceEffect' && this._renderEffect()}
+          {sequenceItem.sequenceType == 'sequenceWait' && this._renderCondition()}
         </div>
       </div>
     )

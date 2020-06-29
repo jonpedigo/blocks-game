@@ -1,5 +1,5 @@
 import effects from './effects'
-import { testCondition } from './conditions'
+import { testCondition, testEventMatch } from './conditions'
 import _ from 'lodash'
 
 function endSequence(sequence) {
@@ -67,7 +67,7 @@ function startSequence(sequenceId, context) {
 
   if(sequence.state && sequence.state.disabled) return console.log('sequence disabled', sequenceId)
 
-  if(!sequence) return console.log('no sequence with id ', sequenceId)
+  if(!sequence || !sequence.items) return console.log('no sequence with id ', sequenceId)
 
   const { pauseGame, items } = sequence
   if(pauseGame) {
@@ -76,11 +76,9 @@ function startSequence(sequenceId, context) {
 
   sequence.mainObject = context.mainObject
   sequence.guestObject = context.guestObject
-  sequence.remoteObject = context.remoteObject
   sequence.currentItemId = sequence.items[0].id
   sequence.eventListeners = []
   sequence.itemMap = mapSequenceItems(items)
-  delete sequence.items
 
   GAME.gameState.sequenceQueue.push(sequence)
 }
@@ -90,6 +88,10 @@ function processSequence(sequence) {
   if(!item) return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
+
+  if(item.waiting) {
+    return
+  }
 
   if(item.sequenceType === 'sequenceDialogue') {
     item.effectName = 'dialogue'
@@ -157,6 +159,26 @@ function processSequence(sequence) {
     sequence.eventListeners.push(removeEventListener)
   }
 
+  if(item.sequenceType === 'sequenceWait') {
+    item.waiting = true
+    if(item.conditionType === 'onTimerEnd') {
+      GAME.addTimeout(window.uniqueID(), item.conditionValue || 10, () => {
+        item.waiting = false
+        sequence.currentItemId = item.next
+      })
+    } else if(item.conditionType === 'onEvent') {
+      const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
+        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
+        if(eventMatch) {
+          item.waiting = false
+          sequence.currentItemId = item.next
+          removeEventListener()
+        }
+      })
+      sequence.eventListeners.push(removeEventListener)
+    }
+  }
+
   if(item.sequenceType === 'sequenceCondition') {
     const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
 
@@ -185,8 +207,6 @@ function processSequence(sequence) {
 
     const pass = testCondition(item, testObjects, { allTestedMustPass })
 
-    console.log('passing?', pass)
-
     if(pass) {
       sequence.currentItemId = item.passNext
     } else {
@@ -199,7 +219,7 @@ function processSequence(sequence) {
 
   if(item.next === 'end') {
     endSequence(sequence)
-  } else if(item.next) {
+  } else if(!item.waiting && item.next) {
     sequence.currentItemId = item.next
   }
 }

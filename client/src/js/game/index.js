@@ -731,21 +731,21 @@ class Game{
   startMod(ownerId, mod) {
     mod = JSON.parse(JSON.stringify(mod))
     mod.ownerId = ownerId
-
     GAME.gameState.activeModList.push(mod)
 
     if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
-      if(mod.conditionType === 'onTrigger') {
-        mod.removeEventListener = window.local.on(mod.eventName, (mainObject, guestObject) => {
-          const ownerObject = OBJECTS.getObjectOrHeroById[mod.ownerId]
-          const eventMatch = testEventMatch(mod.eventName, mainObject, guestObject, mod, ownerObject)
+      if(mod.conditionType === 'onEvent') {
+        mod.removeEventListener = window.local.on(mod.conditionEventName, (mainObject, guestObject) => {
+          const ownerObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
+          const eventMatch = testEventMatch(mod.conditionEventName, mainObject, guestObject, mod, ownerObject, { testPassReverse: mod.testPassReverse, testModdedVersion: mod.testModdedVersion })
           if(eventMatch) {
             mod._remove = true
             mod.removeEventListener()
+            delete mod.removeEventListener
           }
         })
       }
-      if(mod.conditionType === 'onTimer') {
+      if(mod.conditionType === 'onTimerEnd') {
         GAME.addTimeout(window.uniqueID(), mod.conditionValue || 10, () => {
           mod._remove = true
         })
@@ -776,7 +776,7 @@ class Game{
       if(mod._remove) {
         if(mod.removeEventListener) mod.removeEventListener()
         return false
-      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onEvent' && mod.conditionType !== 'onTimerEnd') {
+      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
         if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
           return true
         }

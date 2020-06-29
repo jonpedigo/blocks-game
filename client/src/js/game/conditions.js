@@ -38,12 +38,12 @@ window.conditionTypes = {
   },
 
   // reverts only work for mods really ATM
-  revertOnEvent: {
+  onEvent: {
     // number: true,
     event: true,
     //
   },
-  revertOnTimerEnd: {
+  onTimerEnd: {
     number: true,
     label: 'Timer seconds:'
   },
@@ -254,15 +254,21 @@ function testHasTag(tag, testObject, options) {
 }
 
 
-function testEventMatch(eventName, mainObject, guestObject, condition, ownerObject) {
+function testEventMatch(eventName, mainObject, guestObject, condition, ownerObject, options = { allTestedMustPass: false, testPassReverse: false, testModdedVersion: false }) {
   let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = condition
 
   let eventMatch = false
 
+  if(options.testModdedVersion) {
+    if(ownerObject) ownerObject = ownerObject.mod()
+    if(guestObject) guestObject = guestObject.mod()
+    if(mainObject) mainObject = mainObject.mod()
+  }
+
   if(ownerObject) {
     // the code below attempts to automatically determine the main object or the guest object
     // based on the name of the event
-    if(ownerObject.mod().tags.hero) {
+    if(ownerObject.tags.hero) {
       if(!guestObjectId && !guestObjectTag && eventName.indexOf('Object') >= 0) {
         guestObjectId = ownerObject.id
       }
@@ -296,6 +302,8 @@ function testEventMatch(eventName, mainObject, guestObject, condition, ownerObje
   if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0) {
     eventMatch = true
   }
+
+  if(options.testPassReverse) return !eventMatch
 
   return eventMatch
 }

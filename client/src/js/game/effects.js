@@ -204,7 +204,7 @@ function processEffect(effect, effected, effector) {
       mainObject: effected,
       guestObject: effector,
     }
-    startSequence(effectValue, context)
+    startSequence(effect.effectSequenceId, context)
   }
 
   if(effectName === 'mod') {

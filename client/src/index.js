@@ -5,12 +5,6 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-// ADDING A MOD is kind of intense
-// 1. apply the mod to the code base ( rendering, physics, event system, condition system, etc )
-// 2. test reverting with conditions and events/timers
-//
-// create compendium with objects, heros, sequences, mods/mutates
-
 // TRIGGER MENU.
    eventName
    mainObjectTag
@@ -33,7 +27,7 @@ TAG
 Tag is Event + Condition + Effect with ONE CLICK! Easy to add. Common Triggers should become Tags
 
 SEQUENCE
-Sequence is ( Condition, Effect, Choice, UI ) in any order you want
+Sequence is ( Condition, Effect, Wait, Choice, UI ) in any order you want
 
 MORPH is permanent and transformative
 MUTATE is permanent and transitionary
