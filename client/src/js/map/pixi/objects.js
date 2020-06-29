@@ -54,9 +54,9 @@ const updatePixiObject = (gameObject, stage) => {
   } else if(pixiChild.emitter) {
     pixiChild.emitter.destroy()
     delete pixiChild.emitter
-    pixiChild.sprite = 'solidcolorsprite'
-    pixiChild.defaultSprite = 'solidcolorsprite'
-    pixiChild.visible = true
+
+    initPixiObject(gameObject)
+    return
   }
 
 
@@ -106,7 +106,7 @@ const updatePixiObject = (gameObject, stage) => {
       }
     }
 
-    if(gameObject.sprite != pixiChild.texture.id) {
+    if(!pixiChild.texture || gameObject.sprite != pixiChild.texture.id) {
       pixiChild.texture = PIXIMAP.textures[gameObject.sprite]
     }
   }
@@ -142,7 +142,12 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   }
 
   if(!pixiChild.emitter) {
-    pixiChild = addEmitterToChild(pixiChild, gameObject)
+    pixiChild.visible = false
+    gameObject.defaultSprite = 'invisiblesprite'
+    gameObject.sprite = gameObject.defaultSprite
+    PIXIMAP.stage.removeChild(pixiChild)
+    pixiChild = addEmitter(gameObject)
+    return
   }
 
   /////////////////////
@@ -186,12 +191,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
 }
 
-function addEmitterToChild(pixiChild, gameObject) {
-  pixiChild.visible = false
-  gameObject.defaultSprite = 'invisiblesprite'
-  gameObject.sprite = gameObject.defaultSprite
-  PIXIMAP.stage.removeChild(pixiChild)
-
+function addEmitter(gameObject, pixiChild) {
   const container = new PIXI.Container()
   container.name = gameObject.id
   PIXIMAP.stage.addChild(container)
@@ -201,7 +201,8 @@ function addEmitterToChild(pixiChild, gameObject) {
   container.emitter = emitter
   container.emitter.type = 'flameEmitter'
 
-  console.log(emitter)
+  updatePixiEmitter(container, gameObject)
+
   return container
 }
 
@@ -240,24 +241,6 @@ function updatePositionRotationScale(pixiChild, gameObject) {
   }
 }
 
-function addEmitterToStage(gameObject, stage) {
-  /////////////////////
-  /////////////////////
-  // INIT EMITTER
-
-  const sprite = new PIXI.Sprite(PIXIMAP.textures['invisiblesprite'])
-  let addedChild = stage.addChild(sprite)
-
-  /////////////////////
-  /////////////////////
-  // NAME SPRITE FOR LOOKUP
-  addedChild.name = gameObject.id
-
-  addedChild = addEmitterToChild(addedChild, gameObject)
-
-  updatePixiEmitter(addedChild, gameObject)
-}
-
 const addGameObjectToStage = (gameObject, stage) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
@@ -285,6 +268,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   /////////////////////
   // ADD TO STAGE
   let addedChild = stage.addChild(sprite)
+  addedChild.texture = texture
 
   /////////////////////
   /////////////////////
@@ -299,7 +283,7 @@ const initPixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.tags.emitter) {
-    addEmitterToStage(gameObject, stage)
+    addEmitter(gameObject)
     return
   }
 
