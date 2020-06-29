@@ -53,6 +53,20 @@ const updatePixiObject = (gameObject, stage) => {
     return
   }
 
+  /////////////////////
+  /////////////////////
+  // UPDATE EMITTER
+  if(gameObject.tags.emitter) {
+    updatePixiEmitter(pixiChild, gameObject)
+    return
+  } else if(pixiChild.emitter) {
+    pixiChild.emitter.destroy()
+    delete pixiChild.emitter
+    pixiChild.sprite = 'solidcolorsprite'
+    pixiChild.defaultSprite = 'solidcolorsprite'
+    pixiChild.visible = true
+  }
+
 
   /////////////////////
   /////////////////////
@@ -60,13 +74,12 @@ const updatePixiObject = (gameObject, stage) => {
   const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
   // remove if its invisible now
   if (isInvisible) {
-    if(pixiChild.emitter) pixiChild.emitter.emit = false
     pixiChild.visible = false
     return
   } else {
-    if(pixiChild.emitter) pixiChild.emitter.emit = true
     pixiChild.visible = true
   }
+
 
   /////////////////////
   /////////////////////
@@ -137,6 +150,8 @@ const updatePixiObject = (gameObject, stage) => {
   // COLOR
   if(gameObject.color) {
     pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+  } else if(GAME.world.defaultObjectColor) {
+    pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
   }
 
   /////////////////////
@@ -149,6 +164,65 @@ const updatePixiObject = (gameObject, stage) => {
   }
 }
 
+const updatePixiEmitter = (pixiChild, gameObject) => {
+  /////////////////////
+  /////////////////////
+  // SELECT CAMERA
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
+  if(!pixiChild.emitter) {
+    addEmitterToChild(pixiChild, gameObject)
+  }
+
+  /////////////////////
+  /////////////////////
+  // INVISIBILITY
+  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
+  // remove if its invisible now
+  if (isInvisible) {
+    if(pixiChild.emitter) {
+      pixiChild.emitter.emit = false
+      pixiChild.emitter.cleanup()
+    }
+    pixiChild.visible = false
+    return
+  } else {
+    if(pixiChild.emitter) pixiChild.emitter.emit = true
+    pixiChild.visible = true
+  }
+
+  const emitter = pixiChild.emitter
+  emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+}
+
+function addEmitterToChild(pixiChild, gameObject) {
+  gameObject.defaultSprite = 'invisiblesprite'
+  gameObject.sprite = gameObject.defaultSprite
+  let emitter = flameEmitter({stage: PIXIMAP.stage, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
+  PIXIMAP.stage.emitters.push(emitter)
+  pixiChild.emitter = emitter
+}
+
+function addEmitterToStage(gameObject, stage) {
+  /////////////////////
+  /////////////////////
+  // INIT EMITTER
+
+  const sprite = new PIXI.Sprite(PIXIMAP.textures['invisiblesprite'])
+  let addedChild = stage.addChild(sprite)
+
+  /////////////////////
+  /////////////////////
+  // NAME SPRITE FOR LOOKUP
+  addedChild.name = gameObject.id
+
+  addEmitterToChild(addedChild, gameObject)
+
+  updatePixiEmitter(addedChild, gameObject)
+}
 
 const addGameObjectToStage = (gameObject, stage) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
@@ -161,7 +235,6 @@ const addGameObjectToStage = (gameObject, stage) => {
   }
   gameObject.sprite = gameObject.defaultSprite
 
-
   /////////////////////
   /////////////////////
   // CREATE SPRITE
@@ -173,21 +246,16 @@ const addGameObjectToStage = (gameObject, stage) => {
     sprite = new PIXI.Sprite(texture)
   }
 
-  /////////////////////
-  /////////////////////
-  // NAME SPRITE FOR LOOKUP
-  sprite.name = gameObject.id
 
   /////////////////////
   /////////////////////
   // ADD TO STAGE
-  const addedChild = stage.addChild(sprite)
+  let addedChild = stage.addChild(sprite)
 
-  if (gameObject.tags.emitter) {
-    let emitter = flameEmitter({stage, startPos: {x: gameObject.x * camera.multiplier, y: gameObject.y * camera.multiplier}})
-    stage.emitters.push(emitter)
-    addedChild.emitter = emitter
-  }
+  /////////////////////
+  /////////////////////
+  // NAME SPRITE FOR LOOKUP
+  addedChild.name = gameObject.id
 
   updatePixiObject(gameObject, stage)
 }
@@ -196,8 +264,10 @@ const initPixiObject = (gameObject) => {
   const stage = PIXIMAP.stage
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
-  // const isOutline = !gameObject.tags.filled
-  // if (gameObject.invisible || isOutline) return
+  if(gameObject.tags.emitter) {
+    addEmitterToStage(gameObject, stage)
+    return
+  }
 
   if(gameObject.constructParts) {
     const container = new PIXI.Container()

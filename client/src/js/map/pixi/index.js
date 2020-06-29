@@ -35,6 +35,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   app.ticker.add(function(delta) {
     // console.log(app.stage)
     app.stage.emitters.forEach((emitter) => {
+      if(!emitter.emit) return
       emitter.update(2 * 0.001);
     })
   });
@@ -59,7 +60,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/outlinesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load(() => {
+    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load(() => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -73,11 +74,11 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures['solidcolorsprite'] = texture
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      const baseTexture = new PIXI.BaseTexture('assets/images/outlinesprite.png');
+      const baseTexture = new PIXI.BaseTexture('assets/images/invisiblesprite.png');
       baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
       texture = new PIXI.Texture(baseTexture)
-      texture.id = 'outlinesprite'
-      textures['outlinesprite'] = texture
+      texture.id = 'invisiblesprite'
+      textures['invisiblesprite'] = texture
 
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
@@ -118,26 +119,32 @@ PIXIMAP.onGameLoaded = function() {
 }
 
 PIXIMAP.onDeleteHero = function(object) {
-  const pixiChild = stage.getChildByName(object.id)
-  stage.removeChild(pixiChild)
+  PIXIMAP.deleteObject(object)
 }
 
 PIXIMAP.onDeleteObject = function(object) {
-  const pixiChild = stage.getChildByName(object.id)
-  if(pixiChild.children && pixiChild.children.length) {
-    pixiChild.removeChildren()
-  }
-  stage.removeChild(pixiChild)
+  PIXIMAP.deleteObject(object)
 }
 
 PIXIMAP.onDeleteSubObject = function(object, subObjectName) {
   const subObject = object.subObjects[subObjectName]
-  const pixiChild = stage.getChildByName(subObject.id)
-  stage.removeChild(pixiChild)
+  PIXIMAP.deleteObject(subObject)
 }
 
 PIXIMAP.deleteObject = function(object) {
   const pixiChild = stage.getChildByName(object.id)
+  if(!pixiChild) return
+  if(pixiChild.children && pixiChild.children.length) {
+    pixiChild.removeChildren()
+  }
+  if(pixiChild.emitter) {
+    PIXIMAP.stage.emitters = PIXIMAP.stage.emitters.filter((emitter) => {
+      if(pixiChild.emitter === emitter) return false
+      return true
+    })
+    pixiChild.emitter.destroy()
+    delete pixiChild.emitter
+  }
   stage.removeChild(pixiChild)
 }
 

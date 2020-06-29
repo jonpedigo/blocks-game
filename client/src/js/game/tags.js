@@ -97,6 +97,10 @@ function setDefault() {
     heroCameraShakeOnHeroCollide_long: false,
   }
 
+  window.particleTags = {
+    emitter: false,
+  }
+  
   window.descriptiveTags = {
     fresh: false,
     spawned: false,
@@ -116,6 +120,7 @@ function setDefault() {
     ...window.graphicalTags,
     ...window.descriptiveTags,
     ...window.cameraTags,
+    ...window.particleTags,
   }
 
   window.plainObjectTags = {

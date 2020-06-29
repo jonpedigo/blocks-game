@@ -96,6 +96,7 @@ import { startSequence } from './sequence'
     // play sound FX
     // stop music
     // start music
+    // camera shake
   }
 
   // — speed up hero

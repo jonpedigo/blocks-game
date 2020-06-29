@@ -72,6 +72,9 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Camera">
         {this._renderTagMenuItems(window.cameraTags)}
       </SubMenu>
+      <SubMenu title="Particle">
+        {this._renderTagMenuItems(window.particleTags)}
+      </SubMenu>
       {subObject && <SubMenu title="Sub Object">
         {this._renderTagMenuItems(window.subObjectTags)}
       </SubMenu>}

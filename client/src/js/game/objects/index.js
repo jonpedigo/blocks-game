@@ -463,7 +463,6 @@ class Objects{
       update.velocityY = 0
     }
 
-    PIXIMAP.onDeleteObject(object)
     if(update.constructParts) {
       if(object.constructParts) {
         object.constructParts.forEach((part) => {
@@ -480,10 +479,13 @@ class Objects{
     } else if(object.constructParts) {
       PHYSICS.addObject(object)
     }
-
     object.path = null
     window.mergeDeep(object, update)
-    PIXIMAP.addObject(object)
+
+    if(update.constructParts || object.constructParts) {
+      PIXIMAP.deleteObject(object)
+      PIXIMAP.addObject(object)
+    }
   }
 
   onEditObjects(editedObjects) {

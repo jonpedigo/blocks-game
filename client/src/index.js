@@ -6,7 +6,6 @@
 ////////////////////////////////////////////////////
 
 // GOALS
-1) Camera shake
     other camera/world effects from PIXI
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )
@@ -167,7 +166,6 @@ Shockwave filter / Bulge pinch?
 Reflection filter
 
 Godray filter
-
 
 Many of these are really good CAMERA effects
 Dot filter
