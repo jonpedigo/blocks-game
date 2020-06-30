@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js'
+window.PIXI = PIXI
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import { flameEmitter } from './particles'
 
-const updatePixiObject = (gameObject, stage) => {
+const updatePixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   /////////////////////
@@ -12,7 +13,7 @@ const updatePixiObject = (gameObject, stage) => {
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
-      updatePixiObject(subObject, stage)
+      updatePixiObject(subObject)
     })
   }
 
@@ -20,7 +21,7 @@ const updatePixiObject = (gameObject, stage) => {
   /////////////////////
   /////////////////////
   // GET CHILD
-  const pixiChild = stage.getChildByName(gameObject.id)
+  const pixiChild = PIXIMAP.objectStage.getChildByName(gameObject.id)
   if(!pixiChild) {
     initPixiObject(gameObject)
     return
@@ -40,7 +41,7 @@ const updatePixiObject = (gameObject, stage) => {
         color = gameObject.color
       }
       const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: 'solidcolorsprite'}
-      updatePixiObject(partObject, pixiChild)
+      updatePixiObject(partObject)
     })
     return
   }
@@ -145,7 +146,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     pixiChild.visible = false
     gameObject.defaultSprite = 'invisiblesprite'
     gameObject.sprite = gameObject.defaultSprite
-    PIXIMAP.stage.removeChild(pixiChild)
+    PIXIMAP.objectStage.removeChild(pixiChild)
     pixiChild = addEmitter(gameObject)
     return
   }
@@ -191,13 +192,13 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
 }
 
-function addEmitter(gameObject, pixiChild) {
+function addEmitter(gameObject) {
   const container = new PIXI.Container()
   container.name = gameObject.id
-  PIXIMAP.stage.addChild(container)
+  PIXIMAP.objectStage.addChild(container)
 
   let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
-  PIXIMAP.stage.emitters.push(emitter)
+  PIXIMAP.objectStage.emitters.push(emitter)
   container.emitter = emitter
   container.emitter.type = 'flameEmitter'
 
@@ -263,6 +264,22 @@ const addGameObjectToStage = (gameObject, stage) => {
     sprite = new PIXI.Sprite(texture)
   }
 
+  ///////////////
+  ///////////////
+  ///////////////
+  // LIGHTING
+  const lightbulb = new PIXI.Graphics();
+  // const rr = Math.random() * 0x80 | 0;
+  // const rg = Math.random() * 0x80 | 0;
+  // const rb = Math.random() * 0x80 | 0;
+  const rad = 10 + Math.random() * 20;
+  lightbulb.beginFill(0xFFFFFF, 1.0);
+  lightbulb.drawCircle(0, 0, rad);
+  lightbulb.endFill();
+  lightbulb.parentLayer = PIXIMAP.lighting;// <-- try comment it
+  sprite.addChild(lightbulb);
+  ///////
+  ///////
 
   /////////////////////
   /////////////////////
@@ -279,7 +296,7 @@ const addGameObjectToStage = (gameObject, stage) => {
 }
 
 const initPixiObject = (gameObject) => {
-  const stage = PIXIMAP.stage
+  const stage = PIXIMAP.objectStage
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.tags.emitter) {
@@ -293,18 +310,18 @@ const initPixiObject = (gameObject) => {
       addGameObjectToStage({tags: gameObject.tags, ...part}, container)
     })
     container.name = gameObject.id
-    PIXIMAP.stage.addChild(container)
+    PIXIMAP.objectStage.addChild(container)
     return
   }
 
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
-      addGameObjectToStage(subObject, PIXIMAP.stage)
+      addGameObjectToStage(subObject, PIXIMAP.objectStage)
     })
   }
 
-  addGameObjectToStage(gameObject, PIXIMAP.stage)
+  addGameObjectToStage(gameObject, PIXIMAP.objectStage)
 }
 
 function removeFilter(pixiChild, filterClass) {

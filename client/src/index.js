@@ -5,8 +5,9 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-// GOALS
-    other camera/world effects from PIXI
+// MY CURRENT GOAL IS TO TRY TO GET SHADOWS TO WORK
+THIS MAY REQUIRE A DOWNGRADE TO PIXI 4.5
+
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )
 
