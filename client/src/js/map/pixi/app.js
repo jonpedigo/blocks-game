@@ -4,6 +4,7 @@ import 'pixi-layers'
 import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
 import tileset from './tileset.json'
+import "pixi-shadows";
 
 const textures = {};
 let stage
@@ -15,57 +16,42 @@ const initPixiApp = (canvasRef, onLoad) => {
   });
   document.getElementById('GameContainer').appendChild(app.view);
 
+  let world
+  if(GAME.world.tags.shadow) {
+    world = PIXI.shadows.init(app);
+    // PIXI.shadows.filter.ambientLight = .7
+  } else {
+    world = app.stage
+  }
+
   // CODE
-  app.stage = new PIXI.display.Stage();
 
-
-  const background = new PIXI.TilingSprite(
+  const background = new PIXI.extras.TilingSprite(
       PIXI.Texture.from('assets/images/p2.jpeg'),
       2000,
       2000,
   );
-  app.stage.addChild(background);
+  world.addChild(background);
 
   ///////////////
   ///////////////
   ///////////////
   // OBJECT STAGE
   PIXIMAP.objectStage = new PIXI.Container();
-  app.stage.addChild(PIXIMAP.objectStage);
+  world.addChild(PIXIMAP.objectStage);
   PIXIMAP.objectStage.emitters = []
 
-  ///////////////
-  ///////////////
-  ///////////////
-  // LIGHTING
-  const lighting = new PIXI.display.Layer();
-  lighting.on('display', (element) => {
-      element.blendMode = PIXI.BLEND_MODES.ADD;
-  });
-  lighting.useRenderTexture = true;
-  lighting.clearColor = [0.05, 0.05, 0.05, 1]; // ambient gray
-  PIXIMAP.lighting = lighting
-  PIXIMAP.lightingLayer = app.stage.addChild(lighting);
-
-  const lightingSprite = new PIXI.Sprite(lighting.getRenderTexture());
-  lightingSprite.blendMode = PIXI.BLEND_MODES.MULTIPLY;
-  app.stage.addChild(lightingSprite);
-  PIXIMAP.lightingSprite = lightingSprite
-  ///////////////
-  ///////////////
-
-  stage = app.stage
-  PIXIMAP.stage = stage
+  PIXIMAP.stage = world
   PIXIMAP.app = app
 
 
   // GAME.world.tags.useFlatColors = true
   // if(GAME.world.tags.useFlatColors) {
-  //   app.stage.filters = [new ColorOverlayFilter(parseInt(tinycolor('red').toHex(), 16))]
+  //   world.stage.filters = [new ColorOverlayFilter(parseInt(tinycolor('red').toHex(), 16))]
   // }
 
   app.ticker.add(function(delta) {
-    // console.log(app.stage)
+    // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
       if(!emitter.emit) return
       emitter.update(2 * 0.001);
@@ -83,16 +69,16 @@ const initPixiApp = (canvasRef, onLoad) => {
     onResize()
   }
 
-  app.loader.add('assets/images/tileset.png').load(() => {
+  app.loader.add('assets/images/tileset.png').load((loaded) => {
     tileset.forEach((tile) => {
-      let baseTexture = new PIXI.BaseTexture('assets/images/tileset.png');
+      let baseTexture = PIXI.BaseTexture.from('assets/images/tileset.png');
       baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
       let texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(tile.x, tile.y, tile.width, tile.height));
       texture.id = tile.id
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load(() => {
+    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -106,11 +92,10 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures['solidcolorsprite'] = texture
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      const baseTexture = new PIXI.BaseTexture('assets/images/invisiblesprite.png');
-      baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
-      texture = new PIXI.Texture(baseTexture)
-      texture.id = 'invisiblesprite'
-      textures['invisiblesprite'] = texture
+      // texture = PIXI.Texture.from('assets/images/invisiblesprite.png')
+      // texture.id = 'invisiblesprite'
+      // textures['invisiblesprite'] = texture
+      // texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
@@ -123,6 +108,18 @@ const initPixiApp = (canvasRef, onLoad) => {
   })
 
 
+  if(GAME.world.tags.shadow && PAGE.role.isAdmin) {
+    // Create a light that casts shadows
+    var shadow = new PIXI.shadows.Shadow(700, 1);
+    shadow.position.set(450, 150);
+    world.addChild(shadow);
+
+    // Make the light track your mouse
+    world.interactive = true;
+    world.on("mousemove", function(event) {
+        shadow.position.copy(event.data.global);
+    });
+  }
 }
 
 export {

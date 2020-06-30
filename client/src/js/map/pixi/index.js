@@ -91,7 +91,26 @@ PIXIMAP.onRender = function() {
     GAME.heroList.forEach((hero) => {
       updatePixiObject(hero, PIXIMAP.stage)
     })
-    PIXIMAP.lightingSprite.x = camera.x
-    PIXIMAP.lightingSprite.y = camera.y
   }
+}
+
+
+
+// A function to combine different assets of your world object, but give them a common transform by using pixi-layers
+// It is of course recommended to create a custom class for this, but this demo just shows the minimal steps required
+PIXIMAP.createShadowSprite = function(texture, shadowTexture) {
+    var container = new PIXI.Container(); // This represents your final 'sprite'
+
+    // Things that create shadows
+    if (shadowTexture) {
+        var shadowCastingSprite = new PIXI.Sprite(shadowTexture);
+        shadowCastingSprite.parentGroup = PIXI.shadows.casterGroup;
+        container.addChild(shadowCastingSprite);
+    }
+
+    // The things themselves (their texture)
+    var sprite = new PIXI.Sprite(texture);
+    container.addChild(sprite);
+
+    return container;
 }

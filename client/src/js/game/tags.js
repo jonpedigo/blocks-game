@@ -86,6 +86,7 @@ function setDefault() {
     invisible: false,
     tilingSprite: false,
     inputDirectionSprites: false,
+    flashlight: false,
     // invisibleOnHeroCollide
   }
 
@@ -100,7 +101,7 @@ function setDefault() {
   window.particleTags = {
     emitter: false,
   }
-  
+
   window.descriptiveTags = {
     fresh: false,
     spawned: false,

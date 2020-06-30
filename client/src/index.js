@@ -5,8 +5,8 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-// MY CURRENT GOAL IS TO TRY TO GET SHADOWS TO WORK
-THIS MAY REQUIRE A DOWNGRADE TO PIXI 4.5
+1) < --- LITERALLY OMG? <-- https://github.com/claus/react-dat-gui
+https://github.com/dataarts/dat.gui
 
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )

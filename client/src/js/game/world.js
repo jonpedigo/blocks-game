@@ -17,6 +17,7 @@ function setDefault() {
       shouldRestoreHero: false,
       storeEntireGameState: false,
       overrideCustomGameCode: false,
+      shadows: false,
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,

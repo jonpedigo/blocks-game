@@ -17,6 +17,14 @@ const updatePixiObject = (gameObject) => {
     })
   }
 
+  if(gameObject.tags.flashlight) {
+    const pixiChild = PIXIMAP.stage.getChildByName(gameObject.id)
+    if(pixiChild.isFlashlight) {
+      pixiChild.position.set(gameObject.x, gameObject.y)
+      return
+    }
+  }
+
 
   /////////////////////
   /////////////////////
@@ -27,6 +35,87 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
+  if(pixiChild.hasShadow) {
+    pixiChild.children.forEach((child) => {
+      updateProperties(child, gameObject)
+    })
+  } else {
+    updateProperties(pixiChild, gameObject)
+  }
+}
+
+const updatePixiEmitter = (pixiChild, gameObject) => {
+  /////////////////////
+  /////////////////////
+  // SELECT CAMERA
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
+  if(!pixiChild.emitter) {
+    PIXIMAP.objectStage.removeChild(pixiChild)
+    pixiChild = addEmitter(gameObject)
+    return
+  }
+
+  /////////////////////
+  /////////////////////
+  // INVISIBILITY
+  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
+  // remove if its invisible now
+  if (isInvisible) {
+    if(pixiChild.emitter) {
+      pixiChild.emitter.emit = false
+      pixiChild.emitter.cleanup()
+    }
+    return
+  } else {
+    if(pixiChild.emitter) pixiChild.emitter.emit = true
+  }
+
+  const emitter = pixiChild.emitter
+  // emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+
+
+  const emitterData = window.particleEmitters[emitter.type]
+
+  /////////////////////
+  /////////////////////
+  // ROTATION
+  if(gameObject.tags.rotateable) {
+    pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+    pixiChild.rotation = gameObject.angle || 0
+    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+  } else {
+    pixiChild.x = (gameObject.x) * camera.multiplier
+    pixiChild.y = (gameObject.y) * camera.multiplier
+  }
+
+  /////////////////////
+  /////////////////////
+  // SCALE
+  emitter.startScale.value = emitterData.scale.start * camera.multiplier
+  emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
+}
+
+function addEmitter(gameObject) {
+  const container = new PIXI.Container()
+  container.name = gameObject.id
+  PIXIMAP.objectStage.addChild(container)
+
+  let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
+  PIXIMAP.objectStage.emitters.push(emitter)
+  container.emitter = emitter
+  container.emitter.type = 'flameEmitter'
+
+  updatePixiEmitter(container, gameObject)
+
+  return container
+}
+
+function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // CONSTRUCT PARTS
@@ -112,102 +201,6 @@ const updatePixiObject = (gameObject) => {
     }
   }
 
-  updatePositionRotationScale(pixiChild, gameObject)
-
-  /////////////////////
-  /////////////////////
-  // COLOR
-  if(gameObject.color) {
-    pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
-  } else if(GAME.world.defaultObjectColor) {
-    pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
-  }
-
-  /////////////////////
-  /////////////////////
-  // INTERACT HIGHLIGHT
-  if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
-    pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
-  } else {
-    removeFilter(pixiChild, GlowFilter)
-  }
-}
-
-const updatePixiEmitter = (pixiChild, gameObject) => {
-  /////////////////////
-  /////////////////////
-  // SELECT CAMERA
-  let camera = MAP.camera
-  if(CONSTRUCTEDITOR.open) {
-    camera = CONSTRUCTEDITOR.camera
-  }
-
-  if(!pixiChild.emitter) {
-    pixiChild.visible = false
-    gameObject.defaultSprite = 'invisiblesprite'
-    gameObject.sprite = gameObject.defaultSprite
-    PIXIMAP.objectStage.removeChild(pixiChild)
-    pixiChild = addEmitter(gameObject)
-    return
-  }
-
-  /////////////////////
-  /////////////////////
-  // INVISIBILITY
-  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
-  // remove if its invisible now
-  if (isInvisible) {
-    if(pixiChild.emitter) {
-      pixiChild.emitter.emit = false
-      pixiChild.emitter.cleanup()
-    }
-    return
-  } else {
-    if(pixiChild.emitter) pixiChild.emitter.emit = true
-  }
-
-  const emitter = pixiChild.emitter
-  // emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
-
-
-  const emitterData = window.particleEmitters[emitter.type]
-
-  /////////////////////
-  /////////////////////
-  // ROTATION
-  if(gameObject.tags.rotateable) {
-    pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
-    pixiChild.rotation = gameObject.angle || 0
-    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-  } else {
-    pixiChild.x = (gameObject.x) * camera.multiplier
-    pixiChild.y = (gameObject.y) * camera.multiplier
-  }
-
-  /////////////////////
-  /////////////////////
-  // SCALE
-  emitter.startScale.value = emitterData.scale.start * camera.multiplier
-  emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
-}
-
-function addEmitter(gameObject) {
-  const container = new PIXI.Container()
-  container.name = gameObject.id
-  PIXIMAP.objectStage.addChild(container)
-
-  let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
-  PIXIMAP.objectStage.emitters.push(emitter)
-  container.emitter = emitter
-  container.emitter.type = 'flameEmitter'
-
-  updatePixiEmitter(container, gameObject)
-
-  return container
-}
-
-function updatePositionRotationScale(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // SELECT CAMERA
@@ -240,6 +233,24 @@ function updatePositionRotationScale(pixiChild, gameObject) {
     pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
     pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
   }
+
+  /////////////////////
+  /////////////////////
+  // COLOR
+  if(gameObject.color) {
+    pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
+  } else if(GAME.world.defaultObjectColor) {
+    pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
+  }
+
+  /////////////////////
+  /////////////////////
+  // INTERACT HIGHLIGHT
+  if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
+    pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
+  } else {
+    removeFilter(pixiChild, GlowFilter)
+  }
 }
 
 const addGameObjectToStage = (gameObject, stage) => {
@@ -258,28 +269,28 @@ const addGameObjectToStage = (gameObject, stage) => {
   // CREATE SPRITE
   const texture = PIXIMAP.textures[gameObject.sprite]
   let sprite
-  if(gameObject.tags.tilingSprite) {
-    sprite = new PIXI.TilingSprite(texture, gameObject.width, gameObject.height)
-  } else {
-    sprite = new PIXI.Sprite(texture)
-  }
 
-  ///////////////
-  ///////////////
-  ///////////////
-  // LIGHTING
-  const lightbulb = new PIXI.Graphics();
-  // const rr = Math.random() * 0x80 | 0;
-  // const rg = Math.random() * 0x80 | 0;
-  // const rb = Math.random() * 0x80 | 0;
-  const rad = 10 + Math.random() * 20;
-  lightbulb.beginFill(0xFFFFFF, 1.0);
-  lightbulb.drawCircle(0, 0, rad);
-  lightbulb.endFill();
-  lightbulb.parentLayer = PIXIMAP.lighting;// <-- try comment it
-  sprite.addChild(lightbulb);
-  ///////
-  ///////
+  if(GAME.world.tags.shadow) {
+
+    if(gameObject.tags.flashlight) {
+      // Create a light that casts shadows
+      sprite = new PIXI.shadows.Shadow(700, 1)
+      sprite.isFlashlight = true
+      const addedChild = PIXIMAP.stage.addChild(sprite)
+      addedChild.name = gameObject.id
+      updatePixiObject(gameObject)
+      return
+    } else {
+      sprite = PIXIMAP.createShadowSprite(texture, texture)
+      sprite.hasShadow = true
+    }
+  } else {
+    if(gameObject.tags.tilingSprite) {
+      sprite = new PIXI.extras.TilingSprite(texture, gameObject.width, gameObject.height)
+    } else {
+      sprite = new PIXI.Sprite(texture)
+    }
+  }
 
   /////////////////////
   /////////////////////
@@ -292,7 +303,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   // NAME SPRITE FOR LOOKUP
   addedChild.name = gameObject.id
 
-  updatePixiObject(gameObject, stage)
+  updatePixiObject(gameObject)
 }
 
 const initPixiObject = (gameObject) => {
