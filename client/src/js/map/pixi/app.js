@@ -17,6 +17,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   // INTIIALIZE
   const app = new PIXI.Application({
     width: canvasRef.width, height: canvasRef.height,
+    background: 0x000000
   });
   document.getElementById('GameContainer').appendChild(app.view);
 
@@ -32,24 +33,38 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.stage = world
   PIXIMAP.app = app
 
-  ///////////////
-  ///////////////
-  ///////////////
-  // BACKGROUND
-  // const background = new PIXI.extras.TilingSprite(
-  //     PIXI.Texture.from('assets/images/p2.jpeg'),
-  //     2000,
-  //     2000,
-  // );
-  // world.addChild(background);
-
-
+  if(GAME.world.tags.shadow) {
+    ///////////////
+    ///////////////
+    ///////////////
+    // BACKGROUND
+    const background = new PIXI.extras.TilingSprite(
+        PIXI.Texture.from('assets/images/p2.jpeg'),
+        2000,
+        2000,
+    );
+    world.addChild(background);
+  }
 
   ///////////////
   ///////////////
   ///////////////
   // OBJECT STAGE
-  PIXIMAP.objectStage = new PIXI.Container();
+  PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
+  PIXIMAP.sortGroup.on('sort', function(sprite) {
+      if(sprite.name) {
+        const object = OBJECTS.getObjectOrHeroById(sprite.name)
+        if(!object) {
+          return
+        }
+        if(object.tags.obstacle || object.tags.hero){
+          sprite.zOrder = -sprite.y;
+        }
+      }
+  });
+  PIXIMAP.sortGroup.sortPriority = 1;
+
+  PIXIMAP.objectStage = new PIXI.display.Layer(PIXIMAP.sortGroup)
   world.addChild(PIXIMAP.objectStage);
 
   if(!GAME.world.tags.shadow) {
@@ -58,6 +73,8 @@ const initPixiApp = (canvasRef, onLoad) => {
       new PIXI.display.Layer(PixiLights.normalGroup),
       new PIXI.display.Layer(PixiLights.lightGroup),
     );
+  } else {
+
   }
 
   PIXIMAP.objectStage.emitters = []

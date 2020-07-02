@@ -577,8 +577,6 @@ class Objects{
 
     let hero = GAME.heros[id]
     if(hero) return hero
-
-    console.log(id, object, hero)
   }
 
   removeObject(object) {

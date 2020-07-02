@@ -9,6 +9,11 @@ import * as PixiLights from "pixi-lights";
 const updatePixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
+  let camera = MAP.camera
+  if(CONSTRUCTEDITOR.open) {
+    camera = CONSTRUCTEDITOR.camera
+  }
+
   /////////////////////
   /////////////////////
   // SUB OBJECTS
@@ -60,6 +65,15 @@ const updatePixiObject = (gameObject) => {
 
   if(pixiChild.children && pixiChild.children.length) {
     pixiChild.children.forEach((child) => {
+      if(gameObject.tags.rotateable) {
+        pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+        pixiChild.rotation = gameObject.angle || 0
+        pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+        pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+      } else {
+        pixiChild.x = (gameObject.x) * camera.multiplier
+        pixiChild.y = (gameObject.y) * camera.multiplier
+      }
       updateProperties(child, gameObject)
     })
   } else {
@@ -201,7 +215,7 @@ function updateProperties(pixiChild, gameObject) {
         } else gameObject.sprite = gameObject.defaultSprite
       }
     } else {
-      // not for normal sprites
+      // not for diffuse sprites
       // if(gameObject.defaultSprite != gameObject.sprite) {
       //   gameObject.sprite = gameObject.defaultSprite
       // }
@@ -224,18 +238,17 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // ROTATION
-  if(gameObject.tags.rotateable) {
-    // pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
-
-    pixiChild.anchor.set(0.5, 0.5)
-    pixiChild.rotation = gameObject.angle || 0
-    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-  } else {
-    pixiChild.x = (gameObject.x) * camera.multiplier
-    pixiChild.y = (gameObject.y) * camera.multiplier
-  }
-
+  // if(gameObject.tags.rotateable) {
+  //   // pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+  //
+  //   pixiChild.anchor.set(0.5, 0.5)
+  //   pixiChild.rotation = gameObject.angle || 0
+  //   pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+  //   pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+  // } else {
+  //   pixiChild.x = (gameObject.x) * camera.multiplier
+  //   pixiChild.y = (gameObject.y) * camera.multiplier
+  // }
 
   /////////////////////
   /////////////////////
@@ -305,6 +318,7 @@ const addGameObjectToStage = (gameObject, stage) => {
 
       addedChild.name = gameObject.id
       updatePixiObject(gameObject)
+      // sprite.parentGroup = PIXIMAP.sortGroup
       return
     } else {
       sprite = PIXIMAP.createShadowSprite(texture, texture)
@@ -312,8 +326,8 @@ const addGameObjectToStage = (gameObject, stage) => {
     }
   } else {
     if(gameObject.tags.flashlight) {
-      sprite = PIXIMAP.createLight('point', null, 10, 0xffffff);
-      sprite.addChild(PIXIMAP.createLight('ambient', null, .1, 0xffffff))
+      sprite = PIXIMAP.createLight('point', null, 30, 0xffffff);
+      // sprite.addChild(PIXIMAP.createLight('ambient', null, .1, 0xffffff))
       sprite.light = true
     } else if(gameObject.tags.tilingSprite) {
       sprite = new PIXI.extras.TilingSprite(texture, gameObject.width, gameObject.height)
@@ -325,6 +339,7 @@ const addGameObjectToStage = (gameObject, stage) => {
       }
       // sprite = PIXIMAP.createSpritePair(PIXIMAP.textures['block'], PIXIMAP.textures['blockNormalMap'])
     }
+    sprite.parentGroup = PIXIMAP.sortGroup
   }
 
   /////////////////////

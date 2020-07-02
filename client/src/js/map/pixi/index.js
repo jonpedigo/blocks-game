@@ -127,6 +127,7 @@ PIXIMAP.createSpritePair = function (diffuseTex, normalTex) {
   var container = new PIXI.Container();
   var diffuseSprite = new PIXI.Sprite(diffuseTex);
   diffuseSprite.parentGroup = PixiLights.diffuseGroup;
+  
   var normalSprite = new PIXI.Sprite(normalTex);
   normalSprite.parentGroup = PixiLights.normalGroup;
   container.addChild(diffuseSprite);

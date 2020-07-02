@@ -6,9 +6,10 @@
 ////////////////////////////////////////////////////
 
 // uhh oK
-https://rottensoup.herokuapp.com/#/
 // construct Parts copy when you create new ones
-
+// switching sprites! doesnt work rn..,
+// try to combine pixi-shadows with pixi-lights so theres only one mode
+// try to create a day/night mode
 
 // create light tags
 // create particle tags
