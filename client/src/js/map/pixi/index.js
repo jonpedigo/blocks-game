@@ -1,6 +1,8 @@
 import tinycolor from 'tinycolor2'
 import { updatePixiObject, initPixiObject } from './objects'
 import { initPixiApp } from './app'
+import 'pixi-layers'
+import * as PixiLights from "pixi-lights";
 
 window.PIXIMAP = {
   textures: {},
@@ -56,11 +58,17 @@ PIXIMAP.deleteObject = function(object) {
   const pixiChild = stage.getChildByName(object.id)
   if(!pixiChild) return
   if(pixiChild.children && pixiChild.children.length) {
+    pixiChild.children.forEach((child) => {
+      if(child.children) child.removeChildren()
+    })
     pixiChild.removeChildren()
   }
   if(pixiChild.emitter) {
-    PIXIMAP.stage.emitters = PIXIMAP.stage.emitters.filter((emitter) => {
-      if(pixiChild.emitter === emitter) return false
+    PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
+      if(pixiChild.emitter === emitter) {
+        console.log("FPIMD EMITTER")
+        return false
+      }
       return true
     })
     pixiChild.emitter.destroy()
@@ -81,16 +89,16 @@ PIXIMAP.onRender = function() {
   }
 
   if(PIXIMAP.assetsLoaded) {
-    MAP.canvas.style.backgroundColor = ''
-    PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
-    PIXIMAP.stage.pivot.x = camera.x
-    PIXIMAP.stage.pivot.y = camera.y
+    // MAP.canvas.style.backgroundColor = ''
+    // PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
     GAME.objects.forEach((object) => {
       updatePixiObject(object, PIXIMAP.stage)
     })
     GAME.heroList.forEach((hero) => {
       updatePixiObject(hero, PIXIMAP.stage)
     })
+    PIXIMAP.stage.pivot.x = camera.x
+    PIXIMAP.stage.pivot.y = camera.y
   }
 }
 
@@ -111,6 +119,44 @@ PIXIMAP.createShadowSprite = function(texture, shadowTexture) {
     // The things themselves (their texture)
     var sprite = new PIXI.Sprite(texture);
     container.addChild(sprite);
+
+    return container;
+}
+
+PIXIMAP.createSpritePair = function (diffuseTex, normalTex) {
+  var container = new PIXI.Container();
+  var diffuseSprite = new PIXI.Sprite(diffuseTex);
+  diffuseSprite.parentGroup = PixiLights.diffuseGroup;
+  var normalSprite = new PIXI.Sprite(normalTex);
+  normalSprite.parentGroup = PixiLights.normalGroup;
+  container.addChild(diffuseSprite);
+  container.addChild(normalSprite);
+
+  return container;
+}
+
+PIXIMAP.createLight = function(type, radius, intensity, color) {
+    var container = new PIXI.Container();
+
+    if(type === 'point') {
+      const pixiLight = new PixiLights.PointLight(color, intensity);
+      container.addChild(pixiLight);
+    }
+    if(type === 'ambient') {
+      const pixiLight = new PixiLights.AmbientLight(color, intensity);
+      container.addChild(pixiLight);
+    }
+    if(!GAME.world.tags.shadow) {
+      if(type === 'directional') {
+        const pixiLight = new PixiLights.DirectionalLight(color, intensity, new PIXI.Point(0, 1));
+        container.addChild(pixiLight);
+      }
+    }
+
+    if(GAME.world.tags.shadow) {
+      var shadow = new PIXI.shadows.Shadow(radius, 0.7); // Radius in pixels
+      container.addChild(shadow);
+    }
 
     return container;
 }

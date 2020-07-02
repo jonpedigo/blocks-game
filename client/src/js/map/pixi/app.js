@@ -5,18 +5,23 @@ import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
 import tileset from './tileset.json'
 import "pixi-shadows";
+import * as PixiLights from "pixi-lights";
 
 const textures = {};
 let stage
 
 const initPixiApp = (canvasRef, onLoad) => {
-  // init pixi app and textures
+  ///////////////
+  ///////////////
+  ///////////////
+  // INTIIALIZE
   const app = new PIXI.Application({
     width: canvasRef.width, height: canvasRef.height,
   });
   document.getElementById('GameContainer').appendChild(app.view);
 
   let world
+  app.stage = new PIXI.display.Stage();
   if(GAME.world.tags.shadow) {
     world = PIXI.shadows.init(app);
     // PIXI.shadows.filter.ambientLight = .7
@@ -24,14 +29,21 @@ const initPixiApp = (canvasRef, onLoad) => {
     world = app.stage
   }
 
-  // CODE
+  PIXIMAP.stage = world
+  PIXIMAP.app = app
 
-  const background = new PIXI.extras.TilingSprite(
-      PIXI.Texture.from('assets/images/p2.jpeg'),
-      2000,
-      2000,
-  );
-  world.addChild(background);
+  ///////////////
+  ///////////////
+  ///////////////
+  // BACKGROUND
+  // const background = new PIXI.extras.TilingSprite(
+  //     PIXI.Texture.from('assets/images/p2.jpeg'),
+  //     2000,
+  //     2000,
+  // );
+  // world.addChild(background);
+
+
 
   ///////////////
   ///////////////
@@ -39,10 +51,18 @@ const initPixiApp = (canvasRef, onLoad) => {
   // OBJECT STAGE
   PIXIMAP.objectStage = new PIXI.Container();
   world.addChild(PIXIMAP.objectStage);
+
+  if(!GAME.world.tags.shadow) {
+    PIXIMAP.objectStage.addChild(
+      new PIXI.display.Layer(PixiLights.diffuseGroup),
+      new PIXI.display.Layer(PixiLights.normalGroup),
+      new PIXI.display.Layer(PixiLights.lightGroup),
+    );
+  }
+
   PIXIMAP.objectStage.emitters = []
 
-  PIXIMAP.stage = world
-  PIXIMAP.app = app
+
 
 
   // GAME.world.tags.useFlatColors = true
@@ -50,6 +70,10 @@ const initPixiApp = (canvasRef, onLoad) => {
   //   world.stage.filters = [new ColorOverlayFilter(parseInt(tinycolor('red').toHex(), 16))]
   // }
 
+  ///////////////
+  ///////////////
+  ///////////////
+  // EMITTERS
   app.ticker.add(function(delta) {
     // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
@@ -58,6 +82,10 @@ const initPixiApp = (canvasRef, onLoad) => {
     })
   });
 
+  ///////////////
+  ///////////////
+  ///////////////
+  // ON RESIZE
   if(PAGE.role.isPlayer) {
     function onResize() {
       MAP.canvasMultiplier = window.innerWidth/640;
@@ -69,6 +97,11 @@ const initPixiApp = (canvasRef, onLoad) => {
     onResize()
   }
 
+
+  ///////////////
+  ///////////////
+  ///////////////
+  // SPRITES
   app.loader.add('assets/images/tileset.png').load((loaded) => {
     tileset.forEach((tile) => {
       let baseTexture = PIXI.BaseTexture.from('assets/images/tileset.png');
@@ -78,7 +111,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
+    app.loader.add(['assets/images/block.png', 'assets/images/blockNormalMap.png', 'assets/images/solidcolorsprite.png', 'assets/images/solidcolorsprite_n.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -92,34 +125,62 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures['solidcolorsprite'] = texture
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
+      texture = PIXI.Texture.from('assets/images/solidcolorsprite_n.png');
+      texture.id = 'solidcolorsprite_n'
+      textures['solidcolorsprite_n'] = texture
+      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
+
+      texture = PIXI.Texture.from('assets/images/block.png');
+      texture.id = 'block'
+      textures['block'] = texture
+      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
+
+      texture = PIXI.Texture.from('assets/images/blockNormalMap.png');
+      texture.id = 'blockNormalMap'
+      textures['blockNormalMap'] = texture
+      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
+
       // texture = PIXI.Texture.from('assets/images/invisiblesprite.png')
       // texture.id = 'invisiblesprite'
       // textures['invisiblesprite'] = texture
       // texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
       textures['spencer-1'] = texture
       PIXIMAP.textures = textures
       PIXIMAP.assetsLoaded = true
 
+      // world.addChild(new PIXI.lights.DirectionalLight(null, 1, block1));
+      // world.addChild(light);
+
       onLoad(app, textures)
     })
   })
 
-
-  if(GAME.world.tags.shadow && PAGE.role.isAdmin) {
     // Create a light that casts shadows
-    var shadow = new PIXI.shadows.Shadow(700, 1);
-    shadow.position.set(450, 150);
-    world.addChild(shadow);
+  // var light = PIXIMAP.createLight('point', 700, 4, 0x000000);
+  // light.position.set(300, 300);
+  // world.addChild(light);
 
-    // Make the light track your mouse
-    world.interactive = true;
-    world.on("mousemove", function(event) {
-        shadow.position.copy(event.data.global);
-    });
-  }
+  // Create a light point on click
+  // world.on("pointerdown", function(event) {
+  //     var light = PIXIMAP.createLight(450, 2, 0xffffff);
+  //     light.position.copy(event.data.global);
+  //     world.addChild(light);
+  // });
+
+  // if(GAME.world.tags.shadow && PAGE.role.isAdmin) {
+  //   // Create a light that casts shadows
+  //   var shadow = new PIXI.shadows.Shadow(700, 1);
+  //   shadow.position.set(450, 150);
+  //   world.addChild(shadow);
+  //
+  //   // Make the light track your mouse
+  //   world.interactive = true;
+  //   world.on("mousemove", function(event) {
+  //       shadow.position.copy(event.data.global);
+  //   });
+  // }
 }
 
 export {

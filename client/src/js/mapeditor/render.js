@@ -10,7 +10,7 @@ function update() {
   if(!GAME.gameState.started) {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
-      if(object.tags.invisible) {
+      if(object.tags.invisible || object.tags.flashlight || object.tags.emitter) {
         drawTools.drawObject(ctx, {...object, tags: {invisible: false }, color: 'rgba(255,255,255,0.6)'}, camera)
       }
     })

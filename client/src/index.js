@@ -5,6 +5,15 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+// uhh oK
+https://rottensoup.herokuapp.com/#/
+// construct Parts copy when you create new ones
+
+
+// create light tags
+// create particle tags
+// particles/lights/timers/spawnZones <--- ALL ARE SPECIAL TYPES OF OBJECTS
+
 1) < --- LITERALLY OMG? <-- https://github.com/claus/react-dat-gui
 https://github.com/dataarts/dat.gui
 

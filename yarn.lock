@@ -6255,7 +6255,7 @@ pixi-layers@^0.1.9:
   dependencies:
     "@types/pixi.js" "^4.7.1"
 
-pixi-lights@^2.0.1:
+pixi-lights@^2.0.1, pixi-lights@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/pixi-lights/-/pixi-lights-2.0.3.tgz#e0a8ab346bc78927f338bc2876ec183600846e6f"
   integrity sha512-bKHv7X95R+zWiyHyFT5d1C/1XcNaViRlJ4mNYALyVQZsLVKiGZ73jYVKU9kcj4SzA1lPC8/jrWUNL0kSROny5Q==
@@ -6276,7 +6276,7 @@ pixi-shadows@^0.0.7:
     pixi.js "^4.8.1"
     stats-js "^1.0.0-alpha1"
 
-pixi.js@^4.8.0, pixi.js@^4.8.1:
+pixi.js@^4.5.0, pixi.js@^4.8.1:
   version "4.8.9"
   resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-4.8.9.tgz#36dc0de8907d9e64336436e237c6f7f7c0a362e1"
   integrity sha512-YcepG5/bXLAVTSTXaMIU9NeSzwyPq/oMu2oQi6L6iE5giwng02ixVCKgc6/eMv3zl2Ho+teSOLC8R5Wp3jBvLA==
