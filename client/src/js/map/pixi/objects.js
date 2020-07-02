@@ -321,7 +321,7 @@ const addGameObjectToStage = (gameObject, stage) => {
       // sprite.parentGroup = PIXIMAP.sortGroup
       return
     } else {
-      sprite = PIXIMAP.createShadowSprite(texture, texture)
+      sprite = PIXIMAP.createShadowSprite(texture, PIXIMAP.textures['solidcolorsprite_n'])
       sprite.hasShadow = true
     }
   } else {

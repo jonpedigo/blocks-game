@@ -102,8 +102,6 @@ PIXIMAP.onRender = function() {
   }
 }
 
-
-
 // A function to combine different assets of your world object, but give them a common transform by using pixi-layers
 // It is of course recommended to create a custom class for this, but this demo just shows the minimal steps required
 PIXIMAP.createShadowSprite = function(texture, shadowTexture) {
@@ -127,7 +125,7 @@ PIXIMAP.createSpritePair = function (diffuseTex, normalTex) {
   var container = new PIXI.Container();
   var diffuseSprite = new PIXI.Sprite(diffuseTex);
   diffuseSprite.parentGroup = PixiLights.diffuseGroup;
-  
+
   var normalSprite = new PIXI.Sprite(normalTex);
   normalSprite.parentGroup = PixiLights.normalGroup;
   container.addChild(diffuseSprite);

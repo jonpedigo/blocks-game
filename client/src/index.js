@@ -10,6 +10,10 @@
 // switching sprites! doesnt work rn..,
 // try to combine pixi-shadows with pixi-lights so theres only one mode
 // try to create a day/night mode
+// shadows need to be a higher layer than the objects ( they arent covering anyything right now)
+// emitters in light mode
+// combine shadow mode with light mode??
+// also smarter removing and adding lights 
 
 // create light tags
 // create particle tags

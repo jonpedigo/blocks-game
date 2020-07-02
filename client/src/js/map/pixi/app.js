@@ -26,14 +26,6 @@ const initPixiApp = (canvasRef, onLoad) => {
   if(GAME.world.tags.shadow) {
     world = PIXI.shadows.init(app);
     // PIXI.shadows.filter.ambientLight = .7
-  } else {
-    world = app.stage
-  }
-
-  PIXIMAP.stage = world
-  PIXIMAP.app = app
-
-  if(GAME.world.tags.shadow) {
     ///////////////
     ///////////////
     ///////////////
@@ -44,25 +36,30 @@ const initPixiApp = (canvasRef, onLoad) => {
         2000,
     );
     world.addChild(background);
+  } else {
+    world = app.stage
   }
+
+  PIXIMAP.stage = world
+  PIXIMAP.app = app
 
   ///////////////
   ///////////////
   ///////////////
   // OBJECT STAGE
-  PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
-  PIXIMAP.sortGroup.on('sort', function(sprite) {
-      if(sprite.name) {
-        const object = OBJECTS.getObjectOrHeroById(sprite.name)
-        if(!object) {
-          return
-        }
-        if(object.tags.obstacle || object.tags.hero){
-          sprite.zOrder = -sprite.y;
-        }
-      }
-  });
-  PIXIMAP.sortGroup.sortPriority = 1;
+  // PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
+  // PIXIMAP.sortGroup.on('sort', function(sprite) {
+  //     if(sprite.name) {
+  //       const object = OBJECTS.getObjectOrHeroById(sprite.name)
+  //       if(!object) {
+  //         return
+  //       }
+  //       if(object.tags.obstacle || object.tags.hero){
+  //         sprite.zOrder = -sprite.y;
+  //       }
+  //     }
+  // });
+  // PIXIMAP.sortGroup.sortPriority = 1;
 
   PIXIMAP.objectStage = new PIXI.display.Layer(PIXIMAP.sortGroup)
   world.addChild(PIXIMAP.objectStage);
