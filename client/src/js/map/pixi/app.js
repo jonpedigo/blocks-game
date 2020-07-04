@@ -4,7 +4,7 @@ import 'pixi-layers'
 import { GlowFilter, OutlineFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
 import tileset from './tileset.json'
-import "pixi-shadows";
+import "./pixi-shadows";
 import * as PixiLights from "pixi-lights";
 
 const textures = {};
@@ -47,19 +47,19 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   ///////////////
   // OBJECT STAGE
-  // PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
-  // PIXIMAP.sortGroup.on('sort', function(sprite) {
-  //     if(sprite.name) {
-  //       const object = OBJECTS.getObjectOrHeroById(sprite.name)
-  //       if(!object) {
-  //         return
-  //       }
-  //       if(object.tags.obstacle || object.tags.hero){
-  //         sprite.zOrder = -sprite.y;
-  //       }
-  //     }
-  // });
-  // PIXIMAP.sortGroup.sortPriority = 1;
+  PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
+  PIXIMAP.sortGroup.on('sort', function(sprite) {
+      if(sprite.name) {
+        const object = OBJECTS.getObjectOrHeroById(sprite.name)
+        if(!object) {
+          return
+        }
+        if(object.tags.obstacle || object.tags.hero){
+          sprite.zOrder = -sprite.y;
+        }
+      }
+  });
+  PIXIMAP.sortGroup.sortPriority = 1;
 
   PIXIMAP.objectStage = new PIXI.display.Layer(PIXIMAP.sortGroup)
   world.addChild(PIXIMAP.objectStage);
