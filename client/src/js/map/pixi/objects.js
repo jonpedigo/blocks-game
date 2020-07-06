@@ -1,10 +1,8 @@
 import * as PIXI from 'pixi.js'
-window.PIXI = PIXI
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { flameEmitter } from './particles'
-import 'pixi-layers'
-import * as PixiLights from "pixi-lights";
+import './pixi-layers'
 
 const updatePixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
@@ -23,45 +21,6 @@ const updatePixiObject = (gameObject) => {
       updatePixiObject(subObject)
     })
   }
-
-  if(GAME.world.tags.shadow) {
-    if(gameObject.tags.light) {
-      let camera = MAP.camera
-      if(CONSTRUCTEDITOR.open) {
-        camera = CONSTRUCTEDITOR.camera
-      }
-      let pixiChild = PIXIMAP.shadowStage.getChildByName(gameObject.id)
-      if(!pixiChild) {
-        initPixiObject(gameObject)
-        return
-      }
-      if(pixiChild.isFlashlight) {
-        pixiChild.range = 700 * camera.multiplier
-        pixiChild.position.set((gameObject.x + gameObject.width/2) * camera.multiplier, (gameObject.y + gameObject.height/2) * camera.multiplier)
-        return
-      }
-    }
-    // if(gameObject.tags.shadowCaster) {
-    //   let pixiChild = PIXIMAP.objectStage.getChildByName(gameObject.id)
-    //   if(!pixiChild) {
-    //     initPixiObject(gameObject)
-    //     return
-    //   }
-    //   if(pixiChild.shadow) {
-    //     if(gameObject.tags.rotateable) {
-    //       pixiChild.shadow.anchor.set(0.5, 0.5)
-    //       pixiChild.shadow.rotation = gameObject.angle || 0
-    //       pixiChild.shadow.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-    //       pixiChild.shadow.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-    //     } else {
-    //       pixiChild.shadow.x = (gameObject.x) * camera.multiplier
-    //       pixiChild.shadow.y = (gameObject.y) * camera.multiplier
-    //     }
-    //     updateProperties(pixiChild.shadow, gameObject)
-    //   }
-    // }
-  }
-
 
   /////////////////////
   /////////////////////
@@ -303,11 +262,11 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // INTERACT HIGHLIGHT
-  // if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
-  //   pixiChild.filters = [new GlowFilter(3, 0xFFFFFF)];
-  // } else {
-  //   removeFilter(pixiChild, GlowFilter)
-  // }
+  if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
+    pixiChild.filters = [new GlowFilter(12, 0xFFFFFF)];
+  } else {
+    removeFilter(pixiChild, GlowFilter)
+  }
 }
 
 const addGameObjectToStage = (gameObject, stage) => {
@@ -333,65 +292,13 @@ const addGameObjectToStage = (gameObject, stage) => {
   /////////////////////
   // CREATE SPRITE
   const texture = PIXIMAP.textures[gameObject.sprite]
-  // const normalTexture = PIXIMAP.textures[gameObject.sprite + '_n']
   let sprite
-
-  if(GAME.world.tags.shadow) {
-    if(gameObject.tags.light) {
-      // Create a light that casts shadows
-      sprite = new PIXI.shadows.Shadow(700 * camera.multiplier, 1)
-      sprite.isFlashlight = true
-      const addedChild = PIXIMAP.shadowStage.addChild(sprite)
-
-      // sprite.ignoreShadowCaster = PIXIMAP.cameraOverlay
-// range: The radius of the lit area
-// intensity: The opacity of the lit area
-// pointCount: The number of points that cast light rays (With more points you get softer edges)
-// scatterRange: The radius in which the light points are spread around
-// Attributes:
-//
-// All of the parameters above are also attributes
-// radialResolution: The number of pixels to use for the shadow mapping, preferably at least 2 times the radius
-// depthResolution: The number of depth steps to execute per pixel, preferably at least 1
-// ignoreShadowCaster: A sprite that can be assigned to a light such that it won't cast shadows
-
-      addedChild.name = gameObject.id
-      updatePixiObject(gameObject)
-      return
-    } else if(gameObject.tags.shadowCaster) {
-      sprite = new PIXI.Container()
-      const caster = new PIXI.Sprite(texture)
-      // just comment out the line below to remove SHADOWS
-      caster.parentGroup = PIXI.shadows.casterGroup
-      sprite.addChild(caster)
-      sprite.addChild(new PIXI.Sprite(texture))
-
-      sprite.parentGroup = PIXIMAP.sortGroup
-    } else {
-      sprite = new PIXI.Container()
-      const casted = new PIXI.Sprite(texture)
-      sprite.addChild(casted)
-      sprite.parentGroup = PIXIMAP.sortGroup
-    }
+  if(gameObject.tags.tilingSprite) {
+    sprite = new PIXI.extras.TilingSprite(texture, gameObject.width, gameObject.height)
   } else {
-    if(gameObject.tags.light) {
-      sprite = PIXIMAP.createLight('point', null, 30, 0xffffff);
-      // sprite.addChild(PIXIMAP.createLight('ambient', null, .1, 0xffffff))
-      sprite.light = true
-    } else if(gameObject.tags.tilingSprite) {
-      sprite = new PIXI.extras.TilingSprite(texture, gameObject.width, gameObject.height)
-    } else {
-      sprite = new PIXI.Sprite(texture)
-
-      // if(normalTexture) {
-      //   sprite = PIXIMAP.createSpritePair(texture, normalTexture)
-      // } else {
-      //   sprite = PIXIMAP.createSpritePair(texture, PIXIMAP.textures['solidcolorsprite_n'])
-      // }
-      // sprite = PIXIMAP.createSpritePair(PIXIMAP.textures['block'], PIXIMAP.textures['blockNormalMap'])
-    }
-    sprite.parentGroup = PIXIMAP.sortGroup
+    sprite = new PIXI.Sprite(texture)
   }
+  sprite.parentGroup = PIXIMAP.sortGroup
 
   /////////////////////
   /////////////////////
@@ -433,7 +340,7 @@ const initPixiObject = (gameObject) => {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
       const pixiChild = addGameObjectToStage(subObject, PIXIMAP.objectStage)
-      pixiChild.ownerName = gameObject.name
+      pixiChild.ownerName = gameObject.id
     })
   }
 

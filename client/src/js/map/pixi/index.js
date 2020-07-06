@@ -1,8 +1,8 @@
 import tinycolor from 'tinycolor2'
 import { updatePixiObject, initPixiObject } from './objects'
 import { initPixiApp } from './app'
-import 'pixi-layers'
-import * as PixiLights from "pixi-lights";
+import gridUtil from '../../utils/grid'
+import * as PIXI from 'pixi.js'
 
 window.PIXIMAP = {
   textures: {},
@@ -12,21 +12,12 @@ window.PIXIMAP = {
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {
-  const background = new PIXI.extras.TilingSprite(
-      PIXI.Texture.from('assets/images/p2.jpeg'),
-      2000,
-      2000,
-  );
-  background.parentGroup = PIXIMAP.sortGroup
-  PIXIMAP.objectStage.addChild(background);
-
   GAME.objects.forEach((object) => {
     initPixiObject(object)
   })
   GAME.heroList.forEach((hero) => {
     initPixiObject(hero)
   })
-
 
   PIXIMAP.initialized = true
 }
@@ -39,14 +30,23 @@ PIXIMAP.onGameLoaded = function() {
   // GAME.world.tags.usePixiMap = true
 
   if(!PIXIMAP.assetsLoaded) {
+    setInterval(PIXIMAP.resetDarknessSprites, 200)
+    setInterval(PIXIMAP.updateDarknessSprites, 200)
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
+      PIXIMAP.initializeDarknessSprites()
     })
   } else if(PIXIMAP.assetsLoaded) {
-    if(PIXIMAP.shadowStage) PIXIMAP.shadowStage.removeChildren()
+    PIXIMAP.shadowStage.removeChildren()
     PIXIMAP.objectStage.removeChildren()
+    PIXIMAP.initializeDarknessSprites()
     PIXIMAP.initializePixiObjectsFromGame()
   }
+}
+
+PIXIMAP.onGameStart = function() {
+  PIXIMAP.initializeDarknessSprites()
+  PIXIMAP.resetDarknessSprites()
 }
 
 PIXIMAP.onDeleteHero = function(object) {
@@ -63,7 +63,7 @@ PIXIMAP.onDeleteSubObject = function(object, subObjectName) {
 }
 
 PIXIMAP.deleteObject = function(object) {
-  const stage = PIXIMAP.stage
+  const stage = PIXIMAP.objectStage
 
   const pixiChild = stage.getChildByName(object.id)
   if(!pixiChild) return
@@ -92,15 +92,14 @@ PIXIMAP.addObject = function(object) {
 }
 
 PIXIMAP.onRender = function() {
-
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
   }
 
   if(PIXIMAP.assetsLoaded) {
-    // MAP.canvas.style.backgroundColor = ''
-    // PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
+    MAP.canvas.style.backgroundColor = ''
+    PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
     GAME.objects.forEach((object) => {
       updatePixiObject(object, PIXIMAP.stage)
     })
@@ -116,60 +115,105 @@ PIXIMAP.onRender = function() {
   }
 }
 
-// A function to combine different assets of your world object, but give them a common transform by using pixi-layers
-// It is of course recommended to create a custom class for this, but this demo just shows the minimal steps required
-PIXIMAP.createShadowSprite = function(texture, shadowTexture) {
-    var container = new PIXI.Container(); // This represents your final 'sprite'
 
-    // Things that create shadows
-    if (shadowTexture) {
-        var shadowCastingSprite = new PIXI.Sprite(shadowTexture);
-        shadowCastingSprite.parentGroup = PIXI.shadows.casterGroup;
-        container.addChild(shadowCastingSprite);
+
+PIXIMAP.resetDarknessSprites = function() {
+  if(!PIXIMAP.grid) return
+
+  const nodes = PIXIMAP.grid.nodes
+
+  for(var x = 0; x < nodes.length; x++) {
+    let row = nodes[x]
+    for(var y = 0; y < row.length; y++) {
+      let node = row[y]
+      if(node.light > 1) {
+        // if(Date.now() < node._illumatedTime + 3000) continue
+      }
+      node.light = 0
+      node._illumatedTime = null
     }
-
-    // The things themselves (their texture)
-    var sprite = new PIXI.Sprite(texture);
-    container.addChild(sprite);
-
-    return container;
+  }
 }
 
-PIXIMAP.createSpritePair = function (diffuseTex, normalTex) {
-  var container = new PIXI.Container();
-  var diffuseSprite = new PIXI.Sprite(diffuseTex);
-  diffuseSprite.parentGroup = PixiLights.diffuseGroup;
+PIXIMAP.updateDarknessSprites = function() {
+  if(!PIXIMAP.grid) return
 
-  var normalSprite = new PIXI.Sprite(normalTex);
-  normalSprite.parentGroup = PixiLights.normalGroup;
-  container.addChild(diffuseSprite);
-  container.addChild(normalSprite);
+  const nodes = PIXIMAP.grid.nodes
+  // if(!GAME.gameState.started) return
 
-  return container;
-}
+  GAME.heroList.forEach((hero) => {
+    const { gridX, gridY } = gridUtil.convertToGridXY({x: hero.x + PIXIMAP.grid.nodeSize/2, y: hero.y + PIXIMAP.grid.nodeSize/2})
 
-PIXIMAP.createLight = function(type, radius, intensity, color) {
-    var container = new PIXI.Container();
+    const startGridX = gridX - 7
+    const startGridY = gridY - 7
+    const endGridX = gridX + 7
+    const endGridY = gridY + 7
 
-    if(type === 'point') {
-      const pixiLight = new PixiLights.PointLight(color, intensity);
-      container.addChild(pixiLight);
-    }
-    if(type === 'ambient') {
-      const pixiLight = new PixiLights.AmbientLight(color, intensity);
-      container.addChild(pixiLight);
-    }
-    if(!GAME.world.tags.shadow) {
-      if(type === 'directional') {
-        const pixiLight = new PixiLights.DirectionalLight(color, intensity, new PIXI.Point(0, 1));
-        container.addChild(pixiLight);
+    for(let x = startGridX; x < endGridX +1; x++) {
+      for(let y = startGridY; y < endGridY + 1; y++) {
+        let nodeX = nodes[x]
+        if(!nodeX) continue
+        let node = nodes[x][y]
+        if(!node) continue
+        // if(x - gridX >= 1 || x - gridX <= -1 ) {
+        // }
+        if(x - gridX == 5 || x - gridX == -5 || x - gridX == 6 || x - gridX == -6 || x - gridX == 7 || x - gridX == -7 ) {
+          if(!node.light) node.light = 1
+        } else if(y - gridY == 5 || y - gridY == -5 || y - gridY == 6 || y - gridY == -6 || y - gridY == 7 || y - gridY == -7) {
+          if(!node.light) node.light = 1
+        } else {
+          node.light = 2
+          node._illumatedTime = Date.now()
+        }
+        // if(x - gridX === 0 || x - gridX == 1 || x - gridX == -1) {
+        //   node.light = 3
+        // }
       }
     }
 
-    if(GAME.world.tags.shadow) {
-      var shadow = new PIXI.shadows.Shadow(radius, 0.7); // Radius in pixels
-      container.addChild(shadow);
-    }
+    const ambientLight = GAME.world.ambientLight || .2
+    for(var x = 0; x < nodes.length; x++) {
+      let row = nodes[x]
+      for(var y = 0; y < row.length; y++) {
+        let node = row[y]
+        if(!node.darknessSprite) return
+        if(node.light == 1) {
+          node.darknessSprite.alpha = .90 - ambientLight
+        } else if(node.light == 2) {
+          node.darknessSprite.alpha = .60 - ambientLight
+        } else if(node.light == 3) {
+          node.darknessSprite.alpha = .30 - ambientLight
+        } else if(node.light >= 4) {
+          node.darknessSprite.alpha = 0 - ambientLight
+        } else {
+          node.darknessSprite.alpha = 1 - ambientLight
+        }
 
-    return container;
+      }
+    }
+  })
+}
+
+PIXIMAP.initializeDarknessSprites = function() {
+  PIXIMAP.grid = _.cloneDeep(GAME.grid)
+  PIXIMAP.shadowStage.removeChildren()
+  const nodes = PIXIMAP.grid.nodes
+  const textures = PIXIMAP.textures
+  for(var x = 0; x < nodes.length; x++) {
+    let row = nodes[x]
+    for(var y = 0; y < row.length; y++) {
+      let node = row[y]
+      const darknessSprite = new PIXI.Sprite(textures['solidcolorsprite'])
+      PIXIMAP.shadowStage.addChild(darknessSprite)
+      darknessSprite.x = node.x
+      darknessSprite.y = node.y
+      darknessSprite.x = (node.x) * MAP.camera.multiplier
+      darknessSprite.y = (node.y) * MAP.camera.multiplier
+      darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier
+      darknessSprite.transform.scale.y = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.height) * MAP.camera.multiplier
+      darknessSprite.tint = parseInt(tinycolor('black').toHex(), 16)
+      node.darknessSprite = darknessSprite
+      // darknessSprite.alpha = 0
+    }
+  }
 }

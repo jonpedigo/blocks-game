@@ -973,164 +973,487 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@pixi/filter-adjustment@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-adjustment/-/filter-adjustment-2.7.0.tgz#150c2463647ece90f085ca204fb3e501907ba866"
-  integrity sha512-PZj8usw+Ven4PlEjC4ET3ZxBt+qpNEeLCPpv2zF9MyeECZRPPR/fNNDaEKNnjzVTE6Yhv201fTSzkDOWw5fEwA==
-
-"@pixi/filter-advanced-bloom@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-advanced-bloom/-/filter-advanced-bloom-2.7.0.tgz#c031b4ffb7508ce418220fb9418afe55fcef1e7a"
-  integrity sha512-aMfSH3zOC7q2GWCvn2CXT/UIGBqUdMtidNneCBMggOnXGuGYU/an2mBNstxl68db76+RBuPvBpqbVBsLIJULXA==
+"@pixi/accessibility@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/accessibility/-/accessibility-5.3.0.tgz#fd6a4f1fe033c9dbadd699a019e7ede7f19df6b3"
+  integrity sha512-L1oyQH4MaVk57UR0c2Votk8ti2s8mqdTAU8ckqtV/sSckvCCcNivuOSa/1E2A92yhzg5qliZp7OQUsWvZz1u7Q==
   dependencies:
-    "@pixi/filter-kawase-blur" "^2.7.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/utils" "5.3.0"
 
-"@pixi/filter-ascii@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-ascii/-/filter-ascii-2.7.1.tgz#9995255d10dd41a5ebe9a11f5c408c44c02cd30a"
-  integrity sha512-wXCcdo9fp9+/loezkaub+43bPLAYsr6ymPv5JcFBSntojm7HhmFm3CvSq1yzQ6leHAl9gTqDJCu0IG2JcGvCVA==
-
-"@pixi/filter-bevel@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-bevel/-/filter-bevel-2.7.0.tgz#6a785c7b67140a727a560d50a4dff3e105e5cd8c"
-  integrity sha512-lyhbh8xKBreq2blTGD3YUd0bVAkvgXwAMFjH8HJJzn4viqGdIBEHeCKBtAoTosZiOOQmrD0hXRuEH09vkrmL6Q==
-
-"@pixi/filter-bloom@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-bloom/-/filter-bloom-2.7.0.tgz#363a17a6ab30f580ce25614f580c21f211953533"
-  integrity sha512-ZGtpQf3jRbvjr915hilFBTUSECTlbhZID0OcWeV5LBBeuOFrrHO7d9xBLpevbP+H/5/6wXpx29BDA0q7aCsK+A==
-
-"@pixi/filter-bulge-pinch@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-bulge-pinch/-/filter-bulge-pinch-2.7.0.tgz#0399b7d29e2d0d8100f8e7c291aa29e05b7f7487"
-  integrity sha512-H3ICDm/590XT67QfLnAMeHRcqy38cTlzhDvpC+UK130DU4I8IxuuIrc8zO2V5a/0zGDKMWnNp9l1xoRUptud1Q==
-
-"@pixi/filter-color-map@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-color-map/-/filter-color-map-2.7.0.tgz#f10db71076bf270bb2ad9d7209dacc1bac3eb5bb"
-  integrity sha512-Yz1pYi5RGL9NR0DMPqd1+i61yegEhh06ipLMRyLRpi+PGaG3kSYTib1gQByKEgAW4DTJlgSz1WLCqF2PRjlMEw==
-
-"@pixi/filter-color-replace@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-color-replace/-/filter-color-replace-2.7.0.tgz#cd228d4797480ab341ffbf01ffdeceda12fc055f"
-  integrity sha512-QLimj1Y8kPRZAB3dE1ZtbG/hWxHn+PzRgnk4RQE8Pa1G5h92yVgfGIO+JbFVW6nRZx6/qm3nArD4Z6O639YGaQ==
-
-"@pixi/filter-convolution@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-convolution/-/filter-convolution-2.7.0.tgz#2448c559d52ccb063669d7ea6281ddaebf3834c8"
-  integrity sha512-3CbUCC/KwTafuPG5dWvDsMScvwJiTC1U0ggUSkQNOxc/Fnr0KpO+BEVPNU5IPz0R+5JnQIlor1Eoe7xGEitC6Q==
-
-"@pixi/filter-cross-hatch@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-cross-hatch/-/filter-cross-hatch-2.7.0.tgz#da065a21fdcfdb2a1f9f8d13e3604c608c89e8d3"
-  integrity sha512-XZICIHWGrv/UbtA9Q4QqIJln8AEDVYnkGuC+Z1QV79guEycizNDsRZGvw4LdfOzTpr9wxxuJMwt09VN3pC27zw==
-
-"@pixi/filter-crt@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-crt/-/filter-crt-2.7.0.tgz#c472585e2cdd9132e260fa84a8f552cd746c1a66"
-  integrity sha512-4F6XIGniwPQkR2vc9XyaQAzauQ66GBvyUfX4raa2+ufhpVx+I2HPiSQYEBT6hahQgM0q5A/fThgjwSGAcVjHhw==
-
-"@pixi/filter-dot@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-dot/-/filter-dot-2.7.0.tgz#daa78ff6ada8e4a46b485b966a42a05f8162d820"
-  integrity sha512-PP1RSihkoZDTP9def4QNQrLbGtkAxLFIDY+UysNxKo97CHTiTwOIVJD97lPF9HXCWP959f+bsHo0OCh60t5nTg==
-
-"@pixi/filter-drop-shadow@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-drop-shadow/-/filter-drop-shadow-2.7.0.tgz#f53b4c3ba52e1b64997cf7b0eccf8dbf749ad84c"
-  integrity sha512-4AIYZuIF9oGvQYpHEc4UoQejLjMI8jEySKTBxULjLaMlR/DuDH7zUVXll4oX2baA6wliUWU04ljWvKf3mJwfAA==
+"@pixi/app@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/app/-/app-5.3.0.tgz#97c2a5486f8e027e6a6441495a8196b6eb9cdc66"
+  integrity sha512-7U4w5EvFU9N9SMa7eBhaEMtQyHUWRHeXg1wKMIAeOcfOY9WR0KmXqWS1J1mbLtkDLG2ZVfRDS2Zs0ZhIcbL+9Q==
   dependencies:
-    "@pixi/filter-kawase-blur" "^2.7.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
 
-"@pixi/filter-emboss@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-emboss/-/filter-emboss-2.7.0.tgz#bfb7e0d774f41e49e0f08da75240a64cee0ab33a"
-  integrity sha512-u9J5pscppSTIhkbJZMLpFj7pAHggvifYFiK7ET7WlA2jHn78XkvFItEz3+ZeqypqbiP7V5mefGRlIHR2WrOZww==
+"@pixi/constants@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/constants/-/constants-5.3.0.tgz#0d94426bf2cc5e12000f7c7cbc5241e9df70174c"
+  integrity sha512-tJtzKNbKA86NZ5EYeWsZfzni9kGIAfP9ZKU5036gfvMesiERAZqYUFjDUkrxF6g8pRyxcC4QBppDmB3YIKQhMA==
 
-"@pixi/filter-glitch@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-glitch/-/filter-glitch-2.7.0.tgz#1409706671d23fc80f4c6b9208fe2122c0d4d751"
-  integrity sha512-d7/cIPFs5Rowi3KfW9Xw8MJLFxu/hiDdvXnW22gxpvdBpI5q2TSA9Bl3a5SNwCHKzCQ38pCQcqrd6JEqSKr/Jw==
+"@pixi/core@5.3.0", "@pixi/core@^5.0.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/core/-/core-5.3.0.tgz#65d051af50966f5188c68ac86886df586eaa6876"
+  integrity sha512-HfEaGzzLmcTaJKQ5jyHX44e6fMjhL5qV35tsqdMS41S9dDPSwp+Rhi9kYCeOr3SC0jQH4i9Nus46kqUpszvkQA==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/runner" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/ticker" "5.3.0"
+    "@pixi/utils" "5.3.0"
 
-"@pixi/filter-glow@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-glow/-/filter-glow-2.7.0.tgz#3f77728a88106e2fde358a3aa50f8ffdc8f1ca00"
-  integrity sha512-WmopMMAc17hQLWue3mrnGzlBJklVW5Q9OZXtZ/ffGsSadq3Bj9IqvndOvvLVrTLfFG9H63gjSAFkJQ4wYsGscw==
+"@pixi/display@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/display/-/display-5.3.0.tgz#0667b259c57ecb44772749421d1bc47bf7b2e361"
+  integrity sha512-3H5z9K2m70lO8asf+KIPFeeYU6b+GsZX/JQeJREvTwNU7WziL6sBjLeHsgW6/YwkDdsF8BF81GYlRRzSwka0eg==
+  dependencies:
+    "@pixi/math" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/utils" "5.3.0"
 
-"@pixi/filter-godray@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-godray/-/filter-godray-2.7.0.tgz#18df90d9579d81814c02c8faf4c305035037d5f7"
-  integrity sha512-ZAPFFx+qU7Dv6PL+d9MRd/N9D2a1+5VCfbGiJntkVsancP+ZkeJxJhHiyaghPcgDn+fAkn4X9OG6b9VmtUtrGA==
+"@pixi/extract@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/extract/-/extract-5.3.0.tgz#99f1b77e50043dc01e4c3660d8c57e5c8b34e531"
+  integrity sha512-B3g4mlr8Je1TPrO3OrSt5sUhOJjMiqhR/BZr+ixR5hyVIXAJ79JAISBQ1WHgGYrv+v0Uq2zW/jyKffge2ksDOQ==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/utils" "5.3.0"
 
-"@pixi/filter-kawase-blur@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-kawase-blur/-/filter-kawase-blur-2.7.0.tgz#8c0ff0b84f7c4fadf9721cb0909670a458d7e6c6"
-  integrity sha512-OVXCK4S4R7oxQVK1zfibuwfTbrDEsmT81vxo6avQ2l5dp4Lr9AMJX7mER1d7iPsVl2WP7CpG8Vhm3h1hAZRGYQ==
+"@pixi/filter-adjustment@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-adjustment/-/filter-adjustment-3.1.1.tgz#2aa41048106fa2006648deae59813bfb55c8fe54"
+  integrity sha512-N+qbkofBn5tiGn2Ubg52AEoPOM69VIO5TEHsBtm5oh2S4m/rb6FnnqPji/FzwK89iLvtYmJdbwWAYi87PWnE3Q==
 
-"@pixi/filter-motion-blur@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-motion-blur/-/filter-motion-blur-2.7.0.tgz#87c271c3a248a374e67bb1e7e1d321cb5cd25ced"
-  integrity sha512-pBwcPO7oYmWprLPa7jII3RWzVW/n1cxiQJXYxUsqWgpw/26TocUOXTUY5yfsRyhXiOmJ13WICKslhsNEEk4wXg==
+"@pixi/filter-advanced-bloom@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-advanced-bloom/-/filter-advanced-bloom-3.1.1.tgz#e45b8fa8bd17a98e6242fa8a96c199484a82ca22"
+  integrity sha512-IkBSOWVk+pFQzher3oJXLl3/ayTEMY92hzL7EOvmOeQYn46nxmNYX9GIqtHSlvXUEIB0GB+HgOB/9n6EJYv9kA==
+  dependencies:
+    "@pixi/filter-kawase-blur" "3.1.1"
 
-"@pixi/filter-multi-color-replace@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-multi-color-replace/-/filter-multi-color-replace-2.7.0.tgz#ac4d56f2982b6b0abd9b17e8667b58eb0123e1bb"
-  integrity sha512-WM7teXpWHZOC9/XonwbNC2g29ACaWCf1UxrPW+9hqiqNOByrot3fl8JZ04oeEEzJ8t+0MsE5KYIKYZA2TbPK5A==
+"@pixi/filter-alpha@5.3.0", "@pixi/filter-alpha@^5.0.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-alpha/-/filter-alpha-5.3.0.tgz#985ec33116dca860d0f7f480e333e08801c6b8c5"
+  integrity sha512-E/2off+dIJk45MymMQSwEmAUd+D5gmwuTNM5J9XPvJsauXkiQgmvSJTYwOBojPLgE6Tz74dwzjPfyVXhXD2OMw==
+  dependencies:
+    "@pixi/core" "5.3.0"
 
-"@pixi/filter-old-film@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-old-film/-/filter-old-film-2.7.0.tgz#bf5b2a79f93dae64a4bc2fca828ebfaa65e22416"
-  integrity sha512-aSRpuaxlOmBLUYKrGviTKCb2P/ZPkjCaSMruVdGU3mHhcZQ794B00Ph8o28J9MILS7RLB3y79Xcqb3nnVdFbGg==
+"@pixi/filter-ascii@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-ascii/-/filter-ascii-3.1.1.tgz#edcc8e5fd08b72996f848d18af4761f4a9b92767"
+  integrity sha512-/9mECm/T+9ze7qBXG4q0FghzBBXwOu213IWpJrQGsv5zptRI+8hNU58Gx/U/O7hlKVdNjLoeMlQxKGRcC4N4YQ==
 
-"@pixi/filter-outline@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-outline/-/filter-outline-2.7.0.tgz#7af83af5f47cdc5961582e48ea641d1e10f1f480"
-  integrity sha512-6705gF8hUt3J6IUf+p/9Rbj4bthFrkh2TFBEGiaShEQEwHUP3N2l1/41yWhcFuJFNpaoeFKaL9CFZpJ0ttuOSA==
+"@pixi/filter-bevel@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-bevel/-/filter-bevel-3.1.1.tgz#ddb738a31876854b4e37c3e5da9d622d57a03dab"
+  integrity sha512-m5jSNqjp+XmyRiwGFriqN14JVvu1z2sShgp5OsU+3AfwPkgOQheT0tK7phb7QTf5QYKD1TdCPdMZ4UasHeIZsg==
 
-"@pixi/filter-pixelate@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-pixelate/-/filter-pixelate-2.7.0.tgz#3b6c9f392fb08448c28c3499ca5d094638f21212"
-  integrity sha512-Y/+9+xeOsCeY4iZP1Py62mZpOY2Xj4+EV/3zCHs20kR+PUGS7AJ+1D1aU4gLhk+OQhLEmdXg8Da/gsUucj9xCg==
+"@pixi/filter-bloom@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-bloom/-/filter-bloom-3.1.1.tgz#4c07701e7938ef1b43577aa14ac3a489830beb0a"
+  integrity sha512-mGvE1l+dxnTun3+cgGuA8u4BiA2TOSIi6lKkNb8GnLezvjJxMUlPPHId/3Dz6TUmCA+fziVBvZo1KGqGYRm90g==
+  dependencies:
+    "@pixi/filter-alpha" "^5.0.0"
+    "@pixi/filter-blur" "^5.0.0"
 
-"@pixi/filter-radial-blur@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-radial-blur/-/filter-radial-blur-2.7.0.tgz#a89f324bf572f1e56bca1388d80fbee76d52890d"
-  integrity sha512-E8k0FPKt0YATI9hr3Q/vce/zllWEiPS8UTcgiE751K8fUfYkFQ14aq3Vf0b+gmKN3UKBG+C0d+C7WIgQzhQIyw==
+"@pixi/filter-blur@5.3.0", "@pixi/filter-blur@^5.0.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-blur/-/filter-blur-5.3.0.tgz#adbd49e4c2ce8be0b3c5e9ee1853ff352d068120"
+  integrity sha512-p/Wjy+ylrCkUuMeNneubKkNuw2b9pDxEM9Ox1wAzWwe9MXYNeU/NU3RPnU7d0XGtxK+VxpOm3ktKbghtuMzoJQ==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/settings" "5.3.0"
 
-"@pixi/filter-reflection@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-reflection/-/filter-reflection-2.7.0.tgz#7a9ceafa7cd5be169780cf01b8497903a0e9d713"
-  integrity sha512-c1aKlfVbfnKdK6tilpciCfKHetaQgRGcKVi+WhV+tU/SxTh1DVJvgYuntQfyGgxBCceKYsrC9WTtBlG5jCM6aA==
+"@pixi/filter-bulge-pinch@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-bulge-pinch/-/filter-bulge-pinch-3.1.1.tgz#cd2a44e9800e74101c01c9ed9c884e890d52c22f"
+  integrity sha512-PtQzmZ/VGcSiSiFXS227tKreuGhIRqP6PHC1aTkuQPMUGbeAaHArE8S8ucJoZhwj9Y7fpJC7fnC3Zs0C2EHZmw==
 
-"@pixi/filter-rgb-split@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-rgb-split/-/filter-rgb-split-2.7.0.tgz#6637f07ee8ada2071778460b5153ec7177862171"
-  integrity sha512-fPghDxH3Ocjuow/csJozyxkxHzzVNGw5JorZlWtm0KcICSNt3RJKLexKlqihPRFo5dR47nOFg/wj6HweWo7rjQ==
+"@pixi/filter-color-map@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-color-map/-/filter-color-map-3.1.1.tgz#6691c4dec0e14245f1a52904e4f4622ef0b68fbf"
+  integrity sha512-zS5GOmzjpJxrDYnO6p+FKLMPcIt+aF7zqueiX1UPMflGL8sKJ7cbzD1o5/GoSbReQ54Nn7KT7x2HgFvmW7SExw==
 
-"@pixi/filter-shockwave@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-shockwave/-/filter-shockwave-2.7.0.tgz#79395783045a99065ce3a1a3befe11746eb2c84a"
-  integrity sha512-6m9swwRUgb32WCKRWo8G+uBajyNkfHMFkhUjtPBJJqDJadjy276nXtoTNkuyPU6xm6yqNnQE5REAJltwUl5xRQ==
+"@pixi/filter-color-matrix@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-color-matrix/-/filter-color-matrix-5.3.0.tgz#b1fe75af978cd25288b5528eeba950f799259d24"
+  integrity sha512-TytHEkVtmVEaEKNYUtbLMxjE66FJsTRLZxdXDfbKJmYSlItvKj/Dfaau8JVntnK5hXCgQShnGZv7pQJmOZGJwQ==
+  dependencies:
+    "@pixi/core" "5.3.0"
 
-"@pixi/filter-simple-lightmap@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-simple-lightmap/-/filter-simple-lightmap-2.7.0.tgz#4a57ac1e476d9bc35b28ec185bb4f7d83ce8aa88"
-  integrity sha512-gF20Fc1Evl51KrBHcgavOuqceG+Z2zoYHi++tKHr7e5BdOWZYAY5paK8kCDNSkZ3A/vo8/+r0pTSg8JLskMd7Q==
+"@pixi/filter-color-overlay@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-color-overlay/-/filter-color-overlay-3.1.1.tgz#4bfb2cf59abf8e1913a21621a5cde3b839972e1b"
+  integrity sha512-GO4I0e+GMnT/tfXJCZnV3pxS3/aBJQRXMmccm8E4p5XHOQxkHWwycvewpDTOTUnkz5iIOzgx5SFmlmv0yZeJ4Q==
 
-"@pixi/filter-tilt-shift@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-tilt-shift/-/filter-tilt-shift-2.7.0.tgz#04bc68014d5e33dd5251986c9ece5e55c623c4a3"
-  integrity sha512-LJ/GrJKDMoquMBy/pWS6BuYQiH6HdIZsmbkPBZ+6CvMsUOgwZx2alS1KQ9w0gNuExCyts0G4Nfss3MsUUFeQeg==
+"@pixi/filter-color-replace@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-color-replace/-/filter-color-replace-3.1.1.tgz#66c0ddff9fc548e24ef71a3a52baaa207434695c"
+  integrity sha512-grpbKuEv6iQYo8TUpx8Uf6jY2CP0/i6f6WubDe8CiNFWnNIxHTwgrkEdLUzTddoR7H/IIUAjNn75yPZfW/pThg==
 
-"@pixi/filter-twist@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-twist/-/filter-twist-2.7.0.tgz#cebc09cc80ee67bfd9ceb46b8a971fb0cfc82348"
-  integrity sha512-WFBi2+yZwGPh6mo4cSijs8+AFC+mpnPg6ENfOefGjLTczP3IIhjwCsYYSKOesJY8OZ/pYYqBkFb3vDqMMuyHtA==
+"@pixi/filter-convolution@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-convolution/-/filter-convolution-3.1.1.tgz#f80137aed1e08e2b27d2ef641de6847e155642a9"
+  integrity sha512-9PNtOqT74cdeh2FT9gM4XKkYL9odPSxwOKplv1Iioq8P/udDl3z4J2jwCRiRpL1Do7wZGVqEBBb3OpscOlHtrw==
 
-"@pixi/filter-zoom-blur@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@pixi/filter-zoom-blur/-/filter-zoom-blur-2.7.0.tgz#1bffef06bca2ef258585983c06a9ee3db1c63436"
-  integrity sha512-m64jGei+C+Ndbi+B9twwWg3yk98x0gPBTqcFmagiJsAIf/LQYK5tP2l8ROJu/5OXlPE6WcVIKaf3VByaZ6kiWQ==
+"@pixi/filter-cross-hatch@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-cross-hatch/-/filter-cross-hatch-3.1.1.tgz#72e847e6de697c64e1df5baaaae879dc10054609"
+  integrity sha512-1ITwzzSneo5Nq7URcsUCabwFT/NHBan4OoUh5AbVhcl4Na2LT2lGjHI/Tprs4DyrFMUtOlaPefwp4xz9CaVsNQ==
+
+"@pixi/filter-crt@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-crt/-/filter-crt-3.1.1.tgz#3fd769a853d43ab322dca12225d885f9dbc2acde"
+  integrity sha512-Zx8CE+Yf8xZKDmWHDRCzRKHwY+4CUg2WXlNxsQHEmFN9UA9Ek9dgy6B817IbG49AvYbgr6b23cMQON6H+hE2CQ==
+
+"@pixi/filter-displacement@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-displacement/-/filter-displacement-5.3.0.tgz#3b09a4ee018f423c55e7c450e03479f20619259b"
+  integrity sha512-fExR6lo0WYLuxB5fWGzzE6v9rHO5Pbq2W54oa1GKCEmKgUsKlRE81TGAeSOfSlz7wilrjQkfOzAECk8Q4b1Isg==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/math" "5.3.0"
+
+"@pixi/filter-dot@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-dot/-/filter-dot-3.1.1.tgz#84049158e7fc86192b3a2fbda352f8e7e31f9ea9"
+  integrity sha512-ejE0olqrZwdjjNH186ls0ANiKNUjQnSHNueNshmZ+QbtVEz1SDPewxw88FLyxjoAONvmeYPHSCjGGvqRjXB7Cw==
+
+"@pixi/filter-drop-shadow@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-drop-shadow/-/filter-drop-shadow-3.1.1.tgz#af4313ba4f3f9ac99702c4388333c6fbf5c74a2c"
+  integrity sha512-tx3MgEoUAL2iLK6fKbwan9zKXDxrMzZ6uEFaqZYYD/3pTYBMOMcPCF1oGq8YpzQqLUriOQJX5Sj2aWMNzQSm5g==
+  dependencies:
+    "@pixi/filter-kawase-blur" "3.1.1"
+
+"@pixi/filter-emboss@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-emboss/-/filter-emboss-3.1.1.tgz#3657c3a1a8050dc693d914033edd554ef1c57d99"
+  integrity sha512-OqCrE1wHfDIFqWHvsScNKZ1CSPm/4aJoYz1Yd/Sn0P3d1H9UEydmxescS1UxNrga6zTEcYpo1RT1V6Xb/TTQtw==
+
+"@pixi/filter-fxaa@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-fxaa/-/filter-fxaa-5.3.0.tgz#86481331d44715501709234432b15853a22d448c"
+  integrity sha512-vQxDEYGfu7ZF1IE5GpFPcUaOfWTiUq0ZgSdHzTlOdpdQ08Cq8DgTZAxRAd2sh1RBHANpyMlaFgAJLW6zJcLAnQ==
+  dependencies:
+    "@pixi/core" "5.3.0"
+
+"@pixi/filter-glitch@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-glitch/-/filter-glitch-3.1.1.tgz#95d973439e9e418149a5b17effaf97d43fef2e54"
+  integrity sha512-l6TF6zgDiNaUkRYrlJcApEEQZimyvS8YkrN6l1UrQJ7uMxx7kvYNn/sMSdOcWyhFj1WI2y5PP7/15bX7ekEd7A==
+
+"@pixi/filter-glow@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-glow/-/filter-glow-3.1.1.tgz#c8c43487cba8896ebc270844a5c6a0f4f295e87e"
+  integrity sha512-W0BYO1tJhMaFcw0jXWcxTvrKZavpR45whcajr+f+pRQJHRqwUJnRR9cqZW+2qi3+4rHLy+X0T7Yg77OiaSJZlg==
+  dependencies:
+    "@pixi/core" "^5.0.0"
+    "@pixi/utils" "^5.0.0"
+
+"@pixi/filter-godray@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-godray/-/filter-godray-3.1.1.tgz#4e9f68cacbc4c330b7727e61f1d1085d5933d488"
+  integrity sha512-fKKUOAxN6iy6eFflz08fCanMOnqrcML98ODGA71pzvwmwxNiamsvaWyBm9PdCgrFOTrKwnpX544jR6hCaNMaTg==
+
+"@pixi/filter-kawase-blur@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-kawase-blur/-/filter-kawase-blur-3.1.1.tgz#9e419f17bf17f46dea3230babff9b0449435ee11"
+  integrity sha512-whHyj8bpfbGSUCmHjd6wd3+C4vB2zyBxB+2IoWXxW44b/bDcDypifwDhRShsXcdWRJ5urTvukiqiZStaeK9oeA==
+
+"@pixi/filter-motion-blur@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-motion-blur/-/filter-motion-blur-3.1.1.tgz#5472738ac168f84ba2dc6eb8f4b329c4fee8ec96"
+  integrity sha512-5AjQJseuQsDJi7zBsas7rQexQO7LfZcA274FxTFOZ9TeYtdqUGzYilPA8a9oAec6Z+iGkQmAoK/FR3ybCqNPmQ==
+
+"@pixi/filter-multi-color-replace@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-multi-color-replace/-/filter-multi-color-replace-3.1.1.tgz#c8136bb8665850a12bc40cb7aa4dec15d10d9cc1"
+  integrity sha512-ocP9UPn2cU9w7/zyN/uUJg3JDM9nPzRAkc8y7NgkoenUHV4zV0pGaXNx8kREl/GIggnZNySd7hLstJPvzg40tg==
+
+"@pixi/filter-noise@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-noise/-/filter-noise-5.3.0.tgz#19d103678dc2640ad4d6f3dfee3cdc719ddd5999"
+  integrity sha512-mL3QjZgGBZRmuaT9j8b985dx0d0oO1B34OIV4T8mp8Mgvxt8XtnVNJyttTACRCZE7hoRw7FyiauOwiApNYG3vw==
+  dependencies:
+    "@pixi/core" "5.3.0"
+
+"@pixi/filter-old-film@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-old-film/-/filter-old-film-3.1.1.tgz#88d6b8a3ba73f47ee38add5c8a84dd472d1213a0"
+  integrity sha512-1kc6+mbFQahnkC9qqPCRscneSYcHjQI93fKqQuyzPxR5Wzkcaz6WlQfoeqUnZTA6YhnENxygJWk0KCCHG6mHKw==
+
+"@pixi/filter-outline@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-outline/-/filter-outline-3.1.1.tgz#e14614313e52ae1ada2da97ceea3225ee9429f41"
+  integrity sha512-yhmElQoXl0QBU3DNes8zvbbNtpD5ajAKrkPCP/pevxTg4toqtc4mJjp/h3yr1bFEfXAfcpPB4llxreWhM3OmCg==
+
+"@pixi/filter-pixelate@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-pixelate/-/filter-pixelate-3.1.1.tgz#8976171f79ad452637651cd5334b4a608323fdf4"
+  integrity sha512-r8kakBMhqJW0gub5mGN7QJAJcdb8QUt4dUyyUKvntAvSzRhHZOrCoBmoC//3p6FFLidPWU9DAkSgWEvoBVaLaQ==
+
+"@pixi/filter-radial-blur@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-radial-blur/-/filter-radial-blur-3.1.1.tgz#d3c6d77583fd500f10274adf7a5ba2fbc9792a8e"
+  integrity sha512-ZOH6GQy384FfVJNoBczFiqwZb14s9W/6oL02L5GMNhDbaWFAEOVNZlCLecv2a2x1Xv31zkSSmchJtffe2UU4Gw==
+
+"@pixi/filter-reflection@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-reflection/-/filter-reflection-3.1.1.tgz#370fe247a898126bc08e428f69546b85b174aac4"
+  integrity sha512-WZ3GPDeNIQ0hLCmwRHLJDMlnkmDN5vKqQaDx3Y0fccAiaKkkr0b6wiJBYuC9PZ4ULaKRhWPhPTUiOadMS7qSug==
+
+"@pixi/filter-rgb-split@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-rgb-split/-/filter-rgb-split-3.1.1.tgz#0b9d1fbe7e1e6b8ec24733f9b5471a674e3d8679"
+  integrity sha512-VV+6xH7E2I+jvhnsfh7VLRWxXzRfc3R42w0yuaWnJtnx6xfGMkEX84I69GnDd8GGhrU7D/+u0KRJvtLajcGTFA==
+
+"@pixi/filter-shockwave@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-shockwave/-/filter-shockwave-3.1.1.tgz#757e7f7d56ddf1b1f65ff8b2eee1fa9cc4c77ec5"
+  integrity sha512-r3OMvrrE6M6WNvyu03mljkZucG7Z9oGEQKOEHwCTcpir2CumLsTiKMWmtLiWSeEt5lTofMRHe1tu1FkSuHLJyA==
+
+"@pixi/filter-simple-lightmap@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-simple-lightmap/-/filter-simple-lightmap-3.1.1.tgz#4fe463c68ddda6d5b84ab5ca60f6864d79133d57"
+  integrity sha512-UwOs1frSxRFw7r3unhOSJqgAKMez159ShwO8bCOejTEThlC1GVmpQj1dw/8vxUkQrdFBhj+Imrmh0jEBWLd0ng==
+
+"@pixi/filter-tilt-shift@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-tilt-shift/-/filter-tilt-shift-3.1.1.tgz#27fd175618eacd959181b395d6c45815861021c8"
+  integrity sha512-1XOh6qLxpW1daQJYHNYY1Bf2B/mszC9r15N5NFJ3a/ruX1ydayYsoXlaJI6FLc8ZG3VJivNnrM/PycKNwiOv8Q==
+
+"@pixi/filter-twist@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-twist/-/filter-twist-3.1.1.tgz#f5c7072f84ecb48fbc87eca2b43cfb694074a7a2"
+  integrity sha512-oSZts+m14MD9uiYJTllWWioTAMsH6l3JFXnkworF+0W2OZ9Cki5qyNmC8xAlq+PkyhesuMR2xHmTizSFQBfubA==
+
+"@pixi/filter-zoom-blur@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@pixi/filter-zoom-blur/-/filter-zoom-blur-3.1.1.tgz#0fab5d1c0562ebdf1524a454c78d7f129bcc8e64"
+  integrity sha512-BmgSW8Aq9nBIP71lAvZUfmc+pk+zRe2u6UQf0yaoG0PIWGAp0dPcATYKXYhurzcAh+J8sPwwhFVaQ7S5MDQPOg==
+
+"@pixi/graphics@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/graphics/-/graphics-5.3.0.tgz#18123fe4f0f9d2e5349817ed43a28c39a240c80e"
+  integrity sha512-ey+uo6oABO4uGF514LINzte4za2Ezrf0keMpmynaoN8Eafe9Uep/PEmLj2BcdoNugRzcruJLqEoSQusQHQ23Jg==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/interaction@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/interaction/-/interaction-5.3.0.tgz#f7920ec208771c7be3b956d70db47bf795d06102"
+  integrity sha512-gc3uOzZqfKD9UCjNUYL23F8eLqXF+Epnji/HtwzOFq6P9Ybr5DIrbAG/8nFS7UjHIUUbFZ/Tw5FgqgprfAfDwA==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/ticker" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/loaders@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/loaders/-/loaders-5.3.0.tgz#44424edee635e1d6b597373f30181606f78b7f02"
+  integrity sha512-g85GUuGWjJmh59J8gVjcIIy9rz+Zurj+cgVWb1oGTmpAVn2q19VX9Wks167SW+vLlng4UWJyjOV91pKnW7Ys9g==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/utils" "5.3.0"
+    resource-loader "^3.0.1"
+
+"@pixi/math@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/math/-/math-5.3.0.tgz#5a72c641221a188365a9b385f68e56cd2c1d3b0d"
+  integrity sha512-tNCEJsRhlpz2AZEhs3CPS372zgONc535pnZ9LlzErhPhbaugRraTuYrVwyuTUeqpnokpzu9VMK7ywExt3VZ/gg==
+
+"@pixi/mesh-extras@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/mesh-extras/-/mesh-extras-5.3.0.tgz#77d19308033c8bf123dda04255341a4bb707fe5a"
+  integrity sha512-eWPQ+HijIWNgjtmjhV8HGGFCBr83CZVgSlSEVtNUGJ9m+mZXibTXyu1KDoc3aV82G6g4rZ44b7+TITNQNJ6gyg==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/mesh" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/mesh@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/mesh/-/mesh-5.3.0.tgz#9b4bf5e22cdc1cabc820ecfc6a6b4352eaac065e"
+  integrity sha512-E1vTvT3Mz7VOpVrDj7OuwE87hcePCZKt7vLVKMOm99WBFR1rclo/HIrQjWFpuGSRTWnE9IcLoVf0gMuBOHobJQ==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/mixin-cache-as-bitmap@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/mixin-cache-as-bitmap/-/mixin-cache-as-bitmap-5.3.0.tgz#d63d010ce5143dc6e5b97a28aff672a17df28805"
+  integrity sha512-s82wh0lsf3qK5UDkm6ze4r5mzuW48n0juQGt//2ia99lJlL1qi1EPgSJrY9Ru4ET0XG+cHtYH+pcjPzY9rGCrw==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/mixin-get-child-by-name@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/mixin-get-child-by-name/-/mixin-get-child-by-name-5.3.0.tgz#575edff4fff54afdd4a73b8654f5a05946f7dc86"
+  integrity sha512-WlLPGAllfXx4HvemEfgosr1XB6Dw6Ds8D9xPO4HdymXuzmAKOCzgTDShZkUljTu+9k77mVxiNZ1WE0JwQr07ZQ==
+  dependencies:
+    "@pixi/display" "5.3.0"
+
+"@pixi/mixin-get-global-position@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/mixin-get-global-position/-/mixin-get-global-position-5.3.0.tgz#6baf1e9e2482c40441ab66f3850a0420ddb9b671"
+  integrity sha512-sAq7PjcL4pu1LawRw8cEMMtBDV6cfhxtEp9LDJytilgQMHZA+iRfysbVAGrhJ7e/mPLFYqcuS2N5lFrJKssIxA==
+  dependencies:
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+
+"@pixi/particles@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/particles/-/particles-5.3.0.tgz#2cc03f0ba37f0e0fd5d531184250b625bee41bf5"
+  integrity sha512-i+HtGIYvrsyLgfRF+38KyPpRM58+dzlwxHzl942t1BeOb3fZXInj/mJMNX7dht9SRpF61Wj8JKSa66pmKay40A==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/polyfill@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/polyfill/-/polyfill-5.3.0.tgz#56a2aeaa6aaf34f92bec1bc9835a726373fe662a"
+  integrity sha512-virwKgMUTkak1UhdCTlsm5B8VbL06dgIPboNSMGBjCx7QtSAY0OGOlczljfQGbreWcjYdLob9kwDczmfObiX9A==
+  dependencies:
+    es6-promise-polyfill "^1.2.0"
+    object-assign "^4.1.1"
+
+"@pixi/prepare@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/prepare/-/prepare-5.3.0.tgz#d1217ef286a9033e9063c0c82c775b341efc0776"
+  integrity sha512-TGzEGkMFDzA8T/zKhe98dh6VoAwT/8VAHRZyWXoHL9Zz7zb5ljC5VqyxEdwrP+mqZWu94Ru7bqM6msNEbKiMLA==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/graphics" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/text" "5.3.0"
+    "@pixi/ticker" "5.3.0"
+
+"@pixi/runner@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/runner/-/runner-5.3.0.tgz#06499fe63cf89803409619bea52ca65e83c5f68c"
+  integrity sha512-E/bpmflpqvdRwqV4iyECvRz4heXIISoKRcxxyYV9wT1XstQYICifoxCN1qLqjnAZEZPbQSEnoZDXnqAOtdfWRw==
+
+"@pixi/settings@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/settings/-/settings-5.3.0.tgz#437c4e1e38f718c0381fcaed44110ac388c41340"
+  integrity sha512-SbxdTGSutcxi4mpUVZ45J/YmSpItC0mLuFxS2CprcvIJ6yYf6fVkm5zBIQd5XFiiidEy1hgo66JsOj7bRMJkKg==
+  dependencies:
+    ismobilejs "^1.1.0"
+
+"@pixi/sprite-animated@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/sprite-animated/-/sprite-animated-5.3.0.tgz#3b915e77bbae1d15d02f7e9413e858129bf58dc3"
+  integrity sha512-+QizdTwanp00e1zC2aN2z69BKANbXkRsUhutAPfo7noCMaXjD2Pu9VtX4XvYrYv91E67AT6lAySuw/KG15grrA==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/ticker" "5.3.0"
+
+"@pixi/sprite-tiling@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/sprite-tiling/-/sprite-tiling-5.3.0.tgz#7e9c315004e15db994204aafef4c4f1949f233e6"
+  integrity sha512-j5FTT4apvqx4USyh8lp13XmlCi6Aa/LpkVBlzccwA5xOtElXG52ArnI+dcC+USCdZH1+DCMWzHZApJ81FEvR6g==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/sprite@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/sprite/-/sprite-5.3.0.tgz#b85fb246230f70cc41bddce521f62036e8dfd158"
+  integrity sha512-BOFaSYP4c1Rj9GomuwjVvT6yaXdDqV7us/xGxMZctNVA/x3KSacaS9wMgezledyPUsbSCPzOoaJKFA/ceNoakQ==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/spritesheet@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/spritesheet/-/spritesheet-5.3.0.tgz#ecd16158231e6f6b0d4e4249e5eefe1b90e32939"
+  integrity sha512-KQQPdvua3pus1OYUZgMj3V9YZwEFocFxZLkY6YMggvdcGA7slLr6rDC4C+PS6OIs4lh24RXxkqsXlz8zH4V2jg==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/loaders" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/text-bitmap@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/text-bitmap/-/text-bitmap-5.3.0.tgz#7ca56bb660673f436efb4c32732f90981219a821"
+  integrity sha512-e4qTFvvolAQYC5hYtVk22CKT80Av3wjsDaXV3dvJAWglLcDLxUSf7n1WVXu36YLvTDZUYU1TxPG8VSuPRNF2QA==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/loaders" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/mesh" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/text" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/text@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/text/-/text-5.3.0.tgz#ef88069cf9ce989e3acf9ecb400c41be24a233e4"
+  integrity sha512-495dXenYu4j8nX17NWrdayEzFutY17hAzeGJH4xrPd9D89IWT87mXWJBamhTi66Isdjb67xTOUpavzWMp0ULtQ==
+  dependencies:
+    "@pixi/core" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/utils" "5.3.0"
+
+"@pixi/ticker@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/ticker/-/ticker-5.3.0.tgz#bbd2a9f0bf1a3e120a57607c92c8058a6f9aa278"
+  integrity sha512-W5QLwaVIiULbxurboEKv0D4JIT4MOBUWQiPy2ViAqil/bQ+iVg5zZUdv0r3L3PzX/ve1fxfS+YxJ2+8WfdDbig==
+  dependencies:
+    "@pixi/settings" "5.3.0"
+
+"@pixi/utils@5.3.0", "@pixi/utils@^5.0.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@pixi/utils/-/utils-5.3.0.tgz#fb722c014b3536d498093db394311e4cbd8a5b37"
+  integrity sha512-nKjygxKbkhiivsThrVjx5kzihlND92s4Az2qaoiLRtmn9ACXH+NsXtuz8ULjTvA6gdRhHszBbyVAuykWoe84aw==
+  dependencies:
+    "@pixi/constants" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    earcut "^2.1.5"
+    eventemitter3 "^3.1.0"
+    url "^0.11.0"
 
 "@sphinxxxx/color-conversion@^2.2.2":
   version "2.2.2"
@@ -1174,11 +1497,6 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
-
-"@types/pixi.js@^4.7.1":
-  version "4.8.9"
-  resolved "https://registry.yarnpkg.com/@types/pixi.js/-/pixi.js-4.8.9.tgz#207d8719f655d84eaa28adcfb3c62e414450dc56"
-  integrity sha512-PCqd9/TaGOAqg73u8cQKH2sg8pdkRzU6VKu8lWrV+/+p5QiDRtrT8chY5yveVM8A/hWLNtvIQlWpojDomTSNQQ==
 
 "@types/q@^1.5.1":
   version "1.5.4"
@@ -1828,11 +2146,6 @@ bindings@^1.5.0:
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
   dependencies:
     file-uri-to-path "1.0.0"
-
-bit-twiddle@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/bit-twiddle/-/bit-twiddle-1.0.2.tgz#0c6c1fabe2b23d17173d9a61b7b7093eb9e1769e"
-  integrity sha1-DGwfq+KyPRcXPZpht7cJPrnhdp4=
 
 blob@0.0.5:
   version "0.0.5"
@@ -2875,11 +3188,6 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-dat.gui@^0.7.2:
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/dat.gui/-/dat.gui-0.7.7.tgz#7f96dbd21621a76385203659aebfa264ee6ae89b"
-  integrity sha512-sRl/28gF/XRC5ywC9I4zriATTsQcpSsRG7seXCPnTkK8/EQMIbCu5NPMpICLGxX9ZEUvcXR3ArLYCtgreFoMDw==
-
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -3149,7 +3457,7 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
-earcut@^2.1.4:
+earcut@^2.1.5:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/earcut/-/earcut-2.2.2.tgz#41b0bc35f63e0fe80da7cddff28511e7e2e80d11"
   integrity sha512-eZoZPPJcUHnfRZ0PjLvx2qBordSiO8ofC3vt+qACLM95u+4DovnbYNpQtJh0DNsWj8RnxrQytD4WA8gj5cRIaQ==
@@ -3316,6 +3624,11 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
+es6-promise-polyfill@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/es6-promise-polyfill/-/es6-promise-polyfill-1.2.0.tgz#f38925f23cb3e3e8ce6cda8ff774fcebbb090cde"
+  integrity sha1-84kl8jyz4+jObNqP93T867sJDN4=
+
 escalade@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/escalade/-/escalade-3.0.1.tgz#52568a77443f6927cd0ab9c73129137533c965ed"
@@ -3461,10 +3774,10 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-eventemitter3@^2.0.0:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-2.0.3.tgz#b5e1079b59fb5e1ba2771c0a993be060a58c99ba"
-  integrity sha1-teEHm1n7XhuidxwKmTvgYKWMmbo=
+eventemitter3@^3.1.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
+  integrity sha512-tvtQIeLVHjDkJYnzf2dgVMxfuSGJeM/7UCG17TT4EumTfNtF+0nebF/4zWOIkCreAbtNqhGEboB6BWrwqNaw4Q==
 
 eventemitter3@^4.0.0:
   version "4.0.4"
@@ -4827,12 +5140,7 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-ismobilejs@^0.5.1:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/ismobilejs/-/ismobilejs-0.5.2.tgz#e81bacf6187c532ad8348355f4fecd6e6adfdce1"
-  integrity sha512-ta9UdV60xVZk/ZafFtSFslQaE76SvNkcs1r73d2PVR21zVzx9xuYv9tNe4MxA1NN7WoeCc2RjGot3Bz1eHDx3Q==
-
-ismobilejs@^1.1.1:
+ismobilejs@^1.1.0, ismobilejs@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ismobilejs/-/ismobilejs-1.1.1.tgz#c56ca0ae8e52b24ca0f22ba5ef3215a2ddbbaa0e"
   integrity sha512-VaFW53yt8QO61k2WJui0dHf4SlL8lxBofUuUmwBo0ljPk0Drz2TiuDW4jo3wDcv41qy/SxrJ+VAzJ/qYqsmzRw==
@@ -5354,7 +5662,7 @@ mini-css-extract-plugin@^0.8.0:
     schema-utils "^1.0.0"
     webpack-sources "^1.1.0"
 
-mini-signals@^1.1.1:
+mini-signals@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mini-signals/-/mini-signals-1.2.0.tgz#45b08013c5fae51a24aa1a935cd317c9ed721d74"
   integrity sha1-RbCAE8X65RokqhqTXNMXye1yHXQ=
@@ -6122,89 +6430,93 @@ pinkie@^2.0.0:
   resolved "https://registry.yarnpkg.com/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
   integrity sha1-clVrgM+g1IqXToDnckjoDtT3+HA=
 
-pixi-filters@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/pixi-filters/-/pixi-filters-2.7.1.tgz#7b7400b913b0ede213278e10b2af52c0e4db2965"
-  integrity sha512-E1MmUe7BNvpaRhNMqCXBW5pJc3wdPfL8aWWaIVdKyHkzOGo/kBwFD0LIItPJ6ydGK2Lmb3n0CeJyAc3xtqQp8w==
+pixi-filters@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/pixi-filters/-/pixi-filters-3.1.1.tgz#9af5c37028f37be3182e7c9feb959960bc01be3f"
+  integrity sha512-28Is0vKvslbPm1X63hwqCc1+jrOqICdjoq8u+/nhCd96vev9fuTDWYo8FvyMK63wD2Rhwn8PLHjxjRO/WgglVg==
   dependencies:
-    "@pixi/filter-adjustment" "^2.7.0"
-    "@pixi/filter-advanced-bloom" "^2.7.0"
-    "@pixi/filter-ascii" "^2.7.1"
-    "@pixi/filter-bevel" "^2.7.0"
-    "@pixi/filter-bloom" "^2.7.0"
-    "@pixi/filter-bulge-pinch" "^2.7.0"
-    "@pixi/filter-color-map" "^2.7.0"
-    "@pixi/filter-color-replace" "^2.7.0"
-    "@pixi/filter-convolution" "^2.7.0"
-    "@pixi/filter-cross-hatch" "^2.7.0"
-    "@pixi/filter-crt" "^2.7.0"
-    "@pixi/filter-dot" "^2.7.0"
-    "@pixi/filter-drop-shadow" "^2.7.0"
-    "@pixi/filter-emboss" "^2.7.0"
-    "@pixi/filter-glitch" "^2.7.0"
-    "@pixi/filter-glow" "^2.7.0"
-    "@pixi/filter-godray" "^2.7.0"
-    "@pixi/filter-kawase-blur" "^2.7.0"
-    "@pixi/filter-motion-blur" "^2.7.0"
-    "@pixi/filter-multi-color-replace" "^2.7.0"
-    "@pixi/filter-old-film" "^2.7.0"
-    "@pixi/filter-outline" "^2.7.0"
-    "@pixi/filter-pixelate" "^2.7.0"
-    "@pixi/filter-radial-blur" "^2.7.0"
-    "@pixi/filter-reflection" "^2.7.0"
-    "@pixi/filter-rgb-split" "^2.7.0"
-    "@pixi/filter-shockwave" "^2.7.0"
-    "@pixi/filter-simple-lightmap" "^2.7.0"
-    "@pixi/filter-tilt-shift" "^2.7.0"
-    "@pixi/filter-twist" "^2.7.0"
-    "@pixi/filter-zoom-blur" "^2.7.0"
+    "@pixi/filter-adjustment" "3.1.1"
+    "@pixi/filter-advanced-bloom" "3.1.1"
+    "@pixi/filter-ascii" "3.1.1"
+    "@pixi/filter-bevel" "3.1.1"
+    "@pixi/filter-bloom" "3.1.1"
+    "@pixi/filter-bulge-pinch" "3.1.1"
+    "@pixi/filter-color-map" "3.1.1"
+    "@pixi/filter-color-overlay" "3.1.1"
+    "@pixi/filter-color-replace" "3.1.1"
+    "@pixi/filter-convolution" "3.1.1"
+    "@pixi/filter-cross-hatch" "3.1.1"
+    "@pixi/filter-crt" "3.1.1"
+    "@pixi/filter-dot" "3.1.1"
+    "@pixi/filter-drop-shadow" "3.1.1"
+    "@pixi/filter-emboss" "3.1.1"
+    "@pixi/filter-glitch" "3.1.1"
+    "@pixi/filter-glow" "3.1.1"
+    "@pixi/filter-godray" "3.1.1"
+    "@pixi/filter-kawase-blur" "3.1.1"
+    "@pixi/filter-motion-blur" "3.1.1"
+    "@pixi/filter-multi-color-replace" "3.1.1"
+    "@pixi/filter-old-film" "3.1.1"
+    "@pixi/filter-outline" "3.1.1"
+    "@pixi/filter-pixelate" "3.1.1"
+    "@pixi/filter-radial-blur" "3.1.1"
+    "@pixi/filter-reflection" "3.1.1"
+    "@pixi/filter-rgb-split" "3.1.1"
+    "@pixi/filter-shockwave" "3.1.1"
+    "@pixi/filter-simple-lightmap" "3.1.1"
+    "@pixi/filter-tilt-shift" "3.1.1"
+    "@pixi/filter-twist" "3.1.1"
+    "@pixi/filter-zoom-blur" "3.1.1"
 
-pixi-gl-core@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/pixi-gl-core/-/pixi-gl-core-1.1.4.tgz#8b4b5c433b31e419bc379dc565ce1b835a91b372"
-  integrity sha1-i0tcQzsx5Bm8N53FZc4bg1qRs3I=
-
-pixi-layers@^0.1.9:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/pixi-layers/-/pixi-layers-0.1.10.tgz#fb067ffe2911d2ecf3b5f17bc421a285b42f56b9"
-  integrity sha512-isK7wss3Vg7IMrUieZhstjp8r1Ynk9HJVgc1Tz/TGnMRN0LN5APiUCeLrsFvaodfbVxCQ/4YRm56gW0jaeEoig==
-  dependencies:
-    "@types/pixi.js" "^4.7.1"
-
-pixi-lights@^2.0.1, pixi-lights@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/pixi-lights/-/pixi-lights-2.0.3.tgz#e0a8ab346bc78927f338bc2876ec183600846e6f"
-  integrity sha512-bKHv7X95R+zWiyHyFT5d1C/1XcNaViRlJ4mNYALyVQZsLVKiGZ73jYVKU9kcj4SzA1lPC8/jrWUNL0kSROny5Q==
+pixi-layers@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/pixi-layers/-/pixi-layers-0.2.3.tgz#db441af4622349deb6257a5c2aff22315468aee5"
+  integrity sha512-alf52hWgJ5P95TMUMgLdG4ul/wpqQ1J2MMBYT9/d263FQRSSP4Apgq4bDGKvpXRND2HkboQ1ISGDRAkMwOJLIw==
 
 pixi-particles@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/pixi-particles/-/pixi-particles-4.2.1.tgz#b7858fc2f9d1f4fb754cf827dfc1c79c7df86048"
   integrity sha512-8Hp7HZU+hYFHVOAigLf4gzimDusDK1ecDGjnOsg5JhnBT9p7V1aNr6U7DuHyDnGGGk6IoLlovggx7/WEMNNe4A==
 
-pixi-shadows@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/pixi-shadows/-/pixi-shadows-0.0.7.tgz#ae2270fd691b67ed606d337d26af1a553424d8ec"
-  integrity sha512-tvRo5+07Zax9huIVMH717O74/dub3TxG+APuHx6DlKKwIFaj67kU5zEP7nedLP84R4aXZu3quEXYP13MjNIDEg==
+pixi.js@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-5.3.0.tgz#5af9ae5d9195e26dae68d0c3118fb392b8796edf"
+  integrity sha512-6hrQn5F5EPBPR3QTwQYJvOR0OqHVKrITE+rxo061yIUvOjFboTDB6piBSCJ4elZwfkIRLPm1/mwgoSrPovnpBg==
   dependencies:
-    dat.gui "^0.7.2"
-    pixi-layers "^0.1.9"
-    pixi-lights "^2.0.1"
-    pixi.js "^4.8.1"
-    stats-js "^1.0.0-alpha1"
-
-pixi.js@^4.5.0, pixi.js@^4.8.1:
-  version "4.8.9"
-  resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-4.8.9.tgz#36dc0de8907d9e64336436e237c6f7f7c0a362e1"
-  integrity sha512-YcepG5/bXLAVTSTXaMIU9NeSzwyPq/oMu2oQi6L6iE5giwng02ixVCKgc6/eMv3zl2Ho+teSOLC8R5Wp3jBvLA==
-  dependencies:
-    bit-twiddle "^1.0.2"
-    earcut "^2.1.4"
-    eventemitter3 "^2.0.0"
-    ismobilejs "^0.5.1"
-    object-assign "^4.0.1"
-    pixi-gl-core "^1.1.4"
-    remove-array-items "^1.0.0"
-    resource-loader "^2.2.3"
+    "@pixi/accessibility" "5.3.0"
+    "@pixi/app" "5.3.0"
+    "@pixi/constants" "5.3.0"
+    "@pixi/core" "5.3.0"
+    "@pixi/display" "5.3.0"
+    "@pixi/extract" "5.3.0"
+    "@pixi/filter-alpha" "5.3.0"
+    "@pixi/filter-blur" "5.3.0"
+    "@pixi/filter-color-matrix" "5.3.0"
+    "@pixi/filter-displacement" "5.3.0"
+    "@pixi/filter-fxaa" "5.3.0"
+    "@pixi/filter-noise" "5.3.0"
+    "@pixi/graphics" "5.3.0"
+    "@pixi/interaction" "5.3.0"
+    "@pixi/loaders" "5.3.0"
+    "@pixi/math" "5.3.0"
+    "@pixi/mesh" "5.3.0"
+    "@pixi/mesh-extras" "5.3.0"
+    "@pixi/mixin-cache-as-bitmap" "5.3.0"
+    "@pixi/mixin-get-child-by-name" "5.3.0"
+    "@pixi/mixin-get-global-position" "5.3.0"
+    "@pixi/particles" "5.3.0"
+    "@pixi/polyfill" "5.3.0"
+    "@pixi/prepare" "5.3.0"
+    "@pixi/runner" "5.3.0"
+    "@pixi/settings" "5.3.0"
+    "@pixi/sprite" "5.3.0"
+    "@pixi/sprite-animated" "5.3.0"
+    "@pixi/sprite-tiling" "5.3.0"
+    "@pixi/spritesheet" "5.3.0"
+    "@pixi/text" "5.3.0"
+    "@pixi/text-bitmap" "5.3.0"
+    "@pixi/ticker" "5.3.0"
+    "@pixi/utils" "5.3.0"
 
 pkg-dir@^1.0.0:
   version "1.0.0"
@@ -7382,11 +7694,6 @@ relateurl@0.2.x:
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
 
-remove-array-items@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/remove-array-items/-/remove-array-items-1.1.1.tgz#fd745ff73d0822e561ea910bf1b401fc7843e693"
-  integrity sha512-MXW/jtHyl5F1PZI7NbpS8SOtympdLuF20aoWJT5lELR1p/HJDd5nqW8Eu9uLh/hCRY3FgvrIT5AwDCgBODklcA==
-
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
@@ -7503,12 +7810,12 @@ resolve@^1.10.0, resolve@^1.12.0, resolve@^1.3.2:
   dependencies:
     path-parse "^1.0.6"
 
-resource-loader@^2.2.3:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/resource-loader/-/resource-loader-2.2.4.tgz#9bf43dba59475d56be29c796399211ce0e96fd2d"
-  integrity sha512-MrY0bEJN26us3h4bzJUSP0n4tFEb79lCpYBavtLjSezWCcXZMgxhSgvC9LxueuqpcxG+qPjhwFu5SQAcUNacdA==
+resource-loader@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/resource-loader/-/resource-loader-3.0.1.tgz#33355bb5421e2994f59454bbc7f6dbff8df06d47"
+  integrity sha512-fBuCRbEHdLCI1eglzQhUv9Rrdcmqkydr1r6uHE2cYHvRBrcLXeSmbE/qI/urFt8rPr/IGxir3BUwM5kUK8XoyA==
   dependencies:
-    mini-signals "^1.1.1"
+    mini-signals "^1.2.0"
     parse-uri "^1.0.0"
 
 restore-cursor@^3.1.0:
@@ -8095,11 +8402,6 @@ static-extend@^0.1.1:
   dependencies:
     define-property "^0.2.5"
     object-copy "^0.1.0"
-
-stats-js@^1.0.0-alpha1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/stats-js/-/stats-js-1.0.1.tgz#377c36490c1935b9a4e68bf3acc3afeb59878f66"
-  integrity sha512-EAwEFghGNv8mlYC4CZzI5kWghsnP8uBKXw6VLRHtXkOk5xySfUKLTqTkjgJFfDluIkf/O7eZwi5MXP50VeTbUg==
 
 "statuses@>= 1.4.0 < 2", "statuses@>= 1.5.0 < 2", statuses@~1.5.0:
   version "1.5.0"

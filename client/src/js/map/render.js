@@ -46,10 +46,10 @@ function update(camera) {
   // ctx.filter = "none"
 
   // //reset background
-  // canvas.style.backgroundColor = 'black'
-  // if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
-  //   canvas.style.backgroundColor = GAME.world.backgroundColor
-  // }
+  canvas.style.backgroundColor = 'black'
+  if(GAME.world.backgroundColor && GAME.gameState.started && !MAPEDITOR.paused) {
+    canvas.style.backgroundColor = GAME.world.backgroundColor
+  }
 
   let viewBoundaries = HERO.getViewBoundaries(clientHero)
   GAME.objects.forEach((object) => {
@@ -110,9 +110,7 @@ function update(camera) {
     })
   }
 
-
-//&& !clientHero.interactableObject.tags.filled
-  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue) {
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && !clientHero.interactableObject.tags.filled) {
     const { interactableObject } = clientHero
 
     if(interactableObject.tags.invisible) {

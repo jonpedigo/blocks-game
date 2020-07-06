@@ -18,6 +18,7 @@ function setDefault() {
       storeEntireGameState: false,
       overrideCustomGameCode: false,
       shadows: false,
+      ambientLight: .2,
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
