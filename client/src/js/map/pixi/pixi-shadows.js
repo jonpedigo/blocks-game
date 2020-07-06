@@ -835,6 +835,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 PIXI.shadows = {
     init: function init(application) {
         // The objects that will cast shadows
+        this.castedGroup = new PIXI.display.Group();
+        this.castedLayer = new PIXI.display.Layer(this.castedGroup);
+
+        // The objects that will cast shadows
         this.casterGroup = new PIXI.display.Group();
         this.casterLayer = new PIXI.display.Layer(this.casterGroup);
 
@@ -859,11 +863,8 @@ PIXI.shadows = {
         var container = new PIXI.Container();
         application.stage.addChild(container);
 
-        // // Set up the shadow layers
-        // application.stage.addChild(
-        //     this.overlayLayer
-        //     this.casterLayer,
-        // );
+        // Set up the shadow layers
+        application.stage.addChild(this.overlayLayer, this.casterLayer, this.castedLayer);
 
         // Set up pixi lights if available
         if (PIXI.lights) {

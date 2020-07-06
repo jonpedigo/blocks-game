@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 window.PIXI = PIXI
 import 'pixi-layers'
-import { GlowFilter, OutlineFilter } from 'pixi-filters'
+import { GlowFilter, OutlineFilter, GodrayFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
 import tileset from './tileset.json'
 import "./pixi-shadows";
@@ -21,12 +21,15 @@ const initPixiApp = (canvasRef, onLoad) => {
   });
   app.view.id = "pixi-canvas"
   document.getElementById('GameContainer').appendChild(app.view);
+  PIXIMAP.app = app
+
+  app.stage = new PIXI.display.Stage();
 
   let world
-  app.stage = new PIXI.display.Stage();
+
   if(GAME.world.tags.shadow) {
     world = PIXI.shadows.init(app);
-    PIXI.shadows.filter.ambientLight = .2
+    // PIXI.shadows.filter.ambientLight = .2
 
     PIXIMAP.shadowStage = new PIXI.display.Layer()
     world.addChild(PIXIMAP.shadowStage);
@@ -35,8 +38,6 @@ const initPixiApp = (canvasRef, onLoad) => {
   }
 
   PIXIMAP.stage = world
-  PIXIMAP.app = app
-
 
   ///////////////
   ///////////////
@@ -44,18 +45,22 @@ const initPixiApp = (canvasRef, onLoad) => {
   // OBJECT STAGE
   PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
   PIXIMAP.sortGroup.on('sort', function(sprite) {
-      if(sprite.name) {
-        const object = OBJECTS.getObjectOrHeroById(sprite.name)
-        if(!object) {
-          return
-        }
-        if(object.tags.emitter) {
-          sprite.zOrder = -1000000000000;
-        }
-        if(object.tags.obstacle || object.tags.hero){
-          sprite.zOrder = -sprite.y - 10000;
-        }
+      let object
+      if(sprite.ownerName) {
+        object = OBJECTS.getObjectOrHeroById(sprite.ownerName)
+      } else if(sprite.name) {
+        object = OBJECTS.getObjectOrHeroById(sprite.name)
       }
+
+      if(object && object.tags.emitter) {
+        sprite.zOrder = -1000000000000;
+        return
+      }
+      if(object && object.tags.obstacle || object && object.tags.hero){
+        sprite.zOrder = -sprite.y - 1000000;
+        return
+      }
+      sprite.zOrder = -sprite.y;
   });
   PIXIMAP.sortGroup.sortPriority = 1;
 
@@ -65,11 +70,11 @@ const initPixiApp = (canvasRef, onLoad) => {
 
 
   if(!GAME.world.tags.shadow) {
-    // PIXIMAP.objectStage.addChild(
-    //   new PIXI.display.Layer(PixiLights.diffuseGroup),
-    //   new PIXI.display.Layer(PixiLights.normalGroup),
-    //   new PIXI.display.Layer(PixiLights.lightGroup),
-    // );
+    PIXIMAP.objectStage.addChild(
+      new PIXI.display.Layer(PixiLights.diffuseGroup),
+      new PIXI.display.Layer(PixiLights.normalGroup),
+      new PIXI.display.Layer(PixiLights.lightGroup),
+    );
   }
 
 
@@ -162,6 +167,20 @@ const initPixiApp = (canvasRef, onLoad) => {
 
       // world.addChild(new PIXI.lights.DirectionalLight(null, 1, block1));
       // world.addChild(light);
+
+      // PIXIMAP.overlayStage = new PIXI.display.Layer()
+      // world.addChild(PIXIMAP.overlayStage);
+      //
+      //
+      // PIXIMAP.cameraOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
+      // PIXIMAP.cameraOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.cameraOverlay.texture._frame.width)
+      // PIXIMAP.cameraOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.cameraOverlay.texture._frame.width)
+      // PIXIMAP.overlayStage.addChild(PIXIMAP.cameraOverlay)
+      // PIXIMAP.cameraOverlay.alpha = .5
+      // PIXIMAP.cameraOverlay.parentGroup = PIXI.shadows.castedGroup
+      // PIXIMAP.cameraOverlay.filters = [
+      //   // new GodrayFilter(0xFFFFFF)
+      // ]
 
       onLoad(app, textures)
     })

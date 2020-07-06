@@ -343,7 +343,7 @@ const addGameObjectToStage = (gameObject, stage) => {
       sprite.isFlashlight = true
       const addedChild = PIXIMAP.shadowStage.addChild(sprite)
 
-      // sprite.ignoreShadowCaster = PIXIMAP.objectStage
+      // sprite.ignoreShadowCaster = PIXIMAP.cameraOverlay
 // range: The radius of the lit area
 // intensity: The opacity of the lit area
 // pointCount: The number of points that cast light rays (With more points you get softer edges)
@@ -362,12 +362,15 @@ const addGameObjectToStage = (gameObject, stage) => {
       sprite = new PIXI.Container()
       const caster = new PIXI.Sprite(texture)
       // just comment out the line below to remove SHADOWS
-      // caster.parentGroup = PIXI.shadows.casterGroup
+      caster.parentGroup = PIXI.shadows.casterGroup
       sprite.addChild(caster)
+      sprite.addChild(new PIXI.Sprite(texture))
 
       sprite.parentGroup = PIXIMAP.sortGroup
     } else {
-      sprite = new PIXI.Sprite(texture)
+      sprite = new PIXI.Container()
+      const casted = new PIXI.Sprite(texture)
+      sprite.addChild(casted)
       sprite.parentGroup = PIXIMAP.sortGroup
     }
   } else {
@@ -403,6 +406,8 @@ const addGameObjectToStage = (gameObject, stage) => {
   addedChild.name = gameObject.id
 
   updatePixiObject(gameObject)
+
+  return addedChild
 }
 
 const initPixiObject = (gameObject) => {
@@ -427,7 +432,8 @@ const initPixiObject = (gameObject) => {
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
-      addGameObjectToStage(subObject, PIXIMAP.objectStage)
+      const pixiChild = addGameObjectToStage(subObject, PIXIMAP.objectStage)
+      pixiChild.ownerName = gameObject.name
     })
   }
 

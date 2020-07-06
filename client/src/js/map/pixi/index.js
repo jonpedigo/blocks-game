@@ -107,8 +107,12 @@ PIXIMAP.onRender = function() {
     GAME.heroList.forEach((hero) => {
       updatePixiObject(hero, PIXIMAP.stage)
     })
-    PIXIMAP.stage.pivot.x = camera.x
-    PIXIMAP.stage.pivot.y = camera.y
+    PIXIMAP.objectStage.pivot.x = camera.x
+    PIXIMAP.objectStage.pivot.y = camera.y
+    if(PIXIMAP.shadowStage) {
+      PIXIMAP.shadowStage.pivot.x = camera.x
+      PIXIMAP.shadowStage.pivot.y = camera.y
+    }
   }
 }
 

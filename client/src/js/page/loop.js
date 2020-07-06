@@ -46,21 +46,22 @@ var mainLoop = function () {
       // Also, adjust for gameInterval not being multiple of 16.67
       thenRender = now - (deltaRender % renderInterval);
       render(deltaRender / 1000)
-
-      // TESTING...Report #seconds since start and achieved fps.
-      var sinceStart = now - startTime;
-      var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
-      if(frameCount > 10) {
-        frameCount = 0
-        startTime = Date.now()
-      }
-
-      PAGE.fps = currentFps;
   }
 
   if (deltaUpdate > updateInterval) {
     if(deltaUpdate > 23) deltaUpdate = 23
     thenUpdate = now - (deltaUpdate % updateInterval);
+
+    // TESTING...Report #seconds since start and achieved fps.
+    var sinceStart = now - startTime;
+    var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
+    if(frameCount > 10) {
+      frameCount = 0
+      startTime = Date.now()
+    }
+
+    PAGE.fps = currentFps;
+
     update(deltaUpdate / 1000);
   }
 
