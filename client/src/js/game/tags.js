@@ -86,7 +86,9 @@ function setDefault() {
     invisible: false,
     tilingSprite: false,
     inputDirectionSprites: false,
-    flashlight: false,
+    light: false,
+    shadowObscured: false,
+    shadowCaster: false,
     // invisibleOnHeroCollide
   }
 

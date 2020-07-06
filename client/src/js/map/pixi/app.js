@@ -19,29 +19,24 @@ const initPixiApp = (canvasRef, onLoad) => {
     width: canvasRef.width, height: canvasRef.height,
     background: 0x000000
   });
+  app.view.id = "pixi-canvas"
   document.getElementById('GameContainer').appendChild(app.view);
 
   let world
   app.stage = new PIXI.display.Stage();
   if(GAME.world.tags.shadow) {
     world = PIXI.shadows.init(app);
-    // PIXI.shadows.filter.ambientLight = .7
-    ///////////////
-    ///////////////
-    ///////////////
-    // BACKGROUND
-    const background = new PIXI.extras.TilingSprite(
-        PIXI.Texture.from('assets/images/p2.jpeg'),
-        2000,
-        2000,
-    );
-    world.addChild(background);
+    PIXI.shadows.filter.ambientLight = .2
+
+    PIXIMAP.shadowStage = new PIXI.display.Layer()
+    world.addChild(PIXIMAP.shadowStage);
   } else {
     world = app.stage
   }
 
   PIXIMAP.stage = world
   PIXIMAP.app = app
+
 
   ///////////////
   ///////////////
@@ -54,8 +49,11 @@ const initPixiApp = (canvasRef, onLoad) => {
         if(!object) {
           return
         }
+        if(object.tags.emitter) {
+          sprite.zOrder = -1000000000000;
+        }
         if(object.tags.obstacle || object.tags.hero){
-          sprite.zOrder = -sprite.y;
+          sprite.zOrder = -sprite.y - 10000;
         }
       }
   });
@@ -64,19 +62,15 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.objectStage = new PIXI.display.Layer(PIXIMAP.sortGroup)
   world.addChild(PIXIMAP.objectStage);
 
+
+
   if(!GAME.world.tags.shadow) {
-    PIXIMAP.objectStage.addChild(
-      new PIXI.display.Layer(PixiLights.diffuseGroup),
-      new PIXI.display.Layer(PixiLights.normalGroup),
-      new PIXI.display.Layer(PixiLights.lightGroup),
-    );
-  } else {
-
+    // PIXIMAP.objectStage.addChild(
+    //   new PIXI.display.Layer(PixiLights.diffuseGroup),
+    //   new PIXI.display.Layer(PixiLights.normalGroup),
+    //   new PIXI.display.Layer(PixiLights.lightGroup),
+    // );
   }
-
-  PIXIMAP.objectStage.emitters = []
-
-
 
 
   // GAME.world.tags.useFlatColors = true
@@ -88,6 +82,8 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   ///////////////
   // EMITTERS
+  PIXIMAP.objectStage.emitters = []
+
   app.ticker.add(function(delta) {
     // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
@@ -103,11 +99,11 @@ const initPixiApp = (canvasRef, onLoad) => {
   if(PAGE.role.isPlayer) {
     function onResize() {
       MAP.canvasMultiplier = window.innerWidth/640;
-      const width = 640 * MAP.canvasMultiplier;
-      const height = 320 * MAP.canvasMultiplier;
+      const width = (640 * MAP.canvasMultiplier);
+      const height = (320 * MAP.canvasMultiplier);
       app.renderer.resize(width, height);
     }
-    window.addEventListener("resize", onResize);
+    if(!GAME.world.tags.shadow) window.addEventListener("resize", onResize);
     onResize()
   }
 

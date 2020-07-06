@@ -5,18 +5,35 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+///
+// Before the compendium, there are basic graphical objects that every game will access
+1) Background tiles ( put on grid nodes ?)
+2) Obstacles ( no other functionaliy ) ( via construct editor )
+3) Sprites/Blocks/Obstacles
+4) Zones
+5) Particle Emitter
+6) Actor
+7) Animal ? idk / Monster
+8) environment -> Lava, water
+9) Lights
+
+// has shadow
+// casts shadow
+
+( quest, timer, trigger, hook )
+
+1) give flashlights sprites
+///
+
+
 // uhh oK
 // construct Parts copy when you create new ones
-// switching sprites! doesnt work rn..,
-// try to combine pixi-shadows with pixi-lights so theres only one mode
 // try to create a day/night mode
-// shadows need to be a higher layer than the objects ( they arent covering anyything right now)
-// emitters in light mode
-// combine shadow mode with light mode??
-// also smarter removing and adding lights 
 
 // create light tags
 // create particle tags
+pixi- ease
+pixi particles -> more
 // particles/lights/timers/spawnZones <--- ALL ARE SPECIAL TYPES OF OBJECTS
 
 1) < --- LITERALLY OMG? <-- https://github.com/claus/react-dat-gui

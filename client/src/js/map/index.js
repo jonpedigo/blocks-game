@@ -2,7 +2,7 @@ import render from './render'
 import Camera from './camera.js'
 import Shake from './cameraShake.js'
 import constellation from './constellation.js'
-import pixiMap from './pixi/index'
+import './pixi/index'
 
 window.MAP = {
   canvas: null,
@@ -16,8 +16,10 @@ MAP.onPageLoaded = function() {
   // Canvas SETUP
   MAP.canvas = document.createElement("canvas");
   MAP.ctx = MAP.canvas.getContext("2d");
+
   if(PAGE.role.isPlayer) {
     function onResize() {
+      if(GAME.world.tags && GAME.world.tags.shadow) return
       MAP.canvasMultiplier = window.innerWidth/640;
       MAP.canvas.width = 640 * MAP.canvasMultiplier;
       MAP.canvas.height = 320 * MAP.canvasMultiplier;

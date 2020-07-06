@@ -110,7 +110,9 @@ function update(camera) {
     })
   }
 
-  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && !clientHero.interactableObject.tags.filled) {
+
+//&& !clientHero.interactableObject.tags.filled
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue) {
     const { interactableObject } = clientHero
 
     if(interactableObject.tags.invisible) {

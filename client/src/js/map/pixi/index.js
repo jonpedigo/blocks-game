@@ -12,12 +12,21 @@ window.PIXIMAP = {
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {
+  const background = new PIXI.extras.TilingSprite(
+      PIXI.Texture.from('assets/images/p2.jpeg'),
+      2000,
+      2000,
+  );
+  background.parentGroup = PIXIMAP.sortGroup
+  PIXIMAP.objectStage.addChild(background);
+
   GAME.objects.forEach((object) => {
     initPixiObject(object)
   })
   GAME.heroList.forEach((hero) => {
     initPixiObject(hero)
   })
+
 
   PIXIMAP.initialized = true
 }
@@ -34,7 +43,8 @@ PIXIMAP.onGameLoaded = function() {
       window.local.emit('onAssetsLoaded')
     })
   } else if(PIXIMAP.assetsLoaded) {
-    PIXIMAP.stage.removeChildren()
+    if(PIXIMAP.shadowStage) PIXIMAP.shadowStage.removeChildren()
+    PIXIMAP.objectStage.removeChildren()
     PIXIMAP.initializePixiObjectsFromGame()
   }
 }
