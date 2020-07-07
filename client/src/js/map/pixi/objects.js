@@ -259,6 +259,12 @@ function updateProperties(pixiChild, gameObject) {
     pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
   }
 
+  if(gameObject.opacity) {
+    pixiChild.alpha = gameObject.opacity
+  } else if(GAME.world.defaultObjectColor) {
+    pixiChild.alpha = 1
+  }
+
   /////////////////////
   /////////////////////
   // INTERACT HIGHLIGHT
@@ -305,12 +311,17 @@ const addGameObjectToStage = (gameObject, stage) => {
   // ADD TO STAGE
   let addedChild = stage.addChild(sprite)
 
+
   addedChild.texture = texture
 
   /////////////////////
   /////////////////////
   // NAME SPRITE FOR LOOKUP
   addedChild.name = gameObject.id
+
+  if(gameObject.id === HERO.id) {
+    PIXIMAP.hero = addedChild
+  }
 
   updatePixiObject(gameObject)
 

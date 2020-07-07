@@ -1,12 +1,85 @@
 import * as PIXI from 'pixi.js'
 window.PIXI = PIXI
 import './pixi-layers'
-import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter } from 'pixi-filters'
+import { GlowFilter, ColorMatrixFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
 import tileset from './tileset.json'
 
 const textures = {};
 let stage
+
+const applyFilters = () => {
+  /*
+  ////////////////////////////////
+  ////////////////////////////////
+  // PIXI FILTER NOTES
+
+  TWIST filter
+  Glow filter
+  Outline filter
+
+  —
+
+  Rain graphic ?
+
+  Displacement filter — underwater effect
+  + underwater overlay graphic??
+
+  Shockwave filter / Bulge pinch?
+
+  Reflection filter
+
+  Godray filter
+
+  Many of these are really good CAMERA effects
+  Dot filter
+  Old Film filter
+  Pixelate filter
+  Color Matrix filter
+  Cross Hatch filter
+  Crt filter
+  Zoom blur filter — Perhaps when you are like low on health??
+  */
+
+
+
+  // const  grFilter = new GodrayFilter({
+  //   angle: 30,
+  //   gain: 0.5,
+  //   lacunarity: 2.5,
+  //   time: 0,
+  //   parallel: true,
+  //   center: [0, 0],
+  // })
+  // const refFilter = new ShockwaveFilter()
+  //
+  // GodrayFilter
+  // PIXIMAP.backgroundStage.filters = [
+  //   grFilter
+  //   // refFilter
+  // ]
+  // const refFilter = new EmbossFilter()
+  // PIXIMAP.backgroundStage.filters = [
+  //   // grFilter
+  //   refFilter
+  // ]
+
+
+  // shockwave filter ( requires sprites )
+  // reflectionFilter ( idk requires a lot of fenagling, could be a mirror )
+  // emboss filter ( good frozen in carbonite effect )
+  const refFilter = new PIXI.filters.ColorMatrixFilter()
+  // You could PERHAPS make a specific COLOR very important to PAPABEAR
+  // or another character
+  // refFilter.night(.5, 10)
+  // refFilter.colorTone()
+  // refFilter.predator(.2)
+  PIXIMAP.objectStage.filters = [refFilter]
+
+
+  // const refFilter = new ReflectionFilter()
+  // PIXIMAP.cameraStage.filters = [grFilter]
+}
 
 const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
@@ -27,13 +100,25 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   PIXIMAP.stage = world
 
-  PIXIMAP.backgroundStage = new PIXI.display.Layer()
-  world.addChild(PIXIMAP.backgroundStage);
 
   ///////////////
   ///////////////
   ///////////////
-  // OBJECT STAGE
+  // BACKGROUND STAGE
+  PIXIMAP.backgroundStage = new PIXI.display.Layer()
+  world.addChild(PIXIMAP.backgroundStage);
+  PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
+  PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
+  PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
+  PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
+
+  PIXIMAP.backgroundStage.addChild(PIXIMAP.backgroundOverlay)
+
+
+  ///////////////
+  ///////////////
+  ///////////////
+  // SORT GROUP
   PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
   PIXIMAP.sortGroup.on('sort', function(sprite) {
       let object
@@ -59,16 +144,34 @@ const initPixiApp = (canvasRef, onLoad) => {
   });
 
   PIXIMAP.sortGroup.enableSort = true;
-
+  ///////////////
+  ///////////////
+  ///////////////
+  // OBJECT STAGE
   PIXIMAP.objectStage = new PIXI.display.Layer(PIXIMAP.sortGroup)
   PIXIMAP.objectStage.sortableChildren = true;
-
-
-
   world.addChild(PIXIMAP.objectStage);
 
+
+  ///////////////
+  ///////////////
+  ///////////////
+  // SHADOW STAGE
   PIXIMAP.shadowStage = new PIXI.display.Layer()
   world.addChild(PIXIMAP.shadowStage);
+
+  ///////////////
+  ///////////////
+  ///////////////
+  // CAMERA STAGE
+  PIXIMAP.cameraStage = new PIXI.display.Layer()
+  world.addChild(PIXIMAP.cameraStage);
+  PIXIMAP.cameraOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
+  PIXIMAP.cameraOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.cameraOverlay.texture._frame.width)
+  PIXIMAP.cameraOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.cameraOverlay.texture._frame.width)
+  PIXIMAP.cameraOverlay.alpha = 0
+  PIXIMAP.cameraOverlay.tint = parseInt(tinycolor("rgb(0, 0, 100)").toHex(), 16)
+  PIXIMAP.cameraStage.addChild(PIXIMAP.cameraOverlay)
 
   ///////////////
   ///////////////
@@ -76,19 +179,35 @@ const initPixiApp = (canvasRef, onLoad) => {
   // EMITTERS
   PIXIMAP.objectStage.emitters = []
 
+
+  ///////////////
+  ///////////////
+  ///////////////
+  // UPDATE FILTERS AND EMITTERS
   app.ticker.add(function(delta) {
+    function updateFilters(filter) {
+      // if(filter instanceof GodrayFilter) {
+      //   filter.time+=delta/100
+      // }
+      // if(filter instanceof ReflectionFilter) {
+      //   filter.time+=delta/100
+      // }
+      // if(filter instanceof ShockwaveFilter) {
+      //   filter.time+=delta/100
+      // }
+    }
+
     // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
       if(!emitter.emit) return
       emitter.update(2 * 0.001);
     })
-    if(PIXIMAP.backgroundStage && PIXIMAP.backgroundStage.updateFilters) PIXIMAP.backgroundStage.updateFilters.forEach((filter) => {
-      if(filter instanceof GodrayFilter) {
-        filter.time+=delta/100
-      }
-    });
-
+    if(PIXIMAP.backgroundStage && PIXIMAP.backgroundStage.filters) PIXIMAP.backgroundStage.filters.forEach(updateFilters);
+    if(PIXIMAP.cameraStage && PIXIMAP.cameraStage.filters) PIXIMAP.cameraStage.filters.forEach(updateFilters);
+    if(PIXIMAP.objectStage && PIXIMAP.objectStage.filters) PIXIMAP.objectStage.filters.forEach(updateFilters);
   });
+
+
 
   ///////////////
   ///////////////
@@ -105,6 +224,7 @@ const initPixiApp = (canvasRef, onLoad) => {
     onResize()
   }
 
+  applyFilters()
 
   ///////////////
   ///////////////
@@ -158,25 +278,6 @@ const initPixiApp = (canvasRef, onLoad) => {
       PIXIMAP.textures = textures
       PIXIMAP.assetsLoaded = true
 
-      PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
-      PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
-      PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
-      PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
-
-      PIXIMAP.backgroundStage.addChild(PIXIMAP.backgroundOverlay)
-      const  grFilter =       new GodrayFilter({
-                  angle: 30,
-                  gain: 0.5,
-                  lacunarity: 2.5,
-                  time: 0,
-                  parallel: true,
-                  center: [0, 0],
-              })
-      PIXIMAP.backgroundStage.filters = [
-        grFilter
-      ]
-
-      PIXIMAP.backgroundStage.updateFilters =  [grFilter]
       onLoad(app, textures)
     })
   })

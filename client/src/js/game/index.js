@@ -9,6 +9,7 @@ import tags from './tags.js'
 import timeouts from './timeouts'
 import world from './world.js'
 import grid from './grid.js'
+import dayNightCycle from './daynightcycle.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
@@ -38,6 +39,7 @@ class Game{
     tags.setDefault()
     input.setDefault()
     timeouts.setDefault()
+    dayNightCycle.setDefault()
 
     triggers.onPageLoaded()
     input.onPageLoaded()
@@ -75,12 +77,13 @@ class Game{
         //// 1. UPDATE GAME STATE PHASE -- START
         //////////////////////////////
         //////////////////////////////
-        //// TIMEOUT
+        //// UPDATE SERVICES
         GAME.gameState.sequenceQueue.forEach((sequence) => {
           processSequence(sequence)
         })
         GAME.updateActiveMods()
 
+        dayNightCycle.update(delta)
         timeouts.onUpdate(delta)
         //////////////////////////////
         //// HEROS
@@ -203,6 +206,7 @@ class Game{
   onGameLoaded() {
     GAME.gameState.loaded = true
     GAME.gameState.paused = false
+    dayNightCycle.onGameLoaded()
   }
 
   loadAndJoin(game) {

@@ -8,6 +8,7 @@ function setDefault() {
     timeoutsById: {},
     activeMods: {},
     activeModList: [],
+    ambientLight: .2,
   }
   if(!localStorage.getItem('gameStates')) {
     localStorage.setItem('gameStates', JSON.stringify({}))
