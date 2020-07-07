@@ -192,8 +192,6 @@ function processSequence(sequence) {
       if(GAME.heros[id]) return GAME.heros[id]
     }))
 
-    window.getObjectsByTag()
-
     testObjects = testObjects.concat(testTags.reduce((arr, tag) => {
       let newArr = arr
       if(GAME.objectsByTag[tag]) {
@@ -222,23 +220,6 @@ function processSequence(sequence) {
   } else if(!item.waiting && item.next) {
     sequence.currentItemId = item.next
   }
-}
-
-window.getObjectsByTag = function() {
-  GAME.objectsByTag = GAME.objects.reduce((map, object) => {
-    Object.keys(object.mod().tags).forEach((tag) => {
-      if(!map[tag]) map[tag] = []
-      if(object.mod().tags[tag] === true) map[tag].push(object)
-    })
-    return map
-  }, {})
-  GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
-    Object.keys(hero.mod().tags).forEach((tag) => {
-      if(!map[tag]) map[tag] = []
-      if(hero.mod().tags[tag] === true) map[tag].push(hero)
-    })
-    return map
-  }, {})
 }
 
 export {

@@ -219,6 +219,17 @@ const initPixiApp = (canvasRef, onLoad) => {
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
       app.renderer.resize(width, height);
+      if(!window.resettingDarkness) {
+        setTimeout(() => {
+          if(PIXIMAP.initialized) {
+            PIXIMAP.initializeDarknessSprites()
+            PIXIMAP.resetDarknessSprites()
+            PIXIMAP.updateDarknessSprites()
+          }
+          window.resettingDarkness = false
+        }, 100)
+        window.resettingDarkness = true
+      }
     }
     window.addEventListener("resize", onResize);
     onResize()

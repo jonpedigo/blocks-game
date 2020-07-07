@@ -145,8 +145,12 @@ PIXIMAP.updateDarknessSprites = function() {
   const nodes = PIXIMAP.grid.nodes
   // if(!GAME.gameState.started) return
 
-  GAME.heroList.forEach((hero) => {
-    const { gridX, gridY } = gridUtil.convertToGridXY({x: hero.x + PIXIMAP.grid.nodeSize/2, y: hero.y + PIXIMAP.grid.nodeSize/2})
+  const lightObjects = [...GAME.objectsByTag['light'], ...GAME.heroList]
+  lightObjects.forEach((object) => {
+    if(object.removed) return
+    if(object.tags.potential) return
+
+    const { gridX, gridY } = gridUtil.convertToGridXY({x: object.x + PIXIMAP.grid.nodeSize/2, y: object.y + PIXIMAP.grid.nodeSize/2})
 
     const startGridX = gridX - 7
     const startGridY = gridY - 7
@@ -175,35 +179,35 @@ PIXIMAP.updateDarknessSprites = function() {
         // }
       }
     }
-
-    let ambientLight = GAME.gameState.ambientLight
-    if(typeof ambientLight !== 'number') ambientLight = 1
-
-    for(var x = 0; x < nodes.length; x++) {
-      let row = nodes[x]
-      for(var y = 0; y < row.length; y++) {
-        let node = row[y]
-        if(!node.darknessSprite) return
-
-        // if(GAME.gameState.ambientLight > 1) {
-        //   node.darknessSprite.alpha = ambientLight - 1
-        //   node.darknessSprite.tint = parseInt(tinycolor("orange").toHex(), 16)
-        // } else {
-          if(node.light == 1) {
-            node.darknessSprite.alpha = .90 - ambientLight
-          } else if(node.light == 2) {
-            node.darknessSprite.alpha = .60 - ambientLight
-          } else if(node.light == 3) {
-            node.darknessSprite.alpha = .30 - ambientLight
-          } else if(node.light >= 4) {
-            node.darknessSprite.alpha = 0 - ambientLight
-          } else {
-            node.darknessSprite.alpha = 1 - ambientLight
-          }
-        // }
-      }
-    }
   })
+
+  let ambientLight = GAME.gameState.ambientLight
+  if(typeof ambientLight !== 'number') ambientLight = 1
+
+  for(var x = 0; x < nodes.length; x++) {
+    let row = nodes[x]
+    for(var y = 0; y < row.length; y++) {
+      let node = row[y]
+      if(!node.darknessSprite) return
+
+      // if(GAME.gameState.ambientLight > 1) {
+      //   node.darknessSprite.alpha = ambientLight - 1
+      //   node.darknessSprite.tint = parseInt(tinycolor("orange").toHex(), 16)
+      // } else {
+        if(node.light == 1) {
+          node.darknessSprite.alpha = .90 - ambientLight
+        } else if(node.light == 2) {
+          node.darknessSprite.alpha = .60 - ambientLight
+        } else if(node.light == 3) {
+          node.darknessSprite.alpha = .30 - ambientLight
+        } else if(node.light >= 4) {
+          node.darknessSprite.alpha = 0 - ambientLight
+        } else {
+          node.darknessSprite.alpha = 1 - ambientLight
+        }
+      // }
+    }
+  }
 }
 
 PIXIMAP.initializeDarknessSprites = function() {
@@ -217,8 +221,6 @@ PIXIMAP.initializeDarknessSprites = function() {
       let node = row[y]
       const darknessSprite = new PIXI.Sprite(textures['solidcolorsprite'])
       PIXIMAP.shadowStage.addChild(darknessSprite)
-      darknessSprite.x = node.x
-      darknessSprite.y = node.y
       darknessSprite.x = (node.x) * MAP.camera.multiplier
       darknessSprite.y = (node.y) * MAP.camera.multiplier
       darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier

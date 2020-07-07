@@ -50,6 +50,7 @@ class Game{
     HERO.forAll((hero) => {
       GAME.heroList.push(hero)
     })
+    GAME.getObjectsByTag()
 
     if(PAGE.role.isHost) {
       // remove second part when a player can host a multiplayer game
@@ -85,6 +86,7 @@ class Game{
 
         dayNightCycle.update(delta)
         timeouts.onUpdate(delta)
+
         //////////////////////////////
         //// HEROS
         GAME.heroList.forEach(hero => {
@@ -855,6 +857,23 @@ class Game{
       GAME.modCache[objectCopy.id] = objectCopy
       return objectCopy
     }
+  }
+
+  getObjectsByTag() {
+    GAME.objectsByTag = GAME.objects.reduce((map, object) => {
+      Object.keys(object.mod().tags).forEach((tag) => {
+        if(!map[tag]) map[tag] = []
+        if(object.mod().tags[tag] === true) map[tag].push(object)
+      })
+      return map
+    }, {})
+    GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
+      Object.keys(hero.mod().tags).forEach((tag) => {
+        if(!map[tag]) map[tag] = []
+        if(hero.mod().tags[tag] === true) map[tag].push(hero)
+      })
+      return map
+    }, {})
   }
 }
 

@@ -71,8 +71,6 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
   if(condition.conditionType === 'insideOfObjectTag') {
     const tag = condition.conditionValue
 
-    window.getObjectsByTag()
-
     let areaObjects = []
     if(GAME.objectsByTag[tag]) {
       areaObjects = areaObjects.concat(GAME.objectsByTag[tag])

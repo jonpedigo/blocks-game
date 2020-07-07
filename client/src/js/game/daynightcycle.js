@@ -1,24 +1,27 @@
 function setDefault() {
   window.defaultDayNightCycle = {
-    ambientLightDelta: null,
-    dayLength: 6,
+    dayLength: 2,
     dayAmbientLight: 2,
-    nightLength: 6,
+    nightLength: 30,
     nightAmbientLight: 0,
     transitionTime: 6,
   }
 }
 
 function onGameLoaded(options = {}) {
-  GAME.gameState.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
-  GAME.gameState.dayNightCycle.currentTime = options.startTime || 0
+  GAME.gameState.ambientLight = 1
+  GAME.gameState.ambientLightDelta = null
+  GAME.gameState.currentTime = options.startTime || 0
+  GAME.gameState.currentTimeOfDay = ''
+  GAME.world.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
 }
 
 function calculateCurrentTOD() {
-  const cycle = GAME.gameState.dayNightCycle
+  const cycle = GAME.world.dayNightCycle
+  const currentTime = GAME.gameState.currentTime
 
   const totalLength = cycle.dayLength + cycle.nightLength + (cycle.transitionTime + cycle.transitionTime)
-  const remainder = cycle.currentTime % totalLength
+  const remainder = currentTime % totalLength
 
   if(remainder > cycle.dayLength + cycle.transitionTime + cycle.nightLength) {
     // console.log('sunrise', remainder)
@@ -36,10 +39,11 @@ function calculateCurrentTOD() {
 }
 
 function update(delta) {
-  GAME.gameState.dayNightCycle.currentTime += delta
-  const { dayAmbientLight, nightAmbientLight, transitionTime, ambientLightDelta } = GAME.gameState.dayNightCycle
+  GAME.gameState.currentTime += delta
+  const { dayAmbientLight, nightAmbientLight, transitionTime} = GAME.world.dayNightCycle
   const newTOD = calculateCurrentTOD()
-  const currentTOD = GAME.gameState.dayNightCycle.currentTOD
+  const currentTOD = GAME.gameState.currentTimeOfDay
+  const ambientLightDelta = GAME.gameState.ambientLightDelta
 
   if(ambientLightDelta) {
     if(GAME.gameState.ambientLight <= 1 && GAME.gameState.ambientLight >= 0) {
@@ -52,13 +56,13 @@ function update(delta) {
     const currentAmbientLight = GAME.gameState.ambientLight
     const goalAmbientLight = nightAmbientLight
     const ambientLightDelta = (goalAmbientLight - currentAmbientLight)/transitionTime
-    GAME.gameState.dayNightCycle.ambientLightDelta = ambientLightDelta
+    GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
   if(currentTOD === 'sunset' && newTOD === 'night') {
     // console.log('sunset -> night')
     GAME.gameState.ambientLight = 0
-    GAME.gameState.dayNightCycle.ambientLightDelta = null
+    GAME.gameState.ambientLightDelta = null
   }
 
   if(currentTOD === 'night' && newTOD === 'sunrise') {
@@ -66,18 +70,16 @@ function update(delta) {
     const currentAmbientLight = GAME.gameState.ambientLight
     const goalAmbientLight = dayAmbientLight
     const ambientLightDelta = (goalAmbientLight - currentAmbientLight)/transitionTime
-    GAME.gameState.dayNightCycle.ambientLightDelta = ambientLightDelta
+    GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
   if(currentTOD === 'sunrise' && newTOD === 'day') {
     // console.log('sunrise -> day')
     GAME.gameState.ambientLight = 1
-    GAME.gameState.dayNightCycle.ambientLightDelta = null
+    GAME.gameState.ambientLightDelta = null
   }
 
-
-
-  GAME.gameState.dayNightCycle.currentTOD = newTOD
+  GAME.gameState.currentTimeOfDay = newTOD
 }
 
 export default {
