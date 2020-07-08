@@ -27,7 +27,9 @@ PIXIMAP.initializePixiObjectsFromGame = function() {
 }
 
 PIXIMAP.onAssetsLoaded = function() {
+  PIXIMAP.initializeDarknessSprites()
   PIXIMAP.initializePixiObjectsFromGame()
+  window.local.emit('onGameReady')
 }
 
 PIXIMAP.onGameLoaded = function() {
@@ -38,13 +40,13 @@ PIXIMAP.onGameLoaded = function() {
     setInterval(PIXIMAP.updateDarknessSprites, 200)
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
-      PIXIMAP.initializeDarknessSprites()
     })
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
     PIXIMAP.objectStage.removeChildren()
     PIXIMAP.initializeDarknessSprites()
     PIXIMAP.initializePixiObjectsFromGame()
+    window.local.emit('onGameReady')
   }
 }
 
@@ -145,6 +147,7 @@ PIXIMAP.updateDarknessSprites = function() {
   const nodes = PIXIMAP.grid.nodes
   // if(!GAME.gameState.started) return
 
+  if(!GAME.objectsByTag) return
   const lightObjects = [...GAME.objectsByTag['light'], ...GAME.heroList]
   lightObjects.forEach((object) => {
     if(object.removed) return
@@ -152,10 +155,10 @@ PIXIMAP.updateDarknessSprites = function() {
 
     const { gridX, gridY } = gridUtil.convertToGridXY({x: object.x + PIXIMAP.grid.nodeSize/2, y: object.y + PIXIMAP.grid.nodeSize/2})
 
-    const startGridX = gridX - 7
-    const startGridY = gridY - 7
-    const endGridX = gridX + 7
-    const endGridY = gridY + 7
+    const startGridX = gridX - 5
+    const startGridY = gridY - 5
+    const endGridX = gridX + 5
+    const endGridY = gridY + 5
 
     for(let x = startGridX; x < endGridX +1; x++) {
       for(let y = startGridY; y < endGridY + 1; y++) {
@@ -166,9 +169,11 @@ PIXIMAP.updateDarknessSprites = function() {
 
         // if(x - gridX >= 1 || x - gridX <= -1 ) {
         // }
-        if(x - gridX == 5 || x - gridX == -5 || x - gridX == 6 || x - gridX == -6 || x - gridX == 7 || x - gridX == -7 ) {
+        // || x - gridX == 6 || x - gridX == -6 || x - gridX == 7 || x - gridX == -7
+        if(x - gridX == 5 || x - gridX == -5) {
           if(!node.light) node.light = 1
-        } else if(y - gridY == 5 || y - gridY == -5 || y - gridY == 6 || y - gridY == -6 || y - gridY == 7 || y - gridY == -7) {
+        // || y - gridY == 6 || y - gridY == -6 || y - gridY == 7 || y - gridY == -7
+        } else if(y - gridY == 5 || y - gridY == -5) {
           if(!node.light) node.light = 1
         } else {
           node.light = 2

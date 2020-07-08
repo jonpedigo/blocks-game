@@ -3,6 +3,7 @@ import onTalk from './onTalk'
 import onBehavior from './onBehavior'
 import onCombat from './onCombat'
 import { startQuest, completeQuest } from './quests'
+import { pickupObject } from './inventory'
 
 export default function onHeroTrigger(hero, collider, result, options = { fromInteractButton: false }) {
   const isInteraction = options.fromInteractButton
@@ -95,7 +96,15 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
     triggered = true
   }
 
+  if(collider.tags && collider.mod().tags['pickupable'] && collider.mod().tags['pickupOnHeroInteract'] && isInteraction) {
+    pickupObject(hero, collider)
+    triggered = true
+  }
 
+  if(collider.tags && collider.mod().tags['pickupable'] && collider.mod().tags['pickupOnHeroCollide']) {
+    pickupObject(hero, collider)
+    triggered = true
+  }
 
   if(collider.tags && triggered && collider.mod().tags['destroyAfterTrigger']) {
     collider._remove = true

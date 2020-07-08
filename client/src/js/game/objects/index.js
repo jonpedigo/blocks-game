@@ -111,6 +111,8 @@ class Objects{
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
       customState: object.customState,
+      inInventory: object.inInventory,
+      isEquipped: object.isEquipped,
     }
 
     if(object.subObjects) {
@@ -165,10 +167,9 @@ class Objects{
       namePos: object.namePos,
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
-
-      subObjects: object.subObjects,
-      originalHeight: object.originalHeight,
-      originalWidth: object.originalWidth,
+      
+      // inventory
+      count: object.count
 
       //
       constructParts: object.constructParts && object.constructParts.map((part) => {
@@ -184,7 +185,6 @@ class Objects{
       }),
 
       // sub objects
-      changeWithDirection: object.changeWithDirection,
       relativeWidth: object.relativeWidth,
       relativeHeight: object.relativeHeight,
 
@@ -300,6 +300,8 @@ class Objects{
     if(object.mod().tags['updateHeroOnHeroInteract'] && object.mod().tags.heroUpdate) return true
 
     if(object.mod().tags['talkOnHeroInteract'] && object.mod().tags.talker) return true
+
+    if(object.mod().tags['pickupOnHeroInteract'] && object.mod().tags.pickupable) return true
 
     if(object.mod().tags['showInteractBorder']) return true
 

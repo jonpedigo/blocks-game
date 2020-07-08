@@ -219,13 +219,13 @@ function objectCollisionEffects(po) {
 
       const isInteractable = OBJECTS.isInteractable(collider)
       if(agent.mod().tags['heroInteractTriggerArea'] && isInteractable) {
-        // sometimes the hero could be logged off
         let hero = GAME.heros[agent.ownerId]
+        // sometimes the hero could be logged off
         if(hero) {
           if(!hero.interactableObject) {
             hero.interactableObject = collider
             hero.interactableObjectResult = result
-          } else if(collider.width < hero.interactableObject.width || collider.height < hero.interactableObject.height) {
+          } else if(collider.mod().width < hero.interactableObject.mod().width || collider.mod().height < hero.interactableObject.mod().height) {
             hero.interactableObject = collider
             hero.interactableObjectResult = result
           }

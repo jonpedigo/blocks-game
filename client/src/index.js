@@ -1,4 +1,5 @@
 /*
+// THE BEST FEATURES ARE THE ONES THAT THE PLAYER THINKS EXISTS BUT ACTUALLY DOESNT
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 // TODO
@@ -7,37 +8,36 @@
 ///
 // Before the compendium, there are basic graphical objects that every game will access
 1) Background tiles ( put on grid nodes ?)
-2) Obstacles ( no other functionaliy ) ( via construct editor )
-3) Sprites/Blocks/Obstacles
-4) Zones
-5) Particle Emitter
-6) Actor
-7) Animal ? idk / Monster
-8) environment -> Lava, water
-9) Lights
+XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
+XXX3) Zones ( spawn zone, filters, idk, its just an invisible object )
+XXX4) Particle Emitter
+XXX5) Moving Object ( starts with dialogue and some path finding?, has an awareness area subobject and a pf object? )
+6) special environment -> Lava, water, tree (?), mountain, sand, ice
+XXX7) Lights
+8) Droppable
+9) Sounds
+XXX10) game objects ( quest, sequence, timer, trigger, hook )
+11) Resource Management ( stores, resource, resource pool )
 
-// has shadow
-// casts shadow
+MENUS
+world--
+day night editor
+camera editor
+grid editor
 
-( quest, timer, trigger, hook )
+object--
+spawn zone editor
+path editor
+physics editor
+inventory editor
+light editor
 
-1) give flashlights sprites
-///
-
-
-// uhh oK
+// Chest is more than just object on ground. The point of chests is something else...
+// Chest that leads to random item in compendium? or leads to random subObject, what are the conditions of this randomness? ( the time.., etc )
 // construct Parts copy when you create new ones
-// try to create a day/night mode
-
-// create light tags
-// create particle tags
-pixi- ease
-pixi particles -> more
-// particles/lights/timers/spawnZones <--- ALL ARE SPECIAL TYPES OF OBJECTS
 
 1) < --- LITERALLY OMG? <-- https://github.com/claus/react-dat-gui
 https://github.com/dataarts/dat.gui
-
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )
 
@@ -88,6 +88,7 @@ PHYSICS EDITOR <---- !
 SPAWN ZONE EDITOR <---- !
 
 PATHFINDING editor / advancements <---- !
+// objects have their own path?
 // pathfinding editor should fit inside of the sequence editor
 // path goals AKA patrol
 // path 1, path 2, path 3 with conditions
@@ -103,6 +104,8 @@ JUICE <---- !
 Finish feature list
 
 !!!!!!!! !!!! READY FOR BETA !!!! !!!!!!
+
+FOG OF WAR
 
 CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
 SOUND FX
@@ -154,6 +157,7 @@ Target/Homing awareness area
 // change tag filled -> tag solid color outline
 // add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
+// name system -> sub object system
 
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
@@ -268,6 +272,8 @@ Engine trail on a car u know what I mean?
 // view current POWERS
 // VIEW DIFF from default version of this object
 // auto save game state to DB, restore game state
+
+// combine objectsById and objectsByTag with hero versions. Heros ARE objects. We can use .objectList and .heroList to diffentiate
 
 // () => syntax in react PLEASE so no more binding
 

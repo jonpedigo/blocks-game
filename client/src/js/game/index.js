@@ -724,7 +724,7 @@ class Game{
 
   onResetObjects() {
     GAME.objects.forEach((object) => {
-      PHYSICS.removeObject(object)
+      window.local.emit('onDeleteObject', object)
     }, [])
     GAME.objects = []
     GAME.objectsById = {}

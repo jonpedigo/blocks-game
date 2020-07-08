@@ -243,7 +243,7 @@ function testIsSubObjectEquipped(name, testObject, options) {
 
 function testIsSubObjectInInvestory(name, testObject, options) {
   if(options.testModdedVersion) testObject = testObject.mod()
-  return testObject.subObjects[name] && testObject.subObjects[name].isInInventory
+  return testObject.subObjects[name] && testObject.subObjects[name].inInventory
 }
 
 function testHasTag(tag, testObject, options) {

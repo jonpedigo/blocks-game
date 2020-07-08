@@ -470,6 +470,7 @@ class Hero{
         mapState.subObjects[subObjectName].y = subObject.y
         mapState.subObjects[subObjectName].width = subObject.width
         mapState.subObjects[subObjectName].height = subObject.height
+        mapState.subObjects[subObjectName].tags = subObject.tags
       })
     }
 

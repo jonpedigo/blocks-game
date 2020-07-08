@@ -84,11 +84,11 @@ function setDefault() {
     glowing: false,
     filled: false,
     invisible: false,
-    tilingSprite: false,
+    tilingSprite: false, //cant change
     inputDirectionSprites: false,
     light: false,
-    shadowObscured: false,
-    shadowCaster: false,
+    // shadowObscured: false,
+    // shadowCaster: false,
     // invisibleOnHeroCollide
   }
 
@@ -100,8 +100,20 @@ function setDefault() {
     heroCameraShakeOnHeroCollide_long: false,
   }
 
+  window.inventoryTags = {
+    pickupable: false,
+    dontDestroyOnPickup: false,
+    pickupOnHeroInteract: false,
+    pickupOnHeroCollide: false,
+    equippable: false,
+    equipOnPickup: false,
+    // potential: false,
+    stackable: false,
+    existsWhenEquipped: false, //cant change
+  }
+
   window.particleTags = {
-    emitter: false,
+    emitter: false, //cant change
   }
 
   window.descriptiveTags = {
@@ -124,6 +136,7 @@ function setDefault() {
     ...window.descriptiveTags,
     ...window.cameraTags,
     ...window.particleTags,
+    ...window.inventoryTags,
   }
 
   window.plainObjectTags = {
@@ -146,7 +159,7 @@ function setDefault() {
     objectInteractTriggerArea: false,
     relativeToDirection: false,
     relativeToAngle: false,
-    potential: false,
+    potential: false, //cant change
   }
 
   window.keyInputTags = {

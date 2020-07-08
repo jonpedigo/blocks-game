@@ -9,14 +9,13 @@ export default class TagMenu extends React.Component{
       const { objectSelected } = this.props;
       const { networkEditObject } = MAPEDITOR
 
-      // LOCAL TAGS ALLOWS US TO SEE WHAT TAGS WE HAVE ADDED W CHECKMARSK!!
+      const newValue = !this.state.localTags[key]
       this.setState({ localTags: {
         ...this.state.localTags,
-        [key]: !this.state.localTags[key]
+        [key]: newValue
       }})
 
-
-      networkEditObject(objectSelected, { tags: { [key]: !objectSelected.tags[key] }})
+      networkEditObject(objectSelected, { tags: { [key]: newValue }})
     }
 
     this.state = {
@@ -74,6 +73,9 @@ export default class TagMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Particle">
         {this._renderTagMenuItems(window.particleTags)}
+      </SubMenu>
+      <SubMenu title="Inventory">
+        {this._renderTagMenuItems(window.inventoryTags)}
       </SubMenu>
       {subObject && <SubMenu title="Sub Object">
         {this._renderTagMenuItems(window.subObjectTags)}
