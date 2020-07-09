@@ -281,7 +281,7 @@ function updateProperties(pixiChild, gameObject) {
   }
 }
 
-const addGameObjectToStage = (gameObject, stage, constructPart) => {
+const addGameObjectToStage = (gameObject, stage) => {
   /////////////////////
   /////////////////////
   // SELECT CAMERA
@@ -290,7 +290,7 @@ const addGameObjectToStage = (gameObject, stage, constructPart) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
-  if(PAGE.role.isHost && !constructPart) gameObject = gameObject.mod()
+  if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   /////////////////////
   /////////////////////
@@ -329,7 +329,7 @@ const addGameObjectToStage = (gameObject, stage, constructPart) => {
     PIXIMAP.hero = addedChild
   }
 
-  if(!constructPart) updatePixiObject(gameObject)
+  updatePixiObject(gameObject)
 
   return addedChild
 }

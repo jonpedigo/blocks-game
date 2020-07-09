@@ -59,8 +59,8 @@ function update(camera) {
     if(object.id === CONSTRUCTEDITOR.objectId) return
     if(object.constructParts) {
       drawTools.drawConstructParts(ctx, camera, object)
-    }
-    if(!object.tags.filled) {
+
+    } else if(!object.tags.filled) {
       if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
         drawTools.drawObject(ctx, object, camera)
       }

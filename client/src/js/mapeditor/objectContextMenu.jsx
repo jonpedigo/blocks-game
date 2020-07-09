@@ -50,6 +50,10 @@ export default class ObjectContextMenu extends React.Component{
       if(key === 'copy') {
         onCopy(objectSelected)
       }
+
+      if(key === 'drop') {
+        window.socket.emit('dropObject', objectSelected.ownerId, objectSelected.subObjectName)
+      }
     }
   }
 
@@ -112,6 +116,7 @@ export default class ObjectContextMenu extends React.Component{
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}
+      { subObject && <MenuItem key="drop">Drop</MenuItem> }
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
       <SubMenu title="Advanced">
         <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>
