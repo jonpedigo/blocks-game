@@ -1,8 +1,11 @@
 /*
 // THE BEST FEATURES ARE THE ONES THAT THE PLAYER THINKS EXISTS BUT ACTUALLY DOESNT
+// U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 // TODO
+SPRITE CONSTRUCT PART
+BACKGROUND/GRID SPRITES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 ///
@@ -35,7 +38,6 @@ light editor
 
 // Chest is more than just object on ground. The point of chests is something else...
 // Chest that leads to random item in compendium? or leads to random subObject, what are the conditions of this randomness? ( the time.., etc )
-// construct Parts copy when you create new ones
 
 1) < --- LITERALLY OMG? <-- https://github.com/claus/react-dat-gui
 https://github.com/dataarts/dat.gui
@@ -163,6 +165,7 @@ Target/Homing awareness area
 // KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
 // INTERACT MENU if theres > 1 type of interaction available
 // ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
+// animation compendium
 
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////

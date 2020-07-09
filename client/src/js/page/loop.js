@@ -54,13 +54,13 @@ var mainLoop = function () {
 
     // TESTING...Report #seconds since start and achieved fps.
     var sinceStart = now - startTime;
-    var currentFps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
+    var currentUps = Math.round(1000 / (sinceStart / ++frameCount) * 100) / 100;
     if(frameCount > 10) {
       frameCount = 0
       startTime = Date.now()
     }
 
-    PAGE.fps = currentFps;
+    PAGE.ups = currentUps;
 
     update(deltaUpdate / 1000);
   }

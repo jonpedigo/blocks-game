@@ -99,6 +99,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   world = app.stage
 
   PIXIMAP.stage = world
+  PIXIMAP.app.ticker.maxFPS = 24
 
 
   ///////////////
@@ -111,9 +112,10 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
-
   PIXIMAP.backgroundStage.addChild(PIXIMAP.backgroundOverlay)
 
+  PIXIMAP.gridStage = new PIXI.display.Layer()
+  world.addChild(PIXIMAP.gridStage);
 
   ///////////////
   ///////////////
@@ -185,6 +187,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // UPDATE FILTERS AND EMITTERS
   app.ticker.add(function(delta) {
+    PAGE.fps = app.ticker.FPS
     function updateFilters(filter) {
       // if(filter instanceof GodrayFilter) {
       //   filter.time+=delta/100
@@ -231,6 +234,9 @@ const initPixiApp = (canvasRef, onLoad) => {
         window.resettingDarkness = true
       }
     }
+    window.local.on('onHeroZoomChange', () => {
+      onResize()
+    })
     window.addEventListener("resize", onResize);
     onResize()
   }
@@ -288,7 +294,6 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures['spencer-1'] = texture
       PIXIMAP.textures = textures
       PIXIMAP.assetsLoaded = true
-
       onLoad(app, textures)
     })
   })

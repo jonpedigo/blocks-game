@@ -38,6 +38,7 @@ PIXIMAP.onGameLoaded = function() {
   if(!PIXIMAP.assetsLoaded) {
     setInterval(PIXIMAP.resetDarknessSprites, 200)
     setInterval(PIXIMAP.updateDarknessSprites, 200)
+    setInterval(PIXIMAP.updateBlockSprites, 300)
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
     })
@@ -87,7 +88,6 @@ PIXIMAP.deleteObject = function(object) {
   if(pixiChild.emitter) {
     PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
       if(pixiChild.emitter === emitter) {
-        console.log("FPIMD EMITTER")
         return false
       }
       return true
@@ -111,6 +111,7 @@ PIXIMAP.onRender = function() {
   if(PIXIMAP.assetsLoaded) {
     MAP.canvas.style.backgroundColor = ''
     PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
+    PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
     GAME.objects.forEach((object) => {
       updatePixiObject(object, PIXIMAP.stage)
     })
@@ -122,6 +123,10 @@ PIXIMAP.onRender = function() {
     if(PIXIMAP.shadowStage) {
       PIXIMAP.shadowStage.pivot.x = camera.x
       PIXIMAP.shadowStage.pivot.y = camera.y
+    }
+    if(PIXIMAP.gridStage) {
+      PIXIMAP.gridStage.pivot.x = camera.x
+      PIXIMAP.gridStage.pivot.y = camera.y
     }
   }
 }
@@ -188,6 +193,8 @@ PIXIMAP.updateDarknessSprites = function() {
         // if(x - gridX === 0 || x - gridX == 1 || x - gridX == -1) {
         //   node.light = 3
         // }
+
+
       }
     }
   })
@@ -224,6 +231,7 @@ PIXIMAP.updateDarknessSprites = function() {
 PIXIMAP.initializeDarknessSprites = function() {
   PIXIMAP.grid = _.cloneDeep(GAME.grid)
   PIXIMAP.shadowStage.removeChildren()
+  PIXIMAP.gridStage.removeChildren()
   const nodes = PIXIMAP.grid.nodes
   const textures = PIXIMAP.textures
   for(var x = 0; x < nodes.length; x++) {
@@ -237,10 +245,64 @@ PIXIMAP.initializeDarknessSprites = function() {
       darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier
       darknessSprite.transform.scale.y = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.height) * MAP.camera.multiplier
       darknessSprite.tint = parseInt(tinycolor("black").toHex(), 16)
-      // PIXIMAP.cameraOverlay.tint = parseInt(tinycolor("rgb(0, 0, 100)").toHex(), 16)
 
       node.darknessSprite = darknessSprite
-      // darknessSprite.alpha = 0
+
+      PIXIMAP.initBackgroundSprite(node, node.sprite)
+    }
+  }
+}
+
+PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
+  if(!nodeSprite) {
+    return
+  }
+  const textures = PIXIMAP.textures
+  const sprite = new PIXI.Sprite(textures[nodeSprite])
+  sprite.x = node.x * MAP.camera.multiplier
+  sprite.y = node.y * MAP.camera.multiplier
+  sprite.transform.scale.x = (GAME.grid.nodeSize/sprite.texture._frame.width) * MAP.camera.multiplier
+  sprite.transform.scale.y = (GAME.grid.nodeSize/sprite.texture._frame.width) * MAP.camera.multiplier
+  sprite.name = 'x' + node.gridX + 'y' + node.gridY
+  const backgroundSprite = PIXIMAP.gridStage.addChild(sprite)
+  node.backgroundSprite = backgroundSprite
+}
+
+PIXIMAP.updateBlockSprites = function() {
+  if(!PIXIMAP.grid) return
+
+  const nodes = PIXIMAP.grid.nodes
+  const hero = GAME.heros[HERO.id]
+  const textures = PIXIMAP.textures
+
+  const { gridX, gridY } = gridUtil.convertToGridXY({x: hero.x + PIXIMAP.grid.nodeSize/2, y: hero.y + PIXIMAP.grid.nodeSize/2})
+
+  for(var x = 0; x < nodes.length; x++) {
+    const row = nodes[x]
+    for(var y = 0; y < row.length; y++) {
+      const node = row[y]
+      const gridNode = GAME.grid.nodes[x][y]
+
+      if(gridNode.sprite && !node.backgroundSprite) {
+        PIXIMAP.initBackgroundSprite(node, gridNode.sprite)
+      }
+
+      // if(node.backgroundSprite) {
+      //   if(node.backgroundSprite.texture.id !== gridNode.sprite) {
+      //     node.backgroundSprite.texture = textures[gridNode.sprite]
+      //   }
+      // }
+
+      // if(Math.abs(gridX - x) > 32) {
+      //   node.darknessSprite.visible = false
+      //   if(node.backgroundSprite) node.backgroundSprite.visible = false
+      // } else if(Math.abs(gridY - y) > 20) {
+      //   node.darknessSprite.visible = false
+      //   if(node.backgroundSprite) node.backgroundSprite.visible = false
+      // } else {
+      //   node.darknessSprite.visible = true
+      //   if(node.backgroundSprite) node.backgroundSprite.visible = true
+      // }
     }
   }
 }

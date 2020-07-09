@@ -482,6 +482,9 @@ class Hero{
       updatedHero.velocityX = 0
       updatedHero.velocityY = 0
     }
+    if(updatedHero.zoomMultiplier) {
+      window.local.emit('onHeroZoomChange', updatedHero.id)
+    }
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }
 
