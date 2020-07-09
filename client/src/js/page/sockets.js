@@ -342,6 +342,10 @@ function init() {
     window.local.emit('onHeroCameraEffect', type, heroId, options)
   })
 
+  window.socket.on('onDropObject', (objectId, subObjectName) => {
+    window.local.emit('onDropObject', objectId, subObjectName)
+  })
+
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {
     window.socket.on('onHostLog', (msg, arg1, arg2, arg3) => {
       let args = [msg, arg1, arg2, arg3].filter(i => !!i)

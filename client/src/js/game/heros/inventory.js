@@ -36,11 +36,10 @@ function pickupObject(hero, collider) {
     window.local.emit('onHeroEquip', hero, subObject)
   }
 
-  window.local.emit('onHeroPickup', hero, subObject)
+  // window.local.emit('onHeroPickup', hero, subObject)
 
   // dont add a new subObject
   if(subObjectAlreadyExisted) return
-
 
   hero.interactableObject = null
   hero.interactableObjectResult = null
@@ -48,6 +47,32 @@ function pickupObject(hero, collider) {
   window.socket.emit('addSubObject', hero, subObject, subObject.id)
 }
 
+function dropObject(hero, subObject) {
+  let subObjectStillHasCount = false
+  if(subObject.tags.stackable && subobject.count >= 1) {
+    subObject.count--
+    subObjectStillHasCount = true
+  }
+
+  let object = _.cloneDeep(subObject.mod())
+
+  object.id = 'object-' + window.uniqueID()
+  object.removed = false
+  object.tags.potential = false
+  delete object.inInventory
+  delete object.isEquipped
+
+  // window.local.emit('onHeroDrop', hero, object)
+  window.socket.emit('addObjects', [object])
+
+  if(!subObjectStillHasCount) {
+    hero.interactableObject = null
+    hero.interactableObjectResult = null
+    window.socket.emit('deleteSubObject', hero, subObject.subObjectName)
+  }
+}
+
 export {
   pickupObject,
+  dropObject,
 }

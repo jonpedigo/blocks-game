@@ -31,6 +31,32 @@ const updatePixiObject = (gameObject) => {
     return
   }
 
+  // /////////////////////
+  // /////////////////////
+  // // CONSTRUCT PARTS
+  // if(gameObject.constructParts) {
+  //   gameObject.constructParts.forEach((part) => {
+  //     let sprite = part.sprite
+  //     let color = part.color
+  //     let defaultSprite = part.defaultSprite
+  //     if(!part.sprite) {
+  //       sprite = gameObject.sprite
+  //     }
+  //     if(!part.defaultSprite) {
+  //       sprite = gameObject.sprite
+  //     }
+  //     if(!part.color) {
+  //       color = gameObject.color
+  //     }
+  //     const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  //     const partPixiChild = pixiChild.getChildByName(part.id)
+  //     updateProperties(partPixiChild, partObject)
+  //   })
+  //
+  //   return
+  // }
+
+
   /////////////////////
   /////////////////////
   // UPDATE EMITTER
@@ -90,7 +116,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   /////////////////////
   /////////////////////
   // INVISIBILITY
-  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
+  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
   // remove if its invisible now
   if (isInvisible) {
     if(pixiChild.emitter) {
@@ -147,28 +173,8 @@ function initEmitter(gameObject) {
 function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
-  // CONSTRUCT PARTS
-  if(gameObject.constructParts) {
-    gameObject.constructParts.forEach((part) => {
-      let sprite = part.sprite
-      let color = part.color
-      if(!part.sprite) {
-        sprite = 'solidcolorsprite'
-      }
-      if(!part.color) {
-        color = gameObject.color
-      }
-      const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: 'solidcolorsprite'}
-      updatePixiObject(partObject)
-    })
-    return
-  }
-
-
-  /////////////////////
-  /////////////////////
   // INVISIBILITY
-  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential
+  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
   // remove if its invisible now
   if (isInvisible) {
     pixiChild.visible = false
@@ -275,7 +281,7 @@ function updateProperties(pixiChild, gameObject) {
   }
 }
 
-const addGameObjectToStage = (gameObject, stage) => {
+const addGameObjectToStage = (gameObject, stage, constructPart) => {
   /////////////////////
   /////////////////////
   // SELECT CAMERA
@@ -284,7 +290,7 @@ const addGameObjectToStage = (gameObject, stage) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
-  if(PAGE.role.isHost) gameObject = gameObject.mod()
+  if(PAGE.role.isHost && !constructPart) gameObject = gameObject.mod()
 
   /////////////////////
   /////////////////////
@@ -304,7 +310,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   } else {
     sprite = new PIXI.Sprite(texture)
   }
-  sprite.parentGroup = PIXIMAP.sortGroup
+  if(stage === PIXIMAP.objectStage) sprite.parentGroup = PIXIMAP.sortGroup
 
   /////////////////////
   /////////////////////
@@ -323,7 +329,7 @@ const addGameObjectToStage = (gameObject, stage) => {
     PIXIMAP.hero = addedChild
   }
 
-  updatePixiObject(gameObject)
+  if(!constructPart) updatePixiObject(gameObject)
 
   return addedChild
 }
@@ -337,15 +343,15 @@ const initPixiObject = (gameObject) => {
     return
   }
 
-  if(gameObject.constructParts) {
-    const container = new PIXI.Container()
-    gameObject.constructParts.forEach((part) => {
-      addGameObjectToStage({tags: gameObject.tags, ...part}, container)
-    })
-    container.name = gameObject.id
-    PIXIMAP.objectStage.addChild(container)
-    return
-  }
+  // if(gameObject.constructParts) {
+  //   const container = new PIXI.Container()
+  //   gameObject.constructParts.forEach((part) => {
+  //     addGameObjectToStage({tags: gameObject.tags, ...part}, container, true)
+  //   })
+  //   container.name = gameObject.id
+  //   // PIXIMAP.objectStage.addChild(container)
+  //   return
+  // }
 
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {

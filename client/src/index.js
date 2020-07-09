@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////
 ///
 // Before the compendium, there are basic graphical objects that every game will access
+// THE DEFAULT COMPENDIUM
 1) Background tiles ( put on grid nodes ?)
 XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
 XXX3) Zones ( spawn zone, filters, idk, its just an invisible object )
@@ -158,6 +159,9 @@ Target/Homing awareness area
 // add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
 // name system -> sub object system
+// KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
+// INTERACT MENU if theres > 1 type of interaction available
+// ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
@@ -228,6 +232,8 @@ Zoom blur filter — Perhaps when you are like low on health??
   // striped object!
 
 have layered border, just draw another version at +2 and +4 and +6, -2 etc..
+
+SHINE effect
 
 Shakes
 	Object Shakes

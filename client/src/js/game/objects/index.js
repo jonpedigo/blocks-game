@@ -3,6 +3,7 @@ import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import triggers from '../triggers.js'
+import { dropObject } from '../heros/inventory.js'
 
 class Objects{
   constructor() {
@@ -167,11 +168,10 @@ class Objects{
       namePos: object.namePos,
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
-      
-      // inventory
-      count: object.count
 
-      //
+      // inventory
+      count: object.count,
+
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
           id: part.id,
@@ -534,8 +534,6 @@ class Objects{
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
     subObject.id = subObjectName + '-' + window.uniqueID()
-    if(!subObject.originalWidth) subObject.originalWidth  = subObject.width
-    if(!subObject.originalHeight) subObject.originalHeight = subObject.height
 
     owner.subObjects[subObjectName] = subObject
     if(!subObject.tags.potential) PHYSICS.addObject(subObject)
@@ -667,8 +665,12 @@ class Objects{
   onEditSubObject(ownerId, subObjectName, update) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     window.mergeDeep(owner.subObjects[subObjectName], update)
-    owner.subObjects[subObjectName].originalWidth = owner.subObjects[subObjectName].width
-    owner.subObjects[subObjectName].originalHeight = owner.subObjects[subObjectName].height
+  }
+
+  onDropObject(objectId, subObjectName) {
+    const dropper = OBJECTS.getObjectOrHeroById(objectId)
+    const dropping = dropper.subObjects[subObjectName]
+    dropObject(dropper, dropping)
   }
 
   onNetworkUpdateObjects(objectsUpdated) {

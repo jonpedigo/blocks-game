@@ -147,8 +147,11 @@ PIXIMAP.updateDarknessSprites = function() {
   const nodes = PIXIMAP.grid.nodes
   // if(!GAME.gameState.started) return
 
-  if(!GAME.objectsByTag) return
-  const lightObjects = [...GAME.objectsByTag['light'], ...GAME.heroList]
+  let lights = []
+  if(GAME.objectsByTag && GAME.objectsByTag['light']) {
+    lights =  GAME.objectsByTag['light']
+  }
+  const lightObjects = [...lights, ...GAME.heroList]
   lightObjects.forEach((object) => {
     if(object.removed) return
     if(object.tags.potential) return

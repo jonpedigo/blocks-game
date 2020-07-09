@@ -251,7 +251,6 @@ function testHasTag(tag, testObject, options) {
   return testObject.tags[tag]
 }
 
-
 function testEventMatch(eventName, mainObject, guestObject, condition, ownerObject, options = { allTestedMustPass: false, testPassReverse: false, testModdedVersion: false }) {
   let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = condition
 

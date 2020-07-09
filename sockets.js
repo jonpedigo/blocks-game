@@ -375,6 +375,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onHeroCameraEffect', type, heroId, options)
   })
 
+  socket.on('dropObject', (objectId, subObjectName) => {
+    io.emit('onDropObject', objectId, subObjectName)
+  })
+
   socket.on('hostLog', (msg, arg1, arg2, arg3) => {
     let args = [msg, arg1, arg2, arg3].filter(i => !!i)
     io.emit('onHostLog', ...args)
