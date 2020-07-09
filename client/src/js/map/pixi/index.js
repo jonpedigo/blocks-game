@@ -263,9 +263,10 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
   sprite.y = node.y * MAP.camera.multiplier
   sprite.transform.scale.x = (GAME.grid.nodeSize/sprite.texture._frame.width) * MAP.camera.multiplier
   sprite.transform.scale.y = (GAME.grid.nodeSize/sprite.texture._frame.width) * MAP.camera.multiplier
-  sprite.name = 'x' + node.gridX + 'y' + node.gridY
   const backgroundSprite = PIXIMAP.gridStage.addChild(sprite)
   node.backgroundSprite = backgroundSprite
+  node.backgroundSprite.name = 'x' + node.gridX + 'y' + node.gridY
+
 }
 
 PIXIMAP.updateBlockSprites = function() {
@@ -283,26 +284,33 @@ PIXIMAP.updateBlockSprites = function() {
       const node = row[y]
       const gridNode = GAME.grid.nodes[x][y]
 
+      // add
       if(gridNode.sprite && !node.backgroundSprite) {
         PIXIMAP.initBackgroundSprite(node, gridNode.sprite)
       }
 
-      // if(node.backgroundSprite) {
-      //   if(node.backgroundSprite.texture.id !== gridNode.sprite) {
-      //     node.backgroundSprite.texture = textures[gridNode.sprite]
-      //   }
-      // }
+      // delete
+      if((gridNode.sprite === 'none' || !gridNode.sprite) && node.backgroundSprite) {
+        PIXIMAP.gridStage.removeChild(node.backgroundSprite)
+      }
 
-      // if(Math.abs(gridX - x) > 32) {
-      //   node.darknessSprite.visible = false
-      //   if(node.backgroundSprite) node.backgroundSprite.visible = false
-      // } else if(Math.abs(gridY - y) > 20) {
-      //   node.darknessSprite.visible = false
-      //   if(node.backgroundSprite) node.backgroundSprite.visible = false
-      // } else {
-      //   node.darknessSprite.visible = true
-      //   if(node.backgroundSprite) node.backgroundSprite.visible = true
-      // }
+      // change
+      if(node.backgroundSprite) {
+        if(node.backgroundSprite.texture.id !== gridNode.sprite) {
+          node.backgroundSprite.texture = textures[gridNode.sprite]
+        }
+      }
+
+      if(Math.abs(gridX - x) > 32) {
+        node.darknessSprite.visible = false
+        if(node.backgroundSprite) node.backgroundSprite.visible = false
+      } else if(Math.abs(gridY - y) > 20) {
+        node.darknessSprite.visible = false
+        if(node.backgroundSprite) node.backgroundSprite.visible = false
+      } else {
+        node.darknessSprite.visible = true
+        if(node.backgroundSprite) node.backgroundSprite.visible = true
+      }
     }
   }
 }

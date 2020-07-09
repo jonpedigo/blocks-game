@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 // TODO
+UI FOR BOTH
 SPRITE CONSTRUCT PART
 BACKGROUND/GRID SPRITES
 ////////////////////////////////////////////////////
@@ -85,6 +86,8 @@ WORLD EDITOR <---- !
   // zoom to all objects
 
 ***TEST GAME LIMITS FOR GRID SIZE / PATHFINDING SIZES
+  - in a short test I found a pretty large limit for the world size
+  - the biggest performance hits are rendering and pathfinding
 
 PHYSICS EDITOR <---- !
   // turn into live property editor essentially ( combine with spawn zone and timer editor ? )
