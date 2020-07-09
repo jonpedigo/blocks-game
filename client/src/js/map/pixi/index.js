@@ -71,6 +71,11 @@ PIXIMAP.onDeleteSubObject = function(object, subObjectName) {
 PIXIMAP.deleteObject = function(object) {
   const stage = PIXIMAP.objectStage
 
+  if(object.constructParts) {
+    object.constructParts.forEach((part) => {
+      PIXIMAP.deleteObject(part)
+    })
+  }
   const pixiChild = stage.getChildByName(object.id)
   if(!pixiChild) return
   if(pixiChild.children && pixiChild.children.length) {
@@ -120,8 +125,6 @@ PIXIMAP.onRender = function() {
     }
   }
 }
-
-
 
 PIXIMAP.resetDarknessSprites = function() {
   if(!PIXIMAP.grid) return

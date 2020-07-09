@@ -154,6 +154,7 @@ Target/Homing awareness area
 // 3d sound effects system from papa bear
 // Construct editor in top right ( global construct object that is just a stationary obstacle )
 // layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
+// ALSO ^^ if an object is a certain size allow selection of 'world' menu
 // EDITOR UI OPTIONS - admin toggle, global construct, which context menu, creator/player/lobby/waiting, run local simulation, power UI toggle,
 // change tag filled -> tag solid color outline
 // add sprites to construct editor

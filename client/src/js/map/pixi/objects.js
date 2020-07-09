@@ -22,6 +22,22 @@ const updatePixiObject = (gameObject) => {
     })
   }
 
+
+    /////////////////////
+    /////////////////////
+    // CONSTRUCT PARTS
+    if(gameObject.constructParts) {
+      gameObject.constructParts.forEach((part) => {
+        let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
+        let color = part.color || gameObject.color || GAME.world.defaultObjectColor
+        let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
+        const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+        updatePixiObject(partObject)
+      })
+
+      return
+    }
+
   /////////////////////
   /////////////////////
   // GET CHILD
@@ -30,31 +46,6 @@ const updatePixiObject = (gameObject) => {
     initPixiObject(gameObject)
     return
   }
-
-  // /////////////////////
-  // /////////////////////
-  // // CONSTRUCT PARTS
-  // if(gameObject.constructParts) {
-  //   gameObject.constructParts.forEach((part) => {
-  //     let sprite = part.sprite
-  //     let color = part.color
-  //     let defaultSprite = part.defaultSprite
-  //     if(!part.sprite) {
-  //       sprite = gameObject.sprite
-  //     }
-  //     if(!part.defaultSprite) {
-  //       sprite = gameObject.sprite
-  //     }
-  //     if(!part.color) {
-  //       color = gameObject.color
-  //     }
-  //     const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
-  //     const partPixiChild = pixiChild.getChildByName(part.id)
-  //     updateProperties(partPixiChild, partObject)
-  //   })
-  //
-  //   return
-  // }
 
 
   /////////////////////
@@ -343,15 +334,12 @@ const initPixiObject = (gameObject) => {
     return
   }
 
-  // if(gameObject.constructParts) {
-  //   const container = new PIXI.Container()
-  //   gameObject.constructParts.forEach((part) => {
-  //     addGameObjectToStage({tags: gameObject.tags, ...part}, container, true)
-  //   })
-  //   container.name = gameObject.id
-  //   // PIXIMAP.objectStage.addChild(container)
-  //   return
-  // }
+  if(gameObject.constructParts) {
+    gameObject.constructParts.forEach((part) => {
+      addGameObjectToStage({tags: gameObject.tags, ...part}, PIXIMAP.objectStage)
+    })
+    return
+  }
 
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
