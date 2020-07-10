@@ -1,10 +1,11 @@
 import React from 'react'
 import DialogueBox from './DialogueBox.jsx'
+import Inventory from './Inventory.jsx'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import modals from './modals.js';
 
-export default class Root extends React.Component{
+export default class Root extends React.Component {
   constructor(props) {
     super(props)
 
@@ -12,12 +13,12 @@ export default class Root extends React.Component{
       activeQuest: {},
       gameState: {},
       toastingActiveQuestGoalId: null,
-      toastingActiveQuestGoalToastId : null,
+      toastingActiveQuestGoalToastId: null,
+      showInventory: false,
     }
 
     this.onUpdateState = () => {
       const hero = GAME.heros[HERO.id]
-
       this.setState({
         activeQuest: this._getActiveQuest(hero),
         quests: hero.quests,
@@ -26,42 +27,50 @@ export default class Root extends React.Component{
       })
     }
 
-    this.onHeroStartQuest = function(hero, questId) {
+    this.onHeroStartQuest = function (hero, questId) {
       const quest = hero.quests[questId]
-      if(hero.id === HERO.id && quest) {
-        if(quest.startMessage.length) {
+      if (hero.id === HERO.id && quest) {
+        if (quest.startMessage.length) {
           modals.openModal(quest.id + ' Started!', quest.startMessage)
         } else {
-          toast('quest started: ' + quest.id , {
-             position:"top-right",
-             autoClose: 6000,
-             newestOnTop:true,
+          toast('quest started: ' + quest.id, {
+            position: "top-right",
+            autoClose: 6000,
+            newestOnTop: true,
           })
         }
       }
     }
 
-    this.onHeroCompleteQuest = function(hero, questId) {
+    this.onHeroCompleteQuest = function (hero, questId) {
       const quest = hero.quests[questId]
-      if(hero.id === HERO.id && quest) {
-        if(quest.completionMessage.length) {
+      if (hero.id === HERO.id && quest) {
+        if (quest.completionMessage.length) {
           modals.openModal(quest.id + ' Complete!', quest.completionMessage)
         } else {
-          toast('quest completed: ' + quest.id , {
-             position:"top-right",
-             autoClose: 6000,
-             newestOnTop:true,
+          toast('quest completed: ' + quest.id, {
+            position: "top-right",
+            autoClose: 6000,
+            newestOnTop: true,
           })
         }
       }
     }
+    this._toggleInventory = this._toggleInventory.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this._toggleInventory, false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this._toggleInventory, false);
   }
 
   _getActiveQuest(hero) {
     let activeQuest;
-    if(hero.questState) {
+    if (hero.questState) {
       Object.keys(hero.questState).forEach((questId) => {
-        if(hero.questState[questId].active) {
+        if (hero.questState[questId].active) {
           activeQuest = hero.quests[questId]
         }
       })
@@ -76,8 +85,8 @@ export default class Root extends React.Component{
       toastingActiveQuestGoalToastId
     } = this.state;
 
-    if(!activeQuest) {
-      if(toastingActiveQuestGoalToastId) {
+    if (!activeQuest) {
+      if (toastingActiveQuestGoalToastId) {
         toast.dismiss(toastingActiveQuestGoalToastId)
       }
       this.setState({
@@ -88,8 +97,8 @@ export default class Root extends React.Component{
       return
     }
 
-    if(activeQuest && activeQuest.id !== toastingActiveQuestGoalId) {
-      if(toastingActiveQuestGoalToastId) {
+    if (activeQuest && activeQuest.id !== toastingActiveQuestGoalId) {
+      if (toastingActiveQuestGoalToastId) {
         toast.dismiss(toastingActiveQuestGoalToastId)
       }
 
@@ -100,16 +109,24 @@ export default class Root extends React.Component{
     }
   }
 
+  _toggleInventory(event) {
+    if (event.code === "KeyI") {
+      this.setState({ showInventory: !this.state.showInventory })
+    }
+  }
+
   render() {
-    if(CONSTRUCTEDITOR.open) return null
-    if(!GAME.gameState || !GAME.gameState.loaded) return null
-
+    const { showInventory } = this.state;
+    if (CONSTRUCTEDITOR.open) return null
+    if (!GAME.gameState || !GAME.gameState.loaded) return null
+    let toastOpacity = showInventory ? 0 : 1
     const hero = GAME.heros[HERO.id]
-
     return (
       <div className="PlayerUI">
+        {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
         <ToastContainer
           position="top-center"
+          style={{ opacity: toastOpacity }}
           autoClose={false}
           hideProgressBar={true}
           closeOnClick={false}
@@ -118,8 +135,8 @@ export default class Root extends React.Component{
           draggable={false}
           transition={Slide}
         />
-      {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue}/>}
-      {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions}/>}
+        {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue} />}
+        {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
       </div>
     )
   }

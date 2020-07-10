@@ -43,6 +43,33 @@
   }
 }
 
+.Inventory {
+  display: grid;
+  width: 100%;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: auto auto auto;
+  grid-auto-rows: max-content;
+  background-color: #fff;
+  color: #444;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  // background-color: lightgray;
+  opacity: 0.5;
+  
+  &__item {
+    background-color: #444;
+    color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    font-size: 150%;
+  }
+}
+
+ 
+
+
 @keyframes blinker {
   50% {
     opacity: 0;
