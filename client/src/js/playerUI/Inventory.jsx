@@ -34,12 +34,14 @@ export default class Inventory extends React.Component {
 
     render() {
         const { inventoryDisplay } = this.state;
-        console.log(inventoryDisplay, 'invd')
-        return inventoryDisplay.length < 1 ? <p>Inventory is currently empty! </p> :
-            (<div className="Inventory Inventory--options">{inventoryDisplay.map((item, index) => {
+
+        if(inventoryDisplay.length < 1) {
+          return <div className="Inventory">Inventory is currently empty! </div>
+        }
+
+        return (<div className="Inventory Inventory--options">{inventoryDisplay.map((item, index) => {
                 let count = item.count ? item.count + 'x' : '';
                 return <div key={index} className="Inventory__item">{`${item.name} ${count}`}</div>
-            })}
-            </div>)
+            })}</div>)
     }
 }
