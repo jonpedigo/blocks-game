@@ -2,6 +2,7 @@ import Swal from 'sweetalert2/src/sweetalert2.js';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SequenceItem from '../sequenceeditor/SequenceItem.jsx'
+import ConditionSeries from '../sequenceeditor/ConditionSeries.jsx'
 
 function editTriggerEffect(owner, trigger, cb) {
   PAGE.typingMode = true
@@ -18,6 +19,19 @@ function editTriggerEffect(owner, trigger, cb) {
   })
 }
 
+function editHookConditions(owner, hook, cb) {
+  PAGE.typingMode = true
+  openEditConditionSeriesModal(hook.conditionList, (result) => {
+    if(result && result.value) {
+      hook.conditionList = result.value
+      const oldId = hook.id
+      window.socket.emit('editHook', owner.id, oldId, hook)
+      if(cb) cb()
+    }
+    PAGE.typingMode = false
+  })
+}
+
 function addTrigger(owner, eventName) {
   PAGE.typingMode = true
   openAddTrigger((result) => {
@@ -25,6 +39,19 @@ function addTrigger(owner, eventName) {
       const trigger = { id: result.value, eventName }
       window.socket.emit('addTrigger', owner.id, trigger)
       editTriggerEffect(owner, trigger, () => {
+        PAGE.typingMode = false
+      })
+    }
+  })
+}
+
+function addHook(owner, eventName) {
+  PAGE.typingMode = true
+  openAddHook((result) => {
+    if(result && result.value) {
+      const hook = { id: result.value, eventName }
+      window.socket.emit('addHook', owner.id, hook)
+      editHookConditions(owner, hook, () => {
         PAGE.typingMode = false
       })
     }
@@ -219,6 +246,23 @@ function openAddTrigger(cb) {
     },
   }).then(cb)
 }
+
+function openAddHook(cb) {
+  Swal.fire({
+    title: 'What is the name of this hook?',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off'
+    },
+  }).then(cb)
+}
+
 
 function addGameTag() {
   Swal.fire({
@@ -475,10 +519,37 @@ function openEditEffectModal(effect, cb) {
 
 }
 
+function openEditConditionSeriesModal(conditionList, cb) {
+  Swal.fire({
+    title: 'Edit Conditions',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    html:`<div id='edit-condition-series-container'></div>`,
+    preConfirm: (result) => {
+      return ref.current.getSequenceJSON()
+    }
+  }).then(cb)
+
+  // Mount React App
+  const ref = React.createRef()
+  ReactDOM.render(
+    React.createElement(ConditionSeries, { ref, sequenceItems: conditionList }),
+    document.getElementById('edit-condition-series-container')
+  )
+
+}
+
 export default {
   addCustomInputBehavior,
   addGameTag,
   addNewSubObject,
+  addHook,
+  addTrigger,
+  editHookConditions,
   editObjectCode,
   editProperty,
   editPropertyNumber,
@@ -487,7 +558,6 @@ export default {
   writeDialogue,
   nameObject,
   openEditCodeModal,
-  addTrigger,
   editTriggerEvent,
   editTriggerEffect,
 }

@@ -10,6 +10,18 @@ function setDefault() {
     zombie: false,
   }
 
+  window.physicsTags = {
+    gravity: false,
+    obstacle: false,
+    stationary: false,
+    onlyHeroAllowed: false,
+    noHeroAllowed: false,
+    movingPlatform: false,
+    heroPushable: false,
+    skipHeroGravityOnCollide: false,
+    rotateable: false,
+  }
+
   window.otherTags = {
     removeAfterTrigger: false,
     showInteractBorder: false,
@@ -56,18 +68,6 @@ function setDefault() {
     // updateHeroOnDestroy: false,
   }
 
-  window.physicsTags = {
-    gravity: false,
-    obstacle: false,
-    stationary: false,
-    onlyHeroAllowed: false,
-    noHeroAllowed: false,
-    movingPlatform: false,
-    heroPushable: false,
-    skipHeroGravityOnCollide: false,
-    rotateable: false,
-  }
-
   window.questTags = {
     questGiver: false,
     giveQuestOnStart: false,
@@ -109,7 +109,8 @@ function setDefault() {
     equipOnPickup: false,
     // potential: false,
     stackable: false,
-    existsWhenEquipped: false, //cant change
+    // existsWhenEquipped: false, //cant change
+    // dropOnOwnerDestroyed: false,
   }
 
   window.particleTags = {

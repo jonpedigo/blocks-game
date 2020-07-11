@@ -110,11 +110,18 @@ export default class SequenceItem extends React.Component{
   _onChangeConditionType(event) {
     const { sequenceItem } = this.state;
     const type = event.value
-    if(type === 'onTimerEnd' || type === 'onEvent') {
-      sequenceItem.sequenceType = 'sequenceWait'
-    } else {
-      sequenceItem.sequenceType = 'sequenceCondition'
+
+    const isWait = sequenceItem.conditionType === 'onEvent' || sequenceItem.conditionType === 'onTimerEnd'
+    const isMod = sequenceItem.effectName && sequenceItem.effectName === 'mod'
+
+    if(!isWait && !isMod) {
+      if(type === 'onTimerEnd' || type === 'onEvent') {
+        sequenceItem.sequenceType = 'sequenceWait'
+      } else {
+        sequenceItem.sequenceType = 'sequenceCondition'
+      }
     }
+
     sequenceItem.conditionType = event.value
     this.setState({sequenceItem})
   }

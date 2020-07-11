@@ -4,6 +4,7 @@ import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import triggers from '../triggers.js'
 import { dropObject } from '../heros/inventory.js'
+import { addHook, deleteHook } from '../hooks.js'
 
 class Objects{
   constructor() {
@@ -712,6 +713,22 @@ class Objects{
       relativeX: (object.x + object.mod().width/2) - (relative.x + relative.mod().width/2),
       relativeY: (object.y + object.mod().height/2) - (relative.y + relative.mod().height/2)
     }
+  }
+
+  onAddHook(ownerId, hook) {
+    const { eventName } = hook
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    addHook(owner, hook)
+  }
+  
+  onEditHook(ownerId, hookId, hook) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    deleteHook(owner, hookId)
+    addHook(owner, hook)
+  }
+
+  onDeleteHook(ownerId, hookId) {
+    deleteHook(OBJECTS.getObjectOrHeroById(ownerId), hookId)
   }
 }
 

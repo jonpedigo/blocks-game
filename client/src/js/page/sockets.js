@@ -113,6 +113,16 @@ function init() {
     window.socket.on('onEditTrigger', (ownerId, triggerId, trigger) => {
       window.local.emit('onEditTrigger', ownerId, triggerId, trigger)
     })
+
+    window.socket.on('onDeleteHook', (ownerId, hookId) => {
+      window.local.emit('onDeleteHook', ownerId, hookId)
+    })
+    window.socket.on('onAddHook', (ownerId, hook) => {
+      window.local.emit('onAddHook', ownerId, hook)
+    })
+    window.socket.on('onEditHook', (ownerId, hookId, hook) => {
+      window.local.emit('onEditHook', ownerId, hookId, hook)
+    })
   }
 
   if(PAGE.role.isGhost) {

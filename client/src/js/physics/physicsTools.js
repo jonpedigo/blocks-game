@@ -222,6 +222,13 @@ function objectCollisionEffects(po) {
         let hero = GAME.heros[agent.ownerId]
         // sometimes the hero could be logged off
         if(hero) {
+
+          if(collider.mod().hooks && collider.mod().hooks.interact) {
+            
+          } else {
+
+          }
+
           if(!hero.interactableObject) {
             hero.interactableObject = collider
             hero.interactableObjectResult = result

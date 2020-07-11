@@ -1,4 +1,6 @@
 import React from 'react'
+import Sprite from './Sprite.jsx'
+
 export default class Inventory extends React.Component {
     constructor(props) {
         super(props)

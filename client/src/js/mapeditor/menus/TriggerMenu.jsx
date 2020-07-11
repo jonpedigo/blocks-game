@@ -27,10 +27,6 @@ export default class TriggerMenu extends React.Component{
       if(data.action === 'delete') {
         window.socket.emit('deleteTrigger', objectSelected.id, data.trigger.id)
       }
-
-      if(data.action === 'editEffectJSON') {
-        modals.editEffectJSON(objectSelected, data.trigger)
-      }
     }
   }
 

@@ -383,6 +383,17 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     let args = [msg, arg1, arg2, arg3].filter(i => !!i)
     io.emit('onHostLog', ...args)
   })
+
+  //// TRIGGERS
+  socket.on('deleteHook', (ownerId, hookId) => {
+    io.emit('onDeleteHook', ownerId, hookId)
+  })
+  socket.on('addHook', (ownerId, hook) => {
+    io.emit('onAddHook', ownerId, hook)
+  })
+  socket.on('editHook', (ownerId, hookId, hook) => {
+    io.emit('onEditHook', ownerId, hookId, hook)
+  })
 }
 
 module.exports = socketEvents

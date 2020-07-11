@@ -2,6 +2,13 @@
 
 }
 
+.Sprite {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .PlayerUI {
   text-align: center;
 }
@@ -57,7 +64,7 @@
   width: 100%;
   // background-color: lightgray;
   opacity: 0.5;
-  
+
   &__item {
     background-color: #444;
     color: #fff;
@@ -67,7 +74,7 @@
   }
 }
 
- 
+
 
 
 @keyframes blinker {
