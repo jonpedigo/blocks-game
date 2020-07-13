@@ -40,7 +40,7 @@
   interactHook
   >>>>>collideHook
   >>>>>destroyHook
-  respawnHook ( respawnOnDestroy tag )
+  >>>>>respawnHook ( respawnOnDestroy tag )
 
   LOOT CHEST
   loot
@@ -48,7 +48,7 @@
 
   ( WE MIGHT WANT TO START WITH A MINI COMPENDIUM BECAUSE SOME OBJECTS INSTEAD OF BEING PULLED FROM AN ACTUAL SUBOBJECT, IT SHOULD BE PULLED FROM A POTENTIAL COMPENDIUM OBJECT OR POTENTIAL OBJECT )
   perhaps we just say FOR NOW -> if the potential tag is set, its not a realized object ye
-  can we spawn an object thata has subobjets? technically YE
+  can we spawn an object that has subobjets? technically YE
 
 Take a look at grid system
 update grid node
@@ -397,6 +397,11 @@ MORPH is permanent and transformative
 MUTATE is permanent and transitionary
 MOD is temporary with a condition
 */
+
+// ENGINE -> Events, Conditions, Effects
+// UI -> Tags, Triggers, Hooks, Sequences
+// GAME DATA -> Objects, Heros, World, Grid
+// SCENARIOS..?
 
 // BIG PAPA BEAR INSIGHTS
 // COMMON FOLKS, UPPER CLASS, GODS

@@ -1,14 +1,42 @@
-import { testCondition, testEventMatch } from './conditions'
+import { testCondition } from './conditions'
 
 window.hookEvents = {
-  onHeroInteract: {},
+  onObjectInteractable: {},
   // onRespawn: {},
   // onDestroy: {},
   // onEffect: {},
 }
 
-function testHook(ownerObject, hook) {
+function testHookCondition(mainObject, guestObject, ownerObject, hook) {
+  const { allTestedMustPass, testPassReverse, testModdedVersion, conditionJSON, testMainObject, testGuestObject, testOwnerObject, testWorldObject, testIds, testTags } = hook
 
+  let testObjects = []
+  if(testMainObject) testObjects.push(mainObject)
+  if(testGuestObject) testObjects.push(guestObject)
+  if(testOwnerObject) testObjects.push(ownerObject)
+  if(testWorldObject) testObjects.push(GAME.world)
+
+  if(testIds) {
+    testObjects = testObjects.concat(testIds.map((id) => {
+      if(GAME.objectsById[id]) return GAME.objectsById[id]
+      if(GAME.heros[id]) return GAME.heros[id]
+    }))
+  }
+
+  if(testTags) {
+    testObjects = testObjects.concat(testTags.reduce((arr, tag) => {
+      let newArr = arr
+      if(GAME.objectsByTag[tag]) {
+        newArr = newArr.concat(GAME.objectsByTag[tag])
+      }
+      if(GAME.herosByTag[tag]) {
+        newArr = newArr.concat(GAME.herosByTag[tag])
+      }
+      return newArr
+    }, []))
+  }
+
+  return testCondition(hook, testObjects, { allTestedMustPass, testPassReverse, testModdedVersion })
 }
 
 function addHook(ownerObject, hook) {
@@ -30,7 +58,11 @@ function deleteHook(ownerObject, hookId) {
 
 window.getHooksByEventName = function(ownerObject, eventName) {
   const hooks = []
-  ownerObject.hooks.forEach((hook) => {
+
+  if(!ownerObject.hooks) return []
+
+  Object.keys(ownerObject.hooks).forEach((hookName) => {
+    const hook = ownerObject.hooks[hookName]
     if(hook.eventName === eventName) {
       hooks.push(hook)
     }
@@ -40,7 +72,7 @@ window.getHooksByEventName = function(ownerObject, eventName) {
 }
 
 export {
-  testHook,
+  testHookCondition,
   addHook,
   deleteHook
 }

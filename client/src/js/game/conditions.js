@@ -37,6 +37,12 @@ window.conditionTypes = {
     label: 'Sub Object Name:'
   },
 
+  // GIVE ID
+  occursXTimes: {
+    number: true,
+    label: 'X amount'
+  },
+
   // reverts only work for mods really ATM
   onEvent: {
     // number: true,

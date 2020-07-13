@@ -1,4 +1,5 @@
 import { Polygon } from 'collisions';
+import { testHookCondition } from '../game/hooks'
 
 function shouldCheckConstructPart(part) {
   if(PHYSICS.correctedConstructs[part.ownerId]) return false
@@ -217,24 +218,31 @@ function objectCollisionEffects(po) {
       let collider = body.gameObject
       let agent = po.gameObject
 
-      const isInteractable = OBJECTS.isInteractable(collider)
-      if(agent.mod().tags['heroInteractTriggerArea'] && isInteractable) {
+      const colliderIsInteractable = OBJECTS.isInteractable(collider)
+      if(agent.mod().tags['heroInteractTriggerArea'] && colliderIsInteractable) {
         let hero = GAME.heros[agent.ownerId]
         // sometimes the hero could be logged off
         if(hero) {
 
-          if(collider.mod().hooks && collider.mod().hooks.interact) {
-            
-          } else {
+          const hooks = window.getHooksByEventName(collider.mod(), 'onObjectInteractable')
 
+          let passed = true
+          if(hooks.length) {
+            passed = hooks.every((hook) => {
+              return hook.conditionList.every((condition) => {
+                return testHookCondition(collider, hero, collider, condition)
+              })
+            })
           }
 
-          if(!hero.interactableObject) {
-            hero.interactableObject = collider
-            hero.interactableObjectResult = result
-          } else if(collider.mod().width < hero.interactableObject.mod().width || collider.mod().height < hero.interactableObject.mod().height) {
-            hero.interactableObject = collider
-            hero.interactableObjectResult = result
+          if(passed) {
+            if(!hero.interactableObject) {
+              hero.interactableObject = collider
+              hero.interactableObjectResult = result
+            } else if(collider.mod().width < hero.interactableObject.mod().width || collider.mod().height < hero.interactableObject.mod().height) {
+              hero.interactableObject = collider
+              hero.interactableObjectResult = result
+            }
           }
         }
       }

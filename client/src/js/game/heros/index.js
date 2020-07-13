@@ -329,6 +329,8 @@ class Hero{
       angle: hero.angle,
       questState: hero.questState,
       customState: hero.customState,
+      objectsWithin: hero.objectsWithin,
+      conditionTestCounts: hero.conditionTestCounts,
     }
 
     if(hero.subObjects) {
@@ -386,6 +388,7 @@ class Hero{
       parentId: hero.parentId,
       quests: hero.quests,
       customProps: hero.customProps,
+      hooks: hero.hooks,
     }
 
     if(hero.subObjects) {

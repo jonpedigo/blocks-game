@@ -40,6 +40,14 @@
   }
 }
 
+.SequenceEditor--condition-list {
+  .SequenceItem {
+    &:last-child {
+      margin-bottom: 0px;
+    }
+  }
+}
+
 .SequenceItem {
   &--sequenceDialogue{
     background-color: rgba(0, 0, 100, .2);

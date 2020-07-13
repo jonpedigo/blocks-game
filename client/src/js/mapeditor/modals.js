@@ -2,7 +2,7 @@ import Swal from 'sweetalert2/src/sweetalert2.js';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SequenceItem from '../sequenceeditor/SequenceItem.jsx'
-import ConditionSeries from '../sequenceeditor/ConditionSeries.jsx'
+import ConditionList from '../sequenceeditor/ConditionList.jsx'
 
 function editTriggerEffect(owner, trigger, cb) {
   PAGE.typingMode = true
@@ -21,7 +21,7 @@ function editTriggerEffect(owner, trigger, cb) {
 
 function editHookConditions(owner, hook, cb) {
   PAGE.typingMode = true
-  openEditConditionSeriesModal(hook.conditionList, (result) => {
+  openEditConditionListModal(hook.conditionList, (result) => {
     if(result && result.value) {
       hook.conditionList = result.value
       const oldId = hook.id
@@ -519,7 +519,7 @@ function openEditEffectModal(effect, cb) {
 
 }
 
-function openEditConditionSeriesModal(conditionList, cb) {
+function openEditConditionListModal(conditionList, cb) {
   Swal.fire({
     title: 'Edit Conditions',
     showClass: {
@@ -528,7 +528,7 @@ function openEditConditionSeriesModal(conditionList, cb) {
     hideClass: {
       popup: 'animated fadeOutUp faster'
     },
-    html:`<div id='edit-condition-series-container'></div>`,
+    html:`<div id='edit-condition-list-container'></div>`,
     preConfirm: (result) => {
       return ref.current.getSequenceJSON()
     }
@@ -537,8 +537,8 @@ function openEditConditionSeriesModal(conditionList, cb) {
   // Mount React App
   const ref = React.createRef()
   ReactDOM.render(
-    React.createElement(ConditionSeries, { ref, sequenceItems: conditionList }),
-    document.getElementById('edit-condition-series-container')
+    React.createElement(ConditionList, { ref, sequenceItems: conditionList }),
+    document.getElementById('edit-condition-list-container')
   )
 
 }

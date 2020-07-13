@@ -115,6 +115,8 @@ class Objects{
       customState: object.customState,
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
+      objectsWithin: object.objectsWithin,
+      conditionTestCounts: object.conditionTestCounts,
     }
 
     if(object.subObjects) {
@@ -169,6 +171,7 @@ class Objects{
       namePos: object.namePos,
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
+      hooks: object.hooks,
 
       // inventory
       count: object.count,
@@ -720,7 +723,7 @@ class Objects{
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     addHook(owner, hook)
   }
-  
+
   onEditHook(ownerId, hookId, hook) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
     deleteHook(owner, hookId)

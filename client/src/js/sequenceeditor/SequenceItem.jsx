@@ -425,6 +425,8 @@ export default class SequenceItem extends React.Component{
 
     const isWait = sequenceItem.conditionType === 'onEvent' || sequenceItem.conditionType === 'onTimerEnd'
     const isMod = sequenceItem.effectName && sequenceItem.effectName === 'mod'
+    const isHook = this.props.isHook
+    
     return <div className={classnames("SequenceItem__condition", {"SequenceItem__condition--nested": nested})}>
           {nested && <hr></hr>}
           {nested && <h4>Mod Condition</h4>}
@@ -443,13 +445,13 @@ export default class SequenceItem extends React.Component{
             <div className="SequenceItem__condition-input"><input onChange={() => this._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
             {nested && <hr></hr>}
           </div>
-          {!isWait && !nested && this._renderNextSelect(sequenceItem.passNext, (event) => {
+          {!isHook && !isWait && !nested && this._renderNextSelect(sequenceItem.passNext, (event) => {
             this._selectNext(event, 'passNext')
           }, 'Pass Next:')}
-          {!isWait && !nested && this._renderNextSelect(sequenceItem.failNext, (event) => {
+          {!isHook && !isWait && !nested && this._renderNextSelect(sequenceItem.failNext, (event) => {
             this._selectNext(event, 'failNext')
           }, 'Fail Next:')}
-          {isWait && this._renderNextSelect(sequenceItem.next, (event) => {
+          {!isHook && isWait && this._renderNextSelect(sequenceItem.next, (event) => {
             this._selectNext(event, 'next')
           }, 'Next:')}
         </div>
