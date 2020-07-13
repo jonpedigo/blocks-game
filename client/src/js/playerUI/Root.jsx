@@ -116,14 +116,22 @@ export default class Root extends React.Component {
   }
 
   render() {
+    // temp mock up variable fullscreen
+    const fullscreen = false;
     const { showInventory } = this.state;
     if (CONSTRUCTEDITOR.open) return null
     if (!GAME.gameState || !GAME.gameState.loaded) return null
-    let toastOpacity = showInventory ? 0 : 1
+    let toastOpacity = showInventory && fullscreen ? 0 : 1
     const hero = GAME.heros[HERO.id]
     return (
       <div className="PlayerUI">
-        {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
+        {showInventory ? <Inventory inventoryItems={hero.subObjects}
+          maxInvSize={10}
+          dropLastOnFull={null}
+          preventAddOnFull={null}
+          fullscreen={fullscreen}
+
+        /> : null}
         <ToastContainer
           position="top-center"
           style={{ opacity: toastOpacity }}

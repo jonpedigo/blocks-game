@@ -51,18 +51,14 @@
 }
 
 .Inventory {
-  display: grid;
-  width: 100%;
+  padding: 3px; 
   display: grid;
   grid-gap: 10px;
   grid-template-columns: auto auto auto;
   grid-auto-rows: max-content;
   background-color: #fff;
   color: #444;
-  height: 100%;
   position: absolute;
-  width: 100%;
-  // background-color: lightgray;
   opacity: 0.5;
 
   &__item {
@@ -71,6 +67,18 @@
     border-radius: 5px;
     padding: 20px;
     font-size: 150%;
+  }
+
+  &--halfscreen {
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 40%;
+  }
+
+  &--fullscreen {
+    width: 100%;
+    height: 100%;
   }
 }
 
