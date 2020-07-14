@@ -1,18 +1,33 @@
+import gridUtil from '../../utils/grid.js'
+// import collisionsUtil from '../../utils/collisionsUtil.js'
+
+function getInventoryName(object) {
+  if(object.name) {
+    return object.name
+  }
+
+  if(object.subObjectName) {
+    return object.subObjectName
+  }
+
+  return object.id
+}
+
 function pickupObject(hero, collider) {
   let subObject = _.cloneDeep(collider.mod())
 
   let subObjectAlreadyExisted = false
 
-  if(subObject.name && subObject.tags.stackable) {
-    subObject.id = subObject.name
-  } else {
-    subObject.id = 'pickupable-'+window.uniqueID()
-  }
+  // subObject.id = 'pickupable-'+window.uniqueID()
 
-  if(hero.subObjects[subObject.name]) {
-    subObject = hero.subObjects[subObject.name]
+  // const name = getInventoryName(subObject)
+
+  if(!subObject.subObjectName) subObject.subObjectName = subObject.id
+
+  if(hero.subObjects[subObject.subObjectName]) {
+    subObject = hero.subObjects[subObject.subObjectName]
     if(!subObject.count) subObject.count = 1
-    subObject.count++
+    subObject.count+= collider.count
     subObjectAlreadyExisted = true
   }
 
@@ -21,9 +36,8 @@ function pickupObject(hero, collider) {
     collider._destroyedBy = hero
   }
 
-  subObject.inInventory = true
-
   if(!subObjectAlreadyExisted) {
+    subObject.inInventory = true
     if(subObject.tags.appearWhenEquipped) {
       subObject.removed = true
     } else {
@@ -44,32 +58,49 @@ function pickupObject(hero, collider) {
   hero.interactableObject = null
   hero.interactableObjectResult = null
   delete subObject.subObjects
-  window.socket.emit('addSubObject', hero, subObject, subObject.id)
+  window.socket.emit('addSubObject', hero, subObject, subObject.subObjectName )
 }
 
-function dropObject(hero, subObject) {
-  let subObjectStillHasCount = false
-  if(subObject.tags.stackable && subobject.count >= 1) {
-    subObject.count--
-    subObjectStillHasCount = true
-  }
-
+function dropObject(hero, subObject, dropAmount = 1) {
   let object = _.cloneDeep(subObject.mod())
 
-  object.id = 'object-' + window.uniqueID()
+  let subObjectStillHasCount = false
+  if(subObject.tags.stackable) {
+    let newSubObjectCount = subObject.count - dropAmount
+    subObject.count -= dropAmount
+    if(newSubObjectCount >= 1) {
+      subObjectStillHasCount = true
+      object.id = 'stackable-' + window.uniqueID()
+    }
+    object.count = dropAmount
+  }
+
   object.removed = false
   object.tags.potential = false
+  object.tags.subObject = false
   delete object.inInventory
   delete object.isEquipped
 
+  const {x, y} = gridUtil.snapXYToGrid(object.x, object.y)
+  object.x = x
+  object.y = y
+
+
+  // if(object.tags.stackable) {
+  //   collisionsUtil.check(object, GAME.objects.filter(({subObjectName}) => {
+  //     return subObjectName && subObjectName == object.subObjectName
+  //   }))
+  // }
+
   // window.local.emit('onHeroDrop', hero, object)
-  window.socket.emit('addObjects', [object])
 
   if(!subObjectStillHasCount) {
     hero.interactableObject = null
     hero.interactableObjectResult = null
     window.socket.emit('deleteSubObject', hero, subObject.subObjectName)
   }
+
+  window.socket.emit('addObjects', [object])
 }
 
 export {
