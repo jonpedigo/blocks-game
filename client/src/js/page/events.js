@@ -104,6 +104,10 @@ class EventEmitter {
       if(SEQUENCEEDITOR[eventName]) {
         event.push(SEQUENCEEDITOR[eventName])
       }
+
+      if(LIVEEDITOR[eventName]) {
+        event.push(LIVEEDITOR[eventName])
+      }
     }
 
     if( event ) {

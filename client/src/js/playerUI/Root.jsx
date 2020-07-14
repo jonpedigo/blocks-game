@@ -1,7 +1,6 @@
 import React from 'react'
 import DialogueBox from './DialogueBox.jsx'
 import Inventory from './Inventory.jsx'
-import LiveEditor from './LiveEditor.jsx'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import modals from './modals.js';
@@ -124,7 +123,6 @@ export default class Root extends React.Component {
     const hero = GAME.heros[HERO.id]
     return (
       <div className="PlayerUI">
-        <LiveEditor data={hero} />
         {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
         <ToastContainer
           position="top-center"

@@ -3,6 +3,8 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import TriggerMenu from './menus/TriggerMenu.jsx';
 import SpriteMenu from './menus/SpriteMenu.jsx';
+import HookMenu from './menus/HookMenu.jsx';
+import LiveMenu from './menus/LiveMenu.jsx';
 import TagMenu from './menus/tagMenu.jsx';
 import modals from './modals.js'
 
@@ -185,6 +187,12 @@ export default class HeroContextMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Triggers">
         <TriggerMenu objectSelected={objectSelected}/>
+      </SubMenu>
+      <SubMenu title="Hooks">
+        <HookMenu objectSelected={objectSelected}/>
+      </SubMenu>
+      <SubMenu title="Live Edit">
+        <LiveMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>
       <SubMenu title="Controls">
