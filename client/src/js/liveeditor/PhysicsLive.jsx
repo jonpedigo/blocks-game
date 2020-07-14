@@ -5,18 +5,18 @@ export default class PhysicsLive extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-          data: this.props.data
+          objectSelected: this.props.objectSelected
         }
         this.handleUpdate = this.handleUpdate.bind(this)
     }
 
     // Update current state with changes from controls
     handleUpdate(newData) {
-      const { data } = this.state
-      const id = data.id
+      const { objectSelected } = this.state
+      const id = objectSelected.id
 
       this.setState({
-        data: {...data, ...newData}
+        objectSelected: {...objectSelected, ...newData}
       })
 
       const updatedProps = {
@@ -28,11 +28,11 @@ export default class PhysicsLive extends React.Component {
       if(PAGE.role.isHost) {
         Object.assign(OBJECTS.getObjectOrHeroById(id), updatedProps)
       } else {
-        if(data.tags.hero) {
+        if(objectSelected.tags.hero) {
           window.socket.emit('editHero', { id, ...updatedProps})
         // }
-        // else if(data.tags.subObject) {
-        // window.socket.emit('editSubObject', data.ownerId, data.subObjectName, updatedProps)
+        // else if(objectSelected.tags.subObject) {
+        // window.socket.emit('editSubObject', objectSelected.ownerId, objectSelected.subObjectName, updatedProps)
         } else {
           window.socket.emit('editObjects', [{ id, ...updatedProps }])
         }
@@ -40,10 +40,10 @@ export default class PhysicsLive extends React.Component {
     }
 
     render() {
-        const { data } = this.state;
+        const { objectSelected } = this.state;
         return (
             <div className='PhysicsLive'>
-                <DatGui data={data} onUpdate={this.handleUpdate}>
+                <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
                     <DatNumber path='speed' label='Speed' min={0} max={1000} step={1} />
                 </DatGui>
             </div>

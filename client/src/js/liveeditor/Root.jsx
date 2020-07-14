@@ -24,7 +24,7 @@ export default class Root extends React.Component {
 
     return (
       <div className="LiveEditor">
-        {openEditorName === 'physics' && <PhysicsLive data={objectSelected} />}
+        {openEditorName === 'physics' && <PhysicsLive objectSelected={objectSelected} />}
       </div>
     )
   }
