@@ -43,9 +43,10 @@ export default class PhysicsLive extends React.Component {
         const { objectSelected } = this.state;
         return (
             <div className='PhysicsLive'>
-                <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
-                    <DatNumber path='speed' label='Speed' min={0} max={1000} step={1} />
-                </DatGui>
+              <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
+                <div className="LiveEditor__title">Live Physics Editor</div>
+                <DatNumber path='speed' label='Speed' min={0} max={1000} step={1} />
+              </DatGui>
             </div>
         )
     }
