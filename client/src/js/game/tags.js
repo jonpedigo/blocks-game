@@ -41,12 +41,37 @@ function setDefault() {
     // behaviorOnDestroy: false,
   }
 
+  window.resourceTags = {
+    resourceZone: false,
+    resourceDropOffOnInteract: false,
+    resourceDropOffOnCollide: false,
+    resourceRetrieveOnInteract: false,
+    resourceRetrieveOnCollide: false,
+    // resourceShop: false,
+    // resourceRealized: false,
+    // resourceStealable: false,
+    // resourceFlammable: false,
+    // resourceLimit: 0,
+    // resourceRetrieveAmount: 0,
+  }
+
   window.spawnZoneTags = {
     spawnZone: false,
+    spawnRandomlyWithin: false,
+    // spawnSkipOnCollision: false,
     // spawnOnStart: false,
     // spawnOnHeroCollide: false,
     // spawnOnHeroInteract: false,
     // spawnOnDestroy: false,
+  }
+
+  window.lootTags = {
+    loot: false,
+    lootOnHeroInteract: false,
+    // lootShowModal: false,
+    // lootOnce: false,
+    // lootOntoMap: false,
+    // lootOnDestroy: false,
   }
 
   window.dialogueTags = {
@@ -138,6 +163,7 @@ function setDefault() {
     ...window.cameraTags,
     ...window.particleTags,
     ...window.inventoryTags,
+    ...window.resourceTags,
   }
 
   window.plainObjectTags = {

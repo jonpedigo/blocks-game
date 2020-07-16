@@ -356,6 +356,14 @@ function init() {
     window.local.emit('onDropObject', objectId, subObjectName)
   })
 
+  window.socket.on('onSpawnAllNow', (objectId) => {
+    window.local.emit('onSpawnAllNow', objectId)
+  })
+
+  window.socket.on('onDeleteSubObjectChance', (ownerI, subObjectName) => {
+    window.local.emit('onDeleteSubObjectChance', ownerI, subObjectName)
+  })
+
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {
     window.socket.on('onHostLog', (msg, arg1, arg2, arg3) => {
       let args = [msg, arg1, arg2, arg3].filter(i => !!i)

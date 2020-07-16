@@ -389,6 +389,7 @@ class Hero{
       quests: hero.quests,
       customProps: hero.customProps,
       hooks: hero.hooks,
+      subObjectChances: hero.subObjectChances,
     }
 
     if(hero.subObjects) {
@@ -402,7 +403,10 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = hero.triggers[triggerId]
+        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+                  conditionMainObjectTag,
+                  conditionGuestObjectId,
+                  conditionGuestObjectTag, } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -425,12 +429,18 @@ class Hero{
           guestObjectId,
           guestObjectTag,
           initialTriggerPool,
+
+          // just for mods right now, not actual conditions
           testPassReverse,
           testModdedVersion,
           conditionValue,
           conditionType,
           conditionJSON,
           conditionEventName,
+          conditionMainObjectId,
+          conditionMainObjectTag,
+          conditionGuestObjectId,
+          conditionGuestObjectTag,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

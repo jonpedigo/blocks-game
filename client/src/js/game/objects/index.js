@@ -172,6 +172,7 @@ class Objects{
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
       hooks: object.hooks,
+      subObjectChances: object.subObjectChances,
 
       // inventory
       count: object.count,
@@ -196,7 +197,6 @@ class Objects{
       spawnPoolInitial: object.spawnPoolInitial,
       spawnWaitTimer: object.spawnWaitTimer,
       spawnLimit: object.spawnLimit,
-      spawnSubObjectName: object.spawnSubObjectName,
 
       powerUpTimer: object.powerUpTimer,
 
@@ -217,7 +217,10 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags } = object.triggers[triggerId]
+        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+                  conditionMainObjectTag,
+                  conditionGuestObjectId,
+                  conditionGuestObjectTag, } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -240,12 +243,18 @@ class Objects{
           mainObjectTag,
           guestObjectId,
           guestObjectTag,
+
+          // for mod currently, might move to a .mod property and use these for actual condition on the trigger
           testPassReverse,
           testModdedVersion,
           conditionValue,
           conditionType,
           conditionJSON,
           conditionEventName,
+          conditionMainObjectId,
+          conditionMainObjectTag,
+          conditionGuestObjectId,
+          conditionGuestObjectTag,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

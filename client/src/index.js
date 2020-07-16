@@ -25,24 +25,16 @@
   >>>>>>resourceFlammable
   resourceLimit
 
-
   NUMBERS resourceLimit, resourceRetrieveAmount
   >>>>>>COST ( number ) is on the resource?
-
-  /////////////////////////////////
-  /////////////////////////////////
-  ///// RESOURCE
-  STACKABLE UPGRADE
-  I need to upgrade the stackable system for the sake of resources. An object should be able to be on the .. ground?
-  If an object IS stackable and theres > 1 on the same grid I think its ok if they are all picked up
 
   HOOKS ( INTERACTION UPGRADE )
   interactHook
   >>>>>collideHook
   >>>>>destroyHook
-  >>>>>respawnHook ( respawnOnDestroy tag )
+  >>>>>respawnHook
 
-  LOOT CHEST
+  LOOT
   loot
   lootSubObjects = { subObjectName: X, randomWeight: X, ...condition }
 
