@@ -3,7 +3,7 @@ import collision from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 
 import pathfinderIntelligence from './pathfinders'
-import spawnZoneIntelligence from './spawnZone'
+import { spawnObject } from '../spawnZone'
 
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldX = object.x
@@ -98,7 +98,8 @@ function onUpdate(objects, delta) {
     }
 
     pathfinderIntelligence(object)
-    spawnZoneIntelligence(object)
+
+    spawnObject(object)
   })
 }
 

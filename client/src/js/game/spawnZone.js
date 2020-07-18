@@ -5,11 +5,11 @@
 // spawnedIds
 // spawnLimit
 
-import gridUtil from '../../utils/grid'
-import collisionsUtil from '../../utils/collisions'
-import { testCondition } from '../conditions'
+import gridUtil from '../utils/grid'
+import collisionsUtil from '../utils/collisions'
+import { testCondition } from './conditions'
 
-export default function spawnZoneIntelligence(object) {
+function spawnObject(object) {
   if(object.tags && object.mod().tags['spawnZone']) {
     if(!object.spawnedIds) object.spawnedIds = []
 
@@ -24,42 +24,7 @@ export default function spawnZoneIntelligence(object) {
     }
 
     if((object.spawnedIds.length < object.spawnLimit || object.spawnLimit < 0) && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0 || object.spawnPool < 0)) {
-      const spawnSubObject = window.getSubObjectFromChances(null, null, object)
-
-      if(!spawnSubObject) return
-      let newObject = {
-        x: object.x,
-        y: object.y,
-        width: object.width,
-        height: object.height,
-        ...JSON.parse(JSON.stringify(spawnSubObject)),
-        id: 'spawned-' + window.uniqueID(),
-        spawned: true,
-      }
-
-      if(object.tags.spawnRandomlyWithin) {
-        for(var i = 0; i <= 10; i++) {
-          newObject.x = gridUtil.getRandomGridWithinXY(object.x, object.x + object.width)
-          newObject.y = gridUtil.getRandomGridWithinXY(object.y, object.y + object.height)
-          if(!collisionsUtil.check(newObject, GAME.objects)) break
-
-          if(i == 10) {
-            console.log('no room for spawn ', object.id)
-            return
-          }
-        }
-
-      }
-      newObject.tags.potential = false
-      newObject.tags.subObject = false
-      delete newObject.subObjectName
-      delete newObject.ownerId
-
-      // let x = gridUtil.getRandomGridWithinXY(object.x, object.x+width)
-      // let y = gridUtil.getRandomGridWithinXY(object.y, object.y+height)
-
-      let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
-      object.spawnedIds.push(createdObject[0].id)
+      forceObjectSpawn(object)
       object.spawnPool--
 
       object.spawnWait = true
@@ -77,7 +42,7 @@ window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) 
     return ownerObject.subObjects[name]
   })
 
-  if(subObjectNames.length === 1) return ownerObject.subObject[subObjectNames[0]]
+  if(subObjectNames.length === 1) return ownerObject.subObjects[subObjectNames[0]]
 
   subObjectNames = subObjectNames.filter((name) => {
     if(!ownerObject.subObjectChances[name].conditionList) return true
@@ -88,7 +53,7 @@ window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) 
     })
   })
 
-  if(subObjectNames.length === 1) return ownerObject.subObject[subObjectNames[0]]
+  if(subObjectNames.length === 1) return ownerObject.subObjects[subObjectNames[0]]
   if(subObjectNames.length === 0) return null
 
   const totalWeight = subObjectNames.reduce((acc, name) => { return acc + ownerObject.subObjectChances[name].randomWeight }, 0)
@@ -137,4 +102,51 @@ function testChanceCondition(mainObject, guestObject, ownerObject, condition) {
   }
 
   return testCondition(condition, testObjects, { allTestedMustPass, testPassReverse, testModdedVersion })
+}
+
+function forceObjectSpawn(object) {
+  const spawnSubObject = window.getSubObjectFromChances(null, null, object)
+
+  if(!spawnSubObject) return
+  let newObject = {
+    x: object.x,
+    y: object.y,
+    width: object.width,
+    height: object.height,
+    ...JSON.parse(JSON.stringify(spawnSubObject)),
+    id: 'spawned-' + window.uniqueID(),
+    spawned: true,
+  }
+
+  if(object.tags.spawnRandomlyWithin) {
+    for(var i = 0; i <= 10; i++) {
+      newObject.x = gridUtil.getRandomGridWithinXY(object.x, object.x + object.width)
+      newObject.y = gridUtil.getRandomGridWithinXY(object.y, object.y + object.height)
+      if(!collisionsUtil.check(newObject, GAME.objects)) {
+        // console.log('found sspot', newObject.x, newObject.y)
+        break
+      }
+
+      if(i == 10) {
+        console.log('no room for spawn ', object.id)
+        return
+      }
+    }
+
+  }
+  newObject.tags.potential = false
+  newObject.tags.subObject = false
+  delete newObject.subObjectName
+  delete newObject.ownerId
+
+  // let x = gridUtil.getRandomGridWithinXY(object.x, object.x+width)
+  // let y = gridUtil.getRandomGridWithinXY(object.y, object.y+height)
+
+  let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
+  object.spawnedIds.push(createdObject[0].id)
+}
+
+export {
+  spawnObject,
+  forceObjectSpawn
 }

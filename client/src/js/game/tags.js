@@ -48,7 +48,7 @@ function setDefault() {
     resourceRetrieveOnInteract: false,
     resourceRetrieveOnCollide: false,
     // resourceShop: false,
-    // resourceRealized: false,
+    // resourceOnMap: false,
     // resourceStealable: false,
     // resourceFlammable: false,
     // resourceLimit: 0,
@@ -58,11 +58,14 @@ function setDefault() {
   window.spawnZoneTags = {
     spawnZone: false,
     spawnRandomlyWithin: false,
-    // spawnSkipOnCollision: false,
+    // spawnInInventory: false,
     // spawnOnStart: false,
     // spawnOnHeroCollide: false,
     // spawnOnHeroInteract: false,
     // spawnOnDestroy: false,
+    // spawnDontOverlap: false
+    // spawnClearAllObjects: false
+    // spawnClearSpawnedObjects: false
   }
 
   window.lootTags = {
@@ -70,7 +73,7 @@ function setDefault() {
     lootOnHeroInteract: false,
     // lootShowModal: false,
     // lootOnce: false,
-    // lootOntoMap: false,
+    // lootInInventory: false,
     // lootOnDestroy: false,
   }
 
@@ -112,9 +115,7 @@ function setDefault() {
     tilingSprite: false, //cant change
     inputDirectionSprites: false,
     light: false,
-    // shadowObscured: false,
-    // shadowCaster: false,
-    // invisibleOnHeroCollide
+    // invisibleOnHeroCollide: false
   }
 
   window.cameraTags = {
@@ -134,7 +135,7 @@ function setDefault() {
     equipOnPickup: false,
     // potential: false,
     stackable: false,
-    // existsWhenEquipped: false, //cant change
+    // onMapWhenEquipped: false, //cant change
     // dropOnOwnerDestroyed: false,
   }
 
