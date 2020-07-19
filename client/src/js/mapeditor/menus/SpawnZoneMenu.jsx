@@ -48,8 +48,8 @@ export default class SpawnZoneMenu extends React.Component{
 
     return <Menu onClick={this._handleSpawnZoneMenuClick}>
       <MenuItem key="edit-spawn-pool-initial">Edit Initial Spawn Pool</MenuItem>
-      <MenuItem key="edit-spawn-wait-timer">Edit Spawn Wait Seconds</MenuItem>
-      <MenuItem key="edit-spawn-limit">Edit Spawn Limit</MenuItem>
+      {objectSelected.tags.spawnOnInterval && <MenuItem key="edit-spawn-wait-timer">Edit Spawn Wait Seconds</MenuItem>}
+      {objectSelected.tags.spawnOnInterval && <MenuItem key="edit-spawn-limit">Edit Spawn Limit</MenuItem>}
       <SubMenu title="Spawn Objects">
         {subObjectChanceNames.map((subObjectName) => {
           return <SubMenu title={subObjectName}>

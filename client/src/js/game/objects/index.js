@@ -193,6 +193,7 @@ class Objects{
       // sub objects
       relativeWidth: object.relativeWidth,
       relativeHeight: object.relativeHeight,
+      subObjectName: object.subObjectName,
 
       //spawn objects
       spawnPoolInitial: object.spawnPoolInitial,
@@ -316,6 +317,8 @@ class Objects{
     if(object.mod().tags['talkOnHeroInteract'] && object.mod().tags.talker) return true
 
     if(object.mod().tags['pickupOnHeroInteract'] && object.mod().tags.pickupable) return true
+
+    if(object.mod().tags['spawnAllInHeroInventoryOnHeroInteract'] && object.mod().tags.spawnZone) return true
 
     if(object.mod().tags['showInteractBorder']) return true
 
@@ -547,16 +550,38 @@ class Objects{
     subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
-    subObject.id = subObjectName + '-' + window.uniqueID()
+    if(!subObject.id) subObject.id = subObjectName + '-' + window.uniqueID()
 
-    owner.subObjects[subObjectName] = subObject
-    if(!subObject.tags.potential) PHYSICS.addObject(subObject)
+    let subObjectAlreadyExisted = false
 
-    if(subObject.triggers) {
-      Object.keys(subObject.triggers).forEach((triggerId) => {
-        const trigger = subObject.triggers[triggerId]
-        triggers.addTrigger(subObject, trigger)
-      })
+    if(owner.subObjects[subObject.subObjectName]) {
+      const existingSubObject = owner.subObjects[subObject.subObjectName]
+      if(existingSubObject.id !== subObject.id) {
+        if(subObject.tags.stackable) {
+          if(!existingSubObject.count) existingSubObject.count = 1
+          existingSubObject.count+= (subObject.count || 1)
+          subObjectAlreadyExisted = true
+          if(subObject.isEquipped) {
+            existingSubObject.isEquipped = true
+          }
+          return
+        } else {
+          subObject.subObjectName = subObject.subObjectName + '-copy-'+window.uniqueID()
+          subObjectName = subObject.subObjectName
+        }
+      }
+    }
+
+    if(!subObjectAlreadyExisted){
+      owner.subObjects[subObjectName] = subObject
+      if(!subObject.tags.potential) PHYSICS.addObject(subObject)
+
+      if(subObject.triggers) {
+        Object.keys(subObject.triggers).forEach((triggerId) => {
+          const trigger = subObject.triggers[triggerId]
+          triggers.addTrigger(subObject, trigger)
+        })
+      }
     }
   }
 

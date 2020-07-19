@@ -4,6 +4,7 @@ import onBehavior from './onBehavior'
 import onCombat from './onCombat'
 import { startQuest, completeQuest } from './quests'
 import { pickupObject } from './inventory'
+import { spawnAllNow } from '../spawnZone'
 
 export default function onHeroTrigger(hero, collider, result, options = { fromInteractButton: false }) {
   const isInteraction = options.fromInteractButton
@@ -103,6 +104,11 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
 
   if(collider.tags && collider.mod().tags['pickupable'] && collider.mod().tags['pickupOnHeroCollide']) {
     pickupObject(hero, collider)
+    triggered = true
+  }
+
+  if(collider.tags && collider.mod().tags['spawnZone'] && collider.mod().tags['spawnAllInHeroInventoryOnHeroInteract'] && isInteraction) {
+    spawnAllNow(collider, hero)
     triggered = true
   }
 

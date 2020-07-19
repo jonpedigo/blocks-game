@@ -58,14 +58,17 @@ function setDefault() {
   window.spawnZoneTags = {
     spawnZone: false,
     spawnRandomlyWithin: false,
-    // spawnInInventory: false,
-    // spawnOnStart: false,
+    spawnOnInterval: false,
+
+    // spawnAllOnStart: false,
     // spawnOnHeroCollide: false,
+    // spawnAllOnDestroy: false,
+    spawnAllInHeroInventoryOnHeroInteract: false,
     // spawnOnHeroInteract: false,
-    // spawnOnDestroy: false,
     // spawnDontOverlap: false
     spawnClearAllObjects: false,
-    spawnClearSpawnedObjects: false
+    spawnClearSpawnedObjects: false,
+    destroyOnSpawnPoolDepleted: false,
   }
 
   window.lootTags = {

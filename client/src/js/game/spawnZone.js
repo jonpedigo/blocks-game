@@ -13,7 +13,7 @@ import collisionsUtil from '../utils/collisions'
 import { testCondition } from './conditions'
 
 function spawnObject(object) {
-  if(object.tags && object.mod().tags['spawnZone']) {
+  if(object.tags && object.mod().tags['spawnZone'] && object.mod().tags['spawnOnInterval']) {
     if(!object.spawnedIds) object.spawnedIds = []
 
     object.spawnedIds = object.spawnedIds.filter((id) => {
@@ -31,7 +31,11 @@ function spawnObject(object) {
     if((object.spawnedIds.length < object.spawnLimit || object.spawnLimit < 0) && !object.spawnWait && (object.spawnPool === undefined || object.spawnPool === null || object.spawnPool > 0 || object.spawnPool < 0)) {
       extraSpawnFunctionality(object)
 
-      forceObjectSpawn(object)
+      const spawnSubObject = window.getSubObjectFromChances(null, null, object)
+      if(!spawnSubObject) return
+      const newObject = getSpawnObjectData(object, spawnSubObject)
+      spawnObjectOnMap(object, newObject)
+
       object.spawnPool--
 
       object.spawnWait = true
@@ -40,6 +44,19 @@ function spawnObject(object) {
       })
     }
   }
+
+  if(object.spawnPool === 0 && object.mod().tags.destroyOnSpawnPoolDepleted) {
+    object._destroy = true
+  }
+}
+
+function spawnObjectOnMap(object, newObject) {
+  let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
+
+  if(!object.spawnedIds) object.spawnedIds = []
+  object.spawnedIds.push(createdObject[0].id)
+
+  return createdObject[0]
 }
 
 window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) {
@@ -76,7 +93,7 @@ window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) 
   }, { lastNumber: 0 })
 
   let random = Math.floor(Math.random() * totalWeight)
-  return weightMap[random]
+  return _.cloneDeep(weightMap[random])
 }
 
 function testChanceCondition(mainObject, guestObject, ownerObject, condition) {
@@ -111,109 +128,101 @@ function testChanceCondition(mainObject, guestObject, ownerObject, condition) {
   return testCondition(condition, testObjects, { allTestedMustPass, testPassReverse, testModdedVersion })
 }
 
-let count = 0
-
-function forceObjectSpawn(object, isRespawn = true) {
-  const spawnSubObject = window.getSubObjectFromChances(null, null, object)
-
-  if(!spawnSubObject) return
+function getSpawnObjectData(object, subObject, spawnPending = [], isRespawn = false) {
   let newObject = {
     x: object.x,
     y: object.y,
-    width: object.width,
-    height: object.height,
-    ...JSON.parse(JSON.stringify(spawnSubObject.mod())),
+    ...JSON.parse(JSON.stringify(subObject.mod())),
     id: 'spawned-' + window.uniqueID(),
     spawned: !isRespawn,
   }
 
   if(object.tags.spawnRandomlyWithin) {
-    for(var i = 0; i <= 10; i++) {
+    const check = [...spawnPending, ...GAME.objects]
+
+    for(var i = 0; i <= 1000; i++) {
       newObject.x = gridUtil.getRandomGridWithinXY(object.x, object.x + object.width)
       newObject.y = gridUtil.getRandomGridWithinXY(object.y, object.y + object.height)
-      if(!collisionsUtil.check(newObject, GAME.objects)) {
+      if(!collisionsUtil.check(newObject, check)) {
         // console.log('found spot', newObject.x, newObject.y)
         break
       }
 
       if(i == 10) {
         console.log('no room for spawn ', object.id)
-        return
+        return 'no room'
       }
     }
 
   }
   newObject.tags.potential = false
   newObject.tags.subObject = false
-  delete newObject.subObjectName
   delete newObject.ownerId
 
   // let x = gridUtil.getRandomGridWithinXY(object.x, object.x+width)
   // let y = gridUtil.getRandomGridWithinXY(object.y, object.y+height)
 
-  let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
-
-  if(!isRespawn) {
-    if(!object.spawnedIds) object.spawnedIds = []
-    object.spawnedIds.push(createdObject[0].id)
-  }
-
-  return createdObject[0]
+  return newObject
 }
 
-////////////////////////////
-// FOR SPAWN IN INVENTORY TAG
-////////////////////////
-// if(hero.subObjects[subObject.subObjectName]) {
-//   subObject = hero.subObjects[subObject.subObjectName]
-//   if(!subObject.count) subObject.count = 1
-//   subObject.count+= collider.count
-//   subObjectAlreadyExisted = true
-// }
-//
-// if(!subObjectAlreadyExisted) {
-//   subObject.inInventory = true
-// }
-////
-// // dont add a new subObject
-// if(subObjectAlreadyExisted) return
-//
-// hero.interactableObject = null
-// hero.interactableObjectResult = null
-// delete subObject.subObjects
-// window.socket.emit('addSubObject', hero, subObject, subObject.subObjectName )
+function spawnAllNow(spawningObject, spawnInto) {
+  extraSpawnFunctionality(spawningObject)
 
-function spawnAllNow(object) {
-  if(GAME.gameState.started){
-    const originalWait = object.spawnWaitTimer
-    object.spawnWaitTimer = -1
-    object.spawnWait = false
-    setTimeout(() => {
-      object.spawnWaitTimer = originalWait
-    }, 10000)
-    return
+  if(spawningObject.spawnPoolInitial && (spawningObject.spawnPool === undefined || spawningObject.spawnPool === null)) {
+    spawningObject.spawnPool = spawningObject.spawnPoolInitial
   }
 
-  let pool = object.spawnPoolInitial
+  let pool = spawningObject.spawnPoolInitial
+  if(GAME.gameState.started){
+    pool = spawningObject.spawnPool
+  }
 
-  extraSpawnFunctionality(object)
-
-  // since non hosts need the client to check for hitting obstacles after each add we will spawn after each network event
-  // this is terrible, we could have a local collision check with something besides GAME.objects, but this works
-  const removeEventListener = window.local.on('onNetworkAddObjects', (objects) => {
-    if(pool === 0) {
-      removeEventListener()
-      return
+  const spawnSubObjects = []
+  for(let i = 0; i < pool; i++) {
+    let sso
+    if(spawnInto) {
+      // spawnAllInHeroInventoryOnHeroInteract means spawnInto is the hero
+      sso = window.getSubObjectFromChances(spawnInto, spawningObject, spawningObject)
+    } else {
+      sso = window.getSubObjectFromChances(null, null, spawningObject)
     }
 
-    if(objects.length == 1 && objects[0].id === lastObject.id) {
-      lastObject = forceObjectSpawn(object)
-      pool--
+    if(!sso) {
+      i--
+      continue
     }
-  })
+    spawnSubObjects.push(sso)
+  }
 
-  let lastObject = forceObjectSpawn(object)
-  pool--
+  if(spawnInto) {
+    spawnSubObjects.forEach((sso) => {
+      sso = _.cloneDeep(sso.mod())
+      sso.inInventory = true
+      sso.id = 'spawned-' + window.uniqueID()
+      sso.tags.potential = true
+      sso.tags.subObject = true
+      window.local.emit('onAddSubObject', spawnInto, sso, sso.subObjectName)
+    })
+  } else {
+    const readyToSpawn = []
+    spawnSubObjects.forEach((sso) => {
+      const willSpawn = getSpawnObjectData(spawningObject, sso, readyToSpawn)
+      readyToSpawn.push(willSpawn)
+    })
+
+    readyToSpawn.forEach((spawnMe) => {
+      spawnObjectOnMap(spawningObject, spawnMe)
+    })
+  }
+
+  if(GAME.gameState.started){
+    spawningObject.spawnPool = 0
+  }
+
+  if(spawningObject.spawnPool === 0 && spawningObject.mod().tags.destroyOnSpawnPoolDepleted) {
+    // need a destroy object event
+    window.socket.emit('deleteObject', spawningObject)
+  }
 }
 
 function destroySpawnIds(object) {
@@ -244,7 +253,6 @@ function extraSpawnFunctionality(object) {
 
 export {
   spawnObject,
-  forceObjectSpawn,
   spawnAllNow,
   destroySpawnIds,
 }

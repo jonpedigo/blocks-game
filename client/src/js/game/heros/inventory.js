@@ -16,33 +16,22 @@ function getInventoryName(object) {
 function pickupObject(hero, collider) {
   let subObject = _.cloneDeep(collider.mod())
 
-  let subObjectAlreadyExisted = false
-
   // subObject.id = 'pickupable-'+window.uniqueID()
 
   // const name = getInventoryName(subObject)
 
   if(!subObject.subObjectName) subObject.subObjectName = subObject.id
 
-  if(hero.subObjects[subObject.subObjectName]) {
-    subObject = hero.subObjects[subObject.subObjectName]
-    if(!subObject.count) subObject.count = 1
-    subObject.count+= collider.count
-    subObjectAlreadyExisted = true
-  }
-
   if(!collider.mod().tags['dontDestroyOnPickup']) {
     collider._destroy = true
     collider._destroyedBy = hero
   }
 
-  if(!subObjectAlreadyExisted) {
-    subObject.inInventory = true
-    if(subObject.tags.onMapWhenEquipped) {
-      subObject.removed = true
-    } else {
-      subObject.tags.potential = true
-    }
+  subObject.inInventory = true
+  if(subObject.tags.onMapWhenEquipped) {
+    subObject.removed = true
+  } else {
+    subObject.tags.potential = true
   }
 
   if(subObject.tags['equipOnPickup']) {
@@ -51,14 +40,8 @@ function pickupObject(hero, collider) {
   }
 
   // window.local.emit('onHeroPickup', hero, subObject)
-
-  // dont add a new subObject
-  if(subObjectAlreadyExisted) return
-
-  hero.interactableObject = null
-  hero.interactableObjectResult = null
   delete subObject.subObjects
-  window.socket.emit('addSubObject', hero, subObject, subObject.subObjectName )
+  window.local.emit('onAddSubObject', hero, subObject, subObject.subObjectName )
 }
 
 function dropObject(hero, subObject, dropAmount = 1) {
