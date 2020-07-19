@@ -43,7 +43,6 @@ window.conditionTypes = {
     label: 'X amount'
   },
 
-  // reverts only work for mods really ATM
   onEvent: {
     // number: true,
     event: true,
@@ -258,7 +257,12 @@ function testHasTag(tag, testObject, options) {
 }
 
 function testEventMatch(eventName, mainObject, guestObject, condition, ownerObject, options = { allTestedMustPass: false, testPassReverse: false, testModdedVersion: false }) {
-  let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag } = condition
+  let { mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, conditionMainObjectId, conditionMainObjectTag, conditionGuestObjectId, conditionGuestObjectTag  } = condition
+
+  if(conditionMainObjectId) mainObjectId = conditionMainObjectId
+  if(conditionMainObjectTag) mainObjectTag = conditionMainObjectTag
+  if(conditionGuestObjectId) guestObjectId = conditionGuestObjectId
+  if(conditionGuestObjectTag) guestObjectTag = conditionGuestObjectTag
 
   let eventMatch = false
 

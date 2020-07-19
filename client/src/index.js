@@ -3,6 +3,11 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// need to create multiple tag menu for resources. which means theyll accept anything with those tags
+// Need to implement tradeItem into inventory service
+// Need to add interactable for loot ( both the outline and the functionality )
+// Timers
+// visibleTo
 // TODO
   /////////////////////////////////
   /////////////////////////////////
@@ -25,24 +30,16 @@
   >>>>>>resourceFlammable
   resourceLimit
 
-
   NUMBERS resourceLimit, resourceRetrieveAmount
   >>>>>>COST ( number ) is on the resource?
-
-  /////////////////////////////////
-  /////////////////////////////////
-  ///// RESOURCE
-  STACKABLE UPGRADE
-  I need to upgrade the stackable system for the sake of resources. An object should be able to be on the .. ground?
-  If an object IS stackable and theres > 1 on the same grid I think its ok if they are all picked up
 
   HOOKS ( INTERACTION UPGRADE )
   interactHook
   >>>>>collideHook
   >>>>>destroyHook
-  >>>>>respawnHook ( respawnOnDestroy tag )
+  >>>>>respawnHook
 
-  LOOT CHEST
+  LOOT
   loot
   lootSubObjects = { subObjectName: X, randomWeight: X, ...condition }
 
@@ -63,18 +60,21 @@ XXX1) Background tiles ( put on grid nodes ?)
   Background sprites
 XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
   Sprite construct parts
-XXX3) Zones ( spawn zone, filters, idk, its just an invisible object THAT COMES WITH CUSTOM TAGS there shiuld be a menu where you choose zone tags )
+XXX3) Zones ( spawn zone, resource zone, filters, idk, its just an invisible object THAT COMES WITH CUSTOM TAGS there shiuld be a menu where you choose zone tags )
+  // tag choosing menu?
 XXX4) Particle Emitter
+  // add more? allow JSON upload?
 XXX5) Moving Object ( starts with dialogue and some path finding?, has an awareness area subobject and a pf object? )
+  // awareness area
 >>>>>>6) special environment -> (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice
 XXX7) Lights
-XXX8) Droppable
+  // tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
+XXX8) Pickupable, Loot chests
+  // implement getting chest
 >>>>>>9) Sounds
 XXX10) game objects ( quest, sequence, timer, trigger, hook )
---->11) Resource Management ( stores, resource, resource pool )
---->12 ) Chests
-// Chest is more than just object on ground. The point of chests is something else...
-// Chest that leads to random item in compendium? or leads to random subObject, what are the conditions of this randomness? ( the time.., etc )
+--->11) Resource Management
+  // implement trading resources
 
 https://github.com/dataarts/dat.gui
 EDITORS
@@ -115,16 +115,15 @@ WORLD EDITOR
   //Set all objects to the middle ( FULL MIGRATION )
   // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
 
-HOOKS
-  // hook into events and prevent them from happening with conditions
-
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 // BIG FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+SUB OBJECT CREATION MENU
 EDITOR UI
+HOOK UP respawns to a spawn zone
 
 SCENARIOS
 GAME RESULTS PAGE

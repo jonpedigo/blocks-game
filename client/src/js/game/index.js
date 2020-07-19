@@ -276,9 +276,9 @@ class Game{
       return object
     })
 
-    if(!GAME.gameState.loaded) {
-      GAME.objects.filter((object) => !object.spawned)
-    }
+    // if(!GAME.gameState.loaded) {
+    //   GAME.objects.filter((object) => !object.spawned)
+    // }
 
     // for host to find themselves ONRELOAD really is all...
     if(game.heros) {
@@ -553,7 +553,8 @@ class Game{
 
   cleanForSave(game) {
     let gameCopy = JSON.parse(JSON.stringify({
-      objects: game.objects.filter((object) => !object.spawned),
+      //.filter((object) => !object.spawned)
+      objects: game.objects,
       world: game.world,
       grid: game.grid,
       tags: game.tags,

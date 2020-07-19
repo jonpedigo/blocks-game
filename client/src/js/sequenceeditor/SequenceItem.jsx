@@ -408,17 +408,17 @@ export default class SequenceItem extends React.Component{
 
     if(sequenceItem.conditionType === "onEvent") {
       chosenConditionForm.push(<React.Fragment>
-          {this._renderSingleIdSelect('mainObjectId', (result) => {
-            this._onSetPropValue('mainObjectId', result.value)
+          {this._renderSingleIdSelect('conditionMainObjectId', (result) => {
+            this._onSetPropValue('conditionMainObjectId', result.value)
           }, 'Main Object Id:')}
-          {this._renderSingleIdSelect('guestObjectId', (result) => {
-            this._onSetPropValue('guestObjectId', result.value)
+          {this._renderSingleIdSelect('conditionGuestObjectId', (result) => {
+            this._onSetPropValue('conditionGuestObjectId', result.value)
           }, 'Guest Object Id:')}
-          {this._renderSingleTagSelect('mainObjectTag', (result) => {
-            this._onSetPropValue('mainObjectTag', result.value)
+          {this._renderSingleTagSelect('conditionMainObjectTag', (result) => {
+            this._onSetPropValue('conditionMainObjectTag', result.value)
           }, 'Main Object Tag:')}
-          {this._renderSingleTagSelect('guestObjectTag', (result) => {
-            this._onSetPropValue('guestObjectTag', result.value)
+          {this._renderSingleTagSelect('conditionGuestObjectTag', (result) => {
+            this._onSetPropValue('conditionGuestObjectTag', result.value)
           }, 'Guest Object Tag:')}
         </React.Fragment>)
     }
@@ -426,7 +426,7 @@ export default class SequenceItem extends React.Component{
     const isWait = sequenceItem.conditionType === 'onEvent' || sequenceItem.conditionType === 'onTimerEnd'
     const isMod = sequenceItem.effectName && sequenceItem.effectName === 'mod'
     const isHook = this.props.isHook
-    
+
     return <div className={classnames("SequenceItem__condition", {"SequenceItem__condition--nested": nested})}>
           {nested && <hr></hr>}
           {nested && <h4>Mod Condition</h4>}

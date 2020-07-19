@@ -32,6 +32,21 @@ function editHookConditions(owner, hook, cb) {
   })
 }
 
+function editSubObjectChanceConditions(object, subObjectName, cb) {
+  PAGE.typingMode = true
+
+  let conditionList = object.subObjectChances[subObjectName].conditionList
+
+  openEditConditionListModal(conditionList, (result) => {
+    if(result && result.value) {
+      object.subObjectChances[subObjectName].conditionList = result.value
+      window.socket.emit('editObjects', [{ id: object.id, subObjectChances: object.subObjectChances }])
+      if(cb) cb()
+    }
+    PAGE.typingMode = false
+  })
+}
+
 function addTrigger(owner, eventName) {
   PAGE.typingMode = true
   openAddTrigger((result) => {
@@ -136,7 +151,7 @@ function editPropertyNumber(object, property, currentValue, options = {}) {
   PAGE.typingMode = true
   openEditNumberModal(property, currentValue, options, (result) => {
     if(result && result.value && result.value.length) {
-      MAPEDITOR.networkEditObject(object, { [property]: result.value})
+      MAPEDITOR.networkEditObject(object, { [property]: Number(result.value) })
     }
     PAGE.typingMode = false
   })
@@ -557,7 +572,10 @@ export default {
   editEffectJSON,
   writeDialogue,
   nameObject,
+  openNameSubObjectModal,
   openEditCodeModal,
+  openEditNumberModal,
   editTriggerEvent,
   editTriggerEffect,
+  editSubObjectChanceConditions
 }
