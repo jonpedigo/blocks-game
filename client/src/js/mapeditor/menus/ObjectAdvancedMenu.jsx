@@ -43,7 +43,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       }
 
       if(key === 'turn-into-spawn-zone') {
-        window.socket.emit('addSubObject', objectSelected, { tags: { potential: true }}, 'spawner')
+        window.socket.emit('addSubObject', objectSelected, { tags: { potential: true, obstacle: false }}, 'spawner')
         networkEditObject(objectSelected, { tags: {spawnZone: true}, spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}} })
       }
 

@@ -191,6 +191,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
+    console.log('addObject req')
     currentGame.objects.push(...addedobjects)
     io.emit('onAddObjects', addedobjects)
   })
@@ -395,9 +396,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onEditHook', ownerId, hookId, hook)
   })
 
-  //// TRIGGERS
-  socket.on('spawnAllNow', (object) => {
-    io.emit('onSpawnAllNow', object)
+  socket.on('spawnAllNow', (objectId) => {
+    io.emit('onSpawnAllNow', objectId)
+  })
+  socket.on('destroySpawnIds', (objectId) => {
+    io.emit('onDestroySpawnIds', objectId)
   })
 
   socket.on('deleteSubObjectChance', (ownerId, subObjectName) => {

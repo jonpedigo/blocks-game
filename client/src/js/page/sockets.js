@@ -28,6 +28,21 @@ function init() {
     window.local.emit('onEditObjects', editedObjects)
   })
   if(PAGE.role.isHost) {
+    window.socket.on('onDropObject', (objectId, subObjectName) => {
+      window.local.emit('onDropObject', objectId, subObjectName)
+    })
+
+    window.socket.on('onSpawnAllNow', (objectId) => {
+      window.local.emit('onSpawnAllNow', objectId)
+    })
+    window.socket.on('onDestroySpawnIds', (objectId) => {
+      window.local.emit('onDestroySpawnIds', objectId)
+    })
+
+    window.socket.on('onDeleteSubObjectChance', (ownerI, subObjectName) => {
+      window.local.emit('onDeleteSubObjectChance', ownerI, subObjectName)
+    })
+
     window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
       window.local.emit('onRemoveSubObject', ownerId, subObjectName)
     })
@@ -350,18 +365,6 @@ function init() {
 
   window.socket.on('onHeroCameraEffect', (type, heroId, options) => {
     window.local.emit('onHeroCameraEffect', type, heroId, options)
-  })
-
-  window.socket.on('onDropObject', (objectId, subObjectName) => {
-    window.local.emit('onDropObject', objectId, subObjectName)
-  })
-
-  window.socket.on('onSpawnAllNow', (objectId) => {
-    window.local.emit('onSpawnAllNow', objectId)
-  })
-
-  window.socket.on('onDeleteSubObjectChance', (ownerI, subObjectName) => {
-    window.local.emit('onDeleteSubObjectChance', ownerI, subObjectName)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

@@ -28,7 +28,7 @@ function update() {
   if(objectHighlighted) {
     let color = 'rgba(255,255,255,0.2)'
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
-      color = 'rgba(255,255,255,0.6)'
+      color = 'rgba(255,255,255,0.2)'
     }
 
     // if(objectHighlighted.tags && objectHighlighted.tags.subObject) {
@@ -49,7 +49,7 @@ function update() {
     let color = 'rgba(255,255,255,0.1)'
     objectHighlightedChildren.forEach((object) => {
       if(object.tags && object.tags.invisible) {
-        color = 'rgba(255,255,255,0.4)'
+        color = 'rgba(255,255,255,0.1)'
       }
       drawTools.drawFilledObject(ctx, {...object, color}, camera)
     })

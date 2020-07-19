@@ -875,10 +875,6 @@ class Game{
       return map
     }, {})
   }
-
-  onSpawnAllNow(object) {
-
-  }
 }
 
 window.GAME = new Game()

@@ -5,6 +5,7 @@ import gridUtil from '../../utils/grid.js'
 import triggers from '../triggers.js'
 import { dropObject } from '../heros/inventory.js'
 import { addHook, deleteHook } from '../hooks.js'
+import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
 
 class Objects{
   constructor() {
@@ -741,6 +742,15 @@ class Objects{
 
   onDeleteHook(ownerId, hookId) {
     deleteHook(OBJECTS.getObjectOrHeroById(ownerId), hookId)
+  }
+
+  onSpawnAllNow(objectId) {
+    const object = OBJECTS.getObjectOrHeroById(objectId)
+    spawnAllNow(object)
+  }
+  onDestroySpawnIds(objectId) {
+    const object = OBJECTS.getObjectOrHeroById(objectId)
+    destroySpawnIds(object)
   }
 }
 

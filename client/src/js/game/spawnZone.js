@@ -16,7 +16,9 @@ function spawnObject(object) {
     object.spawnedIds = object.spawnedIds.filter((id) => {
       if(GAME.objectsById[id] && !GAME.objectsById[id].removed) {
         return true
-      } else return false
+      } else {
+        return false
+      }
     })
 
     if(object.spawnPoolInitial && (object.spawnPool === undefined || object.spawnPool === null)) {
@@ -68,7 +70,7 @@ window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) 
     return acc
   }, { lastNumber: 0 })
 
-  let random = Math.ceil(Math.random() * totalWeight)
+  let random = Math.floor(Math.random() * totalWeight)
   return weightMap[random]
 }
 
@@ -104,6 +106,8 @@ function testChanceCondition(mainObject, guestObject, ownerObject, condition) {
   return testCondition(condition, testObjects, { allTestedMustPass, testPassReverse, testModdedVersion })
 }
 
+let count = 0
+
 function forceObjectSpawn(object) {
   const spawnSubObject = window.getSubObjectFromChances(null, null, object)
 
@@ -123,7 +127,7 @@ function forceObjectSpawn(object) {
       newObject.x = gridUtil.getRandomGridWithinXY(object.x, object.x + object.width)
       newObject.y = gridUtil.getRandomGridWithinXY(object.y, object.y + object.height)
       if(!collisionsUtil.check(newObject, GAME.objects)) {
-        // console.log('found sspot', newObject.x, newObject.y)
+        // console.log('found spot', newObject.x, newObject.y)
         break
       }
 
@@ -143,10 +147,44 @@ function forceObjectSpawn(object) {
   // let y = gridUtil.getRandomGridWithinXY(object.y, object.y+height)
 
   let createdObject = OBJECTS.create([newObject], { fromLiveGame: true })
+  if(!object.spawnedIds) object.spawnedIds = []
   object.spawnedIds.push(createdObject[0].id)
+
+  return createdObject[0]
+}
+
+function spawnAllNow(object) {
+  let pool = object.spawnPool || object.spawnPoolInitial
+
+  const removeEventListener = window.local.on('onNetworkAddObjects', (objects) => {
+    if(pool === 0) {
+      removeEventListener()
+      return
+    }
+
+    if(objects.length == 1 && objects[0].id === lastObject.id) {
+      lastObject = forceObjectSpawn(object)
+      pool--
+    }
+  })
+
+  let lastObject = forceObjectSpawn(object)
+  pool--
+}
+
+function destroySpawnIds(object) {
+  if(object.spawnedIds && object.spawnedIds.length) {
+    object.spawnedIds.forEach((id) => {
+      if(GAME.objectsById[id]) {
+        window.socket.emit('deleteObject', GAME.objectsById[id])
+      }
+    })
+  }
 }
 
 export {
   spawnObject,
-  forceObjectSpawn
+  forceObjectSpawn,
+  spawnAllNow,
+  destroySpawnIds,
 }

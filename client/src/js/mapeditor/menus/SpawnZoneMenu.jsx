@@ -35,6 +35,10 @@ export default class SpawnZoneMenu extends React.Component{
       if(key === 'spawn-all-now') {
         window.socket.emit('spawnAllNow', objectSelected.id)
       }
+
+      if(key === 'destroy-spawned') {
+        window.socket.emit('destroySpawnIds', objectSelected.id)
+      }
     }
   }
 
@@ -55,6 +59,7 @@ export default class SpawnZoneMenu extends React.Component{
         })}
         <MenuItem key="add-spawn-object">Add Spawn Object</MenuItem>
       </SubMenu>
+      <MenuItem key="destroy-spawned">Destroy Spawned</MenuItem>
     </Menu>
   }
 }
