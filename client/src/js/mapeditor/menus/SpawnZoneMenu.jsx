@@ -47,10 +47,9 @@ export default class SpawnZoneMenu extends React.Component{
     const subObjectChanceNames = Object.keys(objectSelected.subObjectChances)
 
     return <Menu onClick={this._handleSpawnZoneMenuClick}>
-      <MenuItem key="edit-spawn-pool-initial">Initial Spawn Pool</MenuItem>
-      <MenuItem key="edit-spawn-wait-timer">Spawn Wait Seconds</MenuItem>
-      <MenuItem key="edit-spawn-limit">Spawn Limit</MenuItem>
-      <MenuItem key="spawn-all-now">Spawn All Now</MenuItem>
+      <MenuItem key="edit-spawn-pool-initial">Edit Initial Spawn Pool</MenuItem>
+      <MenuItem key="edit-spawn-wait-timer">Edit Spawn Wait Seconds</MenuItem>
+      <MenuItem key="edit-spawn-limit">Edit Spawn Limit</MenuItem>
       <SubMenu title="Spawn Objects">
         {subObjectChanceNames.map((subObjectName) => {
           return <SubMenu title={subObjectName}>
@@ -59,6 +58,7 @@ export default class SpawnZoneMenu extends React.Component{
         })}
         <MenuItem key="add-spawn-object">Add Spawn Object</MenuItem>
       </SubMenu>
+      <MenuItem key="spawn-all-now">Spawn All Now</MenuItem>
       <MenuItem key="destroy-spawned">Destroy Spawned</MenuItem>
     </Menu>
   }

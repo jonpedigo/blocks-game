@@ -109,7 +109,6 @@ class Objects{
       gridWidth: object.gridWidth,
       onGround: object.onGround,
       removed: object.removed,
-      spawned: object.spawned,
       spawnedIds: object.spawnedIds,
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
@@ -174,6 +173,7 @@ class Objects{
       questCompleterId: object.questCompleterId,
       hooks: object.hooks,
       subObjectChances: object.subObjectChances,
+      spawned: object.spawned,
 
       // inventory
       count: object.count,

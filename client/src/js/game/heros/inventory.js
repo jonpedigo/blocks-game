@@ -38,7 +38,7 @@ function pickupObject(hero, collider) {
 
   if(!subObjectAlreadyExisted) {
     subObject.inInventory = true
-    if(subObject.tags.appearWhenEquipped) {
+    if(subObject.tags.onMapWhenEquipped) {
       subObject.removed = true
     } else {
       subObject.tags.potential = true

@@ -64,8 +64,8 @@ function setDefault() {
     // spawnOnHeroInteract: false,
     // spawnOnDestroy: false,
     // spawnDontOverlap: false
-    // spawnClearAllObjects: false
-    // spawnClearSpawnedObjects: false
+    spawnClearAllObjects: false,
+    spawnClearSpawnedObjects: false
   }
 
   window.lootTags = {
