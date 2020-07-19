@@ -354,6 +354,7 @@ import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'
 import './js/playerUI/index.js'
+import './js/liveeditor/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 

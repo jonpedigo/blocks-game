@@ -12,6 +12,7 @@ import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
 import RelativeMenu from './menus/RelativeMenu.jsx';
 import TriggerMenu from './menus/TriggerMenu.jsx';
 import HookMenu from './menus/HookMenu.jsx';
+import LiveMenu from './menus/LiveMenu.jsx';
 import SpriteMenu from './menus/SpriteMenu.jsx';
 import modals from './modals.js'
 
@@ -113,6 +114,9 @@ export default class ObjectContextMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
+      </SubMenu>
+      <SubMenu title="Live Edit">
+        <LiveMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
