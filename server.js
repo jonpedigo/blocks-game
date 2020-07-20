@@ -10,9 +10,18 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', function(req, res){
-  console.log('hello..?')
   res.sendFile(__dirname + '/client/dist/index.html')
 })
+
+console.log(path.join(__dirname, 'client/public'))
+
+app.use(function(req) => {
+  console.log(req.path)
+})
+
+app.use(express.static(path.join(__dirname, 'client/public')))
+app.use(express.static(path.join(__dirname, 'client/public')))
+
 
 server.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
