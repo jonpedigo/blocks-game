@@ -14,19 +14,17 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/client/dist/index.html')
 })
 
-console.log(path.join(__dirname, 'client/public'))
+console.log(path.join(__dirname, 'client/dist'))
 
 app.use(function(req) {
   console.log(req.path)
 })
 
-app.use('/assets', function(req) {
+app.use('/assets/*', function(req) {
   console.log(req.path)
 })
 
-app.use('/assets', express.static(path.join(__dirname, 'client/public')))
 app.use(express.static(path.join(__dirname, 'client/dist')))
-
 
 server.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
