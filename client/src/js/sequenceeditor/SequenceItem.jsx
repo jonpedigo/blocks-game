@@ -494,7 +494,7 @@ export default class SequenceItem extends React.Component{
     return <div className="SequenceItem__test">{title || 'Test Tags:'}<Select
       value={sequenceItem[valueProp] && sequenceItem[valueProp].map((tags) => { return { value: tags, label: tags} })}
       onChange={onChange}
-      options={Object.keys({...GAME.tags, ...window.allTags}).map(tag => { return { value: tag, label: tag}})}
+      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
       styles={window.reactSelectStyle}
       isMulti
       theme={window.reactSelectTheme}/>
@@ -538,7 +538,7 @@ export default class SequenceItem extends React.Component{
     return <div className="SequenceItem__test">{title || 'Test Tags:'}<Select
       value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
       onChange={onChange}
-      options={Object.keys({...GAME.tags, ...window.allTags}).map(tag => { return { value: tag, label: tag}})}
+      options={Object.keys(window.allTags).map(tag => { return { value: tag, label: tag}})}
       styles={window.reactSelectStyle}
       theme={window.reactSelectTheme}/>
     </div>

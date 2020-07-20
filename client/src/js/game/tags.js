@@ -199,6 +199,7 @@ function setDefault() {
 
 function addGameTags(tags) {
   Object.assign(window.tags, tags)
+  Object.assign(window.allTags, tags)
 }
 
 export default {

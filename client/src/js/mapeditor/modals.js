@@ -256,7 +256,7 @@ function openSelectTag(cb) {
       popup: 'animated fadeOutUp faster'
     },
     input: 'select',
-    inputOptions: Object.keys({...GAME.tags, ...window.allTags}),
+    inputOptions: Object.keys(window.allTags),
   }).then(cb)
 }
 

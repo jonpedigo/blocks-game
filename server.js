@@ -10,6 +10,7 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', function(req, res){
+  console.log('hello..?')
   res.sendFile(__dirname + '/client/dist/index.html')
 })
 

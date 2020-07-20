@@ -26,7 +26,7 @@ export default class ResourceZoneMenu extends React.Component{
         modals.openSelectTag((result) => {
           if(result && result.value) {
             const resourceTags = objectSelected.resourceTags
-            resourceTags.push(Object.keys({...GAME.tags, ...window.allTags})[result.value])
+            resourceTags.push(Object.keys(window.allTags)[result.value])
             networkEditObject(objectSelected, { resourceTags })
           }
         })

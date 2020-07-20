@@ -1,6 +1,6 @@
 import gridUtil from '../utils/grid.js'
 import collisionsUtil from '../utils/collisions'
-import contextMenu from './contextMenu.jsx'
+import adminContextMenu from './adminMenus/contextMenu.jsx'
 import selectionTools from './selectionTools';
 import keyInput from './keyInput';
 import render from './render';
@@ -56,7 +56,9 @@ class MapEditor{
        if(!MAPEDITOR.paused) handleMouseOut(event)
     })
 
-    contextMenu.init(MAPEDITOR)
+    if(PAGE.role.isAdmin) {
+      adminContextMenu.init(MAPEDITOR)
+    }
     keyInput.init()
 
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
