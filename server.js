@@ -20,6 +20,10 @@ app.use(function(req) {
   console.log(req.path)
 })
 
+app.use('/assets', function(req) {
+  console.log(req.path)
+})
+
 app.use('/assets', express.static(path.join(__dirname, 'client/public')))
 app.use(express.static(path.join(__dirname, 'client/dist')))
 
