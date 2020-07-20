@@ -86,7 +86,39 @@ function dropObject(hero, subObject, dropAmount = 1) {
   window.socket.emit('addObjects', [object])
 }
 
+function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount) {
+  const subObject = owner.subObjects[subObjectName]
+  const newObject = _.cloneDeep(subObject)
+
+  let subObjectStillHasCount = false
+  if(subObject.tags.stackable) {
+    subObject.count -= withdrawAmount
+    if(subObject.count >= 1) {
+      subObjectStillHasCount = true
+      newObject.id = 'stackable-' + window.uniqueID()
+    }
+    newObject.count = withdrawAmount
+  }
+  delete newObject.isEquipped
+  newObject.inInventory = true
+
+
+  if(!subObjectStillHasCount) {
+    owner.interactableObject = null
+    owner.interactableObjectResult = null
+    window.socket.emit('deleteSubObject', owner, subObjectName)
+  }
+
+  window.local.emit('onAddSubObject', withdrawer, newObject, subObjectName)
+}
+
+function depositToInventory(depositor, retriever, subObjectName, amount) {
+
+}
+
 export {
   pickupObject,
   dropObject,
+  withdrawFromInventory,
+  depositToInventory,
 }

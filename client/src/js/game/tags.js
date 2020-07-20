@@ -41,18 +41,15 @@ function setDefault() {
     // behaviorOnDestroy: false,
   }
 
-  window.resourceTags = {
+  window.resourceZoneTags = {
     resourceZone: false,
-    resourceDropOffOnInteract: false,
-    resourceDropOffOnCollide: false,
-    resourceRetrieveOnInteract: false,
-    resourceRetrieveOnCollide: false,
-    // resourceShop: false,
+    resourceDepositOnInteract: false,
+    resourceDepositOnCollide: false,
+    resourceWithdrawOnInteract: false,
+    resourceWithdrawOnCollide: false,
     // resourceOnMap: false,
     // resourceStealable: false,
     // resourceFlammable: false,
-    // resourceLimit: 0,
-    // resourceRetrieveAmount: 0,
   }
 
   window.spawnZoneTags = {
@@ -148,6 +145,7 @@ function setDefault() {
   window.defaultTags = {
     ...window.physicsTags,
     ...window.spawnZoneTags,
+    ...window.resourceZoneTags,
     ...window.behaviorTags,
     ...window.combatBehaviorTags,
     ...window.triggerTags,
@@ -160,7 +158,6 @@ function setDefault() {
     ...window.cameraTags,
     ...window.particleTags,
     ...window.inventoryTags,
-    ...window.resourceTags,
   }
 
   window.plainObjectTags = {

@@ -391,6 +391,10 @@ class Hero{
       customProps: hero.customProps,
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
+
+      resourceWithdrawAmount: hero.resourceWithdrawAmount,
+      resourceTags: hero.resourceTags,
+      resourceLimit: hero.resourceLimit,
     }
 
     if(hero.subObjects) {

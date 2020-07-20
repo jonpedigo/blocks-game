@@ -3,7 +3,7 @@ import onTalk from './onTalk'
 import onBehavior from './onBehavior'
 import onCombat from './onCombat'
 import { startQuest, completeQuest } from './quests'
-import { pickupObject } from './inventory'
+import { pickupObject, withdrawFromInventory } from './inventory'
 import { spawnAllNow } from '../spawnZone'
 
 export default function onHeroTrigger(hero, collider, result, options = { fromInteractButton: false }) {
@@ -109,6 +109,38 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
 
   if(collider.tags && collider.mod().tags['spawnZone'] && collider.mod().tags['spawnAllInHeroInventoryOnHeroInteract'] && isInteraction) {
     spawnAllNow(collider, hero)
+    triggered = true
+  }
+
+  if(collider.tags && collider.mod().tags['resourceZone'] && collider.mod().tags['resourceWithdrawOnInteract'] && isInteraction) {
+    let subObjectNameToWithdraw
+    Object.keys(collider.subObjects).forEach((subObjectName) => {
+      const so = collider.subObjects[subObjectName]
+      const tagsAllowed = collider.resourceTags
+      const hasTag = tagsAllowed.some((tag) => {
+        return so.tags[tag]
+      })
+      if(hasTag) subObjectNameToWithdraw = subObjectName
+    })
+    if(subObjectNameToWithdraw) withdrawFromInventory(hero, collider, subObjectNameToWithdraw, collider.resourceWithdrawAmount)
+    triggered = true
+  }
+
+  if(collider.tags && collider.mod().tags['resourceZone'] && collider.mod().tags['resourceDepositOnInteract'] && isInteraction) {
+    let subObjectNameToWithdraw
+    Object.keys(hero.subObjects).forEach((subObjectName) => {
+      const so = hero.subObjects[subObjectName]
+      const tagsAllowed = collider.resourceTags
+      const hasTag = tagsAllowed.some((tag) => {
+        return so.tags[tag]
+      })
+      if(hasTag) subObjectNameToWithdraw = subObjectName
+    })
+
+    if(subObjectNameToWithdraw) {
+      const so = hero.subObjects[subObjectNameToWithdraw]
+      withdrawFromInventory(collider, hero, subObjectNameToWithdraw, so.count)
+    }
     triggered = true
   }
 

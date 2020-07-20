@@ -12,6 +12,7 @@ class Objects{
     window.defaultSubObject = {
       relativeX: 0, relativeY: 0,
       objectType: 'subObject',
+      count: 1,
     }
 
     window.defaultObject = {
@@ -198,10 +199,15 @@ class Objects{
       relativeHeight: object.relativeHeight,
       subObjectName: object.subObjectName,
 
-      //spawn objects
+      //spawn zones
       spawnPoolInitial: object.spawnPoolInitial,
       spawnWaitTimer: object.spawnWaitTimer,
       spawnLimit: object.spawnLimit,
+
+      //resource zones
+      resourceWithdrawAmount: object.resourceWithdrawAmount,
+      resourceTags: object.resourceTags,
+      resourceLimit: object.resourceLimit,
 
       powerUpTimer: object.powerUpTimer,
 
@@ -322,6 +328,10 @@ class Objects{
     if(object.mod().tags['pickupOnHeroInteract'] && object.mod().tags.pickupable) return true
 
     if(object.mod().tags['spawnAllInHeroInventoryOnHeroInteract'] && object.mod().tags.spawnZone) return true
+
+    if(object.mod().tags['resourceWithdrawOnInteract'] && object.mod().tags.resourceZone) return true
+
+    if(object.mod().tags['resourceDepositOnInteract'] && object.mod().tags.resourceZone) return true
 
     if(object.mod().tags['showInteractBorder']) return true
 

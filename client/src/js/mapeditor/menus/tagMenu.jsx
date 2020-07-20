@@ -65,6 +65,9 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Spawn Zone">
         {this._renderTagMenuItems(window.spawnZoneTags)}
       </SubMenu>
+      <SubMenu title="Resource Zone">
+        {this._renderTagMenuItems(window.resourceZoneTags)}
+      </SubMenu>
       <SubMenu title="Graphical">
         {this._renderTagMenuItems(window.graphicalTags)}
       </SubMenu>
@@ -76,9 +79,6 @@ export default class TagMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Inventory">
         {this._renderTagMenuItems(window.inventoryTags)}
-      </SubMenu>
-      <SubMenu title="Resource">
-        {this._renderTagMenuItems(window.resourceTags)}
       </SubMenu>
       {subObject && <SubMenu title="Sub Object">
         {this._renderTagMenuItems(window.subObjectTags)}

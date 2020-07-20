@@ -3,47 +3,11 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-// need to create multiple tag menu for resources. which means theyll accept anything with those tags
-// Need to implement tradeItem into inventory service
-
-// TODO
-  /////////////////////////////////
-  /////////////////////////////////
-  ///// RESOURCE CONTAINER
-  resourceTags
-
-  resourceSingle
-
-  >>>>>>>( MIGHT NEED DETAILED INTERACT MENU )
-  resourceDropOffOnInteract
-  resoruceDropOffOnCollide
-  resourceRetrieveOnInteract
-  resourceRetrieveOnCollide
-  resourceRetrieveAmount
-
-  >>>>>>resourceShop
-
-  >>>>>>resourceRealized
-  >>>>>>resourceStealable
-  >>>>>>resourceFlammable
-  resourceLimit
-
-  NUMBERS resourceLimit, resourceRetrieveAmount
-  >>>>>>COST ( number ) is on the resource?
-
-  HOOKS ( INTERACTION UPGRADE )
-  interactHook
-  >>>>>collideHook
-  >>>>>destroyHook
-  >>>>>respawnHook
-
-  ( WE MIGHT WANT TO START WITH A MINI COMPENDIUM BECAUSE SOME OBJECTS INSTEAD OF BEING PULLED FROM AN ACTUAL SUBOBJECT, IT SHOULD BE PULLED FROM A POTENTIAL COMPENDIUM OBJECT OR POTENTIAL OBJECT )
-  perhaps we just say FOR NOW -> if the potential tag is set, its not a realized object ye
-  can we spawn an object that has subobjets? technically YE
-
-Take a look at grid system
-update grid node
 Editor UI
+  Map Creator Buttons
+  World Edits
+  Grid Editing
+  Game Loading Saving
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -52,10 +16,10 @@ Editor UI
 // THE DEFAULT COMPENDIUM
 XXX1) Background tiles ( put on grid nodes ?)
   Background sprites
+  update grid node
 XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
   Sprite construct parts
 XXX3) Zones ( spawn zone, resource zone, filters, idk, its just an invisible object THAT COMES WITH CUSTOM TAGS there shiuld be a menu where you choose zone tags )
-  // tag choosing menu?
 XXX4) Particle Emitter
   // add more? allow JSON upload?
 XXX5) Moving Object ( starts with dialogue and some path finding?, has an awareness area subobject and a pf object? )
@@ -64,11 +28,9 @@ XXX5) Moving Object ( starts with dialogue and some path finding?, has an awaren
 XXX7) Lights
   // tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
 XXX8) Pickupable, Loot chests
-  // implement getting chest
 >>>>>>9) Sounds
 XXX10) game objects ( quest, sequence, timer, trigger, hook )
 --->11) Resource Management
-  // implement trading resources
 
 https://github.com/dataarts/dat.gui
 EDITORS
@@ -109,14 +71,17 @@ WORLD EDITOR
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-EDITOR UI
 SUB OBJECT CREATION MENU
+
+GROUP OBJECT COMMANDS
 
 HOOK UP RESPAWNS TO A SPAWN ZONE
 TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS
 
 TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
-// visibleTo
+VISIBLE TO
+
+HERO MAP EDITOR
 
 SCENARIOS
 GAME RESULTS PAGE
@@ -156,13 +121,15 @@ LEVEL UP SYSTEM
 LEVELS ( sub worlds )
 PROCEDURAL
 
-COMPOSABLE CONTEXT MENU POWERS
-
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+pickupable SUB OBJECT, cuz right now that would break right??
+a max stackable???? idk
+
+never close right click menu if shift is pressed
 Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
 UI - input index
 Object 'swinging' like on a rope. I mean... awesome right?
