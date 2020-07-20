@@ -20,8 +20,8 @@ app.use(function(req) {
   console.log(req.path)
 })
 
-app.use(express.static(path.join(__dirname, 'client/public')))
-app.use(express.static(path.join(__dirname, 'client/public')))
+app.use('/assets', express.static(path.join(__dirname, 'client/public')))
+app.use(express.static(path.join(__dirname, 'client/dist')))
 
 
 server.listen(process.env.PORT || 4000, function(){
