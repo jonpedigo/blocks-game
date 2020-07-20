@@ -66,18 +66,11 @@ function setDefault() {
     spawnAllInHeroInventoryOnHeroInteract: false,
     // spawnOnHeroInteract: false,
     // spawnDontOverlap: false
+    spawnOverObstacles: false,
+    spawnOverNonObstacles: false,
     spawnClearAllObjects: false,
     spawnClearSpawnedObjects: false,
     destroyOnSpawnPoolDepleted: false,
-  }
-
-  window.lootTags = {
-    loot: false,
-    lootOnHeroInteract: false,
-    // lootShowModal: false,
-    // lootOnce: false,
-    // lootInInventory: false,
-    // lootOnDestroy: false,
   }
 
   window.dialogueTags = {

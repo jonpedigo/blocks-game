@@ -246,6 +246,20 @@ function openSelectEffect(cb) {
   }).then(cb)
 }
 
+function openSelectTag(cb) {
+  Swal.fire({
+    title: 'Select a tag',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'select',
+    inputOptions: Object.keys({...GAME.tags, ...window.allTags}),
+  }).then(cb)
+}
+
 function openAddTrigger(cb) {
   Swal.fire({
     title: 'What is the name of this trigger?',
@@ -575,6 +589,7 @@ export default {
   openNameSubObjectModal,
   openEditCodeModal,
   openEditNumberModal,
+  openSelectTag,
   editTriggerEvent,
   editTriggerEffect,
   editSubObjectChanceConditions

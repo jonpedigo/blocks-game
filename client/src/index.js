@@ -5,9 +5,7 @@
 ////////////////////////////////////////////////////
 // need to create multiple tag menu for resources. which means theyll accept anything with those tags
 // Need to implement tradeItem into inventory service
-// Need to add interactable for loot ( both the outline and the functionality )
-// Timers
-// visibleTo
+
 // TODO
   /////////////////////////////////
   /////////////////////////////////
@@ -38,10 +36,6 @@
   >>>>>collideHook
   >>>>>destroyHook
   >>>>>respawnHook
-
-  LOOT
-  loot
-  lootSubObjects = { subObjectName: X, randomWeight: X, ...condition }
 
   ( WE MIGHT WANT TO START WITH A MINI COMPENDIUM BECAUSE SOME OBJECTS INSTEAD OF BEING PULLED FROM AN ACTUAL SUBOBJECT, IT SHOULD BE PULLED FROM A POTENTIAL COMPENDIUM OBJECT OR POTENTIAL OBJECT )
   perhaps we just say FOR NOW -> if the potential tag is set, its not a realized object ye
@@ -103,12 +97,6 @@ resource editor ( shop )
    eventThreshold ( event value )
    triggerPool
 
-SPAWN ZONE TAGS
-// SPAWN RANDOMLY WITHIN
-// DONT OVERLAP SPAWNED
-// CLEAR PREVIOUS OBJECTS
-// CLEAR PREVIOUS OBJECTS WITH TAG
-
 WORLD EDITOR
   //zoom to Set to game boundary size
   //zoom to all objects
@@ -121,9 +109,14 @@ WORLD EDITOR
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-SUB OBJECT CREATION MENU
 EDITOR UI
-HOOK UP respawns to a spawn zone
+SUB OBJECT CREATION MENU
+
+HOOK UP RESPAWNS TO A SPAWN ZONE
+TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS
+
+TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
+// visibleTo
 
 SCENARIOS
 GAME RESULTS PAGE
@@ -136,7 +129,6 @@ EPILOGUE
   - the biggest performance hits are rendering and pathfinding
 
 SOUND FX
-TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
 
 !!!!!!!! !!!! READY FOR PAPA BEAR BETA !!!! !!!!!!
 

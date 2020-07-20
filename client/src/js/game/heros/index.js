@@ -362,6 +362,7 @@ class Hero{
   getProperties(hero) {
     let properties = {
       id: hero.id,
+      objectType: hero.objectType,
       actionButtonBehavior: hero.actionButtonBehavior,
       arrowKeysBehavior: hero.arrowKeysBehavior,
       spaceBarBehavior: hero.spaceBarBehavior,

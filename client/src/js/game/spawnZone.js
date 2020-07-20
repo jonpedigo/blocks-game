@@ -138,14 +138,24 @@ function getSpawnObjectData(object, subObject, spawnPending = [], isRespawn = fa
   }
 
   if(object.tags.spawnRandomlyWithin) {
-    const check = [...spawnPending, ...GAME.objects]
+    const check = [...spawnPending, ...GAME.objects.filter(({id}) => id !== object.id) ]
 
     for(var i = 0; i <= 1000; i++) {
       newObject.x = gridUtil.getRandomGridWithinXY(object.x, object.x + object.width)
       newObject.y = gridUtil.getRandomGridWithinXY(object.y, object.y + object.height)
-      if(!collisionsUtil.check(newObject, check)) {
-        // console.log('found spot', newObject.x, newObject.y)
+
+      if(object.mod().tags.spawnOverObstacles) {
         break
+      } else if(object.mod().tags.spawnOverNonObstacles) {
+        if(!collisionsUtil.check(newObject, check)) {
+          // console.log('found spot', newObject.x, newObject.y)
+          break
+        }
+      } else {
+        if(!collisionsUtil.checkAnything(newObject, check)) {
+          // console.log('found spot', newObject.x, newObject.y)
+          break
+        }
       }
 
       if(i == 10) {
@@ -243,11 +253,7 @@ function extraSpawnFunctionality(object) {
   }
 
   if(object.mod().tags.spawnClearSpawnedObjects) {
-    collisionsUtil.checkAnything(object, GAME.objects, (collided) => {
-      if(collided.spawned) {
-        window.socket.emit('deleteObject', collided)
-      }
-    })
+    destroySpawnIds()
   }
 }
 

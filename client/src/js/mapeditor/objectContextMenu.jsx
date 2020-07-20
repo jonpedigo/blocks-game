@@ -6,6 +6,7 @@ import GameTagMenu from './menus/GameTagMenu.jsx';
 import DialogueMenu from './menus/DialogueMenu.jsx';
 import QuestMenu from './menus/QuestMenu.jsx';
 import SpawnZoneMenu from './menus/SpawnZoneMenu.jsx';
+import ResourceZoneMenu from './menus/ResourceZoneMenu.jsx';
 import NameMenu from './menus/NameMenu.jsx';
 import ObjectAdvancedMenu from './menus/ObjectAdvancedMenu.jsx';
 import SelectSubObjectMenu from './menus/SelectSubObjectMenu.jsx';
@@ -81,6 +82,17 @@ export default class ObjectContextMenu extends React.Component{
     }
   }
 
+  _renderObjectResourceZoneMenu() {
+    const { objectSelected, subObject } = this.props
+    const { resourceZone } = objectSelected.tags
+
+    if(resourceZone) {
+      return <SubMenu title="Resource Zone">
+        <ResourceZoneMenu objectSelected={objectSelected} subObject={subObject}/>
+      </SubMenu>
+    }
+  }
+
   render() {
     const { objectSelected, subObject } = this.props
 
@@ -106,6 +118,7 @@ export default class ObjectContextMenu extends React.Component{
       </SubMenu>
       {this._renderObjectQuestMenu()}
       {this._renderObjectSpawnZoneMenu()}
+      {this._renderObjectResourceZoneMenu()}
       <SubMenu title="Group">
         <GameTagMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>
@@ -124,7 +137,7 @@ export default class ObjectContextMenu extends React.Component{
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}
-      { subObject && <MenuItem key="drop">Drop</MenuItem> }
+      { subObject && objectSelected.tags.pickupable && <MenuItem key="drop">Drop</MenuItem> }
       { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
       <SubMenu title="Advanced">
         <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>

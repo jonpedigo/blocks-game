@@ -20,6 +20,7 @@ function checkAnything(agent, objects, onCollide = () => {}) {
     if(objects[i].removed) continue
     if(agent.id === objects[i].id) continue
     checkObject(agent, objects[i], () => {
+      illegal = true
       if(onCollide) onCollide(objects[i])
     })
   }

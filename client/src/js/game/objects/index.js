@@ -10,7 +10,8 @@ import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
 class Objects{
   constructor() {
     window.defaultSubObject = {
-      relativeX: 0, relativeY: 0
+      relativeX: 0, relativeY: 0,
+      objectType: 'subObject',
     }
 
     window.defaultObject = {
@@ -19,6 +20,7 @@ class Objects{
       velocityMax: 100,
       speed: 100,
       subObjects: {},
+      objectType: 'plainObject',
     }
   }
 
@@ -29,8 +31,8 @@ class Objects{
   }
 
   onGameLoaded() {
-    window.defaultObject.tags = window.tags
-    window.mergeDeep(window.defaultObject.tags, window.plainObjectTags)
+    // window.defaultObject.tags = window.tags
+    // window.mergeDeep(window.defaultObject.tags, window.plainObjectTags)
   }
 
   onObjectCollide(agent, collider, result) {
@@ -148,6 +150,7 @@ class Objects{
   getProperties(object) {
     let properties = {
       id: object.id,
+      objectType: object.objectType,
       velocityMax: object.velocityMax,
       speed: object.speed,
       width: object.width,
@@ -522,7 +525,7 @@ class Objects{
   }
 
   addObject(object) {
-    object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
+    // object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
     GAME.objectsById[object.id] = object
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
