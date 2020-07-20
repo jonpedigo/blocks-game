@@ -10,12 +10,6 @@ io.on('connection', (socket) => {
   socketEvents(fs, io, socket)
 });
 
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/client/dist/index.html')
-})
-
-console.log(path.join(__dirname, 'client/dist'))
-
 app.use(function(req) {
   console.log(req.path)
 })
@@ -24,7 +18,11 @@ app.use('/assets/*', function(req) {
   console.log(req.path)
 })
 
-app.use(express.static(path.join(__dirname, 'client/dist')))
+app.use(express.static(__dirname + '/dist'))
+
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/dist/index.html')
+})
 
 server.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
