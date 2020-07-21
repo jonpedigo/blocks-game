@@ -10,16 +10,6 @@ io.on('connection', (socket) => {
   socketEvents(fs, io, socket)
 });
 
-app.use(function(req, res, next) {
-  console.log(req.path)
-  next()
-})
-
-app.use('/assets/*', function(req, res, next) {
-  console.log(req.path)
-  next()
-})
-
 app.use(express.static(__dirname + '/dist'))
 
 app.get('/', function(req, res) {

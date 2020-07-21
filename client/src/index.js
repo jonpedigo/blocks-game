@@ -3,6 +3,9 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+Use MAPEDITOR.objectHighlighted to decide where to place these editor UI objects
+EDITOR UI will have many features. the CREATOR component needs to be extensible with any objects I put in there
+
 Editor UI
   Map Creator Buttons
   World Edits
@@ -313,6 +316,7 @@ import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'
 import './js/playerUI/index.js'
+import './js/editorUI/index.js'
 import './js/liveeditor/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'

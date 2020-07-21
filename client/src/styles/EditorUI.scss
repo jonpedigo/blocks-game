@@ -1,0 +1,37 @@
+.EditorUI {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+
+  .Creator {
+    display: flex;
+    &__category {
+      color: #ccc;
+      font-size: 30px;
+      font-family: Courier;
+      max-width: 200px;
+      height: 40px;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      width: 20%;
+      margin: 20px;
+      background-color: black;
+      -moz-box-shadow: 0 0 5px #fff;
+      -webkit-box-shadow: 0 0 5px #fff;
+      box-shadow: 0px 0px 5px #fff;
+
+      &:hover {
+        -moz-box-shadow: 0 0 20px #fff;
+        -webkit-box-shadow: 0 0 20px #fff;
+        box-shadow: 0px 0px 20px #fff;
+        cursor: pointer;
+      }
+
+      &-item {
+
+      }
+    }
+  }
+}

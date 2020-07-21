@@ -42,6 +42,7 @@ function setDefault() {
   }
 
   window.resourceZoneTags = {
+    resource: false,
     resourceZone: false,
     resourceDepositOnInteract: false,
     resourceDepositOnCollide: false,
