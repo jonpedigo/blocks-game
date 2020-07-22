@@ -5,7 +5,7 @@ function setDefault() {
     nightLength: 30,
     nightAmbientLight: 0,
     transitionTime: 6,
-    alwaysDay: false,
+    alwaysDay: true,
     alwaysNight: false,
   }
 }
@@ -15,7 +15,9 @@ function onGameLoaded(options = {}) {
   GAME.gameState.ambientLightDelta = null
   GAME.gameState.currentTime = options.startTime || 0
   GAME.gameState.currentTimeOfDay = ''
-  GAME.world.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
+  if(!GAME.world.dayNightCycle) {
+    GAME.world.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
+  }
 }
 
 function calculateCurrentTOD() {
