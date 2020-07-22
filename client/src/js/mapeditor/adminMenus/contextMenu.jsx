@@ -21,7 +21,7 @@ class contextMenuEl extends React.Component{
   constructor(props) {
     super(props)
 
-    MAPEDITOR.canvas.addEventListener("contextmenu", e => {
+    document.body.addEventListener("contextmenu", e => {
       if(!MAPEDITOR.paused) {
         e.preventDefault();
         const origin = {

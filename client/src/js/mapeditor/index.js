@@ -43,16 +43,16 @@ class MapEditor{
     MAPEDITOR.canvas = canvas
     MAPEDITOR.camera = camera
 
-    canvas.addEventListener("mousedown", (e) => {
+    document.body.addEventListener("mousedown", (e) => {
       if(!MAPEDITOR.paused) handleMouseDown(event)
     })
-    canvas.addEventListener("mousemove", (e) => {
+    document.body.addEventListener("mousemove", (e) => {
       if(!MAPEDITOR.paused) handleMouseMove(event)
     })
-    canvas.addEventListener("mouseup", (e) => {
+    document.body.addEventListener("mouseup", (e) => {
        if(!MAPEDITOR.paused) handleMouseUp(event)
     })
-    canvas.addEventListener("mouseout", (e) => {
+    document.body.addEventListener("mouseout", (e) => {
        if(!MAPEDITOR.paused) handleMouseOut(event)
     })
 
@@ -187,15 +187,15 @@ class MapEditor{
 
 function handleMouseUp(event) {
   const { camera } = MAPEDITOR
-  let clickEndX = ((event.offsetX + camera.x) / camera.multiplier)
-  let clickEndY = ((event.offsetY + camera.y) / camera.multiplier)
+  let clickEndX = ((event.clientX + camera.x) / camera.multiplier)
+  let clickEndY = ((event.clientY + camera.y) / camera.multiplier)
 }
 
 function handleMouseDown(event) {
   const { camera, networkEditObject } = MAPEDITOR
 
-  MAPEDITOR.clickStart.x = ((event.offsetX + camera.x) / camera.multiplier)
-  MAPEDITOR.clickStart.y = ((event.offsetY + camera.y) / camera.multiplier)
+  MAPEDITOR.clickStart.x = ((event.clientX + camera.x) / camera.multiplier)
+  MAPEDITOR.clickStart.y = ((event.clientY + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.copiedObject) {
     OBJECTS.create([MAPEDITOR.copiedObject])
@@ -251,8 +251,8 @@ function handleMouseMove(event) {
     MAPEDITOR.skipRemoteStateUpdate = true
   }
 
-  MAPEDITOR.mousePos.x = ((event.offsetX + camera.x) / camera.multiplier)
-  MAPEDITOR.mousePos.y = ((event.offsetY + camera.y) / camera.multiplier)
+  MAPEDITOR.mousePos.x = ((event.clientX + camera.x) / camera.multiplier)
+  MAPEDITOR.mousePos.y = ((event.clientY + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.draggingRelativeObject) {
     updateDraggingObject(MAPEDITOR.draggingRelativeObject)

@@ -876,6 +876,13 @@ class Game{
       return map
     }, {})
   }
+
+  onUpdateGridNode(x, y, update) {
+    if(GAME.grid && GAME.grid.nodes && GAME.grid.nodes[x] && GAME.grid.nodes[x][y]) {
+      Object.assign(GAME.grid.nodes[x][y], update)
+    }
+  }
+
 }
 
 window.GAME = new Game()

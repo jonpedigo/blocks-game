@@ -285,6 +285,10 @@ function init() {
     window.local.emit('onUpdateGrid', grid)
   })
 
+  window.socket.on('onUpdateGridNode', (x, y, update) => {
+    window.local.emit('onUpdateGridNode', x, y, update)
+  })
+
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (hero) => {
     if(PAGE.role.isPlayEditor && window.editingHero.id == hero.id) {

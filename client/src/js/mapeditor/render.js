@@ -7,7 +7,7 @@ function update() {
   let camera = MAPEDITOR.camera
   if(!ctx) return
 
-  if(!GAME.gameState.started) {
+  if(PAGE.role.isAdmin) {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
       if(object.tags.invisible || object.tags.light || object.tags.emitter) {
@@ -25,7 +25,7 @@ function update() {
     drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
   }
 
-  if(objectHighlighted) {
+  if(objectHighlighted && !objectHighlighted.CREATOR) {
     let color = 'rgba(255,255,255,0.2)'
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       color = 'rgba(255,255,255,0.2)'
@@ -56,9 +56,14 @@ function update() {
   }
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject || draggingRelativeObject
+  if(objectHighlighted && objectHighlighted.CREATOR) {
+    currentObject = objectHighlighted
+  }
   if(currentObject) {
-    if(currentObject.tags && currentObject.tags.invisible) {
-      drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false, filled: true}, color: 'rgba(255,255,255,0.2)'}, camera)
+    if(currentObject.tags && currentObject.tags.invisible || currentObject.tags.light || currentObject.tags.emitter) {
+      ctx.setLineDash([5, 15]);
+      drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false }, color: 'rgba(255,255,255,1)'}, camera)
+      ctx.setLineDash([]);
     } else {
       drawTools.drawObject(ctx, currentObject, camera)
       if(currentObject.constructParts) {

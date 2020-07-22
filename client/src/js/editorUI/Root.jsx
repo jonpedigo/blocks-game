@@ -22,6 +22,20 @@ export default class Root extends React.Component {
       })
     }
 
+    this._handleKeyDown = (e) => {
+      if(e.keyCode === 27) {
+        this._creatorRef.current.clearSelectedCreatorObject()
+      }
+    }
+
+    this._creatorRef = React.createRef()
+  }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this._handleKeyDown, false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this._handleKeyDown, false);
   }
 
   render() {
@@ -29,7 +43,7 @@ export default class Root extends React.Component {
 
     return (
       <div className="EditorUI">
-        <Creator></Creator>
+        <Creator ref={this._creatorRef}></Creator>
       </div>
     )
   }

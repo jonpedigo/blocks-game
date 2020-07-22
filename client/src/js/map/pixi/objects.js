@@ -152,10 +152,11 @@ function initEmitter(gameObject) {
 
   let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
   PIXIMAP.objectStage.emitters.push(emitter)
-  container.parentGroup = PixiLights.diffuseGroup
+  // container.parentGroup = PixiLights.diffuseGroup
   container.emitter = emitter
   container.emitter.type = 'flameEmitter'
 
+  console.log('?', container, gameObject)
   updatePixiEmitter(container, gameObject)
 
   return container

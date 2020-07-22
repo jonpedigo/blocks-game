@@ -112,7 +112,7 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['resourceZone'] && collider.mod().tags['resourceWithdrawOnInteract'] && isInteraction) {
+  if(collider.tags && collider.mod().tags['resourceZone'] && ((collider.mod().tags['resourceWithdrawOnInteract'] && isInteraction) || collider.mod().tags['resourceWithdrawOnCollide'])) {
     let subObjectNameToWithdraw
     Object.keys(collider.subObjects).forEach((subObjectName) => {
       const so = collider.subObjects[subObjectName]
@@ -126,7 +126,7 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['resourceZone'] && collider.mod().tags['resourceDepositOnInteract'] && isInteraction) {
+  if(collider.tags && collider.mod().tags['resourceZone'] && ((collider.mod().tags['resourceDepositOnInteract'] && isInteraction) || collider.mod().tags['resourceDepositOnCollide'])) {
     let subObjectNameToWithdraw
     Object.keys(hero.subObjects).forEach((subObjectName) => {
       const so = hero.subObjects[subObjectName]

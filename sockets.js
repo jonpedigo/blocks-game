@@ -327,6 +327,13 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateGrid', gridIn)
   })
 
+  socket.on('updateGridNode', (x, y, update) => {
+    if(currentGame.grid && currentGame.grid.nodes && currentGame.grid.nodes[x] && currentGame.grid.nodes[x][y]) {
+      Object.assign(currentGame.grid.nodes[x][y], update)
+    }
+    io.emit('onUpdateGridNode', x, y, update)
+  })
+
   socket.on('askGrid', () => {
     io.emit('onUpdateGrid', currentGame.grid)
   })

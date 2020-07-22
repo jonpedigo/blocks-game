@@ -62,6 +62,8 @@ function spawnObjectOnMap(object, newObject) {
 window.getSubObjectFromChances = function(mainObject, guestObject, ownerObject) {
   let subObjectNames = Object.keys(ownerObject.subObjectChances)
 
+  if(!ownerObject.subObjects) return
+
   subObjectNames = subObjectNames.filter((name) => {
     return ownerObject.subObjects[name]
   })

@@ -269,6 +269,13 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
 
 }
 
+PIXIMAP.onUpdateGridNode = function(x, y, update) {
+  const nodes = PIXIMAP.grid.nodes
+  if(nodes[x] && nodes[x][y]) {
+    Object.assign(nodes[x][y], update)
+  }
+  PIXIMAP.updateBlockSprites()
+}
 PIXIMAP.updateBlockSprites = function() {
   if(!PIXIMAP.grid) return
 

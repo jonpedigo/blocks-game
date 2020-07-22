@@ -1,79 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
 
-window.defaultCreatorObjects = [
-  {
-    label: 'Structure',
-    columnName: 'Basic',
-    JSON: {
-      objectType: 'plainObject',
-      tags: {
-        obstacle: true,
-        stationary: true
-      }
-    }
-  },
-  {
-    label: 'Backdrop',
-    columnName: 'Basic',
-    onSelectObject: () => {
-      //sprite chooser
-    },
-    onCreateObject: () => {
-      //window.socket.emit('updateGridNode')
-    }
-  },
-  {
-    label: 'Medium  Light',
-    columnName: 'Lights',
-    JSON: {
-      objectType: 'plainObject',
-      tags: {
-        light: true,
-      }
-    }
-  },
-  {
-    label: 'Fire',
-    columnName: 'Lights',
-    JSON: {
-      objectType: 'plainObject',
-      tags: {
-        light: true,
-      }
-    }
-  },
-  {
-    label: 'Spawn Zone',
-    columnName: 'Zones',
-    JSON: {
-      objectType: 'plainObject',
-      width: GAME.grid.nodeSize * 2,
-      height: GAME.grid.nodeSize * 2,
-      tags: {
-        spawnZone: true,
-        spawnRandomlyWithin: true,
-        spawnOnInterval: true,
-      },
-      spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
-    },
-    onCreateObject: (object) => {
-      window.socket.emit('addSubObject', object, { tags: { potential: true } }, 'spawner')
-    },
-  },
-  {
-    label: 'Resource Zone',
-    columnName: 'Zones',
-    JSON: {
-      objectType: 'plainObject',
-      width: GAME.grid.nodeSize * 2,
-      height: GAME.grid.nodeSize * 2,
-      tags: { resourceZone: true, resourceDepositOnCollide: true, resourceWithdrawOnCollide: true },
-      resourceWithdrawAmount: 1, resourceLimit: -1, resourceTags: ['resource']
-    }
-  }
-]
-
 export default class Creator extends React.Component {
   constructor(props) {
     super(props)
@@ -92,6 +19,12 @@ export default class Creator extends React.Component {
       })
     }
 
+    this.clearSelectedCreatorObject = () => {
+      this.setState({
+        creatorObjectSelected: {}
+      })
+    }
+
     this._open = () => {
       this.setState({
         open: true,
@@ -102,6 +35,39 @@ export default class Creator extends React.Component {
       this.setState({
         open: false,
       })
+    }
+
+    this._onMouseMove = () => {
+      const { creatorObjectSelected } = this.state
+
+      if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
+        const { height, width, tags, color } = creatorObjectSelected.JSON
+        if(width) MAPEDITOR.objectHighlighted.width = width
+        if(height) MAPEDITOR.objectHighlighted.height = height
+        if(tags) MAPEDITOR.objectHighlighted.tags = tags
+        MAPEDITOR.objectHighlighted.color = color || 'white'
+        MAPEDITOR.objectHighlighted.CREATOR = true
+      }
+    }
+
+    this._onClick = () => {
+      const { creatorObjectSelected } = this.state
+      let newObject
+      if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
+        newObject = _.cloneDeep(creatorObjectSelected.JSON)
+        newObject.x = MAPEDITOR.objectHighlighted.x
+        newObject.y = MAPEDITOR.objectHighlighted.y
+        newObject.id = 'creator-'+window.uniqueID()
+        OBJECTS.create(newObject)
+
+        if(creatorObjectSelected.onCreateObject) {
+          creatorObjectSelected.onCreateObject(newObject)
+        }
+      }
+
+      if(creatorObjectSelected.onClick) {
+        creatorObjectSelected.onClick(MAPEDITOR.objectHighlighted, newObject)
+      }
     }
 
     this._categorizeCreatorObjects = () => {
@@ -123,7 +89,15 @@ export default class Creator extends React.Component {
   }
 
   componentDidMount() {
+    document.body.addEventListener("click", this._onClick)
+    document.body.addEventListener("mousemove", this._onMouseMove)
+
     this._categorizeCreatorObjects()
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("click", this._onClick, false);
+    document.removeEventListener("mousemove", this._onMouseMove, false);
   }
 
   _toggleOpenColumn(columnName) {
@@ -143,6 +117,7 @@ export default class Creator extends React.Component {
   }
 
   _selectCreatorObject(object) {
+    // window.setFontAwesomeCursor("\uf041", 'white')
     this.setState({
       creatorObjectSelected: object
     })
@@ -171,6 +146,7 @@ export default class Creator extends React.Component {
               this.setState({
                 creatorObjectSelected: {}
               })
+              // document.body.style.cursor = 'default';
             }
           }></i>
         }
