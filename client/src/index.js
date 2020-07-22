@@ -3,70 +3,25 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-Use MAPEDITOR.objectHighlighted to decide where to place these editor UI objects
-EDITOR UI will have many features. the CREATOR component needs to be extensible with any objects I put in there
+—
+Choose color
+PAINT CLICK
+Erase
+Color dropper
+—
 
+Pop up text above hero
+ALSO MODALS You acquired ___
+
+Solid Color Transition Effects ( MORE PARTICLE EFFECTS )
+
+World and grid editor
+
+--
 Editor UI
-  Map Creator Buttons
   World Edits
   Grid Editing
   Game Loading Saving
-
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-/// EDITOR UI
-// Before the compendium, there are basic graphical objects that every game will access
-// THE DEFAULT COMPENDIUM
-XXX1) Background tiles ( put on grid nodes ?)
-  Background sprites
-  update grid node
-XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
-  Sprite construct parts
-XXX3) Zones ( spawn zone, resource zone, filters, idk, its just an invisible object THAT COMES WITH CUSTOM TAGS there shiuld be a menu where you choose zone tags )
-XXX4) Particle Emitter
-  // add more? allow JSON upload?
-XXX5) Moving Object ( starts with dialogue and some path finding?, has an awareness area subobject and a pf object? )
-  // awareness area
->>>>>>6) special environment -> (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice
-XXX7) Lights
-  // tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
-XXX8) Pickupable, Loot chests
->>>>>>9) Sounds
-XXX10) game objects ( quest, sequence, timer, trigger, hook )
---->11) Resource Management
-
-https://github.com/dataarts/dat.gui
-EDITORS
-world--
-day night editor
-camera/game editor
-grid editor
-
-object--
-timer editor
-zone editor
-spawn zone editor
-path editor
-physics editor
-inventory editor
-light editor
-chest editor
-resource editor ( shop )
-
-// TRIGGER EDITOR
-   eventName
-   mainObjectTag
-   mainObjectId
-   guestObjectTag
-   guestObjectId
-   eventThreshold ( event value )
-   triggerPool
-
-WORLD EDITOR
-  //zoom to Set to game boundary size
-  //zoom to all objects
-  //Set all objects to the middle ( FULL MIGRATION )
-  // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -75,22 +30,18 @@ WORLD EDITOR
 ////////////////////////////////////////////////////
 
 SUB OBJECT CREATION MENU
-
 GROUP OBJECT COMMANDS
-
-HOOK UP RESPAWNS TO A SPAWN ZONE
-TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS
 
 TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
 VISIBLE TO
-
-HERO MAP EDITOR
 
 SCENARIOS
 GAME RESULTS PAGE
 WIN/LOSE CONDITIONS
 GAME LOBBY PAGE
 EPILOGUE
+
+(ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
 
 ***TEST GAME LIMITS FOR GRID SIZE / PATHFINDING SIZES
   - in a short test I found a pretty large limit for the world size
@@ -100,23 +51,14 @@ SOUND FX
 
 !!!!!!!! !!!! READY FOR PAPA BEAR BETA !!!! !!!!!!
 
-PATHFINDING editor / advancements <---- !
-// objects have their own path?
-// pathfinding editor should fit inside of the sequence editor
-// path goals AKA patrol
-// path 1, path 2, path 3 with conditions
-// Set Target, Set Pathfinding Target
-// Pathfinding for something larger than one grid node
-// Perhaps not PATHFINDING but… targeting.
+PATHFINDING UPGRADE
 
 COMPENDIUM <---- !
 PUZZLE INTERFACES <---- !
-
 SUBINTERACT MENU ( find all interact triggers involving this object and display all possible )
 Finish feature list
 
 FOG OF WAR
-JUICE
 CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
 PIXEL EDITOR
 LEVEL UP SYSTEM
@@ -129,9 +71,9 @@ PROCEDURAL
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+HOOK UP RESPAWNS TO A SPAWN ZONE
 pickupable SUB OBJECT, cuz right now that would break right??
 a max stackable???? idk
-
 never close right click menu if shift is pressed
 Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
 UI - input index
@@ -171,6 +113,65 @@ Target/Homing awareness area
 // notation for < or > for conditions and notation for '+' and '-' for edit
 ////////////////////////////////////////////////////
 
+
+
+
+NOTES
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+/// ALL SORTS OF EDITOR NOTES
+/////////////////////////////
+BASIC - Structure, Outline, Backdrop
+LIGHT - Fire, Light
+// tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
+ZONE - Spawn Zone, Resource Zone, Timer
+ITEM - Resource, Chest
+ACTOR - Standing Actor, Wanderer
+// Awareness Area
+
+https://github.com/dataarts/dat.gui
+EDITORS
+world--
+day night editor
+camera/game editor
+grid editor
+
+object--
+timer editor
+zone editor
+spawn zone editor
+path editor
+physics editor
+inventory editor
+light editor
+chest editor
+resource editor ( shop )
+
+// TRIGGER EDITOR
+   eventName
+   mainObjectTag
+   mainObjectId
+   guestObjectTag
+   guestObjectId
+   eventThreshold ( event value )
+   triggerPool
+
+WORLD EDITOR
+  //zoom to Set to game boundary size
+  //zoom to all objects
+  //Set all objects to the middle ( FULL MIGRATION )
+  // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
+
+PATHFINDING editor / advancements <---- !
+TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
+// objects have their own path?
+// pathfinding editor should fit inside of the sequence editor
+// path goals AKA patrol
+// path 1, path 2, path 3 with conditions
+// Set Target, Set Pathfinding Target
+// Pathfinding for something larger than one grid node
+// Perhaps not PATHFINDING but… targeting.
+
 ////////////////////////////////
 ////////////////////////////////
 // INVENTORY NOTES
@@ -178,13 +179,6 @@ GAME
 // max inventory ( number )
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
-
-UI
-// show item sprite ( boolean )
-// fullscreen ( boolean )
-// inventory style ( String - ['grid', 'list'])
-// inventory size ( String - ['micro', ?, ?, ?, ])
-
 
 ////////////////////////////////
 ////////////////////////////////

@@ -147,7 +147,7 @@ class contextMenuEl extends React.Component{
 
 
   _renderAdvancedWorldMenu() {
-    const { objectSelected, subObject } = this.props
+    const { objectSelected } = this.props
 
     return <SubMenu title="Advanced">
       <MenuItem key='download-game-JSON'>Download Game JSON</MenuItem>

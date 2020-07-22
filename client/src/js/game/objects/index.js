@@ -583,6 +583,7 @@ class Objects{
         } else {
           subObject.subObjectName = subObject.subObjectName + '-copy-'+window.uniqueID()
           subObjectName = subObject.subObjectName
+          console.trace('i have copied', existingSubObject, subObject)
         }
       }
     }

@@ -211,6 +211,10 @@ export default class Root extends React.Component {
     const { sequence } = this.state
 
     GAME.world.sequences[sequence.id] = this._getSequenceJSON()
+    if(!PAGE.role.isHost) {
+      window.socket.emit('updateWorld', { sequences: GAME.world.sequences })
+    }
+
     this.setState({
       sequence: null
     })

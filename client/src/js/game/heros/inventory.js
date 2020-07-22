@@ -63,6 +63,7 @@ function dropObject(hero, subObject, dropAmount = 1) {
   object.tags.subObject = false
   delete object.inInventory
   delete object.isEquipped
+  delete object.ownerId
 
   const {x, y} = gridUtil.snapXYToGrid(object.x, object.y)
   object.x = x
