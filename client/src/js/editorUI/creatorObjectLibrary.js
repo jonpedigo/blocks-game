@@ -22,7 +22,7 @@ function onGameLoaded() {
   window.defaultCreatorObjects = [
     {
       label: 'Structure',
-      columnName: 'Basic',
+      columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryObstacle', { obstacle: true, stationary: true })
       }
@@ -48,14 +48,14 @@ function onGameLoaded() {
     // },
     {
       label: 'Background',
-      columnName: 'Basic',
+      columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true })
       }
     },
     {
       label: 'Foreground',
-      columnName: 'Basic',
+      columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true })
       }

@@ -1,5 +1,6 @@
 import React from 'react'
 import Creator from './Creator.jsx'
+import Toolbar from './Toolbar.jsx'
 
 export default class Root extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ export default class Root extends React.Component {
     return (
       <div className="EditorUI">
         <Creator ref={this._creatorRef}></Creator>
+        <Toolbar></Toolbar>
       </div>
     )
   }
