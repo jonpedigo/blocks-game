@@ -3,12 +3,6 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-—
-Choose color
-PAINT CLICK
-Erase
-Color dropper
-—
 
 Pop up text above hero
 ALSO MODALS You acquired ___

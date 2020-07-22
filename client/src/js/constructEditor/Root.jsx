@@ -1,4 +1,4 @@
-import { SketchPicker } from 'react-color';
+import { SketchPicker, SwatchesPicker } from 'react-color';
 import React from 'react'
 
 export default class Root extends React.Component{
@@ -51,11 +51,24 @@ export default class Root extends React.Component{
           this.setState({
             selectedColor: color.hex
           })
+          selectColor(color.hex)
         }}
         onChangeComplete={ (color) => {
           selectColor(color.hex)
         }}
       />
+      <SwatchesPicker
+          color={selectedColor}
+          onChange={(color) => {
+            this.setState({
+              selectedColor: color.hex
+            })
+            selectColor(color.hex)
+          }}
+          onChangeComplete={ (color) => {
+            selectColor(color.hex)
+          }}
+        />
     </div>
   }
 

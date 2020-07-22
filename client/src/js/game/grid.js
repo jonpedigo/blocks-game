@@ -5,6 +5,7 @@ function setDefault() {
     nodeSize: 32,
     startX: 0,
     startY: 0,
+    nodeData: {}
   }
 }
 

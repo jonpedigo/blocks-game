@@ -104,11 +104,13 @@ function setDefault() {
 
   window.graphicalTags = {
     glowing: false,
-    filled: false,
+    outline: false,
     invisible: false,
     tilingSprite: false, //cant change
     inputDirectionSprites: false,
     light: false,
+    background: false,
+    foreground: false,
     // invisibleOnHeroCollide: false
   }
 
@@ -167,7 +169,6 @@ function setDefault() {
 
   window.heroTags = {
     hero: true,
-    filled: true,
     gravityY: false,
     default: false,
     monsterDestroyer: false,

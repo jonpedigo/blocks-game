@@ -43,8 +43,8 @@ export default class HeroContextMenu extends React.Component{
         window.socket.emit('respawnHero', objectSelected)
       }
 
-      if(key === 'toggle-filled') {
-        networkEditObject(objectSelected, { tags: { filled: !objectSelected.tags.filled }})
+      if(key === 'toggle-outline') {
+        networkEditObject(objectSelected, { tags: { outline: !objectSelected.tags.outline }})
       }
 
       if(key === 'copy-id') {
@@ -173,7 +173,7 @@ export default class HeroContextMenu extends React.Component{
       <MenuItem key='respawn'>Respawn</MenuItem>
       <SubMenu title="Color">
         <MenuItem key="select-color" className='dont-close-menu'>Color Picker</MenuItem>
-        <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
+        <MenuItem key="toggle-outline">{ objectSelected.tags.outline ? 'On border only' : "Fill object" }</MenuItem>
       </SubMenu>
       <SubMenu title="Quests">
         <MenuItem key="add-quest">Add Quest</MenuItem>

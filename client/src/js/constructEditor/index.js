@@ -47,12 +47,12 @@ class ConstructEditor {
   }
 
   cancel() {
+    this.open = false
     window.local.emit('onConstructEditorClose', false)
     this.close()
   }
 
   close() {
-    this.open = false
     document.body.style.cursor = 'default';
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
@@ -115,7 +115,7 @@ class ConstructEditor {
     }
     this.canvas.addEventListener("mouseup", this._mouseUpListener)
 
-    this.ref.open(object.color || GAME.world.defaultObjectColor || '#525252')
+    this.ref.open(object.color || GAME.world.defaultObjectColor || window.defaultObjectColor)
     this.selectColor(object.color)
   }
 
@@ -134,7 +134,7 @@ class ConstructEditor {
       this.unfillNodeXY(this.mousePos.x, this.mousePos.y)
     } else if(tool === 'eyeDropper') {
       const color = this.getColorFromNodeXY(this.mousePos.x, this.mousePos.y)
-      this.selectedColor = color || GAME.world.defaultObjectColor || '#525252'
+      this.selectedColor = color || GAME.world.defaultObjectColor || window.defaultObjectColor
       this.ref.setColor(this.selectedColor)
     }
   }
@@ -351,12 +351,12 @@ class ConstructEditor {
       }
     })
 
-    if(!tags.filled) {
+    if(tags.outline) {
       ctx.globalCompositeOperation='destination-out';
 
       grid.forEachNode((node) => {
         if(node.data.filled) {
-          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width }, camera)
+          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, tags }, camera)
         }
       })
 
@@ -365,7 +365,7 @@ class ConstructEditor {
 
     if(nodeHighlighted) {
       if(tool === 'paintBrush') {
-        drawTools.drawObject(ctx, nodeHighlighted, camera)
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)
       } else if(tool === 'eraser'){
         drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
       } else {

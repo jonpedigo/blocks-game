@@ -6,6 +6,14 @@
 
   .Creator {
     display: flex;
+
+    &__color-picker {
+      position: fixed;
+      left: 10px;
+      top: 60px;
+      cursor: default;
+    }
+
     &__category {
       color: #ccc;
       font-size: 30px;
@@ -21,6 +29,9 @@
 
       &-top {
         min-height: 40px;
+        .fa-chevron-down {
+          color: #eee;
+        }
       }
 
       &--selected {

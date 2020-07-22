@@ -31,7 +31,8 @@ const updatePixiObject = (gameObject) => {
         let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
         let color = part.color || gameObject.color || GAME.world.defaultObjectColor
         let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-        const partObject = {tags: gameObject.tags,  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+        const partObject = {tags: _.cloneDeep(gameObject.tags),  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+        if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
         updatePixiObject(partObject)
       })
 
@@ -107,7 +108,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   /////////////////////
   /////////////////////
   // INVISIBILITY
-  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
+  const isInvisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
   // remove if its invisible now
   if (isInvisible) {
     if(pixiChild.emitter) {
@@ -156,7 +157,6 @@ function initEmitter(gameObject) {
   container.emitter = emitter
   container.emitter.type = 'flameEmitter'
 
-  console.log('?', container, gameObject)
   updatePixiEmitter(container, gameObject)
 
   return container
@@ -166,8 +166,9 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // INVISIBILITY
-  const isInvisible = !gameObject.tags.filled || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
+  const isInvisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
   // remove if its invisible now
+
   if (isInvisible) {
     pixiChild.visible = false
     return
@@ -255,6 +256,8 @@ function updateProperties(pixiChild, gameObject) {
     pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
   } else if(GAME.world.defaultObjectColor) {
     pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
+  } else {
+    pixiChild.tint = parseInt(tinycolor(window.defaultObjectColor).toHex(), 16)
   }
 
   if(gameObject.opacity) {
@@ -337,7 +340,8 @@ const initPixiObject = (gameObject) => {
 
   if(gameObject.constructParts) {
     gameObject.constructParts.forEach((part) => {
-      addGameObjectToStage({tags: gameObject.tags, ...part}, PIXIMAP.objectStage)
+      const pixiChild = addGameObjectToStage({tags: gameObject.tags, ...part}, PIXIMAP.objectStage)
+      pixiChild.ownerName = gameObject.id
     })
     return
   }

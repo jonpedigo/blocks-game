@@ -878,6 +878,10 @@ class Game{
   }
 
   onUpdateGridNode(x, y, update) {
+    const key = 'x:'+x+'y:'+y
+    if(!GAME.grid.nodeData) GAME.grid.nodeData = {}
+    if(!GAME.grid.nodeData[key]) GAME.grid.nodeData[key] = {}
+    Object.assign(GAME.grid.nodeData[key], update)
     if(GAME.grid && GAME.grid.nodes && GAME.grid.nodes[x] && GAME.grid.nodes[x][y]) {
       Object.assign(GAME.grid.nodes[x][y], update)
     }

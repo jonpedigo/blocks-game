@@ -284,6 +284,9 @@ class Hero{
       const id = hero.id
       hero = JSON.parse(JSON.stringify(GAME.defaultHero))
       hero.id = id
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
+        subObject.id = 'subObject-'+window.uniqueID()
+      })
       HERO.respawn(hero)
       return hero
     }

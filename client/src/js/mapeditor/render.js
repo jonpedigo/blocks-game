@@ -11,7 +11,7 @@ function update() {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
       if(object.tags.invisible || object.tags.light || object.tags.emitter) {
-        drawTools.drawObject(ctx, {...object, tags: {invisible: false }, color: 'rgba(255,255,255,1)'}, camera)
+        drawTools.drawObject(ctx, {...object, tags: {invisible: false, outline: true }, color: 'rgba(255,255,255,1)'}, camera)
       }
     })
     ctx.setLineDash([]);
@@ -62,7 +62,7 @@ function update() {
   if(currentObject) {
     if(currentObject.tags && currentObject.tags.invisible || currentObject.tags.light || currentObject.tags.emitter) {
       ctx.setLineDash([5, 15]);
-      drawTools.drawObject(ctx, {...currentObject, tags: {invisible: false }, color: 'rgba(255,255,255,1)'}, camera)
+      drawTools.drawObject(ctx, {...currentObject, tags: { invisible: false, outline: true }, color: 'rgba(255,255,255,1)'}, camera)
       ctx.setLineDash([]);
     } else {
       drawTools.drawObject(ctx, currentObject, camera)

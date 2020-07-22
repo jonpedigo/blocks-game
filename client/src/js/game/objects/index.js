@@ -9,6 +9,7 @@ import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
 
 class Objects{
   constructor() {
+    window.defaultObjectColor = '#525252'
     window.defaultSubObject = {
       relativeX: 0, relativeY: 0,
       objectType: 'subObject',
@@ -180,6 +181,7 @@ class Objects{
       hooks: object.hooks,
       subObjectChances: object.subObjectChances,
       spawned: object.spawned,
+      reserved: object.reserved,
 
       // inventory
       count: object.count,
@@ -520,9 +522,11 @@ class Objects{
   onEditObjects(editedObjects) {
     editedObjects.forEach((obj) => {
       let objectById = GAME.objectsById[obj.id]
-      OBJECTS.editObject(objectById, obj)
       if(obj.constructParts || objectById.constructParts) {
         PIXIMAP.deleteObject(objectById)
+      }
+      OBJECTS.editObject(objectById, obj)
+      if(obj.constructParts || objectById.constructParts) {
         PIXIMAP.addObject(objectById)
       }
     })

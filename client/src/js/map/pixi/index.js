@@ -5,6 +5,8 @@ import gridUtil from '../../utils/grid'
 import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
 
+import { setColor } from './utils'
+
 window.PIXIMAP = {
   textures: {},
   initialized: false,
@@ -306,6 +308,7 @@ PIXIMAP.updateBlockSprites = function() {
         if(node.backgroundSprite.texture.id !== gridNode.sprite) {
           node.backgroundSprite.texture = textures[gridNode.sprite]
         }
+        setColor(node.backgroundSprite, node)
       }
 
       if(Math.abs(gridX - x) > 32) {

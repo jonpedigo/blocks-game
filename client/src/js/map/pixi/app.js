@@ -130,18 +130,31 @@ const initPixiApp = (canvasRef, onLoad) => {
         object = OBJECTS.getObjectOrHeroById(sprite.name)
       }
 
-      if(object && object.tags.emitter) {
-        sprite.zOrder = 1000000000000;
+      if(object && object.tags.background) {
+        sprite.zOrder = -1
         return
       }
+
       if(object && object.tags.obstacle){
-        sprite.zOrder = sprite.y + 100000;
+        sprite.zOrder = sprite.y + 10000
         return
       }
       if(object && object.tags.hero) {
-        sprite.zOrder = sprite.y + 1000000;
+        sprite.zOrder = sprite.y + 100000
         return
       }
+
+      if(object && object.tags.foreground) {
+        sprite.zOrder = sprite.y + 1000000
+        return
+      }
+
+      // emitters are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
+      if(object && object.tags.emitter) {
+        sprite.zOrder = 1000000000000
+        return
+      }
+
       sprite.zOrder = sprite.y;
   });
 

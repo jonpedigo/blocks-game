@@ -286,7 +286,7 @@ function updateGridHighlight(location) {
   MAPEDITOR.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
-  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects)
+  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects.filter(({reserved}) => !reserved))
 
   collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
     if(hero.removed) return

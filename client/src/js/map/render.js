@@ -57,7 +57,7 @@ function update(camera) {
 
     if(object.removed) return
     if(object.id === CONSTRUCTEDITOR.objectId) return
-    if(!object.tags.filled) {
+    if(object.tags.outline) {
       if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
         if(object.constructParts) {
           drawTools.drawConstructParts(ctx, camera, object)
@@ -71,7 +71,7 @@ function update(camera) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
         if(subObject.tags.potential) return
         if(subObject.tags.removed) return
-        if(subObject.tags.filled) return
+        if(!subObject.tags.outline) return
         drawTools.drawObject(ctx, subObject, camera)
       })
     }
@@ -81,7 +81,7 @@ function update(camera) {
     hero = hero.mod()
     if(hero.removed) return
 
-    if(!hero.tags.filled) {
+    if(hero.tags.outline) {
       if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
         drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
       } else {
@@ -93,7 +93,7 @@ function update(camera) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
         if(subObject.tags.potential) return
         if(subObject.tags.removed) return
-        if(subObject.tags.filled) return
+        if(!subObject.tags.outline) return
         drawTools.drawObject(ctx, subObject, camera)
       })
     }
@@ -110,7 +110,7 @@ function update(camera) {
     })
   }
 
-  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && !clientHero.interactableObject.tags.filled) {
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && clientHero.interactableObject.tags.outline) {
     const { interactableObject } = clientHero
 
     if(interactableObject.tags.invisible) {

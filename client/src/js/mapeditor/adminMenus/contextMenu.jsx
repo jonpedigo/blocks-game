@@ -22,6 +22,7 @@ class contextMenuEl extends React.Component{
     super(props)
 
     document.body.addEventListener("contextmenu", e => {
+      if(!window.isClickingMap(e.target.className)) return
       if(!MAPEDITOR.paused) {
         e.preventDefault();
         const origin = {
@@ -173,7 +174,7 @@ class contextMenuEl extends React.Component{
           } else if(coloringObject == 'defaultObject') {
             window.socket.emit('updateWorld', {defaultObjectColor: color.hex})
           } else {
-            coloringObject.tags.filled = true
+            coloringObject.tags.outline = false
             networkEditObject(coloringObject, {color: color.hex})
           }
           this.setState({

@@ -4,7 +4,7 @@ function drawConstructParts(ctx, camera, object) {
   })
 
   // this punches out outlines inside of object
-  if(!object.tags.filled) {
+  if(object.tags.outline) {
     ctx.globalCompositeOperation='destination-out';
     object.constructParts.forEach((part) => {
       drawObject(ctx, part, camera)
@@ -83,7 +83,7 @@ function drawFilledObject(ctx, object, camera, options = {}) {
     else if(GAME.world.defaultObjectColor) {
       ctx.strokeStyle = GAME.world.defaultObjectColor
     }
-    else ctx.strokeStyle = '#525252'
+    else ctx.strokeStyle = window.defaultObjectColor
 
     ctx.strokeRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
   } else {
@@ -91,7 +91,7 @@ function drawFilledObject(ctx, object, camera, options = {}) {
     else if(GAME.world.defaultObjectColor) {
       ctx.fillStyle = GAME.world.defaultObjectColor
     }
-    else ctx.fillStyle = '#525252'
+    else ctx.fillStyle = window.defaultObjectColor
 
     ctx.fillRect((object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier));
   }
@@ -105,7 +105,7 @@ function drawVertice(ctx, vertice, camera) {
 
   if(vertice.color) ctx.strokeStyle = vertice.color
   else if(GAME.world.defaultObjectColor) ctx.strokeStyle = GAME.world.defaultObjectColor
-  else ctx.strokeStyle = '#525252'
+  else ctx.strokeStyle = window.defaultObjectColor
 
   if(vertice.thickness) {
     ctx.lineWidth = vertice.thickness
@@ -121,7 +121,7 @@ function drawVertice(ctx, vertice, camera) {
     drawVertice(ctx, {...vertice, glow: false}, camera)
   }
   if(vertice.color) {
-    ctx.strokeStyle = '#525252';
+    ctx.strokeStyle = window.defaultObjectColor;
   }
   if(vertice.thickness) {
     ctx.lineWidth = 1
@@ -150,7 +150,7 @@ function drawObject(ctx, object, camera, options = {showInvisible: false, stroke
      ctx.globalAlpha = 0.2;
      drawFilledObject(ctx, object, camera, options);
    }
-  } else if(!object.tags || (object.tags && object.tags.filled)) {
+ } else if(!object.tags || (object.tags && !object.tags.outline)) {
     drawFilledObject(ctx, object, camera, options);
   } else {
     drawFilledObject(ctx, object, camera, {...options, strokeRect: true});

@@ -121,3 +121,9 @@ window.setFontAwesomeCursor = function(unicode, color) {
 Object.defineProperty(Object.prototype, 'mod', { value: function() {
   return GAME.mod(this)
 }})
+
+window.isClickingMap = function(className) {
+  if(className.indexOf('Creator__category') >= 0 && className.indexOf('Creator__category-container') === -1) return false
+
+  return true
+}

@@ -22,10 +22,17 @@ function convertToGridXY(object, options = { }) {
 function generateGridNodes(gridProps) {
   const grid = []
 
+  const nodeData = gridProps.nodeData
   for(var i = 0; i < gridProps.width; i++) {
     grid.push([])
     for(var j = 0; j < gridProps.height; j++) {
-      grid[i].push({x: gridProps.startX + (i * GAME.grid.nodeSize), y: gridProps.startX + (j * GAME.grid.nodeSize), width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, gridX: i, gridY: j})
+      const node = {x: gridProps.startX + (i * GAME.grid.nodeSize), y: gridProps.startX + (j * GAME.grid.nodeSize), width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, gridX: i, gridY: j}
+      const key = 'x:'+node.gridX+'y:'+node.gridY
+      if(nodeData && nodeData[key]) {
+        node.sprite = nodeData[key].sprite
+        node.color = nodeData[key].color
+      }
+      grid[i].push(node)
     }
   }
 

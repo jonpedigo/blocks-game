@@ -328,6 +328,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('updateGridNode', (x, y, update) => {
+    const key = 'x:'+x+'y:'+y
+    if(!currentGame.grid.nodeData) currentGame.grid.nodeData = {}
+    if(!currentGame.grid.nodeData[key]) currentGame.grid.nodeData[key] = {}
+    Object.assign(currentGame.grid.nodeData[key], update)
+
     if(currentGame.grid && currentGame.grid.nodes && currentGame.grid.nodes[x] && currentGame.grid.nodes[x][y]) {
       Object.assign(currentGame.grid.nodes[x][y], update)
     }
