@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 
 window.defaultCreatorObjects = [
   {
@@ -79,7 +80,7 @@ export default class Creator extends React.Component {
 
     this.state = {
       creatorObjects: window.defaultCreatorObjects,
-      creatorObjectSelected : null,
+      creatorObjectSelected : {},
       open: true,
       rows: [],
       columnsOpen: {}
@@ -121,6 +122,10 @@ export default class Creator extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this._categorizeCreatorObjects()
+  }
+
   _toggleOpenColumn(columnName) {
     const columnsOpen = this.state.columnsOpen
 
@@ -129,30 +134,69 @@ export default class Creator extends React.Component {
     this.setState({columnsOpen})
   }
 
-  componentDidMount() {
-    this._categorizeCreatorObjects()
+  _closeColumn(columnName) {
+    const columnsOpen = this.state.columnsOpen
+
+    columnsOpen[columnName] = false
+
+    this.setState({columnsOpen})
+  }
+
+  _selectCreatorObject(object) {
+    this.setState({
+      creatorObjectSelected: object
+    })
+  }
+
+  _renderColumn(column) {
+    const { columnsOpen, creatorObjectSelected } = this.state
+
+    const name = column[0].columnName
+    const selected = name === creatorObjectSelected.columnName
+    const open = columnsOpen[name] || selected
+
+    return <div className="Creator__category-container"><div className={classnames("Creator__category", {"Creator__category--selected": selected } )} onClick={() => {
+        this._toggleOpenColumn(name)
+      }}
+      onMouseLeave={() => {
+        this._closeColumn(name)
+      }}
+      >
+      <div className="Creator__category-top">
+        {!open && name}
+        {open && !selected && <i className="fa fas fa-chevron-down"></i>}
+        {selected &&
+          <i className="Creator__category-close fa fas fa-times"
+            onClick={() => {
+              this.setState({
+                creatorObjectSelected: {}
+              })
+            }
+          }></i>
+        }
+      </div>
+      {open &&
+        column.map((object) => {
+          const selected = object.label === creatorObjectSelected.label
+          return <div className={classnames("Creator__category-item", { "Creator__category-item--selected": selected })} onClick={() => {
+              this._selectCreatorObject(object)
+            }}>
+            {object.label}
+          </div>
+        })
+      }
+    </div></div>
   }
 
   render() {
-    const { creatorObjects, open, rows, columnsOpen } = this.state
+    const { creatorObjects, open, rows } = this.state
 
     if(!open) return
 
     return (
       <div className="Creator">
-        {rows.map((columns) => {
-          return <div className="Creator__category" onClick={() => {
-              this._toggleOpenColumn(columns[0].columnName)
-            }}>
-            {columns[0].columnName}
-            {columnsOpen[columns[0].columnName] &&
-              columns.map((object) => {
-                return <div className="Creator__category-item">
-                  {object.label}
-                </div>
-              })
-            }
-          </div>
+        {rows.map((column) => {
+          return this._renderColumn(column)
         })}
       </div>
     )

@@ -11,26 +11,49 @@
       font-size: 30px;
       font-family: Courier;
       max-width: 200px;
-      height: 40px;
+      width: 120px;
       text-align: center;
       align-items: center;
       justify-content: center;
-      width: 20%;
-      margin: 20px;
+      margin: 10px;
       background-color: black;
-      -moz-box-shadow: 0 0 5px #fff;
-      -webkit-box-shadow: 0 0 5px #fff;
-      box-shadow: 0px 0px 5px #fff;
+      border: 1px solid rgba(255,255,255,0.5);
 
-      &:hover {
+      &-top {
+        min-height: 40px;
+      }
+
+      &--selected {
         -moz-box-shadow: 0 0 20px #fff;
         -webkit-box-shadow: 0 0 20px #fff;
         box-shadow: 0px 0px 20px #fff;
         cursor: pointer;
       }
 
-      &-item {
+      &:hover {
+        cursor: pointer;
+      }
 
+      &-close {
+        width: 100%;
+        min-height: 40px;
+        &:hover {
+          background-color: #555;
+        }
+      }
+
+      &-item {
+        display:flex;
+        background-color: black;
+        font-size: 20px;
+        border-top: 1px solid rgba(255,255,255,0.5);
+        height: 80px;
+        align-items: center;
+        justify-content: center;
+
+        &:hover, &--selected {
+          background-color: #333;
+        }
       }
     }
   }
