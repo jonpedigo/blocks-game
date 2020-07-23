@@ -4,18 +4,76 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Pop up text above hero
-ALSO MODALS You acquired ___
+Make objects interchangeable with heros, combine the lists??
+
+The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
+COMBINED DAT GUI EDITOR WITH REACT EDITOR?
+Find a good way to customize DAT GUI position and have more than one DAT GUI up?
+
+Auto grid. Yes you heard me I want a grid that auto expands when we add to it
+I also want to be able to have negative objects. NO I WILL NOT BE SETTING THE GRID BEFORE WE START EDITING
+Seperate grid from PF grid? We need to think PF grids completely
+
+Toolbelt UI sub menus? How does that work
+  View all the notes in the Toolbelt component, Implement that
+  Allow toolbelt to be created with JSON data
+
+An Event Modal system! Kind of like quests, but more modals!
+Options -> Modal, Toast, Chat
+  Modal, Toast, Chat, Log LOG LOG LOG LOG LOG
+    -> onHeroPickup
+    -> onHeroDrop
+    -> onHeroDeposit
+    -> onHeroWithdraw
+    -> onHeroDestroyed
+    -> onHeroRespawned
+    -> onHeroEquip
+    -> onHeroAware
+
+Scenarios/BeginEnd
+  TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
+  VISIBLE TO
+  Fade in/out to game
+
+  BEGIN
+  I think what we are going to want is a SERIES OF screens. Lets not allow then to be customizable right now
+  Maybe allow a background upload or allow them to draw the start screen
+  onGameStart is called after all heros reach the end
+  { pressToStartHeader: false, colorBackground: false, centerText: "", bottomText: "" }
+  allow playground: true ( this allows them to move around before the game starts )
+  controls screen
+
+  LOBBY ( multiplayer game )
+  Hero select or hero random
+  ( show all NPCS as heros )
+  Team Select or team random
+  new Heros allowed
+  allow Bios
+
+  SCENARIO
+  firstHero to score ___
+  firstTeam to score ___
+  firstResourceTo X
+  killCount to X
+  firstHero to collide with X
+  after timer
+  end by admin
+  Deathmatch ( heros have lives )
+  ( make tags for special scenario resources, winning resource, winning item, winning area, etc )
+
+  SCORE SCREENS
+  Teams
+  ResourceZones
+  Hero
+    Kill Counts
+    Score
+  LOGS ( I MEAN YEAH WE WANT A LOG SYSTEM with TIMESTAMPS )
+
+  EPILOGUE SCENARIO?
 
 Solid Color Transition Effects ( MORE PARTICLE EFFECTS )
 
-World and grid editor
-
 --
-Editor UI
-  World Edits
-  Grid Editing
-  Game Loading Saving
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -24,22 +82,8 @@ Editor UI
 ////////////////////////////////////////////////////
 
 SUB OBJECT CREATION MENU
-GROUP OBJECT COMMANDS
-
-TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
-VISIBLE TO
-
-SCENARIOS
-GAME RESULTS PAGE
-WIN/LOSE CONDITIONS
-GAME LOBBY PAGE
-EPILOGUE
 
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
-
-***TEST GAME LIMITS FOR GRID SIZE / PATHFINDING SIZES
-  - in a short test I found a pretty large limit for the world size
-  - the biggest performance hits are rendering and pathfinding
 
 SOUND FX
 
@@ -123,7 +167,6 @@ ITEM - Resource, Chest
 ACTOR - Standing Actor, Wanderer
 // Awareness Area
 
-https://github.com/dataarts/dat.gui
 EDITORS
 world--
 day night editor
@@ -218,6 +261,7 @@ Zoom blur filter — Perhaps when you are like low on health??
 ////////////////////////////////
 ////////////////////////////////
 // JUICE IDEAS
+https://www.engadget.com/alt254-zelda-style-indie-game-pixels-174504609.html
 ////////////////////////////////
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )

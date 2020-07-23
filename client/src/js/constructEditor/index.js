@@ -72,6 +72,7 @@ class ConstructEditor {
   }
 
   start(object) {
+    window.local.emit('onConstructEditorStart', object)
     this.initState()
     this.objectId = object.id
     this.open = true

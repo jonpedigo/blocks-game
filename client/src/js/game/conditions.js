@@ -12,6 +12,7 @@ window.conditionTypes = {
     id: true,
     label: 'Id:'
   },
+  // insideOfObjectId for timer amount
   hasTag: {
     tag: true,
     label: 'Tag:'
@@ -38,10 +39,10 @@ window.conditionTypes = {
   },
 
   // GIVE ID
-  occursXTimes: {
-    number: true,
-    label: 'X amount'
-  },
+  // occursXTimes: {
+  //   number: true,
+  //   label: 'X amount'
+  // },
 
   onEvent: {
     // number: true,

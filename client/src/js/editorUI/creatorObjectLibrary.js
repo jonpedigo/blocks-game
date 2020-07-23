@@ -146,8 +146,8 @@ function onGameLoaded() {
       }
     },
     {
-      label: 'Standing Actor',
-      columnName: 'Actors',
+      label: 'Standing',
+      columnName: 'NPCs',
       JSON: {
         objectType: 'plainObject',
         dialogue: "Hello!",
@@ -155,8 +155,8 @@ function onGameLoaded() {
       }
     },
     {
-      label: 'Wanderer',
-      columnName: 'Actors',
+      label: 'Wandering',
+      columnName: 'NPCs',
       JSON: {
         objectType: 'plainObject',
         dialogue: "Hello!",

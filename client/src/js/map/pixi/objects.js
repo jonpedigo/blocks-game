@@ -254,10 +254,14 @@ function updateProperties(pixiChild, gameObject) {
   // COLOR
   if(gameObject.color) {
     pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
-  } else if(GAME.world.defaultObjectColor) {
-    pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
+  } else if(pixiChild.texture.id === 'solidcolorsprite') {
+    if(GAME.world.defaultObjectColor) {
+      pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
+    } else {
+      pixiChild.tint = parseInt(tinycolor(window.defaultObjectColor).toHex(), 16)
+    }
   } else {
-    pixiChild.tint = parseInt(tinycolor(window.defaultObjectColor).toHex(), 16)
+    delete pixiChild.tint
   }
 
   if(gameObject.opacity) {

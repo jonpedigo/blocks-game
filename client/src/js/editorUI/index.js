@@ -33,6 +33,13 @@ class EditorUI {
   open(objectSelected, openEditorName) {
     EDITORUI.ref.open(objectSelected, openEditorName)
   }
+
+  onConstructEditorClose() {
+    EDITORUI.ref.forceUpdate()
+  }
+  onConstructEditorStart() {
+    EDITORUI.ref.forceUpdate()
+  }
 }
 
 window.EDITORUI = new EditorUI()
