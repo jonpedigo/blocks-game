@@ -5,6 +5,8 @@ function setDefault() {
     nightLength: 30,
     nightAmbientLight: 0,
     transitionTime: 6,
+    alwaysDay: true,
+    alwaysNight: false,
   }
 }
 
@@ -13,7 +15,9 @@ function onGameLoaded(options = {}) {
   GAME.gameState.ambientLightDelta = null
   GAME.gameState.currentTime = options.startTime || 0
   GAME.gameState.currentTimeOfDay = ''
-  GAME.world.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
+  if(!GAME.world.dayNightCycle) {
+    GAME.world.dayNightCycle = { ...JSON.parse(JSON.stringify(window.defaultDayNightCycle)), ...options }
+  }
 }
 
 function calculateCurrentTOD() {
@@ -40,42 +44,43 @@ function calculateCurrentTOD() {
 
 function update(delta) {
   GAME.gameState.currentTime += delta
-  const { dayAmbientLight, nightAmbientLight, transitionTime} = GAME.world.dayNightCycle
+  const cycle = GAME.world.dayNightCycle
+  const { dayAmbientLight, nightAmbientLight, transitionTime } = GAME.world.dayNightCycle
   const newTOD = calculateCurrentTOD()
   const currentTOD = GAME.gameState.currentTimeOfDay
   const ambientLightDelta = GAME.gameState.ambientLightDelta
 
-  if(ambientLightDelta) {
-    if(GAME.gameState.ambientLight <= 1 && GAME.gameState.ambientLight >= 0) {
+  if (ambientLightDelta) {
+    if (GAME.gameState.ambientLight <= dayAmbientLight && GAME.gameState.ambientLight >= nightAmbientLight) {
       GAME.gameState.ambientLight += (ambientLightDelta * delta)
     }
   }
 
-  if(currentTOD === 'day' && newTOD === 'sunset') {
+  if (currentTOD === 'day' && newTOD === 'sunset') {
     // console.log('day -> sunset')
     const currentAmbientLight = GAME.gameState.ambientLight
     const goalAmbientLight = nightAmbientLight
-    const ambientLightDelta = (goalAmbientLight - currentAmbientLight)/transitionTime
+    const ambientLightDelta = (goalAmbientLight - currentAmbientLight) / transitionTime
     GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
-  if(currentTOD === 'sunset' && newTOD === 'night') {
+  if (currentTOD === 'sunset' && newTOD === 'night' || cycle.alwaysNight) {
     // console.log('sunset -> night')
-    GAME.gameState.ambientLight = 0
+    GAME.gameState.ambientLight = nightAmbientLight
     GAME.gameState.ambientLightDelta = null
   }
 
-  if(currentTOD === 'night' && newTOD === 'sunrise') {
+  if (currentTOD === 'night' && newTOD === 'sunrise') {
     // console.log('night -> sunrise')
     const currentAmbientLight = GAME.gameState.ambientLight
     const goalAmbientLight = dayAmbientLight
-    const ambientLightDelta = (goalAmbientLight - currentAmbientLight)/transitionTime
+    const ambientLightDelta = (goalAmbientLight - currentAmbientLight) / transitionTime
     GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
-  if(currentTOD === 'sunrise' && newTOD === 'day') {
+  if (currentTOD === 'sunrise' && newTOD === 'day' || cycle.alwaysDay) {
     // console.log('sunrise -> day')
-    GAME.gameState.ambientLight = 1
+    GAME.gameState.ambientLight = dayAmbientLight
     GAME.gameState.ambientLightDelta = null
   }
 
