@@ -70,6 +70,8 @@ class Game{
           })
         }
 
+        dayNightCycle.update(delta)
+
         if(GAME.gameState.started) {
 
         //////////////////////////////
@@ -84,7 +86,6 @@ class Game{
         })
         GAME.updateActiveMods()
 
-        dayNightCycle.update(delta)
         timeouts.onUpdate(delta)
 
         //////////////////////////////
