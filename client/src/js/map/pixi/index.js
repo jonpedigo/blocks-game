@@ -339,12 +339,12 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
 
   // animationFlashColor: object.animationFlashColor,
 
-  // animationQuake: object.animationQuake,
   // animationTrail: object.animationTrail,
   // animationFadeIn: object.animationFadeIn,
   // animationFadeOut: object.animationFadeOut,
 
   // animationExplode: object.animationExplode,
+  // animationFireworks
   // animationShake: object.animationShake,
   //
   // animationPulseSize: object.animationPulseSize,

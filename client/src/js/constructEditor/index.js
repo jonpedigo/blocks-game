@@ -114,7 +114,7 @@ class ConstructEditor {
 
     this._mouseMoveListener = (e) => {
       if(!window.isClickingMap(e.target.className)) return
-      if(!this.paused) this.handleMouseMove(event)
+      if(!this.paused && this.open) this.handleMouseMove(event)
     }
     document.body.addEventListener("mousemove", this._mouseMoveListener)
 
