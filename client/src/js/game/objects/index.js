@@ -817,6 +817,7 @@ class Objects{
         let lastCreatedObjects = []
         let stage = 0
         let maxStage = 4
+        const powerWave = false
 
         const originalPosition = _.cloneDeep(object)
         // originalPosition.x -= GAME.grid.nodeSize
@@ -824,7 +825,7 @@ class Objects{
         // originalPosition.width += (GAME.grid.nodeSize * 2)
         // originalPosition.height += (GAME.grid.nodeSize * 2)
 
-        const quakeSpeed = 100
+        const quakeSpeed = 150
         const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
         const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
         const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
@@ -856,14 +857,29 @@ class Objects{
               } else return true
             })
 
+
+            if(powerWave) {
+              diagonals.forEach((co) => {
+                const go = GAME.objectsById[co.id]
+                if(go) {
+                  window.socket.emit('deleteObject', go)
+                }
+              })
+
+            }
+
             createdObjects.forEach((co) => {
               const go = GAME.objectsById[co.id]
               if(go) {
-                go.velocityX = 0
-                go.velocityY = 0
+                if(!powerWave) {
+                  go.velocityX = 0
+                  go.velocityY = 0
+                }
+
                 if(go.opacity <= 0) window.socket.emit('deleteObject', go)
                 if(go.opacity > lowestOpacity || allEqualOpacity) {
                   let opacityDelta = ((go.opacity/100) * delta) + .05
+                  // if(powerWave) opacityDelta = opacityDelta/1000
                   go.opacity -= opacityDelta
                   if(!allEqualOpacity && go.opacity < lowestOpacity) go.opacity = lowestOpacity
                 }
@@ -884,9 +900,10 @@ class Objects{
               }).forEach((diag) => {
                 if(diag) {
                   window.socket.emit('deleteObject', diag)
-                  const opacity = stage >= 2 ? 1 : diag.opacity
-                  diagChildren.push({...diag, id: null, velocityX: 0, opacity: opacity })
-                  diagChildren.push({...diag, id: null, velocityY: 0, opacity: opacity })
+                  const hasWeight = stage >= 2
+                  const opacity = hasWeight ? 1 : diag.opacity
+                  diagChildren.push({...diag, id: null, velocityX: 0, tags: { noHeroAllowed: hasWeight }, opacity: opacity })
+                  diagChildren.push({...diag, id: null, velocityY: 0, tags: { noHeroAllowed: hasWeight }, opacity: opacity })
                 }
               })
               if(diagChildren.length) {
@@ -900,10 +917,10 @@ class Objects{
             if(stage === 1) {
               newDiagonalOpacity = 1
             }
-            const topLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
-            const topRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
-            const bottomLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
-            const bottomRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
+            const topLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
+            const topRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
+            const bottomLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
+            const bottomRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
 
             const newDiagonals = OBJECTS.create([topLeft, topRight, bottomLeft, bottomRight])
 
