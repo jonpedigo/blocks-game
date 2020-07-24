@@ -150,6 +150,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       }
 
       // emitters are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
+      // WORK AROUND -> I could put foreground elements on a different higher stage than the emitters
       if(object && object.tags.emitter) {
         sprite.zOrder = 1000000000000
         return
@@ -269,7 +270,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/block.png', 'assets/images/blockNormalMap.png', 'assets/images/solidcolorsprite.png', 'assets/images/solidcolorsprite_n.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
+    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/solidcolorsprite_n.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -283,25 +284,6 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures['solidcolorsprite'] = texture
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      texture = PIXI.Texture.from('assets/images/solidcolorsprite_n.png');
-      texture.id = 'solidcolorsprite_n'
-      textures['solidcolorsprite_n'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      texture = PIXI.Texture.from('assets/images/block.png');
-      texture.id = 'block'
-      textures['block'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      texture = PIXI.Texture.from('assets/images/blockNormalMap.png');
-      texture.id = 'blockNormalMap'
-      textures['blockNormalMap'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      // texture = PIXI.Texture.from('assets/images/invisiblesprite.png')
-      // texture.id = 'invisiblesprite'
-      // textures['invisiblesprite'] = texture
-      // texture.scaleMode = PIXI.SCALE_MODES.NEAREST
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
       textures['spencer-1'] = texture

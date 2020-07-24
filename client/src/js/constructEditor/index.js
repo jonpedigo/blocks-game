@@ -71,7 +71,7 @@ class ConstructEditor {
     this.close()
   }
 
-  start(object) {
+  start(object, startAtHero = false) {
     window.local.emit('onConstructEditorStart', object)
     this.initState()
     this.objectId = object.id
@@ -82,8 +82,8 @@ class ConstructEditor {
     this.spawnPointY = object.spawnPointY
     this.initializeGridNodes(object)
 
-    const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
-    this.camera.setLimitRect(gridObject)
+    // const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
+    // this.camera.setLimitRect(gridObject)
 
     let gridWidth = (object.width/this.grid.nodeSize)
     let gridHeight = (object.height/this.grid.nodeSize)
@@ -96,25 +96,32 @@ class ConstructEditor {
 
     const width = zoomMultiplier * HERO.cameraWidth
     const height = zoomMultiplier * HERO.cameraHeight
-    this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier}
+    if(startAtHero) {
+      const hero = GAME.heros[HERO.id]
+      this.cameraController = {x: hero.x, width: hero.width, y: hero.y, height: hero.height, zoomMultiplier}
+    } else {
+      this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier}
+    }
     this.camera.set(this.cameraController)
 
     this._mouseDownListener = (e) => {
+      if(!window.isClickingMap(e.target.className)) return
       if(e.which === 1) {
         if(!this.paused) this.handleMouseDown(event)
       }
     }
-    this.canvas.addEventListener("mousedown", this._mouseDownListener)
+    document.body.addEventListener("mousedown", this._mouseDownListener)
 
     this._mouseMoveListener = (e) => {
+      if(!window.isClickingMap(e.target.className)) return
       if(!this.paused) this.handleMouseMove(event)
     }
-    this.canvas.addEventListener("mousemove", this._mouseMoveListener)
+    document.body.addEventListener("mousemove", this._mouseMoveListener)
 
     this._mouseUpListener = (e) => {
       if(!this.paused) this.handleMouseUp(event)
     }
-    this.canvas.addEventListener("mouseup", this._mouseUpListener)
+    document.body.addEventListener("mouseup", this._mouseUpListener)
 
     this.ref.open(object.color || GAME.world.defaultObjectColor || window.defaultObjectColor)
     this.selectColor(object.color)

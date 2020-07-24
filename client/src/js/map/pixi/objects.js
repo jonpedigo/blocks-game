@@ -266,7 +266,7 @@ function updateProperties(pixiChild, gameObject) {
 
   if(gameObject.opacity) {
     pixiChild.alpha = gameObject.opacity
-  } else if(GAME.world.defaultObjectColor) {
+  } else {
     pixiChild.alpha = 1
   }
 

@@ -887,7 +887,6 @@ class Game{
       Object.assign(GAME.grid.nodes[x][y], update)
     }
   }
-
 }
 
 window.GAME = new Game()

@@ -54,6 +54,9 @@ import { startSequence } from './sequence'
     tagToggle: {
       tag: true,
     },
+
+    // 'animation',
+    // 'toast/log/modal/chat event'
     // 'anticipatedAdd',
     // 'goToStarView',
     // 'emitEvent',

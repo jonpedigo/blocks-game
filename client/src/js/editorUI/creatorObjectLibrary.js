@@ -2,11 +2,11 @@ import gridUtil from '../utils/grid.js'
 
 function constructEditorOnSelect(objectId, tags) {
   if(GAME.objectsById[objectId]) {
-    MAPEDITOR.openConstructEditor(GAME.objectsById[objectId])
+    MAPEDITOR.openConstructEditor(GAME.objectsById[objectId], true)
   } else {
     const globalConstructStationaryObstacle = {reserved: true, x: 0, y: 0, width: GAME.grid.width, height: GAME.grid.height, tags, constructParts: [], id: objectId}
     OBJECTS.create(globalConstructStationaryObstacle)
-    MAPEDITOR.openConstructEditor(globalConstructStationaryObstacle)
+    MAPEDITOR.openConstructEditor(globalConstructStationaryObstacle, true)
   }
   const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
     setTimeout(() => {

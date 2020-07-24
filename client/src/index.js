@@ -18,18 +18,6 @@ Toolbelt UI sub menus? How does that work
   View all the notes in the Toolbelt component, Implement that
   Allow toolbelt to be created with JSON data
 
-An Event Modal system! Kind of like quests, but more modals!
-Options -> Modal, Toast, Chat
-  Modal, Toast, Chat, Log LOG LOG LOG LOG LOG
-    -> onHeroPickup
-    -> onHeroDrop
-    -> onHeroDeposit
-    -> onHeroWithdraw
-    -> onHeroDestroyed
-    -> onHeroRespawned
-    -> onHeroEquip
-    -> onHeroAware
-
 Scenarios/BeginEnd
   TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
   VISIBLE TO
@@ -109,7 +97,9 @@ PROCEDURAL
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 HOOK UP RESPAWNS TO A SPAWN ZONE
+Game feel improvement in live editor - velocityX decay, jumpVelocity, dashVelocity, ( jumpAcc, dashAcc) accXDecay, accYDecay, bounce
 pickupable SUB OBJECT, cuz right now that would break right??
 a max stackable???? idk
 never close right click menu if shift is pressed
@@ -165,7 +155,15 @@ LIGHT - Fire, Light
 ZONE - Spawn Zone, Resource Zone, Timer
 ITEM - Resource, Chest
 ACTOR - Standing Actor, Wanderer
-// Awareness Area
+
+ADD SUB OBJECT
+Spear
+Gun
+Inventory Item
+Area x 2
+Area X 3
+Area x 4
+Potential Sub Object
 
 EDITORS
 world--
@@ -262,7 +260,19 @@ Zoom blur filter — Perhaps when you are like low on health??
 ////////////////////////////////
 // JUICE IDEAS
 https://www.engadget.com/alt254-zelda-style-indie-game-pixels-174504609.html
+https://typeitjs.com/
+https://safi.me.uk/typewriterjs/
+https://wwayne.github.io/react-tooltip/
+
+RECORDING
+https://codepen.io/adkanojia/pen/EZJvJL
+https://github.com/spite/ccapture.js/
+^this could be huge..
+but honeslty I could just do a 'pick objects to be recorded moment' and we keep track of their x, y, dialogue, chat, color, etc
+
 ////////////////////////////////
+// little glowy things all around ( particle effects, see hyper light drifter )
+
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )
 // INVERT GAME, for example, when you get pacman powers

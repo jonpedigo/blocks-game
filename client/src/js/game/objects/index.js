@@ -121,6 +121,8 @@ class Objects{
       customState: object.customState,
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
+
+      // IMPLEMENT...
       objectsWithin: object.objectsWithin,
       conditionTestCounts: object.conditionTestCounts,
     }
@@ -182,6 +184,7 @@ class Objects{
       subObjectChances: object.subObjectChances,
       spawned: object.spawned,
       reserved: object.reserved,
+      opacity: object.opacity,
 
       // inventory
       count: object.count,
@@ -390,7 +393,7 @@ class Objects{
     }
   }
 
-  create(objects, options = { bypassCollisions: false, fromLiveGame: false }) {
+  create(objects, options = { local: false, bypassCollisions: false, fromLiveGame: false }) {
     if(!objects.length) {
       objects = [objects]
     }
@@ -484,10 +487,16 @@ class Objects{
     }
 
     function emitNewObjects() {
-      if(window.editingGame && window.editingGame.branch && !options.fromLiveGame) {
-        window.branch.objects.push(...objects)
-      } else {
-        window.socket.emit('addObjects', objects)
+      if(!options.silently) {
+        if(window.editingGame && window.editingGame.branch && !options.fromLiveGame) {
+          window.branch.objects.push(...objects)
+        } else {
+          if(options.local) {
+            window.local.emit('onNetworkAddObjects', objects)
+          } else {
+            window.socket.emit('addObjects', objects)
+          }
+        }
       }
     }
 
@@ -796,6 +805,145 @@ class Objects{
   onDestroySpawnIds(objectId) {
     const object = OBJECTS.getObjectOrHeroById(objectId)
     destroySpawnIds(object)
+  }
+
+
+  onObjectAnimation(type, objectId, options = {}) {
+    const object = OBJECTS.getObjectOrHeroById(objectId)
+    if(object) {
+      if(type === 'quake') {
+        const createdObjects = []
+        const diagonals = []
+        let lastCreatedObjects = []
+        let stage = 0
+        let maxStage = 4
+
+        const originalPosition = _.cloneDeep(object)
+        // originalPosition.x -= GAME.grid.nodeSize
+        // originalPosition.y -= GAME.grid.nodeSize
+        // originalPosition.width += (GAME.grid.nodeSize * 2)
+        // originalPosition.height += (GAME.grid.nodeSize * 2)
+
+        const quakeSpeed = 100
+        const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
+        const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
+        const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
+        const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
+        stage++
+
+        // the diagonal buggers have 3 stages
+        // 1. move diagonal
+        // 2. duplicate self with two other nodes ( one going up/down another going left/right )
+        // 3.
+
+        lastCreatedObjects = OBJECTS.create([left, top, bottom, right])
+        createdObjects.push(...lastCreatedObjects)
+
+        const removeUpdateListener = window.local.on('onUpdate', (delta) => {
+          if(stage === maxStage) {
+            let lowestOpacity = 1
+            createdObjects.forEach((co) => {
+              const go = GAME.objectsById[co.id]
+              if(go) {
+                if(go.opacity < lowestOpacity) lowestOpacity = go.opacity
+              }
+            })
+
+            const allEqualOpacity = createdObjects.every((co) => {
+              const go = GAME.objectsById[co.id]
+              if(go) {
+                return go.opacity === lowestOpacity
+              } else return true
+            })
+
+            createdObjects.forEach((co) => {
+              const go = GAME.objectsById[co.id]
+              if(go) {
+                go.velocityX = 0
+                go.velocityY = 0
+                if(go.opacity <= 0) window.socket.emit('deleteObject', go)
+                if(go.opacity > lowestOpacity || allEqualOpacity) {
+                  let opacityDelta = ((go.opacity/100) * delta) + .05
+                  go.opacity -= opacityDelta
+                  if(!allEqualOpacity && go.opacity < lowestOpacity) go.opacity = lowestOpacity
+                }
+              }
+            })
+          }
+
+          if(stage < maxStage && GAME.objectsById[lastCreatedObjects[0].id] && !collisions.checkAnything(originalPosition, lastCreatedObjects.map(({id}) => {
+            return GAME.objectsById[id]
+          }))) {
+            // - ((stage/maxStage)/2)
+
+            if(stage < maxStage - 1) {
+              // diagonals
+              const diagChildren = []
+              diagonals.map(({id}) => {
+                return GAME.objectsById[id]
+              }).forEach((diag) => {
+                if(diag) {
+                  window.socket.emit('deleteObject', diag)
+                  const opacity = stage >= 2 ? 1 : diag.opacity
+                  diagChildren.push({...diag, id: null, velocityX: 0, opacity: opacity })
+                  diagChildren.push({...diag, id: null, velocityY: 0, opacity: opacity })
+                }
+              })
+              if(diagChildren.length) {
+                const createdChildren = OBJECTS.create(diagChildren)
+                createdObjects.push(...createdChildren)
+              }
+            }
+
+            const newObjectOpacity = stage < maxStage-1 ? .4 : .2
+            let newDiagonalOpacity = newObjectOpacity
+            if(stage === 1) {
+              newDiagonalOpacity = 1
+            }
+            const topLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
+            const topRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
+            const bottomLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
+            const bottomRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: {}, opacity: newDiagonalOpacity }
+
+            const newDiagonals = OBJECTS.create([topLeft, topRight, bottomLeft, bottomRight])
+
+            // diagonals.forEach(({id}) => {
+            //   const go = GAME.objectsById[id]
+            // })
+
+            diagonals.push(...newDiagonals)
+            createdObjects.push(...newDiagonals)
+
+            const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: newObjectOpacity   }
+            const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: newObjectOpacity   }
+            const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: newObjectOpacity }
+            const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: newObjectOpacity }
+
+            // const topLeft1 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: .5 }
+            // const topLeft2 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: .5 }
+            //
+            // const topRight1 = { y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: .5 }
+            // const topRight2 = { y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: .5 }
+            //
+            // const bottomLeft1 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: .5 }
+            // const bottomLeft2 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height, width: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: .5 }
+            //
+            // const bottomRight1 = { y: object.y + object.height, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: .5 }
+            // const bottomRight2 = { y: object.y + object.height, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: .5 }
+            //
+            // lastCreatedObjects = OBJECTS.create([topLeft1, topLeft2, topRight1, topRight2, bottomLeft1, bottomLeft2, bottomRight1, bottomRight2])
+            lastCreatedObjects = OBJECTS.create([left, top, bottom, right])
+            createdObjects.push(...lastCreatedObjects)
+            stage++
+          }
+        })
+      }
+    }
+    // animationQuake: object.animationQuake,
+    // ACTUAL
+    // fadeToColor ( actual )
+    // fadeOut
+    // fadeIn
   }
 }
 

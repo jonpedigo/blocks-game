@@ -126,6 +126,8 @@ window.isClickingMap = function(className) {
   if(className.indexOf('Creator__category') >= 0 && className.indexOf('Creator__category-container') === -1) return false
 
   if(className.indexOf('Toolbar') >= 0) return false
-  
+
+  if(className.indexOf('ConstructEditor') >= 0) return false
+
   return true
 }

@@ -394,6 +394,7 @@ class Hero{
       customProps: hero.customProps,
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
+      opacity: hero.opacity,
 
       resourceWithdrawAmount: hero.resourceWithdrawAmount,
       resourceTags: hero.resourceTags,

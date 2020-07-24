@@ -32,6 +32,10 @@ function setDefault() {
     monsterVictim: false,
     monster: false,
     respawn: false,
+    // knockBackOnHit,
+    // explodeOnDestroy,
+    // fadeOutOnDestroy,
+    // flashWhiteOnHit,
   }
 
   window.behaviorTags = {

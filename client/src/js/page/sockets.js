@@ -367,8 +367,24 @@ function init() {
     window.local.emit('onGetCustomGameFx', eventName)
   })
 
+  window.socket.on('openHeroModal', (heroId, title, body) => {
+    window.local.emit('onOpenHeroModal', heroId, title, body)
+  })
+
+  window.socket.on('showHeroToast', (heroId, body) => {
+    window.local.emit('onShowHeroToast', heroId, body)
+  })
+
   window.socket.on('onHeroCameraEffect', (type, heroId, options) => {
     window.local.emit('onHeroCameraEffect', type, heroId, options)
+  })
+
+  window.socket.on('onObjectAnimation', (type, objectId, options) => {
+    window.local.emit('onObjectAnimation', type, objectId, options)
+  })
+
+  window.socket.on('onEmitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
+    window.local.emit(eventName, arg1, arg2, arg3, arg4)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

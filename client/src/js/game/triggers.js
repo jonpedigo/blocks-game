@@ -15,8 +15,17 @@ function onPageLoaded() {
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
     onGameStart: { mainObject: null, guestObject: null },
   }
+  // -> onHeroPickup
+  // -> onHeroDrop
+  // -> onHeroDeposit
+  // -> onHeroWithdraw
+  // -> onHeroDestroyed
+  // -> onHeroRespawned
+  // -> onHeroEquip
+  // -> onHeroAware
+
     // 'onHeroChooseOption',
-    // 'OnObjectSpawn',
+    // 'onObjectSpawn',
     // 'onObjectNoticed',
     // 'onObjectNotice',
     // 'onHeroCanInteract'

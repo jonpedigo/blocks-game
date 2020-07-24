@@ -268,7 +268,6 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
   const backgroundSprite = PIXIMAP.gridStage.addChild(sprite)
   node.backgroundSprite = backgroundSprite
   node.backgroundSprite.name = 'x' + node.gridX + 'y' + node.gridY
-
 }
 
 PIXIMAP.onUpdateGridNode = function(x, y, update) {
@@ -323,4 +322,40 @@ PIXIMAP.updateBlockSprites = function() {
       }
     }
   }
+}
+
+PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
+  const object = OBJECTS.getObjectOrHeroById[objectId]
+  if(type === 'flash') {
+    if(options.color) {
+      object.animationFlashColor = options.color
+    } else {
+      object.animationFlashColor = 'white'
+    }
+    setTimeout(() => {
+      delete object.animationFlashColor
+    }, options.duration || 1000)
+  }
+
+  // animationFlashColor: object.animationFlashColor,
+
+  // animationQuake: object.animationQuake,
+  // animationTrail: object.animationTrail,
+  // animationFadeIn: object.animationFadeIn,
+  // animationFadeOut: object.animationFadeOut,
+
+  // animationExplode: object.animationExplode,
+  // animationShake: object.animationShake,
+  //
+  // animationPulseSize: object.animationPulseSize,
+  // animationPulseColor: object.animationPulseColor,
+  //
+  // animationGlow: object.animationGlow,
+  // animationShine: object.animationShine,
+  //
+  // animationFadeCycle: object.animationFadeCycle,
+
+  // what quake does is it sends out 3 layers. Each layer is less alpha than the last
+  //
+  // Fade to Color
 }
