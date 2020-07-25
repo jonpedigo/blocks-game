@@ -13,7 +13,7 @@ function constructEditorOnSelect(objectId, tags) {
       this.setState({
         creatorObjectSelected: {}
       })
-    })
+    }, 100)
     removeListener()
   })
 }

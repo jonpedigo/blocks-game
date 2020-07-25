@@ -11,11 +11,6 @@ COMBINED DAT GUI EDITOR WITH REACT EDITOR?
 Find a good way to customize DAT GUI position and have more than one DAT GUI up?
 ( allow them to tweak everything from animations to powerups to the physics to the day /night )
 
-PROBLEM
-Auto grid. Yes you heard me I want a grid that auto expands when we add to it
-I also want to be able to have negative objects. NO I WILL NOT BE SETTING THE GRID BEFORE WE START EDITING
-Seperate grid from PF grid? We need to think PF grids completely
-
 Toolbelt UI sub menus? How does that work
   View all the notes in the Toolbelt component, Implement that
   Allow toolbelt to be created with JSON data

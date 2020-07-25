@@ -48,8 +48,8 @@ class ConstructEditor {
 
   cancel() {
     this.open = false
-    window.local.emit('onConstructEditorClose', false)
     this.close()
+    window.local.emit('onConstructEditorClose', false)
   }
 
   close() {
@@ -67,12 +67,11 @@ class ConstructEditor {
       part.id = window.uniqueID()
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
-    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
     this.close()
+    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
   }
 
   start(object, startAtHero = false) {
-    window.local.emit('onConstructEditorStart', object)
     this.initState()
     this.objectId = object.id
     this.open = true
@@ -125,6 +124,8 @@ class ConstructEditor {
 
     this.ref.open(object.color || GAME.world.defaultObjectColor || window.defaultObjectColor)
     this.selectColor(object.color)
+
+    window.local.emit('onConstructEditorStart', object)
   }
 
   handleMouseUp() {

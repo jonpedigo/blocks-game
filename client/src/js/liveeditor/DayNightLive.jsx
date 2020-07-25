@@ -64,12 +64,12 @@ export default class DayNightLive extends React.Component {
     return (
       <div className='DayNightLive'>
         <div>
-          <DatGui data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
+          <DatGui style={{ marginTop: '250px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
             <DatNumber path='ambientLight' label='ambientLight' min={0} max={1} step={.01} />
           </DatGui>
         </div>
         <div>
-          <DatGui style={{ left: '0%' }} data={cycleData} onUpdate={this.handleUpdate}>
+          <DatGui data={cycleData} onUpdate={this.handleUpdate}>
             <DatBoolean path='autoCycle' label='autoCycle' />
             <DatBoolean path='alwaysDay' label='alwaysDay' />
             <DatBoolean path='alwaysNight' label='alwaysNight' />

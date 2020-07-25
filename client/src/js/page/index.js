@@ -160,7 +160,7 @@ class Page{
         if(currentGameExists) {
           cb(game)
         } else {
-          if(PAGE.role.isPlayEditor) {
+          if(PAGE.role.isAdmin || PAGE.role.isPlayEditor) {
             const { value: loadGameId } = await Swal.fire({
               title: 'Load Game',
               text: "Enter id of game",
@@ -201,7 +201,7 @@ class Page{
               }
             }
           } else {
-            alert('no current game, reload after game has been chosen')
+            alert('host has not chosen game, become host or reload when game has been chosen')
           }
         }
       })

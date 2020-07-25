@@ -4,8 +4,9 @@ import { initPixiApp } from './app'
 import gridUtil from '../../utils/grid'
 import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
+import { Ease, ease } from 'pixi-ease'
 
-import { setColor } from './utils'
+import { setColor, getHexColor } from './utils'
 
 window.PIXIMAP = {
   textures: {},
@@ -112,8 +113,8 @@ PIXIMAP.onRender = function() {
 
   if(PIXIMAP.assetsLoaded) {
     MAP.canvas.style.backgroundColor = ''
-    PIXIMAP.app.renderer.backgroundColor = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
-    PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
+    // PIXIMAP.app.renderer.backgroundColor = getHexColor(GAME.world.backgroundColor)
+    if(!PIXIMAP.backgroundOverlay.animatingColor) PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
     GAME.objects.forEach((object) => {
       updatePixiObject(object, PIXIMAP.stage)
     })
@@ -212,7 +213,7 @@ PIXIMAP.updateDarknessSprites = function() {
 
       // if(GAME.gameState.ambientLight > 1) {
       //   node.darknessSprite.alpha = ambientLight - 1
-      //   node.darknessSprite.tint = parseInt(tinycolor("orange").toHex(), 16)
+      //   node.darknessSprite.tint = getHexColor("orange")
       // } else {
         if(node.light == 1) {
           node.darknessSprite.alpha = .90 - ambientLight
@@ -246,7 +247,7 @@ PIXIMAP.initializeDarknessSprites = function() {
       darknessSprite.y = (node.y) * MAP.camera.multiplier
       darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier
       darknessSprite.transform.scale.y = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.height) * MAP.camera.multiplier
-      darknessSprite.tint = parseInt(tinycolor("black").toHex(), 16)
+      darknessSprite.tint = getHexColor("black")
 
       node.darknessSprite = darknessSprite
 
@@ -358,4 +359,52 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
   // what quake does is it sends out 3 layers. Each layer is less alpha than the last
   //
   // Fade to Color
+}
+
+PIXIMAP.onConstructEditorClose = function() {
+  resetConstructParts()
+}
+
+PIXIMAP.onConstructEditorStart = function() {
+  resetConstructParts()
+}
+
+PIXIMAP.onResize = function() {
+  setTimeout(() => {
+    resetConstructParts()
+  }, 100)
+}
+
+function resetConstructParts() {
+  GAME.objects.forEach((gameObject) => {
+    /////////////////////
+    /////////////////////
+    // CONSTRUCT PARTS
+    if(gameObject.constructParts) {
+      gameObject.constructParts.forEach((part) => {
+        let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
+        let color = part.color || gameObject.color || GAME.world.defaultObjectColor
+        let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
+        const partObject = {tags: {...gameObject.tags},  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+        if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
+        updatePixiObject(partObject)
+      })
+
+      return
+    }
+  })
+}
+
+PIXIMAP.onConstellationAnimationStart = function() {
+  PIXIMAP.backgroundOverlay.animatingColor = true
+  const example = ease.add(PIXIMAP.backgroundOverlay, { blend: 0x000000 }, { duration: 1000, ease: 'linear' })
+  example.once('complete', () => PIXIMAP.backgroundOverlay.tint = 0x000000)
+}
+
+PIXIMAP.onConstellationAnimationEnd = function() {
+  const example = ease.add(PIXIMAP.backgroundOverlay, { blend: getHexColor(GAME.world.backgroundColor) }, { duration: 1000, ease: 'linear' })
+  example.once('complete', () => {
+    PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
+    PIXIMAP.backgroundOverlay.animatingColor = false
+  })
 }

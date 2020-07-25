@@ -40,8 +40,21 @@
   }
 
   &__tool-container {
+    height: 50px;
+
+    &--closed {
+      width: 50px;
+    }
+  }
+
+  &__tool-children {
     display: inline-flex;
     flex-direction: row;
+  }
+
+  &__tool-children--column {
+    display: flex;
+    flex-direction: column;
   }
 
   &__tool-child, &__tool-selector {

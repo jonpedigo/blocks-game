@@ -101,14 +101,13 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.stage = world
   PIXIMAP.app.ticker.maxFPS = 24
 
-
   ///////////////
   ///////////////
   ///////////////
   // BACKGROUND STAGE
   PIXIMAP.backgroundStage = new PIXI.display.Layer()
   world.addChild(PIXIMAP.backgroundStage);
-  PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
+  PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.WHITE)
   PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
@@ -231,7 +230,13 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // ON RESIZE
   if(PAGE.role.isPlayer) {
+    let loadingTimeout
     function onResize() {
+      if(loadingTimeout) clearTimeout(loadingTimeout)
+      PAGE.resizing = true
+      loadingTimeout = setTimeout(() => {
+        PAGE.resizing = false
+      }, 150)
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
@@ -247,8 +252,10 @@ const initPixiApp = (canvasRef, onLoad) => {
         }, 100)
         window.resettingDarkness = true
       }
+      PIXIMAP.resizeToWindow = onResize
+      window.local.emit('onResize')
     }
-    window.local.on('onHeroZoomChange', () => {
+    window.local.on('onZoomChange', () => {
       onResize()
     })
     window.addEventListener("resize", onResize);

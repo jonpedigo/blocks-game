@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
+import './Editor.js'
 
 import creatorObjectLibrary from './creatorObjectLibrary.js'
 
@@ -39,6 +40,12 @@ class EditorUI {
   }
   onConstructEditorStart() {
     EDITORUI.ref.forceUpdate()
+  }
+
+  onEditHero(hero) {
+    if(hero.id === HERO.id && GAME.heros[hero.id]) {
+      EDITORUI.ref.forceUpdate()
+    }
   }
 }
 

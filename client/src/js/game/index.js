@@ -229,6 +229,7 @@ class Game{
   }
 
   loadGridWorldObjectsCompendiumState(game){
+    GAME.id = game.id
     GAME.grid = game.grid
     window.local.emit('onGridLoaded')
 
@@ -337,8 +338,8 @@ class Game{
     GAME.objects.forEach((object) => {
       OBJECTS.unloadObject(object)
     })
-    GAME.heroList.forEach(({id}) => {
-      let hero = GAME.heros[id]
+
+    GAME.heroList.forEach((hero) => {
       HERO.deleteHero(hero)
     })
 
@@ -494,6 +495,8 @@ class Game{
   }
 
   onStopGame() {
+    PAGE.startingAndStoppingGame = true
+
     if(!GAME.gameState.started) {
       return console.log('trying to stop game that aint even started yet')
     }
@@ -510,9 +513,12 @@ class Game{
     GAME.loadAndJoin(initialGameState)
     GAME.gameState.paused = true
     window.local.emit('onGameStopped')
+
+    PAGE.startingAndStoppingGame = false
   }
 
   onGameStart() {
+    PAGE.startingAndStoppingGame = true
     if(GAME.gameState.started) {
       return console.log('trying to start game that has already started')
     }
@@ -549,7 +555,8 @@ class Game{
     })
     GAME.gameState.paused = false
     GAME.gameState.started = true
-    window.local.emit('onStartedGame')
+    window.local.emit('onGameStarted')
+    PAGE.startingAndStoppingGame = false
   }
 
   cleanForSave(game) {

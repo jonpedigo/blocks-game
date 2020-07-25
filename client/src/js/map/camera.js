@@ -44,7 +44,7 @@ function camera() {
   }
 
   this.set = function(hero) {
-    this.multiplier = hero.zoomMultiplier / MAP.canvasMultiplier
+    this.multiplier = (EDITOR.preferences.zoomMultiplier + hero.zoomMultiplier) / MAP.canvasMultiplier
 
     if(hero.animationZoomMultiplier) {
       this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
@@ -60,6 +60,12 @@ function camera() {
 
     this.multiplier = 1/this.multiplier
     this.hasHitLimit = false
+
+    if(EDITOR.preferences.zoomMultiplier > 0){
+      this.setHeroX(hero)
+      this.setHeroY(hero)
+      return
+    }
 
     if (this.limitX !== null && this.limitX >= 0) {
       const potentialX = ((hero.x + hero.width/2)*this.multiplier)

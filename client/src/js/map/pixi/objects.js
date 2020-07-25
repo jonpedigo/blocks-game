@@ -28,14 +28,16 @@ const updatePixiObject = (gameObject) => {
     // CONSTRUCT PARTS
     if(gameObject.constructParts) {
       // WE DONT GOTTA UPDATE THESE
-      // gameObject.constructParts.forEach((part) => {
-      //   let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
-      //   let color = part.color || gameObject.color || GAME.world.defaultObjectColor
-      //   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-      //   const partObject = {tags: {...gameObject.tags},  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
-      //   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
-      //   updatePixiObject(partObject)
-      // })
+      if(PAGE.resizing || !gameObject.tags.stationary) {
+        gameObject.constructParts.forEach((part) => {
+          let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
+          let color = part.color || gameObject.color || GAME.world.defaultObjectColor
+          let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
+          const partObject = {tags: {...gameObject.tags},  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
+          if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
+          updatePixiObject(partObject)
+        })
+      }
 
       return
     }

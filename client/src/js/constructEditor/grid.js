@@ -30,7 +30,6 @@ class Grid {
     // const gridX = Math.floor(x/this.nodeSize)
     // const gridY = Math.floor(y/this.nodeSize)
 
-    console.log(x, y, gridX, gridY)
     return {
       gridX,
       gridY

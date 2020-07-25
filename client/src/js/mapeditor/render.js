@@ -8,6 +8,10 @@ function update() {
   if(!ctx) return
 
   if(PAGE.role.isAdmin) {
+    drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+  }
+
+  // if(PAGE.role.isAdmin || PAGE.role.isCreator) {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
       if(object.tags.invisible || object.tags.light || object.tags.emitter) {
@@ -15,7 +19,7 @@ function update() {
       }
     })
     ctx.setLineDash([]);
-  }
+  // }
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
@@ -75,6 +79,71 @@ function update() {
   if(draggingRelativeObject) {
     const owner = OBJECTS.getOwner(draggingRelativeObject)
     drawTools.drawLine(ctx, { x: owner.x + owner.width/2, y: owner.y + owner.height/2 }, { x: draggingRelativeObject.x + draggingRelativeObject.width/2, y: draggingRelativeObject.y + draggingRelativeObject.height/2 }, {color: 'white', thickness: 5 }, camera)
+  }
+
+  if(GAME.world.lockCamera) {
+    drawTools.drawBorder(ctx, { color: '#0A0', ...GAME.world.lockCamera }, camera, { thickness: 2} );
+  }
+
+  if(GAME.world && GAME.world.gameBoundaries) {
+    if(GAME.world.gameBoundaries.behavior == 'purgatory') {
+      if(PAGE.role.isAdmin) {
+        ctx.strokeStyle='red';
+        let valueRed = {
+          x: GAME.world.gameBoundaries.x-1,
+          y: GAME.world.gameBoundaries.y-1,
+          width: GAME.world.gameBoundaries.width+1,
+          height: GAME.world.gameBoundaries.height+1,
+          color: 'red'
+        }
+        drawTools.drawBorder(ctx, valueRed, camera);
+        ctx.strokeStyle='white';
+        const hero = GAME.heros[HERO.id]
+        let valueWhite = {
+          x: GAME.world.gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2),
+          y: GAME.world.gameBoundaries.y + ((HERO.cameraHeight * hero.zoomMultiplier)/2),
+          width: GAME.world.gameBoundaries.width - ((HERO.cameraWidth * hero.zoomMultiplier)),
+          height: GAME.world.gameBoundaries.height - ((HERO.cameraHeight * hero.zoomMultiplier)),
+          color: 'white'
+        }
+        drawTools.drawBorder(ctx, valueWhite, camera);
+      }
+    } else {
+      ctx.strokeStyle='white';
+      let value = {
+        x: GAME.world.gameBoundaries.x-1,
+        y: GAME.world.gameBoundaries.y-1,
+        width: GAME.world.gameBoundaries.width+1,
+        height: GAME.world.gameBoundaries.height+1,
+        color: 'white'
+      }
+      drawTools.drawBorder(ctx, value, camera);
+    }
+  }
+
+  if(PAGE.role.isAdmin) {
+    GAME.heroList.forEach((hero) => {
+      if(!GAME.world.lockCamera || !GAME.world.lockCamera.x || ((HERO.cameraWidth * hero.zoomMultiplier)) < GAME.world.lockCamera.width) {
+        drawTools.drawBorder(ctx, {color: '#0A0', x: hero.x - (HERO.cameraWidth * hero.zoomMultiplier)/2 + hero.width/2, y: hero.y - (HERO.cameraHeight * hero.zoomMultiplier)/2 + hero.height/2, width: (HERO.cameraWidth * hero.zoomMultiplier), height: (HERO.cameraHeight * hero.zoomMultiplier)}, camera)
+      }
+
+      if(hero.reachablePlatformHeight && hero.tags.gravityY) {
+        let y = (hero.y + hero.height)
+        let x = hero.x - hero.reachablePlatformWidth
+        let width = (hero.reachablePlatformWidth * 2) + (hero.width)
+        let height = hero.reachablePlatformHeight
+        let color = 'rgba(50, 255, 50, 0.5)'
+        drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
+      }
+    });
+  }
+
+  if(PAGE.loadingMap) {
+    ctx.fillStyle = "#222"
+    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
+    if(PAGE.role.isAdmin) {
+      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    }
   }
 }
 

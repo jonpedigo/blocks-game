@@ -214,11 +214,23 @@ class Hero{
   }
 
   zoomAnimation(hero) {
+    if(hero.animationZoomMultiplier == hero.zoomMultiplier && hero.animationZoomTarget == window.constellationDistance) {
+      window.local.emit('onConstellationAnimationStart')
+    }
+    if(hero.animationZoomMultiplier == window.constellationDistance && hero.zoomMultiplier == hero.animationZoomTarget) {
+      setTimeout(() => {
+        window.local.emit('onConstellationAnimationEnd')
+      }, 2500)
+    }
+
     if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/.97
+      PAGE.resizing = true
       if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
-        if(hero.endAnimation) hero.animationZoomMultiplier = null
-        else {
+        if(hero.endAnimation) {
+          hero.animationZoomMultiplier = null
+          PAGE.resizing = false
+        } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget
         }
       }
@@ -226,9 +238,12 @@ class Hero{
 
     if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/1.03
+      PAGE.resizing = true
       if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
-        if(hero.endAnimation) hero.animationZoomMultiplier = null
-        else {
+        if(hero.endAnimation) {
+          PAGE.resizing = false
+          hero.animationZoomMultiplier = null
+        } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget
         }
       }
@@ -500,12 +515,12 @@ class Hero{
   }
 
   onEditHero(updatedHero) {
-    if(updatedHero.arrowKeysBehavior) {
+    if(updatedHero.arrowKeysBehavior || (updatedHero.tags && updatedHero.tags.gravityY !== undefined)) {
       updatedHero.velocityX = 0
       updatedHero.velocityY = 0
     }
     if(updatedHero.zoomMultiplier) {
-      window.local.emit('onHeroZoomChange', updatedHero.id)
+      window.local.emit('onZoomChange', updatedHero.id)
     }
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }

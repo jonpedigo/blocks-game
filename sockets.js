@@ -92,6 +92,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       } else {
       let obj = JSON.parse(data); //now it an object
       currentGame = obj
+      currentGame.id = id
       socket.emit('onLoadGame', currentGame)
     }});
   })
