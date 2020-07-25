@@ -173,7 +173,7 @@ export default class Creator extends React.Component {
       }}
       >
       <div className="Creator__category-top">
-        {!open && name}
+        {!open && !selected && name}
         {open && !selected && <i className="Creator__category-close fa fas fa-chevron-down"></i>}
         {selected &&
           <i className="Creator__category-close fa fas fa-times"

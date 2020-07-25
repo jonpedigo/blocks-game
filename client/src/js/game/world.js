@@ -10,7 +10,8 @@ function setDefault() {
     worldSpawnPointX: null,
     worldSpawnPointY: null,
     tags: {
-      calculatePathCollisions: true,
+      preventHeroGridBypass: false,
+      calculatePathCollisions: false,
       noCamping: false,
       // targetOnSight: false,
       // isAsymmetric: false,
@@ -18,11 +19,11 @@ function setDefault() {
       storeEntireGameState: false,
       overrideCustomGameCode: false,
       // shadows: false,
-      ambientLight: .2,
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
     sequences: {},
+    ambientLight: 1,
   }
 
   window.local.on('onGridLoaded', () => {

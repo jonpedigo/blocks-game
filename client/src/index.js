@@ -9,7 +9,9 @@ Make objects interchangeable with heros, combine the lists??
 The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
 COMBINED DAT GUI EDITOR WITH REACT EDITOR?
 Find a good way to customize DAT GUI position and have more than one DAT GUI up?
+( allow them to tweak everything from animations to powerups to the physics to the day /night )
 
+PROBLEM
 Auto grid. Yes you heard me I want a grid that auto expands when we add to it
 I also want to be able to have negative objects. NO I WILL NOT BE SETTING THE GRID BEFORE WE START EDITING
 Seperate grid from PF grid? We need to think PF grids completely

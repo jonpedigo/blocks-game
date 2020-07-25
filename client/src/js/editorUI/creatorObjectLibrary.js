@@ -150,7 +150,9 @@ function onGameLoaded() {
       columnName: 'NPCs',
       JSON: {
         objectType: 'plainObject',
-        dialogue: "Hello!",
+        heroDialogue: [
+          "hello!"
+        ],
         tags: { obstacle: true, stationary: true, talker: true, talkOnHeroInteract: true },
       }
     },
@@ -159,7 +161,9 @@ function onGameLoaded() {
       columnName: 'NPCs',
       JSON: {
         objectType: 'plainObject',
-        dialogue: "Hello!",
+        heroDialogue: [
+          "hello!"
+        ],
         tags: { obstacle: true, wander: true, talker: true, talkOnHeroInteract: true },
       }
     },

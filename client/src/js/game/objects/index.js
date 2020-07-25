@@ -426,24 +426,45 @@ class Objects{
 
       //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
       if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+        const diff = newObject.x + newObject.width - ((GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX)
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+        window.socket.emit('updateGrid', GAME.grid)
+        // return null
       }
       if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+        const diff = newObject.y + newObject.height - ((GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY)
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+        // return null
+        GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
+        window.socket.emit('updateGrid', GAME.grid)
       }
       if(newObject.x < GAME.grid.startX) {
+        const diff = GAME.grid.startX - newObject.x
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+        GAME.grid.startX -= diff
+
+        // return null
       }
       if(newObject.y < GAME.grid.startY) {
+        const diff = GAME.grid.startY - newObject.y
+
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
+        GAME.grid.startY -= diff
+        // return null
+      }
+
+      if(hasBeenWarned) {
+        window.socket.emit('updateGrid', GAME.grid)
       }
 
       return newObject

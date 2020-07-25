@@ -26,7 +26,7 @@ function generateGridNodes(gridProps) {
   for(var i = 0; i < gridProps.width; i++) {
     grid.push([])
     for(var j = 0; j < gridProps.height; j++) {
-      const node = {x: gridProps.startX + (i * GAME.grid.nodeSize), y: gridProps.startX + (j * GAME.grid.nodeSize), width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, gridX: i, gridY: j}
+      const node = {x: gridProps.startX + (i * GAME.grid.nodeSize), y: gridProps.startY + (j * GAME.grid.nodeSize), width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, gridX: i, gridY: j}
       const key = 'x:'+node.gridX+'y:'+node.gridY
       if(nodeData && nodeData[key]) {
         node.sprite = nodeData[key].sprite
@@ -41,17 +41,28 @@ function generateGridNodes(gridProps) {
 
 function snapXYToGrid(x, y, options = { closest: true }) {
   let diffX = x % GAME.grid.nodeSize;
-  if(diffX > GAME.grid.nodeSize/2 && options.closest) {
-    x += (GAME.grid.nodeSize - diffX)
-  } else {
+
+  if(diffX < 0) {
     x -= diffX
+    x -= GAME.grid.nodeSize
+  } else {
+    if(diffX > GAME.grid.nodeSize/2 && options.closest) {
+      x += (GAME.grid.nodeSize - diffX)
+    } else {
+      x -= diffX
+    }
   }
 
   let diffY = y % GAME.grid.nodeSize;
-  if(diffY > GAME.grid.nodeSize/2 && options.closest) {
-    y += (GAME.grid.nodeSize - diffY)
-  } else {
+  if(diffY < 0) {
     y -= diffY
+    y -= GAME.grid.nodeSize
+  } else {
+    if(diffY > GAME.grid.nodeSize/2 && options.closest) {
+      y += (GAME.grid.nodeSize - diffY)
+    } else {
+      y -= diffY
+    }
   }
   return { x, y }
 }
@@ -228,8 +239,8 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(attemptingX >= (GAME.grid.startX/GAME.grid.nodeSize) && attemptingX < GAME.grid.width + GAME.grid.startX) {
-    if(attemptingY >= (GAME.grid.startY/GAME.grid.nodeSize) && attemptingY < GAME.grid.height + GAME.grid.startY) {
+  if(attemptingX >= (GAME.grid.startX/GAME.grid.nodeSize) && attemptingX < GAME.grid.width + (GAME.grid.startX/GAME.grid.nodeSize)) {
+    if(attemptingY >= (GAME.grid.startY/GAME.grid.nodeSize) && attemptingY < GAME.grid.height + (GAME.grid.startY/GAME.grid.nodeSize)) {
       return true
     }
   }

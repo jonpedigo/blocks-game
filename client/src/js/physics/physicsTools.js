@@ -451,17 +451,19 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
-    object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
-  }
-  if(object.y + object.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
-    object.y = (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY - object.height
-  }
-  if(object.x < GAME.grid.startX) {
-    object.x = GAME.grid.startX
-  }
-  if(object.y < GAME.grid.startY) {
-    object.y = GAME.grid.startY
+  if(!object.tags.hero || GAME.world.preventHeroGridBypass) {
+    if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+      object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
+    }
+    if(object.y + object.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+      object.y = (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY - object.height
+    }
+    if(object.x < GAME.grid.startX) {
+      object.x = GAME.grid.startX
+    }
+    if(object.y < GAME.grid.startY) {
+      object.y = GAME.grid.startY
+    }
   }
 }
 

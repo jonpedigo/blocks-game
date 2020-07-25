@@ -241,10 +241,10 @@ class ConstructEditor {
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
           const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
           const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
-          rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color})
+          rectangles.push({x: node.x + this.grid.startX, y: node.y + this.grid.startY, width, height, color: node.data.color})
           this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY)
         } else {
-          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color })
+          rectangles.push({ x: node.x + this.grid.startX, y: node.y + this.grid.startY, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color })
           this.unfillNode(node.gridX, node.gridY)
         }
       }
@@ -290,6 +290,7 @@ class ConstructEditor {
   paintNodeXY(x, y) {
     const { selectedColor, grid } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
+    // console.log(x, y, gridX, gridY)
     this.fillNode(gridX, gridY, selectedColor)
   }
 
@@ -355,7 +356,7 @@ class ConstructEditor {
 
     grid.forEachNode((node) => {
       if(node.data.filled) {
-        drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
+        drawTools.drawObject(ctx, {x: node.x + grid.startX, y: node.y  + grid.startY, height: node.height, width: node.width, color: node.data.color, tags }, camera)
       }
     })
 
@@ -364,7 +365,7 @@ class ConstructEditor {
 
       grid.forEachNode((node) => {
         if(node.data.filled) {
-          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, tags }, camera)
+          drawTools.drawObject(ctx, {x: node.x + grid.startX, y: node.y + grid.startY, height: node.height, width: node.width, tags }, camera)
         }
       })
 
