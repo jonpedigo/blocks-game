@@ -39,6 +39,17 @@
     &--text {
       text-overflow: ellipsis;
       width: 120px;
+      font-style: normal;
+      font-family: Courier;
+    }
+
+    &--shift {
+      color: black;
+      background-color: white;
+
+      &:hover {
+        background-color: #CCC !important;
+      }
     }
   }
 

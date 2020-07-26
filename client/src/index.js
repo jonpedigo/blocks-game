@@ -9,19 +9,16 @@ Tooltips
 Animations + Live Animation Tester
 More Particles + Particle Tester/Uploader
 
-World Transforms
-
-World Spawn Point -> Through Map Editor always? ( same with grid start, camera boundaries, etc )
 World -> Trash All Objects
+
+Hero removed -> respawn UI
 
 Combine Ghost and Hero
 
 Scenarios and Stories !! AWESOME
 
-
 More live player animations!! because these are sick
 allow chaining of animations and effects
-and then also MARIO/ZELDA world transforms
 
 The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
 COMBINED DAT GUI EDITOR WITH REACT EDITOR?

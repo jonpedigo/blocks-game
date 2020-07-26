@@ -135,10 +135,10 @@ class Hero{
     let x = 960;
     let y = 960;
     // hero spawn point takes precedence
-    if(hero.mod().spawnPointX && hero.mod().spawnPointX >= 0 && hero.mod().spawnPointY && hero.mod().spawnPointY >= 0) {
+    if(hero.mod().spawnPointX && typeof hero.mod().spawnPointX == 'number' && hero.mod().spawnPointY && typeof hero.mod().spawnPointY == 'number') {
       x = hero.mod().spawnPointX
       y = hero.mod().spawnPointY
-    } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0 && GAME.world.worldSpawnPointY && GAME.world.worldSpawnPointY >= 0) {
+    } else if(GAME && GAME.world.worldSpawnPointX && typeof GAME.world.worldSpawnPointX == 'number' && GAME.world.worldSpawnPointY && typeof GAME.world.worldSpawnPointY == 'number') {
       x = GAME.world.worldSpawnPointX
       y = GAME.world.worldSpawnPointY
     }

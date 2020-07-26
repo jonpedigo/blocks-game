@@ -15,6 +15,19 @@ class Editor {
     if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
       EDITOR.preferences = JSON.parse(storedPreferences)
     }
+
+    window.addEventListener("keydown", function (e) {
+      if(e.keyCode === 16) {
+        EDITOR.shiftPressed = true
+        EDITORUI.ref.forceUpdate()
+      }
+    })
+    window.addEventListener("keyup", function (e) {
+      if(e.keyCode === 16) {
+        EDITOR.shiftPressed = false
+        EDITORUI.ref.forceUpdate()
+      }
+    })
   }
 
   onUpdate() {
@@ -89,6 +102,112 @@ class Editor {
     }
   }
 
+  transformWorldTo(worldName) {
+    const { clearProperty, setGameBoundaryBehavior, setGameBoundaryTo, setCameraLockTo, setHeroZoomTo, setGridTo, setWorldAndHeroSpawnPointsTo, respawnAllHeros } = EDITOR
+    if(worldName === 'Mario') {
+      if(EDITOR.shiftPressed) {
+        GAME.grid.width = 200
+        GAME.grid.height = 80
+        window.socket.emit('updateGrid', GAME.grid)
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+
+      setGameBoundaryBehavior('default')
+      setGameBoundaryTo('grid')
+      setCameraLockTo('gridMinusOne')
+      setHeroZoomTo('default')
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags, allMovingObjectsHaveGravityY: true, gameBoundaryBottomDestroyHero: true }})
+    }
+    if(worldName === 'Zelda') {
+      if(EDITOR.shiftPressed) {
+        GAME.grid.width = 200
+        GAME.grid.height = 200
+        window.socket.emit('updateGrid', GAME.grid)
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+
+      setGameBoundaryBehavior('boundaryAll')
+      setGameBoundaryTo('grid')
+      setCameraLockTo('grid')
+      setHeroZoomTo('default')
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
+    }
+    if(worldName === 'Pacman') {
+      if(EDITOR.shiftPressed) {
+        GAME.grid.width = 40
+        GAME.grid.height = 20
+        window.socket.emit('updateGrid', GAME.grid)
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+
+      setGameBoundaryBehavior('pacmanFlip')
+      setGameBoundaryTo('grid')
+      setCameraLockTo('grid')
+      setHeroZoomTo('grid')
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
+    }
+    if(worldName === 'Purgatory') {
+      if(EDITOR.shiftPressed) {
+        setGridTo('default')
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+
+      setGameBoundaryBehavior('purgatory')
+      setGameBoundaryTo('grid')
+      clearProperty('lockCamera')
+      setHeroZoomTo('default')
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
+
+    }
+    if(worldName === 'Smash') {
+      if(EDITOR.shiftPressed) {
+        setGridTo('default')
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+      setGameBoundaryBehavior('default')
+      setGameBoundaryTo('grid')
+      setCameraLockTo('grid')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setCameraLockTo('smaller')
+      setHeroZoomTo('default')
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags, gameBoundaryDestroyHero: true }})
+    }
+    if(worldName === 'Default') {
+      if(EDITOR.shiftPressed) {
+        setGridTo('default')
+        window.socket.emit('resetObjects')
+        setWorldAndHeroSpawnPointsTo('gridCenter')
+        respawnAllHeros()
+      }
+      setHeroZoomTo('default')
+      clearProperty('lockCamera')
+      clearProperty('gameBoundaries')
+    }
+  }
+
   clearProperty(propName) {
     if(propName === 'gameBoundaries') {
       sendWorldUpdate( { gameBoundaries: null })
@@ -150,7 +269,7 @@ class Editor {
       sendWorldUpdate( { lockCamera })
     }
 
-    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0) {
+    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
       const value = GAME.world.gameBoundaries
       const { x, y, width, height} = value
       const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
@@ -180,7 +299,7 @@ class Editor {
   }
 
   setHeroZoomTo(propName) {
-    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0) {
+    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
       let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth
       sendHeroUpdate({ zoomMultiplier })
     }
@@ -206,6 +325,11 @@ class Editor {
       sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     }
 
+    if(propName === 'default') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ id: hero.id, zoomMultiplier: 1.875 })
+    }
+
     // if(propName === 'larger') {
     //   GAME.heroList.forEach((hero) => {
     //     sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
@@ -218,20 +342,39 @@ class Editor {
     // }
   }
 
+  setWorldAndHeroSpawnPointsTo(propName) {
+    if(propName === 'gridCenter') {
+      const x = GAME.grid.startX + ((GAME.grid.width * GAME.grid.nodeSize)/2)
+      const y = GAME.grid.startY + ((GAME.grid.height * GAME.grid.nodeSize)/2)
+      sendWorldUpdate({spawnPointX: x, spawnPointY: y})
+      sendHeroUpdate({spawnPointX: x, spawnPointY: y})
+    }
+  }
+
   setGridTo(propName) {
     if(propName === 'larger') {
-      GAME.grid.width+=2
-      GAME.grid.startX-=GAME.grid.nodeSize
-      GAME.grid.height+=1
-      GAME.grid.startY-=GAME.grid.nodeSize/2
+      GAME.grid.width+=4
+      GAME.grid.startX-=GAME.grid.nodeSize * 2
+      GAME.grid.height+=2
+      GAME.grid.startY-=GAME.grid.nodeSize
     }
     if(propName === 'smaller') {
-      GAME.grid.width-=2
-      GAME.grid.startX+=GAME.grid.nodeSize
-      GAME.grid.height-=1
-      GAME.grid.startY+=GAME.grid.nodeSize/2
+      GAME.grid.width-=4
+      GAME.grid.startX+=GAME.grid.nodeSize * 1
+      GAME.grid.height-=2
+      GAME.grid.startY+=GAME.grid.nodeSize
+    }
+    if(propName === 'default') {
+      GAME.grid.width = window.defaultGrid.width
+      GAME.grid.height = window.defaultGrid.height
     }
     window.socket.emit('updateGrid', GAME.grid)
+  }
+
+  respawnAllHeros() {
+    GAME.heroList.forEach((hero) => {
+      window.socket.emit('respawnHero', hero)
+    })
   }
 }
 
@@ -310,8 +453,21 @@ function sendHeroUpdate(update) {
   window.socket.emit('editHero', { id: HERO.id, ...update })
 }
 
+let worldUpdate
+let flushWorldUpdateTimer
 function sendWorldUpdate(update) {
-  window.socket.emit('updateWorld', update)
+  window.mergeDeep(GAME.world, update)
+  if(worldUpdate) {
+    Object.assign(worldUpdate, update)
+  } else {
+    worldUpdate = update
+  }
+
+  if(flushWorldUpdateTimer) clearTimeout(flushWorldUpdateTimer)
+  flushWorldUpdateTimer = setTimeout(() => {
+    window.socket.emit('updateWorld', worldUpdate)
+    worldUpdate = null
+  }, 100)
 }
 
 window.EDITOR = new Editor

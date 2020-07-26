@@ -695,15 +695,14 @@ class Game{
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
           }
-        }
-        if(key === 'syncHero' && PAGE.role.isPlayEditor) {
-          window.syncHeroToggle.checked = value
-        }
-        if(key === 'syncObjects' && PAGE.role.isPlayEditor) {
-          window.syncObjectsToggle.checked = value
-        }
-        if(key === 'syncGameState' && PAGE.role.isPlayEditor) {
-          window.syncGameStateToggle.checked = value
+          if(tag === 'allMovingObjectsHaveGravityY') {
+            GAME.objects.forEach((object) => {
+              object.velocityY = 0
+            });
+            GAME.heroList.forEach((object) => {
+              object.velocityY = 0
+            });
+          }
         }
       }
     }

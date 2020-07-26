@@ -117,9 +117,14 @@ function updatePosition(object, delta) {
   let gravityVelocityY = GAME.world.gravityVelocityY
   if(!gravityVelocityY) gravityVelocityY = 1000
 
+  let applyWorldGravity = false
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary) {
+    applyWorldGravity = true
+  }
+
   if(object._skipNextGravity) {
     object._skipNextGravity = false
-  } else if(object.tags && object.mod().tags.gravityY) {
+  } else if(object.tags && object.mod().tags.gravityY || applyWorldGravity) {
     let distance = (object.velocityY * delta) +  ((gravityVelocityY * (delta * delta))/2)
     object.y += distance
     object.velocityY += (gravityVelocityY * delta)
@@ -372,7 +377,7 @@ function removeAndRespawn() {
 
     if(hero._destroy) {
       window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
-      if(hero.tags.respawn) {
+      if(hero.mod().tags.respawn) {
         hero._respawn = true
       } else hero._remove = true
       delete hero._destroy

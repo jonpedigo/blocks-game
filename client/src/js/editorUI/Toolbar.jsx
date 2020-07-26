@@ -1,7 +1,8 @@
 import React from 'react'
 import classnames from 'classnames'
 import { SketchPicker, SwatchesPicker } from 'react-color';
-import ToolbarItem from './ToolbarItem.jsx'
+import ToolbarRow from './ToolbarRow.jsx'
+import ToolbarButton from './ToolbarButton.jsx'
 
 export default class Toolbar extends React.Component {
   constructor(props) {
@@ -34,9 +35,9 @@ export default class Toolbar extends React.Component {
     return (
       <div className="Toolbar">
         {/* Map Actions -> Pull out
-        <ToolbarItem open iconName='fa-map'>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-object-group"></i>
-        </ToolbarItem>
+        <ToolbarRow open iconName='fa-map'>
+          <ToolbarButton iconName="fa-object-group"></i>
+        </ToolbarRow>
 
         Bulldoze -> Map Action
         <i className="Toolbar__tool-selector fa fas fa-snowplow" onMouseEnter={() => {
@@ -48,113 +49,127 @@ export default class Toolbar extends React.Component {
         */}
 
         {/* World Edit -> Pull out */}
-        <ToolbarItem iconName='fa-globe'>
+        <ToolbarRow iconName='fa-globe'>
           {/* Day Night Cycle -> Dat GUI */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-cloud-sun-rain" onClick={() => {
+          <ToolbarButton iconName="fa-cloud-sun-rain" onClick={() => {
             LIVEEDITOR.open(GAME.world, 'daynightcycle')
-          }}></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-sliders-h" onClick={() => {
+          }}/>
+          <ToolbarButton iconName="fa-sliders-h" onClick={() => {
             LIVEEDITOR.open(GAME.world, 'world')
-          }}></i>
+          }}/>
 
           {/* Clear All Objects -> Map Action */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-trash-alt"></i>
-        </ToolbarItem>
+          <ToolbarButton iconName="fa-trash-alt" onClick={() => {
+            window.socket.emit('resetObjects')
+          }}/>
+        </ToolbarRow>
 
-        <ToolbarItem iconName='fa-atlas'>
-          <span className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor Toolbar__tool-selector--text">Mario</span>
-          <span className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor Toolbar__tool-selector--text">Zelda</span>
-          <span className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor Toolbar__tool-selector--text">Pacman</span>
-          <span className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor Toolbar__tool-selector--text">Smash</span>
-          <span className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor Toolbar__tool-selector--text">Purg</span>
-        </ToolbarItem>
+        <ToolbarRow iconName='fa-atlas'>
+          <ToolbarButton text="Mario" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Mario')
+          }}/>
+          <ToolbarButton text="Zelda" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Zelda')
+          }}/>
+          <ToolbarButton text="Pacman" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Pacman')
+          }}/>
+          <ToolbarButton text="Smash" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Smash')
+          }}/>
+          <ToolbarButton text="Purg" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Purgatory')
+          }}/>
+          <ToolbarButton text="Default" onShiftClick onClick={() => {
+            EDITOR.transformWorldTo('Default')
+          }}/>
+        </ToolbarRow>
 
         {/* Hero Edit -> Pull out */}
-        <ToolbarItem open iconName='fa-street-view'>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-plus-square" onClick={() => {
+        <ToolbarRow open iconName='fa-street-view'>
+          <ToolbarButton iconName="fa-plus-square" onClick={() => {
             window.socket.emit('anticipateObject', { tags: { obstacle: true }});
             // window.socket.emit('anticipateObject', {...window.objecteditor.get(), wall: true});
-          }}></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-sliders-h" onClick={() => {
+          }}/>
+          <ToolbarButton iconName="fa-sliders-h" onClick={() => {
             LIVEEDITOR.open(hero, 'hero')
-          }}></i>
+          }}/>
           {/* star view */}
-          {hero.animationZoomTarget === window.constellationDistance ? <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-globe-asia" onClick={() => {
+          {hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
-          }}></i> : <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-star" onClick={() => {
+          }}/> : <ToolbarButton iconName="fa-star" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })
-          }}></i>}
+          }}/>}
 
           {/* camera shake */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-camera" onClick={() => {
+          <ToolbarButton iconName="fa-camera" onClick={() => {
             window.socket.emit('heroCameraEffect', 'cameraShake', HERO.id, { duration: 500, frequency: 20, amplitude: 36 })
-          }}></i>
+          }}/>
           {/* go incognito */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-mask"></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-code"></i>
+          <ToolbarButton iconName="fa-mask"/>
+          <ToolbarButton iconName="fa-code"/>
           {/*
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-save"></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-comment"></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-gamepad"></i>
+          <ToolbarButton iconName="fa-save"></i>
+          <ToolbarButton iconName="fa-comment"></i>
+          <ToolbarButton iconName="fa-gamepad"></i>
           */}
           {/*
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-skull"></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-tag"></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-briefcase"></i>
+          <ToolbarButton iconName="fa-skull"></i>
+          <ToolbarButton iconName="fa-tag"></i>
+          <ToolbarButton iconName="fa-briefcase"></i>
           */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-search-plus" onClick={() => {
+          <ToolbarButton iconName="fa-search-plus" onClick={() => {
             EDITOR.setHeroZoomTo('smaller')
-          }}></i>
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-search-minus" onClick={() => {
+          }}/>
+          <ToolbarButton iconName="fa-search-minus" onClick={() => {
             EDITOR.setHeroZoomTo('larger')
-          }}></i>
-        </ToolbarItem>
+          }}/>
+        </ToolbarRow>
 
-        <ToolbarItem open iconName='fa-chess'>
+        <ToolbarRow open iconName='fa-chess'>
           {/* Quests -> Menu
-            <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-check-square"></i>
+            <ToolbarButton iconName="fa-check-square"></i>
           */}
           {/* Scenarios -> Menu */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-trophy"></i>
+          <ToolbarButton iconName="fa-trophy"/>
           {/* Story -> Menu */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-leanpub"></i>
+          <ToolbarButton iconName="fa-leanpub"/>
           {/* Sequences -> Menu */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-sitemap" onClick={() => {
+          <ToolbarButton iconName="fa-sitemap" onClick={() => {
             SEQUENCEEDITOR.open()
-          }}></i>
+          }}/>
           {/* Default Heros -> Menu */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-theater-masks"></i>
+          <ToolbarButton iconName="fa-theater-masks"/>
           {/* Compendium -> Menu */}
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-book-dead"></i>
-        </ToolbarItem>
+          <ToolbarButton iconName="fa-book-dead"/>
+        </ToolbarRow>
 
         {/* Grid -> Menu
-          <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-th"></i>*/}
+          <ToolbarButton iconName="fa-th"></i>*/}
         <br/>
-        <ToolbarItem iconName='fa-search'>
-
-        <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-search-plus" onClick={() => {
-          EDITOR.preferences.zoomMultiplier -= (EDITOR.zoomDelta * 4)
-          window.local.emit('onZoomChange', HERO.id)
-        }}></i>
-        <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-search-minus" onClick={() => {
-          EDITOR.preferences.zoomMultiplier += (EDITOR.zoomDelta * 4)
-          window.local.emit('onZoomChange', HERO.id)
-        }}></i>
-        <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-times" onClick={() => {
-          EDITOR.preferences.zoomMultiplier = 0
-          window.local.emit('onZoomChange', HERO.id)
-        }}></i>
-        </ToolbarItem>
+        <ToolbarRow iconName='fa-search'>
+          <ToolbarButton iconName="fa-search-plus" onClick={() => {
+            EDITOR.preferences.zoomMultiplier -= (EDITOR.zoomDelta * 4)
+            window.local.emit('onZoomChange', HERO.id)
+          }}/>
+          <ToolbarButton iconName="fa-search-minus" onClick={() => {
+            EDITOR.preferences.zoomMultiplier += (EDITOR.zoomDelta * 4)
+            window.local.emit('onZoomChange', HERO.id)
+          }}/>
+          <ToolbarButton iconName="fa-times" onClick={() => {
+            EDITOR.preferences.zoomMultiplier = 0
+            window.local.emit('onZoomChange', HERO.id)
+          }}/>
+        </ToolbarRow>
 
         <br/>
 
         {PAGE.role.isHost &&
-          <ToolbarItem open iconName='fa-cog'>
-            <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-save" onClick={EDITOR.saveGame}></i>
-            <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-folder-open" onClick={EDITOR.loadGame}></i>
-            <i className="Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas fa-file" onClick={EDITOR.newGame}></i>
-          </ToolbarItem>
+          <ToolbarRow open iconName='fa-cog'>
+            <ToolbarButton iconName="fa-save" onClick={EDITOR.saveGame}/>
+            <ToolbarButton iconName="fa-folder-open" onClick={EDITOR.loadGame}/>
+            <ToolbarButton iconName="fa-file" onClick={EDITOR.newGame}/>
+          </ToolbarRow>
         }
       </div>
     )

@@ -1,7 +1,7 @@
 export default function onObjectCollide(agent, collider, result) {
   if(agent.mod().tags['monsterDestroyer'] && collider.mod().tags['monster']) {
     collider._destroyedBy = agent
-    if(collider.mod().spawnPointX >= 0 && collider.mod().tags['respawn']) {
+    if(typeof collider.mod().spawnPointX == 'number' && collider.mod().tags['respawn']) {
       collider._respawn = true
     } else {
       collider._remove = true
@@ -19,7 +19,7 @@ export default function onObjectCollide(agent, collider, result) {
 
   if(agent.mod().tags['monsterVictim'] && collider.mod().tags['monster']) {
     agent._destroyedBy = collider
-    if(agent.mod().spawnPointX >= 0 && agent.mod().tags['respawn']) {
+    if(typeof agent.mod().spawnPointX == 'number' && agent.mod().tags['respawn']) {
       agent._respawn = true
     } else {
       agent._remove = true

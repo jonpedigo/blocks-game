@@ -194,7 +194,7 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
+  if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
       return false
@@ -207,7 +207,7 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
   }
 
-  if(GAME.world.gameBoundaries && GAME.world.gameBoundaries.x >= 0 && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
+  if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
     let hero = GAME.heros[HERO.id]
     if(PAGE.role.isPlayEditor) {
       hero = window.editingHero

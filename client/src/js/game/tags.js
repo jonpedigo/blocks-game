@@ -14,6 +14,7 @@ function setDefault() {
     gravity: false,
     obstacle: false,
     stationary: false,
+    projectile: false,
     onlyHeroAllowed: false,
     noHeroAllowed: false,
     movingPlatform: false,
@@ -173,6 +174,7 @@ function setDefault() {
 
   window.heroTags = {
     hero: true,
+    respawn: true,
     gravityY: false,
     default: false,
     monsterDestroyer: false,

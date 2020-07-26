@@ -57,7 +57,7 @@ function update(delta) {
 
   if(autoCycle) {
     const newTOD = calculateCurrentTOD()
-    setTimeOfDay(newTOD, currentTOD)
+    setTimeOfDay(currentTOD, newTOD)
   }
 }
 

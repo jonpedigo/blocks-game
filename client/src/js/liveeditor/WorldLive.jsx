@@ -39,18 +39,22 @@ export default class WorldLive extends React.Component {
   render() {
     return (
       <div className='WorldLive'>
-        <DatGui labelWidth="60%" data={this.state} onUpdate={this.handleUpdate}>
+        <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
           <DatFolder title='Physics'>
-            <DatNumber path='world.gravityVelocityX' label='World Gravity Velocity X' min={0} max={5000} step={1} />
-            <DatNumber path='world.gravityVelocityY' label='World Gravity Velocity Y' min={0} max={5000} step={1} />
+            <DatNumber path='world.gravityVelocityX' label='Gravity Velocity X' min={0} max={5000} step={1} />
+            <DatNumber path='world.gravityVelocityY' label='Gravity Velocity Y' min={0} max={5000} step={1} />
           </DatFolder>
           <DatFolder title='Tags'>
+            <DatBoolean label='All Moving Objects Have Gravity' path="world.tags.allMovingObjectsHaveGravityY"/>
             <DatBoolean label='Prevent Hero From Leaving Grid' path="world.tags.preventHeroGridBypass"/>
             <DatBoolean label='No Monster Camping' path="world.tags.noCamping"/>
             <DatBoolean label='Calculate Moving Obstacle Paths' path="world.tags.calculatePathCollisions"/>
             <DatBoolean label='Restore Hero Position When Reloaded' path="world.tags.shouldRestoreHero"/>
             <DatBoolean label='Store Game State in Local Storage' path="world.tags.storeEntireGameState"/>
             <DatBoolean label='Custom Editor Code Override Arcade' path="world.tags.overrideCustomGameCode"/>
+            <DatBoolean label='Destroy Hero if hit Game Boundaries' path="world.tags.gameBoundaryDestroyHero"/>
+            <DatBoolean label='Destroy Hero if hit Game Botttom' path="world.tags.gameBoundaryBottomDestroyHero"/>
+            <DatBoolean label='Destroy Objects if hit Game Boundaries' path="world.tags.gameBoundaryDestroyObjects"/>
           </DatFolder>
           <DatFolder title='Game Boundaries' closed={false}>
             <DatSelect path='world.gameBoundaries.behavior' label='Behavior' options={['default','boundaryAll','pacmanFlip','purgatory']}/>

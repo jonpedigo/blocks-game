@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import { SketchPicker, SwatchesPicker } from 'react-color';
 
-export default class Toolbar extends React.Component {
+export default class ToolbarRow extends React.Component {
   constructor(props) {
     super(props)
 
@@ -17,7 +17,7 @@ export default class Toolbar extends React.Component {
     const { open } = this.state
 
     return (
-      <div className="Toolbar__tool-item">
+      <div className="Toolbar__row">
         <div className={classnames("Toolbar__tool-container", {"Toolbar__tool-container--open": open, "Toolbar__tool-container--closed": !open })} onMouseEnter={() => {
           this.setState({ open: true })
         }}
