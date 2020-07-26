@@ -1,7 +1,7 @@
 import React from 'react';
-import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui';
+import DatGui, { DatBoolean, DatButton, DatFolder, DatColor, DatNumber, DatString } from 'react-dat-gui';
 
-export default class PhysicsLive extends React.Component {
+export default class HeroLive extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -28,14 +28,7 @@ export default class PhysicsLive extends React.Component {
     if (PAGE.role.isHost) {
       Object.assign(OBJECTS.getObjectOrHeroById(id), updatedProps)
     } else {
-      if (objectSelected.tags.hero) {
-        window.socket.emit('editHero', { id, ...updatedProps })
-        // }
-        // else if(objectSelected.tags.subObject) {
-        // window.socket.emit('editSubObject', objectSelected.ownerId, objectSelected.subObjectName, updatedProps)
-      } else {
-        window.socket.emit('editObjects', [{ id, ...updatedProps }])
-      }
+      window.socket.emit('editHero', { id, ...updatedProps })
     }
   }
 
@@ -50,11 +43,20 @@ export default class PhysicsLive extends React.Component {
     const { objectSelected } = this.state;
 
     return (
-      <div className='PhysicsLive'>
+      <div className='WorldLive'>
         <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
-          <DatNumber path='speed' label='Speed' min={0} max={1000} step={1} />
-          <DatNumber path='velocityMax' label="velocityMax" min={0} max={1000} step={1} />
-          <DatNumber path='jumpVelocity' label="jumpVelocity" min={-1000} max={1000} />
+          <DatFolder title='Game Boundaries'>
+
+          </DatFolder>
+          <DatFolder title='Camera Lock'>
+
+          </DatFolder>
+          <DatFolder title='Grid'>
+
+          </DatFolder>
+          <DatFolder title='All'>
+
+          </DatFolder>
         </DatGui>
       </div>
     )

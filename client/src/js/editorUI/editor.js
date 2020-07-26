@@ -1,4 +1,5 @@
 import gridUtil from '../utils/grid'
+import Swal from 'sweetalert2/src/sweetalert2.js';
 
 class Editor {
   constructor() {
@@ -28,6 +29,12 @@ class Editor {
       inputAttributes: {
         autocapitalize: 'off'
       },
+      showClass: {
+        popup: 'animated fadeInDown faster'
+      },
+      hideClass: {
+        popup: 'animated fadeOutUp faster'
+      },
       showCancelButton: true,
       confirmButtonText: 'Load Game',
     })
@@ -47,6 +54,12 @@ class Editor {
       inputAttributes: {
         autocapitalize: 'off'
       },
+      showClass: {
+        popup: 'animated fadeInDown faster'
+      },
+      hideClass: {
+        popup: 'animated fadeOutUp faster'
+      },
       showCancelButton: true,
       confirmButtonText: 'Create',
     })
@@ -60,6 +73,19 @@ class Editor {
       }
       window.socket.emit('saveGame', game)
       choseGameCallback(game)
+    }
+  }
+
+  saveGame() {
+    console.log('previous version before save', GAME)
+    let saveGame = GAME.cleanForSave(GAME)
+
+    if(window.location.href.indexOf('localhost')) {
+      console.log('saving to server', saveGame)
+      window.socket.emit('saveGame', {...saveGame,
+            compendium: window.compendium })
+    } else {
+      PAGE.downloadObjectAsJson(saveGame, GAME.id)
     }
   }
 

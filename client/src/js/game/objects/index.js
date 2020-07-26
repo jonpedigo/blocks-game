@@ -829,13 +829,13 @@ class Objects{
   }
 
 
-  quake(object, options) {
+  quake(object, options = { powerWave: false, color: object.color, speed: 150, tags: { noHeroAllowed: true }}) {
     const createdObjects = []
     const diagonals = []
     let lastCreatedObjects = []
     let stage = 0
     let maxStage = 4
-    const powerWave = false
+    const powerWave = options.powerWave
 
     const originalPosition = _.cloneDeep(object)
     // originalPosition.x -= GAME.grid.nodeSize
@@ -843,11 +843,11 @@ class Objects{
     // originalPosition.width += (GAME.grid.nodeSize * 2)
     // originalPosition.height += (GAME.grid.nodeSize * 2)
 
-    const quakeSpeed = 150
-    const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
-    const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
-    const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
-    const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: 1 }
+    const quakeSpeed = options.speed
+    const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
     stage++
 
     // the diagonal buggers have 3 stages
@@ -883,7 +883,6 @@ class Objects{
               window.socket.emit('deleteObject', go)
             }
           })
-
         }
 
         createdObjects.forEach((co) => {
@@ -897,7 +896,7 @@ class Objects{
             if(go.opacity <= 0) window.socket.emit('deleteObject', go)
             if(go.opacity > lowestOpacity || allEqualOpacity) {
               let opacityDelta = ((go.opacity/100) * delta) + .05
-              // if(powerWave) opacityDelta = opacityDelta/1000
+              if(powerWave) opacityDelta = opacityDelta/1000
               go.opacity -= opacityDelta
               if(!allEqualOpacity && go.opacity < lowestOpacity) go.opacity = lowestOpacity
             }
@@ -924,8 +923,8 @@ class Objects{
               window.socket.emit('deleteObject', diag)
               const hasWeight = stage >= 2
               const opacity = hasWeight ? 1 : diag.opacity
-              diagChildren.push({...diag, id: null, velocityX: 0, tags: { noHeroAllowed: hasWeight }, opacity: opacity })
-              diagChildren.push({...diag, id: null, velocityY: 0, tags: { noHeroAllowed: hasWeight }, opacity: opacity })
+              diagChildren.push({...diag, id: null, velocityX: 0, tags: hasWeight ? options.tags : {}, velocityMax: 1000, opacity: opacity, color: options.color })
+              diagChildren.push({...diag, id: null, velocityY: 0, tags: hasWeight ? options.tags : {}, velocityMax: 1000, opacity: opacity, color: options.color })
             }
           })
           if(diagChildren.length) {
@@ -939,10 +938,10 @@ class Objects{
         if(stage === 1) {
           newDiagonalOpacity = 1
         }
-        const topLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
-        const topRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
-        const bottomLeft = { x: object.x, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
-        const bottomRight = { x: object.x + object.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: { noHeroAllowed: true }, opacity: newDiagonalOpacity }
+        const topLeft = { x: originalPosition.x, height: GAME.grid.nodeSize, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const topRight = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const bottomLeft = { x: originalPosition.x, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const bottomRight = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
 
         const newDiagonals = OBJECTS.create([topLeft, topRight, bottomLeft, bottomRight])
 
@@ -953,22 +952,22 @@ class Objects{
         diagonals.push(...newDiagonals)
         createdObjects.push(...newDiagonals)
 
-        const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: newObjectOpacity   }
-        const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: newObjectOpacity   }
-        const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: newObjectOpacity }
-        const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: newObjectOpacity }
+        const left = { x: originalPosition.x, height: originalPosition.height, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity   }
+        const top = { y: originalPosition.y, width: originalPosition.width, x: originalPosition.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity   }
+        const right = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: originalPosition.height, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity }
+        const bottom = { y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: originalPosition.width, x: originalPosition.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity }
 
-        // const topLeft1 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: .5 }
-        // const topLeft2 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: .5 }
+        // const topLeft1 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const topLeft2 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
         //
-        // const topRight1 = { y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, opacity: .5 }
-        // const topRight2 = { y: object.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: .5 }
+        // const topRight1 = { y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const topRight2 = { y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
         //
-        // const bottomLeft1 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, opacity: .5 }
-        // const bottomLeft2 = { x: object.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: object.y + object.height, width: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: .5 }
+        // const bottomLeft1 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const bottomLeft2 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
         //
-        // const bottomRight1 = { y: object.y + object.height, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, opacity: .5 }
-        // const bottomRight2 = { y: object.y + object.height, width: GAME.grid.nodeSize, x: object.x + object.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, opacity: .5 }
+        // const bottomRight1 = { y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const bottomRight2 = { y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
         //
         // lastCreatedObjects = OBJECTS.create([topLeft1, topLeft2, topRight1, topRight2, bottomLeft1, bottomLeft2, bottomRight1, bottomRight2])
         lastCreatedObjects = OBJECTS.create([left, top, bottom, right])
@@ -978,14 +977,14 @@ class Objects{
     })
   }
 
-  onObjectAnimation(type, objectId, options = {}) {
+  onObjectAnimation(type, objectId, options) {
     const object = OBJECTS.getObjectOrHeroById(objectId)
     if(object) {
       if(type === 'quake') {
         OBJECTS.quake(object, options)
       }
     }
-    // animationQuake: object.animationQuake,
+    // animationQuake: originalPosition.animationQuake,
     // ACTUAL
     // fadeToColor ( actual )
     // fadeOut

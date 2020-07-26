@@ -64,6 +64,7 @@ function camera() {
     if(EDITOR.preferences.zoomMultiplier > 0){
       this.setHeroX(hero)
       this.setHeroY(hero)
+      this.shake()
       return
     }
 
@@ -98,6 +99,10 @@ function camera() {
       this.setHeroY(hero)
     }
 
+    this.shake()
+  }
+
+  this.shake = function() {
     if(this.xShake && this.xShake.isShaking) {
       this.x -= this.xShake.amplitude() * this.shakeAmplitude
     }

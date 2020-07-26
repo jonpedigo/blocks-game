@@ -116,7 +116,7 @@ export default class Toolbar extends React.Component {
             // window.socket.emit('anticipateObject', {...window.objecteditor.get(), wall: true});
           }}></i>
           <i className="Toolbar__tool-selector fa fas fa-sliders-h" onClick={() => {
-            LIVEEDITOR.open(hero, 'physics')
+            LIVEEDITOR.open(hero, 'hero')
           }}></i>
           {/* star view */}
           {hero.animationZoomTarget === window.constellationDistance ? <i className="Toolbar__tool-selector fa fas fa-globe-asia" onClick={() => {
@@ -172,6 +172,8 @@ export default class Toolbar extends React.Component {
         {/* Grid -> Menu
           <i className="Toolbar__tool-selector fa fas fa-th"></i>*/}
         <br/>
+        <ToolbarItem iconName='fa-search'>
+
         <i className="Toolbar__tool-selector fa fas fa-search-plus" onClick={() => {
           EDITOR.preferences.zoomMultiplier -= (EDITOR.zoomDelta * 4)
           window.local.emit('onZoomChange', HERO.id)
@@ -180,18 +182,21 @@ export default class Toolbar extends React.Component {
           EDITOR.preferences.zoomMultiplier += (EDITOR.zoomDelta * 4)
           window.local.emit('onZoomChange', HERO.id)
         }}></i>
+        <i className="Toolbar__tool-selector fa fas fa-times" onClick={() => {
+          EDITOR.preferences.zoomMultiplier = 0
+          window.local.emit('onZoomChange', HERO.id)
+        }}></i>
+        </ToolbarItem>
+
+
 
         <br/>
 
         {PAGE.role.isHost &&
           <ToolbarItem open iconName='fa-cog'>
-            <i className="Toolbar__tool-selector fa fas fa-save"></i>
-            <i className="Toolbar__tool-selector fa fas fa-folder-open" onClick={() => {
-              EDITOR.loadGame()
-            }}></i>
-            <i className="Toolbar__tool-selector fa fas fa-file" onClick={() => {
-              EDITOR.newGame()
-            }}></i>
+            <i className="Toolbar__tool-selector fa fas fa-save" onClick={EDITOR.saveGame}></i>
+            <i className="Toolbar__tool-selector fa fas fa-folder-open" onClick={EDITOR.loadGame}></i>
+            <i className="Toolbar__tool-selector fa fas fa-file" onClick={EDITOR.newGame}></i>
           </ToolbarItem>
         }
       </div>

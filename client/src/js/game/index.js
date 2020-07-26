@@ -562,6 +562,7 @@ class Game{
   cleanForSave(game) {
     let gameCopy = JSON.parse(JSON.stringify({
       //.filter((object) => !object.spawned)
+      id: game.id,
       objects: game.objects,
       world: game.world,
       grid: game.grid,
@@ -582,10 +583,7 @@ class Game{
       else if(!gameCopy.defaultHero) return alert('could not find a game hero')
     }
 
-    let idValue = document.getElementById('game-id').value
-    if(idValue) {
-      gameCopy.id = idValue
-    }else if(!gameCopy.id) {
+    if(!gameCopy.id) {
       gameCopy.id = 'game-' + window.uniqueID()
     }
 

@@ -123,6 +123,8 @@ Object.defineProperty(Object.prototype, 'mod', { value: function() {
 }})
 
 window.isClickingMap = function(className) {
+  if(typeof className !== 'string') return false
+
   if(className.indexOf('Creator__category') >= 0 && className.indexOf('Creator__category-container') === -1) return false
 
   if(className.indexOf('Toolbar') >= 0) return false
