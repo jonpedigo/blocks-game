@@ -431,7 +431,6 @@ class Objects{
         hasBeenWarned = true
 
         GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
-        window.socket.emit('updateGrid', GAME.grid)
         // return null
       }
       if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
@@ -440,7 +439,6 @@ class Objects{
         hasBeenWarned = true
         // return null
         GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
-        window.socket.emit('updateGrid', GAME.grid)
       }
       if(newObject.x < GAME.grid.startX) {
         const diff = GAME.grid.startX - newObject.x

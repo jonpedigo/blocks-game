@@ -31,7 +31,10 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+
+    &--normal-cursor {
+      cursor: pointer;
+    }
 
     &--text {
       text-overflow: ellipsis;

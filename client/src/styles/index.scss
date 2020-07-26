@@ -19,7 +19,7 @@
 .LiveEditor {
   &__close {
     position: fixed;
-    top: 0px;
+    top: 60px;
     right: 0px;
     z-index: 1;
     color: white;
@@ -46,6 +46,13 @@
   .react-dat-gui {
     width: 400px;
     margin-right: 40px;
+    margin-top: 60px;
+  }
+
+  .WorldLive {
+    .react-dat-gui {
+      width: 400px;
+    }
   }
 }
 

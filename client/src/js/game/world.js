@@ -23,7 +23,6 @@ function setDefault() {
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
     sequences: {},
-    ambientLight: 1,
   }
 
   window.local.on('onGridLoaded', () => {

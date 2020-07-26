@@ -25,7 +25,7 @@ export default class Toolbar extends React.Component {
           this.setState({ open: false })
         }}
         >
-          <i className={"Toolbar__tool-selector fa fas " + iconName}>
+          <i className={"Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas " + iconName}>
           </i>
           <div className={classnames({"Toolbar__tool-children": !column, "Toolbar__tool-children--column": column })}>
             {open && children.map((child) => {

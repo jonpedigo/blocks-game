@@ -4,16 +4,29 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Make objects interchangeable with heros, combine the lists??
+Tooltips
+
+Animations + Live Animation Tester
+More Particles + Particle Tester/Uploader
+
+World Transforms
+
+World Spawn Point -> Through Map Editor always? ( same with grid start, camera boundaries, etc )
+World -> Trash All Objects
+
+Combine Ghost and Hero
+
+Scenarios and Stories !! AWESOME
+
+
+More live player animations!! because these are sick
+allow chaining of animations and effects
+and then also MARIO/ZELDA world transforms
 
 The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
 COMBINED DAT GUI EDITOR WITH REACT EDITOR?
 Find a good way to customize DAT GUI position and have more than one DAT GUI up?
 ( allow them to tweak everything from animations to powerups to the physics to the day /night )
-
-Toolbelt UI sub menus? How does that work
-  View all the notes in the Toolbelt component, Implement that
-  Allow toolbelt to be created with JSON data
 
 Scenarios/BeginEnd
   TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
@@ -55,8 +68,6 @@ Scenarios/BeginEnd
   LOGS ( I MEAN YEAH WE WANT A LOG SYSTEM with TIMESTAMPS )
 
   EPILOGUE SCENARIO?
-
-Solid Color Transition Effects ( MORE PARTICLE EFFECTS )
 
 --
 

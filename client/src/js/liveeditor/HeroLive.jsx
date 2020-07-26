@@ -12,7 +12,7 @@ export default class HeroLive extends React.Component {
       cameraShakeDuration: 2000,
       cameraShakeFrequency: 40,
     }
-    
+
     this.handleUpdate = this.handleUpdate.bind(this)
   }
 
@@ -27,7 +27,8 @@ export default class HeroLive extends React.Component {
     const updatedObjectProps = {
       speed: newData.objectSelected.speed,
       jumpVelocity: newData.objectSelected.jumpVelocity,
-      velocityMax: newData.objectSelected.velocityMax
+      velocityMax: newData.objectSelected.velocityMax,
+      zoomMultiplier: newData.objectSelected.zoomMultiplier
     }
 
     if (PAGE.role.isHost) {
@@ -58,7 +59,8 @@ export default class HeroLive extends React.Component {
                 }}></DatButton>
             </DatFolder>
           </DatFolder>
-          <DatFolder title='Camera' closed={false}>
+          <DatFolder title='Hero Camera' closed={false}>
+            <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>
             <DatFolder title='Shake' closed>
               <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={1000} step={1} />
               <DatNumber path='cameraShakeFrequency' label='Frequency' min={0} max={1000} step={1} />

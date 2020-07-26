@@ -81,7 +81,7 @@ function update() {
     drawTools.drawLine(ctx, { x: owner.x + owner.width/2, y: owner.y + owner.height/2 }, { x: draggingRelativeObject.x + draggingRelativeObject.width/2, y: draggingRelativeObject.y + draggingRelativeObject.height/2 }, {color: 'white', thickness: 5 }, camera)
   }
 
-  if(GAME.world.lockCamera) {
+  if(PAGE.role.isAdmin && GAME.world.lockCamera) {
     drawTools.drawBorder(ctx, { color: '#0A0', ...GAME.world.lockCamera }, camera, { thickness: 2} );
   }
 

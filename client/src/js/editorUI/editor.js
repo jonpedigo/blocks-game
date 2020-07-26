@@ -122,11 +122,11 @@ class Editor {
       const value = getGridMinusOneValue()
       sendWorldUpdate( { gameBoundaries: {...value, behavior: GAME.world.gameBoundaries ? GAME.world.gameBoundaries.behavior : 'default' }})
     }
-    if(propName === 'zoomOut') {
+    if(propName === 'larger') {
       let game = GAME.world.gameBoundaries
       sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width + (GAME.grid.nodeSize * 2)), height: (game.height + (GAME.grid.nodeSize)), x:  game.x -  GAME.grid.nodeSize, y: game.y  - (GAME.grid.nodeSize/2) } })
     }
-    if(propName === 'zoomIn') {
+    if(propName === 'smaller') {
       let game = GAME.world.gameBoundaries
       sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width - (GAME.grid.nodeSize * 2)), height: (game.height - (GAME.grid.nodeSize)), x:  game.x +  GAME.grid.nodeSize, y: game.y  + (GAME.grid.nodeSize/2) } })
     }
@@ -157,7 +157,7 @@ class Editor {
       sendWorldUpdate( { lockCamera })
     }
 
-    if(propName === 'zoomOut') {
+    if(propName === 'larger') {
       let lockCamera = GAME.world.lockCamera
       lockCamera.x -= GAME.grid.nodeSize
       lockCamera.y -= GAME.grid.nodeSize/2
@@ -167,12 +167,12 @@ class Editor {
       lockCamera = { ...lockCamera, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
       sendWorldUpdate( { lockCamera })
     }
-    if(propName === 'zoomIn') {
+    if(propName === 'smaller') {
       let lockCamera = GAME.world.lockCamera
-      lockCamera.x -= GAME.grid.nodeSize
-      lockCamera.y -= GAME.grid.nodeSize/2
-      lockCamera.width += (GAME.grid.nodeSize * 2)
-      lockCamera.height += (GAME.grid.nodeSize)
+      lockCamera.x += GAME.grid.nodeSize
+      lockCamera.y += GAME.grid.nodeSize/2
+      lockCamera.width -= (GAME.grid.nodeSize * 2)
+      lockCamera.height -= (GAME.grid.nodeSize)
       const value = lockCamera
       lockCamera = { ...lockCamera, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
       sendWorldUpdate( { lockCamera })
@@ -197,42 +197,81 @@ class Editor {
       sendHeroUpdate({ zoomMultiplier })
     }
 
-    if(propName === 'zoomOut') {
+    if(propName === 'larger') {
       const hero = GAME.heros[HERO.id]
       sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
     }
-    if(propName === 'zoomIn') {
+    if(propName === 'smaller') {
       const hero = GAME.heros[HERO.id]
       sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     }
 
-    // if(propName === 'zoomOut') {
+    // if(propName === 'larger') {
     //   GAME.heroList.forEach((hero) => {
     //     sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
     //   })
     // }
-    // if(propName === 'zoomIn') {
+    // if(propName === 'smaller') {
     //   GAME.heroList.forEach((hero) => {
     //     sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     //   })
     // }
   }
+
+  setGridTo(propName) {
+    if(propName === 'larger') {
+      GAME.grid.width+=2
+      GAME.grid.startX-=GAME.grid.nodeSize
+      GAME.grid.height+=1
+      GAME.grid.startY-=GAME.grid.nodeSize/2
+    }
+    if(propName === 'smaller') {
+      GAME.grid.width-=2
+      GAME.grid.startX+=GAME.grid.nodeSize
+      GAME.grid.height-=1
+      GAME.grid.startY+=GAME.grid.nodeSize/2
+    }
+    window.socket.emit('updateGrid', GAME.grid)
+  }
+}
+
+function expandGrid(newObject) {
+  if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+    const diff = newObject.x + newObject.width - ((GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX)
+    GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+  }
+  if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+    const diff = newObject.y + newObject.height - ((GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY)
+    GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
+  }
+  if(newObject.x < GAME.grid.startX) {
+    const diff = GAME.grid.startX - newObject.x
+    GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+    GAME.grid.startX -= diff
+  }
+  if(newObject.y < GAME.grid.startY) {
+    const diff = GAME.grid.startY - newObject.y
+    GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
+    GAME.grid.startY -= diff
+  }
 }
 
 function getHeroCameraValue() {
+  const hero = GAME.heros[HERO.id]
   const value = {
     width: HERO.cameraWidth * hero.zoomMultiplier,
     height: HERO.cameraHeight * hero.zoomMultiplier,
-    centerX: hero.x + hero.width/2,
-    centerY: hero.y + hero.height/2,
   }
-  value.x = value.centerX - value.width/2
-  value.y = value.centerY - value.height/2
-  value.limitX = Math.abs(value.width/2)
-  value.limitY = Math.abs(value.height/2)
+  value.x = hero.x - value.width/2
+  value.y = hero.y - value.height/2
+
   gridUtil.snapObjectToGrid(value)
   value.width = HERO.cameraWidth * hero.zoomMultiplier
   value.height = HERO.cameraHeight * hero.zoomMultiplier
+  value.centerX = value.x + value.width/2,
+  value.centerY = value.y + value.height/2,
+  value.limitX = Math.abs(value.width/2)
+  value.limitY = Math.abs(value.height/2)
 
   return value;
 }

@@ -271,6 +271,20 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
   node.backgroundSprite.name = 'x' + node.gridX + 'y' + node.gridY
 }
 
+PIXIMAP.onUpdateGrid = function() {
+  if(!window.resettingDarkness) {
+    setTimeout(() => {
+      if(PIXIMAP.initialized) {
+        PIXIMAP.initializeDarknessSprites()
+        PIXIMAP.resetDarknessSprites()
+        PIXIMAP.updateDarknessSprites()
+      }
+      window.resettingDarkness = false
+    }, 100)
+    window.resettingDarkness = true
+  }
+}
+
 PIXIMAP.onUpdateGridNode = function(x, y, update) {
   const nodes = PIXIMAP.grid.nodes
   if(nodes[x] && nodes[x][y]) {

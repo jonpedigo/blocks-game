@@ -451,7 +451,7 @@ function containObjectWithinGridBoundaries(object) {
   }
 
   //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(!object.tags.hero || GAME.world.preventHeroGridBypass) {
+  if(GAME.world.tags.preventHeroGridBypass || object.tags.hero == false) {
     if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
       object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
     }

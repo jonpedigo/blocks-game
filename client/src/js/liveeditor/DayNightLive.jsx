@@ -64,7 +64,7 @@ export default class DayNightLive extends React.Component {
     return (
       <div className='DayNightLive'>
         <div>
-          <DatGui style={{ marginTop: '250px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
+          <DatGui style={{ marginTop: '300px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
             <DatNumber path='ambientLight' label='ambientLight' min={0} max={1} step={.01} />
           </DatGui>
         </div>
