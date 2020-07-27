@@ -251,10 +251,12 @@ class Page{
 
   onLoadingScreenEnd() {
     PAGE.loadingGame = false
+    document.body.style.cursor = 'default'
   }
 
   onLoadingScreenStart() {
     PAGE.loadingGame = true
+    document.body.style.cursor = 'wait'
   }
 
   downloadObjectAsJson(exportObj, exportName){

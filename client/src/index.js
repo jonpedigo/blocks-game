@@ -19,7 +19,9 @@ Scenarios and Stories !! AWESOME
 
 More live player animations!! because these are sick
 allow chaining of animations and effects
+Save Animations to world ( save animation button )
 
+---
 The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
 COMBINED DAT GUI EDITOR WITH REACT EDITOR?
 Find a good way to customize DAT GUI position and have more than one DAT GUI up?

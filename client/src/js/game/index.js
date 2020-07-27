@@ -530,8 +530,6 @@ class Game{
 
     window.local.emit('onLoadingScreenStart')
 
-    window.local.emit('onRender')
-
     setTimeout(() => {
       // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
       localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))

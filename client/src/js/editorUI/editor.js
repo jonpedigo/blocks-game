@@ -89,16 +89,25 @@ class Editor {
     }
   }
 
-  saveGame() {
+  saveGameToServer() {
     console.log('previous version before save', GAME)
     let saveGame = GAME.cleanForSave(GAME)
+    saveGame = {...saveGame,
+          compendium: window.compendium }
 
     if(window.location.href.indexOf('localhost')) {
       console.log('saving to server', saveGame)
       window.socket.emit('saveGame', {...saveGame,
             compendium: window.compendium })
     } else {
-      PAGE.downloadObjectAsJson(saveGame, GAME.id)
+      console.log('saving to local storage')
+      const saveString = JSON.stringify(saveGame)
+      const size = window.byteLength(saveString)/1000000
+      if(size > 3) {
+        alert('save too big for browser storage, download as json instead')
+      } else {
+        localStorage.setItem('saveEditingGame', saveString)
+      }
     }
   }
 
@@ -120,6 +129,7 @@ class Editor {
       setHeroZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags, allMovingObjectsHaveGravityY: true, gameBoundaryBottomDestroyHero: true }})
     }
+
     if(worldName === 'Zelda') {
       if(EDITOR.shiftPressed) {
         GAME.grid.width = 200
@@ -136,6 +146,7 @@ class Editor {
       setHeroZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
+
     if(worldName === 'Pacman') {
       if(EDITOR.shiftPressed) {
         GAME.grid.width = 40
@@ -152,6 +163,7 @@ class Editor {
       setHeroZoomTo('grid')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
+
     if(worldName === 'Purgatory') {
       if(EDITOR.shiftPressed) {
         setGridTo('default')
@@ -165,8 +177,8 @@ class Editor {
       clearProperty('lockCamera')
       setHeroZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
-
     }
+
     if(worldName === 'Smash') {
       if(EDITOR.shiftPressed) {
         setGridTo('default')
@@ -301,45 +313,34 @@ class Editor {
   setHeroZoomTo(propName) {
     if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
       let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth
-      sendHeroUpdate({ zoomMultiplier })
+      sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'lockCamera' && GAME.world.lockCamera) {
       let zoomMultiplier = GAME.world.lockCamera.width/HERO.cameraWidth
-      sendHeroUpdate({ zoomMultiplier })
+      sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'grid') {
       let zoomMultiplier = (GAME.grid.width * GAME.grid.nodeSize)/HERO.cameraWidth
-      sendHeroUpdate({ zoomMultiplier })
+      sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'gridMinusOne') {
       let zoomMultiplier = ((GAME.grid.width-2) * GAME.grid.nodeSize)/HERO.cameraWidth
-      sendHeroUpdate({ zoomMultiplier })
+      sendHerosUpdate({ zoomMultiplier })
     }
 
     if(propName === 'larger') {
       const hero = GAME.heros[HERO.id]
-      sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
+      sendHerosUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
     }
     if(propName === 'smaller') {
       const hero = GAME.heros[HERO.id]
-      sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
+      sendHerosUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     }
 
     if(propName === 'default') {
       const hero = GAME.heros[HERO.id]
-      sendHeroUpdate({ id: hero.id, zoomMultiplier: 1.875 })
+      sendHerosUpdate({ id: hero.id, zoomMultiplier: 1.875 })
     }
-
-    // if(propName === 'larger') {
-    //   GAME.heroList.forEach((hero) => {
-    //     sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
-    //   })
-    // }
-    // if(propName === 'smaller') {
-    //   GAME.heroList.forEach((hero) => {
-    //     sendHeroUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
-    //   })
-    // }
   }
 
   setWorldAndHeroSpawnPointsTo(propName) {
@@ -347,7 +348,7 @@ class Editor {
       const x = GAME.grid.startX + ((GAME.grid.width * GAME.grid.nodeSize)/2)
       const y = GAME.grid.startY + ((GAME.grid.height * GAME.grid.nodeSize)/2)
       sendWorldUpdate({spawnPointX: x, spawnPointY: y})
-      sendHeroUpdate({spawnPointX: x, spawnPointY: y})
+      sendHerosUpdate({spawnPointX: x, spawnPointY: y})
     }
   }
 
@@ -442,6 +443,7 @@ function getGridMinusOneValue() {
 }
 
 function choseGameCallback(game) {
+  window.local.emit('onLoadingScreenStart')
   if(GAME.id) {
     GAME.unload()
   }
@@ -451,6 +453,12 @@ function choseGameCallback(game) {
 
 function sendHeroUpdate(update) {
   window.socket.emit('editHero', { id: HERO.id, ...update })
+}
+
+function sendHerosUpdate(update) {
+  GAME.heroList.forEach(({id}) => {
+    window.socket.emit('editHero', { id, ...update })
+  })
 }
 
 let worldUpdate

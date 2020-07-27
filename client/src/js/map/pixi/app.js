@@ -100,6 +100,7 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   PIXIMAP.stage = world
   PIXIMAP.app.ticker.maxFPS = 24
+  PIXIMAP.app.renderer.preserveDrawingBuffer = true
 
   ///////////////
   ///////////////
@@ -234,13 +235,15 @@ const initPixiApp = (canvasRef, onLoad) => {
     function onResize() {
       if(loadingTimeout) clearTimeout(loadingTimeout)
       PAGE.resizingMap = true
+      window.local.emit('onLoadingScreenStart')
       loadingTimeout = setTimeout(() => {
         PAGE.resizingMap = false
+        window.local.emit('onLoadingScreenEnd')
       }, 150)
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
-      app.renderer.resize(width, height);
+      app.queueResize(width, height);
       if(!window.resettingDarkness) {
         setTimeout(() => {
           if(PIXIMAP.initialized) {

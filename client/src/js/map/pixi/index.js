@@ -419,6 +419,7 @@ function resetConstructParts() {
 
 PIXIMAP.onConstellationAnimationStart = function() {
   PIXIMAP.backgroundOverlay.isAnimatingColor = true
+  PIXIMAP.shadowStage.visible = false
   const example = ease.add(PIXIMAP.backgroundOverlay, { blend: 0x000000 }, { duration: 1000, ease: 'linear' })
   example.once('complete', () => PIXIMAP.backgroundOverlay.tint = 0x000000)
 }
@@ -428,5 +429,22 @@ PIXIMAP.onConstellationAnimationEnd = function() {
   example.once('complete', () => {
     PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
     PIXIMAP.backgroundOverlay.isAnimatingColor = false
+    setTimeout(() => {
+      PIXIMAP.shadowStage.visible = true
+    }, 1500)
   })
+}
+
+PIXIMAP.downloadAsImage = function() {
+  download_sprite_as_png(PIXIMAP.app.renderer, PIXIMAP.app.stage, 'pixi-map.png')
+}
+
+function download_sprite_as_png(renderer, sprite, fileName) {
+  renderer.render(sprite);
+  const data = renderer.view.toDataURL('image/png', 1)
+  var a = document.createElement("a"); //Create <a>
+  a.href = data; //Image Base64 Goes here
+  a.download = fileName; //File name Here
+  a.click(); //Downloaded file
+  a.remove();
 }
