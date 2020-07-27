@@ -23,10 +23,7 @@ class Hero{
   }
 
   getHeroId() {
-    // GET GAME.heros[HERO.id] ID
-    if(PAGE.role.isGhost) {
-      HERO.id = 'ghost'
-    } else if(PAGE.role.isPlayer) {
+    if(PAGE.role.isPlayer) {
       let savedHero = localStorage.getItem('hero');
       if(savedHero && JSON.parse(savedHero).id){
         HERO.id = JSON.parse(savedHero).id

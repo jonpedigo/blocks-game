@@ -9,11 +9,9 @@ Tooltips
 Animations + Live Animation Tester
 More Particles + Particle Tester/Uploader
 
-World -> Trash All Objects
+Shadow + camera shake on pacman levels.. iffy iffy iffy
 
 Hero removed -> respawn UI
-
-Combine Ghost and Hero
 
 Scenarios and Stories !! AWESOME
 

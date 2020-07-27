@@ -267,10 +267,18 @@ function updateProperties(pixiChild, gameObject) {
     delete pixiChild.tint
   }
 
-  if(gameObject.opacity) {
+  if(typeof gameObject.opacity === 'number') {
     pixiChild.alpha = gameObject.opacity
   } else {
     pixiChild.alpha = 1
+  }
+
+  if(gameObject.tags.hidden) {
+    if(gameObject.id === HERO.originalId) {
+      pixiChild.alpha = .3
+    } else {
+      pixiChild.alpha = 0
+    }
   }
 
   /////////////////////

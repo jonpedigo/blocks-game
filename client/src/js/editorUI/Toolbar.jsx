@@ -120,10 +120,10 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-camera" onClick={() => {
             window.socket.emit('heroCameraEffect', 'cameraShake', HERO.id, { duration: 500, frequency: 20, amplitude: 36 })
           }}/>
-          {/* go incognito */}
-          <ToolbarButton iconName="fa-mask"/>
           <ToolbarButton iconName="fa-code"/>
           {/*
+            {/* go incognito}
+            <ToolbarButton iconName="fa-mask"/>
           <ToolbarButton iconName="fa-save"></i>
           <ToolbarButton iconName="fa-comment"></i>
           <ToolbarButton iconName="fa-gamepad"></i>
@@ -176,6 +176,17 @@ export default class Toolbar extends React.Component {
             window.local.emit('onZoomChange', HERO.id)
           }}/>
         </ToolbarRow>
+
+        <br/>
+
+        {/* go incognito */}
+        {HERO.originalId && <ToolbarButton active={GAME.heros[HERO.originalId].tags.hidden} iconName="fa-eye-slash" onClick={() => {
+          if(GAME.heros[HERO.originalId].tags.hidden) {
+            window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: false } })
+          } else {
+            window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: true } })
+          }
+        }}/>}
 
         <br/>
 

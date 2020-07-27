@@ -218,7 +218,7 @@ class Game{
     GAME.loadGridWorldObjectsCompendiumState(game)
 
     // if you are a player and you dont already have a hero from the server ask for one
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && !GAME.heros[HERO.id]) {
+    if(PAGE.role.isPlayer && !GAME.heros[HERO.id]) {
       if(GAME.heros[HERO.id]) {
         window.local.emit('onHeroFound', GAME.heros[HERO.id])
       } else {

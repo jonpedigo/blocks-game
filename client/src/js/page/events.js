@@ -58,7 +58,7 @@ class EventEmitter {
         event.push(HERO[eventName])
       }
 
-      if(PAGE.role.isGhost && GHOST[eventName]) {
+      if(GHOST[eventName]) {
         event.push(GHOST[eventName])
       }
 

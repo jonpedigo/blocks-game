@@ -27,20 +27,10 @@ class Page{
       PAGE.role.isHost = true
     }
 
-    if(PAGE.getParameterByName('mapEditor')) {
-      PAGE.role.isMapEditor = true
-    }
-
     if(PAGE.getParameterByName('arcadeMode')) {
       PAGE.role.isHost = true
       PAGE.role.isArcadeMode = true
       PAGE.role.isPlayer = true
-    }
-
-    if(PAGE.getParameterByName('ghost')) {
-      PAGE.role.isPlayEditor = false
-      PAGE.role.isPlayer = true
-      PAGE.role.isGhost = true
     }
 
     if(PAGE.getParameterByName('admin')) {
@@ -60,9 +50,7 @@ class Page{
       console.log('editor')
     }
     if(PAGE.role.isPlayer) {
-      if(PAGE.role.isGhost){
-       console.log('player-ghost')
-      } else console.log('player')
+      console.log('player')
     }
   }
 
@@ -220,6 +208,8 @@ class Page{
   resetStorage() {
     localStorage.removeItem('hero')
     localStorage.removeItem('ghostData')
+    localStorage.removeItem('initialGameState')
+    localStorage.removeItem('saveEditingGame')
     PAGE.role.isPlayer = false
     window.location.reload()
   }

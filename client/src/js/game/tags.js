@@ -116,6 +116,7 @@ function setDefault() {
     light: false,
     background: false,
     foreground: false,
+    hidden: false,
     // invisibleOnHeroCollide: false
   }
 
@@ -180,6 +181,7 @@ function setDefault() {
     monsterDestroyer: false,
     obstacle: false,
     rotateable: false,
+    hidden: false,
   }
 
   window.subObjectTags = {

@@ -3,7 +3,9 @@ import gridUtil from '../../utils/grid.js'
 import input from '../input.js'
 
 class Ghost{
-  onPageLoaded(){
+  onHerosLoaded(){
+    if(!PAGE.role.isAdmin) return
+    if(!HERO.originalId) HERO.originalId = HERO.id
     window.addEventListener("keydown", function (e) {
       keysDown[e.keyCode] = true
 
@@ -20,8 +22,6 @@ class Ghost{
             break;
           }
         }
-
-        return
       }
 
       //select right
@@ -37,19 +37,22 @@ class Ghost{
             break;
           }
         }
-        return
       }
 
+      if(HERO.id !== HERO.originalId) PAGE.role.isGhost = true
+      else PAGE.role.isGhost = false
     }, false)
+
+
 
     window.addEventListener("keyup", function (e) {
   	   delete keysDown[e.keyCode]
     }, false)
   }
-  // 
-  // onUpdate(delta) {
-  //   localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: HERO.id, ghost: PAGE.role.isGhostHero}))
   //
+  onUpdate(delta) {
+    localStorage.setItem('ghostData', JSON.stringify({selectedHeroId: HERO.id, ghost: PAGE.role.isGhostHero}))
+
   //   if(HERO.id === 'ghost' && 16 in keysDown) {
   //     if (38 in keysDown) { // Player holding up
   //       GAME.heros[HERO.id].y -= GAME.grid.nodeSize
@@ -67,22 +70,26 @@ class Ghost{
   //     }
   //     input.onUpdate(GAME.heros[HERO.id], GAME.keysDown, delta)
   //   }
-  // }
+  }
 
-  // onGameLoaded() {
-  //   let ghostData = JSON.parse(localStorage.getItem('ghostData'));
-  //   if(ghostData && ghostData.selectedHeroId) {
-  //     HERO.ghost = ghostData.ghost
-  //     if(GAME.heros[ghostData.selectedHeroId]) HERO.id = ghostData.selectedHeroId
-  //   }
-  //
-  //   if(!HERO.ghost) HERO.ghost = JSON.parse(JSON.stringify(window.defaultHero))
-  //   HERO.ghost.color = 'rgba(255,255,255,0.1)'
-  //   HERO.ghost.arrowKeysBehavior = 'grid'
-  //   HERO.ghost.id = 'ghost'
-  //   gridUtil.snapObjectToGrid(HERO.ghost)
-  //   GAME.heros.ghost = HERO.ghost
-  // }
+  onGameReady() {
+
+    // let ghostData = JSON.parse(localStorage.getItem('ghostData'));
+    // if(ghostData && ghostData.selectedHeroId) {
+    //   // HERO.ghost = ghostData.ghost
+    //   if(GAME.heros[ghostData.selectedHeroId]) {
+    //     HERO.id = ghostData.selectedHeroId
+    //     PAGE.role.isGhost = true
+    //   }
+    // }
+
+    // if(!HERO.ghost) HERO.ghost = JSON.parse(JSON.stringify(window.defaultHero))
+    // HERO.ghost.color = 'rgba(255,255,255,0.1)'
+    // HERO.ghost.arrowKeysBehavior = 'grid'
+    // HERO.ghost.id = 'ghost'
+    // gridUtil.snapObjectToGrid(HERO.ghost)
+    // GAME.heros.ghost = HERO.ghost
+  }
 }
 
 window.GHOST = new Ghost()

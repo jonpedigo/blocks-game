@@ -82,11 +82,7 @@ function update(camera) {
     if(hero.removed) return
 
     if(hero.tags.outline) {
-      if(hero.id !== 'ghost' && !GAME.gameState.started && !MAPEDITOR.paused) {
-        drawTools.drawObject(ctx, {...hero, color: 'white'}, camera);
-      } else {
-        drawTools.drawObject(ctx, hero, camera);
-      }
+      drawTools.drawObject(ctx, hero, camera);
     }
 
     if(hero.subObjects) {
