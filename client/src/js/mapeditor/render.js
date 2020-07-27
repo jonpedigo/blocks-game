@@ -139,7 +139,7 @@ function update() {
   }
 
   const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
-  const loadingState = (PAGE.resizingMap || PAGE.loadingGame)
+  const loadingState = (PAGE.loadingGame)
   PAGE.loadingScreen = gameEligibleForLoading && loadingState
 
   if(PAGE.loadingScreen) {

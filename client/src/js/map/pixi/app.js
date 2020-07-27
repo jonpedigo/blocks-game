@@ -234,8 +234,8 @@ const initPixiApp = (canvasRef, onLoad) => {
     let loadingTimeout
     function onResize() {
       if(loadingTimeout) clearTimeout(loadingTimeout)
-      PAGE.resizingMap = true
       window.local.emit('onLoadingScreenStart')
+      PAGE.resizingMap = true
       loadingTimeout = setTimeout(() => {
         PAGE.resizingMap = false
         window.local.emit('onLoadingScreenEnd')
@@ -248,7 +248,7 @@ const initPixiApp = (canvasRef, onLoad) => {
         setTimeout(() => {
           if(PIXIMAP.initialized) {
             PIXIMAP.initializeDarknessSprites()
-            PIXIMAP.resetDarknessSprites()
+            PIXIMAP.resetDarkness()
             PIXIMAP.updateDarknessSprites()
           }
           window.resettingDarkness = false

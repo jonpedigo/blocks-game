@@ -115,8 +115,9 @@ class Editor {
     const { clearProperty, setGameBoundaryBehavior, setGameBoundaryTo, setCameraLockTo, setHeroZoomTo, setGridTo, setWorldAndHeroSpawnPointsTo, respawnAllHeros } = EDITOR
     if(worldName === 'Mario') {
       if(EDITOR.shiftPressed) {
-        GAME.grid.width = 200
-        GAME.grid.height = 80
+        const padding = GAME.world.chunkPadding
+        GAME.grid.width = 200 + (padding * 2)
+        GAME.grid.height = 100 + (padding)
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
@@ -124,16 +125,17 @@ class Editor {
       }
 
       setGameBoundaryBehavior('default')
-      setGameBoundaryTo('grid')
-      setCameraLockTo('gridMinusOne')
+      setGameBoundaryTo('gridPadding')
+      setCameraLockTo('gridPaddingMinusOne')
       setHeroZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags, allMovingObjectsHaveGravityY: true, gameBoundaryBottomDestroyHero: true }})
     }
 
     if(worldName === 'Zelda') {
       if(EDITOR.shiftPressed) {
-        GAME.grid.width = 200
-        GAME.grid.height = 200
+        const padding = GAME.world.chunkPadding
+        GAME.grid.width = 200 + (padding * 2)
+        GAME.grid.height = 200 + (padding)
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
@@ -141,16 +143,16 @@ class Editor {
       }
 
       setGameBoundaryBehavior('boundaryAll')
-      setGameBoundaryTo('grid')
-      setCameraLockTo('grid')
+      setGameBoundaryTo('gridPadding')
+      setCameraLockTo('gridPadding')
       setHeroZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
     if(worldName === 'Pacman') {
       if(EDITOR.shiftPressed) {
-        GAME.grid.width = 40
-        GAME.grid.height = 20
+        GAME.grid.width = 44
+        GAME.grid.height = 22
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
@@ -158,9 +160,9 @@ class Editor {
       }
 
       setGameBoundaryBehavior('pacmanFlip')
-      setGameBoundaryTo('grid')
-      setCameraLockTo('grid')
-      setHeroZoomTo('grid')
+      setGameBoundaryTo('gridMinusOne')
+      setCameraLockTo('gridMinusOne')
+      setHeroZoomTo('gridMinusOne')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
@@ -187,8 +189,8 @@ class Editor {
         respawnAllHeros()
       }
       setGameBoundaryBehavior('default')
-      setGameBoundaryTo('grid')
-      setCameraLockTo('grid')
+      setGameBoundaryTo('gridPadding')
+      setCameraLockTo('gridPadding')
       setCameraLockTo('smaller')
       setCameraLockTo('smaller')
       setCameraLockTo('smaller')
@@ -253,6 +255,14 @@ class Editor {
       const value = getGridMinusOneValue()
       sendWorldUpdate( { gameBoundaries: {...value, behavior: GAME.world.gameBoundaries ? GAME.world.gameBoundaries.behavior : 'default' }})
     }
+    if(propName === 'gridPadding') {
+      const value = getGridPaddingValue()
+      sendWorldUpdate( { gameBoundaries: {...value, behavior: GAME.world.gameBoundaries ? GAME.world.gameBoundaries.behavior : 'default' }})
+    }
+    if(propName === 'gridPaddingMinusOne') {
+      const value = getGridPaddingValue(true)
+      sendWorldUpdate( { gameBoundaries: {...value, behavior: GAME.world.gameBoundaries ? GAME.world.gameBoundaries.behavior : 'default' }})
+    }
     if(propName === 'larger') {
       let game = GAME.world.gameBoundaries
       sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width + (GAME.grid.nodeSize * 2)), height: (game.height + (GAME.grid.nodeSize)), x:  game.x -  GAME.grid.nodeSize, y: game.y  - (GAME.grid.nodeSize/2) } })
@@ -276,6 +286,18 @@ class Editor {
     }
     if(propName === 'gridMinusOne') {
       const value = getGridMinusOneValue()
+      const { x, y, width, height} = value
+      const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+      sendWorldUpdate( { lockCamera })
+    }
+    if(propName === 'gridPadding') {
+      const value = getGridPaddingValue()
+      const { x, y, width, height} = value
+      const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
+      sendWorldUpdate( { lockCamera })
+    }
+    if(propName === 'gridPaddingMinusOne') {
+      const value = getGridPaddingValue(true)
       const { x, y, width, height} = value
       const lockCamera = { x, y, width, height, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
       sendWorldUpdate( { lockCamera })
@@ -324,7 +346,17 @@ class Editor {
       sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'gridMinusOne') {
-      let zoomMultiplier = ((GAME.grid.width-2) * GAME.grid.nodeSize)/HERO.cameraWidth
+      let zoomMultiplier = ((GAME.grid.width-4) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHerosUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPadding') {
+      const padding = GAME.world.chunkPadding
+      let zoomMultiplier = ((GAME.grid.width - padding) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHerosUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPaddingMinusOne') {
+      const padding = GAME.world.chunkPadding - 4
+      let zoomMultiplier = ((GAME.grid.width-padding) * GAME.grid.nodeSize)/HERO.cameraWidth
       sendHerosUpdate({ zoomMultiplier })
     }
 
@@ -366,8 +398,9 @@ class Editor {
       GAME.grid.startY+=GAME.grid.nodeSize
     }
     if(propName === 'default') {
-      GAME.grid.width = window.defaultGrid.width
-      GAME.grid.height = window.defaultGrid.height
+      const padding = GAME.world.chunkPadding
+      GAME.grid.width = window.defaultGrid.width + (padding * 2)
+      GAME.grid.height = window.defaultGrid.height + padding
     }
     window.socket.emit('updateGrid', GAME.grid)
   }
@@ -433,14 +466,29 @@ function getGridValue() {
 
 function getGridMinusOneValue() {
   const value = {
-    width: (GAME.grid.width - 2) * GAME.grid.nodeSize,
+    width: (GAME.grid.width - 4) * GAME.grid.nodeSize,
     height: (GAME.grid.height - 2) * GAME.grid.nodeSize,
-    x: GAME.grid.startX + GAME.grid.nodeSize,
+    x: GAME.grid.startX + (GAME.grid.nodeSize * 2),
     y: GAME.grid.startY + GAME.grid.nodeSize
   }
 
   return value
 }
+
+function getGridPaddingValue(minusOne = false) {
+  let padding = GAME.world.chunkPadding
+  if(minusOne) padding++
+
+  const value = {
+    width: (GAME.grid.width - (padding * 2)) * GAME.grid.nodeSize,
+    height: (GAME.grid.height - (padding)) * GAME.grid.nodeSize,
+    x: GAME.grid.startX + (GAME.grid.nodeSize * padding),
+    y: GAME.grid.startY + (GAME.grid.nodeSize * (padding/2))
+  }
+
+  return value
+}
+
 
 function choseGameCallback(game) {
   window.local.emit('onLoadingScreenStart')

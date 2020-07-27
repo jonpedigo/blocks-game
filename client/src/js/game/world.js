@@ -26,6 +26,7 @@ function setDefault() {
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
+    chunkPadding: 6,
     sequences: {},
   }
 

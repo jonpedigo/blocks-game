@@ -36,14 +36,18 @@ PIXIMAP.onAssetsLoaded = function() {
 
 PIXIMAP.onGameLoaded = function() {
   // GAME.world.tags.usePixiMap = true
+  PIXIMAP.grid = _.cloneDeep(GAME.grid)
 
   if(!PIXIMAP.assetsLoaded) {
-    setInterval(PIXIMAP.resetDarknessSprites, 200)
-    setInterval(PIXIMAP.updateDarknessSprites, 200)
-    setInterval(PIXIMAP.updateBlockSprites, 300)
+    // setInterval(PIXIMAP.updateBlockSprites, 300)
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
       window.local.emit('onGameReady')
+      setInterval(() => {
+        PIXIMAP.initializeDarknessSprites()
+        PIXIMAP.resetDarkness()
+        PIXIMAP.updateDarknessSprites()
+      }, 200)
     })
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
@@ -56,7 +60,7 @@ PIXIMAP.onGameLoaded = function() {
 
 PIXIMAP.onGameStarted = function() {
   PIXIMAP.initializeDarknessSprites()
-  PIXIMAP.resetDarknessSprites()
+  PIXIMAP.resetDarkness()
   window.local.emit('onGameReady')
 }
 
@@ -128,10 +132,10 @@ PIXIMAP.onRender = function() {
       PIXIMAP.shadowStage.pivot.x = camera.x
       PIXIMAP.shadowStage.pivot.y = camera.y
     }
-    if(PIXIMAP.gridStage) {
-      PIXIMAP.gridStage.pivot.x = camera.x
-      PIXIMAP.gridStage.pivot.y = camera.y
-    }
+    // if(PIXIMAP.gridStage) {
+    //   PIXIMAP.gridStage.pivot.x = camera.x
+    //   PIXIMAP.gridStage.pivot.y = camera.y
+    // }
 
     // const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
     // const loadingState = (PAGE.resizingMap || PAGE.startingAndStoppingGame)
@@ -142,7 +146,7 @@ PIXIMAP.onRender = function() {
   }
 }
 
-PIXIMAP.resetDarknessSprites = function() {
+PIXIMAP.resetDarkness = function() {
   if(!PIXIMAP.grid) return
 
   const nodes = PIXIMAP.grid.nodes
@@ -213,53 +217,61 @@ PIXIMAP.updateDarknessSprites = function() {
   let ambientLight = GAME.gameState.ambientLight
   if(typeof ambientLight !== 'number') ambientLight = 1
 
-  for(var x = 0; x < nodes.length; x++) {
-    let row = nodes[x]
-    for(var y = 0; y < row.length; y++) {
-      let node = row[y]
-      if(!node.darknessSprite) return
+  const hero = GAME.heros[HERO.id]
 
-      // if(GAME.gameState.ambientLight > 1) {
-      //   node.darknessSprite.alpha = ambientLight - 1
-      //   node.darknessSprite.tint = getHexColor("orange")
-      // } else {
-        if(node.light == 1) {
-          node.darknessSprite.alpha = .90 - ambientLight
-        } else if(node.light == 2) {
-          node.darknessSprite.alpha = .60 - ambientLight
-        } else if(node.light == 3) {
-          node.darknessSprite.alpha = .30 - ambientLight
-        } else if(node.light >= 4) {
-          node.darknessSprite.alpha = 0 - ambientLight
-        } else {
-          node.darknessSprite.alpha = 1 - ambientLight
-        }
-      // }
+  if(hero) {
+    const { startX, endX, startY, endY } = PIXIMAP.getShadowBoundaries(hero)
+    for(var x = startX; x < endX; x++) {
+      let row = nodes[x]
+      for(var y = startY; y < endY; y++) {
+        let node = row[y]
+        if(!node.darknessSprite) continue
+
+        // if(GAME.gameState.ambientLight > 1) {
+        //   node.darknessSprite.alpha = ambientLight - 1
+        //   node.darknessSprite.tint = getHexColor("orange")
+        // } else {
+          if(node.light == 1) {
+            node.darknessSprite.alpha = .90 - ambientLight
+          } else if(node.light == 2) {
+            node.darknessSprite.alpha = .60 - ambientLight
+          } else if(node.light == 3) {
+            node.darknessSprite.alpha = .30 - ambientLight
+          } else if(node.light >= 4) {
+            node.darknessSprite.alpha = 0 - ambientLight
+          } else {
+            node.darknessSprite.alpha = 1 - ambientLight
+          }
+        // }
+      }
     }
   }
 }
 
 PIXIMAP.initializeDarknessSprites = function() {
-  PIXIMAP.grid = _.cloneDeep(GAME.grid)
   PIXIMAP.shadowStage.removeChildren()
-  PIXIMAP.gridStage.removeChildren()
+  // PIXIMAP.gridStage.removeChildren()
   const nodes = PIXIMAP.grid.nodes
   const textures = PIXIMAP.textures
-  for(var x = 0; x < nodes.length; x++) {
-    let row = nodes[x]
-    for(var y = 0; y < row.length; y++) {
-      let node = row[y]
-      const darknessSprite = new PIXI.Sprite(textures['solidcolorsprite'])
-      PIXIMAP.shadowStage.addChild(darknessSprite)
-      darknessSprite.x = (node.x) * MAP.camera.multiplier
-      darknessSprite.y = (node.y) * MAP.camera.multiplier
-      darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier
-      darknessSprite.transform.scale.y = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.height) * MAP.camera.multiplier
-      darknessSprite.tint = getHexColor("black")
 
-      node.darknessSprite = darknessSprite
+  const hero = GAME.heros[HERO.id]
 
-      PIXIMAP.initBackgroundSprite(node, node.sprite)
+  if(hero) {
+    const { startX, endX, startY, endY } = PIXIMAP.getShadowBoundaries(hero)
+    for(var x = startX; x < endX; x++) {
+      for(var y = startY; y < endY; y++) {
+        const gridNode = PIXIMAP.grid.nodes[x][y]
+
+        const darknessSprite = new PIXI.Sprite(textures['solidcolorsprite'])
+        PIXIMAP.shadowStage.addChild(darknessSprite)
+        darknessSprite.x = (gridNode.x) * MAP.camera.multiplier
+        darknessSprite.y = (gridNode.y) * MAP.camera.multiplier
+        darknessSprite.transform.scale.x = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.width) * MAP.camera.multiplier
+        darknessSprite.transform.scale.y = (GAME.grid.nodeSize/textures['solidcolorsprite']._frame.height) * MAP.camera.multiplier
+        darknessSprite.tint = getHexColor("black")
+        gridNode.darknessSprite = darknessSprite
+        gridNode.darknessSprite.alpha = 0
+      }
     }
   }
 }
@@ -280,11 +292,13 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
 }
 
 PIXIMAP.onUpdateGrid = function() {
+  PIXIMAP.grid = _.cloneDeep(GAME.grid)
+
   if(!window.resettingDarkness) {
     setTimeout(() => {
       if(PIXIMAP.initialized) {
         PIXIMAP.initializeDarknessSprites()
-        PIXIMAP.resetDarknessSprites()
+        PIXIMAP.resetDarkness()
         PIXIMAP.updateDarknessSprites()
       }
       window.resettingDarkness = false
@@ -298,7 +312,7 @@ PIXIMAP.onUpdateGridNode = function(x, y, update) {
   if(nodes[x] && nodes[x][y]) {
     Object.assign(nodes[x][y], update)
   }
-  PIXIMAP.updateBlockSprites()
+  // PIXIMAP.updateBlockSprites()
 }
 PIXIMAP.updateBlockSprites = function() {
   if(!PIXIMAP.grid) return
@@ -315,33 +329,35 @@ PIXIMAP.updateBlockSprites = function() {
       const node = row[y]
       const gridNode = GAME.grid.nodes[x][y]
 
-      // add
-      if(gridNode.sprite && !node.backgroundSprite) {
-        PIXIMAP.initBackgroundSprite(node, gridNode.sprite)
-      }
+      // // add
+      // if(gridNode.sprite && !node.backgroundSprite) {
+      //   PIXIMAP.initBackgroundSprite(node, gridNode.sprite)
+      // }
+      //
+      // // delete
+      // if((gridNode.sprite === 'none' || !gridNode.sprite) && node.backgroundSprite) {
+      //   PIXIMAP.gridStage.removeChild(node.backgroundSprite)
+      // }
+      //
+      // // change
+      // if(node.backgroundSprite) {
+      //   if(node.backgroundSprite.texture.id !== gridNode.sprite) {
+      //     node.backgroundSprite.texture = textures[gridNode.sprite]
+      //   }
+      //   setColor(node.backgroundSprite, node)
+      // }
 
-      // delete
-      if((gridNode.sprite === 'none' || !gridNode.sprite) && node.backgroundSprite) {
-        PIXIMAP.gridStage.removeChild(node.backgroundSprite)
-      }
-
-      // change
-      if(node.backgroundSprite) {
-        if(node.backgroundSprite.texture.id !== gridNode.sprite) {
-          node.backgroundSprite.texture = textures[gridNode.sprite]
+      if(node.darknessSprite) {
+        if(Math.abs(gridX - x) > 32) {
+          node.darknessSprite.visible = false
+          if(node.backgroundSprite) node.backgroundSprite.visible = false
+        } else if(Math.abs(gridY - y) > 20) {
+          node.darknessSprite.visible = false
+          if(node.backgroundSprite) node.backgroundSprite.visible = false
+        } else {
+          node.darknessSprite.visible = true
+          if(node.backgroundSprite) node.backgroundSprite.visible = true
         }
-        setColor(node.backgroundSprite, node)
-      }
-
-      if(Math.abs(gridX - x) > 32) {
-        node.darknessSprite.visible = false
-        if(node.backgroundSprite) node.backgroundSprite.visible = false
-      } else if(Math.abs(gridY - y) > 20) {
-        node.darknessSprite.visible = false
-        if(node.backgroundSprite) node.backgroundSprite.visible = false
-      } else {
-        node.darknessSprite.visible = true
-        if(node.backgroundSprite) node.backgroundSprite.visible = true
       }
     }
   }
@@ -436,7 +452,7 @@ PIXIMAP.onConstellationAnimationEnd = function() {
 }
 
 PIXIMAP.downloadAsImage = function() {
-  download_sprite_as_png(PIXIMAP.app.renderer, PIXIMAP.app.stage, 'pixi-map.png')
+  download_sprite_as_png(PIXIMAP.app.renderer, PIXIMAP.app.stage, 'mapimage.png')
 }
 
 function download_sprite_as_png(renderer, sprite, fileName) {
@@ -447,4 +463,24 @@ function download_sprite_as_png(renderer, sprite, fileName) {
   a.download = fileName; //File name Here
   a.click(); //Downloaded file
   a.remove();
+}
+
+PIXIMAP.getShadowBoundaries = function(hero) {
+  const { gridX, gridY, gridWidth, gridHeight } = HERO.getViewBoundaries(hero)
+  const padding = GAME.world.chunkPadding
+  let startX = gridX - padding
+  let endX = gridX + gridWidth + padding
+  let startY = gridY - padding
+  let endY = gridY + gridHeight + padding
+  if(startX < 0) startX = 0
+  if(endX > PIXIMAP.grid.width) endX = PIXIMAP.grid.width
+  if(startY < 0) startY = 0
+  if(endY > PIXIMAP.grid.height) endY = PIXIMAP.grid.height
+
+  return {
+    startX,
+    startY,
+    endX,
+    endY
+  }
 }

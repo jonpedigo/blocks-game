@@ -9,8 +9,6 @@ Tooltips
 Animations + Live Animation Tester
 More Particles + Particle Tester/Uploader
 
-Shadow + camera shake on pacman levels.. iffy iffy iffy
-
 Hero removed -> respawn UI
 
 Scenarios and Stories !! AWESOME
