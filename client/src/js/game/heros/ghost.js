@@ -3,6 +3,34 @@ import gridUtil from '../../utils/grid.js'
 import input from '../input.js'
 
 class Ghost{
+  previousHero() {
+    let heroIds = Object.keys(GAME.heros)
+    for(let i = 0; i < heroIds.length; i++) {
+      if(GAME.heros[heroIds[i]].id === HERO.id) {
+        if(i === 0) {
+          HERO.id = GAME.heros[heroIds[heroIds.length-1]].id
+        } else {
+          HERO.id = GAME.heros[heroIds[i-1]].id
+        }
+        break;
+      }
+    }
+  }
+
+  nextHero() {
+    let heroIds = Object.keys(GAME.heros)
+    for(let i = 0; i < heroIds.length; i++) {
+      if(GAME.heros[heroIds[i]].id === HERO.id) {
+        if(i === heroIds.length - 1) {
+          HERO.id = GAME.heros[heroIds[0]].id
+        } else {
+          HERO.id = GAME.heros[heroIds[i+1]].id
+        }
+        break;
+      }
+    }
+  }
+
   onHerosLoaded(){
     if(!PAGE.role.isAdmin) return
     if(!HERO.originalId) HERO.originalId = HERO.id
@@ -11,32 +39,12 @@ class Ghost{
 
       //select left
       if(keysDown['188']){
-        let heroIds = Object.keys(GAME.heros)
-        for(let i = 0; i < heroIds.length; i++) {
-          if(GAME.heros[heroIds[i]].id === HERO.id) {
-            if(i === 0) {
-              HERO.id = GAME.heros[heroIds[heroIds.length-1]].id
-            } else {
-              HERO.id = GAME.heros[heroIds[i-1]].id
-            }
-            break;
-          }
-        }
+        GHOST.previousHero()
       }
 
       //select right
       if(keysDown['190']){
-        let heroIds = Object.keys(GAME.heros)
-        for(let i = 0; i < heroIds.length; i++) {
-          if(GAME.heros[heroIds[i]].id === HERO.id) {
-            if(i === heroIds.length - 1) {
-              HERO.id = GAME.heros[heroIds[0]].id
-            } else {
-              HERO.id = GAME.heros[heroIds[i+1]].id
-            }
-            break;
-          }
-        }
+        GHOST.nextHero()
       }
 
       if(HERO.id !== HERO.originalId) PAGE.role.isGhost = true

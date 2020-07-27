@@ -123,7 +123,6 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-code"/>
           {/*
             {/* go incognito}
-            <ToolbarButton iconName="fa-mask"/>
           <ToolbarButton iconName="fa-save"></i>
           <ToolbarButton iconName="fa-comment"></i>
           <ToolbarButton iconName="fa-gamepad"></i>
@@ -177,21 +176,30 @@ export default class Toolbar extends React.Component {
           }}/>
         </ToolbarRow>
 
-        <br/>
-
-        {/* go incognito */}
-        {HERO.originalId && <ToolbarButton active={GAME.heros[HERO.originalId].tags.hidden} iconName="fa-eye-slash" onClick={() => {
-          if(GAME.heros[HERO.originalId].tags.hidden) {
-            window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: false } })
-          } else {
-            window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: true } })
-          }
-        }}/>}
+        <ToolbarRow active={HERO.originalId && HERO.id !== HERO.originalId} iconName="fa-mask">
+          {/* go incognito */}
+          <ToolbarButton active={GAME.heros[HERO.originalId].tags.hidden} iconName="fa-eye-slash" onClick={() => {
+            if(GAME.heros[HERO.originalId].tags.hidden) {
+              window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: false } })
+            } else {
+              window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: true } })
+            }
+          }}/>
+          <ToolbarButton iconName="fa-chevron-left" onClick={() => {
+            GHOST.previousHero()
+          }}/>
+          <ToolbarButton iconName="fa-chevron-right" onClick={() => {
+            GHOST.nextHero()
+          }}/>
+          <ToolbarButton iconName="fa-times" onClick={() => {
+            HERO.id = HERO.originalId
+          }}/>
+        </ToolbarRow>
 
         <br/>
 
         {PAGE.role.isHost &&
-          <ToolbarRow open iconName='fa-cog'>
+          <ToolbarRow iconName='fa-cog'>
             <ToolbarButton iconName="fa-save" onClick={EDITOR.saveGame}/>
             <ToolbarButton iconName="fa-folder-open" onClick={EDITOR.loadGame}/>
             <ToolbarButton iconName="fa-file" onClick={EDITOR.newGame}/>

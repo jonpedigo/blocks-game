@@ -12,7 +12,7 @@ export default class ToolbarRow extends React.Component {
   }
 
   render() {
-    const { iconName, children, column } = this.props
+    const { active, iconName, children, column } = this.props
 
     const { open } = this.state
 
@@ -25,10 +25,10 @@ export default class ToolbarRow extends React.Component {
           this.setState({ open: false })
         }}
         >
-          <i className={"Toolbar__tool-selector Toolbar__tool-selector--normal-cursor fa fas " + iconName}>
+          <i className={classnames("Toolbar__tool-selector fa fas ", iconName, { "Toolbar__tool-selector--normal-cursor": true, "Toolbar__tool-selector--active": active })}>
           </i>
           <div className={classnames({"Toolbar__tool-children": !column, "Toolbar__tool-children--column": column })}>
-            {open && children.map((child) => {
+            {children && open && children.map((child) => {
               return <div className="Toolbar__tool-child">
                 {child}
               </div>
