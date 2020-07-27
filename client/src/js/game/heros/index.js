@@ -225,11 +225,11 @@ class Hero{
 
     if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/.97
-      PAGE.resizing = true
+      PAGE.resizingMap = true
       if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
         if(hero.endAnimation) {
           hero.animationZoomMultiplier = null
-          PAGE.resizing = false
+          PAGE.resizingMap = false
         } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget
         }
@@ -238,10 +238,10 @@ class Hero{
 
     if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/1.03
-      PAGE.resizing = true
+      PAGE.resizingMap = true
       if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
         if(hero.endAnimation) {
-          PAGE.resizing = false
+          PAGE.resizingMap = false
           hero.animationZoomMultiplier = null
         } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget

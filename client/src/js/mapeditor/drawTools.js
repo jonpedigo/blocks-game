@@ -29,10 +29,12 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalL
     drawVertice(ctx, {a: {
       x: startX + (x * nodeSize),
       y: startY,
+      color
     },
     b: {
       x: startX + (x * nodeSize),
       y: startY + height,
+      color
     }}, camera)
   }
   for(var y = 0; y <= gridHeight; y++) {
@@ -43,10 +45,12 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalL
     drawVertice(ctx, {a: {
       x: startX,
       y: startY + (y * nodeSize),
+      color
     },
     b: {
       x: startX + width,
       y: startY + (y * nodeSize),
+      color
     }}, camera)
   }
 

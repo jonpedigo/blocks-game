@@ -28,7 +28,7 @@ const updatePixiObject = (gameObject) => {
     // CONSTRUCT PARTS
     if(gameObject.constructParts) {
       // WE DONT GOTTA UPDATE THESE
-      if(PAGE.resizing || !gameObject.tags.stationary) {
+      if((PAGE.resizingMap && !PAGE.loadingScreen) || !gameObject.tags.stationary) {
         gameObject.constructParts.forEach((part) => {
           let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
           let color = part.color || gameObject.color || GAME.world.defaultObjectColor

@@ -8,7 +8,7 @@ function update() {
   if(!ctx) return
 
   if(PAGE.role.isAdmin) {
-    drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height, color: 'white' }, camera)
   }
 
   // if(PAGE.role.isAdmin || PAGE.role.isCreator) {
@@ -138,7 +138,11 @@ function update() {
     });
   }
 
-  if(PAGE.loadingMap) {
+  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const loadingState = (PAGE.resizingMap || PAGE.loadingGame)
+  PAGE.loadingScreen = gameEligibleForLoading && loadingState
+
+  if(PAGE.loadingScreen) {
     ctx.fillStyle = "#222"
     ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
     if(PAGE.role.isAdmin) {

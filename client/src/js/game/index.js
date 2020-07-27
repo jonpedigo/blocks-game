@@ -213,6 +213,8 @@ class Game{
   }
 
   loadAndJoin(game) {
+    window.local.emit('onStartLoadingScreen')
+
     GAME.loadGridWorldObjectsCompendiumState(game)
 
     // if you are a player and you dont already have a hero from the server ask for one
@@ -494,69 +496,77 @@ class Game{
     triggers.deleteTrigger(OBJECTS.getObjectOrHeroById(ownerId), triggerId)
   }
 
-  onStopGame() {
-    PAGE.startingAndStoppingGame = true
+  onGameReady() {
+    window.local.emit('onLoadingScreenEnd')
+  }
 
+  onStopGame() {
     if(!GAME.gameState.started) {
       return console.log('trying to stop game that aint even started yet')
     }
 
-    let initialGameState = localStorage.getItem('initialGameState')
-    if(!initialGameState) {
+    window.local.emit('onLoadingScreenStart')
+
+    setTimeout(() => {
+      let initialGameState = localStorage.getItem('initialGameState')
+      if(!initialGameState) {
+        GAME.unload()
+        GAME.loadAndJoin(GAME)
+        return console.log('game stopped, but no initial game state set')
+      }
+
+      initialGameState = JSON.parse(initialGameState)
       GAME.unload()
-      GAME.loadAndJoin(GAME)
-      return console.log('game stopped, but no initial game state set')
-    }
-
-    initialGameState = JSON.parse(initialGameState)
-    GAME.unload()
-    GAME.loadAndJoin(initialGameState)
-    GAME.gameState.paused = true
-    window.local.emit('onGameStopped')
-
-    PAGE.startingAndStoppingGame = false
+      GAME.loadAndJoin(initialGameState)
+      GAME.gameState.paused = true
+      window.local.emit('onGameStopped')
+    }, 100)
   }
 
   onGameStart() {
-    PAGE.startingAndStoppingGame = true
     if(GAME.gameState.started) {
       return console.log('trying to start game that has already started')
     }
 
-    // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-    localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
+    window.local.emit('onLoadingScreenStart')
 
-    GAME.heroList.forEach((hero) => {
-      HERO.spawn(hero)
-      hero.questState = {}
-      if(hero.quests) {
-        Object.keys(hero.quests).forEach((questId) => {
-          hero.questState[questId] = {
-            started: false,
-            active: false,
-            completed: false,
-          }
-        })
-      }
-    })
+    window.local.emit('onRender')
 
-    GAME.objects.forEach((object) => {
-      OBJECTS.respawn(object)
-      if(object.tags.talkOnStart) {
-        GAME.heroList.forEach((hero) => {
-          onTalk(hero, object, {}, [], [], { fromStart: true })
-        })
-      }
-      if(object.tags.giveQuestOnStart) {
-        GAME.heroList.forEach((hero) => {
-          startQuest(hero, object.questGivingId)
-        })
-      }
-    })
-    GAME.gameState.paused = false
-    GAME.gameState.started = true
-    window.local.emit('onGameStarted')
-    PAGE.startingAndStoppingGame = false
+    setTimeout(() => {
+      // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
+      localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
+
+      GAME.heroList.forEach((hero) => {
+        HERO.spawn(hero)
+        hero.questState = {}
+        if(hero.quests) {
+          Object.keys(hero.quests).forEach((questId) => {
+            hero.questState[questId] = {
+              started: false,
+              active: false,
+              completed: false,
+            }
+          })
+        }
+      })
+
+      GAME.objects.forEach((object) => {
+        OBJECTS.respawn(object)
+        if(object.tags.talkOnStart) {
+          GAME.heroList.forEach((hero) => {
+            onTalk(hero, object, {}, [], [], { fromStart: true })
+          })
+        }
+        if(object.tags.giveQuestOnStart) {
+          GAME.heroList.forEach((hero) => {
+            startQuest(hero, object.questGivingId)
+          })
+        }
+      })
+      GAME.gameState.paused = false
+      GAME.gameState.started = true
+      window.local.emit('onGameStarted')
+    }, 100)
   }
 
   cleanForSave(game) {

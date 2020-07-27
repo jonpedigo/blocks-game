@@ -249,6 +249,14 @@ class Page{
     });
   }
 
+  onLoadingScreenEnd() {
+    PAGE.loadingGame = false
+  }
+
+  onLoadingScreenStart() {
+    PAGE.loadingGame = true
+  }
+
   downloadObjectAsJson(exportObj, exportName){
     var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
     var downloadAnchorNode = document.createElement('a');

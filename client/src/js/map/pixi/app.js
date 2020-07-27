@@ -233,9 +233,9 @@ const initPixiApp = (canvasRef, onLoad) => {
     let loadingTimeout
     function onResize() {
       if(loadingTimeout) clearTimeout(loadingTimeout)
-      PAGE.resizing = true
+      PAGE.resizingMap = true
       loadingTimeout = setTimeout(() => {
-        PAGE.resizing = false
+        PAGE.resizingMap = false
       }, 150)
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);

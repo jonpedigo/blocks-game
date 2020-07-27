@@ -32,7 +32,6 @@ PIXIMAP.initializePixiObjectsFromGame = function() {
 PIXIMAP.onAssetsLoaded = function() {
   PIXIMAP.initializeDarknessSprites()
   PIXIMAP.initializePixiObjectsFromGame()
-  window.local.emit('onGameReady')
 }
 
 PIXIMAP.onGameLoaded = function() {
@@ -44,6 +43,7 @@ PIXIMAP.onGameLoaded = function() {
     setInterval(PIXIMAP.updateBlockSprites, 300)
     initPixiApp(MAP.canvas, (app, textures) => {
       window.local.emit('onAssetsLoaded')
+      window.local.emit('onGameReady')
     })
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
@@ -54,9 +54,10 @@ PIXIMAP.onGameLoaded = function() {
   }
 }
 
-PIXIMAP.onGameStart = function() {
+PIXIMAP.onGameStarted = function() {
   PIXIMAP.initializeDarknessSprites()
   PIXIMAP.resetDarknessSprites()
+  window.local.emit('onGameReady')
 }
 
 PIXIMAP.onDeleteHero = function(object) {
@@ -114,7 +115,7 @@ PIXIMAP.onRender = function() {
   if(PIXIMAP.assetsLoaded) {
     MAP.canvas.style.backgroundColor = ''
     // PIXIMAP.app.renderer.backgroundColor = getHexColor(GAME.world.backgroundColor)
-    if(!PIXIMAP.backgroundOverlay.animatingColor) PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
+    if(!PIXIMAP.backgroundOverlay.isAnimatingColor) PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
     GAME.objects.forEach((object) => {
       updatePixiObject(object, PIXIMAP.stage)
     })
@@ -131,6 +132,13 @@ PIXIMAP.onRender = function() {
       PIXIMAP.gridStage.pivot.x = camera.x
       PIXIMAP.gridStage.pivot.y = camera.y
     }
+
+    // const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
+    // const loadingState = (PAGE.resizingMap || PAGE.startingAndStoppingGame)
+    // const pixiMapInvisible = gameEligibleForLoading && loadingState
+    // if(pixiMapInvisible) {
+    //   PIXIMAP.stage.visible = false
+    // } else PIXIMAP.stage.visible = true
   }
 }
 
@@ -410,7 +418,7 @@ function resetConstructParts() {
 }
 
 PIXIMAP.onConstellationAnimationStart = function() {
-  PIXIMAP.backgroundOverlay.animatingColor = true
+  PIXIMAP.backgroundOverlay.isAnimatingColor = true
   const example = ease.add(PIXIMAP.backgroundOverlay, { blend: 0x000000 }, { duration: 1000, ease: 'linear' })
   example.once('complete', () => PIXIMAP.backgroundOverlay.tint = 0x000000)
 }
@@ -419,6 +427,6 @@ PIXIMAP.onConstellationAnimationEnd = function() {
   const example = ease.add(PIXIMAP.backgroundOverlay, { blend: getHexColor(GAME.world.backgroundColor) }, { duration: 1000, ease: 'linear' })
   example.once('complete', () => {
     PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
-    PIXIMAP.backgroundOverlay.animatingColor = false
+    PIXIMAP.backgroundOverlay.isAnimatingColor = false
   })
 }
