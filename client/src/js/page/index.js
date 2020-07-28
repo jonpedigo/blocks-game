@@ -7,6 +7,7 @@ import modals from '../mapeditor/modals.js'
 class Page{
   constructor() {
     this.role = {}
+    this.loadingCount = 0
 
     const gameContainer = document.createElement('div')
     gameContainer.id = 'GameContainer'
@@ -240,12 +241,17 @@ class Page{
   }
 
   onLoadingScreenEnd() {
-    PAGE.loadingGame = false
-    document.body.style.cursor = 'default'
+    PAGE.loadingCount--
+    if(PAGE.loadingCount <= 0) {
+      PAGE.loadingCount = 0
+      PAGE.loadingGame = false
+      document.body.style.cursor = 'default'
+    }
   }
 
   onLoadingScreenStart() {
     PAGE.loadingGame = true
+    PAGE.loadingCount++
     document.body.style.cursor = 'wait'
   }
 

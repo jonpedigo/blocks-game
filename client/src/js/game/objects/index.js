@@ -579,10 +579,14 @@ class Objects{
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part.ownerId = object.id
-        PHYSICS.addObject(part)
+        if(!object.tags.notCollideable) {
+          PHYSICS.addObject(part)
+        }
       })
     } else {
-      PHYSICS.addObject(object)
+      if(!object.tags.notCollideable) {
+        PHYSICS.addObject(object)
+      }
     }
 
     if(object.triggers) {
@@ -684,12 +688,16 @@ class Objects{
     }
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
-        PHYSICS.removeObject(part)
+        if(PHYSICS.objects[part.id]) {
+          PHYSICS.removeObject(part)
+        }
       })
     } else {
-      PHYSICS.removeObject(object)
+      if(PHYSICS.objects[object.id]) {
+        PHYSICS.removeObject(object)
+      }
     }
-    if(object.triggers) {
+    if(PAGE.role.isHost && object.triggers) {
       Object.keys(object.triggers).forEach((triggerId) => {
         triggers.removeTriggerEventListener(object, triggerId)
       })

@@ -310,9 +310,9 @@ class Game{
 
   loadHeros(heros) {
     if(!GAME.gameState.loaded) {
-      GAME.heroList.forEach(({id}) => {
-        GAME.heros[id] = HERO.summonFromGameData(GAME.heros[id])
-        GAME.heros[id].id = id
+      GAME.heroList.forEach((hero) => {
+        GAME.heros[hero.id] = HERO.summonFromGameData(hero)
+        GAME.heros[hero.id].id = hero.id
       })
     }
 
@@ -439,8 +439,13 @@ class Game{
   }
 
   updateGridObstacles() {
+    if(GAME.grid.width !== GAME.grid.nodes.length) {
+      // were in the middle of a grid update HOMIE!!
+      return
+    }
+
     GAME.forEachGridNode((gridNode) => {
-      gridNode.hasObstacle = false
+      if(gridNode) gridNode.hasObstacle = false
     })
 
     GAME.objects.forEach((obj) => {
@@ -623,7 +628,9 @@ class Game{
   }
 
   onChangeGame(game) {
-    GAME.unload()
+    if(GAME.id) {
+      GAME.unload()
+    }
     GAME.loadAndJoin(game)
     ARCADE.changeGame(game.id)
   }

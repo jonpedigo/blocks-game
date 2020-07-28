@@ -282,7 +282,11 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
-    window.local.emit('onUpdateGrid', grid)
+    window.local.emit('onLoadingScreenStart')
+    setTimeout(() => {
+      window.local.emit('onUpdateGrid', grid)
+      window.local.emit('onLoadingScreenEnd')
+    }, 100)
   })
 
   window.socket.on('onUpdateGridNode', (x, y, update) => {
@@ -320,6 +324,7 @@ function init() {
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
+    console.log('changing', game.id)
     window.local.emit('onChangeGame', game)
   })
 

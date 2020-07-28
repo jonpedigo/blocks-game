@@ -115,10 +115,7 @@ MORE key actions.
   z and x accelerate and decelerate
 more space bar actions -> 'double jump', 'dash'
 input modifiers....'on ice', 'flat'
-combine ghost with player
 ADMIN POWER HIGHLIGHT
-editorZoomMultiplier
-set game boundaries to remove objects
 TRUE zelda camera work
 death by jump
 Target/Homing awareness area
@@ -127,11 +124,8 @@ Target/Homing awareness area
 // 'dont backtrack' tag where they remember where they went
 // planet gravity! Would be cool to have..
 // 3d sound effects system from papa bear
-// Construct editor in top right ( global construct object that is just a stationary obstacle )
 // layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
-// ALSO ^^ if an object is a certain size allow selection of 'world' menu
-// EDITOR UI OPTIONS - admin toggle, global construct, which context menu, creator/player/lobby/waiting, run local simulation, power UI toggle,
-// change tag filled -> tag solid color outline
+// run local simulation
 // add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
 // name system -> sub object system
@@ -140,14 +134,32 @@ Target/Homing awareness area
 // ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 // animation compendium
 // local mods? ( client only mods for specific players/situations )
-
 // notation for < or > for conditions and notation for '+' and '-' for edit
+// world option for if it doesnt have a collideable event on it, dont add to physics system
+// moving grid based on hero ( chunks ) and only run simulation on those objects in the grid
 ////////////////////////////////////////////////////
 
 
 
-
 NOTES
+
+/////
+PLANS FOR ULTIMATE SCALE
+Basically the gri will be a moving grid
+the x and y of each grid node will get a getter based off the startX and startY and gridX
+the grid will move its startX and startY with each hero with as its CHUNK
+
+Normally chunk padding is only used to calculate shadows as of now
+CHUNK padding is the difference between the players view and the grid
+
+It seems that theres VIEW padding and game padding. VIEW Padding seems to be for camera shakes and for moving very fast
+game padding seems to be for smash brothers style deaths and managing object updates ( like mine craft )
+
+A game boundary would likely dissapear, same with a camera lock
+and then you would just have a grid that moves with you, the server would know each heros grid size and location
+and update things accordingly
+
+
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 /// ALL SORTS OF EDITOR NOTES

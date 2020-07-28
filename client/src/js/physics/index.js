@@ -118,7 +118,7 @@ function updatePosition(object, delta) {
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
-  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary) {
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
     applyWorldGravity = true
   }
 
@@ -197,7 +197,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.mod().tags.potential) return
+        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
         everything.push(subObject)
       })
     }
@@ -206,6 +206,10 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object, i) => {
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
+      return
+    }
+
+    if(object.tags.notCollideable) {
       return
     }
 

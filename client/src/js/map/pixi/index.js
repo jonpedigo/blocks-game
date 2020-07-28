@@ -5,6 +5,7 @@ import gridUtil from '../../utils/grid'
 import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
 import { Ease, ease } from 'pixi-ease'
+import './animations.js'
 
 import { setColor, getHexColor } from './utils'
 
@@ -104,13 +105,22 @@ PIXIMAP.deleteObject = function(object) {
     delete pixiChild.emitter
   }
   stage.removeChild(pixiChild)
+  console.log('removedChild')
 }
 
 PIXIMAP.addObject = function(object) {
   initPixiObject(object)
 }
 
+PIXIMAP.onResetObjects = function() {
+  PIXIMAP.objectStage.removeChildren()
+  PIXIMAP.objectStage._reInitialize = true
+}
+
 PIXIMAP.onRender = function() {
+
+  if(PAGE.loadingGame) return
+
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
@@ -120,12 +130,19 @@ PIXIMAP.onRender = function() {
     MAP.canvas.style.backgroundColor = ''
     // PIXIMAP.app.renderer.backgroundColor = getHexColor(GAME.world.backgroundColor)
     if(!PIXIMAP.backgroundOverlay.isAnimatingColor) PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
-    GAME.objects.forEach((object) => {
-      updatePixiObject(object, PIXIMAP.stage)
-    })
-    GAME.heroList.forEach((hero) => {
-      updatePixiObject(hero, PIXIMAP.stage)
-    })
+
+    if(PIXIMAP.objectStage._reInitialize) {
+      PIXIMAP.objectStage._reInitialize = false
+      PIXIMAP.initializePixiObjectsFromGame()
+    } else {
+      GAME.objects.forEach((object) => {
+        updatePixiObject(object, PIXIMAP.stage)
+      })
+      GAME.heroList.forEach((hero) => {
+        updatePixiObject(hero, PIXIMAP.stage)
+      })
+    }
+
     PIXIMAP.objectStage.pivot.x = camera.x
     PIXIMAP.objectStage.pivot.y = camera.y
     if(PIXIMAP.shadowStage) {
@@ -296,6 +313,7 @@ PIXIMAP.initBackgroundSprite = function(node, nodeSprite) {
 PIXIMAP.onUpdateGrid = function() {
   PIXIMAP.grid = _.cloneDeep(GAME.grid)
 
+
   if(!window.resettingDarkness) {
     setTimeout(() => {
       if(PIXIMAP.initialized) {
@@ -422,11 +440,7 @@ function resetConstructParts() {
     // CONSTRUCT PARTS
     if(gameObject.constructParts) {
       gameObject.constructParts.forEach((part) => {
-        let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
-        let color = part.color || gameObject.color || GAME.world.defaultObjectColor
-        let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-        const partObject = {tags: {...gameObject.tags},  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
-        if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
+        const partObject = PIXIMAP.convertToPartObject(gameObject, part)
         updatePixiObject(partObject)
       })
 
@@ -469,7 +483,7 @@ function download_sprite_as_png(renderer, sprite, fileName) {
 
 PIXIMAP.getShadowBoundaries = function(hero) {
   const { gridX, gridY, gridWidth, gridHeight } = HERO.getViewBoundaries(hero)
-  const padding = GAME.world.chunkPadding
+  const padding = GAME.world.chunkRenderPadding || 6
   let startX = gridX - padding
   let endX = gridX + gridWidth + padding
   let startY = gridY - padding
@@ -485,4 +499,14 @@ PIXIMAP.getShadowBoundaries = function(hero) {
     endX,
     endY
   }
+}
+
+PIXIMAP.convertToPartObject = function(gameObject, part) {
+  let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
+  let color = part.color || gameObject.color || GAME.world.defaultObjectColor
+  let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
+  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.removed, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
+
+  return partObject
 }

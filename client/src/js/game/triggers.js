@@ -48,7 +48,7 @@ function deleteTrigger(object, triggerId) {
 }
 
 function removeTriggerEventListener(object, triggerId) {
-  object.triggers[triggerId].removeEventListener()
+  if(object.triggers[triggerId].removeEventListener) object.triggers[triggerId].removeEventListener()
 }
 
 function addTrigger(ownerObject, trigger) {

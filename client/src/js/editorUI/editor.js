@@ -7,6 +7,7 @@ class Editor {
       zoomMultiplier: 0
     }
     this.zoomDelta = .1250
+
   }
 
   onPageLoaded() {
@@ -52,10 +53,7 @@ class Editor {
       confirmButtonText: 'Load Game',
     })
     if(loadGameId) {
-      window.socket.on('onLoadGame', (game) => {
-        choseGameCallback(game)
-      })
-      window.socket.emit('setAndLoadCurrentGame', loadGameId)
+      choseGameCallback(loadGameId)
     }
   }
 
@@ -85,7 +83,7 @@ class Editor {
         grid: JSON.parse(JSON.stringify(window.defaultGrid)),
       }
       window.socket.emit('saveGame', game)
-      choseGameCallback(game)
+      choseGameCallback(game.id)
     }
   }
 
@@ -112,40 +110,42 @@ class Editor {
   }
 
   transformWorldTo(worldName) {
-    const { clearProperty, setGameBoundaryBehavior, setGameBoundaryTo, setCameraLockTo, setHeroZoomTo, setGridTo, setWorldAndHeroSpawnPointsTo, respawnAllHeros } = EDITOR
+    const { clearProperty, setGameBoundaryBehavior, setGameBoundaryTo, setCameraLockTo, setHerosZoomTo, setGridTo, setWorldAndHeroSpawnPointsTo, respawnAllHeros } = EDITOR
     if(worldName === 'Mario') {
       if(EDITOR.shiftPressed) {
-        const padding = GAME.world.chunkPadding
-        GAME.grid.width = 200 + (padding * 2)
-        GAME.grid.height = 100 + (padding)
+        GAME.grid.width = 200
+        GAME.grid.height = 100
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
 
       setGameBoundaryBehavior('default')
-      setGameBoundaryTo('gridPadding')
-      setCameraLockTo('gridPaddingMinusOne')
-      setHeroZoomTo('default')
+      setGameBoundaryTo('grid')
+      setCameraLockTo('gridPadding')
+      setHerosZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags, allMovingObjectsHaveGravityY: true, gameBoundaryBottomDestroyHero: true }})
     }
 
     if(worldName === 'Zelda') {
       if(EDITOR.shiftPressed) {
-        const padding = GAME.world.chunkPadding
-        GAME.grid.width = 200 + (padding * 2)
-        GAME.grid.height = 200 + (padding)
+        GAME.grid.width = 200
+        GAME.grid.height = 200
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
 
       setGameBoundaryBehavior('boundaryAll')
-      setGameBoundaryTo('gridPadding')
-      setCameraLockTo('gridPadding')
-      setHeroZoomTo('default')
+      setGameBoundaryTo('gridMinusOne')
+      setCameraLockTo('gridMinusOne')
+      setHerosZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
@@ -156,13 +156,15 @@ class Editor {
         window.socket.emit('updateGrid', GAME.grid)
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
 
       setGameBoundaryBehavior('pacmanFlip')
       setGameBoundaryTo('gridMinusOne')
       setCameraLockTo('gridMinusOne')
-      setHeroZoomTo('gridMinusOne')
+      setHerosZoomTo('gridMinusOne')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
@@ -171,13 +173,15 @@ class Editor {
         setGridTo('default')
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
 
       setGameBoundaryBehavior('purgatory')
       setGameBoundaryTo('grid')
       clearProperty('lockCamera')
-      setHeroZoomTo('default')
+      setHerosZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
@@ -186,10 +190,12 @@ class Editor {
         setGridTo('default')
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
       setGameBoundaryBehavior('default')
-      setGameBoundaryTo('gridPadding')
+      setGameBoundaryTo('grid')
       setCameraLockTo('gridPadding')
       setCameraLockTo('smaller')
       setCameraLockTo('smaller')
@@ -206,7 +212,7 @@ class Editor {
       setCameraLockTo('smaller')
       setCameraLockTo('smaller')
       setCameraLockTo('smaller')
-      setHeroZoomTo('default')
+      setHerosZoomTo('default')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags, gameBoundaryDestroyHero: true }})
     }
     if(worldName === 'Default') {
@@ -214,9 +220,11 @@ class Editor {
         setGridTo('default')
         window.socket.emit('resetObjects')
         setWorldAndHeroSpawnPointsTo('gridCenter')
-        respawnAllHeros()
+        setTimeout(() => {
+          respawnAllHeros()
+        })
       }
-      setHeroZoomTo('default')
+      setHerosZoomTo('default')
       clearProperty('lockCamera')
       clearProperty('gameBoundaries')
     }
@@ -332,7 +340,7 @@ class Editor {
     }
   }
 
-  setHeroZoomTo(propName) {
+  setHerosZoomTo(propName) {
     if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
       let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth
       sendHerosUpdate({ zoomMultiplier })
@@ -350,28 +358,28 @@ class Editor {
       sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'gridPadding') {
-      const padding = GAME.world.chunkPadding
+      const padding = GAME.world.chunkGamePadding
       let zoomMultiplier = ((GAME.grid.width - padding) * GAME.grid.nodeSize)/HERO.cameraWidth
       sendHerosUpdate({ zoomMultiplier })
     }
     if(propName === 'gridPaddingMinusOne') {
-      const padding = GAME.world.chunkPadding - 4
+      const padding = GAME.world.chunkGamePadding - 4
       let zoomMultiplier = ((GAME.grid.width-padding) * GAME.grid.nodeSize)/HERO.cameraWidth
       sendHerosUpdate({ zoomMultiplier })
     }
 
     if(propName === 'larger') {
       const hero = GAME.heros[HERO.id]
-      sendHerosUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
+      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
     }
     if(propName === 'smaller') {
       const hero = GAME.heros[HERO.id]
-      sendHerosUpdate({ id: hero.id, zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
+      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     }
 
     if(propName === 'default') {
       const hero = GAME.heros[HERO.id]
-      sendHerosUpdate({ id: hero.id, zoomMultiplier: 1.875 })
+      sendHerosUpdate({ zoomMultiplier: 1.875 })
     }
   }
 
@@ -398,7 +406,7 @@ class Editor {
       GAME.grid.startY+=GAME.grid.nodeSize
     }
     if(propName === 'default') {
-      const padding = GAME.world.chunkPadding
+      const padding = GAME.world.chunkGamePadding
       GAME.grid.width = window.defaultGrid.width + (padding * 2)
       GAME.grid.height = window.defaultGrid.height + padding
     }
@@ -476,7 +484,7 @@ function getGridMinusOneValue() {
 }
 
 function getGridPaddingValue(minusOne = false) {
-  let padding = GAME.world.chunkPadding
+  let padding = GAME.world.chunkGamePadding
   if(minusOne) padding++
 
   const value = {
@@ -490,13 +498,8 @@ function getGridPaddingValue(minusOne = false) {
 }
 
 
-function choseGameCallback(game) {
-  window.local.emit('onLoadingScreenStart')
-  if(GAME.id) {
-    GAME.unload()
-  }
-  GAME.loadAndJoin(game)
-  ARCADE.changeGame(game.id)
+function choseGameCallback(gameId) {
+  window.socket.emit('setGame', gameId)
 }
 
 function sendHeroUpdate(update) {

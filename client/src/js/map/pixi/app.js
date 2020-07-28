@@ -236,9 +236,9 @@ const initPixiApp = (canvasRef, onLoad) => {
       if(loadingTimeout) {
         clearTimeout(loadingTimeout)
       } else {
+        window.local.emit('onLoadingScreenStart')
         PAGE.resizingMap = true
       }
-      window.local.emit('onLoadingScreenStart')
       loadingTimeout = setTimeout(() => {
         PAGE.resizingMap = false
         window.local.emit('onLoadingScreenEnd')
@@ -283,7 +283,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/solidcolorsprite.png', 'assets/images/solidcolorsprite_n.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
+    app.loader.add(['assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -292,9 +292,8 @@ const initPixiApp = (canvasRef, onLoad) => {
       texture.id = 'entarkia-1'
       textures['entarkia-1'] = texture
 
-      texture = PIXI.Texture.from('assets/images/solidcolorsprite.png');
-      texture.id = 'solidcolorsprite'
-      textures['solidcolorsprite'] = texture
+      textures['solidcolorsprite'] = PIXI.Texture.WHITE
+      PIXI.Texture.WHITE.id = 'solidcolorsprite'
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
       texture = PIXI.Texture.from('assets/images/spencer-1.png');

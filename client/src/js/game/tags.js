@@ -11,7 +11,8 @@ function setDefault() {
   }
 
   window.physicsTags = {
-    gravity: false,
+    gravityY: false,
+    ignoreWorldGravity: false,
     obstacle: false,
     stationary: false,
     projectile: false,
@@ -21,6 +22,7 @@ function setDefault() {
     heroPushable: false,
     skipHeroGravityOnCollide: false,
     rotateable: false,
+    notCollideable: false,
   }
 
   window.otherTags = {

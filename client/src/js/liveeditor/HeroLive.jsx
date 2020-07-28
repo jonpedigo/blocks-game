@@ -62,9 +62,9 @@ export default class HeroLive extends React.Component {
           <DatFolder title='Hero Camera' closed={false}>
             <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>
             <DatFolder title='Shake' closed>
-              <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={1000} step={1} />
+              <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={5000} step={1} />
               <DatNumber path='cameraShakeFrequency' label='Frequency' min={0} max={1000} step={1} />
-              <DatNumber path='cameraShakeAmplitude' label='Amplitude' min={0} max={1000} step={1} />
+              <DatNumber path='cameraShakeAmplitude' label='Amplitude' min={0} max={400} step={1} />
               <DatButton label="Send Camera Shake" onClick={() => {
                   window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, { amplitude: this.state.cameraShakeAmplitude, frequency: this.state.cameraShakeFrequency, duration: this.state.cameraShakeDuration })
                 }}></DatButton>

@@ -22,25 +22,19 @@ const updatePixiObject = (gameObject) => {
     })
   }
 
-
-    /////////////////////
-    /////////////////////
-    // CONSTRUCT PARTS
-    if(gameObject.constructParts) {
-      // WE DONT GOTTA UPDATE THESE
-      if((PAGE.resizingMap && !PAGE.loadingScreen) || !gameObject.tags.stationary) {
-        gameObject.constructParts.forEach((part) => {
-          let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
-          let color = part.color || gameObject.color || GAME.world.defaultObjectColor
-          let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-          const partObject = {tags: {...gameObject.tags},  ...part, color: color, sprite: sprite, defaultSprite: defaultSprite}
-          if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
-          updatePixiObject(partObject)
-        })
-      }
-
-      return
+  /////////////////////
+  /////////////////////
+  // CONSTRUCT PARTS
+  if(gameObject.constructParts) {
+    if((PAGE.resizingMap && !PAGE.loadingScreen) || !gameObject.tags.stationary) {
+      gameObject.constructParts.forEach((part) => {
+        const partObject = PIXIMAP.convertToPartObject(gameObject, part)
+        updatePixiObject(partObject)
+      })
     }
+
+    return
+  }
 
   /////////////////////
   /////////////////////
@@ -355,7 +349,8 @@ const initPixiObject = (gameObject) => {
 
   if(gameObject.constructParts) {
     gameObject.constructParts.forEach((part) => {
-      const pixiChild = addGameObjectToStage({tags: gameObject.tags, ...part}, PIXIMAP.objectStage)
+      const partObject = PIXIMAP.convertToPartObject(gameObject, part)
+      const pixiChild = addGameObjectToStage(partObject, PIXIMAP.objectStage)
       pixiChild.ownerName = gameObject.id
     })
     return

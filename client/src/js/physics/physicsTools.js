@@ -426,23 +426,24 @@ function containObjectWithinGridBoundaries(object) {
         object.mod().tags.fresh = false
         object.path = null
       }
-    } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
+    } else {
+      const shouldContain = gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
-        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
+        if(shouldContain) objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
         legal = false
       }
       if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
-        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
+        if(shouldContain) objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
         legal = false
         bottom = true
       }
       if(objectToEdit.x < gameBoundaries.x) {
-        objectToEdit.x = gameBoundaries.x
+        if(shouldContain)  objectToEdit.x = gameBoundaries.x
         legal = false
       }
       if(objectToEdit.y < gameBoundaries.y) {
-        objectToEdit.y = gameBoundaries.y
+        if(shouldContain) objectToEdit.y = gameBoundaries.y
         legal = false
       }
     }

@@ -26,13 +26,14 @@ function setDefault() {
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,
-    chunkPadding: 6,
+    chunkGamePadding: 6,
+    chunkRenderPadding: 6,
     sequences: {},
   }
 
   window.local.on('onGridLoaded', () => {
-    window.defaultWorld.worldSpawnPointX = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
-    window.defaultWorld.worldSpawnPointY = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
+    window.defaultWorld.spawnPointX = GAME.grid.startX + (GAME.grid.width * GAME.grid.nodeSize)/2
+    window.defaultWorld.spawnPointY = GAME.grid.startY + (GAME.grid.height * GAME.grid.nodeSize)/2
   })
 }
 

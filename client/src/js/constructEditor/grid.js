@@ -42,7 +42,7 @@ class Grid {
     for(var i = 0; i < gridWidth; i++) {
       grid.push([])
       for(var j = 0; j < gridHeight; j++) {
-        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startX + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
+        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startY + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
       }
     }
 

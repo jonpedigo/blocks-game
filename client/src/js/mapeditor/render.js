@@ -1,6 +1,20 @@
 import drawTools from './drawTools';
 
 function update() {
+  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const loadingState = (PAGE.loadingGame)
+  PAGE.loadingScreen = gameEligibleForLoading && loadingState
+
+  const hero = GAME.heros[HERO.id]
+  if(PAGE.loadingScreen && (!hero || hero.animationZoomMultiplier)) {
+    ctx.fillStyle = "#222"
+    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
+    if(PAGE.role.isAdmin) {
+      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    }
+  }
+
+  if(PAGE.loadingGame) return 
 
   if(MAPEDITOR.paused) return
   let ctx = MAPEDITOR.ctx
@@ -136,18 +150,6 @@ function update() {
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
     });
-  }
-
-  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
-  const loadingState = (PAGE.loadingGame)
-  PAGE.loadingScreen = gameEligibleForLoading && loadingState
-
-  if(PAGE.loadingScreen) {
-    ctx.fillStyle = "#222"
-    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
-    if(PAGE.role.isAdmin) {
-      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
-    }
   }
 }
 

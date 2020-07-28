@@ -42,6 +42,8 @@ export default class Root extends React.Component {
   render() {
     const { objectSelected } = this.state
 
+    if(!PAGE.role.isAdmin) return null
+
     return (
       <div className="EditorUI">
         <Creator ref={this._creatorRef}></Creator>

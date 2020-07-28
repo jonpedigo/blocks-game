@@ -13,7 +13,7 @@ function constructEditorOnSelect(objectId, tags) {
       this.setState({
         creatorObjectSelected: {}
       })
-    }, 100)
+    }, 200)
     removeListener()
   })
 }
@@ -50,14 +50,14 @@ function onGameLoaded() {
       label: 'Background',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notCollideable: true })
       }
     },
     {
       label: 'Foreground',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notCollideable: true })
       }
     },
     // {

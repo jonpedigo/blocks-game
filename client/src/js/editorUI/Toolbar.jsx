@@ -198,27 +198,25 @@ export default class Toolbar extends React.Component {
 
         <br/>
 
-        {PAGE.role.isHost &&
-          <ToolbarRow iconName='fa-cog'>
-            <ToolbarButton iconName="fa-save" onClick={EDITOR.saveGame}/>
-            <ToolbarButton iconName="fa-folder-open" onClick={EDITOR.loadGame}/>
-            <ToolbarButton iconName="fa-file" onClick={EDITOR.newGame}/>
-            <ToolbarButton iconName="fa-download" onClick={() => {
-              let saveGame = GAME.cleanForSave(GAME)
-              PAGE.downloadObjectAsJson(saveGame, GAME.id)
-            }}/>
-            <ToolbarButton iconName="fa-upload" onClick={() => {
-              modals.openEditCodeModal('Paste JSON code here', {}, (result) => {
-                if(result && result.value) {
-                  window.local.emit('onLoadingScreenStart')
-                  GAME.unload()
-                  const game = JSON.parse(result.value)
-                  GAME.loadAndJoin(game)
-                }
-              })
-            }}/>
-          </ToolbarRow>
-        }
+        <ToolbarRow iconName='fa-cog'>
+          <ToolbarButton iconName="fa-save" onClick={EDITOR.saveGame}/>
+          <ToolbarButton iconName="fa-folder-open" onClick={EDITOR.loadGame}/>
+          <ToolbarButton iconName="fa-file" onClick={EDITOR.newGame}/>
+          <ToolbarButton iconName="fa-download" onClick={() => {
+            let saveGame = GAME.cleanForSave(GAME)
+            PAGE.downloadObjectAsJson(saveGame, GAME.id)
+          }}/>
+          <ToolbarButton iconName="fa-upload" onClick={() => {
+            modals.openEditCodeModal('Paste JSON code here', {}, (result) => {
+              if(result && result.value) {
+                window.local.emit('onLoadingScreenStart')
+                GAME.unload()
+                const game = JSON.parse(result.value)
+                GAME.loadAndJoin(game)
+              }
+            })
+          }}/>
+        </ToolbarRow>
       </div>
     )
   }
