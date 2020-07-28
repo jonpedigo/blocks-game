@@ -132,10 +132,10 @@ PIXIMAP.onRender = function() {
       PIXIMAP.shadowStage.pivot.x = camera.x
       PIXIMAP.shadowStage.pivot.y = camera.y
     }
-    // if(PIXIMAP.gridStage) {
-    //   PIXIMAP.gridStage.pivot.x = camera.x
-    //   PIXIMAP.gridStage.pivot.y = camera.y
-    // }
+    if(PIXIMAP.backgroundStage) {
+      PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
+      PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
+    }
 
     // const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
     // const loadingState = (PAGE.resizingMap || PAGE.startingAndStoppingGame)
@@ -225,7 +225,9 @@ PIXIMAP.updateDarknessSprites = function() {
       let row = nodes[x]
       for(var y = startY; y < endY; y++) {
         let node = row[y]
-        if(!node.darknessSprite) continue
+        if(!node.darknessSprite) {
+          continue
+        }
 
         // if(GAME.gameState.ambientLight > 1) {
         //   node.darknessSprite.alpha = ambientLight - 1

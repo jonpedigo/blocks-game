@@ -87,7 +87,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // INTIIALIZE
   const app = new PIXI.Application({
-    width: canvasRef.width, height: canvasRef.height,
+    width: canvasRef.width, height: canvasRef.height, resizeTo: canvasRef
   });
   app.view.id = "pixi-canvas"
   document.getElementById('GameContainer').appendChild(app.view);
@@ -233,9 +233,12 @@ const initPixiApp = (canvasRef, onLoad) => {
   if(PAGE.role.isPlayer) {
     let loadingTimeout
     function onResize() {
-      if(loadingTimeout) clearTimeout(loadingTimeout)
+      if(loadingTimeout) {
+        clearTimeout(loadingTimeout)
+      } else {
+        PAGE.resizingMap = true
+      }
       window.local.emit('onLoadingScreenStart')
-      PAGE.resizingMap = true
       loadingTimeout = setTimeout(() => {
         PAGE.resizingMap = false
         window.local.emit('onLoadingScreenEnd')
@@ -243,7 +246,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
-      app.queueResize(width, height);
+      app.resize(width, height);
       if(!window.resettingDarkness) {
         setTimeout(() => {
           if(PIXIMAP.initialized) {

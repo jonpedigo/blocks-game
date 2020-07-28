@@ -14,6 +14,9 @@ class EditorUI {
   onGameLoaded() {
     creatorObjectLibrary.onGameLoaded()
 
+
+    if(!PAGE.role.isAdmin) return
+    
     // this.container = container
     const initialProps = {
       ref: ref => EDITORUI.ref = ref

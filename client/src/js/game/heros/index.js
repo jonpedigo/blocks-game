@@ -256,12 +256,17 @@ class Hero{
     }
     value.x = value.centerX - value.width/2
     value.y = value.centerY - value.height/2
+    if(hero.id === HERO.id && MAP.camera.hasHitLimit) {
+      value.x = MAP.camera.x
+      value.y = MAP.camera.y
+    }
+
     let nonGrid = {...value}
     const { leftDiff, rightDiff, topDiff, bottomDiff } = gridUtil.getAllDiffs(value)
     gridUtil.snapDragToGrid(value)
 
     const { gridX, gridY, width, height } = gridUtil.convertToGridXY(value)
-    
+
     return {
       gridX,
       gridY,
