@@ -49,7 +49,7 @@ class EditorUI {
     EDITORUI.ref.forceUpdate()
   }
 
-  onEditGameState() {
+  onUpdateGameState() {
     EDITORUI.ref.forceUpdate()
   }
 

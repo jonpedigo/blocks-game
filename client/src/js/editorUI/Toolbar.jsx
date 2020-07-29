@@ -50,6 +50,20 @@ export default class Toolbar extends React.Component {
         }}></i>
         */}
 
+        {!GAME.gameState.started && <ToolbarButton iconName="fa-play" onClick={() => {
+          window.socket.emit('startGame')
+        }}/>}
+        {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
+          window.socket.emit('stopGame')
+        }}>
+          <ToolbarButton iconName={GAME.gameState.paused ? "fa-play" : "fa-pause"} onClick={() => {
+            if(!GAME.gameState.paused) window.socket.emit('editGameState', { paused: true })
+            if(GAME.gameState.paused) window.socket.emit('editGameState', { paused: false })
+          }}/>
+        </ToolbarRow>
+      }
+      <br/>
+
         {/* World Edit -> Pull out */}
         <ToolbarRow iconName='fa-globe'>
           {/* Day Night Cycle -> Dat GUI */}
@@ -223,20 +237,6 @@ export default class Toolbar extends React.Component {
             })
           }}/>
         </ToolbarRow>
-
-        {!GAME.gameState.started && <ToolbarButton iconName="fa-play" onClick={() => {
-          window.socket.emit('startGame')
-        }}/>}
-        {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
-          window.socket.emit('stopGame')
-        }}>
-          <ToolbarButton iconName={GAME.gameState.paused ? "fa-play" : "fa-pause"} onClick={() => {
-            if(!GAME.gameState.paused) window.socket.emit('editGameState', { paused: true })
-            if(GAME.gameState.paused) window.socket.emit('editGameState', { paused: false })
-          }}/>
-        </ToolbarRow>
-      }
-
       </div>
     )
   }
