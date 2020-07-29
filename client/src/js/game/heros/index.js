@@ -569,6 +569,7 @@ class Hero{
 
   onDeleteHero(hero) {
     HERO.deleteHero(hero)
+    delete GAME.heros[hero.id]
   }
 
   onDeleteQuest(heroId, questId) {
@@ -590,7 +591,6 @@ class Hero{
     }
 
     PHYSICS.removeObject(GAME.heros[hero.id])
-    delete GAME.heros[hero.id]
   }
 
   onNetworkUpdateHero(updatedHero) {

@@ -38,6 +38,7 @@ function drawObject(ctx, object, withNames = false) {
 
 function update(camera) {
   const { ctx, canvas } = MAP
+  if(PAGE.loadingGame) return
   const clientHero = GAME.heros[HERO.id].mod()
 
   // ctx.shadowBlur = 0;

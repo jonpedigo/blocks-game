@@ -13,7 +13,7 @@ class EditorUI {
 
   onGameLoaded() {
     creatorObjectLibrary.onGameLoaded()
-    
+
     // this.container = container
     const initialProps = {
       ref: ref => EDITORUI.ref = ref
@@ -39,6 +39,17 @@ class EditorUI {
     EDITORUI.ref.forceUpdate()
   }
   onConstructEditorStart() {
+    EDITORUI.ref.forceUpdate()
+  }
+
+  onStopGame() {
+    EDITORUI.ref.forceUpdate()
+  }
+  onGameStart() {
+    EDITORUI.ref.forceUpdate()
+  }
+
+  onEditGameState() {
     EDITORUI.ref.forceUpdate()
   }
 

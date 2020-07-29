@@ -523,7 +523,6 @@ class Game{
       initialGameState = JSON.parse(initialGameState)
       GAME.unload()
       GAME.loadAndJoin(initialGameState)
-      GAME.gameState.paused = true
       window.local.emit('onGameStopped')
     }, 100)
   }

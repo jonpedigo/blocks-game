@@ -153,7 +153,7 @@ PIXIMAP.onRender = function() {
       PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
       PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
     }
-
+    
     // const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
     // const loadingState = (PAGE.resizingMap || PAGE.startingAndStoppingGame)
     // const pixiMapInvisible = gameEligibleForLoading && loadingState

@@ -144,8 +144,8 @@ Target/Homing awareness area
 NOTES
 
 /////
-PLANS FOR ULTIMATE SCALE
-Basically the gri will be a moving grid
+PLANS FOR ULTIMATE MINECRAFT SCALE
+Basically the grid will be a moving grid
 the x and y of each grid node will get a getter based off the startX and startY and gridX
 the grid will move its startX and startY with each hero with as its CHUNK
 

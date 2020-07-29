@@ -1,20 +1,6 @@
 import drawTools from './drawTools';
 
 function update() {
-  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
-  const loadingState = (PAGE.loadingGame)
-  PAGE.loadingScreen = gameEligibleForLoading && loadingState
-
-  const hero = GAME.heros[HERO.id]
-  if(PAGE.loadingScreen && (!hero || hero.animationZoomMultiplier)) {
-    ctx.fillStyle = "#222"
-    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
-    if(PAGE.role.isAdmin) {
-      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
-    }
-  }
-
-  if(PAGE.loadingGame) return 
 
   if(MAPEDITOR.paused) return
   let ctx = MAPEDITOR.ctx
@@ -37,8 +23,8 @@ function update() {
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
-  if(!GAME.gameState.started && GAME.heros[HERO.id] && (objectHighlighted && objectHighlighted.id === HERO.id)) {
-    const {x, y} = HERO.getSpawnCoords(GAME.heros[HERO.id])
+  if(!GAME.gameState.started && objectHighlighted && objectHighlighted.tags && (objectHighlighted.tags.hero)) {
+    const {x, y} = HERO.getSpawnCoords(objectHighlighted)
     drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
     drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
   }
@@ -150,6 +136,19 @@ function update() {
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
     });
+  }
+
+  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const loadingState = (PAGE.loadingGame)
+  PAGE.loadingScreen = gameEligibleForLoading && loadingState
+
+  const hero = GAME.heros[HERO.id]
+  if(PAGE.loadingScreen || (!hero || hero.animationZoomMultiplier)) {
+    ctx.fillStyle = "#222"
+    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
+    if(PAGE.role.isAdmin) {
+      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    }
   }
 }
 

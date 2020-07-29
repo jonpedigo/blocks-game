@@ -223,7 +223,9 @@ class Editor {
         setTimeout(() => {
           respawnAllHeros()
         })
+        sendWorldUpdate({...window.defaultWorld})
       }
+      sendWorldUpdate({ tags: { ...window.defaultWorld.tags}})
       setHerosZoomTo('default')
       clearProperty('lockCamera')
       clearProperty('gameBoundaries')

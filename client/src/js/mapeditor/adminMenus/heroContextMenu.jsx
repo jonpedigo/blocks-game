@@ -96,6 +96,10 @@ export default class HeroContextMenu extends React.Component{
       if(key === 'reset-to-core-default') {
         window.socket.emit('resetHeroToDefault', objectSelected)
       }
+
+      if (key === "open-hero-live-edit") {
+        LIVEEDITOR.open(objectSelected, 'hero')
+      }
     }
 
     this._handleTagMenuClick = ({ key }) => {
@@ -191,9 +195,7 @@ export default class HeroContextMenu extends React.Component{
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
       </SubMenu>
-      <SubMenu title="Live Edit">
-        <LiveMenu objectSelected={objectSelected}/>
-      </SubMenu>
+      <MenuItem key="open-hero-live-edit">Live Edit</MenuItem>
       <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>
       <SubMenu title="Controls">
         <SubMenu title="Arrow Keys">

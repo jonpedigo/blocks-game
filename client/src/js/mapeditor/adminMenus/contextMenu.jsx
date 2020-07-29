@@ -217,7 +217,6 @@ class contextMenuEl extends React.Component{
         <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
-        {this._renderAdvancedWorldMenu()}
       </Menu>
     }
 

@@ -61,7 +61,11 @@ export default class Toolbar extends React.Component {
           }}/>
 
           {/* Clear All Objects -> Map Action */}
-          <ToolbarButton iconName="fa-trash-alt" onClick={async () => {
+          <ToolbarButton iconName="fa-trash-alt"
+            onShiftClick={() => {
+              window.socket.emit('resetObjects')
+            }}
+          onClick={async () => {
             const { value: confirm } = await Swal.fire({
               title: "Are you sure you want to delete all objects on the map?",
               showClass: {
@@ -120,7 +124,9 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-camera" onClick={() => {
             window.socket.emit('heroCameraEffect', 'cameraShake', HERO.id, { duration: 500, frequency: 20, amplitude: 36 })
           }}/>
-          <ToolbarButton iconName="fa-code"/>
+          <ToolbarButton iconName="fa-code" onClick={() => {
+            modals.editObjectCode(hero, 'Editing Hero JSON', hero);
+          }}/>
           {/*
             {/* go incognito}
           <ToolbarButton iconName="fa-save"></i>
@@ -217,6 +223,20 @@ export default class Toolbar extends React.Component {
             })
           }}/>
         </ToolbarRow>
+
+        {!GAME.gameState.started && <ToolbarButton iconName="fa-play" onClick={() => {
+          window.socket.emit('startGame')
+        }}/>}
+        {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
+          window.socket.emit('stopGame')
+        }}>
+          <ToolbarButton iconName={GAME.gameState.paused ? "fa-play" : "fa-pause"} onClick={() => {
+            if(!GAME.gameState.paused) window.socket.emit('editGameState', { paused: true })
+            if(GAME.gameState.paused) window.socket.emit('editGameState', { paused: false })
+          }}/>
+        </ToolbarRow>
+      }
+
       </div>
     )
   }
