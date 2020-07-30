@@ -59,6 +59,8 @@ class Hero{
       lives: 10,
       score: 0,
       dialogue: [],
+      defaultSprite: 'solidcolorsprite',
+      sprite: 'solidcolorsprite',
       flags : {
         showDialogue: false,
         showScore: false,
@@ -179,10 +181,15 @@ class Hero{
 
   resetToDefault(hero, useGame) {
     HERO.deleteHero(hero)
+    hero.subObjects = {}
+    hero.triggers = {}
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
     if(GAME.defaultHero && useGame) {
       newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.defaultHero)))
     }
+    OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
+      subObject.id = 'subObject-'+window.uniqueID()
+    })
     if(!hero.id) {
       alert('hero getting reset without id')
     }
@@ -306,10 +313,10 @@ class Hero{
       delete GAME.defaultHero.id
       const id = hero.id
       hero = JSON.parse(JSON.stringify(GAME.defaultHero))
-      hero.id = id
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
         subObject.id = 'subObject-'+window.uniqueID()
       })
+      hero.id = id
       HERO.respawn(hero)
       return hero
     }

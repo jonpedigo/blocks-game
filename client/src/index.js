@@ -5,6 +5,12 @@
 ////////////////////////////////////////////////////
 
 Tooltips
+https://github.com/atomiks/tippyjs-react
+https://wwayne.github.io/react-tooltip/
+
+IMAGE MANIPULATION
+http://camanjs.com/examples/
+// aparently also FABRIC.js is good for that, I MEAN IDK MAN
 
 Animations + Live Animation Tester
 More Particles + Particle Tester/Uploader
@@ -75,6 +81,7 @@ Scenarios/BeginEnd
 SUB OBJECT CREATION MENU
 
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
+( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
 
 SOUND FX
 
@@ -277,7 +284,7 @@ Zoom blur filter — Perhaps when you are like low on health??
 https://www.engadget.com/alt254-zelda-style-indie-game-pixels-174504609.html
 https://typeitjs.com/
 https://safi.me.uk/typewriterjs/
-https://wwayne.github.io/react-tooltip/
+HELP WITH COLOR PALLETE?
 
 RECORDING
 https://codepen.io/adkanojia/pen/EZJvJL
@@ -351,6 +358,18 @@ Engine trail on a car u know what I mean?
 // convert all 'guestObject', 'mainObject', 'ownerObject' things to just ID stores
 // dev dependencies to try to lower build file size
 
+// DELETING object keys doesnt work, it just skips that update of that key. We need a good system for this
+// we need more patterns to interact with the rendering system.
+// standards for Adding Object to Game -> Add Object to Physics ->
+// standards for edit object vs update object
+// standards for network update/edit vs local update/edit
+// many more standards for many more features
+// CLIENT_GAME vs HOST_GAME
+// queuing world and other updates so we can 'flush' them like feedly does
+// STANDARDS STANDARDS/
+// admin vs player code much better seperated
+// Standards for DELETE, ADD, REMOVE, SPAWN, RESET, INITIALIZE, HIDE, (DISABLE?)
+
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 // https://zimjs.com/bits/physics.html
 // https://opengameart.org/content/colored-16x16-fantasy-tileset
@@ -358,6 +377,28 @@ Engine trail on a car u know what I mean?
 // https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
 // THINK ABOUT ADDING A BASIC GRAPHICS LIBRARY FOR SQUARES AND ALL THE JUICE REGARDING THE SQUARES
 // https://github.com/YarnSpinnerTool/YarnEditor
+
+/*
+BETTER LOCAL STORAGE
+https://github.com/brianleroux/lawnchair
+
+MOUSE WHEEL
+http://monospaced.github.io/hamster.js/
+
+IDK
+https://namuol.github.io/cheet.js/
+
+GETTING SERIOUS ABOUT OPTIMIZATION
+https://github.com/spite/rstats
+https://github.com/geckosio/snapshot-interpolation
+https://github.com/rgcl/jsonpack
+
+SOUND
+https://github.com/kittykatattack/sound.js
+
+P COOL IDK
+https://game-icons.net/
+*/
 
 // MARKETING IDEA
 // Make a game for their birthday

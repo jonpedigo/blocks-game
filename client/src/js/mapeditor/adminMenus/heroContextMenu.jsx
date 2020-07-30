@@ -195,7 +195,6 @@ export default class HeroContextMenu extends React.Component{
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
       </SubMenu>
-      <MenuItem key="open-hero-live-edit">Live Edit</MenuItem>
       <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>
       <SubMenu title="Controls">
         <SubMenu title="Arrow Keys">
@@ -222,13 +221,14 @@ export default class HeroContextMenu extends React.Component{
           <TagMenu objectSelected={objectSelected}></TagMenu>
         </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-        <MenuItem key="reset-to-default">Reset To Game Default</MenuItem>
+        <MenuItem key="reset-to-game-default">Reset To Game Default</MenuItem>
         <MenuItem key="reset-to-core-default">Reset To Core Default</MenuItem>
         <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
         <MenuItem key="edit-all-json">Edit All JSON</MenuItem>
         <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
+        <MenuItem key="open-hero-live-edit">Live Edit</MenuItem>
       </SubMenu>
     </Menu>
   }

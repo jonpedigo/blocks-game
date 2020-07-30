@@ -119,9 +119,6 @@ function init() {
       window.local.emit('onGameStart')
     })
 
-    window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
-      window.local.emit('onDeleteTrigger', ownerId, triggerId)
-    })
     window.socket.on('onAddTrigger', (ownerId, trigger) => {
       window.local.emit('onAddTrigger', ownerId, trigger)
     })
@@ -129,9 +126,6 @@ function init() {
       window.local.emit('onEditTrigger', ownerId, triggerId, trigger)
     })
 
-    window.socket.on('onDeleteHook', (ownerId, hookId) => {
-      window.local.emit('onDeleteHook', ownerId, hookId)
-    })
     window.socket.on('onAddHook', (ownerId, hook) => {
       window.local.emit('onAddHook', ownerId, hook)
     })
@@ -140,11 +134,18 @@ function init() {
     })
   }
 
-  if(PAGE.role.isGhost) {
-    window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
+  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
+    window.local.emit('onDeleteTrigger', ownerId, triggerId)
+  })
+  window.socket.on('onDeleteHook', (ownerId, hookId) => {
+    window.local.emit('onDeleteHook', ownerId, hookId)
+  })
+
+  window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
+    if(PAGE.role.isGhost) {
       window.local.emit('onSendHeroMapEditor', remoteState, heroId)
-    })
-  }
+    }
+  })
 
   ///////////////////////////////
   ///////////////////////////////

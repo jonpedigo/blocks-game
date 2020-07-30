@@ -3,6 +3,8 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { flameEmitter } from './particles'
 import './pixi-layers'
+import { Ease, ease } from 'pixi-ease'
+import { setColor, getHexColor, startPulse } from './utils'
 
 const updatePixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
@@ -238,41 +240,52 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // SCALE
-  if(gameObject.tags.tilingSprite) {
-    pixiChild.transform.scale.x = camera.multiplier
-    pixiChild.transform.scale.y = camera.multiplier
-  } else if(pixiChild.texture){
-    pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
-    pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
+  if(!pixiChild.isAnimatingScale) {
+    if(gameObject.tags.tilingSprite) {
+      pixiChild.transform.scale.x = camera.multiplier
+      pixiChild.transform.scale.y = camera.multiplier
+    } else if(pixiChild.texture){
+      pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
+      pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
+    }
+
+    // if(gameObject.tags.hero) {
+    //   startPulse(pixiChild, gameObject, 'scale')
+    // }
   }
 
   /////////////////////
   /////////////////////
   // COLOR
-  if(gameObject.color) {
-    pixiChild.tint = parseInt(tinycolor(gameObject.color).toHex(), 16)
-  } else if(pixiChild.texture.id === 'solidcolorsprite') {
-    if(GAME.world.defaultObjectColor) {
-      pixiChild.tint = parseInt(tinycolor(GAME.world.defaultObjectColor).toHex(), 16)
-    } else {
-      pixiChild.tint = parseInt(tinycolor(window.defaultObjectColor).toHex(), 16)
-    }
-  } else {
-    delete pixiChild.tint
+
+  if(!pixiChild.isAnimatingColor) {
+
+    setColor(pixiChild, gameObject)
+
+    // if(gameObject.tags.hero) {
+    //   startPulse(pixiChild, gameObject, 'darken')
+    // }
   }
 
-  if(typeof gameObject.opacity === 'number') {
-    pixiChild.alpha = gameObject.opacity
-  } else {
-    pixiChild.alpha = 1
-  }
 
-  if(gameObject.tags.hidden) {
-    if(gameObject.id === HERO.originalId) {
-      pixiChild.alpha = .3
+  if(!pixiChild.isAnimatingAlpha) {
+    if(typeof gameObject.opacity === 'number') {
+      pixiChild.alpha = gameObject.opacity
     } else {
-      pixiChild.alpha = 0
+      pixiChild.alpha = 1
     }
+
+    if(gameObject.tags.hidden) {
+      if(gameObject.id === HERO.originalId) {
+        pixiChild.alpha = .3
+      } else {
+        pixiChild.alpha = 0
+      }
+    }
+
+    // if(gameObject.tags.hero) {
+    //   startPulse(pixiChild, gameObject, 'alpha')
+    // }
   }
 
   /////////////////////

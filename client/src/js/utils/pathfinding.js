@@ -373,7 +373,6 @@ function walkAround(object) {
   ])
 
   for (let i = 0; i < nearbyGrids.length; i++) {
-    console.log(GAME.pfgrid.nodes[nearbyGrids[i].y][nearbyGrids[i].x], nearbyGrids[i].y, nearbyGrids[i].x)
     if (isGridWalkable(nearbyGrids[i].x, nearbyGrids[i].y, options)) {
       return nearbyGrids[i]
     }

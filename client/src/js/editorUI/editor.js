@@ -100,12 +100,15 @@ class Editor {
     } else {
       console.log('saving to local storage')
       const saveString = JSON.stringify(saveGame)
+      // get megabytes
       const size = window.byteLength(saveString)/1000000
       if(size > 3) {
-        alert('save too big for browser storage, download as json instead')
+        // alert('save too big for browser storage, download as json instead')
       } else {
         localStorage.setItem('saveEditingGame', saveString)
       }
+      console.log('downloading', saveGame)
+      PAGE.downloadObjectAsJson(saveGame, GAME.id)
     }
   }
 
