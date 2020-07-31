@@ -403,6 +403,11 @@ https://game-icons.net/
 // MARKETING IDEA
 // Make a game for their birthday
 
+window.awsURL = 'https://homemadearcade.s3-us-west-1.amazonaws.com/'
+
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 import './js/utils/utils.js'
 import './js/page/index.js'
 import './js/game/index.js'
