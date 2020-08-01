@@ -1,7 +1,7 @@
 import React from 'react'
 import Creator from './Creator.jsx'
 import Toolbar from './Toolbar.jsx'
-import Uploader from '../components/Uploader.jsx'
+import FileUploader from '../components/FileUploader.jsx'
 
 export default class Root extends React.Component {
   constructor(props) {

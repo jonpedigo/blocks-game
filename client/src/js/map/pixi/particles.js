@@ -1,77 +1,65 @@
 import * as PIXI from 'pixi.js';
+import { darken, getColorHex } from './utils.js'
+import './particleLibrary.js'
+
 const pixiParticles = require('pixi-particles');
 
-window.particleEmitters = {
-  flameEmitter: {
-    "alpha": {
-      "start": 0.62,
-      "end": 0
-    },
-    "scale": {
-      "start": 0.05,
-      "end": 0.3,
-      "minimumScaleMultiplier": .05
-    },
-    "color": {
-      "start": "#fff191",
-      "end": "#ff622c"
-    },
-    "speed": {
-      "start": 100,
-      "end": 50,
-      "minimumSpeedMultiplier": 1
-    },
-    "acceleration": {
-      "x": 0,
-      "y": 0
-    },
-    "maxSpeed": 0,
-    "startRotation": {
-      "min": 265,
-      "max": 275
-    },
-    "noRotation": false,
-    "rotationSpeed": {
-      "min": 50,
-      "max": 50
-    },
-    "lifetime": {
-      "min": 0.01,
-      "max": 0.1
-    },
-    "blendMode": "normal",
-    "frequency": 0.001,
-    "emitterLifetime": -1,
-    "maxParticles": 1000,
-    "pos": {
-      "x": 0,
-      "y": 0,
-    },
-    "addAtBack": false,
-    "spawnType": "circle",
-    "spawnCircle": {
-      "x": 0,
-      "y": 0,
-      "r": 2,
+function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
+  const startPos = {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}
+
+  const particleData = {..._.cloneDeep(window.defaultParticleEmitterData[emitterDataName]), pos: startPos}
+
+  if(options.matchObjectColor) {
+    let color = gameObject.color || GAME.world.defaultObjectColor
+    particleData.color.start = color
+    if(emitterDataName == 'trail') {
+      particleData.color.end = darken(color)
+    } else {
+      particleData.color.end = color
     }
   }
-}
 
-function flameEmitter({startPos, stage, particles = ['https://pixijs.io/pixi-particles-editor/assets/images/particle.png', 'https://pixijs.io/pixi-particles-editor/assets/images/Fire.png'], startEmitting}) {
+  let particles = [PIXIMAP.textures.solidcolorsprite]
+  if(particleData.particles) {
+    particles = particleData.particles
+    particles = particles.map(p => PIXI.Texture.from(p))
+  }
+
+  if(options.scaleToGameObject) {
+    const modifyScaleX = (gameObject.width/particles[0]._frame.width)
+    // const modifyScaleY = (gameObject.height/particles[0]._frame.height)
+    particleData.scale.start = modifyScaleX * particleData.scale.start
+    particleData.scale.end = modifyScaleX * particleData.scale.end
+    // particleData.scale.minimumScaleMultiplier += modifyScaleX
+  }
+
   var emitter = new pixiParticles.Emitter(
     stage,
-    particles.map(p => PIXI.Texture.from(p)),
-    {...window.particleEmitters.flameEmitter, pos: startPos},
+    particles,
+    particleData
   );
 
-  if (startEmitting) {
-    emitter.emit = true
+  emitter.data = particleData
+
+  if(options.persistAfterRemoved) {
+    emitter.persistAfterRemoved = true
   }
+
+  // if (startEmitting) {
+    emitter.emit = true
+  // }
 
   return emitter;
 }
 
+function smallFire(arg) {
+  createDefaultEmitter(arg, 'smallFire')
+}
+
+function trail(arg) {
+  createDefaultEmitter(arg, 'trail')
+}
 
 export {
-  flameEmitter,
+  createDefaultEmitter
 }

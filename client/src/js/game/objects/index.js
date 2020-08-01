@@ -996,6 +996,12 @@ class Objects{
     // fadeOut
     // fadeIn
   }
+
+  onObjectDestroyed(object) {
+    if(object.mod().tags.explodeOnDestroy) {
+      window.socket.emit('objectAnimation', 'explode', object.id)
+    }
+  }
 }
 
 window.OBJECTS = new Objects()

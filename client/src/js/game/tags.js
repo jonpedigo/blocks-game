@@ -145,6 +145,9 @@ function setDefault() {
 
   window.particleTags = {
     emitter: false, //cant change
+    hasTrail: false,
+    explodeOnDestroy: false,
+    spinOffOnDestroy: false,
   }
 
   window.descriptiveTags = {
@@ -184,6 +187,7 @@ function setDefault() {
     obstacle: false,
     rotateable: false,
     hidden: false,
+    hasTrail: false,
   }
 
   window.subObjectTags = {

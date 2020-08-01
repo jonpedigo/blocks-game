@@ -4,14 +4,6 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Tooltips
-https://github.com/atomiks/tippyjs-react
-https://wwayne.github.io/react-tooltip/
-
-IMAGE MANIPULATION
-http://camanjs.com/examples/
-// aparently also FABRIC.js is good for that, I MEAN IDK MAN
-
 Animations + Live Animation Tester
 More Particles + Particle Tester/Uploader
 
@@ -395,6 +387,14 @@ https://github.com/rgcl/jsonpack
 
 SOUND
 https://github.com/kittykatattack/sound.js
+
+IMAGE MANIPULATION
+http://camanjs.com/examples/
+// aparently also FABRIC.js is good for that, I MEAN IDK MAN
+
+Tooltips
+https://github.com/atomiks/tippyjs-react
+https://wwayne.github.io/react-tooltip/
 
 P COOL IDK
 https://game-icons.net/

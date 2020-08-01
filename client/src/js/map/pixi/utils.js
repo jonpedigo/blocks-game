@@ -19,6 +19,10 @@ function getHexColor(color) {
   return parseInt(tinycolor(color).toHex(), 16)
 }
 
+function darken(color, amount = 20) {
+  return tinycolor(color).darken(amount).toHex()
+}
+
 function startPulse(pixiChild, gameObject, type) {
   if(type === 'darken') {
     pixiChild.isAnimatingColor = ease.add(pixiChild, { blend: getHexColor(tinycolor(gameObject.color).darken(20)) }, { repeat: true, duration: 3000, ease: 'linear' })
@@ -34,6 +38,7 @@ function startPulse(pixiChild, gameObject, type) {
 }
 
 export {
+  darken,
   getHexColor,
   setColor,
   startPulse

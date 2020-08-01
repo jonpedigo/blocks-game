@@ -1,5 +1,5 @@
 import tinycolor from 'tinycolor2'
-import { updatePixiObject, initPixiObject } from './objects'
+import { updatePixiObject, initPixiObject, initEmitter } from './objects'
 import { initPixiApp } from './app'
 import gridUtil from '../../utils/grid'
 import * as PIXI from 'pixi.js'
@@ -95,16 +95,24 @@ PIXIMAP.deleteObject = function(object) {
     pixiChild.removeChildren()
   }
   if(pixiChild.emitter) {
-    PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
-      if(pixiChild.emitter === emitter) {
-        return false
-      }
-      return true
-    })
-    pixiChild.emitter.destroy()
+    PIXIMAP.deleteEmitter(pixiChild.emitter)
     delete pixiChild.emitter
   }
+  if(pixiChild.trailEmitter) {
+    PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
+    delete pixiChild.trailEmitter
+  }
   stage.removeChild(pixiChild)
+}
+
+PIXIMAP.deleteEmitter = function(emitterToDelete) {
+  PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
+    if(emitterToDelete === emitter) {
+      return false
+    }
+    return true
+  })
+  emitterToDelete.destroy()
 }
 
 PIXIMAP.addObject = function(object) {
@@ -383,7 +391,10 @@ PIXIMAP.updateBlockSprites = function() {
 }
 
 PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
-  const object = OBJECTS.getObjectOrHeroById[objectId]
+  let object = OBJECTS.getObjectOrHeroById[objectId]
+  // sometimes if the object is destroyed we need to do this???
+  if(!object) object = GAME.objectsById[objectId]
+
   if(type === 'flash') {
     if(options.color) {
       object.animationFlashColor = options.color
@@ -393,6 +404,22 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
     setTimeout(() => {
       delete object.animationFlashColor
     }, options.duration || 1000)
+  }
+
+  if(type === 'explode') {
+    let pixiChild = PIXIMAP.objectStage.getChildByName(object.id)
+    pixiChild.explodeEmitter = initEmitter(object, 'explode', { persistAfterRemoved: true, matchObjectColor: true }, true)
+    setTimeout(() => {
+      PIXIMAP.deleteEmitter(pixiChild.explodeEmitter)
+      delete pixiChild.explodeEmitter
+    }, 1000)
+  }
+
+  if(type === 'spinOff') {
+    const explosionEmitter = initEmitter(object, 'spinOff', { persistAfterRemoved: true, scaleToGameObject: true, matchObjectColor: true }, true)
+    setTimeout(() => {
+      PIXIMAP.deleteEmitter(explosionEmitter)
+    }, 1000)
   }
 
   // animationFlashColor: object.animationFlashColor,

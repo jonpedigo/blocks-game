@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-export default class Uploader extends Component {
+export default class FileUploader extends Component {
   constructor(props) {
     super(props)
 

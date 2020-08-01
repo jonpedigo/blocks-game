@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
-import { flameEmitter } from './particles'
+import { createDefaultEmitter } from './particles'
 import './pixi-layers'
 import { Ease, ease } from 'pixi-ease'
 import { setColor, getHexColor, startPulse } from './utils'
@@ -51,11 +51,15 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   /////////////////////
   // UPDATE EMITTER
+  if(pixiChild.trailEmitter) {
+    updatePixiEmitter(pixiChild.trailEmitter, gameObject)
+  }
+
   if(gameObject.tags.emitter) {
     updatePixiEmitter(pixiChild, gameObject)
     return
   } else if(pixiChild.emitter) {
-    pixiChild.emitter.destroy()
+    PIXIMAP.deleteEmitter(pixiChild.emitter)
     delete pixiChild.emitter
 
     initPixiObject(gameObject)
@@ -98,63 +102,70 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
-  if(!pixiChild.emitter) {
+  if(gameObject.tags.emitter && !pixiChild.emitter) {
     PIXIMAP.objectStage.removeChild(pixiChild)
     pixiChild = initEmitter(gameObject)
     return
   }
+
+  const emitter = pixiChild.emitter
 
   /////////////////////
   /////////////////////
   // INVISIBILITY
   const isInvisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
   // remove if its invisible now
-  if (isInvisible) {
-    if(pixiChild.emitter) {
-      pixiChild.emitter.emit = false
-      pixiChild.emitter.cleanup()
+  if (isInvisible && !emitter.persistAfterRemoved) {
+    if(emitter) {
+      emitter.emit = false
+      emitter.cleanup()
     }
     return
   } else {
-    if(pixiChild.emitter) pixiChild.emitter.emit = true
+    if(emitter) emitter.emit = true
   }
-
-  const emitter = pixiChild.emitter
-  // emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
-
-
-  const emitterData = window.particleEmitters[emitter.type]
 
   /////////////////////
   /////////////////////
   // ROTATION
-  if(gameObject.tags.rotateable) {
-    pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
-    pixiChild.rotation = gameObject.angle || 0
-    pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-    pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+
+  if(emitter.isAnimationEmitter) {
+    emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+    emitter.spawnPos.x = gameObject.width/2 * camera.multiplier
+    emitter.spawnPos.y =  gameObject.height/2 * camera.multiplier
   } else {
-    pixiChild.x = (gameObject.x) * camera.multiplier
-    pixiChild.y = (gameObject.y) * camera.multiplier
+    if(gameObject.tags.rotateable) {
+      pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+      pixiChild.rotation = gameObject.angle || 0
+      pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
+      pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
+    } else {
+      pixiChild.x = (gameObject.x) * camera.multiplier
+      pixiChild.y = (gameObject.y) * camera.multiplier
+    }
   }
 
   /////////////////////
   /////////////////////
-  // SCALE
-  emitter.startScale.value = emitterData.scale.start * camera.multiplier
-  emitter.startScale.next.value = emitterData.scale.end * camera.multiplier
+  // SCAL
+  if(emitter.data.scale && emitter.startScale.next) {
+    emitter.startScale.value = emitter.data.scale.start * camera.multiplier
+    emitter.startScale.next.value = emitter.data.scale.end * camera.multiplier
+  }
 }
 
-function initEmitter(gameObject) {
+function initEmitter(gameObject, emitterType = 'smallFire', options = {}, isAnimationEmitter) {
   const container = new PIXI.Container()
-  container.name = gameObject.id
   PIXIMAP.objectStage.addChild(container)
 
-  let emitter = flameEmitter({stage: container, startPos: {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}})
+  let emitter = createDefaultEmitter(container, gameObject, emitterType, options)
   PIXIMAP.objectStage.emitters.push(emitter)
   // container.parentGroup = PixiLights.diffuseGroup
+
+  if(!isAnimationEmitter) container.name = gameObject.id
   container.emitter = emitter
-  container.emitter.type = 'flameEmitter'
+  container.emitter.type = emitterType
+  container.emitter.isAnimationEmitter = isAnimationEmitter
 
   updatePixiEmitter(container, gameObject)
 
@@ -283,6 +294,14 @@ function updateProperties(pixiChild, gameObject) {
       }
     }
 
+    if(gameObject.tags.hasTrail && !pixiChild.trailEmitter) {
+      pixiChild.trailEmitter = initEmitter(gameObject, 'trail', { scaleToGameObject: true, matchObjectColor: true }, true)
+    }
+    if(!gameObject.tags.hasTrail && pixiChild.trailEmitter) {
+      PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
+      delete pixiChild.trailEmitter
+    }
+
     // if(gameObject.tags.hero) {
     //   startPulse(pixiChild, gameObject, 'alpha')
     // }
@@ -399,4 +418,5 @@ function removeFilter(pixiChild, filterClass) {
 export {
   initPixiObject,
   updatePixiObject,
+  initEmitter,
 }
