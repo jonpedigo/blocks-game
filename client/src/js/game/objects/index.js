@@ -1001,6 +1001,9 @@ class Objects{
     if(object.mod().tags.explodeOnDestroy) {
       window.socket.emit('objectAnimation', 'explode', object.id)
     }
+    if(object.mod().tags.spinOffOnDestroy) {
+      window.socket.emit('objectAnimation', 'spinOff', object.id)
+    }
   }
 }
 

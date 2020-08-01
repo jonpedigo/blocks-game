@@ -103,8 +103,8 @@ window.defaultParticleEmitterData = {
   },
   spinOff: {
   	"alpha": {
-  		"start": 0.74,
-  		"end": 0
+  		"start": 1,
+  		"end": 1,
   	},
   	"scale": {
   		"start": 1,
@@ -116,8 +116,8 @@ window.defaultParticleEmitterData = {
   		"end": "#757575"
   	},
   	"speed": {
-  		"start": 1000,
-  		"end": 200,
+  		"start": 40000,
+  		"end": 40000,
   		"minimumSpeedMultiplier": 1
   	},
   	"acceleration": {
@@ -127,16 +127,16 @@ window.defaultParticleEmitterData = {
   	"maxSpeed": 0,
   	"startRotation": {
   		"min": 0,
-  		"max": 360
+  		"max": 360,
   	},
   	"noRotation": false,
   	"rotationSpeed": {
-  		"min": 1000,
-  		"max": 1000
+  		"min": 20000,
+  		"max": 20000
   	},
   	"lifetime": {
-  		"min": 2,
-  		"max": 2
+  		"min": 100,
+  		"max": 100,
   	},
   	"blendMode": "normal",
   	"ease": [
@@ -157,7 +157,7 @@ window.defaultParticleEmitterData = {
   		}
   	],
   	"frequency": 0.001,
-  	"emitterLifetime": 0.1,
+  	"emitterLifetime": 100,
   	"maxParticles": 1,
   	"pos": {
   		"x": 0,
@@ -223,7 +223,7 @@ window.defaultParticleEmitterData = {
   	],
   	"frequency": 0.00001,
   	"emitterLifetime": 10,
-  	"maxParticles": 80,
+  	"maxParticles": 20,
   	"pos": {
   		"x": 0,
   		"y": 0

@@ -500,11 +500,30 @@ PIXIMAP.downloadAsImage = function() {
 function download_sprite_as_png(renderer, sprite, fileName) {
   renderer.render(sprite);
   const data = renderer.view.toDataURL('image/png', 1)
+  console.log(data)
   var a = document.createElement("a"); //Create <a>
   a.href = data; //Image Base64 Goes here
   a.download = fileName; //File name Here
   a.click(); //Downloaded file
   a.remove();
+}
+
+PIXIMAP.convertCanvasImageToFile = function(cb) {
+  const renderer = PIXIMAP.app.renderer
+  const sprite = PIXIMAP.app.stage
+  const name = `piximapimage-${window.uniqueID()}.png`
+
+  renderer.render(sprite);
+  const dataURI = renderer.view.toDataURL('image/png', 1)
+
+  function urltoFile(url, filename, mimeType){
+    return (fetch(url)
+        .then(function(res){return res.arrayBuffer();})
+        .then(function(buf){return new File([buf], filename,{type:mimeType});})
+    );
+  }
+
+  urltoFile(dataURI, name, 'image/png').then(function(file){ cb(file) });
 }
 
 PIXIMAP.getShadowBoundaries = function(hero) {

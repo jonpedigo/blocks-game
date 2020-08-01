@@ -128,9 +128,6 @@ export default class ObjectContextMenu extends React.Component{
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
       </SubMenu>
-      <SubMenu title="Live Edit">
-        <LiveMenu objectSelected={objectSelected}/>
-      </SubMenu>
       <SubMenu title="Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
       </SubMenu>

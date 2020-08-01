@@ -35,11 +35,12 @@ export default class FileUploader extends Component {
       }
     };
 
+    console.log(file)
+    
     axios.get(generatePutUrl, options).then(res => {
       axios
         .put("https://cors-anywhere.herokuapp.com/" + res.data.url, file, options)
         .then(res => {
-          console.log(res)
           this.setState({message:'Upload Successful'})
           setTimeout(()=>{
             this.setState({message:''});
