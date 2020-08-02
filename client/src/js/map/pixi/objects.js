@@ -3,8 +3,8 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter } from './particles'
 import './pixi-layers'
+import { setColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
 import { Ease, ease } from 'pixi-ease'
-import { setColor, getHexColor, startPulse } from './utils'
 
 const updatePixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
@@ -67,40 +67,12 @@ const updatePixiObject = (gameObject) => {
   }
 
   if(pixiChild.children && pixiChild.children.length) {
-    if(gameObject.tags.rotateable) {
-      pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
-      pixiChild.rotation = gameObject.angle || 0
-      pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-      pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-    } else {
-      if(!pixiChild.isAnimatingPosition) {
-        pixiChild.x = (gameObject.x) * camera.multiplier
-        pixiChild.y = (gameObject.y) * camera.multiplier
-
-        if(gameObject.tags.shake) {
-          startPulse(pixiChild, gameObject, 'shake')
-        }
-      }
-    }
+    updatePosition(pixiChild, gameObject)
     pixiChild.children.forEach((child) => {
       updateProperties(child, gameObject)
     })
   } else {
-    if(gameObject.tags.rotateable) {
-      pixiChild.anchor.set(0.5, 0.5)
-      pixiChild.rotation = gameObject.angle || 0
-      pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-      pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-    } else {
-      if(!pixiChild.isAnimatingPosition) {
-        pixiChild.x = (gameObject.x) * camera.multiplier
-        pixiChild.y = (gameObject.y) * camera.multiplier
-
-        if(gameObject.tags.shake) {
-          startPulse(pixiChild, gameObject, 'shake')
-        }
-      }
-    }
+    updatePosition(pixiChild, gameObject)
     updateProperties(pixiChild, gameObject)
   }
 }
@@ -125,7 +97,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   /////////////////////
   /////////////////////
   // INVISIBILITY
-  const isInvisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
+  const isInvisible = getVisibility(pixiChild, gameObject)
   // remove if its invisible now
   if (isInvisible && !emitter.persistAfterRemoved) {
     if(emitter) {
@@ -188,7 +160,7 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // INVISIBILITY
-  const isInvisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
+  const isInvisible = getVisibility(pixiChild, gameObject)
   // remove if its invisible now
 
   if (isInvisible) {
@@ -247,21 +219,6 @@ function updateProperties(pixiChild, gameObject) {
 
   /////////////////////
   /////////////////////
-  // ROTATION
-  // if(gameObject.tags.rotateable) {
-  //   // pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
-  //
-  //   pixiChild.anchor.set(0.5, 0.5)
-  //   pixiChild.rotation = gameObject.angle || 0
-  //   pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
-  //   pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
-  // } else {
-  //   pixiChild.x = (gameObject.x) * camera.multiplier
-  //   pixiChild.y = (gameObject.y) * camera.multiplier
-  // }
-
-  /////////////////////
-  /////////////////////
   // SCALE
   if(!pixiChild.isAnimatingScale) {
     if(gameObject.tags.tilingSprite) {
@@ -290,33 +247,14 @@ function updateProperties(pixiChild, gameObject) {
     // }
   }
 
+  updateAlpha(pixiChild, gameObject)
 
-  if(!pixiChild.isAnimatingAlpha) {
-    if(typeof gameObject.opacity === 'number') {
-      pixiChild.alpha = gameObject.opacity
-    } else {
-      pixiChild.alpha = 1
-    }
-
-    if(gameObject.tags.hidden) {
-      if(gameObject.id === HERO.originalId) {
-        pixiChild.alpha = .3
-      } else {
-        pixiChild.alpha = 0
-      }
-    }
-
-    if(gameObject.tags.hasTrail && !pixiChild.trailEmitter) {
-      pixiChild.trailEmitter = initEmitter(gameObject, 'trail', { scaleToGameObject: true, matchObjectColor: true }, true)
-    }
-    if(!gameObject.tags.hasTrail && pixiChild.trailEmitter) {
-      PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
-      delete pixiChild.trailEmitter
-    }
-
-    // if(gameObject.tags.hero) {
-    //   startPulse(pixiChild, gameObject, 'alpha')
-    // }
+  if(gameObject.tags.hasTrail && !pixiChild.trailEmitter) {
+    pixiChild.trailEmitter = initEmitter(gameObject, 'trail', { scaleToGameObject: true, matchObjectColor: true }, true)
+  }
+  if(!gameObject.tags.hasTrail && pixiChild.trailEmitter) {
+    PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
+    delete pixiChild.trailEmitter
   }
 
   /////////////////////
