@@ -5,7 +5,6 @@ import gridUtil from '../../utils/grid'
 import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
 import { Ease, ease } from 'pixi-ease'
-import './animations.js'
 
 import { setColor, getHexColor } from './utils'
 
@@ -391,23 +390,25 @@ PIXIMAP.updateBlockSprites = function() {
 }
 
 PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
-  let object = OBJECTS.getObjectOrHeroById[objectId]
-  // sometimes if the object is destroyed we need to do this???
-  if(!object) object = GAME.objectsById[objectId]
+  let object = OBJECTS.getObjectOrHeroById(objectId)
 
-  if(type === 'flash') {
+  if(!options) options = {}
+
+  let pixiChild = PIXIMAP.objectStage.getChildByName(object.id)
+  if(!pixiChild) return
+
+  if(type === 'flash' && !pixiChild.animationFlashColor) {
     if(options.color) {
-      object.animationFlashColor = options.color
+      pixiChild.animationColor = options.color
     } else {
-      object.animationFlashColor = 'white'
+      pixiChild.animationColor = 'white'
     }
     setTimeout(() => {
-      delete object.animationFlashColor
-    }, options.duration || 1000)
+      delete pixiChild.animationColor
+    }, options.duration || 50)
   }
 
   if(type === 'explode') {
-    let pixiChild = PIXIMAP.objectStage.getChildByName(object.id)
     pixiChild.explodeEmitter = initEmitter(object, 'explode', { persistAfterRemoved: true, matchObjectColor: true }, true)
     setTimeout(() => {
       PIXIMAP.deleteEmitter(pixiChild.explodeEmitter)
@@ -422,9 +423,6 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
     }, 1000)
   }
 
-  // animationFlashColor: object.animationFlashColor,
-
-  // animationTrail: object.animationTrail,
   // animationFadeIn: object.animationFadeIn,
   // animationFadeOut: object.animationFadeOut,
 
@@ -439,8 +437,6 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
   // animationShine: object.animationShine,
   //
   // animationFadeCycle: object.animationFadeCycle,
-
-  // what quake does is it sends out 3 layers. Each layer is less alpha than the last
   //
   // Fade to Color
 }

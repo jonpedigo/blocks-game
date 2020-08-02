@@ -216,8 +216,7 @@ const initPixiApp = (canvasRef, onLoad) => {
 
     // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
-      if(!emitter.emit) return
-      emitter.update(2 * 0.001);
+      emitter.update(delta/1000);
     })
     if(PIXIMAP.backgroundStage && PIXIMAP.backgroundStage.filters) PIXIMAP.backgroundStage.filters.forEach(updateFilters);
     if(PIXIMAP.cameraStage && PIXIMAP.cameraStage.filters) PIXIMAP.cameraStage.filters.forEach(updateFilters);

@@ -150,6 +150,13 @@ function setDefault() {
     spinOffOnDestroy: false,
   }
 
+  window.animationTags = {
+    shake: false,
+    realRotate: false,
+    realRotateFast: false,
+    // realHover: false,
+  }
+
   window.descriptiveTags = {
     fresh: false,
     spawned: false,
@@ -172,6 +179,7 @@ function setDefault() {
     ...window.cameraTags,
     ...window.particleTags,
     ...window.inventoryTags,
+    ...window.animationTags,
   }
 
   window.plainObjectTags = {

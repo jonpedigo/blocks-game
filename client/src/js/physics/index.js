@@ -380,12 +380,13 @@ function removeAndRespawn() {
   allHeros.forEach((hero) => {
 
     if(hero._destroy) {
-      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
       if(hero.mod().tags.respawn) {
         hero._respawn = true
       } else hero._remove = true
       delete hero._destroy
       delete hero._destroyedBy
+      window.socket.emit('emitGameEvent', 'onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
+      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
     }
 
     if(hero._respawn) {
@@ -401,12 +402,13 @@ function removeAndRespawn() {
 
   GAME.objects.forEach((object) => {
     if(object._destroy) {
-      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
       if(object.mod().tags.respawn) {
         object._respawn = true
       } else object._remove = true
       delete object._destroy
       delete object._destroyedBy
+      window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
+      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
     }
 
     if(object._respawn) {

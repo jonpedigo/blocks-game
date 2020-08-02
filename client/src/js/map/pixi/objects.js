@@ -51,7 +51,7 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   /////////////////////
   // UPDATE EMITTER
-  if(pixiChild.trailEmitter) {
+  if(pixiChild.trailEmitter && gameObject.tags.hasTrail) {
     updatePixiEmitter(pixiChild.trailEmitter, gameObject)
   }
 
@@ -73,8 +73,14 @@ const updatePixiObject = (gameObject) => {
       pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
       pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
     } else {
-      pixiChild.x = (gameObject.x) * camera.multiplier
-      pixiChild.y = (gameObject.y) * camera.multiplier
+      if(!pixiChild.isAnimatingPosition) {
+        pixiChild.x = (gameObject.x) * camera.multiplier
+        pixiChild.y = (gameObject.y) * camera.multiplier
+
+        if(gameObject.tags.shake) {
+          startPulse(pixiChild, gameObject, 'shake')
+        }
+      }
     }
     pixiChild.children.forEach((child) => {
       updateProperties(child, gameObject)
@@ -86,8 +92,14 @@ const updatePixiObject = (gameObject) => {
       pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
       pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
     } else {
-      pixiChild.x = (gameObject.x) * camera.multiplier
-      pixiChild.y = (gameObject.y) * camera.multiplier
+      if(!pixiChild.isAnimatingPosition) {
+        pixiChild.x = (gameObject.x) * camera.multiplier
+        pixiChild.y = (gameObject.y) * camera.multiplier
+
+        if(gameObject.tags.shake) {
+          startPulse(pixiChild, gameObject, 'shake')
+        }
+      }
     }
     updateProperties(pixiChild, gameObject)
   }
@@ -117,12 +129,12 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   // remove if its invisible now
   if (isInvisible && !emitter.persistAfterRemoved) {
     if(emitter) {
-      emitter.emit = false
+      emitter._emit = false
       emitter.cleanup()
     }
     return
   } else {
-    if(emitter) emitter.emit = true
+    if(emitter) emitter._emit = true
   }
 
   /////////////////////

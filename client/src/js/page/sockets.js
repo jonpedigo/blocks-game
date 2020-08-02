@@ -390,7 +390,7 @@ function init() {
   })
 
   window.socket.on('onEmitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
-    window.local.emit(eventName, arg1, arg2, arg3, arg4)
+    if(!PAGE.role.isHost) window.local.emit(eventName, arg1, arg2, arg3, arg4)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

@@ -223,7 +223,7 @@ window.defaultParticleEmitterData = {
   	],
   	"frequency": 0.00001,
   	"emitterLifetime": 10,
-  	"maxParticles": 20,
+  	"maxParticles": 12,
   	"pos": {
   		"x": 0,
   		"y": 0

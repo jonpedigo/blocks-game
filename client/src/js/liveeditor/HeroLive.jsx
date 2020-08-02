@@ -50,7 +50,7 @@ export default class HeroLive extends React.Component {
             <DatNumber path='objectSelected.jumpVelocity' label="jumpVelocity" min={-1000} max={1000} />
           </DatFolder>
           <DatFolder title='Animations' closed={false}>
-            <DatFolder title='Quake' closed>
+            <DatFolder title='Quake'>
               <DatColor path='quakeColor' label="Color"/>
               <DatBoolean path='quakeIsPowerWave' label="Power Wave"/>
               <DatNumber path='quakeSpeed' label='Speed' min={0} max={1000} step={1} />
@@ -58,6 +58,18 @@ export default class HeroLive extends React.Component {
                   window.socket.emit('objectAnimation', 'quake', objectSelected.id, { tags: {}, color: this.state.quakeColor, powerWave: this.state.quakeIsPowerWave, speed: this.state.quakeSpeed })
                 }}></DatButton>
             </DatFolder>
+            <DatButton label="Send Explode" onClick={() => {
+                window.socket.emit('objectAnimation', 'explode', objectSelected.id)
+            }}></DatButton>
+            <DatButton label="Send Spin Off" onClick={() => {
+                window.socket.emit('objectAnimation', 'spinOff', objectSelected.id)
+            }}></DatButton>
+            <DatButton label="Send Flash" onClick={() => {
+                window.socket.emit('objectAnimation', 'flash', objectSelected.id)
+            }}></DatButton>
+            <DatButton label="Send Quick Trail" onClick={() => {
+                window.socket.emit('objectAnimation', 'quickTrail', objectSelected.id)
+            }}></DatButton>
           </DatFolder>
           <DatFolder title='Hero Camera' closed={false}>
             <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>

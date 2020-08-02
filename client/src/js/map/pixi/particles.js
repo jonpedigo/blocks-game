@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { darken, getColorHex } from './utils.js'
+import { darken, lighten, getColorHex } from './utils.js'
 import './particleLibrary.js'
 
 const pixiParticles = require('pixi-particles');
@@ -12,11 +12,11 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   if(options.matchObjectColor) {
     let color = gameObject.color || GAME.world.defaultObjectColor
     particleData.color.start = color
-    if(emitterDataName == 'trail') {
-      particleData.color.end = darken(color)
-    } else {
+    // if(emitterDataName == 'trail') {
+    //   particleData.color.end = lighten(color)
+    // } else {
       particleData.color.end = color
-    }
+    // }
   }
 
   let particles = [PIXIMAP.textures.solidcolorsprite]

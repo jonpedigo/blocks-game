@@ -87,7 +87,7 @@ class Editor {
     }
   }
 
-  saveGameToServer() {
+  saveGame() {
     console.log('previous version before save', GAME)
     let saveGame = GAME.cleanForSave(GAME)
     saveGame = {...saveGame,

@@ -294,6 +294,7 @@ class Objects{
       sprite: object.sprite,
       namePos: object.namePos,
       removed: object.removed,
+      angle: object.angle,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       constructParts: object.constructParts && object.constructParts.map((part) => {
@@ -566,6 +567,17 @@ class Objects{
 
   onAnticipateObject(object) {
     OBJECTS.anticipatedForAdd = object
+  }
+
+  onUpdateObject(object, delta) {
+    if(object.mod().tags.realRotate) {
+      if(typeof object.angle != 'number') object.angle = 0
+      object.angle += 1 * delta
+    }
+    if(object.mod().tags.realRotateFast) {
+      if(typeof object.angle != 'number') object.angle = 0
+      object.angle += 7 * delta
+    }
   }
 
   addObject(object) {
@@ -983,11 +995,22 @@ class Objects{
     })
   }
 
-  onObjectAnimation(type, objectId, options) {
+  onObjectAnimation(type, objectId, options = {}) {
+    if(!PAGE.role.isHost) return
+
+    if(!options) options = {}
+
     const object = OBJECTS.getObjectOrHeroById(objectId)
     if(object) {
       if(type === 'quake') {
         OBJECTS.quake(object, options)
+      }
+
+      if(type === 'quickTrail') {
+        object.tags.hasTrail = true
+        setTimeout(() => {
+          object.tags.hasTrail = false
+        }, options.duration || 800)
       }
     }
     // animationQuake: originalPosition.animationQuake,
