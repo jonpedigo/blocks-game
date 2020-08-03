@@ -154,6 +154,10 @@ function setDefault() {
     shake: false,
     realRotate: false,
     realRotateFast: false,
+    pulseAlpha: false,
+    pulseDarken: false,
+    pulseLighten: false,
+
     // realHover: false,
   }
 

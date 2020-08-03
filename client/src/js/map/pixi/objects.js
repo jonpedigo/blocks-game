@@ -3,7 +3,7 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter } from './particles'
 import './pixi-layers'
-import { setColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
+import { setColor, updateSprite, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
 const updatePixiObject = (gameObject) => {
@@ -170,83 +170,9 @@ function updateProperties(pixiChild, gameObject) {
     pixiChild.visible = true
   }
 
-
-  /////////////////////
-  /////////////////////
-  // CHANGE SPRITE
-  if(gameObject.tags.solidColor) {
-    pixiChild.texture = PIXIMAP.textures['solidcolorsprite']
-  } else {
-    if(gameObject.tags.inputDirectionSprites) {
-      if(gameObject.inputDirection === 'right') {
-        if(gameObject.rightSprite) {
-          gameObject.sprite = gameObject.rightSprite
-        } else gameObject.sprite = gameObject.defaultSprite
-      }
-      if(gameObject.inputDirection === 'left') {
-        if(gameObject.leftSprite) {
-          gameObject.sprite = gameObject.leftSprite
-        } else gameObject.sprite = gameObject.defaultSprite
-      }
-      if(gameObject.inputDirection === 'up') {
-        if(gameObject.upSprite) {
-          gameObject.sprite = gameObject.upSprite
-        } else gameObject.sprite = gameObject.defaultSprite
-      }
-      if(gameObject.inputDirection === 'down') {
-        if(gameObject.downSprite) {
-          gameObject.sprite = gameObject.downSprite
-        } else gameObject.sprite = gameObject.defaultSprite
-      }
-    } else {
-      if(gameObject.defaultSprite != gameObject.sprite) {
-        gameObject.sprite = gameObject.defaultSprite
-      }
-    }
-
-    if(!pixiChild.texture || gameObject.sprite != pixiChild.texture.id) {
-      pixiChild.texture = PIXIMAP.textures[gameObject.sprite]
-    }
-  }
-
-  /////////////////////
-  /////////////////////
-  // SELECT CAMERA
-  let camera = MAP.camera
-  if(CONSTRUCTEDITOR.open) {
-    camera = CONSTRUCTEDITOR.camera
-  }
-
-  /////////////////////
-  /////////////////////
-  // SCALE
-  if(!pixiChild.isAnimatingScale) {
-    if(gameObject.tags.tilingSprite) {
-      pixiChild.transform.scale.x = camera.multiplier
-      pixiChild.transform.scale.y = camera.multiplier
-    } else if(pixiChild.texture){
-      pixiChild.transform.scale.x = (gameObject.width/pixiChild.texture._frame.width) * camera.multiplier
-      pixiChild.transform.scale.y = (gameObject.height/pixiChild.texture._frame.height) * camera.multiplier
-    }
-
-    // if(gameObject.tags.hero) {
-    //   startPulse(pixiChild, gameObject, 'scale')
-    // }
-  }
-
-  /////////////////////
-  /////////////////////
-  // COLOR
-
-  if(!pixiChild.isAnimatingColor) {
-
-    setColor(pixiChild, gameObject)
-
-    // if(gameObject.tags.hero) {
-    //   startPulse(pixiChild, gameObject, 'darken')
-    // }
-  }
-
+  updateSprite(pixiChild, gameObject)
+  updateScale(pixiChild, gameObject)
+  updateColor(pixiChild, gameObject)
   updateAlpha(pixiChild, gameObject)
 
   if(gameObject.tags.hasTrail && !pixiChild.trailEmitter) {
