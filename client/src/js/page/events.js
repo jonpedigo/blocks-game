@@ -105,8 +105,8 @@ class EventEmitter {
         event.push(CONSTRUCTEDITOR[eventName])
       }
 
-      if(SEQUENCEEDITOR[eventName]) {
-        event.push(SEQUENCEEDITOR[eventName])
+      if(WORLDMANAGER[eventName]) {
+        event.push(WORLDMANAGER[eventName])
       }
 
       if(LIVEEDITOR[eventName]) {

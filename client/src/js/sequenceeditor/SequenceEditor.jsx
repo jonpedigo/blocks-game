@@ -76,19 +76,16 @@ const typeOptions = [
   { value: 'sequenceWait', label: 'Wait' },
 ];
 
-export default class Root extends React.Component {
+export default class SequenceEditor extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      open: false,
       sequence: null,
       selectedType: null,
       sequenceItemRefs: [],
     }
 
-    this.open = this.open.bind(this)
-    this.close = this.close.bind(this)
     this.download = this.download.bind(this)
     this._selectType = this._selectType.bind(this)
     this.openSequence = this.openSequence.bind(this)
@@ -240,15 +237,13 @@ export default class Root extends React.Component {
   }
 
   render() {
-    const { open, sequence, selectedType, sequenceItemRefs } = this.state
-
-    if(!open) return null
+    const { sequence, selectedType, sequenceItemRefs } = this.state
 
     if(!sequence) {
       return <div className="SequenceEditor">
         <div className="SequenceMenu">
           <div className="SequenceMenu__top">
-          <i className="SequenceButton fa fas fa-times" onClick={this.close}></i>
+          <i className="SequenceButton fa fas fa-times" onClick={WORLDMANAGER.close}></i>
           </div>
         </div>
         <SequenceList openSequence={this.openSequence} newSequence={this.newSequence}></SequenceList>

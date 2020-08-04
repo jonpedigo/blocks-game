@@ -15,7 +15,7 @@ function setDefault() {
     ignoreWorldGravity: false,
     obstacle: false,
     stationary: false,
-    projectile: false,
+    // projectile: false,
     onlyHeroAllowed: false,
     noHeroAllowed: false,
     movingPlatform: false,

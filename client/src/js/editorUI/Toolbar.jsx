@@ -166,11 +166,9 @@ export default class Toolbar extends React.Component {
           */}
           {/* Scenarios -> Menu */}
           <ToolbarButton iconName="fa-trophy"/>
-          {/* Story -> Menu */}
-          <ToolbarButton iconName="fa-leanpub"/>
           {/* Sequences -> Menu */}
           <ToolbarButton iconName="fa-sitemap" onClick={() => {
-            SEQUENCEEDITOR.open()
+            WORLDMANAGER.open('sequence')
           }}/>
           {/* Default Heros -> Menu */}
           <ToolbarButton iconName="fa-theater-masks"/>

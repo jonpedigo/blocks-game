@@ -84,7 +84,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'open-sequence-editor') {
-        SEQUENCEEDITOR.open()
+        WORLDMANAGER.open('sequence')
       }
 
       if(key === 'download-game-JSON')  {

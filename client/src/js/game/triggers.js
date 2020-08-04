@@ -14,6 +14,7 @@ function onPageLoaded() {
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
     onGameStart: { mainObject: null, guestObject: null },
+    onStoryStart: { mainObject: null, guestObject: null },
   }
   // -> onHeroPickup
   // -> onHeroDrop

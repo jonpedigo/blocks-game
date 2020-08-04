@@ -4,16 +4,15 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Animations + Live Animation Tester
-More Particles + Particle Tester/Uploader
+Scenarios and Stories !! AWESOME
+1) Try to make the editor modular ( from the sequence lists )
+2) Try to combine with dat GUI? I wonder if its possible
+
+FIREWORK PARTICLES, ( UNLEASH THE POWER OF THE PARTICLE SYSTEM )
+Pulsing size and rotating
+Smoke particles very subtle...
 
 Hero removed -> respawn UI
-
-Scenarios and Stories !! AWESOME
-
-More live player animations!! because these are sick
-allow chaining of animations and effects
-Save Animations to world ( save animation button )
 
 ---
 The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
@@ -99,6 +98,11 @@ PROCEDURAL
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
+// Needs to be attached to system ( AKA the combat system )
+allow chaining of animations and effects
+Save Animations to world ( save animation button )
+
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 HOOK UP RESPAWNS TO A SPAWN ZONE
 Game feel improvement in live editor - velocityX decay, jumpVelocity, dashVelocity, ( jumpAcc, dashAcc) accXDecay, accYDecay, bounce
@@ -414,7 +418,7 @@ import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
-import './js/sequenceeditor/index.js'
+import './js/worldmanager/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'

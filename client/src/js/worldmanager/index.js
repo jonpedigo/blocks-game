@@ -2,26 +2,29 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 
-class SequenceEditor {
+class WorldManager {
   constructor() {
     this.container = null
     this.ref = null
-    this.updateStateInterval = null
   }
 
-  open() {
-    this.ref.open()
+  open = (selectedMenu) => {
+    this.ref.open(selectedMenu)
+  }
+
+  close = () => {
+    this.ref.close()
   }
 
   onPageLoaded() {
     const initialProps = {
-      ref: ref => SEQUENCEEDITOR.ref = ref
+      ref: ref => WORLDMANAGER.ref = ref
     }
 
     const container = document.createElement('div')
-    container.id = 'SequenceEditorContainer'
+    container.id = 'WorldManagerContainer'
     document.body.appendChild(container)
-    SEQUENCEEDITOR.container = container
+    WORLDMANAGER.container = container
 
     // Mount React App
     ReactDOM.render(
@@ -31,4 +34,4 @@ class SequenceEditor {
   }
 }
 
-window.SEQUENCEEDITOR = new SequenceEditor()
+window.WORLDMANAGER = new WorldManager()
