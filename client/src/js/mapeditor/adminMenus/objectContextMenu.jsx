@@ -98,7 +98,7 @@ export default class ObjectContextMenu extends React.Component{
 
     return <Menu onClick={this._handleObjectMenuClick}>
       {objectSelected.name && <MenuItem className="bold-menu-item">{objectSelected.name}</MenuItem>}
-      {objectSelected.subObjectName && <MenuItem className="bold-menu-item">{objectSelected.subObjectName}</MenuItem>}
+      {objectSelected.tags.subObject && <MenuItem className="bold-menu-item">{objectSelected.subObjectName}</MenuItem>}
       {!subObject && <MenuItem key="drag">Drag</MenuItem>}
       {!objectSelected.constructParts && <MenuItem key="resize">Resize</MenuItem>}
       {subObject && <MenuItem key="resize-grid">Resize On Grid</MenuItem>}
@@ -127,9 +127,6 @@ export default class ObjectContextMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
-      </SubMenu>
-      <SubMenu title="Live Edit">
-        <LiveMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>

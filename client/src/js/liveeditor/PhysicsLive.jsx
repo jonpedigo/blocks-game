@@ -48,6 +48,7 @@ export default class PhysicsLive extends React.Component {
 
   render() {
     const { objectSelected } = this.state;
+
     return (
       <div className='PhysicsLive'>
         <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
@@ -59,4 +60,3 @@ export default class PhysicsLive extends React.Component {
     )
   }
 }
-

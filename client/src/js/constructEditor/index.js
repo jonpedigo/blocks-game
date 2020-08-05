@@ -47,12 +47,12 @@ class ConstructEditor {
   }
 
   cancel() {
-    window.local.emit('onConstructEditorClose', false)
+    this.open = false
     this.close()
+    window.local.emit('onConstructEditorClose', false)
   }
 
   close() {
-    this.open = false
     document.body.style.cursor = 'default';
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
@@ -67,22 +67,26 @@ class ConstructEditor {
       part.id = window.uniqueID()
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
-    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
     this.close()
+    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
   }
 
-  start(object) {
+  start(object, startAtHero = false) {
     this.initState()
     this.objectId = object.id
     this.open = true
     this.tags = object.tags
-    this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, GAME.grid.nodeSize)
+    if(GAME.world.gameBoundaries) {
+      this.grid = new Grid(GAME.world.gameBoundaries.x, GAME.world.gameBoundaries.y, GAME.world.gameBoundaries.width/GAME.grid.nodeSize, GAME.world.gameBoundaries.height/GAME.grid.nodeSize, GAME.grid.nodeSize)
+    } else {
+      this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, GAME.grid.nodeSize)
+    }
     this.spawnPointX = object.spawnPointX
     this.spawnPointY = object.spawnPointY
     this.initializeGridNodes(object)
 
-    const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
-    this.camera.setLimitRect(gridObject)
+    // const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
+    // this.camera.setLimitRect(gridObject)
 
     let gridWidth = (object.width/this.grid.nodeSize)
     let gridHeight = (object.height/this.grid.nodeSize)
@@ -95,28 +99,37 @@ class ConstructEditor {
 
     const width = zoomMultiplier * HERO.cameraWidth
     const height = zoomMultiplier * HERO.cameraHeight
-    this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier}
+    if(startAtHero) {
+      const hero = GAME.heros[HERO.id]
+      this.cameraController = {x: hero.x, width: hero.width, y: hero.y, height: hero.height, zoomMultiplier}
+    } else {
+      this.cameraController = {x: object.x, width: object.width, y: object.y, height: object.height, zoomMultiplier}
+    }
     this.camera.set(this.cameraController)
 
     this._mouseDownListener = (e) => {
+      if(!window.isClickingMap(e.target.className)) return
       if(e.which === 1) {
         if(!this.paused) this.handleMouseDown(event)
       }
     }
-    this.canvas.addEventListener("mousedown", this._mouseDownListener)
+    document.body.addEventListener("mousedown", this._mouseDownListener)
 
     this._mouseMoveListener = (e) => {
-      if(!this.paused) this.handleMouseMove(event)
+      if(!window.isClickingMap(e.target.className)) return
+      if(!this.paused && this.open) this.handleMouseMove(event)
     }
-    this.canvas.addEventListener("mousemove", this._mouseMoveListener)
+    document.body.addEventListener("mousemove", this._mouseMoveListener)
 
     this._mouseUpListener = (e) => {
       if(!this.paused) this.handleMouseUp(event)
     }
-    this.canvas.addEventListener("mouseup", this._mouseUpListener)
+    document.body.addEventListener("mouseup", this._mouseUpListener)
 
-    this.ref.open(object.color || GAME.world.defaultObjectColor || '#525252')
+    this.ref.open(object.color || GAME.world.defaultObjectColor || window.defaultObjectColor)
     this.selectColor(object.color)
+
+    window.local.emit('onConstructEditorStart', object)
   }
 
   handleMouseUp() {
@@ -134,7 +147,7 @@ class ConstructEditor {
       this.unfillNodeXY(this.mousePos.x, this.mousePos.y)
     } else if(tool === 'eyeDropper') {
       const color = this.getColorFromNodeXY(this.mousePos.x, this.mousePos.y)
-      this.selectedColor = color || GAME.world.defaultObjectColor || '#525252'
+      this.selectedColor = color || GAME.world.defaultObjectColor || window.defaultObjectColor
       this.ref.setColor(this.selectedColor)
     }
   }
@@ -351,12 +364,12 @@ class ConstructEditor {
       }
     })
 
-    if(!tags.filled) {
+    if(tags.outline) {
       ctx.globalCompositeOperation='destination-out';
 
       grid.forEachNode((node) => {
         if(node.data.filled) {
-          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width }, camera)
+          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, tags }, camera)
         }
       })
 
@@ -365,7 +378,7 @@ class ConstructEditor {
 
     if(nodeHighlighted) {
       if(tool === 'paintBrush') {
-        drawTools.drawObject(ctx, nodeHighlighted, camera)
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)
       } else if(tool === 'eraser'){
         drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
       } else {

@@ -117,9 +117,14 @@ function updatePosition(object, delta) {
   let gravityVelocityY = GAME.world.gravityVelocityY
   if(!gravityVelocityY) gravityVelocityY = 1000
 
+  let applyWorldGravity = false
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
+    applyWorldGravity = true
+  }
+
   if(object._skipNextGravity) {
     object._skipNextGravity = false
-  } else if(object.tags && object.mod().tags.gravityY) {
+  } else if(object.tags && object.mod().tags.gravityY || applyWorldGravity) {
     let distance = (object.velocityY * delta) +  ((gravityVelocityY * (delta * delta))/2)
     object.y += distance
     object.velocityY += (gravityVelocityY * delta)
@@ -192,7 +197,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.mod().tags.potential) return
+        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
         everything.push(subObject)
       })
     }
@@ -201,6 +206,10 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object, i) => {
     if(!object.id) {
       console.log('OBJECT', object, 'WITHOUT ID')
+      return
+    }
+
+    if(object.tags.notCollideable) {
       return
     }
 
@@ -371,12 +380,13 @@ function removeAndRespawn() {
   allHeros.forEach((hero) => {
 
     if(hero._destroy) {
-      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
-      if(hero.tags.respawn) {
+      if(hero.mod().tags.respawn) {
         hero._respawn = true
       } else hero._remove = true
       delete hero._destroy
       delete hero._destroyedBy
+      window.socket.emit('emitGameEvent', 'onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
+      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
     }
 
     if(hero._respawn) {
@@ -392,12 +402,13 @@ function removeAndRespawn() {
 
   GAME.objects.forEach((object) => {
     if(object._destroy) {
-      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
       if(object.mod().tags.respawn) {
         object._respawn = true
       } else object._remove = true
       delete object._destroy
       delete object._destroyedBy
+      window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
+      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
     }
 
     if(object._respawn) {

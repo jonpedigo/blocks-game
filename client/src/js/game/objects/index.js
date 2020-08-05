@@ -9,6 +9,7 @@ import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
 
 class Objects{
   constructor() {
+    window.defaultObjectColor = '#525252'
     window.defaultSubObject = {
       relativeX: 0, relativeY: 0,
       objectType: 'subObject',
@@ -120,6 +121,8 @@ class Objects{
       customState: object.customState,
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
+
+      // IMPLEMENT...
       objectsWithin: object.objectsWithin,
       conditionTestCounts: object.conditionTestCounts,
     }
@@ -180,6 +183,8 @@ class Objects{
       hooks: object.hooks,
       subObjectChances: object.subObjectChances,
       spawned: object.spawned,
+      reserved: object.reserved,
+      opacity: object.opacity,
 
       // inventory
       count: object.count,
@@ -289,6 +294,7 @@ class Objects{
       sprite: object.sprite,
       namePos: object.namePos,
       removed: object.removed,
+      angle: object.angle,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       constructParts: object.constructParts && object.constructParts.map((part) => {
@@ -388,7 +394,7 @@ class Objects{
     }
   }
 
-  create(objects, options = { bypassCollisions: false, fromLiveGame: false }) {
+  create(objects, options = { local: false, bypassCollisions: false, fromLiveGame: false }) {
     if(!objects.length) {
       objects = [objects]
     }
@@ -421,24 +427,43 @@ class Objects{
 
       //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
       if(newObject.x + newObject.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+        const diff = newObject.x + newObject.width - ((GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX)
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+        // return null
       }
       if(newObject.y + newObject.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+        const diff = newObject.y + newObject.height - ((GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY)
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+        // return null
+        GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
       }
       if(newObject.x < GAME.grid.startX) {
+        const diff = GAME.grid.startX - newObject.x
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.width += Math.ceil(diff/GAME.grid.nodeSize)
+        GAME.grid.startX -= diff
+
+        // return null
       }
       if(newObject.y < GAME.grid.startY) {
+        const diff = GAME.grid.startY - newObject.y
+
         if(PAGE.role.isPlayEditor && !window.playEditorKeysDown[18] && !hasBeenWarned) alert('adding obj outside grid system, canceled')
         hasBeenWarned = true
-        return null
+
+        GAME.grid.height += Math.ceil(diff/GAME.grid.nodeSize)
+        GAME.grid.startY -= diff
+        // return null
+      }
+
+      if(hasBeenWarned) {
+        window.socket.emit('updateGrid', GAME.grid)
       }
 
       return newObject
@@ -482,10 +507,16 @@ class Objects{
     }
 
     function emitNewObjects() {
-      if(window.editingGame && window.editingGame.branch && !options.fromLiveGame) {
-        window.branch.objects.push(...objects)
-      } else {
-        window.socket.emit('addObjects', objects)
+      if(!options.silently) {
+        if(window.editingGame && window.editingGame.branch && !options.fromLiveGame) {
+          window.branch.objects.push(...objects)
+        } else {
+          if(options.local) {
+            window.local.emit('onNetworkAddObjects', objects)
+          } else {
+            window.socket.emit('addObjects', objects)
+          }
+        }
       }
     }
 
@@ -520,9 +551,11 @@ class Objects{
   onEditObjects(editedObjects) {
     editedObjects.forEach((obj) => {
       let objectById = GAME.objectsById[obj.id]
-      OBJECTS.editObject(objectById, obj)
       if(obj.constructParts || objectById.constructParts) {
         PIXIMAP.deleteObject(objectById)
+      }
+      OBJECTS.editObject(objectById, obj)
+      if(obj.constructParts || objectById.constructParts) {
         PIXIMAP.addObject(objectById)
       }
     })
@@ -536,6 +569,17 @@ class Objects{
     OBJECTS.anticipatedForAdd = object
   }
 
+  onUpdateObject(object, delta) {
+    if(object.mod().tags.realRotate) {
+      if(typeof object.angle != 'number') object.angle = 0
+      object.angle += 1 * delta
+    }
+    if(object.mod().tags.realRotateFast) {
+      if(typeof object.angle != 'number') object.angle = 0
+      object.angle += 7 * delta
+    }
+  }
+
   addObject(object) {
     // object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
     GAME.objectsById[object.id] = object
@@ -547,10 +591,14 @@ class Objects{
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part.ownerId = object.id
-        PHYSICS.addObject(part)
+        if(!object.tags.notCollideable) {
+          PHYSICS.addObject(part)
+        }
       })
     } else {
-      PHYSICS.addObject(object)
+      if(!object.tags.notCollideable) {
+        PHYSICS.addObject(object)
+      }
     }
 
     if(object.triggers) {
@@ -583,6 +631,7 @@ class Objects{
         } else {
           subObject.subObjectName = subObject.subObjectName + '-copy-'+window.uniqueID()
           subObjectName = subObject.subObjectName
+          console.trace('i have copied', existingSubObject, subObject)
         }
       }
     }
@@ -651,12 +700,16 @@ class Objects{
     }
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
-        PHYSICS.removeObject(part)
+        if(PHYSICS.objects[part.id]) {
+          PHYSICS.removeObject(part)
+        }
       })
     } else {
-      PHYSICS.removeObject(object)
+      if(PHYSICS.objects[object.id]) {
+        PHYSICS.removeObject(object)
+      }
     }
-    if(object.triggers) {
+    if(PAGE.role.isHost && object.triggers) {
       Object.keys(object.triggers).forEach((triggerId) => {
         triggers.removeTriggerEventListener(object, triggerId)
       })
@@ -791,6 +844,189 @@ class Objects{
   onDestroySpawnIds(objectId) {
     const object = OBJECTS.getObjectOrHeroById(objectId)
     destroySpawnIds(object)
+  }
+
+
+  quake(object, options = { powerWave: false, color: object.color, speed: 150, tags: { noHeroAllowed: true }}) {
+    const createdObjects = []
+    const diagonals = []
+    let lastCreatedObjects = []
+    let stage = 0
+    let maxStage = 4
+    const powerWave = options.powerWave
+
+    const originalPosition = _.cloneDeep(object)
+    // originalPosition.x -= GAME.grid.nodeSize
+    // originalPosition.y -= GAME.grid.nodeSize
+    // originalPosition.width += (GAME.grid.nodeSize * 2)
+    // originalPosition.height += (GAME.grid.nodeSize * 2)
+
+    const quakeSpeed = options.speed
+    const left = { x: object.x, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const top = { y: object.y, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const right = { x: object.x + object.width - GAME.grid.nodeSize, height: object.height, y: object.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    const bottom = { y: object.y + object.height - GAME.grid.nodeSize, width: object.width, x: object.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: 1 }
+    stage++
+
+    // the diagonal buggers have 3 stages
+    // 1. move diagonal
+    // 2. duplicate self with two other nodes ( one going up/down another going left/right )
+    // 3.
+
+    lastCreatedObjects = OBJECTS.create([left, top, bottom, right])
+    createdObjects.push(...lastCreatedObjects)
+
+    const removeUpdateListener = window.local.on('onUpdate', (delta) => {
+      if(stage === maxStage) {
+        let lowestOpacity = 1
+        createdObjects.forEach((co) => {
+          const go = GAME.objectsById[co.id]
+          if(go) {
+            if(go.opacity < lowestOpacity) lowestOpacity = go.opacity
+          }
+        })
+
+        const allEqualOpacity = createdObjects.every((co) => {
+          const go = GAME.objectsById[co.id]
+          if(go) {
+            return go.opacity === lowestOpacity
+          } else return true
+        })
+
+
+        if(powerWave) {
+          diagonals.forEach((co) => {
+            const go = GAME.objectsById[co.id]
+            if(go) {
+              window.socket.emit('deleteObject', go)
+            }
+          })
+        }
+
+        createdObjects.forEach((co) => {
+          const go = GAME.objectsById[co.id]
+          if(go) {
+            if(!powerWave) {
+              go.velocityX = 0
+              go.velocityY = 0
+            }
+
+            if(go.opacity <= 0) window.socket.emit('deleteObject', go)
+            if(go.opacity > lowestOpacity || allEqualOpacity) {
+              let opacityDelta = ((go.opacity/100) * delta) + .05
+              if(powerWave) opacityDelta = opacityDelta/1000
+              go.opacity -= opacityDelta
+              if(!allEqualOpacity && go.opacity < lowestOpacity) go.opacity = lowestOpacity
+            }
+          }
+        })
+
+        if(createdObjects.every((co) => { return !GAME.objectsById[co.id] })) {
+          removeUpdateListener()
+        }
+      }
+
+      if(stage < maxStage && GAME.objectsById[lastCreatedObjects[0].id] && !collisions.checkAnything(originalPosition, lastCreatedObjects.map(({id}) => {
+        return GAME.objectsById[id]
+      }))) {
+        // - ((stage/maxStage)/2)
+
+        if(stage < maxStage - 1) {
+          // diagonals
+          const diagChildren = []
+          diagonals.map(({id}) => {
+            return GAME.objectsById[id]
+          }).forEach((diag) => {
+            if(diag) {
+              window.socket.emit('deleteObject', diag)
+              const hasWeight = stage >= 2
+              const opacity = hasWeight ? 1 : diag.opacity
+              diagChildren.push({...diag, id: null, velocityX: 0, tags: hasWeight ? options.tags : {}, velocityMax: 1000, opacity: opacity, color: options.color })
+              diagChildren.push({...diag, id: null, velocityY: 0, tags: hasWeight ? options.tags : {}, velocityMax: 1000, opacity: opacity, color: options.color })
+            }
+          })
+          if(diagChildren.length) {
+            const createdChildren = OBJECTS.create(diagChildren)
+            createdObjects.push(...createdChildren)
+          }
+        }
+
+        const newObjectOpacity = stage < maxStage-1 ? .4 : .2
+        let newDiagonalOpacity = newObjectOpacity
+        if(stage === 1) {
+          newDiagonalOpacity = 1
+        }
+        const topLeft = { x: originalPosition.x, height: GAME.grid.nodeSize, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const topRight = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: -quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const bottomLeft = { x: originalPosition.x, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+        const bottomRight = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: quakeSpeed, velocityY: quakeSpeed, tags: options.tags, color: options.color, velocityMax: 1000, opacity: newDiagonalOpacity }
+
+        const newDiagonals = OBJECTS.create([topLeft, topRight, bottomLeft, bottomRight])
+
+        // diagonals.forEach(({id}) => {
+        //   const go = GAME.objectsById[id]
+        // })
+
+        diagonals.push(...newDiagonals)
+        createdObjects.push(...newDiagonals)
+
+        const left = { x: originalPosition.x, height: originalPosition.height, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity   }
+        const top = { y: originalPosition.y, width: originalPosition.width, x: originalPosition.x, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity   }
+        const right = { x: originalPosition.x + originalPosition.width - GAME.grid.nodeSize, height: originalPosition.height, y: originalPosition.y, width: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity }
+        const bottom = { y: originalPosition.y + originalPosition.height - GAME.grid.nodeSize, width: originalPosition.width, x: originalPosition.x, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, color: options.color, velocityMax: 1000, opacity: newObjectOpacity }
+
+        // const topLeft1 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const topLeft2 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        //
+        // const topRight1 = { y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityY: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const topRight2 = { y: originalPosition.y - GAME.grid.nodeSize, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        //
+        // const bottomLeft1 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, velocityX: -quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const bottomLeft2 = { x: originalPosition.x - GAME.grid.nodeSize, height: GAME.grid.nodeSize, y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        //
+        // const bottomRight1 = { y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityY: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        // const bottomRight2 = { y: originalPosition.y + originalPosition.height, width: GAME.grid.nodeSize, x: originalPosition.x + originalPosition.width, height: GAME.grid.nodeSize, velocityX: quakeSpeed, tags: {}, velocityMax: 1000, opacity: .5 }
+        //
+        // lastCreatedObjects = OBJECTS.create([topLeft1, topLeft2, topRight1, topRight2, bottomLeft1, bottomLeft2, bottomRight1, bottomRight2])
+        lastCreatedObjects = OBJECTS.create([left, top, bottom, right])
+        createdObjects.push(...lastCreatedObjects)
+        stage++
+      }
+    })
+  }
+
+  onObjectAnimation(type, objectId, options = {}) {
+    if(!PAGE.role.isHost) return
+
+    if(!options) options = {}
+
+    const object = OBJECTS.getObjectOrHeroById(objectId)
+    if(object) {
+      if(type === 'quake') {
+        OBJECTS.quake(object, options)
+      }
+
+      if(type === 'quickTrail') {
+        object.tags.hasTrail = true
+        setTimeout(() => {
+          object.tags.hasTrail = false
+        }, options.duration || 800)
+      }
+    }
+    // animationQuake: originalPosition.animationQuake,
+    // ACTUAL
+    // fadeToColor ( actual )
+    // fadeOut
+    // fadeIn
+  }
+
+  onObjectDestroyed(object) {
+    if(object.mod().tags.explodeOnDestroy) {
+      window.socket.emit('objectAnimation', 'explode', object.id)
+    }
+    if(object.mod().tags.spinOffOnDestroy) {
+      window.socket.emit('objectAnimation', 'spinOff', object.id)
+    }
   }
 }
 

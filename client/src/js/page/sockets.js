@@ -119,9 +119,6 @@ function init() {
       window.local.emit('onGameStart')
     })
 
-    window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
-      window.local.emit('onDeleteTrigger', ownerId, triggerId)
-    })
     window.socket.on('onAddTrigger', (ownerId, trigger) => {
       window.local.emit('onAddTrigger', ownerId, trigger)
     })
@@ -129,9 +126,6 @@ function init() {
       window.local.emit('onEditTrigger', ownerId, triggerId, trigger)
     })
 
-    window.socket.on('onDeleteHook', (ownerId, hookId) => {
-      window.local.emit('onDeleteHook', ownerId, hookId)
-    })
     window.socket.on('onAddHook', (ownerId, hook) => {
       window.local.emit('onAddHook', ownerId, hook)
     })
@@ -140,11 +134,18 @@ function init() {
     })
   }
 
-  if(PAGE.role.isGhost) {
-    window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
+  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
+    window.local.emit('onDeleteTrigger', ownerId, triggerId)
+  })
+  window.socket.on('onDeleteHook', (ownerId, hookId) => {
+    window.local.emit('onDeleteHook', ownerId, hookId)
+  })
+
+  window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
+    if(PAGE.role.isGhost) {
       window.local.emit('onSendHeroMapEditor', remoteState, heroId)
-    })
-  }
+    }
+  })
 
   ///////////////////////////////
   ///////////////////////////////
@@ -282,7 +283,11 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
-    window.local.emit('onUpdateGrid', grid)
+    window.local.emit('onLoadingScreenStart')
+    setTimeout(() => {
+      window.local.emit('onUpdateGrid', grid)
+      window.local.emit('onLoadingScreenEnd')
+    }, 100)
   })
 
   window.socket.on('onUpdateGridNode', (x, y, update) => {
@@ -320,6 +325,7 @@ function init() {
 
   // this is switching between games
   window.socket.on('onSetGame', (game) => {
+    console.log('changing', game.id)
     window.local.emit('onChangeGame', game)
   })
 
@@ -367,8 +373,24 @@ function init() {
     window.local.emit('onGetCustomGameFx', eventName)
   })
 
+  window.socket.on('openHeroModal', (heroId, title, body) => {
+    window.local.emit('onOpenHeroModal', heroId, title, body)
+  })
+
+  window.socket.on('showHeroToast', (heroId, body) => {
+    window.local.emit('onShowHeroToast', heroId, body)
+  })
+
   window.socket.on('onHeroCameraEffect', (type, heroId, options) => {
     window.local.emit('onHeroCameraEffect', type, heroId, options)
+  })
+
+  window.socket.on('onObjectAnimation', (type, objectId, options) => {
+    window.local.emit('onObjectAnimation', type, objectId, options)
+  })
+
+  window.socket.on('onEmitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
+    if(!PAGE.role.isHost) window.local.emit(eventName, arg1, arg2, arg3, arg4)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

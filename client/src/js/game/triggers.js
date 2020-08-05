@@ -14,9 +14,19 @@ function onPageLoaded() {
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
     onGameStart: { mainObject: null, guestObject: null },
+    onStoryStart: { mainObject: null, guestObject: null },
   }
+  // -> onHeroPickup
+  // -> onHeroDrop
+  // -> onHeroDeposit
+  // -> onHeroWithdraw
+  // -> onHeroDestroyed
+  // -> onHeroRespawned
+  // -> onHeroEquip
+  // -> onHeroAware
+
     // 'onHeroChooseOption',
-    // 'OnObjectSpawn',
+    // 'onObjectSpawn',
     // 'onObjectNoticed',
     // 'onObjectNotice',
     // 'onHeroCanInteract'
@@ -39,7 +49,7 @@ function deleteTrigger(object, triggerId) {
 }
 
 function removeTriggerEventListener(object, triggerId) {
-  object.triggers[triggerId].removeEventListener()
+  if(object.triggers[triggerId].removeEventListener) object.triggers[triggerId].removeEventListener()
 }
 
 function addTrigger(ownerObject, trigger) {

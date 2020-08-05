@@ -92,6 +92,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       } else {
       let obj = JSON.parse(data); //now it an object
       currentGame = obj
+      currentGame.id = id
       socket.emit('onLoadGame', currentGame)
     }});
   })
@@ -191,7 +192,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
-    console.log('addObject req')
     currentGame.objects.push(...addedobjects)
     io.emit('onAddObjects', addedobjects)
   })
@@ -296,18 +296,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onDeleteHero', hero)
   })
 
-  socket.on('deleteQuest', (heroId, questId) => {
-    io.emit('onDeleteQuest', heroId, questId)
-  })
-
-  socket.on('startQuest', (hero, questId) => {
-    io.emit('onHeroStartQuest', hero, questId)
-  })
-
-  socket.on('completeQuest', (hero, questId) => {
-    io.emit('onHeroCompleteQuest', hero, questId)
-  })
-
   socket.on('openHeroModal', (hero, modalTitle, modalBody) => {
     io.emit('onOpenHeroModal', hero, modalTitle, modalBody)
   })
@@ -328,6 +316,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('updateGridNode', (x, y, update) => {
+    const key = 'x:'+x+'y:'+y
+    if(!currentGame.grid.nodeData) currentGame.grid.nodeData = {}
+    if(!currentGame.grid.nodeData[key]) currentGame.grid.nodeData[key] = {}
+    Object.assign(currentGame.grid.nodeData[key], update)
+
     if(currentGame.grid && currentGame.grid.nodes && currentGame.grid.nodes[x] && currentGame.grid.nodes[x][y]) {
       Object.assign(currentGame.grid.nodes[x][y], update)
     }
@@ -383,8 +376,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onHeroCameraEffect', type, heroId, options)
   })
 
-  socket.on('dropObject', (objectId, subObjectName) => {
-    io.emit('onDropObject', objectId, subObjectName)
+  socket.on('objectAnimation', (type, objectId, options) => {
+    io.emit('onObjectAnimation', type, objectId, options)
   })
 
   socket.on('hostLog', (msg, arg1, arg2, arg3) => {
@@ -412,6 +405,32 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   socket.on('deleteSubObjectChance', (ownerId, subObjectName) => {
     io.emit('onDeleteSubObjectChance', ownerId, subObjectName)
+  })
+
+  socket.on('openHeroModal', (heroId, title, body) => {
+    io.emit('onOpenHeroModal', heroId, title, body)
+  })
+
+  socket.on('showHeroToast', (heroId, body) => {
+    io.emit('onShowHeroToast', heroId, body)
+  })
+
+
+  socket.on('dropObject', (objectId, subObjectName) => {
+    io.emit('onDropObject', objectId, subObjectName)
+  })
+  socket.on('deleteQuest', (heroId, questId) => {
+    io.emit('onDeleteQuest', heroId, questId)
+  })
+  socket.on('startQuest', (hero, questId) => {
+    io.emit('onHeroStartQuest', hero, questId)
+  })
+  socket.on('completeQuest', (hero, questId) => {
+    io.emit('onHeroCompleteQuest', hero, questId)
+  })
+
+  socket.on('emitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
+    io.emit('emitGameEvent', eventName, arg1, arg2, arg3, arg4)
   })
 }
 

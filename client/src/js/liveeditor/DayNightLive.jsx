@@ -7,8 +7,6 @@ export default class DayNightLive extends React.Component {
     this.state = {
       cycleData: {},
       ambientLight: null,
-      alwaysDay: false,
-      alwaysNight: false,
     }
     this.handleUpdate = this.handleUpdate.bind(this)
     this.handleLightUpdate = this.handleLightUpdate.bind(this)
@@ -31,14 +29,11 @@ export default class DayNightLive extends React.Component {
       alwaysDay: newData.alwaysDay,
       alwaysNight: newData.alwaysNight,
       dayAmbientLight: newData.dayAmbientLight,
-      nightAmbientLight: newData.nightAmbientLight
+      nightAmbientLight: newData.nightAmbientLight,
+      autoCycle: newData.autoCycle
     }
 
-    if (PAGE.role.isHost) {
-      GAME.world.dayNightCycle = Object.assign({}, updatedProps)
-    } else {
-      window.socket.emit('updateWorld', [{ dayNightCycle: cycleData, ambientLight: updatedAmbientLight }])
-    }
+    window.socket.emit('updateWorld', { dayNightCycle: updatedProps })
   }
 
   handleLightUpdate(newData) {
@@ -54,8 +49,9 @@ export default class DayNightLive extends React.Component {
     if (GAME.gameState.ambientLight !== updatedAmbientLight) {
       if (PAGE.role.isHost) {
         GAME.gameState.ambientLight = updatedAmbientLight
+        GAME.gameState.ambientLightDelta = 0
       } else {
-        window.socket.emit('updateGameState', [{ ambientLight: updatedAmbientLight }])
+        window.socket.emit('updateGameState', { ambientLight: updatedAmbientLight, ambientLightDelta: 0 })
       }
     }
 
@@ -64,15 +60,17 @@ export default class DayNightLive extends React.Component {
 
   render() {
     const { cycleData, ambientLight } = this.state;
+    
     return (
       <div className='DayNightLive'>
         <div>
-          <DatGui data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
+          <DatGui style={{ marginTop: '300px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
             <DatNumber path='ambientLight' label='ambientLight' min={0} max={1} step={.01} />
           </DatGui>
         </div>
         <div>
-          <DatGui style={{ left: '0%' }} data={cycleData} onUpdate={this.handleUpdate}>
+          <DatGui data={cycleData} onUpdate={this.handleUpdate}>
+            <DatBoolean path='autoCycle' label='autoCycle' />
             <DatBoolean path='alwaysDay' label='alwaysDay' />
             <DatBoolean path='alwaysNight' label='alwaysNight' />
             <DatNumber path='dayLength' label="dayLength" min={0} max={100} step={1} />

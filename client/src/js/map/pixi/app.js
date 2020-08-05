@@ -87,7 +87,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // INTIIALIZE
   const app = new PIXI.Application({
-    width: canvasRef.width, height: canvasRef.height,
+    width: canvasRef.width, height: canvasRef.height, resizeTo: canvasRef
   });
   app.view.id = "pixi-canvas"
   document.getElementById('GameContainer').appendChild(app.view);
@@ -100,7 +100,7 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   PIXIMAP.stage = world
   PIXIMAP.app.ticker.maxFPS = 24
-
+  PIXIMAP.app.renderer.preserveDrawingBuffer = true
 
   ///////////////
   ///////////////
@@ -108,7 +108,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   // BACKGROUND STAGE
   PIXIMAP.backgroundStage = new PIXI.display.Layer()
   world.addChild(PIXIMAP.backgroundStage);
-  PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.from('assets/images/solidcolorsprite.png'))
+  PIXIMAP.backgroundOverlay = new PIXI.Sprite(PIXI.Texture.WHITE)
   PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.transform.scale.y = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
   PIXIMAP.backgroundOverlay.tint = parseInt(tinycolor(GAME.world.backgroundColor).toHex(), 16)
@@ -123,6 +123,13 @@ const initPixiApp = (canvasRef, onLoad) => {
   // SORT GROUP
   PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
   PIXIMAP.sortGroup.on('sort', function(sprite) {
+      // emitters are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
+      // WORK AROUND -> I could put foreground elements on a different higher stage than the emitters
+      if(sprite.emitter) {
+        sprite.zOrder = 1000000000000
+        return
+      }
+
       let object
       if(sprite.ownerName) {
         object = OBJECTS.getObjectOrHeroById(sprite.ownerName)
@@ -130,18 +137,25 @@ const initPixiApp = (canvasRef, onLoad) => {
         object = OBJECTS.getObjectOrHeroById(sprite.name)
       }
 
-      if(object && object.tags.emitter) {
-        sprite.zOrder = 1000000000000;
+      if(object && object.tags.background) {
+        sprite.zOrder = -1
         return
       }
+
       if(object && object.tags.obstacle){
-        sprite.zOrder = sprite.y + 100000;
+        sprite.zOrder = sprite.y + 10000
         return
       }
       if(object && object.tags.hero) {
-        sprite.zOrder = sprite.y + 1000000;
+        sprite.zOrder = sprite.y + 100000
         return
       }
+
+      if(object && object.tags.foreground) {
+        sprite.zOrder = sprite.y + 1000000
+        return
+      }
+
       sprite.zOrder = sprite.y;
   });
 
@@ -202,8 +216,7 @@ const initPixiApp = (canvasRef, onLoad) => {
 
     // console.log(world.stage)
     PIXIMAP.objectStage.emitters.forEach((emitter) => {
-      if(!emitter.emit) return
-      emitter.update(2 * 0.001);
+      emitter.update(delta/1000);
     })
     if(PIXIMAP.backgroundStage && PIXIMAP.backgroundStage.filters) PIXIMAP.backgroundStage.filters.forEach(updateFilters);
     if(PIXIMAP.cameraStage && PIXIMAP.cameraStage.filters) PIXIMAP.cameraStage.filters.forEach(updateFilters);
@@ -217,24 +230,37 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // ON RESIZE
   if(PAGE.role.isPlayer) {
+    let loadingTimeout
     function onResize() {
+      if(loadingTimeout) {
+        clearTimeout(loadingTimeout)
+      } else {
+        window.local.emit('onLoadingScreenStart')
+        PAGE.resizingMap = true
+      }
+      loadingTimeout = setTimeout(() => {
+        PAGE.resizingMap = false
+        window.local.emit('onLoadingScreenEnd')
+      }, 150)
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
-      app.renderer.resize(width, height);
+      app.resize(width, height);
       if(!window.resettingDarkness) {
         setTimeout(() => {
           if(PIXIMAP.initialized) {
             PIXIMAP.initializeDarknessSprites()
-            PIXIMAP.resetDarknessSprites()
+            PIXIMAP.resetDarkness()
             PIXIMAP.updateDarknessSprites()
           }
           window.resettingDarkness = false
         }, 100)
         window.resettingDarkness = true
       }
+      PIXIMAP.resizeToWindow = onResize
+      window.local.emit('onResize')
     }
-    window.local.on('onHeroZoomChange', () => {
+    window.local.on('onZoomChange', () => {
       onResize()
     })
     window.addEventListener("resize", onResize);
@@ -256,7 +282,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       textures[tile.id] = texture
     })
 
-    app.loader.add(['assets/images/block.png', 'assets/images/blockNormalMap.png', 'assets/images/solidcolorsprite.png', 'assets/images/solidcolorsprite_n.png', 'assets/images/invisiblesprite.png', 'assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
+    app.loader.add(['assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
       let texture = PIXI.Texture.from('assets/images/firepit-1.png');
       texture.id = 'firepit-1'
       textures['firepit-1'] = texture
@@ -265,30 +291,10 @@ const initPixiApp = (canvasRef, onLoad) => {
       texture.id = 'entarkia-1'
       textures['entarkia-1'] = texture
 
-      texture = PIXI.Texture.from('assets/images/solidcolorsprite.png');
-      texture.id = 'solidcolorsprite'
-      textures['solidcolorsprite'] = texture
+      textures['solidcolorsprite'] = PIXI.Texture.WHITE
+      PIXI.Texture.WHITE.id = 'solidcolorsprite'
       texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      texture = PIXI.Texture.from('assets/images/solidcolorsprite_n.png');
-      texture.id = 'solidcolorsprite_n'
-      textures['solidcolorsprite_n'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      texture = PIXI.Texture.from('assets/images/block.png');
-      texture.id = 'block'
-      textures['block'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      texture = PIXI.Texture.from('assets/images/blockNormalMap.png');
-      texture.id = 'blockNormalMap'
-      textures['blockNormalMap'] = texture
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
-      // texture = PIXI.Texture.from('assets/images/invisiblesprite.png')
-      // texture.id = 'invisiblesprite'
-      // textures['invisiblesprite'] = texture
-      // texture.scaleMode = PIXI.SCALE_MODES.NEAREST
       texture = PIXI.Texture.from('assets/images/spencer-1.png');
       texture.id = 'spencer-1'
       textures['spencer-1'] = texture

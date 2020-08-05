@@ -7,6 +7,7 @@ import modals from '../mapeditor/modals.js'
 class Page{
   constructor() {
     this.role = {}
+    this.loadingCount = 0
 
     const gameContainer = document.createElement('div')
     gameContainer.id = 'GameContainer'
@@ -27,20 +28,10 @@ class Page{
       PAGE.role.isHost = true
     }
 
-    if(PAGE.getParameterByName('mapEditor')) {
-      PAGE.role.isMapEditor = true
-    }
-
     if(PAGE.getParameterByName('arcadeMode')) {
       PAGE.role.isHost = true
       PAGE.role.isArcadeMode = true
       PAGE.role.isPlayer = true
-    }
-
-    if(PAGE.getParameterByName('ghost')) {
-      PAGE.role.isPlayEditor = false
-      PAGE.role.isPlayer = true
-      PAGE.role.isGhost = true
     }
 
     if(PAGE.getParameterByName('admin')) {
@@ -60,9 +51,7 @@ class Page{
       console.log('editor')
     }
     if(PAGE.role.isPlayer) {
-      if(PAGE.role.isGhost){
-       console.log('player-ghost')
-      } else console.log('player')
+      console.log('player')
     }
   }
 
@@ -160,7 +149,7 @@ class Page{
         if(currentGameExists) {
           cb(game)
         } else {
-          if(PAGE.role.isPlayEditor) {
+          if(PAGE.role.isAdmin || PAGE.role.isPlayEditor) {
             const { value: loadGameId } = await Swal.fire({
               title: 'Load Game',
               text: "Enter id of game",
@@ -201,7 +190,7 @@ class Page{
               }
             }
           } else {
-            alert('no current game, reload after game has been chosen')
+            alert('host has not chosen game, become host or reload when game has been chosen')
           }
         }
       })
@@ -220,6 +209,8 @@ class Page{
   resetStorage() {
     localStorage.removeItem('hero')
     localStorage.removeItem('ghostData')
+    localStorage.removeItem('initialGameState')
+    localStorage.removeItem('saveEditingGame')
     PAGE.role.isPlayer = false
     window.location.reload()
   }
@@ -247,6 +238,21 @@ class Page{
         });
       }
     });
+  }
+
+  onLoadingScreenEnd() {
+    PAGE.loadingCount--
+    if(PAGE.loadingCount <= 0) {
+      PAGE.loadingCount = 0
+      PAGE.loadingGame = false
+      document.body.style.cursor = 'default'
+    }
+  }
+
+  onLoadingScreenStart() {
+    PAGE.loadingGame = true
+    PAGE.loadingCount++
+    document.body.style.cursor = 'wait'
   }
 
   downloadObjectAsJson(exportObj, exportName){

@@ -89,7 +89,7 @@ export default class ConditionList extends React.Component {
           </div>
         </div>
         {sequenceItems.map((sequenceItem, index) => {
-          return <SequenceItem ref={sequenceItemRefs[index]} key={sequenceItem.id} sequenceList={sequenceItems} sequenceItem={sequenceItem} isHook onDelete={() => {
+          return <SequenceItem ref={sequenceItemRefs[index]} nested key={sequenceItem.id} sequenceList={sequenceItems} sequenceItem={sequenceItem} isHook onDelete={() => {
               const newSequenceItems = sequenceItems.slice()
               newSequenceItems.splice(index, 1)
               this.setState({sequenceItems: newSequenceItems })

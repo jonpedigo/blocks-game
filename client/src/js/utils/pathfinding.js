@@ -378,7 +378,6 @@ function walkAround(object) {
     }
   }
 
-  // console.log('found nowhere to move')
   return { x: gridX, y: gridY }
 }
 

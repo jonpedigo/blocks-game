@@ -1,12 +1,13 @@
 function setDefault() {
   window.defaultDayNightCycle = {
     dayLength: 2,
-    dayAmbientLight: 2,
+    dayAmbientLight: 1,
     nightLength: 30,
     nightAmbientLight: 0,
     transitionTime: 6,
-    alwaysDay: true,
+    alwaysDay: false,
     alwaysNight: false,
+    auto: false,
   }
 }
 
@@ -45,16 +46,23 @@ function calculateCurrentTOD() {
 function update(delta) {
   GAME.gameState.currentTime += delta
   const cycle = GAME.world.dayNightCycle
-  const { dayAmbientLight, nightAmbientLight, transitionTime } = GAME.world.dayNightCycle
-  const newTOD = calculateCurrentTOD()
+  const { autoCycle, dayAmbientLight, nightAmbientLight, transitionTime } = GAME.world.dayNightCycle
   const currentTOD = GAME.gameState.currentTimeOfDay
   const ambientLightDelta = GAME.gameState.ambientLightDelta
-
   if (ambientLightDelta) {
     if (GAME.gameState.ambientLight <= dayAmbientLight && GAME.gameState.ambientLight >= nightAmbientLight) {
       GAME.gameState.ambientLight += (ambientLightDelta * delta)
     }
   }
+
+  if(autoCycle) {
+    const newTOD = calculateCurrentTOD()
+    setTimeOfDay(currentTOD, newTOD)
+  }
+}
+
+function setTimeOfDay(currentTOD, newTOD) {
+  const { alwaysNight, alwaysDay, dayAmbientLight, nightAmbientLight, transitionTime } = GAME.world.dayNightCycle
 
   if (currentTOD === 'day' && newTOD === 'sunset') {
     // console.log('day -> sunset')
@@ -64,7 +72,7 @@ function update(delta) {
     GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
-  if (currentTOD === 'sunset' && newTOD === 'night' || cycle.alwaysNight) {
+  if (newTOD === 'night' || alwaysNight) {
     // console.log('sunset -> night')
     GAME.gameState.ambientLight = nightAmbientLight
     GAME.gameState.ambientLightDelta = null
@@ -78,7 +86,7 @@ function update(delta) {
     GAME.gameState.ambientLightDelta = ambientLightDelta
   }
 
-  if (currentTOD === 'sunrise' && newTOD === 'day' || cycle.alwaysDay) {
+  if (newTOD === 'day' || alwaysDay) {
     // console.log('sunrise -> day')
     GAME.gameState.ambientLight = dayAmbientLight
     GAME.gameState.ambientLightDelta = null

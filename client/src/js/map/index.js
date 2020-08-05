@@ -87,7 +87,7 @@ MAP.onRender = function(delta) {
   if(PIXIMAP.assetsLoaded && (!GAME.gameState.paused || CONSTRUCTEDITOR.open)) {
     render.update(camera)
   } else {
-    canvas.style.backgroundColor = '#333'
+    canvas.style.backgroundColor = '#222'
   }
 
   if(hero && PAGE.role.isPlayer && GAME.heros[HERO.id] && GAME.heros[HERO.id].animationZoomMultiplier) {

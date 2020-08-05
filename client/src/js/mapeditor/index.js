@@ -64,8 +64,8 @@ class MapEditor{
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
   }
 
-  openConstructEditor(object) {
-    CONSTRUCTEDITOR.start(object)
+  openConstructEditor(object, startAtHero) {
+    CONSTRUCTEDITOR.start(object, startAtHero)
     window.socket.emit('editGameState', { paused: true })
 
     MAPEDITOR.initState()
@@ -247,6 +247,8 @@ function handleMouseOut(event) {
 function handleMouseMove(event) {
   const { camera } = MAPEDITOR
 
+  if(!window.isClickingMap(event.target.className)) return
+
   if(PAGE.role.isGhost) {
     MAPEDITOR.skipRemoteStateUpdate = true
   }
@@ -286,7 +288,7 @@ function updateGridHighlight(location) {
   MAPEDITOR.objectHighlighted = mouseLocation
 
   // find the smallest one stacked up
-  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects)
+  let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects.filter(({reserved}) => !reserved))
 
   collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
     if(hero.removed) return

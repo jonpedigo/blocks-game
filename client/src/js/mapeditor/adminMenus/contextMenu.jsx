@@ -22,6 +22,7 @@ class contextMenuEl extends React.Component{
     super(props)
 
     document.body.addEventListener("contextmenu", e => {
+      if(!window.isClickingMap(e.target.className)) return
       if(!MAPEDITOR.paused) {
         e.preventDefault();
         const origin = {
@@ -83,7 +84,7 @@ class contextMenuEl extends React.Component{
       }
 
       if(key === 'open-sequence-editor') {
-        SEQUENCEEDITOR.open()
+        WORLDMANAGER.open('sequence')
       }
 
       if(key === 'download-game-JSON')  {
@@ -147,7 +148,7 @@ class contextMenuEl extends React.Component{
 
 
   _renderAdvancedWorldMenu() {
-    const { objectSelected, subObject } = this.props
+    const { objectSelected } = this.props
 
     return <SubMenu title="Advanced">
       <MenuItem key='download-game-JSON'>Download Game JSON</MenuItem>
@@ -173,7 +174,7 @@ class contextMenuEl extends React.Component{
           } else if(coloringObject == 'defaultObject') {
             window.socket.emit('updateWorld', {defaultObjectColor: color.hex})
           } else {
-            coloringObject.tags.filled = true
+            coloringObject.tags.outline = false
             networkEditObject(coloringObject, {color: color.hex})
           }
           this.setState({
@@ -216,7 +217,6 @@ class contextMenuEl extends React.Component{
         <MenuItem className='dont-close-menu' key='select-world-background-color'>Set world background color</MenuItem>
         <MenuItem className='dont-close-menu' key='select-default-object-color'>Set default object color</MenuItem>
         <MenuItem key='toggle-start-game'>{ GAME.gameState.started ? 'Stop Game' : 'Start Game' }</MenuItem>
-        {this._renderAdvancedWorldMenu()}
       </Menu>
     }
 

@@ -23,10 +23,7 @@ class Hero{
   }
 
   getHeroId() {
-    // GET GAME.heros[HERO.id] ID
-    if(PAGE.role.isGhost) {
-      HERO.id = 'ghost'
-    } else if(PAGE.role.isPlayer) {
+    if(PAGE.role.isPlayer) {
       let savedHero = localStorage.getItem('hero');
       if(savedHero && JSON.parse(savedHero).id){
         HERO.id = JSON.parse(savedHero).id
@@ -62,6 +59,8 @@ class Hero{
       lives: 10,
       score: 0,
       dialogue: [],
+      defaultSprite: 'solidcolorsprite',
+      sprite: 'solidcolorsprite',
       flags : {
         showDialogue: false,
         showScore: false,
@@ -135,10 +134,10 @@ class Hero{
     let x = 960;
     let y = 960;
     // hero spawn point takes precedence
-    if(hero.mod().spawnPointX && hero.mod().spawnPointX >= 0 && hero.mod().spawnPointY && hero.mod().spawnPointY >= 0) {
+    if(hero.mod().spawnPointX && typeof hero.mod().spawnPointX == 'number' && hero.mod().spawnPointY && typeof hero.mod().spawnPointY == 'number') {
       x = hero.mod().spawnPointX
       y = hero.mod().spawnPointY
-    } else if(GAME && GAME.world.worldSpawnPointX && GAME.world.worldSpawnPointX >= 0 && GAME.world.worldSpawnPointY && GAME.world.worldSpawnPointY >= 0) {
+    } else if(GAME && GAME.world.worldSpawnPointX && typeof GAME.world.worldSpawnPointX == 'number' && GAME.world.worldSpawnPointY && typeof GAME.world.worldSpawnPointY == 'number') {
       x = GAME.world.worldSpawnPointX
       y = GAME.world.worldSpawnPointY
     }
@@ -182,10 +181,15 @@ class Hero{
 
   resetToDefault(hero, useGame) {
     HERO.deleteHero(hero)
+    hero.subObjects = {}
+    hero.triggers = {}
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
     if(GAME.defaultHero && useGame) {
       newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.defaultHero)))
     }
+    OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
+      subObject.id = 'subObject-'+window.uniqueID()
+    })
     if(!hero.id) {
       alert('hero getting reset without id')
     }
@@ -214,11 +218,23 @@ class Hero{
   }
 
   zoomAnimation(hero) {
+    if(hero.animationZoomMultiplier == hero.zoomMultiplier && hero.animationZoomTarget == window.constellationDistance) {
+      window.local.emit('onConstellationAnimationStart')
+    }
+    if(hero.animationZoomMultiplier == window.constellationDistance && hero.zoomMultiplier == hero.animationZoomTarget) {
+      setTimeout(() => {
+        window.local.emit('onConstellationAnimationEnd')
+      }, 2500)
+    }
+
     if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/.97
+      PAGE.resizingMap = true
       if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
-        if(hero.endAnimation) hero.animationZoomMultiplier = null
-        else {
+        if(hero.endAnimation) {
+          hero.animationZoomMultiplier = null
+          PAGE.resizingMap = false
+        } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget
         }
       }
@@ -226,9 +242,12 @@ class Hero{
 
     if(hero.animationZoomTarget < hero.animationZoomMultiplier) {
       hero.animationZoomMultiplier = hero.animationZoomMultiplier/1.03
+      PAGE.resizingMap = true
       if(hero.animationZoomTarget > hero.animationZoomMultiplier) {
-        if(hero.endAnimation) hero.animationZoomMultiplier = null
-        else {
+        if(hero.endAnimation) {
+          PAGE.resizingMap = false
+          hero.animationZoomMultiplier = null
+        } else {
           hero.animationZoomMultiplier = hero.animationZoomTarget
         }
       }
@@ -244,11 +263,22 @@ class Hero{
     }
     value.x = value.centerX - value.width/2
     value.y = value.centerY - value.height/2
+    if(hero.id === HERO.id && MAP.camera.hasHitLimit) {
+      value.x = MAP.camera.x
+      value.y = MAP.camera.y
+    }
+
     let nonGrid = {...value}
     const { leftDiff, rightDiff, topDiff, bottomDiff } = gridUtil.getAllDiffs(value)
     gridUtil.snapDragToGrid(value)
 
+    const { gridX, gridY, width, height } = gridUtil.convertToGridXY(value)
+
     return {
+      gridX,
+      gridY,
+      gridWidth: width,
+      gridHeight: height,
       centerX: value.centerX,
       centerY: value.centerY,
       minX: value.x,
@@ -283,6 +313,9 @@ class Hero{
       delete GAME.defaultHero.id
       const id = hero.id
       hero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
+        subObject.id = 'subObject-'+window.uniqueID()
+      })
       hero.id = id
       HERO.respawn(hero)
       return hero
@@ -391,6 +424,7 @@ class Hero{
       customProps: hero.customProps,
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
+      opacity: hero.opacity,
 
       resourceWithdrawAmount: hero.resourceWithdrawAmount,
       resourceTags: hero.resourceTags,
@@ -496,12 +530,12 @@ class Hero{
   }
 
   onEditHero(updatedHero) {
-    if(updatedHero.arrowKeysBehavior) {
+    if(updatedHero.arrowKeysBehavior || (updatedHero.tags && updatedHero.tags.gravityY !== undefined)) {
       updatedHero.velocityX = 0
       updatedHero.velocityY = 0
     }
-    if(updatedHero.zoomMultiplier) {
-      window.local.emit('onHeroZoomChange', updatedHero.id)
+    if(updatedHero.zoomMultiplier !== GAME.heros[updatedHero.id].zoomMultiplier) {
+      window.local.emit('onZoomChange', updatedHero.id)
     }
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }
@@ -542,6 +576,7 @@ class Hero{
 
   onDeleteHero(hero) {
     HERO.deleteHero(hero)
+    delete GAME.heros[hero.id]
   }
 
   onDeleteQuest(heroId, questId) {
@@ -563,7 +598,6 @@ class Hero{
     }
 
     PHYSICS.removeObject(GAME.heros[hero.id])
-    delete GAME.heros[hero.id]
   }
 
   onNetworkUpdateHero(updatedHero) {

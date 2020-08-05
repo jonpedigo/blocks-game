@@ -11,15 +11,18 @@ function setDefault() {
   }
 
   window.physicsTags = {
-    gravity: false,
+    gravityY: false,
+    ignoreWorldGravity: false,
     obstacle: false,
     stationary: false,
+    // projectile: false,
     onlyHeroAllowed: false,
     noHeroAllowed: false,
     movingPlatform: false,
     heroPushable: false,
     skipHeroGravityOnCollide: false,
     rotateable: false,
+    notCollideable: false,
   }
 
   window.otherTags = {
@@ -32,6 +35,10 @@ function setDefault() {
     monsterVictim: false,
     monster: false,
     respawn: false,
+    // knockBackOnHit,
+    // explodeOnDestroy,
+    // fadeOutOnDestroy,
+    // flashWhiteOnHit,
   }
 
   window.behaviorTags = {
@@ -104,11 +111,14 @@ function setDefault() {
 
   window.graphicalTags = {
     glowing: false,
-    filled: false,
+    outline: false,
     invisible: false,
     tilingSprite: false, //cant change
     inputDirectionSprites: false,
     light: false,
+    background: false,
+    foreground: false,
+    hidden: false,
     // invisibleOnHeroCollide: false
   }
 
@@ -135,6 +145,20 @@ function setDefault() {
 
   window.particleTags = {
     emitter: false, //cant change
+    hasTrail: false,
+    explodeOnDestroy: false,
+    spinOffOnDestroy: false,
+  }
+
+  window.animationTags = {
+    shake: false,
+    realRotate: false,
+    realRotateFast: false,
+    pulseAlpha: false,
+    pulseDarken: false,
+    pulseLighten: false,
+
+    // realHover: false,
   }
 
   window.descriptiveTags = {
@@ -159,6 +183,7 @@ function setDefault() {
     ...window.cameraTags,
     ...window.particleTags,
     ...window.inventoryTags,
+    ...window.animationTags,
   }
 
   window.plainObjectTags = {
@@ -167,12 +192,14 @@ function setDefault() {
 
   window.heroTags = {
     hero: true,
-    filled: true,
+    respawn: true,
     gravityY: false,
     default: false,
     monsterDestroyer: false,
     obstacle: false,
     rotateable: false,
+    hidden: false,
+    hasTrail: false,
   }
 
   window.subObjectTags = {

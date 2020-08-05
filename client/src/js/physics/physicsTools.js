@@ -367,11 +367,14 @@ function objectCorrection(po, final) {
 function containObjectWithinGridBoundaries(object) {
   //DO THE PACMAN FLIP!!
   let gameBoundaries = GAME.world.gameBoundaries
-  if(gameBoundaries && gameBoundaries.x >= 0) {
+  if(gameBoundaries && typeof gameBoundaries.x == 'number') {
     let objectToEdit = object
     if(object.mod().tags.fresh) {
       objectToEdit = JSON.parse(JSON.stringify(object))
     }
+
+    let bottom = false
+    let legal = true
 
     if(gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') == -1 && (GAME.heros[HERO.id] && HERO.id)) {
       // FOR ZOOM IN PURGATORY, PURGATORY ONLY SUPPORTS 1 PLAYER RIGHT NOW
@@ -380,7 +383,6 @@ function containObjectWithinGridBoundaries(object) {
         hero = window.editingHero
       }
 
-      let legal = true
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width - ((HERO.cameraWidth * hero.zoomMultiplier)/2 )) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width - (HERO.cameraWidth * hero.zoomMultiplier)/2
         legal = false
@@ -388,6 +390,7 @@ function containObjectWithinGridBoundaries(object) {
       if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height - ((HERO.cameraHeight * hero.zoomMultiplier)/2 )) {
         objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height - ((HERO.cameraHeight * hero.zoomMultiplier)/2 )
         legal = false
+        bottom = true
       }
       if(objectToEdit.x < gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2)) {
         objectToEdit.x = gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2)
@@ -402,7 +405,6 @@ function containObjectWithinGridBoundaries(object) {
         object.path = null
       }
     } else if(gameBoundaries.behavior === 'pacmanFlip' || (gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') > -1)) {
-      let legal = true
       if(objectToEdit.x < gameBoundaries.x - objectToEdit.width) {
         objectToEdit.x = gameBoundaries.x + gameBoundaries.width
         legal = false
@@ -418,50 +420,64 @@ function containObjectWithinGridBoundaries(object) {
       if (objectToEdit.y > gameBoundaries.y + gameBoundaries.height) {
         objectToEdit.y = gameBoundaries.y - objectToEdit.height
         legal = false
+        bottom = true
       }
       if(legal && object.mod().tags.fresh){
         object.mod().tags.fresh = false
         object.path = null
       }
-    } else if(gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1){
-      let legal = true
+    } else {
+      const shouldContain = gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
-        objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
+        if(shouldContain) objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
         legal = false
       }
       if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
-        objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
+        if(shouldContain) objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
         legal = false
+        bottom = true
       }
       if(objectToEdit.x < gameBoundaries.x) {
-        objectToEdit.x = gameBoundaries.x
+        if(shouldContain)  objectToEdit.x = gameBoundaries.x
         legal = false
       }
       if(objectToEdit.y < gameBoundaries.y) {
-        objectToEdit.y = gameBoundaries.y
+        if(shouldContain) objectToEdit.y = gameBoundaries.y
         legal = false
       }
+    }
 
-      if(legal && object.mod().tags.fresh){
-        object.mod().tags.fresh = false
-        object.path = null
-      }
+    if(legal && object.mod().tags.fresh){
+      object.mod().tags.fresh = false
+      object.path = null
+    }
+
+    if(!legal && !object.tags.hero && GAME.world.tags.gameBoundaryDestroyObjects) {
+      object._destroy = true
+    }
+    if(!legal && object.tags.hero && GAME.world.tags.gameBoundaryDestroyHero) {
+      object._destroy = true
+    }
+    if(bottom && object.tags.hero && GAME.world.tags.gameBoundaryBottomDestroyHero) {
+      object._destroy = true
     }
   }
 
   //ALWAYS CONTAIN WITHIN BOUNDARIES OF THE GRID!!
-  if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
-    object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
-  }
-  if(object.y + object.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
-    object.y = (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY - object.height
-  }
-  if(object.x < GAME.grid.startX) {
-    object.x = GAME.grid.startX
-  }
-  if(object.y < GAME.grid.startY) {
-    object.y = GAME.grid.startY
+  if(GAME.world.tags.preventHeroGridBypass || object.tags.hero == false) {
+    if(object.x + object.width > (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX) {
+      object.x = (GAME.grid.nodeSize * GAME.grid.width) + GAME.grid.startX - object.width
+    }
+    if(object.y + object.height > (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY) {
+      object.y = (GAME.grid.nodeSize * GAME.grid.height) + GAME.grid.startY - object.height
+    }
+    if(object.x < GAME.grid.startX) {
+      object.x = GAME.grid.startX
+    }
+    if(object.y < GAME.grid.startY) {
+      object.y = GAME.grid.startY
+    }
   }
 }
 

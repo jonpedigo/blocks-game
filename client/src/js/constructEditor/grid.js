@@ -15,8 +15,21 @@ class Grid {
   }
 
   getGridXYfromXY(x, y) {
-    const gridX = Math.floor(x/this.nodeSize)
-    const gridY = Math.floor(y/this.nodeSize)
+    // pretend we are dealing with a 0,0 plane
+    x = x - this.startX
+    y = y - this.startY
+
+    let diffX = x % this.nodeSize
+    x -= diffX
+    let gridX = x/this.nodeSize
+
+    let diffY = y % this.nodeSize
+    y -= diffY
+    let gridY = y/this.nodeSize
+
+    // const gridX = Math.floor(x/this.nodeSize)
+    // const gridY = Math.floor(y/this.nodeSize)
+
     return {
       gridX,
       gridY
@@ -29,7 +42,7 @@ class Grid {
     for(var i = 0; i < gridWidth; i++) {
       grid.push([])
       for(var j = 0; j < gridHeight; j++) {
-        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startX + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
+        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startY + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
       }
     }
 

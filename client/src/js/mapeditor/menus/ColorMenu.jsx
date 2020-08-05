@@ -14,8 +14,8 @@ export default class ColorMenu extends React.Component{
         openColorPicker(objectSelected)
       }
 
-      if(key === 'toggle-filled') {
-        networkEditObject(objectSelected, { tags: { filled: !objectSelected.tags.filled }})
+      if(key === 'toggle-outline') {
+        networkEditObject(objectSelected, { tags: { outline: !objectSelected.tags.outline }})
       }
 
       if(key === 'toggle-visible') {
@@ -32,7 +32,7 @@ export default class ColorMenu extends React.Component{
 
     return <Menu onClick={this._handleColorMenuClick}>
       {!objectSelected.constructParts && <MenuItem className='dont-close-menu' key="select-color">Color Picker</MenuItem>}
-      <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
+      <MenuItem key="toggle-outline">{ objectSelected.tags.outline ? 'On border only' : "Fill object" }</MenuItem>
       {objectSelected.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
     </Menu>
   }

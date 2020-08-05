@@ -213,10 +213,12 @@ class Game{
   }
 
   loadAndJoin(game) {
+    window.local.emit('onStartLoadingScreen')
+
     GAME.loadGridWorldObjectsCompendiumState(game)
 
     // if you are a player and you dont already have a hero from the server ask for one
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost && !GAME.heros[HERO.id]) {
+    if(PAGE.role.isPlayer && !GAME.heros[HERO.id]) {
       if(GAME.heros[HERO.id]) {
         window.local.emit('onHeroFound', GAME.heros[HERO.id])
       } else {
@@ -229,6 +231,7 @@ class Game{
   }
 
   loadGridWorldObjectsCompendiumState(game){
+    GAME.id = game.id
     GAME.grid = game.grid
     window.local.emit('onGridLoaded')
 
@@ -307,9 +310,9 @@ class Game{
 
   loadHeros(heros) {
     if(!GAME.gameState.loaded) {
-      GAME.heroList.forEach(({id}) => {
-        GAME.heros[id] = HERO.summonFromGameData(GAME.heros[id])
-        GAME.heros[id].id = id
+      GAME.heroList.forEach((hero) => {
+        GAME.heros[hero.id] = HERO.summonFromGameData(hero)
+        GAME.heros[hero.id].id = hero.id
       })
     }
 
@@ -337,8 +340,8 @@ class Game{
     GAME.objects.forEach((object) => {
       OBJECTS.unloadObject(object)
     })
-    GAME.heroList.forEach(({id}) => {
-      let hero = GAME.heros[id]
+
+    GAME.heroList.forEach((hero) => {
       HERO.deleteHero(hero)
     })
 
@@ -436,8 +439,13 @@ class Game{
   }
 
   updateGridObstacles() {
+    if(GAME.grid.width !== GAME.grid.nodes.length) {
+      // were in the middle of a grid update HOMIE!!
+      return
+    }
+
     GAME.forEachGridNode((gridNode) => {
-      gridNode.hasObstacle = false
+      if(gridNode) gridNode.hasObstacle = false
     })
 
     GAME.objects.forEach((obj) => {
@@ -493,23 +501,30 @@ class Game{
     triggers.deleteTrigger(OBJECTS.getObjectOrHeroById(ownerId), triggerId)
   }
 
+  onGameReady() {
+    window.local.emit('onLoadingScreenEnd')
+  }
+
   onStopGame() {
     if(!GAME.gameState.started) {
       return console.log('trying to stop game that aint even started yet')
     }
 
-    let initialGameState = localStorage.getItem('initialGameState')
-    if(!initialGameState) {
-      GAME.unload()
-      GAME.loadAndJoin(GAME)
-      return console.log('game stopped, but no initial game state set')
-    }
+    window.local.emit('onLoadingScreenStart')
 
-    initialGameState = JSON.parse(initialGameState)
-    GAME.unload()
-    GAME.loadAndJoin(initialGameState)
-    GAME.gameState.paused = true
-    window.local.emit('onGameStopped')
+    setTimeout(() => {
+      let initialGameState = localStorage.getItem('initialGameState')
+      if(!initialGameState) {
+        GAME.unload()
+        GAME.loadAndJoin(GAME)
+        return console.log('game stopped, but no initial game state set')
+      }
+
+      initialGameState = JSON.parse(initialGameState)
+      GAME.unload()
+      GAME.loadAndJoin(initialGameState)
+      window.local.emit('onGameStopped')
+    }, 100)
   }
 
   onGameStart() {
@@ -517,44 +532,49 @@ class Game{
       return console.log('trying to start game that has already started')
     }
 
-    // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-    localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
+    window.local.emit('onLoadingScreenStart')
 
-    GAME.heroList.forEach((hero) => {
-      HERO.spawn(hero)
-      hero.questState = {}
-      if(hero.quests) {
-        Object.keys(hero.quests).forEach((questId) => {
-          hero.questState[questId] = {
-            started: false,
-            active: false,
-            completed: false,
-          }
-        })
-      }
-    })
+    setTimeout(() => {
+      // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
+      localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
 
-    GAME.objects.forEach((object) => {
-      OBJECTS.respawn(object)
-      if(object.tags.talkOnStart) {
-        GAME.heroList.forEach((hero) => {
-          onTalk(hero, object, {}, [], [], { fromStart: true })
-        })
-      }
-      if(object.tags.giveQuestOnStart) {
-        GAME.heroList.forEach((hero) => {
-          startQuest(hero, object.questGivingId)
-        })
-      }
-    })
-    GAME.gameState.paused = false
-    GAME.gameState.started = true
-    window.local.emit('onStartedGame')
+      GAME.heroList.forEach((hero) => {
+        HERO.spawn(hero)
+        hero.questState = {}
+        if(hero.quests) {
+          Object.keys(hero.quests).forEach((questId) => {
+            hero.questState[questId] = {
+              started: false,
+              active: false,
+              completed: false,
+            }
+          })
+        }
+      })
+
+      GAME.objects.forEach((object) => {
+        OBJECTS.respawn(object)
+        if(object.tags.talkOnStart) {
+          GAME.heroList.forEach((hero) => {
+            onTalk(hero, object, {}, [], [], { fromStart: true })
+          })
+        }
+        if(object.tags.giveQuestOnStart) {
+          GAME.heroList.forEach((hero) => {
+            startQuest(hero, object.questGivingId)
+          })
+        }
+      })
+      GAME.gameState.paused = false
+      GAME.gameState.started = true
+      window.local.emit('onGameStarted')
+    }, 100)
   }
 
   cleanForSave(game) {
     let gameCopy = JSON.parse(JSON.stringify({
       //.filter((object) => !object.spawned)
+      id: game.id,
       objects: game.objects,
       world: game.world,
       grid: game.grid,
@@ -575,10 +595,7 @@ class Game{
       else if(!gameCopy.defaultHero) return alert('could not find a game hero')
     }
 
-    let idValue = document.getElementById('game-id').value
-    if(idValue) {
-      gameCopy.id = idValue
-    }else if(!gameCopy.id) {
+    if(!gameCopy.id) {
       gameCopy.id = 'game-' + window.uniqueID()
     }
 
@@ -610,7 +627,9 @@ class Game{
   }
 
   onChangeGame(game) {
-    GAME.unload()
+    if(GAME.id) {
+      GAME.unload()
+    }
     GAME.loadAndJoin(game)
     ARCADE.changeGame(game.id)
   }
@@ -690,15 +709,14 @@ class Game{
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
           }
-        }
-        if(key === 'syncHero' && PAGE.role.isPlayEditor) {
-          window.syncHeroToggle.checked = value
-        }
-        if(key === 'syncObjects' && PAGE.role.isPlayEditor) {
-          window.syncObjectsToggle.checked = value
-        }
-        if(key === 'syncGameState' && PAGE.role.isPlayEditor) {
-          window.syncGameStateToggle.checked = value
+          if(tag === 'allMovingObjectsHaveGravityY') {
+            GAME.objects.forEach((object) => {
+              object.velocityY = 0
+            });
+            GAME.heroList.forEach((object) => {
+              object.velocityY = 0
+            });
+          }
         }
       }
     }
@@ -879,11 +897,14 @@ class Game{
   }
 
   onUpdateGridNode(x, y, update) {
+    const key = 'x:'+x+'y:'+y
+    if(!GAME.grid.nodeData) GAME.grid.nodeData = {}
+    if(!GAME.grid.nodeData[key]) GAME.grid.nodeData[key] = {}
+    Object.assign(GAME.grid.nodeData[key], update)
     if(GAME.grid && GAME.grid.nodes && GAME.grid.nodes[x] && GAME.grid.nodes[x][y]) {
       Object.assign(GAME.grid.nodes[x][y], update)
     }
   }
-
 }
 
 window.GAME = new Game()

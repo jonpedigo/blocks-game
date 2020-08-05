@@ -4,7 +4,7 @@ function Star(x,y,r,color){
     this.x = x;
     this.y = y;
     this.r = r;
-    this.rChange = 0.006;
+    this.rChange = 0.01;
     // this.vx = Math.floor(Math.random()*4+1);
     // this.vy = Math.floor(Math.random()*4+1);
     this.color = color;
@@ -25,8 +25,8 @@ Star.prototype = {
 
       context.beginPath();
       context.arc(((this.x/multiplier ) -  camera.x) , ((this.y/multiplier ) -  camera.y) , (this.r / multiplier), 0, 2*Math.PI, false);
-      context.shadowBlur = 2;
-      context.shadowColor = "white";
+      // context.shadowBlur = 2;
+      // context.shadowColor = "white";
       context.fillStyle = this.color;
       context.fill();
     },
@@ -81,7 +81,7 @@ function onResize(ctx) {
   for(let i = 0; i < 800; i++){
     var randX = Math.floor((Math.random()*(MAP.canvas.width))+1);
     var randY = Math.floor((Math.random()*(MAP.canvas.height))+1);
-    var randR = Math.random() * .5 + .01;
+    var randR = Math.random() * .5 + .2;
 
     var star = new Star(randX, randY, randR, randomColor());
     arrStars.push(star);

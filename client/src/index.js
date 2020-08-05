@@ -3,39 +3,186 @@
 // U CAN HAVE COOL GRAPHICS BUT IF THEY DONT MEAN ANYTHING MEANINGFUL TO THE GAMEPLAY IT DOESNT MATTER
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-Use MAPEDITOR.objectHighlighted to decide where to place these editor UI objects
-EDITOR UI will have many features. the CREATOR component needs to be extensible with any objects I put in there
 
-Editor UI
-  Map Creator Buttons
-  World Edits
-  Grid Editing
-  Game Loading Saving
+Scenarios and Stories !! AWESOME
+1) Try to make the editor modular ( from the sequence lists )
+2) Try to combine with dat GUI? I wonder if its possible
+
+FIREWORK PARTICLES, ( UNLEASH THE POWER OF THE PARTICLE SYSTEM )
+Pulsing size and rotating
+Smoke particles very subtle...
+
+Hero removed -> respawn UI
+
+---
+The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
+COMBINED DAT GUI EDITOR WITH REACT EDITOR?
+Find a good way to customize DAT GUI position and have more than one DAT GUI up?
+( allow them to tweak everything from animations to powerups to the physics to the day /night )
+
+Scenarios/BeginEnd
+  TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
+  VISIBLE TO
+  Fade in/out to game
+
+  BEGIN
+  I think what we are going to want is a SERIES OF screens. Lets not allow then to be customizable right now
+  Maybe allow a background upload or allow them to draw the start screen
+  onGameStart is called after all heros reach the end
+  { pressToStartHeader: false, colorBackground: false, centerText: "", bottomText: "" }
+  allow playground: true ( this allows them to move around before the game starts )
+  controls screen
+
+  LOBBY ( multiplayer game )
+  Hero select or hero random
+  ( show all NPCS as heros )
+  Team Select or team random
+  new Heros allowed
+  allow Bios
+
+  SCENARIO
+  firstHero to score ___
+  firstTeam to score ___
+  firstResourceTo X
+  killCount to X
+  firstHero to collide with X
+  after timer
+  end by admin
+  Deathmatch ( heros have lives )
+  ( make tags for special scenario resources, winning resource, winning item, winning area, etc )
+
+  SCORE SCREENS
+  Teams
+  ResourceZones
+  Hero
+    Kill Counts
+    Score
+  LOGS ( I MEAN YEAH WE WANT A LOG SYSTEM with TIMESTAMPS )
+
+  EPILOGUE SCENARIO?
+
+--
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-/// EDITOR UI
-// Before the compendium, there are basic graphical objects that every game will access
-// THE DEFAULT COMPENDIUM
-XXX1) Background tiles ( put on grid nodes ?)
-  Background sprites
-  update grid node
-XXX2) Stationary Obstacle ( no other functionaliy ) ( via construct editor )
-  Sprite construct parts
-XXX3) Zones ( spawn zone, resource zone, filters, idk, its just an invisible object THAT COMES WITH CUSTOM TAGS there shiuld be a menu where you choose zone tags )
-XXX4) Particle Emitter
-  // add more? allow JSON upload?
-XXX5) Moving Object ( starts with dialogue and some path finding?, has an awareness area subobject and a pf object? )
-  // awareness area
->>>>>>6) special environment -> (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice
-XXX7) Lights
-  // tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
-XXX8) Pickupable, Loot chests
->>>>>>9) Sounds
-XXX10) game objects ( quest, sequence, timer, trigger, hook )
---->11) Resource Management
+// BIG FEATURES
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
-https://github.com/dataarts/dat.gui
+SUB OBJECT CREATION MENU
+
+(ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
+( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
+
+SOUND FX
+
+!!!!!!!! !!!! READY FOR PAPA BEAR BETA !!!! !!!!!!
+
+PATHFINDING UPGRADE
+
+COMPENDIUM <---- !
+PUZZLE INTERFACES <---- !
+SUBINTERACT MENU ( find all interact triggers involving this object and display all possible )
+Finish feature list
+
+FOG OF WAR
+CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
+PIXEL EDITOR
+LEVEL UP SYSTEM
+
+LEVELS ( sub worlds )
+PROCEDURAL
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+/// SMALL FEATURES
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+// a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
+// Needs to be attached to system ( AKA the combat system )
+allow chaining of animations and effects
+Save Animations to world ( save animation button )
+
+I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
+HOOK UP RESPAWNS TO A SPAWN ZONE
+Game feel improvement in live editor - velocityX decay, jumpVelocity, dashVelocity, ( jumpAcc, dashAcc) accXDecay, accYDecay, bounce
+pickupable SUB OBJECT, cuz right now that would break right??
+a max stackable???? idk
+never close right click menu if shift is pressed
+Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
+UI - input index
+Object 'swinging' like on a rope. I mean... awesome right?
+in-game checkpoints
+MORE key actions.
+  Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
+  z and x accelerate and decelerate
+more space bar actions -> 'double jump', 'dash'
+input modifiers....'on ice', 'flat'
+ADMIN POWER HIGHLIGHT
+TRUE zelda camera work
+death by jump
+Target/Homing awareness area
+// gun that swaps places with what it hits! so cool..
+// 'with patience' tag AKA pathfind less often
+// 'dont backtrack' tag where they remember where they went
+// planet gravity! Would be cool to have..
+// 3d sound effects system from papa bear
+// layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
+// run local simulation
+// add sprites to construct editor
+// global compendium service that I can add to remove without copying and pasting JSON
+// name system -> sub object system
+// KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
+// INTERACT MENU if theres > 1 type of interaction available
+// ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
+// animation compendium
+// local mods? ( client only mods for specific players/situations )
+// notation for < or > for conditions and notation for '+' and '-' for edit
+// world option for if it doesnt have a collideable event on it, dont add to physics system
+// moving grid based on hero ( chunks ) and only run simulation on those objects in the grid
+////////////////////////////////////////////////////
+
+
+
+NOTES
+
+/////
+PLANS FOR ULTIMATE MINECRAFT SCALE
+Basically the grid will be a moving grid
+the x and y of each grid node will get a getter based off the startX and startY and gridX
+the grid will move its startX and startY with each hero with as its CHUNK
+
+Normally chunk padding is only used to calculate shadows as of now
+CHUNK padding is the difference between the players view and the grid
+
+It seems that theres VIEW padding and game padding. VIEW Padding seems to be for camera shakes and for moving very fast
+game padding seems to be for smash brothers style deaths and managing object updates ( like mine craft )
+
+A game boundary would likely dissapear, same with a camera lock
+and then you would just have a grid that moves with you, the server would know each heros grid size and location
+and update things accordingly
+
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+/// ALL SORTS OF EDITOR NOTES
+/////////////////////////////
+BASIC - Structure, Outline, Backdrop
+LIGHT - Fire, Light
+// tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
+ZONE - Spawn Zone, Resource Zone, Timer
+ITEM - Resource, Chest
+ACTOR - Standing Actor, Wanderer
+
+ADD SUB OBJECT
+Spear
+Gun
+Inventory Item
+Area x 2
+Area X 3
+Area x 4
+Potential Sub Object
+
 EDITORS
 world--
 day night editor
@@ -68,39 +215,8 @@ WORLD EDITOR
   //Set all objects to the middle ( FULL MIGRATION )
   // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
 
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-// BIG FEATURES
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-
-SUB OBJECT CREATION MENU
-
-GROUP OBJECT COMMANDS
-
-HOOK UP RESPAWNS TO A SPAWN ZONE
-TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS
-
-TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
-VISIBLE TO
-
-HERO MAP EDITOR
-
-SCENARIOS
-GAME RESULTS PAGE
-WIN/LOSE CONDITIONS
-GAME LOBBY PAGE
-EPILOGUE
-
-***TEST GAME LIMITS FOR GRID SIZE / PATHFINDING SIZES
-  - in a short test I found a pretty large limit for the world size
-  - the biggest performance hits are rendering and pathfinding
-
-SOUND FX
-
-!!!!!!!! !!!! READY FOR PAPA BEAR BETA !!!! !!!!!!
-
 PATHFINDING editor / advancements <---- !
+TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
 // objects have their own path?
 // pathfinding editor should fit inside of the sequence editor
 // path goals AKA patrol
@@ -109,68 +225,6 @@ PATHFINDING editor / advancements <---- !
 // Pathfinding for something larger than one grid node
 // Perhaps not PATHFINDING but… targeting.
 
-COMPENDIUM <---- !
-PUZZLE INTERFACES <---- !
-
-SUBINTERACT MENU ( find all interact triggers involving this object and display all possible )
-Finish feature list
-
-FOG OF WAR
-JUICE
-CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
-PIXEL EDITOR
-LEVEL UP SYSTEM
-
-LEVELS ( sub worlds )
-PROCEDURAL
-
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-/// SMALL FEATURES
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-pickupable SUB OBJECT, cuz right now that would break right??
-a max stackable???? idk
-
-never close right click menu if shift is pressed
-Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
-UI - input index
-Object 'swinging' like on a rope. I mean... awesome right?
-in-game checkpoints
-MORE key actions.
-  Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
-  z and x accelerate and decelerate
-more space bar actions -> 'double jump', 'dash'
-input modifiers....'on ice', 'flat'
-combine ghost with player
-ADMIN POWER HIGHLIGHT
-editorZoomMultiplier
-set game boundaries to remove objects
-TRUE zelda camera work
-death by jump
-Target/Homing awareness area
-// gun that swaps places with what it hits! so cool..
-// 'with patience' tag AKA pathfind less often
-// 'dont backtrack' tag where they remember where they went
-// planet gravity! Would be cool to have..
-// 3d sound effects system from papa bear
-// Construct editor in top right ( global construct object that is just a stationary obstacle )
-// layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
-// ALSO ^^ if an object is a certain size allow selection of 'world' menu
-// EDITOR UI OPTIONS - admin toggle, global construct, which context menu, creator/player/lobby/waiting, run local simulation, power UI toggle,
-// change tag filled -> tag solid color outline
-// add sprites to construct editor
-// global compendium service that I can add to remove without copying and pasting JSON
-// name system -> sub object system
-// KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
-// INTERACT MENU if theres > 1 type of interaction available
-// ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
-// animation compendium
-// local mods? ( client only mods for specific players/situations )
-
-// notation for < or > for conditions and notation for '+' and '-' for edit
-////////////////////////////////////////////////////
-
 ////////////////////////////////
 ////////////////////////////////
 // INVENTORY NOTES
@@ -178,13 +232,6 @@ GAME
 // max inventory ( number )
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
-
-UI
-// show item sprite ( boolean )
-// fullscreen ( boolean )
-// inventory style ( String - ['grid', 'list'])
-// inventory size ( String - ['micro', ?, ?, ?, ])
-
 
 ////////////////////////////////
 ////////////////////////////////
@@ -230,7 +277,20 @@ Zoom blur filter — Perhaps when you are like low on health??
 ////////////////////////////////
 ////////////////////////////////
 // JUICE IDEAS
+https://www.engadget.com/alt254-zelda-style-indie-game-pixels-174504609.html
+https://typeitjs.com/
+https://safi.me.uk/typewriterjs/
+HELP WITH COLOR PALLETE?
+
+RECORDING
+https://codepen.io/adkanojia/pen/EZJvJL
+https://github.com/spite/ccapture.js/
+^this could be huge..
+but honeslty I could just do a 'pick objects to be recorded moment' and we keep track of their x, y, dialogue, chat, color, etc
+
 ////////////////////////////////
+// little glowy things all around ( particle effects, see hyper light drifter )
+
 2) Object Shake/Shatter/Warp
 3) Explode ( particles )
 // INVERT GAME, for example, when you get pacman powers
@@ -294,6 +354,18 @@ Engine trail on a car u know what I mean?
 // convert all 'guestObject', 'mainObject', 'ownerObject' things to just ID stores
 // dev dependencies to try to lower build file size
 
+// DELETING object keys doesnt work, it just skips that update of that key. We need a good system for this
+// we need more patterns to interact with the rendering system.
+// standards for Adding Object to Game -> Add Object to Physics ->
+// standards for edit object vs update object
+// standards for network update/edit vs local update/edit
+// many more standards for many more features
+// CLIENT_GAME vs HOST_GAME
+// queuing world and other updates so we can 'flush' them like feedly does
+// STANDARDS STANDARDS/
+// admin vs player code much better seperated
+// Standards for DELETE, ADD, REMOVE, SPAWN, RESET, INITIALIZE, HIDE, (DISABLE?)
+
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 // https://zimjs.com/bits/physics.html
 // https://opengameart.org/content/colored-16x16-fantasy-tileset
@@ -302,8 +374,43 @@ Engine trail on a car u know what I mean?
 // THINK ABOUT ADDING A BASIC GRAPHICS LIBRARY FOR SQUARES AND ALL THE JUICE REGARDING THE SQUARES
 // https://github.com/YarnSpinnerTool/YarnEditor
 
+/*
+BETTER LOCAL STORAGE
+https://github.com/brianleroux/lawnchair
+
+MOUSE WHEEL
+http://monospaced.github.io/hamster.js/
+
+IDK
+https://namuol.github.io/cheet.js/
+
+GETTING SERIOUS ABOUT OPTIMIZATION
+https://github.com/spite/rstats
+https://github.com/geckosio/snapshot-interpolation
+https://github.com/rgcl/jsonpack
+
+SOUND
+https://github.com/kittykatattack/sound.js
+
+IMAGE MANIPULATION
+http://camanjs.com/examples/
+// aparently also FABRIC.js is good for that, I MEAN IDK MAN
+
+Tooltips
+https://github.com/atomiks/tippyjs-react
+https://wwayne.github.io/react-tooltip/
+
+P COOL IDK
+https://game-icons.net/
+*/
+
 // MARKETING IDEA
 // Make a game for their birthday
+
+window.awsURL = 'https://homemadearcade.s3-us-west-1.amazonaws.com/'
+
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 import './js/utils/utils.js'
 import './js/page/index.js'
@@ -311,7 +418,7 @@ import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
-import './js/sequenceeditor/index.js'
+import './js/worldmanager/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'

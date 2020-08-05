@@ -1,5 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
+import { SketchPicker, SwatchesPicker } from 'react-color';
 
 export default class Creator extends React.Component {
   constructor(props) {
@@ -10,7 +11,9 @@ export default class Creator extends React.Component {
       creatorObjectSelected : {},
       open: true,
       rows: [],
-      columnsOpen: {}
+      columnsOpen: {},
+      isColorPickerOpen: false,
+      colorSelected: '#FFFFFF'
     }
 
     this._setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
@@ -37,8 +40,27 @@ export default class Creator extends React.Component {
       })
     }
 
+    this._onMouseUp = (event) => {
+      this.setState({
+        mouseDown: false,
+      })
+    }
+
+    this._onMouseDown = (event) => {
+      if(!window.isClickingMap(event.target.className)) return
+
+      this.setState({
+        mouseDown: true,
+      })
+    }
+
     this._onMouseMove = () => {
-      const { creatorObjectSelected } = this.state
+      if(!MAPEDITOR.objectHighlighted) return
+      const { creatorObjectSelected, colorSelected } = this.state
+
+      if(this.state.mouseDown && creatorObjectSelected.onMouseDown) {
+        creatorObjectSelected.onMouseDown(MAPEDITOR.objectHighlighted, colorSelected)
+      }
 
       if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
         const { height, width, tags, color } = creatorObjectSelected.JSON
@@ -46,18 +68,23 @@ export default class Creator extends React.Component {
         if(height) MAPEDITOR.objectHighlighted.height = height
         if(tags) MAPEDITOR.objectHighlighted.tags = tags
         MAPEDITOR.objectHighlighted.color = color || 'white'
+        if(colorSelected) MAPEDITOR.objectHighlighted.color = colorSelected
         MAPEDITOR.objectHighlighted.CREATOR = true
       }
     }
 
-    this._onClick = () => {
-      const { creatorObjectSelected } = this.state
+    this._onClick = (event) => {
+      if(CONSTRUCTEDITOR.open) return
+      if(!window.isClickingMap(event.target.className)) return
+      const { creatorObjectSelected, colorSelected } = this.state
+
       let newObject
       if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
         newObject = _.cloneDeep(creatorObjectSelected.JSON)
         newObject.x = MAPEDITOR.objectHighlighted.x
         newObject.y = MAPEDITOR.objectHighlighted.y
         newObject.id = 'creator-'+window.uniqueID()
+        if(colorSelected) newObject.color = colorSelected
         OBJECTS.create(newObject)
 
         if(creatorObjectSelected.onCreateObject) {
@@ -66,7 +93,7 @@ export default class Creator extends React.Component {
       }
 
       if(creatorObjectSelected.onClick) {
-        creatorObjectSelected.onClick(MAPEDITOR.objectHighlighted, newObject)
+        creatorObjectSelected.onClick(MAPEDITOR.objectHighlighted, colorSelected, newObject)
       }
     }
 
@@ -86,11 +113,16 @@ export default class Creator extends React.Component {
         rows
       })
     }
+
+    this._openColorPicker = this._openColorPicker.bind(this)
+    this._closeColorPicker = this._closeColorPicker.bind(this)
   }
 
   componentDidMount() {
     document.body.addEventListener("click", this._onClick)
     document.body.addEventListener("mousemove", this._onMouseMove)
+    document.body.addEventListener("mousedown", this._onMouseDown)
+    document.body.addEventListener("mouseup", this._onMouseUp)
 
     this._categorizeCreatorObjects()
   }
@@ -98,6 +130,8 @@ export default class Creator extends React.Component {
   componentWillUnmount() {
     document.removeEventListener("click", this._onClick, false);
     document.removeEventListener("mousemove", this._onMouseMove, false);
+    document.removeEventListener("mousedown", this._onMouseDown, false);
+    document.removeEventListener("mouseup", this._onMouseUp, false);
   }
 
   _toggleOpenColumn(columnName) {
@@ -117,6 +151,7 @@ export default class Creator extends React.Component {
   }
 
   _selectCreatorObject(object) {
+    if(object.onSelect) object.onSelect.bind(this)()
     // window.setFontAwesomeCursor("\uf041", 'white')
     this.setState({
       creatorObjectSelected: object
@@ -138,8 +173,8 @@ export default class Creator extends React.Component {
       }}
       >
       <div className="Creator__category-top">
-        {!open && name}
-        {open && !selected && <i className="fa fas fa-chevron-down"></i>}
+        {!open && !selected && name}
+        {open && !selected && <i className="Creator__category-close fa fas fa-chevron-down"></i>}
         {selected &&
           <i className="Creator__category-close fa fas fa-times"
             onClick={() => {
@@ -164,13 +199,61 @@ export default class Creator extends React.Component {
     </div></div>
   }
 
+  _openColorPicker() {
+    this.setState({isColorPickerOpen: true})
+  }
+
+  _closeColorPicker() {
+    this.setState({isColorPickerOpen: false})
+  }
+
+  _renderColorPicker() {
+    const { colorSelected, isColorPickerOpen } = this.state
+
+    if(!isColorPickerOpen) return null
+
+    return <div className="Creator__color-picker"><SketchPicker
+        color={colorSelected}
+        onChange={(color) => {
+          this.setState({
+            colorSelected: color.hex
+          })
+        }}
+        onChangeComplete={ (color) => {
+          this.setState({
+            colorSelected: color.hex
+          })
+        }}
+      />
+    <br/>
+    <SwatchesPicker
+      color={colorSelected}
+      onChangeComplete={ (color) => {
+        this.setState({
+          colorSelected: color.hex
+        })
+      }}/>
+    </div>
+  }
+
+  _renderColorCategory() {
+    const { isColorPickerOpen, colorSelected } = this.state
+
+    return <div className="Creator__category-container">
+      {!isColorPickerOpen && <div className="Creator__category Creator__category-top" style={{backgroundColor: colorSelected}} onClick={this._openColorPicker}></div>}
+      {isColorPickerOpen && <div className="Creator__category Creator__category-top" style={{backgroundColor: colorSelected}} onClick={this._closeColorPicker}><i className="fa fas fa-chevron-down"></i></div>}
+      {this._renderColorPicker()}
+    </div>
+  }
+
   render() {
     const { creatorObjects, open, rows } = this.state
 
-    if(!open) return
+    if(!open || CONSTRUCTEDITOR.open) return null
 
     return (
       <div className="Creator">
+        {this._renderColorCategory()}
         {rows.map((column) => {
           return this._renderColumn(column)
         })}

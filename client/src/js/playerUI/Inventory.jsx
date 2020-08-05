@@ -1,5 +1,5 @@
 import React from 'react'
-import Sprite from './Sprite.jsx'
+import Sprite from '../components/Sprite.jsx'
 
 export default class Inventory extends React.Component {
     constructor(props) {

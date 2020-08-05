@@ -4,9 +4,13 @@
 
   &__color-picker {
     position: fixed;
-    left: 90px;
+    left: 110px;
     top: 20px;
     cursor: default;
+
+    .swatches-picker {
+      margin-top: 10px;
+    }
   }
 
   &__menu-list {

@@ -121,3 +121,32 @@ window.setFontAwesomeCursor = function(unicode, color) {
 Object.defineProperty(Object.prototype, 'mod', { value: function() {
   return GAME.mod(this)
 }})
+
+window.isClickingMap = function(className) {
+  if(typeof className !== 'string') return false
+
+  if(className == "EditorUI") return true
+  else return false
+
+  if(className == 'title' || className == 'label-text') return false
+
+  if(className.indexOf('Creator__category') >= 0 && className.indexOf('Creator__category-container') === -1) return false
+
+  if(className.indexOf('Toolbar') >= 0) return false
+
+  if(className.indexOf('ConstructEditor') >= 0) return false
+
+  return true
+}
+
+window.byteLength = function(str) {
+  // returns the byte length of an utf8 string
+  var s = str.length;
+  for (var i=str.length-1; i>=0; i--) {
+    var code = str.charCodeAt(i);
+    if (code > 0x7f && code <= 0x7ff) s++;
+    else if (code > 0x7ff && code <= 0xffff) s+=2;
+    if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
+  }
+  return s;
+}

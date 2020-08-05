@@ -58,7 +58,7 @@ class EventEmitter {
         event.push(HERO[eventName])
       }
 
-      if(PAGE.role.isGhost && GHOST[eventName]) {
+      if(GHOST[eventName]) {
         event.push(GHOST[eventName])
       }
 
@@ -105,12 +105,16 @@ class EventEmitter {
         event.push(CONSTRUCTEDITOR[eventName])
       }
 
-      if(SEQUENCEEDITOR[eventName]) {
-        event.push(SEQUENCEEDITOR[eventName])
+      if(WORLDMANAGER[eventName]) {
+        event.push(WORLDMANAGER[eventName])
       }
 
       if(LIVEEDITOR[eventName]) {
         event.push(LIVEEDITOR[eventName])
+      }
+
+      if(EDITOR[eventName]) {
+        event.push(EDITOR[eventName])
       }
     }
 

@@ -47,7 +47,7 @@ function onPageLoaded(){
     const key = keycode(e.keyCode)
 
     if(PAGE.role.isGhost) {
-      if(HERO.id === 'ghost') onKeyDown(key, GAME.heros[HERO.id])
+
     } else if(PAGE.role.isPlayer) {
       if(!PAGE.typingMode) {
         GAME.keysDown[key] = true

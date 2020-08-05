@@ -43,8 +43,8 @@ export default class HeroContextMenu extends React.Component{
         window.socket.emit('respawnHero', objectSelected)
       }
 
-      if(key === 'toggle-filled') {
-        networkEditObject(objectSelected, { tags: { filled: !objectSelected.tags.filled }})
+      if(key === 'toggle-outline') {
+        networkEditObject(objectSelected, { tags: { outline: !objectSelected.tags.outline }})
       }
 
       if(key === 'copy-id') {
@@ -95,6 +95,10 @@ export default class HeroContextMenu extends React.Component{
 
       if(key === 'reset-to-core-default') {
         window.socket.emit('resetHeroToDefault', objectSelected)
+      }
+
+      if (key === "open-hero-live-edit") {
+        LIVEEDITOR.open(objectSelected, 'hero')
       }
     }
 
@@ -173,7 +177,7 @@ export default class HeroContextMenu extends React.Component{
       <MenuItem key='respawn'>Respawn</MenuItem>
       <SubMenu title="Color">
         <MenuItem key="select-color" className='dont-close-menu'>Color Picker</MenuItem>
-        <MenuItem key="toggle-filled">{ objectSelected.tags.filled ? 'On border only' : "Fill object" }</MenuItem>
+        <MenuItem key="toggle-outline">{ objectSelected.tags.outline ? 'On border only' : "Fill object" }</MenuItem>
       </SubMenu>
       <SubMenu title="Quests">
         <MenuItem key="add-quest">Add Quest</MenuItem>
@@ -190,9 +194,6 @@ export default class HeroContextMenu extends React.Component{
       </SubMenu>
       <SubMenu title="Hooks">
         <HookMenu objectSelected={objectSelected}/>
-      </SubMenu>
-      <SubMenu title="Live Edit">
-        <LiveMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>
       <SubMenu title="Controls">
@@ -220,13 +221,14 @@ export default class HeroContextMenu extends React.Component{
           <TagMenu objectSelected={objectSelected}></TagMenu>
         </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-        <MenuItem key="reset-to-default">Reset To Game Default</MenuItem>
+        <MenuItem key="reset-to-game-default">Reset To Game Default</MenuItem>
         <MenuItem key="reset-to-core-default">Reset To Core Default</MenuItem>
         <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
         <MenuItem key="edit-properties-json">Edit Properties JSON</MenuItem>
         <MenuItem key="edit-state-json">Edit State JSON</MenuItem>
         <MenuItem key="edit-all-json">Edit All JSON</MenuItem>
         <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
+        <MenuItem key="open-hero-live-edit">Live Edit</MenuItem>
       </SubMenu>
     </Menu>
   }

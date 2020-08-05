@@ -49,6 +49,7 @@ function moveOnPath(object, delta) {
   let pathSpeedY = object.mod().speed || -100
 
   moveTowardsTarget(object, {x: pathX, y: pathY }, delta, { flat: true })
+
   let diffX = Math.abs(object.x - pathX)
   let diffY = Math.abs(object.y - pathY)
 
