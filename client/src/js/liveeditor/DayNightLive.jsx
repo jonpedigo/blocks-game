@@ -47,7 +47,6 @@ export default class DayNightLive extends React.Component {
     this.setState({
       ambientLight
     })
-    console.log(newData, 'newDataHandleLightUpdate')
 
     let updatedAmbientLight;
     updatedAmbientLight = ambientLight
@@ -65,7 +64,6 @@ export default class DayNightLive extends React.Component {
 
   render() {
     const { cycleData, ambientLight } = this.state;
-    console.log(GAME.gameState.ambientLight, 'AMBIENT LIGHT')
     return (
       <div className='DayNightLive'>
         <div>

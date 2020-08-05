@@ -3,17 +3,18 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import SequenceItem from '../sequenceeditor/SequenceItem.jsx'
 import ConditionList from '../sequenceeditor/ConditionList.jsx'
+import SubObjectModal from './SubObjectModal.jsx'
 
 function editTriggerEffect(owner, trigger, cb) {
   PAGE.typingMode = true
   openEditEffectModal(trigger, (result) => {
-    if(result && result.value) {
+    if (result && result.value) {
       const triggerUpdate = result.value
       const oldId = trigger.id
 
       window.socket.emit('editTrigger', owner.id, oldId, triggerUpdate)
 
-      if(cb) cb()
+      if (cb) cb()
     }
     PAGE.typingMode = false
   })
@@ -572,6 +573,35 @@ function openEditConditionListModal(conditionList, cb) {
 
 }
 
+function openSubObjectModal(objectSelected, cb) {
+  Swal.fire({
+    title: 'Create Sub Object',
+    html: ' <div id="subObjectModal--container"> </div>',
+    focusConfirm: false,
+    preConfirm: () => {
+      const nameValue = document.getElementById('subobject-input-name').value;
+      const tagValueList = document.getElementsByClassName('subobject-radio');
+      const tagValue = [tagValueList.item(0), tagValueList.item(1), tagValueList.item(2)]
+        .find(value => {
+          return value.checked
+        }).id
+
+      if (nameValue) {
+        window.socket.emit('addSubObject', objectSelected, {}, nameValue)
+        if (tagValue) {
+          window.socket.emit('addSubObject', objectSelected, {}, tagValue)
+        }
+      }
+    }
+  }).then(cb)
+  const ref = React.createRef()
+  ReactDOM.render(
+    React.createElement(SubObjectModal, { objectSelected: objectSelected }),
+    document.getElementById('subObjectModal--container')
+  )
+}
+
+
 export default {
   addCustomInputBehavior,
   addGameTag,
@@ -589,6 +619,7 @@ export default {
   openNameSubObjectModal,
   openEditCodeModal,
   openEditNumberModal,
+  openSubObjectModal,
   openSelectTag,
   editTriggerEvent,
   editTriggerEffect,
