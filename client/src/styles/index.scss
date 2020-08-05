@@ -327,3 +327,8 @@ button.selected{
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
     right: 0px;
 }
+
+#subobject-template-options{
+  display: flex;
+  flex-direction: row;
+}

@@ -31,7 +31,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       }
 
       if(key === 'add-new-subobject') {
-        modals.addNewSubObject(objectSelected)
+        modals.addNewSubObjectTemplate(objectSelected)
       }
 
       if(key === 'set-world-respawn-point') {

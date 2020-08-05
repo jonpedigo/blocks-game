@@ -60,7 +60,7 @@ export default class DayNightLive extends React.Component {
 
   render() {
     const { cycleData, ambientLight } = this.state;
-
+    
     return (
       <div className='DayNightLive'>
         <div>

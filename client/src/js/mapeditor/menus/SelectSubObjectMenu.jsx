@@ -13,7 +13,7 @@ export default class SelectSubObjectMenu extends React.Component{
       const { objectSelected, selectSubObject } = this.props;
 
       if(key === 'add-new-subobject') {
-        modals.addNewSubObject(objectSelected)
+        modals.addNewSubObjectTemplate(objectSelected)
       }
 
       if(key.indexOf(selectSubObjectPrefix) === 0) {
