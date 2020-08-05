@@ -573,11 +573,17 @@ function openEditConditionListModal(conditionList, cb) {
 
 }
 
-function openSubObjectModal(objectSelected, cb) {
+function addNewSubObjectTemplate(objectSelected, cb) {
   Swal.fire({
     title: 'Create Sub Object',
     html: ' <div id="subObjectModal--container"> </div>',
     focusConfirm: false,
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
     preConfirm: () => {
       const nameValue = document.getElementById('subobject-input-name').value;
       const tagValueList = document.getElementsByClassName('subobject-radio');
@@ -586,11 +592,12 @@ function openSubObjectModal(objectSelected, cb) {
           return value.checked
         }).id
 
-      if (nameValue) {
+      if(tagValue === 'inventory') {
+        window.socket.emit('addSubObject', objectSelected, { inInventory: true, tags: { potential: true }}, nameValue)
+      } else if(tagValue === 'potential') {
+        window.socket.emit('addSubObject', objectSelected, { tags:{ potential: true }}, nameValue)
+      } else {
         window.socket.emit('addSubObject', objectSelected, {}, nameValue)
-        if (tagValue) {
-          window.socket.emit('addSubObject', objectSelected, {}, tagValue)
-        }
       }
     }
   }).then(cb)
@@ -606,6 +613,7 @@ export default {
   addCustomInputBehavior,
   addGameTag,
   addNewSubObject,
+  addNewSubObjectTemplate,
   addHook,
   addTrigger,
   editHookConditions,
@@ -619,7 +627,6 @@ export default {
   openNameSubObjectModal,
   openEditCodeModal,
   openEditNumberModal,
-  openSubObjectModal,
   openSelectTag,
   editTriggerEvent,
   editTriggerEffect,
