@@ -60,11 +60,47 @@ export default class GeneratedMenu extends React.Component{
     }
   }
 
+  // NATE::
+  _generateContextMenuItems(library) {
+    let objectMenuItems = []
+    let heroMenuItems = []
+
+    library.forEach((menuItem) => {
+      if(menuItem.objectType === 'object') {
+        objectMenuItems.push(menuItem)
+      }
+      if(menuItem.objectType === 'hero') {
+        heroMenuItems.push(menuItem)
+      }
+    })
+
+    // objectMenuItems = objectMenuItems.reduce(() => {
+    //   // NATE:: here youll have to turn the data into the format that you want to use in generatedMenu.jsx
+    //   // if theres a submenu mentioned youll need to create a sub array or something
+    // })
+    //
+    // heroMenuItems = heroMenuItems.reduce(() => {
+    //
+    // })
+
+    return {
+      objectMenuItems,
+      heroMenuItems
+    }
+  }
+
   render() {
-    const { objectSelected, subObject, menuItems } = this.props
-    console.log(menuItems)
+    const { objectSelected, subObject, menuItemData } = this.props
+    const { objectMenuItems, heroMenuItems } = this._generateContextMenuItems(menuItemData)
+
+    if(objectSelected.tags && objectSelected.tags.hero) {
+      return <Menu onClick={this._onHandleMenuClick}>
+        {/* NATE:: use heroMenuItems to generate a menu */}
+      </Menu>
+    }
+
     return <Menu onClick={this._onHandleMenuClick}>
-{/* NATE:: use provide menuItems to generate a menu */}
+      {/* NATE:: use objectMenuItems to generate a menu */}
     </Menu>
   }
 }

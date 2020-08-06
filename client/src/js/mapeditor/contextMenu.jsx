@@ -98,52 +98,16 @@ class contextMenuEl extends React.Component{
     this._toggleContextMenu('show')
   }
 
-// NATE::
-  _generateContextMenuItems(library) {
-    let objectMenuItems = []
-    let heroMenuItems = []
-
-    library.forEach((menuItem) => {
-      if(menuItem.objectType === 'object') {
-        objectMenuItems.push(menuItem)
-      }
-      if(menuItem.objectType === 'hero') {
-        heroMenuItems.push(menuItem)
-      }
-    })
-
-    // objectMenuItems = objectMenuItems.reduce(() => {
-    //   // NATE:: here youll have to turn the data into the format that you want to use in generatedMenu.jsx
-    //   // if theres a submenu mentioned youll need to create a sub array or something
-    // })
-
-    return {
-      objectMenuItems,
-      heroMenuItems
-    }
-  }
-
-// NATE::
   _renderPlayerMenus() {
     const { objectSelected, subObjectSelected, subObjectSelectedName } = this.state;
-    const { objectMenuItems, heroMenuItems } = this._generateContextMenuItems(window.defaultPlayerContextMenu)
 
     MAPEDITOR.contextMenuVisible = true
-
-    if(objectSelected.tags && objectSelected.tags.hero) {
-      return <GeneratedMenu
-        objectSelected={objectSelected}
-        openColorPicker={this.openColorPicker}
-        selectSubObject={this._selectSubObject}
-        menuItems={heroMenuItems}
-      />
-    }
 
     return <GeneratedMenu
       objectSelected={objectSelected}
       openColorPicker={this.openColorPicker}
       selectSubObject={this._selectSubObject}
-      menuItems={objectMenuItems}
+      menuItemData={window.defaultPlayerContextMenu}
     />
   }
 
