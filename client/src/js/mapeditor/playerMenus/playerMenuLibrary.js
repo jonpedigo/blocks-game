@@ -2,7 +2,7 @@ window.defaultPlayerContextMenu = [
   // NATE:: try to make these work. I put them in order of difficulty
   {
     objectType: 'object', // if the object is just a normal object ( see _renderAdminMenus for conditions ) then this will render in that menu
-    action: 'drag', // set key={action} and see how keys are used ---- see key === drag in the objectContextMenu. Basically make a universal util function called like 'action library' that just has all the possible keys we can use for actions
+    action: 'drag', // set key={action} and see how keys are used ---- see key === drag in the objectContextMenu. Basically _handleMenuClick should have a million little actions you can choose from. It would be good to grab these actions from the various menus already existing
     title: 'Move' // The text that you see on the right click menu
   },
   {
