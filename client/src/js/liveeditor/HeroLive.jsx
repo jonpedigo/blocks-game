@@ -28,7 +28,11 @@ export default class HeroLive extends React.Component {
       speed: newData.objectSelected.speed,
       jumpVelocity: newData.objectSelected.jumpVelocity,
       velocityMax: newData.objectSelected.velocityMax,
-      zoomMultiplier: newData.objectSelected.zoomMultiplier
+      zoomMultiplier: newData.objectSelected.zoomMultiplier,
+      cameraTweenToTargetX: newData.objectSelected.cameraTweenToTargetX,
+      cameraTweenToTargetY: newData.objectSelected.cameraTweenToTargetY,
+      cameraTweenSpeedX: newData.objectSelected.cameraTweenSpeedX,
+      cameraTweenSpeedY: newData.objectSelected.cameraTweenSpeedY,
     }
 
     if (PAGE.role.isHost) {
@@ -72,6 +76,10 @@ export default class HeroLive extends React.Component {
             }}></DatButton>
           </DatFolder>
           <DatFolder title='Hero Camera' closed={false}>
+            <DatBoolean path='objectSelected.cameraTweenToTargetX' label="Delay X"/>
+            <DatNumber path='objectSelected.cameraTweenSpeedX' label="Delay Speed X" min={0} max={6} step={.02}/>
+            <DatBoolean path='objectSelected.cameraTweenToTargetY' label="Delay Y"/>
+            <DatNumber path='objectSelected.cameraTweenSpeedY' label="Delay Speed Y" min={0} max={6} step={.02}/>
             <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>
             <DatFolder title='Shake' closed>
               <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={5000} step={1} />

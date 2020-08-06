@@ -78,6 +78,10 @@ class Hero{
       triggers: {},
       triggerState: {},
       tags: {},
+      cameraTweenToTargetX: false,
+      cameraTweenToTargetY: false,
+      cameraTweenSpeedX: 2,
+      cameraTweenSpeedY: 2,
     }
 
     window.local.on('onGridLoaded', () => {
@@ -348,6 +352,10 @@ class Hero{
       reachablePlatformHeight: hero.reachablePlatformHeight,
       animationZoomMultiplier: hero.animationZoomMultiplier,
       animationZoomTarget: hero.animationZoomTarget,
+      cameraTweenToTargetX: hero.cameraTweenToTargetX,
+      cameraTweenToTargetY: hero.cameraTweenToTargetY,
+      cameraTweenSpeedX: hero.cameraTweenSpeedX,
+      cameraTweenSpeedY: hero.cameraTweenSpeedY,
       endAnimation: hero.endAnimation,
       dialogue: hero.dialogue,
       dialogueName: hero.dialogueName,

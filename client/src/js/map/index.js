@@ -75,6 +75,8 @@ MAP.onRender = function(delta) {
     if(hero) camera.set(hero)
   }
 
+  camera.update(hero, delta)
+
   if(camera.xShake && camera.xShake.isShaking) {
     camera.xShake.update()
   }

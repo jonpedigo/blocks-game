@@ -296,7 +296,6 @@ but honeslty I could just do a 'pick objects to be recorded moment' and we keep 
 // INVERT GAME, for example, when you get pacman powers
 // spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
 // lazy scroll that is not not immediate! Smoother...
-// optimize shadow feature, not all vertices!
 // satisfying death animations? satisfing death states or idk.. things?
 /*Trails,
 	long trail
@@ -336,42 +335,46 @@ Engine trail on a car u know what I mean?
 // revise physics system structure, allow like 'center point' to be changed and have it be used by default.
 // ^^ so that rotation isnt a hack
 // Rotational velocity also needs to be default.
+
 // re organize parent, relative, owner, etc. What do these really all mean and why??
 // event system is NOT named right. onDelete vs delete for example. I think that ones good, but like... 'startQuest'
 // like whats our patterns. Is it Host Sends event through network -> Host picks up event through network?
+
 // implement lodash fully with diffs, etc
 // a try catch that if theres an error, the editor asks for a version of the game from like 1 minute ago
 // switch tag fresh to an _fresh ( actually just go through all object state and make sure its consistent, there are others such as !!!target!!!<---( please make _ ) that could be an underscore property )
 // lastHeroUpdateId, velocity? , i gridX, width, etc
-// add grid to world editor
+
 // debug tools such as ( view all possible effects this object can have )
 // view current POWERS
 // VIEW DIFF from default version of this object
+
 // auto save game state to DB, restore game state
 // combine objectsById and objectsByTag with hero versions. Heros ARE objects. We can use .objectList and .heroList to diffentiate
-// () => syntax in react PLEASE so no more binding
 // gameState => worldState
 // convert all 'guestObject', 'mainObject', 'ownerObject' things to just ID stores
 // dev dependencies to try to lower build file size
 
 // DELETING object keys doesnt work, it just skips that update of that key. We need a good system for this
+
 // we need more patterns to interact with the rendering system.
 // standards for Adding Object to Game -> Add Object to Physics ->
 // standards for edit object vs update object
 // standards for network update/edit vs local update/edit
 // many more standards for many more features
-// CLIENT_GAME vs HOST_GAME
-// queuing world and other updates so we can 'flush' them like feedly does
-// STANDARDS STANDARDS/
-// admin vs player code much better seperated
 // Standards for DELETE, ADD, REMOVE, SPAWN, RESET, INITIALIZE, HIDE, (DISABLE?)
+
+// CLIENT_GAME vs HOST_GAME
+
+// queuing world and other updates so we can 'flush' them like feedly does
+
+// admin vs player code much better seperated
 
 // HONESTLY USING BOX 2D PHYSICS WOULD BE INCREDIBLE
 // https://zimjs.com/bits/physics.html
 // https://opengameart.org/content/colored-16x16-fantasy-tileset
 // http://timefantasy.net/
 // https://www.codeandweb.com/texturepacker/tutorials/how-to-create-sprite-sheets-and-animations-with-pixijs5
-// THINK ABOUT ADDING A BASIC GRAPHICS LIBRARY FOR SQUARES AND ALL THE JUICE REGARDING THE SQUARES
 // https://github.com/YarnSpinnerTool/YarnEditor
 
 /*
@@ -402,6 +405,10 @@ https://wwayne.github.io/react-tooltip/
 
 P COOL IDK
 https://game-icons.net/
+
+TWEENS
+http://gizma.com/easing/#quad1
+
 */
 
 // MARKETING IDEA
