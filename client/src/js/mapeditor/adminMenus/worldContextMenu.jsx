@@ -8,7 +8,7 @@ export default class WorldContextMenu extends React.Component{
     super(props)
 
     this._handleMapMenuClick = ({ key }) => {
-      const { objectSelected } = this.state
+      const { objectSelected } = this.props
 
       if(key === 'create-object') {
         OBJECTS.create({...objectSelected, tags: {obstacle: true}})
