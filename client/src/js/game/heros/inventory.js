@@ -109,8 +109,8 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const subObject = owner.subObjects[subObjectName]
   const newObject = _.cloneDeep(subObject)
 
-  if(hero.subObjects && hero.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
-    window.socket.emit('heroNotification', hero.id, { type: 'toast', message: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
+  if(withdrawer.tags.hero && withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
+    window.socket.emit('heroNotification', withdrawer.id, { type: 'toast', message: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
     return
   }
 
@@ -132,11 +132,22 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
     window.socket.emit('deleteSubObject', owner, subObjectName)
   }
 
-  let message =  'You withdrew ' + newObject.subObjectName
-  if(newObject.count > 1) {
-    message = 'You withdrew ' + newObject.count + ' ' + newObject.subObjectName
+  if(withdrawer.tags.hero) {
+    let message =  'You withdrew ' + newObject.subObjectName
+    if(newObject.count > 1) {
+      message = 'You withdrew ' + newObject.count + ' ' + newObject.subObjectName
+    }
+    window.socket.emit('heroNotification', withdrawer.id, { type: 'toast', message})
   }
-  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
+
+  if(owner.tags.hero) {
+    let message =  'You deposited ' + newObject.subObjectName
+    if(newObject.count > 1) {
+      message = 'You deposited ' + newObject.count + ' ' + newObject.subObjectName
+    }
+    window.socket.emit('heroNotification', owner.id, { type: 'toast', message})
+  }
+
   window.local.emit('onAddSubObject', withdrawer, newObject, subObjectName)
 }
 

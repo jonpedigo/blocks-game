@@ -119,7 +119,7 @@ export default class Root extends React.Component {
     if(data.type === 'toast') {
       toast(data.message, {
         position: "top-right",
-        autoClose: data.duration || 1500,
+        autoClose: data.duration || 3000,
         newestOnTop: true,
       })
     }
