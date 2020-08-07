@@ -1030,6 +1030,30 @@ class Objects{
       window.socket.emit('objectAnimation', 'spinOff', object.id)
     }
   }
+
+  combineWithJSON(object, JSON) {
+    JSON = _.cloneDeep(JSON)
+
+    Object.keys(JSON).forEach((key) => {
+      const jsonValue = JSON[key]
+      const objectValue = object[key]
+      if(!objectValue) return
+
+      if(typeof jsonValue === 'string' && typeof objectValue === 'number') {
+        if (jsonValue.startsWith("+")) {
+          const equationValue = Number(jsonValue.slice(1))
+          JSON[key] = objectValue + equationValue
+        } else if(jsonValue.startsWith("-")) {
+          const equationValue = Number(jsonValue.slice(1))
+          JSON[key] = objectValue - equationValue
+        }
+      }
+    })
+
+    console.log(JSON)
+
+    window.mergeDeep(object, JSON)
+  }
 }
 
 window.OBJECTS = new Objects()

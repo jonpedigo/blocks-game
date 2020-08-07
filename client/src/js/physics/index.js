@@ -329,7 +329,7 @@ function postPhysics() {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
-      if(input && ',' in input) {
+      if(input && 'e' in input) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
       }
       // bad for JSON

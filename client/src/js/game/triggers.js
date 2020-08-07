@@ -58,16 +58,21 @@ function addTrigger(ownerObject, trigger) {
   if(!ownerObject.triggers) ownerObject.triggers = {}
 
   ownerObject.triggers[trigger.id] = trigger
-  Object.assign(ownerObject.triggers[trigger.id], {
-    triggerPool: trigger.initialTriggerPool || 1,
-    eventCount: 0,
-    disabled: false,
-  })
+
+  // make sure not to reinitilize this trigger on page reload
+  if(typeof trigger.triggerPool !== 'number') {
+    Object.assign(ownerObject.triggers[trigger.id], {
+       triggerPool: trigger.initialTriggerPool || 1,
+       eventCount: 0,
+       disabled: false,
+     })
+  }
 
   ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
     const eventMatch = testEventMatch(eventName, mainObject, guestObject, trigger, ownerObject)
 
+    console.log(trigger.triggerPool)
     if(eventMatch) {
       if(trigger.triggerPool == 0) return
       trigger.eventCount++

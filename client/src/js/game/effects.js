@@ -113,7 +113,7 @@ import { startSequence } from './sequence'
 function processEffect(effect, effected, effector) {
   const { effectName, effectValue, effectJSON } = effect
   if(effectName === 'mutate' && effectJSON) {
-    window.mergeDeep(effected, effectJSON)
+    OBJECTS.combineWithJSON(effected, effectJSON)
   }
 
   // if(effectName === 'talkToHero' && hero) {
