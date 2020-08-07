@@ -52,7 +52,7 @@ function addTrigger(owner, eventName) {
   PAGE.typingMode = true
   openAddTrigger((result) => {
     if(result && result.value) {
-      const trigger = { id: result.value, eventName }
+      const trigger = { id: result.value, eventName, effectedMainObject: false, effectedOwnerObject: true }
       window.socket.emit('addTrigger', owner.id, trigger)
       editTriggerEffect(owner, trigger, () => {
         PAGE.typingMode = false

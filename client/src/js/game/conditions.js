@@ -65,11 +65,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
   if(condition.conditionType === 'matchJSON') {
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject, options)
+        return testMatchJSONCondition(condition.conditionJSON, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject, options)
+        return testMatchJSONCondition(condition.conditionJSON, testObject, options)
       })
     }
   }

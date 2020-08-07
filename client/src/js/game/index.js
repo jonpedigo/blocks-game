@@ -779,6 +779,23 @@ class Game{
     }
   }
 
+  testMod(mod, testObject) {
+    if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
+      if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
+        mod._disabled = false
+        return true
+      } else if(mod.testFailDestroyMod) {
+        if(mod.removeEventListener) mod.removeEventListener()
+        return false
+      } else {
+        mod._disabled = true
+        return true
+      }
+    }
+
+    return true
+  }
+
   updateActiveMods() {
     GAME.gameState.activeMods = {}
     GAME.modCache = {}
@@ -794,34 +811,41 @@ class Game{
       conditionTimerValue
       conditionValue
       testPassReverse
-
+      testFailDestroyMod
+      testAndModOwnerWhenEquipped
     }
     */
     GAME.gameState.activeModList = GAME.gameState.activeModList.filter(mod => {
-      const testObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
+      const modOwnerObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
+
       if(mod._remove) {
         if(mod.removeEventListener) mod.removeEventListener()
         return false
-      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
-        if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
-          return true
-          mod._disabled = false
-        } else if(mod.testFailDestroyMod) {
-          if(mod.removeEventListener) mod.removeEventListener()
-          return false
+      }
+
+      // this means the owner of the mod's owner object, CONFUSING
+      if(mod.testAndModOwnerWhenEquipped) {
+        if(modOwnerObject.ownerId && modOwnerObject.isEquipped) {
+          const testObject = OBJECTS.getObjectOrHeroById(modOwnerObject.ownerId)
+          return GAME.testMod(mod, testObject)
         } else {
           mod._disabled = true
+          return true
         }
       }
-      return true
+
+      const testObject = modOwnerObject
+      return GAME.testMod(mod, testObject)
     })
 
+    // create mods to effect the game in the next update
     GAME.gameState.activeModList.forEach((mod) => {
       if(!GAME.gameState.activeMods[mod.ownerId]) GAME.gameState.activeMods[mod.ownerId] = []
       GAME.gameState.activeMods[mod.ownerId].push(mod)
     })
   }
 
+  // actually mod an object
   mod(object) {
     if(!object.id || !GAME.modCache) {
       return object

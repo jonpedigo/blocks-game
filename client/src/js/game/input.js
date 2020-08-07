@@ -70,19 +70,24 @@ function onPageLoaded(){
 function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
 
+  const upPressed = 'w' in keysDown || 'up' in keysDown
+  const rightPressed = 'd' in keysDown || 'right' in keysDown
+  const downPressed = 's' in keysDown || 'down' in keysDown
+  const leftPressed = 'a' in keysDown || 'left' in keysDown
+
   if(!GAME.gameState.started && 'shift' in keysDown) {
-    if ('w' in keysDown) {
+    if (upPressed) {
       hero.y -= GAME.grid.nodeSize
     }
-    if ('s' in keysDown) {
+    if (downPressed) {
       hero.y += GAME.grid.nodeSize
     }
 
-    if ('a' in keysDown) {
+    if (leftPressed) {
       hero.x -= GAME.grid.nodeSize
     }
 
-    if ('d' in keysDown) {
+    if (rightPressed) {
       hero.x += GAME.grid.nodeSize
     }
 
@@ -108,28 +113,28 @@ function onUpdate(hero, keysDown, delta) {
   const xSpeed = hero.mod().speed + (hero.mod().speedXExtra || 0)
   const ySpeed = hero.mod().speed + (hero.mod().speedYExtra || 0)
 
-  if ('w' in keysDown) {
+  if (upPressed) {
     if(hero.mod().arrowKeysBehavior === 'acc' || hero.mod().arrowKeysBehavior === 'acceleration') {
       hero.accY -= (ySpeed) * delta;
     } else if (hero.mod().arrowKeysBehavior === 'velocity') {
       hero.velocityY -= (ySpeed) * delta;
     }
   }
-  if ('s' in keysDown) {
+  if (downPressed) {
     if(hero.mod().arrowKeysBehavior === 'acc' || hero.mod().arrowKeysBehavior === 'acceleration') {
       hero.accY += (ySpeed) * delta;
     } else if (hero.mod().arrowKeysBehavior === 'velocity') {
       hero.velocityY += (ySpeed) * delta;
     }
   }
-  if ('a' in keysDown) {
+  if (leftPressed) {
     if(hero.mod().arrowKeysBehavior === 'acc' || hero.mod().arrowKeysBehavior === 'acceleration') {
       hero.accX -= (xSpeed) * delta;
     } else if (hero.mod().arrowKeysBehavior === 'velocity') {
       hero.velocityX -= (xSpeed) * delta;
     }
   }
-  if ('d' in keysDown) {
+  if (rightPressed) {
     if(hero.mod().arrowKeysBehavior === 'acc' || hero.mod().arrowKeysBehavior === 'acceleration') {
       hero.accX += (xSpeed) * delta;
     } else if (hero.mod().arrowKeysBehavior === 'velocity') {
@@ -141,16 +146,16 @@ function onUpdate(hero, keysDown, delta) {
     if(typeof hero.angle !== 'number') hero.angle = 0
     if(typeof hero.velocityAngle !== 'number') hero.velocityAngle = 0
 
-    if ('w' in keysDown) {
+    if (upPressed) {
       hero.velocityAngle += (hero.mod().speed) * delta;
     }
-    if ('s' in keysDown) {
+    if (downPressed) {
       hero.velocityAngle -= (hero.mod().speed) * delta;
     }
-    if ('a' in keysDown) {
+    if (leftPressed) {
       hero.angle -= 1 * delta;
     }
-    if ('d' in keysDown) {
+    if (rightPressed) {
       hero.angle += 1 * delta
     }
 
@@ -174,17 +179,17 @@ function onUpdate(hero, keysDown, delta) {
   function positionInput() {
 
     if(hero.mod().arrowKeysBehavior === 'flatDiagonal') {
-      if ('w' in keysDown && !hero.mod().tags.disableUpKeyMovement) {
+      if (upPressed && !hero.mod().tags.disableUpKeyMovement) {
         hero._flatVelocityY = -ySpeed
-      } else if ('s' in keysDown) {
+      } else if (downPressed) {
         hero._flatVelocityY = ySpeed
       } else {
         hero._flatVelocityY = 0
       }
 
-      if ('a' in keysDown) {
+      if (leftPressed) {
         hero._flatVelocityX = -xSpeed
-      } else if ('d' in keysDown) {
+      } else if (rightPressed) {
         hero._flatVelocityX = xSpeed
       } else {
         hero._flatVelocityX = 0
@@ -197,39 +202,39 @@ function onUpdate(hero, keysDown, delta) {
         hero._flatVelocityY = 0
       }
 
-      if ('w' in keysDown && hero.inputDirection == 'up' && !hero.mod().tags.disableUpKeyMovement) {
+      if (upPressed && hero.inputDirection == 'up' && !hero.mod().tags.disableUpKeyMovement) {
         hero._flatVelocityY = -Math.ceil(ySpeed * delta) * 100
         return
       }
 
-      if ('s' in keysDown && hero.inputDirection == 'down') {
+      if (downPressed && hero.inputDirection == 'down') {
         hero._flatVelocityY = Math.ceil(ySpeed * delta) * 100
         return
       }
 
-      if ('a' in keysDown && hero.inputDirection == 'left') {
+      if (leftPressed && hero.inputDirection == 'left') {
         hero._flatVelocityX = -Math.ceil(xSpeed * delta) * 100
         return
       }
 
-      if ('d' in keysDown && hero.inputDirection == 'right') {
+      if (rightPressed && hero.inputDirection == 'right') {
         hero._flatVelocityX = Math.ceil(xSpeed * delta) * 100
         return
       }
 
-      if ('w' in keysDown && !hero.tags.disableUpKeyMovement) {
+      if (upPressed && !hero.tags.disableUpKeyMovement) {
         hero._flatVelocityY = -Math.ceil(ySpeed * delta) * 100
       }
 
-      if ('s' in keysDown) {
+      if (downPressed) {
         hero._flatVelocityY = Math.ceil(ySpeed * delta) * 100
       }
 
-      if ('a' in keysDown) {
+      if (leftPressed) {
         hero._flatVelocityX = -Math.ceil(xSpeed * delta) * 100
       }
 
-      if ('d' in keysDown) {
+      if (rightPressed) {
         hero._flatVelocityX = Math.ceil(xSpeed * delta) * 100
       }
     }
@@ -291,28 +296,33 @@ function onKeyDown(key, hero) {
     }
   }
 
+  const upPressed = 'w' === key || 'up' === key
+  const rightPressed = 'd' === key || 'right' === key
+  const downPressed = 's' === key || 'down' === key
+  const leftPressed = 'a' === key || 'left' === key
+
   if(hero.mod().arrowKeysBehavior === 'grid') {
-    if ('w' === key) {
+    if (upPressed) {
       hero.y -= GAME.grid.nodeSize
-    } else if ('s' === key) {
+    } else if (downPressed) {
       hero.y += GAME.grid.nodeSize
-    } else if ('a' === key) {
+    } else if (leftPressed) {
       hero.x -= GAME.grid.nodeSize
-    } else if ('d' === key) {
+    } else if (rightPressed) {
       hero.x += GAME.grid.nodeSize
     }
   }
 
-  if ('w' === key) {
+  if (upPressed) {
     hero.inputDirection = 'up'
   }
-  if ('s' === key) {
+  if (downPressed) {
     hero.inputDirection = 'down'
   }
-  if ('a' === key) {
+  if (leftPressed) {
     hero.inputDirection = 'left'
   }
-  if ('d' === key) {
+  if (rightPressed) {
     hero.inputDirection = 'right'
   }
 
