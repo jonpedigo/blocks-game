@@ -98,6 +98,13 @@ PROCEDURAL
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// notation for < or > for conditions and notation for '+' and '-' for edit
+pickupable SUB OBJECT, cuz right now that would break right??
+Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
+death by jump
+// 'with patience' tag AKA pathfind less often
+// 'dont backtrack' tag where they remember where they went
+
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
@@ -105,11 +112,9 @@ Save Animations to world ( save animation button )
 
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 HOOK UP RESPAWNS TO A SPAWN ZONE
-Game feel improvement in live editor - velocityX decay, jumpVelocity, dashVelocity, ( jumpAcc, dashAcc) accXDecay, accYDecay, bounce
-pickupable SUB OBJECT, cuz right now that would break right??
+Bounce
 a max stackable???? idk
 never close right click menu if shift is pressed
-Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
 UI - input index
 Object 'swinging' like on a rope. I mean... awesome right?
 in-game checkpoints
@@ -120,11 +125,9 @@ more space bar actions -> 'double jump', 'dash'
 input modifiers....'on ice', 'flat'
 ADMIN POWER HIGHLIGHT
 TRUE zelda camera work
-death by jump
 Target/Homing awareness area
+rotation having problems 1) object stage already pivoted for camera reason 2) admin canvas is not rotating with
 // gun that swaps places with what it hits! so cool..
-// 'with patience' tag AKA pathfind less often
-// 'dont backtrack' tag where they remember where they went
 // planet gravity! Would be cool to have..
 // 3d sound effects system from papa bear
 // layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
@@ -137,7 +140,6 @@ Target/Homing awareness area
 // ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 // animation compendium
 // local mods? ( client only mods for specific players/situations )
-// notation for < or > for conditions and notation for '+' and '-' for edit
 // world option for if it doesnt have a collideable event on it, dont add to physics system
 // moving grid based on hero ( chunks ) and only run simulation on those objects in the grid
 ////////////////////////////////////////////////////
@@ -330,8 +332,6 @@ Engine trail on a car u know what I mean?
 /// INFRASTRUCTURE
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-// HOST_GAME
-// CLIENT_GAME
 // revise physics system structure, allow like 'center point' to be changed and have it be used by default.
 // ^^ so that rotation isnt a hack
 // Rotational velocity also needs to be default.
@@ -365,6 +365,8 @@ Engine trail on a car u know what I mean?
 // Standards for DELETE, ADD, REMOVE, SPAWN, RESET, INITIALIZE, HIDE, (DISABLE?)
 
 // CLIENT_GAME vs HOST_GAME
+
+// separate hero and PLAYER. the hero is just a game object then...
 
 // queuing world and other updates so we can 'flush' them like feedly does
 

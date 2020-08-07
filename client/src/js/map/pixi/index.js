@@ -149,9 +149,12 @@ PIXIMAP.onRender = function() {
       })
     }
 
+    const hero = GAME.heros[HERO.id]
+    // PIXIMAP.objectStage.rotation = hero.cameraRotation
     PIXIMAP.objectStage.pivot.x = camera.x
     PIXIMAP.objectStage.pivot.y = camera.y
     if(PIXIMAP.shadowStage) {
+      // PIXIMAP.shadowStage.rotation = hero.cameraRotation
       PIXIMAP.shadowStage.pivot.x = camera.x
       PIXIMAP.shadowStage.pivot.y = camera.y
     }

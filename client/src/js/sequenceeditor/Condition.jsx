@@ -115,6 +115,7 @@ export default class Condition extends React.Component {
             </React.Fragment>}
             <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
             <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
+            {isMod && <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testFailDestroyMod')} checked={sequenceItem.testFailDestroyMod} type="checkbox"></input>Test Fail Destroys Mod</div>}
             {nested && <hr></hr>}
           </div>
           {!isHook && !isWait && !nested && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.passNext} onChange={(event) => {

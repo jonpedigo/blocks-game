@@ -805,9 +805,13 @@ class Game{
       } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
         if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
           return true
+          mod._disabled = false
+        } else if(mod.testFailDestroyMod) {
+          if(mod.removeEventListener) mod.removeEventListener()
+          return false
+        } else {
+          mod._disabled = true
         }
-        if(mod.removeEventListener) mod.removeEventListener()
-        return false
       }
       return true
     })
@@ -864,6 +868,7 @@ class Game{
         // pathfindingLimit: object.pathfindingLimit,
 
       activeMods.forEach((mod) => {
+        if(mod._disabled) return
         window.mergeDeep(objectCopy, mod.effectJSON)
       })
 

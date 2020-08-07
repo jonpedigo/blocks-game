@@ -8,7 +8,7 @@ import { spawnObject } from '../spawnZone'
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldX = object.x
   let oldY = object.y
-
+  
   if(object.x > target.x) {
     if(options.flat) object.velocityX = -object.mod().speed || -100
     else {

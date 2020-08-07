@@ -6,7 +6,7 @@ export default class HeroLive extends React.Component {
     super(props)
     this.state = {
       objectSelected: this.props.objectSelected,
-      quakeColor: '#FFF',
+      animationColor: '#FFF',
       quakeSpeed: 150,
       cameraShakeAmplitude: 32,
       cameraShakeDuration: 2000,
@@ -24,15 +24,24 @@ export default class HeroLive extends React.Component {
       ...newData
     })
 
+    const hero = newData.objectSelected
     const updatedObjectProps = {
-      speed: newData.objectSelected.speed,
-      jumpVelocity: newData.objectSelected.jumpVelocity,
-      velocityMax: newData.objectSelected.velocityMax,
-      zoomMultiplier: newData.objectSelected.zoomMultiplier,
-      cameraTweenToTargetX: newData.objectSelected.cameraTweenToTargetX,
-      cameraTweenToTargetY: newData.objectSelected.cameraTweenToTargetY,
-      cameraTweenSpeedX: newData.objectSelected.cameraTweenSpeedX,
-      cameraTweenSpeedY: newData.objectSelected.cameraTweenSpeedY,
+      zoomMultiplier: hero.zoomMultiplier,
+      cameraTweenToTargetX: hero.cameraTweenToTargetX,
+      cameraTweenToTargetY: hero.cameraTweenToTargetY,
+      cameraTweenSpeedX: hero.cameraTweenSpeedX,
+      cameraTweenSpeedY: hero.cameraTweenSpeedY,
+      speed: hero.speed,
+      speedXExtra: hero.speedXExtra,
+      speedYExtra: hero.speedYExtra,
+      jumpVelocity: hero.jumpVelocity,
+      velocityMax: hero.velocityMax,
+      velocityMaxXExtra: hero.velocityMaxXExtra,
+      velocityMaxYExtra: hero.velocityMaxYExtra,
+      dashVelocity: hero.dashVelocity,
+      velocityDecay: hero.velocityDecay,
+      velocityDecayXExtra: hero.velocityDecayXExtra,
+      velocityDecayYExtra: hero.velocityDecayYExtra,
     }
 
     if (PAGE.role.isHost) {
@@ -47,19 +56,28 @@ export default class HeroLive extends React.Component {
 
     return (
       <div className='HeroLive'>
-        <DatGui data={this.state} onUpdate={this.handleUpdate}>
-          <DatFolder title='Physics' closed={false}>
+        <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
+          <DatFolder title='Physics'>
             <DatNumber path='objectSelected.speed' label='Speed' min={0} max={1000} step={1} />
-            <DatNumber path='objectSelected.velocityMax' label="velocityMax" min={0} max={1000} step={1} />
-            <DatNumber path='objectSelected.jumpVelocity' label="jumpVelocity" min={-1000} max={1000} />
+            <DatNumber path='objectSelected.velocityMax' label="Maximum Velocity" min={0} max={1000} step={1} />
+            <DatNumber path='objectSelected.jumpVelocity' label="Jump Velocity" min={-1000} max={1000} />
+            <DatNumber path='objectSelected.velocityDecay' label="Velocity Decay" min={0} max={1000} />
+            <DatFolder title='Additional X/Y'>
+              <DatNumber path='objectSelected.speedXExtra' label="Additional Speed X" min={0} max={1000} step={1} />
+              <DatNumber path='objectSelected.speedYExtra' label="Additional Speed Y" min={0} max={1000} step={1} />
+              <DatNumber path='objectSelected.velocityMaxXExtra' label="Additional Maximum Velocity X" min={0} max={1000} step={1} />
+              <DatNumber path='objectSelected.velocityMaxYExtra' label="Additional Maximum Velocity Y" min={0} max={1000} step={1} />
+              <DatNumber path='objectSelected.velocityDecayXExtra' label="Additional Velocity Decay X" min={0} max={1000} step={1} />
+              <DatNumber path='objectSelected.velocityDecayYExtra' label="Additional Velocity Decay Y" min={0} max={1000} step={1} />
+            </DatFolder>
           </DatFolder>
-          <DatFolder title='Animations' closed={false}>
+          <DatFolder title='Animations'>
+            <DatColor path='animationColor' label="Color"/>
             <DatFolder title='Quake'>
-              <DatColor path='quakeColor' label="Color"/>
               <DatBoolean path='quakeIsPowerWave' label="Power Wave"/>
               <DatNumber path='quakeSpeed' label='Speed' min={0} max={1000} step={1} />
               <DatButton label="Send Quake" onClick={() => {
-                  window.socket.emit('objectAnimation', 'quake', objectSelected.id, { tags: {}, color: this.state.quakeColor, powerWave: this.state.quakeIsPowerWave, speed: this.state.quakeSpeed })
+                  window.socket.emit('objectAnimation', 'quake', objectSelected.id, { tags: {}, color: this.state.animationColor, powerWave: this.state.quakeIsPowerWave, speed: this.state.quakeSpeed })
                 }}></DatButton>
             </DatFolder>
             <DatButton label="Send Explode" onClick={() => {
@@ -75,13 +93,13 @@ export default class HeroLive extends React.Component {
                 window.socket.emit('objectAnimation', 'quickTrail', objectSelected.id)
             }}></DatButton>
           </DatFolder>
-          <DatFolder title='Hero Camera' closed={false}>
+          <DatFolder title='Camera'>
             <DatBoolean path='objectSelected.cameraTweenToTargetX' label="Delay X"/>
             <DatNumber path='objectSelected.cameraTweenSpeedX' label="Delay Speed X" min={0} max={6} step={.02}/>
             <DatBoolean path='objectSelected.cameraTweenToTargetY' label="Delay Y"/>
             <DatNumber path='objectSelected.cameraTweenSpeedY' label="Delay Speed Y" min={0} max={6} step={.02}/>
             <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>
-            <DatFolder title='Shake' closed>
+            <DatFolder title='Shake'>
               <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={5000} step={1} />
               <DatNumber path='cameraShakeFrequency' label='Frequency' min={0} max={1000} step={1} />
               <DatNumber path='cameraShakeAmplitude' label='Amplitude' min={0} max={400} step={1} />

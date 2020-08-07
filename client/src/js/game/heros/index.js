@@ -82,6 +82,7 @@ class Hero{
       cameraTweenToTargetY: false,
       cameraTweenSpeedX: 2,
       cameraTweenSpeedY: 2,
+      // cameraRotation: 0,
     }
 
     window.local.on('onGridLoaded', () => {
@@ -352,10 +353,6 @@ class Hero{
       reachablePlatformHeight: hero.reachablePlatformHeight,
       animationZoomMultiplier: hero.animationZoomMultiplier,
       animationZoomTarget: hero.animationZoomTarget,
-      cameraTweenToTargetX: hero.cameraTweenToTargetX,
-      cameraTweenToTargetY: hero.cameraTweenToTargetY,
-      cameraTweenSpeedX: hero.cameraTweenSpeedX,
-      cameraTweenSpeedY: hero.cameraTweenSpeedY,
       endAnimation: hero.endAnimation,
       dialogue: hero.dialogue,
       dialogueName: hero.dialogueName,
@@ -407,9 +404,6 @@ class Hero{
       actionButtonBehavior: hero.actionButtonBehavior,
       arrowKeysBehavior: hero.arrowKeysBehavior,
       spaceBarBehavior: hero.spaceBarBehavior,
-      jumpVelocity: hero.jumpVelocity,
-      velocityMax: hero.velocityMax,
-      speed: hero.speed,
       width: hero.width,
       height: hero.height,
       flags: hero.flags,
@@ -433,10 +427,27 @@ class Hero{
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
       opacity: hero.opacity,
+      cameraTweenToTargetX: hero.cameraTweenToTargetX,
+      cameraTweenToTargetY: hero.cameraTweenToTargetY,
+      cameraTweenSpeedX: hero.cameraTweenSpeedX,
+      cameraTweenSpeedY: hero.cameraTweenSpeedY,
+      // cameraRotation: hero.cameraRotation,
 
       resourceWithdrawAmount: hero.resourceWithdrawAmount,
       resourceTags: hero.resourceTags,
       resourceLimit: hero.resourceLimit,
+
+      jumpVelocity: hero.jumpVelocity,
+      dashVelocity: hero.dashVelocity,
+      velocityMax: hero.velocityMax,
+      velocityMaxXExtra: hero.velocityMaxXExtra,
+      velocityMaxYExtra: hero.velocityMaxYExtra,
+      speed: hero.speed,
+      speedXExtra: hero.speedXExtra,
+      speedYExtra: hero.speedYExtra,
+      velocityDecay: hero.velocityDecay,
+      velocityDecayXExtra: hero.velocityDecayXExtra,
+      velocityDecayYExtra: hero.velocityDecayYExtra,
     }
 
     if(hero.subObjects) {
@@ -450,7 +461,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+        const { id, testFailDestroyMod, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
                   conditionMainObjectTag,
                   conditionGuestObjectId,
                   conditionGuestObjectTag, } = hero.triggers[triggerId]
@@ -477,7 +488,8 @@ class Hero{
           guestObjectTag,
           initialTriggerPool,
 
-          // just for mods right now, not actual conditions
+          // just for mods right now, not actual Condition
+          testFailDestroyMod,
           testPassReverse,
           testModdedVersion,
           conditionValue,

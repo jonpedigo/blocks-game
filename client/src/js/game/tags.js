@@ -200,6 +200,7 @@ function setDefault() {
     rotateable: false,
     hidden: false,
     hasTrail: false,
+    // allowCameraRotation: false,
   }
 
   window.subObjectTags = {

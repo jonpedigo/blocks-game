@@ -235,7 +235,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+        const { id, testFailDestroyMod, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
                   conditionMainObjectTag,
                   conditionGuestObjectId,
                   conditionGuestObjectTag, } = object.triggers[triggerId]
@@ -263,6 +263,7 @@ class Objects{
           guestObjectTag,
 
           // for mod currently, might move to a .mod property and use these for actual condition on the trigger
+          testFailDestroyMod,
           testPassReverse,
           testModdedVersion,
           conditionValue,

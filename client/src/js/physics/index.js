@@ -90,9 +90,10 @@ function updatePosition(object, delta) {
   //   }
   // }
 
+  const maxVelocityX = object.velocityMax + (object.velocityMaxXExtra || 0)
   if(object.velocityX) {
-    if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
-    else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
+    if(object.velocityX >= maxVelocityX) object.velocityX = maxVelocityX
+    else if(object.velocityX <= maxVelocityX * -1) object.velocityX = maxVelocityX * -1
     object.x += object.velocityX * delta
   }
   if(object._flatVelocityX) {
@@ -130,12 +131,13 @@ function updatePosition(object, delta) {
     object.velocityY += (gravityVelocityY * delta)
   }
 
+  const maxVelocityY = object.velocityMax + (object.velocityMaxYExtra || 0)
   if(object.velocityY) {
-    if(object.velocityY >= object.velocityMax) {
-      object.velocityY = object.velocityMax
+    if(object.velocityY >= maxVelocityY) {
+      object.velocityY = maxVelocityY
     }
-    else if(object.velocityY <= object.velocityMax * -1) {
-      object.velocityY = object.velocityMax * -1
+    else if(object.velocityY <= maxVelocityY * -1) {
+      object.velocityY = maxVelocityY * -1
     }
 
     if(object.tags && !object.mod().tags.gravityY) {
@@ -143,6 +145,27 @@ function updatePosition(object, delta) {
     }
   }
   if(object._flatVelocityY) object.y += object._flatVelocityY * delta
+
+  if(typeof object.velocityDecay == 'number') {
+    const velocityDecayY = object.velocityDecay + (object.velocityDecayYExtra || 0)
+    const velocityDecayX = object.velocityDecay + (object.velocityDecayXExtra || 0)
+
+    if(object.velocityX < 0) {
+      object.velocityX += (velocityDecayX * delta)
+      if(object.velocityX > 0) object.velocityX = 0
+    } else {
+      object.velocityX -= (velocityDecayX * delta)
+      if(object.velocityX < 0) object.velocityX = 0
+    }
+
+    if(object.velocityY < 0) {
+      object.velocityY += (velocityDecayY * delta)
+      if(object.velocityY > 0) object.velocityY = 0
+    } else {
+      object.velocityY -= (velocityDecayY * delta)
+      if(object.velocityY < 0) object.velocityY = 0
+    }
+  }
 
   if(object.tags && object.mod().tags['stationary']) {
     object.velocityY = 0
@@ -306,7 +329,7 @@ function postPhysics() {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
-      if(input && 'x' in input) {
+      if(input && ',' in input) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
       }
       // bad for JSON
