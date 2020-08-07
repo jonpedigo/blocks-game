@@ -1031,7 +1031,7 @@ class Objects{
     }
   }
 
-  combineWithJSON(object, JSON) {
+  mergeWithJSON(object, JSON) {
     JSON = _.cloneDeep(JSON)
 
     Object.keys(JSON).forEach((key) => {
@@ -1049,8 +1049,6 @@ class Objects{
         }
       }
     })
-
-    console.log(JSON)
 
     window.mergeDeep(object, JSON)
   }

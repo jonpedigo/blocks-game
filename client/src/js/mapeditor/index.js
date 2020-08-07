@@ -198,6 +198,13 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.y = ((event.clientY + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.copiedObject) {
+    const subObjects = MAPEDITOR.copiedObject.subObjects
+    if(subObjects) {
+      Object.keys(subObjects).forEach((subObjectName) => {
+        const so = subObjects[subObjectName]
+        so.id = subObjectName + '-' + window.uniqueID()
+      })
+    }
     OBJECTS.create([MAPEDITOR.copiedObject])
     MAPEDITOR.copiedObject = null
   } else if(MAPEDITOR.isSettingPathfindingLimit) {

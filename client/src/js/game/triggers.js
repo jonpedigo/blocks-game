@@ -29,7 +29,7 @@ function onPageLoaded() {
     // 'onObjectSpawn',
     // 'onObjectNoticed',
     // 'onObjectNotice',
-    // 'onHeroCanInteract'
+    // 'onHerocantInteract'
     // 'onHeroNoticed,
     // 'onHeroNotice,
     // 'onQuestFail',
@@ -72,7 +72,6 @@ function addTrigger(ownerObject, trigger) {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
     const eventMatch = testEventMatch(eventName, mainObject, guestObject, trigger, ownerObject)
 
-    console.log(trigger.triggerPool)
     if(eventMatch) {
       if(trigger.triggerPool == 0) return
       trigger.eventCount++

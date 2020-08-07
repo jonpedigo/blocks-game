@@ -63,8 +63,30 @@ function onPageLoaded(){
   }, false)
 
   window.addEventListener("keyup", function (e) {
-	   delete GAME.keysDown[keycode(e.keyCode)]
+    const key = keycode(e.keyCode)
+    delete GAME.keysDown[key]
+
+    if(PAGE.role.isGhost) {
+
+    } else if(PAGE.role.isPlayer) {
+      //locally update the host input! ( teehee this is the magic! )
+      if(PAGE.role.isHost) {
+        GAME.heroInputs[HERO.id] = GAME.keysDown
+        onKeyUp(key, GAME.heros[HERO.id])
+      } else {
+        window.socket.emit('sendHeroKeyUp', key, HERO.id)
+      }
+    }
+    window.socket.emit('sendHeroKeyUp', key, HERO.id)
   }, false)
+}
+
+function onKeyUp(key, hero) {
+  if(key === 'e') {
+    hero._cantInteract = false
+  }
+
+  window.local.emit('onKeyUp', key, hero)
 }
 
 function onUpdate(hero, keysDown, delta) {

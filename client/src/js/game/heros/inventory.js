@@ -22,9 +22,14 @@ function pickupObject(hero, collider) {
 
   if(!subObject.subObjectName) subObject.subObjectName = subObject.id
 
+  if(hero.subObjects && hero.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
+    window.socket.emit('heroNotification', hero.id, { type: 'toast', message: 'You can\'t pick this up. You already have a ' + subObject.subObjectName})
+    return
+  }
+
   if(!collider.mod().tags['dontDestroyOnPickup']) {
-    collider._destroy = true
-    collider._destroyedBy = hero
+    collider._remove = true
+    collider._delete = true
   }
 
   subObject.inInventory = true
@@ -34,6 +39,8 @@ function pickupObject(hero, collider) {
     subObject.tags.potential = true
   }
 
+  hero.interactableObject = null
+  hero.interactableObjectResult = null
   if(subObject.tags['equipOnPickup']) {
     subObject.isEquipped = true
     window.local.emit('onHeroEquip', hero, subObject)
@@ -41,6 +48,12 @@ function pickupObject(hero, collider) {
 
   // window.local.emit('onHeroPickup', hero, subObject)
   delete subObject.subObjects
+
+  let message = 'You picked up ' + subObject.subObjectName
+  if(subObject.count > 1) {
+    message = 'You picked up ' + subObject.count + ' ' + subObject.subObjectName
+  }
+  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
   window.local.emit('onAddSubObject', hero, subObject, subObject.subObjectName )
 }
 
@@ -53,8 +66,8 @@ function dropObject(hero, subObject, dropAmount = 1) {
     subObject.count -= dropAmount
     if(newSubObjectCount >= 1) {
       subObjectStillHasCount = true
-      object.id = 'stackable-' + window.uniqueID()
     }
+    object.id = 'stackable-' + window.uniqueID()
     object.count = dropAmount
   }
 
@@ -84,6 +97,11 @@ function dropObject(hero, subObject, dropAmount = 1) {
     window.socket.emit('deleteSubObject', hero, subObject.subObjectName)
   }
 
+  let message =  'You dropped ' + object.subObjectName
+  if(object.count > 1) {
+    message = 'You dropped ' + object.count + ' ' + object.subObjectName
+  }
+  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
   window.socket.emit('addObjects', [object])
 }
 
@@ -91,18 +109,22 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const subObject = owner.subObjects[subObjectName]
   const newObject = _.cloneDeep(subObject)
 
+  if(hero.subObjects && hero.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
+    window.socket.emit('heroNotification', hero.id, { type: 'toast', message: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
+    return
+  }
+
   let subObjectStillHasCount = false
   if(subObject.tags.stackable) {
     subObject.count -= withdrawAmount
     if(subObject.count >= 1) {
       subObjectStillHasCount = true
-      newObject.id = 'stackable-' + window.uniqueID()
     }
     newObject.count = withdrawAmount
+    newObject.id = 'stackable-' + window.uniqueID()
   }
   delete newObject.isEquipped
   newObject.inInventory = true
-
 
   if(!subObjectStillHasCount) {
     owner.interactableObject = null
@@ -110,6 +132,11 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
     window.socket.emit('deleteSubObject', owner, subObjectName)
   }
 
+  let message =  'You withdrew ' + newObject.subObjectName
+  if(newObject.count > 1) {
+    message = 'You withdrew ' + newObject.count + ' ' + newObject.subObjectName
+  }
+  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
   window.local.emit('onAddSubObject', withdrawer, newObject, subObjectName)
 }
 

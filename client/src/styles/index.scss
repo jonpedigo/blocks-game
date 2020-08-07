@@ -77,7 +77,7 @@ body {
 }
 
 .Toastify__toast-container {
-  z-index: 0;
+  z-index: 1000;
 
   .Toastify__toast--default {
     background: #19191a;

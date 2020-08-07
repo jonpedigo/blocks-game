@@ -69,8 +69,6 @@ Scenarios/BeginEnd
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-SUB OBJECT CREATION MENU
-
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
 ( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
 
@@ -86,7 +84,6 @@ SUBINTERACT MENU ( find all interact triggers involving this object and display 
 Finish feature list
 
 FOG OF WAR
-CUTSCENE RECORDING BY JUST RECORDING ALL EVENTS ON THE SCREEN AND STUFF HMM?
 PIXEL EDITOR
 LEVEL UP SYSTEM
 
@@ -98,7 +95,7 @@ PROCEDURAL
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-// notation for < or > for conditions and notation for '+' and '-' for edit
+Add objects when you hit power world transform buttons
 pickupable SUB OBJECT, cuz right now that would break right??
 Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
 death by jump

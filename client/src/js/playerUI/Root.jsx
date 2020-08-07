@@ -115,18 +115,26 @@ export default class Root extends React.Component {
     }
   }
 
+  onHeroNotification(data) {
+    if(data.type === 'toast') {
+      toast(data.message, {
+        position: "top-right",
+        autoClose: data.duration || 1500,
+        newestOnTop: true,
+      })
+    }
+  }
+
   render() {
     const { showInventory } = this.state;
     if (CONSTRUCTEDITOR.open) return null
     if (!GAME.gameState || !GAME.gameState.loaded) return null
-    let toastOpacity = showInventory ? 0 : 1
     const hero = GAME.heros[HERO.id]
     return (
       <div className="PlayerUI">
         {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
         <ToastContainer
           position="top-center"
-          style={{ opacity: toastOpacity }}
           autoClose={false}
           hideProgressBar={true}
           closeOnClick={false}

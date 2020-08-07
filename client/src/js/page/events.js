@@ -15,7 +15,7 @@ class EventEmitter {
     } else event = []
 
     if(!this.mockSocket) {
-      if(eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
+      if(eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide' && eventName !== 'onSendHeroKeyUp' && eventName !== 'onKeyUp') console.log(eventName)
 
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])

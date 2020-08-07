@@ -143,7 +143,9 @@ function update() {
   PAGE.loadingScreen = gameEligibleForLoading && loadingState
 
   const hero = GAME.heros[HERO.id]
-  if(PAGE.loadingScreen || (!hero || hero.animationZoomMultiplier)) {
+  if(hero && hero.animationZoomMultiplier) PAGE.loadingScreen = false
+
+  if(PAGE.loadingScreen) {
     ctx.fillStyle = "#222"
     ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
     if(PAGE.role.isAdmin) {

@@ -141,6 +141,7 @@ function setDefault() {
     stackable: false,
     // onMapWhenEquipped: false, //cant change
     // dropOnOwnerDestroyed: false,
+    allowDuplication: false,
   }
 
   window.particleTags = {
@@ -157,7 +158,7 @@ function setDefault() {
     pulseAlpha: false,
     pulseDarken: false,
     pulseLighten: false,
-
+    fadeInOnInit: false,
     // realHover: false,
   }
 

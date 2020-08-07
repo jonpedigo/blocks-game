@@ -258,6 +258,13 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('sendHeroKeyDown', (keyCode, hero) => {
     io.emit('onSendHeroKeyDown', keyCode, hero)
   })
+  socket.on('sendHeroKeyUp', (keyCode, hero) => {
+    io.emit('onSendHeroKeyUp', keyCode, hero)
+  })
+  socket.on('heroNotification', (heroId, data) => {
+    io.emit('onHeroNotification', heroId, data)
+  })
+
   socket.on('updateHero', (hero) => {
     currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)

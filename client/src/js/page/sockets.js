@@ -76,6 +76,13 @@ function init() {
     window.socket.on('onSendHeroKeyDown', (keyCode, heroId) => {
       window.local.emit('onSendHeroKeyDown', keyCode, heroId)
     })
+    window.socket.on('onSendHeroKeyUp', (keyCode, heroId) => {
+      window.local.emit('onSendHeroKeyUp', keyCode, heroId)
+    })
+
+    window.socket.on('onHeroNotification', (heroId, data) => {
+      window.local.emit('onHeroNotification', heroId, data)
+    })
 
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {

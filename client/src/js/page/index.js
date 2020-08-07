@@ -203,6 +203,9 @@ class Page{
       window.local.emit('onGameLoopStarted')
       PAGE.loopStarted = true
     }
+    if(!PAGE.gameLoaded) {
+      window.local.emit('onFirstPageGameLoaded')
+    }
     PAGE.gameLoaded = true
   }
 

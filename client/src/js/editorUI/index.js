@@ -11,7 +11,7 @@ class EditorUI {
     this.ref = null
   }
 
-  onGameLoaded() {
+  onFirstPageGameLoaded() {
     creatorObjectLibrary.onGameLoaded()
 
     // this.container = container
@@ -24,6 +24,7 @@ class EditorUI {
     document.getElementById('GameContainer').appendChild(container)
     EDITORUI.container = container
 
+    console.log('?')
     // Mount React App
     ReactDOM.render(
       React.createElement(Root, initialProps),
@@ -50,7 +51,7 @@ class EditorUI {
   }
 
   onUpdateGameState() {
-    EDITORUI.ref.forceUpdate()
+    if(EDITORUI.ref) EDITORUI.ref.forceUpdate()
   }
 
   onEditHero(hero) {

@@ -207,6 +207,7 @@ class Game{
   }
 
   onGameLoaded() {
+    PAGE.gameLoaded = true
     GAME.gameState.loaded = true
     GAME.gameState.paused = false
     dayNightCycle.onGameLoaded()
@@ -893,7 +894,7 @@ class Game{
 
       activeMods.forEach((mod) => {
         if(mod._disabled) return
-        window.mergeDeep(objectCopy, mod.effectJSON)
+        OBJECTS.mergeWithJSON(objectCopy, mod.effectJSON)
       })
 
       if(objectCopy.subObjects) {

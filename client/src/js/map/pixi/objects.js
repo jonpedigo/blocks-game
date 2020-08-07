@@ -3,7 +3,7 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter } from './particles'
 import './pixi-layers'
-import { setColor, updateSprite, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
+import { setColor, startAnimation, updateSprite, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
 const updatePixiObject = (gameObject) => {
@@ -229,7 +229,6 @@ const addGameObjectToStage = (gameObject, stage) => {
   // ADD TO STAGE
   let addedChild = stage.addChild(sprite)
 
-
   addedChild.texture = texture
 
   /////////////////////
@@ -242,6 +241,10 @@ const addGameObjectToStage = (gameObject, stage) => {
   }
 
   updatePixiObject(gameObject)
+
+  if(gameObject.tags.fadeInOnInit) {
+    startAnimation('fadeIn', addedChild, gameObject)
+  }
 
   return addedChild
 }

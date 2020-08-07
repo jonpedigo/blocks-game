@@ -29,14 +29,26 @@ function lighten(color, amount = 30) {
   return tinycolor(color).lighten(amount).toString()
 }
 
+function startAnimation(type, pixiChild, gameObject) {
+  if(type === 'fadeIn') {
+    pixiChild.alpha = 0
+    pixiChild.isAnimatingAlpha = true
+    pixiChild.fadeIn = ease.add(pixiChild, { alpha: 1 }, { duration: 1000, ease: 'linear' })
+    pixiChild.fadeIn.on('complete', () => {
+      delete pixiChild.fadeIn
+      pixiChild.isAnimatingAlpha = false
+    })
+  }
+}
+
 function startPulse(pixiChild, gameObject, type) {
   if(type === 'darken') {
     const color = gameObject.color || GAME.world.defaultObjectColor
-    pixiChild.isAnimatingDarkness = ease.add(pixiChild, { blend: getHexColor(darken(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.pulseDarknessEase = ease.add(pixiChild, { blend: getHexColor(darken(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
   }
   if(type === 'lighten') {
     const color = gameObject.color || GAME.world.defaultObjectColor
-    pixiChild.isAnimatingLightness = ease.add(pixiChild, { blend: getHexColor(lighten(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.pulseLightnessEase = ease.add(pixiChild, { blend: getHexColor(lighten(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
   }
 
   // if(type === 'scale') {
@@ -44,11 +56,11 @@ function startPulse(pixiChild, gameObject, type) {
   // }
 
   if(type === 'alpha') {
-    pixiChild.isAnimatingAlpha = ease.add(pixiChild, { alpha: 0 }, { reverse: true, repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.pulseAlphaEase = ease.add(pixiChild, { alpha: 0 }, { reverse: true, repeat: true, duration: 1000, ease: 'linear' })
   }
 
   if(type === 'shake') {
-    pixiChild.isAnimatingPosition = ease.add(pixiChild, { shake: 5 }, { repeat: true, ease: 'linear' })
+    pixiChild.shakeEase = ease.add(pixiChild, { shake: 5 }, { repeat: true, ease: 'linear' })
   }
 }
 
@@ -70,23 +82,25 @@ function updatePosition(pixiChild, gameObject) {
     pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
     pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
   } else {
-    if(pixiChild.isAnimatingPosition) {
-      pixiChild.isAnimatingPosition.eases[0].start.x = (gameObject.x) * camera.multiplier
-      pixiChild.isAnimatingPosition.eases[0].start.y = (gameObject.y) * camera.multiplier
-    } else {
+    if(pixiChild.shakeEase) {
+      pixiChild.shakeEase.eases[0].start.x = (gameObject.x) * camera.multiplier
+      pixiChild.shakeEase.eases[0].start.y = (gameObject.y) * camera.multiplier
+    }
+
+    if(!pixiChild.isAnimatingPosition){
       pixiChild.x = (gameObject.x) * camera.multiplier
       pixiChild.y = (gameObject.y) * camera.multiplier
     }
 
-    if(gameObject.tags.shake && !pixiChild.isAnimatingPosition) {
+    if(gameObject.tags.shake && !pixiChild.shakeEase) {
       startPulse(pixiChild, gameObject, 'shake')
+      pixiChild.isAnimatingPosition = true
     }
 
-    // This is the main obstacle if I want to add another position animation
-    // id rather not name these two different animations, why not just add to the ease object what tags it comes from?
-    if(!gameObject.tags.shake && pixiChild.isAnimatingPosition) {
+    if(!gameObject.tags.shake && pixiChild.shakeEase) {
       ease.removeEase(pixiChild, 'shake')
-      delete pixiChild.isAnimatingPosition
+      pixiChild.isAnimatingPosition = false
+      delete pixiChild.shakeEase
     }
   }
 }
@@ -108,35 +122,41 @@ function updateAlpha(pixiChild, gameObject) {
     }
   }
 
-  if(gameObject.tags.pulseAlpha && !pixiChild.isAnimatingAlpha) {
+  if(gameObject.tags.pulseAlpha && !pixiChild.pulseAlphaEase) {
     startPulse(pixiChild, gameObject, 'alpha')
+    pixiChild.isAnimatingAlpha = true
   }
 
-  if(!gameObject.tags.pulseAlpha && pixiChild.isAnimatingAlpha) {
+  if(!gameObject.tags.pulseAlpha && pixiChild.pulseAlphaEase) {
     ease.removeEase(pixiChild, 'alpha')
-    delete pixiChild.isAnimatingAlpha
+    pixiChild.isAnimatingAlpha = false
+    delete pixiChild.pulseAlphaEase
   }
 }
 
 function updateColor(pixiChild, gameObject) {
-  if(!pixiChild.isAnimatingDarkness && !pixiChild.isAnimatingLightness) {
+  if(!pixiChild.isAnimatingColor) {
     setColor(pixiChild, gameObject)
   }
 
-  if(gameObject.tags.pulseDarken && !pixiChild.isAnimatingDarkness) {
+  if(gameObject.tags.pulseDarken && !pixiChild.pulseDarknessEase) {
     startPulse(pixiChild, gameObject, 'darken')
+    pixiChild.isAnimatingColor = true
   }
-  if(!gameObject.tags.pulseDarken && pixiChild.isAnimatingDarkness) {
+  if(!gameObject.tags.pulseDarken && pixiChild.pulseDarknessEase) {
     ease.removeEase(pixiChild, 'blend')
-    delete pixiChild.isAnimatingDarkness
+    pixiChild.isAnimatingColor = false
+    delete pixiChild.pulseDarknessEase
   }
 
-  if(gameObject.tags.pulseLighten && !pixiChild.isAnimatingLightness) {
+  if(gameObject.tags.pulseLighten && !pixiChild.pulseLightnessEase) {
     startPulse(pixiChild, gameObject, 'lighten')
+    pixiChild.isAnimatingColor = true
   }
-  if(!gameObject.tags.pulseLighten && pixiChild.isAnimatingLightness) {
+  if(!gameObject.tags.pulseLighten && pixiChild.pulseLightnessEase) {
     ease.removeEase(pixiChild, 'blend')
-    delete pixiChild.isAnimatingDarkness
+    pixiChild.isAnimatingColor = false
+    delete pixiChild.pulseDarknessEase
   }
 }
 
@@ -208,6 +228,7 @@ export {
   getVisibility,
   setColor,
   startPulse,
+  startAnimation,
   updatePosition,
   updateAlpha,
   updateColor,

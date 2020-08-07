@@ -8,7 +8,7 @@ class LiveEditor {
     this.ref = null
   }
 
-  onGameLoaded() {
+  onFirstPageGameLoaded() {
     // this.container = container
     const initialProps = {
       ref: ref => LIVEEDITOR.ref = ref

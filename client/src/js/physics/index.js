@@ -329,8 +329,9 @@ function postPhysics() {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
-      if(input && 'e' in input) {
+      if(input && 'e' in input && !hero._cantInteract) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
+        hero._cantInteract = true
       }
       // bad for JSON
       delete hero.interactableObjectResult
@@ -421,29 +422,60 @@ function removeAndRespawn() {
       HERO.removeHero(hero)
       delete hero._remove
     }
+
+    if(hero.subObjects) {
+      Object.keys(hero.subObjects).forEach((subObjectName) => {
+        const subObject = hero.subObjects[subObjectName]
+        processSubObjectRemoval(subObject)
+      })
+    }
   })
 
-  GAME.objects.forEach((object) => {
-    if(object._destroy) {
-      if(object.mod().tags.respawn) {
-        object._respawn = true
-      } else object._remove = true
-      delete object._destroy
-      delete object._destroyedBy
-      window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
-      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
-    }
+  GAME.objects.forEach(processObjectRemoval)
+}
 
-    if(object._respawn) {
-      OBJECTS.respawn(object)
-      delete object._respawn
-    }
-    if(object._remove) {
-      object.removed = true
-      OBJECTS.removeObject(object)
-      delete object._remove
-    }
-  })
+function processSubObjectRemoval(object) {
+  if(object._destroy) {
+    object._remove = true
+    delete object._destroy
+    delete object._destroyedBy
+    window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
+    window.local.emit('onObjectDestroyed', object, object._destroyedBy)
+  }
+
+  if(object._remove) {
+    object.removed = true
+    delete object._remove
+  }
+}
+
+function processObjectRemoval(object) {
+  if(object._destroy) {
+    if(object.mod().tags.respawn) {
+      object._respawn = true
+    } else object._remove = true
+    delete object._destroy
+    delete object._destroyedBy
+    window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
+    window.local.emit('onObjectDestroyed', object, object._destroyedBy)
+  }
+
+  if(object._respawn) {
+    OBJECTS.respawn(object)
+    delete object._respawn
+  }
+  if(object._remove) {
+    object.removed = true
+    OBJECTS.removeObject(object)
+    delete object._remove
+  }
+
+  if(object.subObjects) {
+    Object.keys(object.subObjects).forEach((subObjectName) => {
+      const subObject = object.subObjects[subObjectName]
+      processSubObjectRemoval(subObject)
+    })
+  }
 }
 
 export default {

@@ -39,6 +39,12 @@ class PlayerUI {
     }
   }
 
+  onHeroNotification(heroId, data) {
+    if(heroId === HERO.id) {
+      PLAYERUI.ref.onHeroNotification(data)
+    }
+  }
+
   onNetworkUpdateHero(hero) {
     if(hero.id === HERO.id && GAME.heros[hero.id]) {
       if(GAME.heros[hero.id].dialogue !== hero.dialogue) {
