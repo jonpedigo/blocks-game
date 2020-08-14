@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
-import './Editor.js'
+import './editor.js'
 
 import creatorObjectLibrary from './creatorObjectLibrary.js'
 

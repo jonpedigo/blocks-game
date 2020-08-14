@@ -138,7 +138,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       }
 
       if(object && object.tags.background) {
-        sprite.zOrder = -1
+        sprite.zOrder = 1
         return
       }
 
@@ -241,6 +241,7 @@ const initPixiApp = (canvasRef, onLoad) => {
       loadingTimeout = setTimeout(() => {
         PAGE.resizingMap = false
         window.local.emit('onLoadingScreenEnd')
+        loadingTimeout = null
       }, 150)
       MAP.canvasMultiplier = window.innerWidth/640;
       const width = (640 * MAP.canvasMultiplier);

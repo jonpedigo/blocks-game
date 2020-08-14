@@ -72,12 +72,12 @@ export default class Effect extends React.Component{
           theme={window.reactSelectTheme}/>
         </div>)
       } else if(effectData.tag) {
-        chosenEffectForm.push(this.props._renderTagSelect('effectTags', (event) => {
+        chosenEffectForm.push(<MultiTagSelect title="Add Tags:" sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectTags' onChange={ (event) => {
           if(event) {
             sequenceItem.effectTags = event.map(({value}) => value)
             this.props.setState({sequenceItem})
           }
-        }, 'Add Tags:'))
+        }}/>)
       }
 
       if(effectData.effectorObject) {

@@ -66,7 +66,7 @@ class MapEditor{
 
   openConstructEditor(object, startAtHero) {
     CONSTRUCTEDITOR.start(object, startAtHero)
-    window.socket.emit('editGameState', { paused: true })
+    // window.socket.emit('editGameState', { paused: true })
 
     MAPEDITOR.initState()
     MAPEDITOR.pause()
@@ -75,7 +75,7 @@ class MapEditor{
       if(constructParts) {
         window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height}])
       }
-      window.socket.emit('editGameState', { paused: false })
+      // window.socket.emit('editGameState', { paused: false })
       MAPEDITOR.resume()
       removeListener()
     })

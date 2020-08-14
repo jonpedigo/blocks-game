@@ -16,12 +16,29 @@ window.PIXIMAP = {
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {
-  GAME.objects.forEach((object) => {
-    initPixiObject(object)
-  })
   GAME.heroList.forEach((hero) => {
     initPixiObject(hero)
   })
+
+  GAME.objects.forEach((object) => {
+    initPixiObject(object)
+  })
+
+
+  if(GAME.objectsById['globalConstructStationaryObstacle']) {
+    PIXIMAP.deleteObject(GAME.objectsById['globalConstructStationaryObstacle'])
+    initPixiObject(GAME.objectsById['globalConstructStationaryObstacle'])
+  }
+
+  if(GAME.objectsById['globalConstructStationaryForeground']) {
+    PIXIMAP.deleteObject(GAME.objectsById['globalConstructStationaryForeground'])
+    initPixiObject(GAME.objectsById['globalConstructStationaryForeground'])
+  }
+
+  if(GAME.objectsById['globalConstructStationaryBackground']) {
+    PIXIMAP.deleteObject(GAME.objectsById['globalConstructStationaryBackground'])
+    initPixiObject(GAME.objectsById['globalConstructStationaryBackground'])
+  }
 
   // const refFilter = new ShockwaveFilter()
   // PIXIMAP.hero.filters = [refFilter]

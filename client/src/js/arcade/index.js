@@ -41,6 +41,12 @@ class Arcade{
     }
   }
 
+  onGameLoaded() {
+    if(PAGE.role.isArcadeMode) {
+      window.socket.emit('editGameState', { started: true })
+    }
+  }
+
   onGetCustomGameFx(customFx) {
     ARCADE.setLiveCustomFx(customFx)
   }

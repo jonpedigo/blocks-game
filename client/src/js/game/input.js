@@ -275,8 +275,9 @@ function onUpdate(hero, keysDown, delta) {
 }
 
 function onKeyDown(key, hero) {
-  if('space' === key) {
-    if(hero.dialogue && hero.dialogue.length) {
+  if('e' === key) {
+    if(hero.dialogue && hero.dialogue.length && !hero._cantInteract) {
+      hero._cantInteract = true
       hero.dialogue.shift()
       if(!hero.dialogue.length) {
         hero.flags.showDialogue = false
@@ -357,4 +358,5 @@ export default {
   onPageLoaded,
   onUpdate,
   onKeyDown,
+  onKeyUp,
 }

@@ -534,16 +534,20 @@ class Objects{
     if(update.constructParts) {
       if(object.constructParts) {
         object.constructParts.forEach((part) => {
-          PHYSICS.removeObject(part)
+          if(!object.tags.notCollideable) {
+            PHYSICS.removeObject(part)
+          }
         })
       } else {
         PHYSICS.removeObject(object)
       }
       update.constructParts.forEach((part) => {
         part.ownerId = object.id
-        PHYSICS.addObject(part)
+        if(!object.tags.notCollideable) {
+          PHYSICS.addObject(part)
+        }
       })
-    } else if(object.constructParts) {
+    } else if(object.constructParts &&!object.tags.notCollideable) {
       PHYSICS.addObject(object)
     }
     object.path = null

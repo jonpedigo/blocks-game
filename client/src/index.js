@@ -4,22 +4,34 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Scenarios and Stories !! AWESOME
-1) Try to make the editor modular ( from the sequence lists )
-2) Try to combine with dat GUI? I wonder if its possible
-
-FIREWORK PARTICLES, ( UNLEASH THE POWER OF THE PARTICLE SYSTEM )
-Pulsing size and rotating
-Smoke particles very subtle...
-
+IMPROVEMENTS
+subinteractmenu ( find all interact triggers involving this object and display all possible )
 Hero removed -> respawn UI
+Add objects when you hit power world transform buttons
+Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
+death by jump
+never close right click menu if shift is pressed
+Inventory UI
+Improve Add Sub Object AND defaultInteractTriggerArea
+Light Editor
+MORE key actions.
+  Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
+  z and x accelerate and decelerate
+more space bar actions -> 'double jump', 'dash'
+// all objects fade in, all objects fade in random
+UI - input index
+Bounce
+Target/Homing awareness area
+Implement special extra physics for objects, not just heros
 
 ---
-The whole sequence menu format should be made modular. I can use it for default hero editing, story editing, scenario editing, compendium editing? Why not combine with DAT GUI
-COMBINED DAT GUI EDITOR WITH REACT EDITOR?
-Find a good way to customize DAT GUI position and have more than one DAT GUI up?
-( allow them to tweak everything from animations to powerups to the physics to the day /night )
 
+1) IMPROVMEENTS UNTIL I GET BORED
+2) Scenarios and stories til I get bored
+3) COMBAT SYSTEM/ELEMENTAL SYSTEM
+4) Random Particle Generator
+
+---
 Scenarios/BeginEnd
   TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
   VISIBLE TO
@@ -69,38 +81,32 @@ Scenarios/BeginEnd
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+Scenario's and Stories
+Random Particle Designer
+GENRE libraries ( creator, generatedMenu )
+
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
 ( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
 
-SOUND FX
-
-!!!!!!!! !!!! READY FOR PAPA BEAR BETA !!!! !!!!!!
-
-PATHFINDING UPGRADE
-
-COMPENDIUM <---- !
-PUZZLE INTERFACES <---- !
-SUBINTERACT MENU ( find all interact triggers involving this object and display all possible )
-Finish feature list
-
-FOG OF WAR
-PIXEL EDITOR
+Pathfinding upgrade
+COMPENDIUM
+PUZZLE INTERFACES
 LEVEL UP SYSTEM
 
+!!!!!!!! !!!! READY FOR HOME MADE ARCADE !!!! !!!!!!
+
+HERO CHOOSER
+SOUND FX
+PROCEDURAL LARGE SCALE
+FOG OF WAR
+PIXEL EDITOR
 LEVELS ( sub worlds )
-PROCEDURAL
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
-Add objects when you hit power world transform buttons
-pickupable SUB OBJECT, cuz right now that would break right??
-Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
-death by jump
-// 'with patience' tag AKA pathfind less often
-// 'dont backtrack' tag where they remember where they went
 
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
@@ -109,20 +115,11 @@ Save Animations to world ( save animation button )
 
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 HOOK UP RESPAWNS TO A SPAWN ZONE
-Bounce
-a max stackable???? idk
-never close right click menu if shift is pressed
-UI - input index
 Object 'swinging' like on a rope. I mean... awesome right?
 in-game checkpoints
-MORE key actions.
-  Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
-  z and x accelerate and decelerate
-more space bar actions -> 'double jump', 'dash'
 input modifiers....'on ice', 'flat'
 ADMIN POWER HIGHLIGHT
 TRUE zelda camera work
-Target/Homing awareness area
 rotation having problems 1) object stage already pivoted for camera reason 2) admin canvas is not rotating with
 // gun that swaps places with what it hits! so cool..
 // planet gravity! Would be cool to have..
@@ -131,14 +128,10 @@ rotation having problems 1) object stage already pivoted for camera reason 2) ad
 // run local simulation
 // add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
-// name system -> sub object system
 // KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
-// INTERACT MENU if theres > 1 type of interaction available
 // ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
-// animation compendium
 // local mods? ( client only mods for specific players/situations )
 // world option for if it doesnt have a collideable event on it, dont add to physics system
-// moving grid based on hero ( chunks ) and only run simulation on those objects in the grid
 ////////////////////////////////////////////////////
 
 
@@ -147,6 +140,10 @@ NOTES
 
 /////
 PLANS FOR ULTIMATE MINECRAFT SCALE
+
+// moving grid based on hero ( chunks ) and only run simulation on those objects in the grid\
+  // the problem is te pathfinding grid, hard to update that, too
+
 Basically the grid will be a moving grid
 the x and y of each grid node will get a getter based off the startX and startY and gridX
 the grid will move its startX and startY with each hero with as its CHUNK
@@ -166,12 +163,18 @@ and update things accordingly
 ////////////////////////////////////////////////////
 /// ALL SORTS OF EDITOR NOTES
 /////////////////////////////
-BASIC - Structure, Outline, Backdrop
-LIGHT - Fire, Light
-// tiny light, small light, large light, gigantic light, directional light ( left, up, down, right )
-ZONE - Spawn Zone, Resource Zone, Timer
-ITEM - Resource, Chest
-ACTOR - Standing Actor, Wanderer
+
+PATHFINDING editor / advancements <---- !
+TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
+// objects have their own path?
+// pathfinding editor should fit inside of the sequence editor
+// path goals AKA patrol
+// path 1, path 2, path 3 with conditions
+// Set Target, Set Pathfinding Target
+// Pathfinding for something larger than one grid node
+// Perhaps not PATHFINDING but… targeting
+// 'with patience' tag AKA pathfind less often
+// 'dont backtrack' tag where they remember where they went
 
 ADD SUB OBJECT
 Spear
@@ -183,21 +186,10 @@ Area x 4
 Potential Sub Object
 
 EDITORS
-world--
-day night editor
-camera/game editor
-grid editor
-
-object--
-timer editor
-zone editor
-spawn zone editor
-path editor
-physics editor
-inventory editor
 light editor
-chest editor
-resource editor ( shop )
+timer editor
+path editor
+quest editor ( inside of default hero editor )
 
 // TRIGGER EDITOR
    eventName
@@ -207,22 +199,6 @@ resource editor ( shop )
    guestObjectId
    eventThreshold ( event value )
    triggerPool
-
-WORLD EDITOR
-  //zoom to Set to game boundary size
-  //zoom to all objects
-  //Set all objects to the middle ( FULL MIGRATION )
-  // CENTER ALL OBJECTS ON GRID ( calculate first and last object ( x and y ) and therefore how much room you can spare
-
-PATHFINDING editor / advancements <---- !
-TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
-// objects have their own path?
-// pathfinding editor should fit inside of the sequence editor
-// path goals AKA patrol
-// path 1, path 2, path 3 with conditions
-// Set Target, Set Pathfinding Target
-// Pathfinding for something larger than one grid node
-// Perhaps not PATHFINDING but… targeting.
 
 ////////////////////////////////
 ////////////////////////////////
@@ -234,33 +210,16 @@ GAME
 
 ////////////////////////////////
 ////////////////////////////////
-// OTHER INTERFACE NOTES
-// can we have a 'Game Editor' in React or a 'Hero Editor'
-// One thing that is inside the context menu that maybe shouldnt be is the quests
-// Quest editor would show me the default hero's quest list and I could sort through it and edit it very easily
-// But why just quests? Why not design all of the heros properties they start with
-// OK so.. the other things on the 'GAME' object that ill want to edit is the World, the Grid
-// world editor and default hero editor
-
-////////////////////////////////
-////////////////////////////////
 // PIXI FILTER NOTES
 
 TWIST filter
 Glow filter
 Outline filter
-
 —
-
-Rain graphic ?
-
 Displacement filter — underwater effect
 + underwater overlay graphic??
-
 Shockwave filter / Bulge pinch?
-
 Reflection filter
-
 Godray filter
 
 Many of these are really good CAMERA effects
@@ -290,27 +249,28 @@ but honeslty I could just do a 'pick objects to be recorded moment' and we keep 
 ////////////////////////////////
 // little glowy things all around ( particle effects, see hyper light drifter )
 
-2) Object Shake/Shatter/Warp
-3) Explode ( particles )
+rain and snow particle overlays
+
+FIREWORK PARTICLES, ( UNLEASH THE POWER OF THE PARTICLE SYSTEM )
+Pulsing size and rotating
+Smoke particles very subtle...
+
+Object Warp
+
 // INVERT GAME, for example, when you get pacman powers
-// spencer wants the world to slowly build itself infront of them.... interesintg, npt sure how to do
-// lazy scroll that is not not immediate! Smoother...
-// satisfying death animations? satisfing death states or idk.. things?
+
 /*Trails,
 	long trail
-	leaving trail ( drops )
-  // grid object so its like outlines over the whole thing
-  // striped object!
+
+leaving trail ( drops )
+
+// grid object so its like outlines over the whole thing
+
+// striped object!
 
 have layered border, just draw another version at +2 and +4 and +6, -2 etc..
 
 SHINE effect
-
-Shakes
-	Object Shakes
-	Camera Shakes
-
-FLASHES
 
 Glow
 
@@ -319,8 +279,6 @@ NEON vibe?
 Dust particles
 
 Particles being sucked into the player ( POWER!!! )
-
-Splatter
 
 Engine trail on a car u know what I mean?
 */
