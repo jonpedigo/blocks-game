@@ -43,7 +43,7 @@ class Arcade{
 
   onGameLoaded() {
     if(PAGE.role.isArcadeMode) {
-      window.socket.emit('editGameState', { started: true })
+      window.local.emit('onGameStart', { started: true })
     }
   }
 
