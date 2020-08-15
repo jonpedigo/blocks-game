@@ -81,8 +81,9 @@ class Hero{
       tags: {},
       cameraTweenToTargetX: false,
       cameraTweenToTargetY: false,
-      cameraTweenSpeedX: 2,
-      cameraTweenSpeedY: 2,
+      cameraTweenSpeedXExtra: 0,
+      cameraTweenSpeedYExtra: 0,
+      cameraTweenSpeed: 2,
       // cameraRotation: 0,
     }
 
@@ -431,8 +432,9 @@ class Hero{
       opacity: hero.opacity,
       cameraTweenToTargetX: hero.cameraTweenToTargetX,
       cameraTweenToTargetY: hero.cameraTweenToTargetY,
-      cameraTweenSpeedX: hero.cameraTweenSpeedX,
-      cameraTweenSpeedY: hero.cameraTweenSpeedY,
+      cameraTweenSpeedXExtra: hero.cameraTweenSpeedXExtra,
+      cameraTweenSpeedYExtra: hero.cameraTweenSpeedYExtra,
+      cameraTweenSpeed: hero.cameraTweenSpeed,
       // cameraRotation: hero.cameraRotation,
 
       resourceWithdrawAmount: hero.resourceWithdrawAmount,

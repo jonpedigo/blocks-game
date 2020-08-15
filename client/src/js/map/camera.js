@@ -120,16 +120,18 @@ function camera() {
   };
 
   this.update = function(hero, delta) {
+    const cameraTweenSpeedX = hero.cameraTweenSpeed + hero.cameraTweenSpeedXExtra
     if(hero.cameraTweenToTargetX && typeof this.x == 'number') {
       const distanceX = this.targetX - this.x
-      this.x += (distanceX) * delta * hero.cameraTweenSpeedX
+      this.x += (distanceX) * delta * cameraTweenSpeedX
     } else {
       this.x = this.targetX
     }
 
+    const cameraTweenSpeedY = hero.cameraTweenSpeed + hero.cameraTweenSpeedYExtra
     if(hero.cameraTweenToTargetY && typeof this.y == 'number') {
       const distanceY = this.targetY - this.y
-      this.y += (distanceY) * delta * hero.cameraTweenSpeedY
+      this.y += (distanceY) * delta * cameraTweenSpeedY
     } else {
       this.y = this.targetY
     }

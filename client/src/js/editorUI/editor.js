@@ -4,19 +4,19 @@ import Swal from 'sweetalert2/src/sweetalert2.js';
 class Editor {
   constructor() {
     this.preferences = {
-      zoomMultiplier: 0
+      zoomMultiplier: 0,
+      creatorColorSelected: window.defaultObjectColor
     }
     this.zoomDelta = .1250
 
-  }
-
-  onPageLoaded() {
     const storedPreferences = localStorage.getItem('editorPreferences')
 
     if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
-      EDITOR.preferences = JSON.parse(storedPreferences)
+      this.preferences = JSON.parse(storedPreferences)
     }
+  }
 
+  onPageLoaded() {
     window.addEventListener("keydown", function (e) {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = true

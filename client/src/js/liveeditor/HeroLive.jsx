@@ -37,8 +37,9 @@ export default class HeroLive extends React.Component {
       zoomMultiplier: hero.zoomMultiplier,
       cameraTweenToTargetX: hero.cameraTweenToTargetX,
       cameraTweenToTargetY: hero.cameraTweenToTargetY,
-      cameraTweenSpeedX: hero.cameraTweenSpeedX,
-      cameraTweenSpeedY: hero.cameraTweenSpeedY,
+      cameraTweenSpeedXExtra: hero.cameraTweenSpeedXExtra,
+      cameraTweenSpeedYExtra: hero.cameraTweenSpeedYExtra,
+      cameraTweenSpeed: hero.cameraTweenSpeed,
       speed: hero.speed,
       speedXExtra: hero.speedXExtra,
       speedYExtra: hero.speedYExtra,
@@ -102,10 +103,11 @@ export default class HeroLive extends React.Component {
             }}></DatButton>
           </DatFolder>
           <DatFolder title='Camera'>
+            <DatNumber path='objectSelected.cameraTweenSpeed' label="Delay Speed" min={0} max={6} step={.02}/>
             <DatBoolean path='objectSelected.cameraTweenToTargetX' label="Delay X"/>
-            <DatNumber path='objectSelected.cameraTweenSpeedX' label="Delay Speed X" min={0} max={6} step={.02}/>
-            <DatBoolean path='objectSelected.cameraTweenToTargetY' label="Delay Y"/>
-            <DatNumber path='objectSelected.cameraTweenSpeedY' label="Delay Speed Y" min={0} max={6} step={.02}/>
+            <DatNumber path='objectSelected.cameraTweenSpeedXExtra' label="Delay Speed X Additional" min={0} max={6} step={.02}/>
+            <DatBoolean path='objectSelected.cameraTweenToTargetYExtra' label="Delay Y"/>
+            <DatNumber path='objectSelected.cameraTweenSpeedY' label="Delay Speed Y Additonal" min={0} max={6} step={.02}/>
             <DatNumber path='objectSelected.zoomMultiplier' label="Zoom" min={0} max={20} step={EDITOR.zoomDelta}/>
             <DatFolder title='Shake'>
               <DatNumber path='cameraShakeDuration' label='Duration' min={0} max={5000} step={1} />

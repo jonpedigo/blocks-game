@@ -64,8 +64,8 @@ class MapEditor{
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
   }
 
-  openConstructEditor(object, startAtHero) {
-    CONSTRUCTEDITOR.start(object, startAtHero)
+  openConstructEditor(object, startColor, startAtHero) {
+    CONSTRUCTEDITOR.start(object, startColor, startAtHero)
     // window.socket.emit('editGameState', { paused: true })
 
     MAPEDITOR.initState()

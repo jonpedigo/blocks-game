@@ -13,8 +13,10 @@ export default class Creator extends React.Component {
       rows: [],
       columnsOpen: {},
       isColorPickerOpen: false,
-      colorSelected: '#FFFFFF'
+      colorSelected: EDITOR.preferences.creatorColorSelected
     }
+
+    console.log(EDITOR.preferences)
 
     this._setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
       this.setState({
@@ -218,11 +220,13 @@ export default class Creator extends React.Component {
           this.setState({
             colorSelected: color.hex
           })
+          EDITOR.preferences.creatorColorSelected = color.hex
         }}
         onChangeComplete={ (color) => {
           this.setState({
             colorSelected: color.hex
           })
+          EDITOR.preferences.creatorColorSelected = color.hex
         }}
       />
     <br/>
@@ -232,6 +236,7 @@ export default class Creator extends React.Component {
         this.setState({
           colorSelected: color.hex
         })
+        EDITOR.preferences.creatorColorSelected = color.hex
       }}/>
     </div>
   }
