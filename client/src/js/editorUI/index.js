@@ -24,7 +24,6 @@ class EditorUI {
     document.getElementById('GameContainer').appendChild(container)
     EDITORUI.container = container
 
-    console.log('?')
     // Mount React App
     ReactDOM.render(
       React.createElement(Root, initialProps),

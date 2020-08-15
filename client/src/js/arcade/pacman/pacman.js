@@ -48,8 +48,8 @@ export default class CustomGame{
     if(hero.flags.paused || GAME.gameState.paused) return
 
     if(hero.lives === 0) {
-      GAME.gameState.gameOver = true
-      GAME.gameState.paused = true
+      // GAME.gameState.gameOver = true
+      // GAME.gameState.paused = true
     }
   }
 
