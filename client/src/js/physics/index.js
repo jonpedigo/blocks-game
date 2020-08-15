@@ -409,8 +409,7 @@ function removeAndRespawn() {
       } else hero._remove = true
       delete hero._destroy
       delete hero._destroyedBy
-      window.socket.emit('emitGameEvent', 'onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
-      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
+      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
     }
 
     if(hero._respawn) {
@@ -439,8 +438,7 @@ function processSubObjectRemoval(object) {
     object._remove = true
     delete object._destroy
     delete object._destroyedBy
-    window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
-    window.local.emit('onObjectDestroyed', object, object._destroyedBy)
+    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
   }
 
   if(object._remove) {
@@ -456,8 +454,7 @@ function processObjectRemoval(object) {
     } else object._remove = true
     delete object._destroy
     delete object._destroyedBy
-    window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
-    window.local.emit('onObjectDestroyed', object, object._destroyedBy)
+    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
   }
 
   if(object._respawn) {

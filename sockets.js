@@ -437,7 +437,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('emitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
-    io.emit('emitGameEvent', eventName, arg1, arg2, arg3, arg4)
+    io.emit('onEmitGameEvent', eventName, arg1, arg2, arg3, arg4)
   })
 }
 

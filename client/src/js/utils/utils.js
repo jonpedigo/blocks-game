@@ -150,3 +150,8 @@ window.byteLength = function(str) {
   }
   return s;
 }
+
+window.emitGameEvent = function(gameEvent, arg1, arg2, arg3, arg4, arg5) {
+  window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
+  window.local.emit(gameEvent, arg1, arg2, arg3, arg4, arg5)
+}

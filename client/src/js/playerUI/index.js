@@ -39,6 +39,12 @@ class PlayerUI {
     }
   }
 
+  onUpdatePlayerUI(hero) {
+    if(hero.id === HERO.id) {
+      PLAYERUI.ref.onUpdateState(hero)
+    }
+  }
+
   onHeroNotification(heroId, data) {
     if(heroId === HERO.id) {
       PLAYERUI.ref.onHeroNotification(data)

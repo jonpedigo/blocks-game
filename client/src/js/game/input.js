@@ -284,6 +284,7 @@ function onKeyDown(key, hero) {
         hero.flags.paused = false
         hero.onGround = false
       }
+      window.emitGameEvent('onUpdatePlayerUI', hero.mod())
     }
   }
 

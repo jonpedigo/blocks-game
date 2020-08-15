@@ -15,11 +15,13 @@ export default class Root extends React.Component {
       toastingActiveQuestGoalId: null,
       toastingActiveQuestGoalToastId: null,
       showInventory: false,
+      hero: GAME.heros[HERO.id]
     }
 
-    this.onUpdateState = () => {
+    this.onUpdateState = (heroOverride) => {
       const hero = GAME.heros[HERO.id]
       this.setState({
+        hero: heroOverride || hero,
         activeQuest: this._getActiveQuest(hero),
         quests: hero.quests,
       }, () => {
@@ -126,10 +128,10 @@ export default class Root extends React.Component {
   }
 
   render() {
-    const { showInventory } = this.state;
+    const { showInventory, hero } = this.state;
     if (CONSTRUCTEDITOR.open) return null
     if (!GAME.gameState || !GAME.gameState.loaded) return null
-    const hero = GAME.heros[HERO.id]
+
     return (
       <div className="PlayerUI">
         {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
