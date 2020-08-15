@@ -207,6 +207,7 @@ function setDefault() {
   window.subObjectTags = {
     subObject: true,
     heroInteractTriggerArea: false,
+    heroAwarenessTriggerArea: false,
     objectInteractTriggerArea: false,
     relativeToDirection: false,
     relativeToAngle: false,

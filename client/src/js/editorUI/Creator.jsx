@@ -16,8 +16,6 @@ export default class Creator extends React.Component {
       colorSelected: EDITOR.preferences.creatorColorSelected
     }
 
-    console.log(EDITOR.preferences)
-
     this._setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
       this.setState({
         creatorObjects

@@ -59,6 +59,11 @@ function heroCollisionEffects(hero) {
       const collider = body.gameObject
 
       window.local.emit('onHeroCollide', heroPO.gameObject, collider, result)
+
+      // dont enter objects that you cant enter...
+      if(!body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['noHeroAllowed']) {
+        heroPO.gameObject._objectsWithinNext.push(body.gameObject.id)
+      }
     }
   }
 }
@@ -95,7 +100,8 @@ function heroCorrection(hero) {
       if(body.gameObject.removed) continue
       let result = PHYSICS.objects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
-        if((body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['heroPushable']) || body.gameObject.mod().tags['noHeroAllowed']) {
+        const heroCanCollide = (body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['heroPushable']) || body.gameObject.mod().tags['noHeroAllowed']
+        if(heroCanCollide) {
           illegal = true
           // console.log(result.collision, result.overlap, result.overlap_x, result.overlap_y)
           corrections.push(result)
@@ -244,6 +250,20 @@ function objectCollisionEffects(po) {
             }
           }
         }
+      }
+
+      if(agent.mod().tags['heroAwarenessTriggerArea']) {
+        let hero = GAME.heros[agent.ownerId]
+        // sometimes the hero could be logged off
+        if(hero) {
+          hero._objectsAwareOfNext.push(collider.id)
+        }
+      }
+
+      const isSafeZone = agent.mod().tags['monster'] && collider.mod().tags && collider.mod().tags['onlyHeroAllowed']
+      const bothAreObstacles = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['obstacle']
+      if(!isSafeZone && !bothAreObstacles) {
+        agent._objectsWithinNext.push(collider.id)
       }
 
       // subobjects and construct parts dont collider with their owners

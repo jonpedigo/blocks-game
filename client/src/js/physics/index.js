@@ -192,6 +192,15 @@ function prepareObjectsAndHerosForMovementPhase() {
   everything.push(...allHeros)
   PHYSICS.correctedConstructs = {}
 
+  // everything.forEach((object) => {
+  //   if(object.subObjects) {
+  //     OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+  //       if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+  //       everything.push(subObject)
+  //     })
+  //   }
+  // })
+
   everything.forEach((object, i) => {
     object._deltaX = 0
     object._deltaY = 0
@@ -202,11 +211,25 @@ function prepareObjectsAndHerosForMovementPhase() {
     delete object._flatVelocityX
     delete object._flatVelocityY
     object.interactableObject = null
+    object.interactableObjectResult = null
 
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part._initialX = part.x
         part._initialY = part.y
+      })
+    }
+
+    if(object.tags.hero) {
+      object._objectsAwareOfNext = []
+    }
+
+    object._objectsWithinNext = []
+
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+        subObject._objectsWithinNext = []
       })
     }
   })
@@ -328,14 +351,15 @@ function postPhysics() {
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
+      window.emitGameEvent('onObjectInteractable', hero.interactableObject, hero)
       if(input && input['e'] === true && !hero._cantInteract && !hero.flags.paused) {
-        window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
+        window.local.emit('onHeroInteract', hero, hero.interactableObject)
         hero._cantInteract = true
       }
       // bad for JSON
       delete hero.interactableObjectResult
     }
+    processAwarenessAndWithinEvents(hero)
   })
 
   // NON CHILD GO FIRST
@@ -347,6 +371,7 @@ function postPhysics() {
       object._deltaX = object.x - object._initialX
       object._deltaY = object.y - object._initialY
     }
+    processAwarenessAndWithinEvents(object)
   })
 
   allHeros.forEach((hero) => {
@@ -398,6 +423,54 @@ function postPhysics() {
     }
   })
 }
+
+function processAwarenessAndWithinEvents(object) {
+  if(object.tags.hero) {
+    if(object._objectsAwareOf) {
+      const left = object._objectsAwareOf.filter((id) => {
+        return object._objectsAwareOfNext.indexOf(id) == -1
+      })
+      const entered = object._objectsAwareOfNext.filter((id) => {
+        return object._objectsAwareOf.indexOf(id) == -1
+      })
+
+      left.forEach((objectLeft) => {
+        window.emitGameEvent('onHeroUnaware', object, objectLeft)
+      })
+      entered.forEach((objectEntered) => {
+        window.emitGameEvent('onHeroAware', object, objectEntered)
+      })
+    }
+    object._objectsAwareOf = object._objectsAwareOfNext
+  }
+
+  if(object._objectsWithin) {
+    const left = object._objectsWithin.filter((id) => {
+      return object._objectsWithinNext.indexOf(id) == -1
+    })
+    const entered = object._objectsWithinNext.filter((id) => {
+      return object._objectsWithin.indexOf(id) == -1
+    })
+
+    left.forEach((objectLeft) => {
+      if(objectLeft.tags && objectLeft.tags.hero) {
+        window.emitGameEvent('onHeroLeave', objectLeft, object)
+      } else {
+        window.emitGameEvent('onObjectLeave', objectLeft, object)
+      }
+    })
+    entered.forEach((objectEntered) => {
+      if(objectEntered.tags && objectEntered.tags.hero) {
+        window.emitGameEvent('onHeroEnter', objectEntered, object)
+      } else {
+        window.emitGameEvent('onObjectEnter', objectEntered, object)
+      }
+    })
+  }
+
+  object._objectsWithin = object._objectsWithinNext
+}
+
 
 function removeAndRespawn() {
   let allHeros = getAllHeros()

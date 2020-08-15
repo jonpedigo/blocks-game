@@ -15,7 +15,9 @@ class EventEmitter {
     } else event = []
 
     if(!this.mockSocket) {
-      if(eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide' && eventName !== 'onSendHeroKeyUp' && eventName !== 'onKeyUp') console.log(eventName)
+      const debugEvent = (eventName == 'onObjectInteractable' && eventName == 'onObjectEnter' && eventName == 'onObjectLeave' && eventName == 'onHeroEnter' && eventName == 'onHeroLeave' && eventName == 'onHeroAware' && eventName !== 'onHeroUnaware')
+
+      if(!debugEvent && eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide' && eventName !== 'onSendHeroKeyUp' && eventName !== 'onKeyUp') console.log(eventName)
 
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])

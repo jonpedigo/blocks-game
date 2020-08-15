@@ -97,12 +97,19 @@ class Hero{
       window.defaultHero.subObjects = {
         heroInteractTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
-          relativeToDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
           relativeHeight: GAME.grid.nodeSize * 2,
-          relativeX: -GAME.grid.nodeSize,
-          relativeY: -GAME.grid.nodeSize,
+          relativeX: 0,
+          relativeY: 0,
           tags: { obstacle: false, invisible: true, stationary: true, heroInteractTriggerArea: true },
+        },
+        heroAwarenessTriggerArea: {
+          x: 0, y: 0, width: 40, height: 40,
+          relativeWidth: GAME.grid.nodeSize * 12,
+          relativeHeight: GAME.grid.nodeSize * 16,
+          relativeX: 0,
+          relativeY: -GAME.grid.nodeSize * 4,
+          tags: { obstacle: false, invisible: true, stationary: true, heroAwarenessTriggerArea: true, relativeToDirection: true, },
         },
         // spear: {
         //   id: 'spear-'+window.uniqueID(),
@@ -371,6 +378,7 @@ class Hero{
       questState: hero.questState,
       customState: hero.customState,
       objectsWithin: hero.objectsWithin,
+      objectsAwareOf: hero.objectsAwareOf,
       conditionTestCounts: hero.conditionTestCounts,
     }
 
