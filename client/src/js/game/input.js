@@ -64,15 +64,15 @@ function onPageLoaded(){
 
   window.addEventListener("keyup", function (e) {
     const key = keycode(e.keyCode)
-    delete GAME.keysDown[key]
 
     if(PAGE.role.isGhost) {
 
     } else if(PAGE.role.isPlayer) {
+      delete GAME.keysDown[key]
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
-        GAME.heroInputs[HERO.id] = GAME.keysDown
         onKeyUp(key, GAME.heros[HERO.id])
+        GAME.heroInputs[HERO.id] = GAME.keysDown
       } else {
         window.socket.emit('sendHeroKeyUp', key, HERO.id)
       }
@@ -85,6 +85,7 @@ function onKeyUp(key, hero) {
   if(key === 'e') {
     hero._cantInteract = false
   }
+  delete GAME.heroInputs[hero.id][key]
 
   window.local.emit('onKeyUp', key, hero)
 }
@@ -276,15 +277,16 @@ function onUpdate(hero, keysDown, delta) {
 
 function onKeyDown(key, hero) {
   if('e' === key) {
-    if(hero.dialogue && hero.dialogue.length && !hero._cantInteract) {
-      hero._cantInteract = true
+    if(hero.dialogue && hero.dialogue.length) {
       hero.dialogue.shift()
       if(!hero.dialogue.length) {
         hero.flags.showDialogue = false
         hero.flags.paused = false
         hero.onGround = false
       }
-      window.emitGameEvent('onUpdatePlayerUI', hero.mod())
+      hero._cantInteract = true
+      console.log('cant Interact false, exiting dialogue')
+      window.emitGameEvent('onUpdatePlayerUI', hero)
     }
   }
 

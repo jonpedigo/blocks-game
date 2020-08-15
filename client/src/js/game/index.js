@@ -624,7 +624,7 @@ class Game{
 
   onUpdateGameState(gameState) {
     if(!PAGE.gameLoaded) return
-    if(!PAGE.role.isHost) GAME.gameState = gameState
+    if(!PAGE.role.isHost) window.mergeDeep(GAME.gameState, gameState)
   }
 
   onChangeGame(game) {

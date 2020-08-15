@@ -13,6 +13,6 @@ export default function onTalk(hero, collider, result, options) {
     GAME.addOrResetTimeout(hero.id+'.lastDialogueId', 3, () => {
       hero.lastDialogueId = null
     })
-    window.emitGameEvent('onUpdatePlayerUI', hero.mod())
+    window.emitGameEvent('onUpdatePlayerUI', hero)
   }
 }

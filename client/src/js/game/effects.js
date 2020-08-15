@@ -138,7 +138,7 @@ function processEffect(effect, effected, effector) {
       } else {
         effected.dialogueName = null
       }
-      window.emitGameEvent('onUpdatePlayerUI', effected.mod())
+      window.emitGameEvent('onUpdatePlayerUI', effected)
     } else {
       console.log('cannot dialogue effect non hero')
     }

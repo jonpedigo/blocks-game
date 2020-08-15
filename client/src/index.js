@@ -148,7 +148,7 @@ Basically the grid will be a moving grid
 the x and y of each grid node will get a getter based off the startX and startY and gridX
 the grid will move its startX and startY with each hero with as its CHUNK
 
-Normally chunk padding is only used to calculate shadows as of now
+chunk padding is only used to calculate shadows as of now
 CHUNK padding is the difference between the players view and the grid
 
 It seems that theres VIEW padding and game padding. VIEW Padding seems to be for camera shakes and for moving very fast
