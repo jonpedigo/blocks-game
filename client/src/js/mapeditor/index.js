@@ -38,6 +38,14 @@ class MapEditor{
     this.paused = false
   }
 
+  onPageLoaded() {
+    const loader = document.createElement('div')
+    loader.className = 'loader'
+    MAPEDITOR.loaderElement = loader
+    document.getElementById('GameContainer').appendChild(loader)
+    loader.style.display = "none"
+  }
+
   set(ctx, canvas, camera) {
     MAPEDITOR.ctx = ctx
     MAPEDITOR.canvas = canvas

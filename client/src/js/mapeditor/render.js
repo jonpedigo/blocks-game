@@ -151,6 +151,9 @@ function update() {
     if(PAGE.role.isAdmin) {
       drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
     }
+    MAPEDITOR.loaderElement.style.display = "block"
+  } else {
+    MAPEDITOR.loaderElement.style.display = "none"
   }
 }
 

@@ -13,7 +13,6 @@ Hero removed -> respawn UI
 Add objects when you hit power world transform buttons
 death by jump
 never close right click menu if shift is pressed
-Inventory UI
 Improve Add Sub Object
 Light Editor
 MORE key actions.
@@ -25,6 +24,9 @@ Bounce
 Implement special extra physics for objects, not just heros
 Hero notifications.. more!
 Make stationary the default, create a new tag called moving
+
+Inventory Context Menu -> Drop and Equip
+show inventory in HUD tag, like RTS resources VS team...yeahh
 
 ---
 
