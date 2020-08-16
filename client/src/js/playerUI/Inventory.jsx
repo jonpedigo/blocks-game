@@ -1,5 +1,5 @@
 import React from 'react'
-import Sprite from '../components/Sprite.jsx'
+import PixiMapSprite from '../components/PixiMapSprite.jsx'
 
 export default class Inventory extends React.Component {
     constructor(props) {

@@ -1,26 +1,73 @@
 import keycode from 'keycode'
 
+window.defaultWASD =  {
+  w: 'Move Up',
+  s: 'Move Down',
+  a: 'Move Left',
+  d: 'Move Right',
+}
+window.defaultArrowKeyss =  {
+  up: 'Move Up',
+  down: 'Move Down',
+  left: 'Move Left',
+  right: 'Move Right',
+}
+
 function setDefault() {
-  window.heroArrowKeyBehaviors = [
-    'flatDiagonal',
-    'velocity',
-    'skating',
-    'flatRecent',
-    'angleAndVelocity',
-    'none'
-  ]
+  window.heroArrowKeyBehaviors = {
+    'flatDiagonal' : {
+      ...window.defaultWASD,
+      ...window.defaultArrowKeys,
+    },
+    'velocity': {
+      ...window.defaultWASD,
+      ...window.defaultArrowKeys,
+    },
+    'skating': {
+      ...window.defaultWASD,
+      ...window.defaultArrowKeys,
+    },
+    'flatRecent': {
+      ...window.defaultWASD,
+      ...window.defaultArrowKeys,
+    },
+    'angleAndVelocity' : {
+      w: 'Move Forward',
+      s: 'Move Backward',
+      a: 'Rotate Left',
+      d: 'Rotate Right',
+      up: 'Move Forward',
+      down: 'Move Backward',
+      left: 'Rotate Left',
+      right: 'Rotate Right',
+    },
+    'none' : {
+    }
+  }
 
-  window.heroActionButtonBehaviors = [
-    'dropWall',
-    'shootBullet',
-    'none'
-  ]
+  window.heroActionButtonBehaviors = {
+    'dropWall': {
+      'Question Mark': 'Drop Wall',
+    },
+    'shootBullet': {
+      'Question Mark': 'Shoot Bullet',
+    },
+    'none': {
 
-  window.heroSpaceBarBehaviors = [
-    'groundJump',
-    'floatJump',
-    'none',
-  ]
+    }
+  }
+
+  window.heroSpaceBarBehaviors = {
+    'groundJump': {
+      'Space Bar': 'Jump ( On Ground )'
+    },
+    'floatJump': {
+      'Space Bar': 'Jump ( On Ground or In Air )'
+    },
+    'none': {
+
+    }
+  }
 }
 
 function addCustomInputBehavior(behaviorList) {

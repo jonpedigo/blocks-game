@@ -9,7 +9,7 @@ class PlayerUI {
     this.updateStateInterval = null
   }
 
-  onPageLoaded() {
+  onGameReady() {
     // this.container = container
     const initialProps = {
       ref: ref => PLAYERUI.ref = ref
@@ -25,9 +25,7 @@ class PlayerUI {
       React.createElement(Root, initialProps),
       container
     )
-  }
 
-  onGameLoaded() {
     if(!PLAYERUI.updateStateInterval) {
       PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
     }

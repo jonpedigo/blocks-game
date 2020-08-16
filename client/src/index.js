@@ -6,6 +6,9 @@
 
 IMPROVEMENTS
 subinteractmenu ( find all interact triggers involving this object and display all possible )
+actually build in this whole equipping system
+  quick equip menu
+  guns, swords, etc, I want it all WITH MODS TOO I WANNA SEE MOD WORKING WITH EQUIP
 Hero removed -> respawn UI
 Add objects when you hit power world transform buttons
 death by jump
@@ -21,6 +24,8 @@ more space bar actions -> 'double jump', 'dash'
 UI - input index
 Bounce
 Implement special extra physics for objects, not just heros
+Hero notifications.. more!
+Make stationary the default, create a new tag called moving
 
 ---
 
@@ -365,6 +370,15 @@ https://game-icons.net/
 
 TWEENS
 http://gizma.com/easing/#quad1
+
+GAVE ME GREAT IDEA FOR LIKE EDGES OF THE GRID NODES
+https://www.mipui.net/
+
+IdK ANOTHER ONLINE https://hextml.playest.net/
+
+THIS IS FOR GENERATING SPRITESHEET JSON
+https://www.leshylabs.com/apps/sstool/
+
 
 */
 

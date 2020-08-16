@@ -1,0 +1,50 @@
+.ModalContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  .Modal {
+    margin: 0 auto;
+    overflow-y: scroll;
+    background: #0f0f0f;
+    position: relative;
+
+    &--medium {
+      width: 30%;
+      height: 60%;
+    }
+
+    &__close {
+      color: white;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      opacity: .7;
+      cursor: pointer;
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    &__item {
+      color: white;
+      font-size: 20px;
+      padding: 20px;
+      cursor: pointer;
+      &:hover {
+        background: #333;
+      }
+
+      @media only screen and (max-width: 800px) {
+        padding: 10px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        padding: 5px;
+      }
+    }
+  }
+}

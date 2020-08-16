@@ -198,13 +198,13 @@ export default class HeroContextMenu extends React.Component{
       <SubMenu title='Sprite'><SpriteMenu objectSelected={objectSelected}/></SubMenu>
       <SubMenu title="Controls">
         <SubMenu title="Arrow Keys">
-          {this._renderInputBehaviorMenu('arrowKeysBehavior', window.heroArrowKeyBehaviors)}
+          {this._renderInputBehaviorMenu('arrowKeysBehavior', Object.keys(window.heroArrowKeyBehaviors))}
         </SubMenu>
         <SubMenu title="Z Key">
-          {this._renderInputBehaviorMenu('actionButtonBehavior', window.heroActionButtonBehaviors)}
+          {this._renderInputBehaviorMenu('actionButtonBehavior', Object.keys(window.heroActionButtonBehaviors))}
         </SubMenu>
         <SubMenu title="Space Bar">
-          {this._renderInputBehaviorMenu('spaceBarBehavior', window.heroSpaceBarBehaviors)}
+          {this._renderInputBehaviorMenu('spaceBarBehavior', Object.keys(window.heroSpaceBarBehaviors))}
         </SubMenu>
         <SubMenu title="Modifiers">
           <Menu onClick={this._handleTagMenuClick}>

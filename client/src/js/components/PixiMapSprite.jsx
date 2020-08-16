@@ -1,5 +1,5 @@
 import React from 'react'
-export default class Sprite extends React.Component {
+export default class PixiMapSprite extends React.Component {
   render() {
     const texture = PIXIMAP.textures[this.props.textureId]
 

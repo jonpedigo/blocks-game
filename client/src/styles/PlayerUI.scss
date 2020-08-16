@@ -11,6 +11,18 @@
 
 .PlayerUI {
   text-align: center;
+  font-family: Courier;
+}
+
+.ShortcutPanel {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  &__main-menu {
+    color: #eee;
+    font-size: 10px;
+    padding: 5px;
+  }
 }
 
 .DialogueBox--options {
