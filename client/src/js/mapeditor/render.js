@@ -11,7 +11,7 @@ function update() {
     drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height, color: 'white' }, camera)
   }
 
-  // if(PAGE.role.isAdmin || PAGE.role.isCreator) {
+  if(PAGE.role.isAdmin || !GAME.gameState.started) {
     ctx.setLineDash([5, 15]);
     GAME.objects.forEach((object) => {
       if(object.tags.invisible || object.tags.light || object.tags.emitter) {
@@ -19,7 +19,7 @@ function update() {
       }
     })
     ctx.setLineDash([]);
-  // }
+  }
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 

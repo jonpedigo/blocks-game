@@ -130,7 +130,7 @@ class ConstructEditor {
     let color = startColor || object.color || GAME.world.defaultObjectColor || window.defaultObjectColor
     this.ref.open(color)
     this.selectColor(color)
-
+    
     window.local.emit('onConstructEditorStart', object)
   }
 

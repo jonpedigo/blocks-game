@@ -1,4 +1,5 @@
 import tinycolor from 'tinycolor2'
+import collisionsUtil from '../../utils/collisions'
 import { Ease, ease } from 'pixi-ease'
 
 function setColor(pixiChild, data) {
@@ -119,6 +120,12 @@ function updateAlpha(pixiChild, gameObject) {
       } else {
         pixiChild.alpha = 0
       }
+    } else if(gameObject.tags.foreground && gameObject.tags.seeThroughOnHeroCollide)  {
+      if(isColliding(GAME.heros[HERO.id], gameObject)) {
+        pixiChild.alpha = .3
+      } else {
+        pixiChild.alpha = 1
+      }
     }
   }
 
@@ -221,6 +228,20 @@ function getVisibility(pixiChild, gameObject) {
   return gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
 }
 
+function isColliding(hero, gameObject) {
+  return collisionsUtil.checkObject(hero, gameObject)
+}
+
+function getGameObjectStage(gameObject) {
+  let object = gameObject
+  if(gameObject.part) object = OBJECTS.getObjectOrHeroById(gameObject.ownerId)
+
+  let stage = PIXIMAP.objectStage
+  if(object.tags.foreground) stage = PIXIMAP.foregroundStage
+
+  return stage
+}
+
 export {
   darken,
   lighten,
@@ -234,4 +255,6 @@ export {
   updateColor,
   updateScale,
   updateSprite,
+  getGameObjectStage,
+  isColliding,
 }

@@ -151,11 +151,6 @@ const initPixiApp = (canvasRef, onLoad) => {
         return
       }
 
-      if(object && object.tags.foreground) {
-        sprite.zOrder = sprite.y + 1000000
-        return
-      }
-
       sprite.zOrder = sprite.y;
   });
 
@@ -168,6 +163,9 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.objectStage.sortableChildren = true;
   world.addChild(PIXIMAP.objectStage);
 
+
+  PIXIMAP.foregroundStage = new PIXI.display.Layer()
+  world.addChild(PIXIMAP.foregroundStage);
 
   ///////////////
   ///////////////

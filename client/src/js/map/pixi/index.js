@@ -6,7 +6,7 @@ import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
 import { Ease, ease } from 'pixi-ease'
 
-import { setColor, getHexColor } from './utils'
+import { setColor, getHexColor, getGameObjectStage } from './utils'
 
 window.PIXIMAP = {
   textures: {},
@@ -69,6 +69,7 @@ PIXIMAP.onGameLoaded = function() {
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
     PIXIMAP.objectStage.removeChildren()
+    PIXIMAP.foregroundStage.removeChildren()
     PIXIMAP.initializeDarknessSprites()
     PIXIMAP.initializePixiObjectsFromGame()
     window.local.emit('onGameReady')
@@ -95,11 +96,11 @@ PIXIMAP.onDeleteSubObject = function(object, subObjectName) {
 }
 
 PIXIMAP.deleteObject = function(object) {
-  const stage = PIXIMAP.objectStage
+  const stage = getGameObjectStage(object)
 
   if(object.constructParts) {
     object.constructParts.forEach((part) => {
-      PIXIMAP.deleteObject(part)
+      PIXIMAP.deleteObject(PIXIMAP.convertToPartObject(object, part))
     })
   }
   const pixiChild = stage.getChildByName(object.id)
@@ -137,6 +138,7 @@ PIXIMAP.addObject = function(object) {
 
 PIXIMAP.onResetObjects = function() {
   PIXIMAP.objectStage.removeChildren()
+  PIXIMAP.foregroundStage.removeChildren()
   PIXIMAP.objectStage._reInitialize = true
 }
 
@@ -174,6 +176,11 @@ PIXIMAP.onRender = function() {
       // PIXIMAP.shadowStage.rotation = hero.cameraRotation
       PIXIMAP.shadowStage.pivot.x = camera.x
       PIXIMAP.shadowStage.pivot.y = camera.y
+    }
+    if(PIXIMAP.foregroundStage) {
+      // PIXIMAP.foregroundStage.rotation = hero.cameraRotation
+      PIXIMAP.foregroundStage.pivot.x = camera.x
+      PIXIMAP.foregroundStage.pivot.y = camera.y
     }
     if(PIXIMAP.backgroundStage) {
       PIXIMAP.backgroundOverlay.transform.scale.x = (PIXIMAP.app.view.width/PIXIMAP.backgroundOverlay.texture._frame.width)
@@ -414,7 +421,9 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
 
   if(!options) options = {}
 
-  let pixiChild = PIXIMAP.objectStage.getChildByName(object.id)
+  const stage = getGameObjectStage(object)
+
+  let pixiChild = stage.getChildByName(object.id)
   if(!pixiChild) return
 
   if(type === 'flash' && !pixiChild.animationFlashColor) {
@@ -566,7 +575,7 @@ PIXIMAP.convertToPartObject = function(gameObject, part) {
   let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
   let color = part.color || gameObject.color || GAME.world.defaultObjectColor
   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.removed, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
 
   return partObject

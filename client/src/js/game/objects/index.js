@@ -45,6 +45,7 @@ class Objects{
   }
 
   forAllSubObjects(subObjects, fx) {
+    if(!subObjects) return
     Object.keys(subObjects).forEach((id) => {
       fx(subObjects[id], id)
     })

@@ -121,6 +121,7 @@ function setDefault() {
     light: false,
     background: false,
     foreground: false,
+    seeThroughOnHeroCollide: false,
     hidden: false,
     // invisibleOnHeroCollide: false
   }

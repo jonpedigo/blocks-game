@@ -8,7 +8,6 @@ IMPROVEMENTS
 subinteractmenu ( find all interact triggers involving this object and display all possible )
 Hero removed -> respawn UI
 Add objects when you hit power world transform buttons
-Objects OVER others objects ( for tunnels and stuff ), they become transparent only if you are under them
 death by jump
 never close right click menu if shift is pressed
 Inventory UI
@@ -21,7 +20,6 @@ more space bar actions -> 'double jump', 'dash'
 // all objects fade in, all objects fade in random
 UI - input index
 Bounce
-Target/Homing awareness area
 Implement special extra physics for objects, not just heros
 
 ---
