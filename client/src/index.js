@@ -21,7 +21,6 @@ MORE key actions.
   z and x accelerate and decelerate
 more space bar actions -> 'double jump', 'dash'
 // all objects fade in, all objects fade in random
-UI - input index
 Bounce
 Implement special extra physics for objects, not just heros
 Hero notifications.. more!

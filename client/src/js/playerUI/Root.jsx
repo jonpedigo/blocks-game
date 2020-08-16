@@ -167,6 +167,12 @@ export default class Root extends React.Component {
     }
   }
 
+  _isModalOpen = () => {
+    const { showInventory, showMainMenuModal, showControlsInfoModal } = this.state;
+
+    return showInventory || showMainMenuModal || showControlsInfoModal
+  }
+
   _onKeyDown = (event) => {
     if(PAGE.typingMode) return
 
@@ -174,8 +180,18 @@ export default class Root extends React.Component {
     if (key === "i") {
       this.setState({ showInventory: !this.state.showInventory })
     }
-    if (key === "enter" || key === 'esc') {
+    if (key === "enter") {
       this.setState({ showMainMenuModal: !this.state.showMainMenuModal })
+    }
+
+    if(key === 'esc') {
+      if(this.state.showMainMenuModal) {
+        this.setState({ showMainMenuModal: false })
+      } else if(this._isModalOpen()){
+        this.setState({ showMainMenuModal: true, showInventory: false, showControlsInfoModal: false })
+      } else {
+        this.setState({ showMainMenuModal: true })
+      }
     }
   }
 }

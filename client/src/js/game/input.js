@@ -6,7 +6,7 @@ window.defaultWASD =  {
   a: 'Move Left',
   d: 'Move Right',
 }
-window.defaultArrowKeyss =  {
+window.defaultArrowKeys =  {
   up: 'Move Up',
   down: 'Move Down',
   left: 'Move Left',
@@ -14,55 +14,55 @@ window.defaultArrowKeyss =  {
 }
 
 function setDefault() {
-  window.heroArrowKeyBehaviors = {
+  window.arrowKeysBehavior = {
     'flatDiagonal' : {
       ...window.defaultWASD,
-      ...window.defaultArrowKeys,
+      // ...window.defaultArrowKeys,
     },
     'velocity': {
       ...window.defaultWASD,
-      ...window.defaultArrowKeys,
+      // ...window.defaultArrowKeys,
     },
     'skating': {
       ...window.defaultWASD,
-      ...window.defaultArrowKeys,
+      // ...window.defaultArrowKeys,
     },
     'flatRecent': {
       ...window.defaultWASD,
-      ...window.defaultArrowKeys,
+      // ...window.defaultArrowKeys,
     },
     'angleAndVelocity' : {
       w: 'Move Forward',
       s: 'Move Backward',
       a: 'Rotate Left',
       d: 'Rotate Right',
-      up: 'Move Forward',
-      down: 'Move Backward',
-      left: 'Rotate Left',
-      right: 'Rotate Right',
+      // up: 'Move Forward',
+      // down: 'Move Backward',
+      // left: 'Rotate Left',
+      // right: 'Rotate Right',
     },
     'none' : {
     }
   }
 
-  window.heroActionButtonBehaviors = {
+  window.actionButtonBehavior = {
     'dropWall': {
-      'Question Mark': 'Drop Wall',
+      'm': 'Drop Wall',
     },
     'shootBullet': {
-      'Question Mark': 'Shoot Bullet',
+      'm': 'Shoot Bullet',
     },
     'none': {
 
     }
   }
 
-  window.heroSpaceBarBehaviors = {
+  window.spaceBarBehavior = {
     'groundJump': {
-      'Space Bar': 'Jump ( On Ground )'
+      'space': 'Jump ( On Ground )'
     },
     'floatJump': {
-      'Space Bar': 'Jump ( On Ground or In Air )'
+      'space': 'Jump ( On Ground or In Air )'
     },
     'none': {
 
@@ -74,13 +74,13 @@ function addCustomInputBehavior(behaviorList) {
   behaviorList.forEach((behavior) => {
     const { behaviorProp, behaviorName } = behavior
     if(behaviorProp === 'spaceBarBehavior') {
-      window.heroSpaceBarBehaviors.unshift(behaviorName)
+      window.spaceBarBehavior.unshift(behaviorName)
     }
     if(behaviorProp === 'actionButtonBehavior') {
-      window.heroActionButtonBehaviors.unshift(behaviorName)
+      window.actionButtonBehavior.unshift(behaviorName)
     }
     if(behaviorProp === 'arrowKeysBehavior') {
-      window.heroArrowKeyBehaviors.unshift(behaviorName)
+      window.arrowKeysBehavior.unshift(behaviorName)
     }
   })
 }

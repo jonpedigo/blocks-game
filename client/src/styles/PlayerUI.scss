@@ -2,6 +2,50 @@
 
 }
 
+.ControlsInfo {
+  text-align: center;
+  color: white;
+
+  // &__content {
+  //   height: 100%;
+  //   overflow-y: scroll;
+  // }
+
+  &__item {
+    font-size: 20px;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+  }
+
+  &__header {
+    font-size: 30px;
+    margin: 0 auto;
+    padding: 20px;
+    font-weight: 700;
+  }
+
+  &__key {
+    width: 30%;
+    text-align: center;
+    padding: 10px;
+    div {
+      margin: 0 auto;
+      transform: scale(3);
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  }
+
+  &__behavior {
+    text-align: left;
+    width: 70%;
+  }
+}
+
 .Sprite {
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
