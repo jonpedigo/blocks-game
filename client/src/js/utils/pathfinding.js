@@ -148,25 +148,25 @@ function walkIntoWall(object) {
 
   let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
 
-  if(object.direction === 'right'){
+  if(object._goalDirection === 'right'){
     if ( isGridWalkable(gridX + 1, gridY, options) ){
       return { x: gridX + 1, y: gridY}
     }
   }
 
-  if(object.direction === 'left') {
+  if(object._goalDirection === 'left') {
     if ( isGridWalkable(gridX - 1, gridY, options) ) {
       return { x: gridX - 1, y: gridY}
     }
   }
 
-  if(object.direction === 'up') {
+  if(object._goalDirection === 'up') {
     if ( isGridWalkable(gridX, gridY - 1, options) ){
       return { x: gridX, y: gridY - 1}
     }
   }
 
-  if(object.direction === 'down') {
+  if(object._goalDirection === 'down') {
     if ( isGridWalkable(gridX, gridY + 1, options) ) {
       return { x: gridX, y: gridY + 1}
     }
@@ -179,8 +179,8 @@ function walkIntoWall(object) {
     'right',
     'up',
     'down',
-  ].filter((dir) => dir !== object.direction)
-  object.direction = directions[Math.floor(Math.random() * 3)]
+  ].filter((dir) => dir !== object._goalDirection)
+  object._goalDirection = directions[Math.floor(Math.random() * 3)]
 
   // console.log('found nowhere to move')
   return { x: gridX, y: gridY }
@@ -208,28 +208,28 @@ function exploreCave(object) {
   }
 
   if(availableGrids.length === 1) {
-    object.direction = availableGrids[0].direction
+    object._goalDirection = availableGrids[0].direction
     return availableGrids[0]
   } else if(availableGrids.length === 2) {
-    if(object.direction === 'right'){
+    if(object._goalDirection === 'right'){
       if ( isGridWalkable(gridX + 1, gridY, options) ){
         return { x: gridX + 1, y: gridY}
       }
     }
 
-    if(object.direction === 'left') {
+    if(object._goalDirection === 'left') {
       if ( isGridWalkable(gridX - 1, gridY, options) ) {
         return { x: gridX - 1, y: gridY}
       }
     }
 
-    if(object.direction === 'up') {
+    if(object._goalDirection === 'up') {
       if ( isGridWalkable(gridX, gridY - 1, options) ){
         return { x: gridX, y: gridY - 1}
       }
     }
 
-    if(object.direction === 'down') {
+    if(object._goalDirection === 'down') {
       if ( isGridWalkable(gridX, gridY + 1, options) ) {
         return { x: gridX, y: gridY + 1}
       }
@@ -242,11 +242,11 @@ function exploreCave(object) {
       'right',
       'up',
       'down',
-    ].filter((dir) => dir !== object.direction)
-    object.direction = directions[Math.floor(Math.random() * (object.direction ? 3 : 4))]
+    ].filter((dir) => dir !== object._goalDirection)
+    object._goalDirection = directions[Math.floor(Math.random() * (object._goalDirection ? 3 : 4))]
   } else {
     let grid = shuffle(availableGrids)[0]
-    object.direction = grid.direction
+    object._goalDirection = grid.direction
     return grid
   }
 
@@ -262,42 +262,42 @@ function walkWithPurpose(object) {
 
   let random = Math.random()
 
-  if(random <= .25 || !object.direction) {
+  if(random <= .25 || !object._goalDirection) {
     let directions = [
       'left',
       'right',
       'up',
       'down',
-    ].filter((dir) => dir !== object.direction)
-    object.direction = directions[Math.floor(Math.random() * (object.direction ? 3 : 4))]
+    ].filter((dir) => dir !== object._goalDirection)
+    object._goalDirection = directions[Math.floor(Math.random() * (object._goalDirection ? 3 : 4))]
   }
 
-  if(object.direction === 'right'){
+  if(object._goalDirection === 'right'){
     if ( isGridWalkable(gridX + 1, gridY, options) ){
       return { x: gridX + 1, y: gridY}
     }
   }
 
-  if(object.direction === 'left') {
+  if(object._goalDirection === 'left') {
     if ( isGridWalkable(gridX - 1, gridY, options) ) {
       return { x: gridX - 1, y: gridY}
     }
   }
 
-  if(object.direction === 'up') {
+  if(object._goalDirection === 'up') {
     if ( isGridWalkable(gridX, gridY - 1, options) ){
       return { x: gridX, y: gridY - 1}
     }
   }
 
-  if(object.direction === 'down') {
+  if(object._goalDirection === 'down') {
     if ( isGridWalkable(gridX, gridY + 1, options) ) {
       return { x: gridX, y: gridY + 1}
     }
   }
 
   // directional movement failed, find somewhere to move
-  object.direction = ''
+  object._goalDirection = ''
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
     { x: gridX, y: gridY-1},
@@ -321,8 +321,8 @@ function walkAround(object) {
   const { gridX, gridY } = gridUtil.convertToGridXY(object)
 
   let direction = ''
-  if(object.direction) {
-    direction = object.direction
+  if(object._goalDirection) {
+    direction = object._goalDirection
   }
 
   let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
@@ -332,7 +332,7 @@ function walkAround(object) {
   if(random <= .25) {
     if(direction !=='left'){
       if ( isGridWalkable(gridX + 1, gridY, options) ){
-        object.direction = 'right'
+        object._goalDirection = 'right'
         return { x: gridX + 1, y: gridY}
       }
     }
@@ -340,7 +340,7 @@ function walkAround(object) {
     // go left
     if(direction !== 'right') {
       if ( isGridWalkable(gridX - 1, gridY, options) ) {
-        object.direction = 'left'
+        object._goalDirection = 'left'
         return { x: gridX - 1, y: gridY}
       }
     }
@@ -348,7 +348,7 @@ function walkAround(object) {
     // go down
     if(direction !== 'up') {
       if ( isGridWalkable(gridX, gridY + 1, options) ) {
-        object.direction = 'down'
+        object._goalDirection = 'down'
         return { x: gridX, y: gridY + 1}
       }
     }
@@ -356,14 +356,14 @@ function walkAround(object) {
     // go up
     if(direction !== 'down') {
       if ( isGridWalkable(gridX, gridY - 1, options) ){
-        object.direction = 'up'
+        object._goalDirection = 'up'
         return { x: gridX, y: gridY - 1}
       }
     }
   }
 
   // directional movement failed, find somewhere to move
-  object.direction = ''
+  object._goalDirection = ''
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = shuffle([
     { x: gridX, y: gridY-1},

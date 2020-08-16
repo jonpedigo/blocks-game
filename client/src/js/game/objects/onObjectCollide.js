@@ -32,20 +32,20 @@ export default function onObjectCollide(agent, collider, result) {
   }
 
   if(agent.tags && agent.mod().tags['goomba'] && collider.tags && collider.mod().tags['obstacle']) {
-    if(result.overlap_x === 1 && agent.direction === 'right') {
-      agent.direction = 'left'
+    if(result.overlap_x === 1 && agent._goalDirection === 'right') {
+      agent._goalDirection = 'left'
     }
-    if(result.overlap_x === -1 && agent.direction === 'left') {
-      agent.direction = 'right'
+    if(result.overlap_x === -1 && agent._goalDirection === 'left') {
+      agent._goalDirection = 'right'
     }
   }
 
   if(agent.tags && agent.mod().tags['goombaSideways'] && collider.tags && collider.mod().tags['obstacle']) {
-    if(result.overlap_y === 1 && agent.direction === 'down') {
-      agent.direction = 'up'
+    if(result.overlap_y === 1 && agent._goalDirection === 'down') {
+      agent._goalDirection = 'up'
     }
-    if(result.overlap_y === -1 && agent.direction === 'up') {
-      agent.direction = 'down'
+    if(result.overlap_y === -1 && agent._goalDirection === 'up') {
+      agent._goalDirection = 'down'
     }
   }
 }

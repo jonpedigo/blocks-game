@@ -252,11 +252,11 @@ function objectCollisionEffects(po) {
         }
       }
 
-      if(agent.mod().tags['heroAwarenessTriggerArea']) {
-        let hero = GAME.heros[agent.ownerId]
-        // sometimes the hero could be logged off
-        if(hero) {
-          hero._objectsAwareOfNext.push(collider.id)
+      if(agent.mod().tags['awarenessTriggerArea']) {
+        let owner = OBJECTS.getObjectOrHeroById(agent.ownerId)
+        // sometimes a hero could be logged off?
+        if(owner) {
+          owner._objectsAwareOfNext.push(collider.id)
         }
       }
 
@@ -367,6 +367,18 @@ function objectCorrection(po, final) {
         correctConstructPart(po.constructPart, po.gameObject, po)
       }
     } else {
+
+      if(object.x > object._initialX) {
+        object._movementDirection = 'right'
+      } else if(object.x < object._initialX) {
+        object._movementDirection = 'left'
+      }
+      if(object.y > object._initialY) {
+        object._movementDirection = 'down'
+      } else if(object.y < object._initialY) {
+        object._movementDirection = 'up'
+      }
+
       // just give up correction and prevent any movement from these mother fuckers
       if(illegal) {
         object.x = object._initialX
@@ -518,7 +530,7 @@ function attachSubObjects(owner, subObjects) {
     if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
     if((subObject.mod().tags.relativeToDirection || subObject.mod().tags.relativeToAngle)) {
-      const direction = owner.inputDirection
+      const direction = owner.inputDirection || owner._movementDirection
 
       let radians = 0
 

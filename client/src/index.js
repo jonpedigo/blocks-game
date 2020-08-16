@@ -12,7 +12,7 @@ Objects OVER others objects ( for tunnels and stuff ), they become transparent o
 death by jump
 never close right click menu if shift is pressed
 Inventory UI
-Improve Add Sub Object AND defaultInteractTriggerArea
+Improve Add Sub Object
 Light Editor
 MORE key actions.
   Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
@@ -311,6 +311,8 @@ Engine trail on a car u know what I mean?
 // dev dependencies to try to lower build file size
 
 // DELETING object keys doesnt work, it just skips that update of that key. We need a good system for this
+
+// another effects phase after correction, this is for things that should not be triggered unless it was legal
 
 // we need more patterns to interact with the rendering system.
 // standards for Adding Object to Game -> Add Object to Physics ->

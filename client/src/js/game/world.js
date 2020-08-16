@@ -23,6 +23,9 @@ function setDefault() {
       gameBoundaryBottomDestroyHero: false,
       gameBoundaryDestroyHero: false,
       gameBoundaryDestroyObjects: true,
+      // randomFadeAllObjectsIn,
+      // fadeAllObjectsIn,
+      // hostHeroPausedSetsGamePaused
     },
     gravityVelocityY: 1000,
     gravityVelocityX: 1000,

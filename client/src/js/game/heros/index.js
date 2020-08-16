@@ -103,13 +103,13 @@ class Hero{
           relativeY: 0,
           tags: { obstacle: false, invisible: true, stationary: true, heroInteractTriggerArea: true },
         },
-        heroAwarenessTriggerArea: {
+        awarenessTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
           relativeWidth: GAME.grid.nodeSize * 12,
           relativeHeight: GAME.grid.nodeSize * 16,
           relativeX: 0,
           relativeY: -GAME.grid.nodeSize * 4,
-          tags: { obstacle: false, invisible: true, stationary: true, heroAwarenessTriggerArea: true, relativeToDirection: true, },
+          tags: { obstacle: false, invisible: true, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
         },
         // spear: {
         //   id: 'spear-'+window.uniqueID(),
@@ -377,8 +377,8 @@ class Hero{
       angle: hero.angle,
       questState: hero.questState,
       customState: hero.customState,
-      objectsWithin: hero.objectsWithin,
-      objectsAwareOf: hero.objectsAwareOf,
+      _objectsWithin: hero._objectsWithin,
+      _objectsAwareOf: hero._objectsAwareOf,
       conditionTestCounts: hero.conditionTestCounts,
     }
 
@@ -551,6 +551,7 @@ class Hero{
       mapState.subObjects = {}
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].id = subObject.id
         mapState.subObjects[subObjectName].x = subObject.x
         mapState.subObjects[subObjectName].y = subObject.y
         mapState.subObjects[subObjectName].width = subObject.width
@@ -635,6 +636,9 @@ class Hero{
 
   onNetworkUpdateHero(updatedHero) {
     if(!PAGE.gameLoaded) return
+    if(updatedHero.subObjects) OBJECTS.forAllSubObjects(updatedHero.subObjects, (so) => {
+      window.mergeDeep(GAME.objectsById[so.id], so)
+    })
     if(PAGE.role.isPlayEditor) HERO.resetReachablePlatformArea(updatedHero)
     if(!PAGE.role.isHost) {
       window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)

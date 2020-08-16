@@ -8,9 +8,17 @@ function onPageLoaded() {
     onHeroLand: { mainObject: 'hero', guestObject: 'anything' },
     onHeroInteract: { mainObject: 'hero', guestObject: 'anything' },
     onHeroDestroyed: { mainObject: 'hero', guestObject: 'anything', guestObjectOptional: true },
+    onHeroAware: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroUnaware: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroEnter: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroLeave: { mainObject: 'hero', guestObject: 'anything' },
     onHeroStartQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
     onHeroCompleteQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
     onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
+    onObjectAware: { mainObject: 'object', guestObject: 'anything' },
+    onObjectUnaware: { mainObject: 'object', guestObject: 'anything' },
+    onObjectEnter: { mainObject: 'object', guestObject: 'anything' },
+    onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
     onGameStart: { mainObject: null, guestObject: null },
@@ -20,27 +28,17 @@ function onPageLoaded() {
   // -> onHeroDrop
   // -> onHeroDeposit
   // -> onHeroWithdraw
-  // -> onHeroDestroyed
   // -> onHeroRespawned
   // -> onHeroEquip
-  // -> onHeroAware
-
+  // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
+  
     // 'onHeroChooseOption',
     // 'onObjectSpawn',
-    // 'onObjectNoticed',
-    // 'onObjectNotice',
-    // 'onHerocantInteract'
-    // 'onHeroNoticed,
-    // 'onHeroNotice,
+    // 'onHeroCanInteract'
     // 'onQuestFail',
     // 'onObjectAwake',
     // 'onTimerEnd',
-    // 'onHeroEnter'
-    // 'onObjectEnter'
-    // 'onHeroLeave'
-    // 'onObjectLeave'
     // 'onUpdate' -> for sequences with conditions
-    // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
 }
 
 function deleteTrigger(object, triggerId) {

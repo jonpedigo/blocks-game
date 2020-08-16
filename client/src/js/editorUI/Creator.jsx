@@ -84,6 +84,9 @@ export default class Creator extends React.Component {
         newObject.x = MAPEDITOR.objectHighlighted.x
         newObject.y = MAPEDITOR.objectHighlighted.y
         newObject.id = 'creator-'+window.uniqueID()
+        OBJECTS.forAllSubObjects(newObject.subObjects, (subObject) => {
+          subObject.id = 'subObject-'+window.uniqueID()
+        })
         if(colorSelected) newObject.color = colorSelected
         OBJECTS.create(newObject)
 

@@ -167,6 +167,26 @@ function onGameLoaded() {
         tags: { obstacle: true, wander: true, talker: true, talkOnHeroInteract: true },
       }
     },
+    {
+      label: 'Homing',
+      columnName: 'Monsters',
+      JSON: {
+        objectType: 'plainObject',
+        tags: { obstacle: true, monster: true, homing: true, targetHeroOnAware: true },
+        subObjects: {
+          awarenessTriggerArea: {
+            x: 0, y: 0, width: 40, height: 40,
+            relativeWidth: GAME.grid.nodeSize * 12,
+            relativeHeight: GAME.grid.nodeSize * 16,
+            relativeX: 0,
+            relativeY: -GAME.grid.nodeSize * 4,
+            opacity: 0.2,
+            color: 'yellow',
+            tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
+          }
+        }
+      }
+    },
   ]
 }
 

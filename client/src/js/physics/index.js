@@ -220,7 +220,7 @@ function prepareObjectsAndHerosForMovementPhase() {
       })
     }
 
-    if(object.tags.hero) {
+    if(object.subObjects && object.subObjects.awarenessTriggerArea) {
       object._objectsAwareOfNext = []
     }
 
@@ -425,7 +425,7 @@ function postPhysics() {
 }
 
 function processAwarenessAndWithinEvents(object) {
-  if(object.tags.hero) {
+  if(object.subObjects && object.subObjects.awarenessTriggerArea) {
     if(object._objectsAwareOf) {
       const left = object._objectsAwareOf.filter((id) => {
         return object._objectsAwareOfNext.indexOf(id) == -1
@@ -434,11 +434,21 @@ function processAwarenessAndWithinEvents(object) {
         return object._objectsAwareOf.indexOf(id) == -1
       })
 
-      left.forEach((objectLeft) => {
-        window.emitGameEvent('onHeroUnaware', object, objectLeft)
+      left.forEach((objectLeftId) => {
+        const objectLeft = OBJECTS.getObjectOrHeroById(objectLeftId)
+        if(object.tags && object.tags.hero) {
+          window.emitGameEvent('onHeroUnaware', object, objectLeft)
+        } else {
+          window.emitGameEvent('onObjectUnaware', object, objectLeft)
+        }
       })
-      entered.forEach((objectEntered) => {
-        window.emitGameEvent('onHeroAware', object, objectEntered)
+      entered.forEach((objectEnteredId) => {
+        const objectEntered = OBJECTS.getObjectOrHeroById(objectEnteredId)
+        if(object.tags && object.tags.hero) {
+          window.emitGameEvent('onHeroAware', object, objectEntered)
+        } else {
+          window.emitGameEvent('onObjectAware', object, objectEntered)
+        }
       })
     }
     object._objectsAwareOf = object._objectsAwareOfNext
@@ -452,14 +462,16 @@ function processAwarenessAndWithinEvents(object) {
       return object._objectsWithin.indexOf(id) == -1
     })
 
-    left.forEach((objectLeft) => {
+    left.forEach((objectLeftId) => {
+      const objectLeft = OBJECTS.getObjectOrHeroById(objectLeftId)
       if(objectLeft.tags && objectLeft.tags.hero) {
         window.emitGameEvent('onHeroLeave', objectLeft, object)
       } else {
         window.emitGameEvent('onObjectLeave', objectLeft, object)
       }
     })
-    entered.forEach((objectEntered) => {
+    entered.forEach((objectEnteredId) => {
+      const objectEntered = OBJECTS.getObjectOrHeroById(objectEnteredId)
       if(objectEntered.tags && objectEntered.tags.hero) {
         window.emitGameEvent('onHeroEnter', objectEntered, object)
       } else {

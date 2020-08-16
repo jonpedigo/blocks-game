@@ -6,6 +6,7 @@ import triggers from '../triggers.js'
 import { dropObject } from '../heros/inventory.js'
 import { addHook, deleteHook } from '../hooks.js'
 import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
+import { setTarget, setHomingPath } from '../ai/pathfinders.js'
 
 class Objects{
   constructor() {
@@ -104,7 +105,8 @@ class Objects{
       target: object.target,
       path: object.path,
       lastHeroUpdateId: object.lastHeroUpdateId,
-      direction: object.direction,
+      _movementDirection: object._movementDirection,
+      _goalDirection: object._goalDirection,
       fresh: object.fresh,
       gridX: object.gridX,
       gridY: object.gridY,
@@ -122,8 +124,12 @@ class Objects{
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
 
+
+      _targetId: object._targetId,
+      _objectsWithin: object._objectsWithin,
+      _objectsAwareOf: object._objectsAwareOf,
+
       // IMPLEMENT...
-      objectsWithin: object.objectsWithin,
       conditionTestCounts: object.conditionTestCounts,
     }
 
@@ -316,6 +322,7 @@ class Objects{
       mapState.subObjects = {}
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
         mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].id = subObject.id
         mapState.subObjects[subObjectName].x = subObject.x
         mapState.subObjects[subObjectName].y = subObject.y
         mapState.subObjects[subObjectName].width = subObject.width
@@ -620,6 +627,7 @@ class Objects{
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
     if(!subObject.id) subObject.id = subObjectName + '-' + window.uniqueID()
+    GAME.objectsById[subObject.id] = subObject
 
     let subObjectAlreadyExisted = false
 
@@ -802,6 +810,10 @@ class Objects{
       GAME.objects = objectsUpdated
       GAME.objects.forEach((object) => {
         GAME.objectsById[object.id] = object
+        // OBJECTS.forAllSubObjects(object.subObjects, (so) => {
+        //   console.log('?')
+        //   GAME.objectsById[so.id] = so
+        // })
       })
     }
   }
@@ -1055,6 +1067,38 @@ class Objects{
     })
 
     window.mergeDeep(object, JSON)
+  }
+
+  onObjectAware(object, awareOfObject) {
+    if(awareOfObject.mod().tags.hero) {
+      if(object.mod().tags.targetHeroOnAware) {
+        if(object.mod().tags.homing) {
+          setHomingPath(object, awareOfObject)
+        }
+        if(object.mod().tags.zombie) {
+          setTarget(object, awareOfObject)
+        }
+      }
+    } else if(awareOfObject.mod().tags.victim){
+      if(object.mod().tags.targetVictimOnAware) {
+        if(object.mod().tags.homing) {
+         setHomingPath(object, awareOfObject)
+        }
+        if(object.mod().tags.zombie) {
+         setTarget(object, awareOfObject)
+        }
+      }
+    }
+  }
+
+  onObjectUnaware(object, awareOfObject) {
+    if(object.mod().tags.targetClearOnAware) {
+      if(awareOfObject.id === object._targetId) {
+        object.path = null
+        object.target = null
+        delete object._targetId
+      }
+    }
   }
 }
 

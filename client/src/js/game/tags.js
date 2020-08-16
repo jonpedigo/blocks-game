@@ -8,6 +8,9 @@ function setDefault() {
     goombaSideways: false,
     homing: false,
     zombie: false,
+    targetHeroOnAware: false,
+    targetVictimOnAware: false,
+    targetClearOnUnaware: false,
   }
 
   window.physicsTags = {
@@ -207,7 +210,7 @@ function setDefault() {
   window.subObjectTags = {
     subObject: true,
     heroInteractTriggerArea: false,
-    heroAwarenessTriggerArea: false,
+    awarenessTriggerArea: false,
     objectInteractTriggerArea: false,
     relativeToDirection: false,
     relativeToAngle: false,

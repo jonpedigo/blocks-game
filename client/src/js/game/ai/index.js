@@ -2,13 +2,13 @@ import pathfinding from '../../utils/pathfinding.js'
 import collision from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 
-import pathfinderIntelligence from './pathfinders'
+import { pathfindingAI } from './pathfinders'
 import { spawnObject } from '../spawnZone'
 
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldX = object.x
   let oldY = object.y
-  
+
   if(object.x > target.x) {
     if(options.flat) object.velocityX = -object.mod().speed || -100
     else {
@@ -98,7 +98,7 @@ function onUpdate(objects, delta) {
       moveTowardsTarget(object, object.target, delta)
     }
 
-    pathfinderIntelligence(object)
+    pathfindingAI(object)
 
     spawnObject(object)
   })
