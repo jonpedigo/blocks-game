@@ -1,7 +1,8 @@
 import React from 'react'
 import DialogueBox from './DialogueBox.jsx'
-import Inventory from './Inventory.jsx'
+import InventoryModal from './InventoryModal.jsx'
 import MainMenuModal from './MainMenuModal.jsx'
+import HeroMenuModal from './HeroMenuModal.jsx'
 import ControlsInfo from './ControlsInfo.jsx'
 import Modal from '../components/Modal.jsx'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
@@ -18,10 +19,11 @@ export default class Root extends React.Component {
       gameState: {},
       toastingActiveQuestGoalId: null,
       toastingActiveQuestGoalToastId: null,
-      showInventory: false,
+      showInventoryModal: false,
       showMainMenuModal: false,
-      hero: GAME.heros[HERO.id],
       showControlsInfoModal: false,
+      showHeroMenuModal: false,
+      hero: GAME.heros[HERO.id],
     }
 
     this.onUpdateState = (heroOverride) => {
@@ -84,18 +86,26 @@ export default class Root extends React.Component {
   }
 
   render() {
-    const { showInventory, showMainMenuModal, showControlsInfoModal, hero } = this.state;
+    const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
     if (CONSTRUCTEDITOR.open) return null
     if (!GAME.gameState || !GAME.gameState.loaded) return null
 
+    // <div className="ShortcutPanel">
+    //   <i className="ShortcutPanel__main-menu fa fas fa-bars"></i>
+    // </div>
+
     return (
       <div className="PlayerUI">
-        <div className="ShortcutPanel">
-          <i className="ShortcutPanel__main-menu fa fas fa-bars"></i>
-        </div>
+        {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue} />}
+        {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
         {showMainMenuModal && <MainMenuModal
           onClose={() => this.setState({ showMainMenuModal: false })}
           onOpenControlsInfoModal={() => this.setState({ showControlsInfoModal: true })}
+        />}
+        {showHeroMenuModal && <HeroMenuModal
+          hero={hero}
+          onClose={() => this.setState({ showHeroMenuModal: false })}
+          onOpenInventoryModal={() => this.setState({ showInventoryModal: true })}
         />}
         {showControlsInfoModal && <Modal
           size="medium"
@@ -103,7 +113,10 @@ export default class Root extends React.Component {
         >
           <ControlsInfo onClose={this._closeControlsInfoModal}/>
         </Modal>}
-        {showInventory ? <Inventory inventoryItems={hero.subObjects} /> : null}
+        {showInventoryModal && <InventoryModal
+          onClose={() => this.setState({ showInventoryModal: false })}
+          inventoryItems={hero.subObjects}
+        />}
         <ToastContainer
           position="top-center"
           autoClose={false}
@@ -114,8 +127,6 @@ export default class Root extends React.Component {
           draggable={false}
           transition={Slide}
         />
-        {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue} />}
-        {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
       </div>
     )
   }
@@ -168,29 +179,38 @@ export default class Root extends React.Component {
   }
 
   _isModalOpen = () => {
-    const { showInventory, showMainMenuModal, showControlsInfoModal } = this.state;
+    const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal } = this.state;
 
-    return showInventory || showMainMenuModal || showControlsInfoModal
+    return showInventoryModal || showMainMenuModal || showControlsInfoModal || showHeroMenuModal
   }
 
   _onKeyDown = (event) => {
     if(PAGE.typingMode) return
 
     const key = keycode(event.keyCode)
-    if (key === "i") {
-      this.setState({ showInventory: !this.state.showInventory })
-    }
-    if (key === "enter") {
-      this.setState({ showMainMenuModal: !this.state.showMainMenuModal })
-    }
+    // if (key === "i") {
+    //   this.setState({ showInventoryModal: !this.state.showInventoryModal })
+    // }
 
-    if(key === 'esc') {
+    if(key === 'esc' || key === 'enter') {
+      event.preventDefault();
       if(this.state.showMainMenuModal) {
         this.setState({ showMainMenuModal: false })
       } else if(this._isModalOpen()){
-        this.setState({ showMainMenuModal: true, showInventory: false, showControlsInfoModal: false })
+        this.setState({ showMainMenuModal: key === 'enter', showInventoryModal: false, showControlsInfoModal: false, showHeroMenuModal: false })
       } else {
         this.setState({ showMainMenuModal: true })
+      }
+    }
+
+    if(key === 'tab') {
+      event.preventDefault();
+      if(this.state.showHeroMenuModal) {
+        this.setState({ showHeroMenuModal: false })
+      } else if(this._isModalOpen()){
+        this.setState({ showHeroMenuModal: true, showInventoryModal: false, showControlsInfoModal: false, showMainMenuModal: false })
+      } else {
+        this.setState({ showHeroMenuModal: true })
       }
     }
   }

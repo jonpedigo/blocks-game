@@ -378,6 +378,10 @@ IdK ANOTHER ONLINE https://hextml.playest.net/
 THIS IS FOR GENERATING SPRITESHEET JSON
 https://www.leshylabs.com/apps/sstool/
 
+IMPROVE AESTHETIC AND GAME AESHTIC CUSTOMIZATION
+https://www.transparenttextures.com/
+
+
 
 */
 
