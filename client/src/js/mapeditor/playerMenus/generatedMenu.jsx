@@ -18,7 +18,7 @@ import SpriteMenu from '../menus/SpriteMenu.jsx';
 import modals from '../modals.js'
 
 // NATE::
-export default class GeneratedMenu extends React.Component{
+export default class GeneratedMenu extends React.Component {
   constructor(props) {
     super(props)
 
@@ -26,35 +26,35 @@ export default class GeneratedMenu extends React.Component{
       const { startResize, onStartDrag, deleteObject, onCopy, removeObject } = MAPEDITOR
 
       //  NATE:: PUT TONS OF FUNCTIONS HERE AS THE LIBRARY
-      if(key === 'resize') {
-        if(subObject) {
+      if (key === 'resize') {
+        if (subObject) {
           startResize(objectSelected, { snapToGrid: false })
         } else {
           startResize(objectSelected)
         }
       }
 
-      if(key === 'resize-grid') {
+      if (key === 'resize-grid') {
         startResize(objectSelected, { snapToGrid: true })
       }
 
-      if(key === 'drag') {
+      if (key === 'drag') {
         onStartDrag(objectSelected)
       }
 
-      if(key === 'delete') {
+      if (key === 'delete') {
         deleteObject(objectSelected)
       }
 
-      if(key === 'remove') {
+      if (key === 'remove') {
         removeObject(objectSelected)
       }
 
-      if(key === 'copy') {
+      if (key === 'copy') {
         onCopy(objectSelected)
       }
 
-      if(key === 'drop') {
+      if (key === 'drop') {
         window.socket.emit('dropObject', objectSelected.ownerId, objectSelected.subObjectName)
       }
     }
@@ -66,41 +66,152 @@ export default class GeneratedMenu extends React.Component{
     let heroMenuItems = []
 
     library.forEach((menuItem) => {
-      if(menuItem.objectType === 'object') {
+      if (menuItem.objectType === 'object') {
         objectMenuItems.push(menuItem)
       }
-      if(menuItem.objectType === 'hero') {
+      if (menuItem.objectType === 'hero') {
         heroMenuItems.push(menuItem)
       }
     })
 
-    // objectMenuItems = objectMenuItems.reduce(() => {
+    // <MenuItem> key=action </MenuItem>
+    const objectMenuObj = { baseLevelMenu: [] }
+    const heroMenuObj = { baseLevelMenu: [] }
+
+    objectMenuItems.forEach(item => {
+      console.log(item, 'item in objectmenu')
+      if (item.hasOwnProperty('subMenu')) {
+        if (!objectMenuObj[item.subMenu]) {
+          objectMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
+          objectMenuObj['baseLevelMenu'].push({ subMenuKey: item.subMenu })
+        }
+        objectMenuObj[item.subMenu].subMenuItems.push(item)
+      } else {
+        objectMenuObj['baseLevelMenu'].push(item)
+      }
+    })
+
+    heroMenuItems.forEach(item => {
+      console.log(item, 'item in objectmenu')
+      if (item.hasOwnProperty('subMenu')) {
+        if (!heroMenuObj[item.subMenu]) {
+          heroMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
+          heroMenuObj['baseLevelMenu'].push({ subMenuKey: item.subMenu })
+        }
+        heroMenuObj[item.subMenu].subMenuItems.push(item)
+      } else {
+        heroMenuObj['baseLevelMenu'].push(item)
+      }
+    })
+
+
+
+
+
+    //objectMenuItems = objectMenuItems.reduce((item, nextItem) => {
     //   // NATE:: here youll have to turn the data into the format that you want to use in generatedMenu.jsx
     //   // if theres a submenu mentioned youll need to create a sub array or something
+    //})
+
+    // heroMenuItems = heroMenuItems.reduce((item) => {
+
     // })
-    //
-    // heroMenuItems = heroMenuItems.reduce(() => {
-    //
-    // })
+    //For submenus create an object { 'special actions': [...react component menu items], menuItems: [libraryObjs, menuItems(reactcompnt)]}
 
     return {
-      objectMenuItems,
-      heroMenuItems
+      heroMenuObj,
+      objectMenuObj
     }
   }
 
+  _renderMenu(menuItems) {
+    return menuItems.map(item => {
+      return this._fetchMenu(item)
+    })
+  }
+
+  _renderSubMenu(subMenuItems, key) {
+    return (
+      <SubMenu title={key}>
+        {subMenuItems.map(item => {
+          return this._fetchMenu(item)
+        })}
+      </SubMenu>
+    )
+  }
+
+  _fetchMenu(menuData, key) {
+    const { objectSelected, subObject, menuItemData, openColorPicker } = this.props
+    switch (menuData.useExistingMenu) {
+      case 'Dialogue':
+        return (<DialogueMenu key={key} objectSelected={objectSelected} subObject={subObject} />)
+      case 'Color':
+        return (<ColorMenu key={key} objectSelected={objectSelected} openColorPicker={openColorPicker} subObject={subObject}></ColorMenu>
+        )
+      case 'Tag':
+        return (<TagMenu key={key} objectSelected={objectSelected}></TagMenu>
+        )
+      case 'GameTag':
+        return (<GameTagMenu key={key} objectSelected={objectSelected} subObject={subObject}></GameTagMenu>
+        )
+      case 'Quest':
+        return (<QuestMenu key={key} objectSelected={objectSelected} subObject={subObject}></QuestMenu>
+        )
+      case 'SpawnZone':
+        return (<SpawnZoneMenu key={key} objectSelected={objectSelected} subObject={subObject}></SpawnZoneMenu>
+        )
+      case 'ResourceZone':
+        return (<ResourceZoneMenu key={key} objectSelected={objectSelected} subObject={subObject}></ResourceZoneMenu>
+        )
+      case 'Name':
+        return (<NameMenu key={key} objectSelected={objectSelected} subObject={subObject}></NameMenu>
+        )
+      case 'ObjectAdvanced':
+        return (<ObjectAdvancedMenu key={key} objectSelected={objectSelected} subObject={subObject}></ObjectAdvancedMenu>
+        )
+      case 'SelectSubObject':
+        return (<SelectSubObjectMenu key={key} objectSelected={objectSelected} subObject={subObject}></SelectSubObjectMenu>
+        )
+      case 'Relative':
+        return (<RelativeMenu key={key} objectSelected={objectSelected} subObject={subObject}></RelativeMenu>
+        )
+      case 'Trigger':
+        return (<TriggerMenu key={key} objectSelected={objectSelected} ></TriggerMenu>
+        )
+      case 'Hook':
+        return (<HookMenu key={key} objectSelected={objectSelected}></HookMenu>
+        )
+      case 'Live':
+        return (<LiveMenu key={key} objectSelected={objectSelected} subObject={subObject}></LiveMenu>
+        )
+      case 'Sprite':
+        return (<SpriteMenu key={key} objectSelected={objectSelected} ></SpriteMenu>
+        )
+      default:
+        return (<MenuItem key={menuData.action}>{menuData.title}</MenuItem>)
+    }
+  }
+
+
+
   render() {
     const { objectSelected, subObject, menuItemData } = this.props
-    const { objectMenuItems, heroMenuItems } = this._generateContextMenuItems(menuItemData)
-
-    if(objectSelected.tags && objectSelected.tags.hero) {
+    const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(menuItemData)
+    //console.log(heroMenuObj, objectMenuObj, 'menu objects')
+    if (objectSelected.tags && objectSelected.tags.hero) {
       return <Menu onClick={this._onHandleMenuClick}>
-        {/* NATE:: use heroMenuItems to generate a menu */}
       </Menu>
     }
 
     return <Menu onClick={this._onHandleMenuClick}>
-      {/* NATE:: use objectMenuItems to generate a menu */}
+      {objectMenuObj.baseLevelMenu.map(item => {
+        if (item.subMenuKey) {
+          return this._renderSubMenu(objectMenuObj[item.subMenuKey], item.subMenuKey)
+        } else {
+          return this._fetchMenu(item)
+        }
+      })}
     </Menu>
   }
 }
+

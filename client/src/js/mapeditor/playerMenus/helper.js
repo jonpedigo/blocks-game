@@ -2,6 +2,8 @@ import modals from '../modals.js'
 
 export default handleExtraMenuClicks = ({ key, objectSelected, openColorPicker, selectSubObject, subObjectName }) => {
     const { startResize, startRelativeDrag, onStartDrag, deleteObject, onCopy, removeObject, onStartSetPathfindingLimit, openConstructEditor, networkEditObject } = MAPEDITOR
+    const { resourceLimit, resourceWithdrawAmount } = objectSelected
+    const data = JSON.parse(key)
 
     if (key === 'select-color') {
         openColorPicker(objectSelected)
@@ -40,7 +42,6 @@ export default handleExtraMenuClicks = ({ key, objectSelected, openColorPicker, 
         modals.addGameTag()
         return
     }
-    const data = JSON.parse(key)
 
     if (data.action === 'add') {
         modals.addHook(objectSelected, data.eventName)
@@ -143,7 +144,6 @@ export default handleExtraMenuClicks = ({ key, objectSelected, openColorPicker, 
         startRelativeDrag(objectSelected, { snapToGrid: true })
     }
 
-    const { resourceLimit, resourceWithdrawAmount } = objectSelected
 
     if (key === 'edit-withdraw-amount') {
         modals.editPropertyNumber(objectSelected, 'resourceWithdrawAmount', resourceWithdrawAmount)
