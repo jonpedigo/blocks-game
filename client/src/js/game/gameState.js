@@ -9,6 +9,7 @@ function setDefault() {
     activeMods: {},
     activeModList: [],
     ambientLight: .2,
+    logs: [],
   }
   if(!localStorage.getItem('gameStates')) {
     localStorage.setItem('gameStates', JSON.stringify({}))

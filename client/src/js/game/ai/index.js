@@ -2,7 +2,7 @@ import pathfinding from '../../utils/pathfinding.js'
 import collision from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 
-import { pathfindingAI } from './pathfinders'
+import { pathfindingAI, setTarget, setPathTarget } from './pathfinders'
 import { spawnObject } from '../spawnZone'
 
 function moveTowardsTarget(object, target, delta, options = { flat: false}) {
@@ -88,14 +88,24 @@ function onUpdate(objects, delta) {
     //MOVEMENT
     //////////////////////////////////////////
     //////////////////////////////////////////
+    if(object._targetPursueId && object.mod().tags['zombie']) {
+      const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
+      setTarget(object, target)
+    }
+
+    if((object.path && object.path.length === 0) && object._targetPursueId && object.mod().tags['homing']) {
+      const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
+      setPathTarget(object, target)
+    }
+
     if(object.path && object.path.length) {
       if(GAME.resetPaths) {
         object.path = []
         object.velocityX = 0
         object.velocityY = 0
       } else moveOnPath(object, delta)
-    } else if(object.target) {
-      moveTowardsTarget(object, object.target, delta)
+    } else if(object.targetXY) {
+      moveTowardsTarget(object, object.targetXY, delta)
     }
 
     pathfindingAI(object)

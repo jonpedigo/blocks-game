@@ -125,7 +125,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   PIXIMAP.sortGroup.on('sort', function(sprite) {
       // emitters are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
       // WORK AROUND -> I could put foreground elements on a different higher stage than the emitters
-      if(sprite.emitter) {
+      if(sprite.emitter || sprite.isChat) {
         sprite.zOrder = 1000000000000
         return
       }
@@ -241,7 +241,9 @@ const initPixiApp = (canvasRef, onLoad) => {
         window.local.emit('onLoadingScreenEnd')
         loadingTimeout = null
       }, 150)
-      MAP.canvasMultiplier = window.innerWidth/640;
+      let gameElementWidth = window.innerWidth
+      if(PAGE.isLogOpen) gameElementWidth = gameElementWidth * .8
+      MAP.canvasMultiplier = gameElementWidth/640;
       const width = (640 * MAP.canvasMultiplier);
       const height = (320 * MAP.canvasMultiplier);
       app.resize(width, height);
@@ -262,6 +264,8 @@ const initPixiApp = (canvasRef, onLoad) => {
     window.local.on('onZoomChange', () => {
       onResize()
     })
+    window.local.on('onCloseLog', onResize)
+    window.local.on('onOpenLog', onResize)
     window.addEventListener("resize", onResize);
     onResize()
   }

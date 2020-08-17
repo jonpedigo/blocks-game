@@ -4,6 +4,7 @@ import InventoryModal from './InventoryModal.jsx'
 import MainMenuModal from './MainMenuModal.jsx'
 import HeroMenuModal from './HeroMenuModal.jsx'
 import ControlsInfo from './ControlsInfo.jsx'
+import GameLogs from './GameLogs.jsx'
 import Modal from '../components/Modal.jsx'
 import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,6 +26,8 @@ export default class Root extends React.Component {
       showHeroMenuModal: false,
       hero: GAME.heros[HERO.id],
     }
+
+    this.gameLogRef = React.createRef()
 
     this.onUpdateState = (heroOverride) => {
       const hero = GAME.heros[HERO.id]
@@ -85,6 +88,16 @@ export default class Root extends React.Component {
     }
   }
 
+  _renderGameLog() {
+    if(!GAME.world.tags.hasGameLog || !PAGE.isGameReady) return
+
+    return <React.Fragment>
+      {PAGE.isLogOpen && <GameLogs ref={this.gameLogRef} logs={GAME.gameState.logs}/>}
+      {!PAGE.isLogOpen && <div className="PlayerUI__open-log"><i className="fa fas fa-chevron-left" onClick={PAGE.openLog}/></div>}
+      {PAGE.isLogOpen && <div className="PlayerUI__close-log"><i className="fa fas fa-times" onClick={PAGE.closeLog}/></div>}
+    </React.Fragment>
+  }
+
   render() {
     const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
     if (CONSTRUCTEDITOR.open) return null
@@ -127,6 +140,7 @@ export default class Root extends React.Component {
           draggable={false}
           transition={Slide}
         />
+      {this._renderGameLog()}
       </div>
     )
   }
@@ -185,19 +199,29 @@ export default class Root extends React.Component {
   }
 
   _onKeyDown = (event) => {
+    const key = keycode(event.keyCode)
+
+    if(GAME.world.tags.allowHeroChat && key === 'enter' && PAGE.isLogOpen) {
+      this.gameLogRef.current.onEnterPressed()
+    }
+
+    if(key === 'esc') {
+      this.gameLogRef.current.onEscPressed()
+      return
+    }
+
     if(PAGE.typingMode) return
 
-    const key = keycode(event.keyCode)
     // if (key === "i") {
     //   this.setState({ showInventoryModal: !this.state.showInventoryModal })
     // }
 
-    if(key === 'esc' || key === 'enter') {
+    if(key === 'esc') {
       event.preventDefault();
       if(this.state.showMainMenuModal) {
         this.setState({ showMainMenuModal: false })
       } else if(this._isModalOpen()){
-        this.setState({ showMainMenuModal: key === 'enter', showInventoryModal: false, showControlsInfoModal: false, showHeroMenuModal: false })
+        this.setState({ showMainMenuModal: false, showInventoryModal: false, showControlsInfoModal: false, showHeroMenuModal: false })
       } else {
         this.setState({ showMainMenuModal: true })
       }

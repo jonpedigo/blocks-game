@@ -345,6 +345,49 @@ class Editor {
     }
   }
 
+  setHeroZoomTo(propName) {
+    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
+      let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'lockCamera' && GAME.world.lockCamera) {
+      let zoomMultiplier = GAME.world.lockCamera.width/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'grid') {
+      let zoomMultiplier = (GAME.grid.width * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridMinusOne') {
+      let zoomMultiplier = ((GAME.grid.width-4) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPadding') {
+      const padding = GAME.world.chunkGamePadding
+      let zoomMultiplier = ((GAME.grid.width - padding) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPaddingMinusOne') {
+      const padding = GAME.world.chunkGamePadding - 4
+      let zoomMultiplier = ((GAME.grid.width-padding) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+
+    if(propName === 'larger') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
+    }
+    if(propName === 'smaller') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
+    }
+
+    if(propName === 'default') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: 1.875 })
+    }
+  }
+
   setHerosZoomTo(propName) {
     if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
       let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth

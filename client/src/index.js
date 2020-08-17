@@ -22,11 +22,15 @@ more space bar actions -> 'double jump', 'dash'
 // all objects fade in, all objects fade in random
 Bounce
 Implement special extra physics for objects, not just heros
-Hero notifications.. more!
-Make stationary the default, create a new tag called moving
 
-Inventory Context Menu -> Drop and Equip
+Make stationary the default, create a new tag called moving
+Make NOT collideable the default as well, create a new tag called collideable instead of notCollideable as a tag. WOW that would make physics really low key
+
+Inventory Context Menu -> Drop, Equip to Hero, Add to Shortcuts
 show inventory in HUD tag, like RTS resources VS team...yeahh
+// have CREATOR menu dissapear unless you hover over?
+
+Hero notifications.. more!
 
 ---
 
@@ -327,6 +331,8 @@ Engine trail on a car u know what I mean?
 
 // CLIENT_GAME vs HOST_GAME
 
+// ok so inssteadd of aappendding all these children to the dom, we should have a specified order so that we dont have to be gnarly with z ordering
+
 // separate hero and PLAYER. the hero is just a game object then...
 
 // queuing world and other updates so we can 'flush' them like feedly does
@@ -411,7 +417,11 @@ import './js/liveeditor/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 
-PAGE.load()
+if(document.hasFocus()) {
+  PAGE.load()
+} else {
+  window.onfocus = PAGE.load
+}
 
 /*
 ////////////////////////////////////////////////////

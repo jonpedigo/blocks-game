@@ -96,6 +96,8 @@ import { startSequence } from './sequence'
     // skipHeroPosUpdate
     // setPathTarget
     // setTarget
+    // chat
+    // private chat
 
     // play sound FX
     // stop music

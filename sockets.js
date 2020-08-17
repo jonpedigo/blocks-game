@@ -116,7 +116,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   // great to have a constantly updating object shared on all computers
   socket.on('updateGameState', (gameState) => {
-    currentGame.gameState = gameState
+    if(!currentGame.gameState) currentGame.gameState = gameState
+    Object.assign(currentGame.gameState, gameState)
     io.emit('onUpdateGameState', gameState)
   })
 
@@ -438,6 +439,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   socket.on('emitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {
     io.emit('onEmitGameEvent', eventName, arg1, arg2, arg3, arg4)
+  })
+
+  socket.on('addLog', (data) => {
+    io.emit('onAddLog', data)
   })
 }
 

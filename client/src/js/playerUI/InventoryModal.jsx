@@ -62,6 +62,7 @@ export default class InventoryModal extends React.Component {
     const { inventoryDisplay } = this.state;
 
     return <Modal className="InventoryModal" size="medium" onClose={onClose}>
+      <div className="Modal__header">Inventory</div>
       <div className="Inventory">
         {inventoryDisplay.map((item) => {
           return this._renderItem(item)

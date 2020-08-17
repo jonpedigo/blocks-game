@@ -269,6 +269,7 @@ class Game{
       GAME.gameState.activeModList = []
       GAME.gameState.timeouts = []
       GAME.gameState.timeoutsById = {}
+      // GAME.gameState.logs = []
     } else {
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
@@ -704,8 +705,9 @@ class Game{
         if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
-      if(key === 'tags' || key === 'editorTags') {
+      if(key === 'tags') {
         for(let tag in updatedWorld.tags) {
+          const tagVal = updatedWorld.tags[tag]
           if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -717,6 +719,14 @@ class Game{
             GAME.heroList.forEach((object) => {
               object.velocityY = 0
             });
+          }
+          if(PAGE.gameLoaded) {
+            if(tag === 'hasGameLog') {
+              if(!tagVal) PAGE.closeLog()
+              if(tagVal) {
+                PAGE.openLog()
+              }
+            }
           }
         }
       }
@@ -934,6 +944,24 @@ class Game{
     if(GAME.grid && GAME.grid.nodes && GAME.grid.nodes[x] && GAME.grid.nodes[x][y]) {
       Object.assign(GAME.grid.nodes[x][y], update)
     }
+  }
+
+  onAddLog(options) {
+    GAME.addLog(options)
+  }
+
+  addLog({ authorId, text, involvedIds, animation, type }) {
+    if(PAGE.role.isHost && type === 'chat') {
+      OBJECTS.chat({ id: authorId, text })
+    }
+
+    GAME.gameState.logs.push({
+      authorId,
+      text,
+      involvedIds,
+      animation,
+      type,
+    })
   }
 }
 

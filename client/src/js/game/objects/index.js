@@ -6,7 +6,7 @@ import triggers from '../triggers.js'
 import { dropObject } from '../heros/inventory.js'
 import { addHook, deleteHook } from '../hooks.js'
 import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
-import { setTarget, setHomingPath } from '../ai/pathfinders.js'
+import { setTarget, setPathTarget } from '../ai/pathfinders.js'
 
 class Objects{
   constructor() {
@@ -103,7 +103,7 @@ class Objects{
       _deltaX: object._deltaX,
       velocityY: object.velocityY,
       velocityX: object.velocityX,
-      target: object.target,
+      target: object.targetXY,
       path: object.path,
       lastHeroUpdateId: object.lastHeroUpdateId,
       _movementDirection: object._movementDirection,
@@ -126,7 +126,7 @@ class Objects{
       isEquipped: object.isEquipped,
 
 
-      _targetId: object._targetId,
+      _targetId: object._targetPursueId,
       _objectsWithin: object._objectsWithin,
       _objectsAwareOf: object._objectsAwareOf,
 
@@ -296,6 +296,7 @@ class Objects{
       id: object.id,
       x: object.x,
       y: object.y,
+      chat: object.chat,
       width: object.width,
       height: object.height,
       color: object.color,
@@ -1074,32 +1075,38 @@ class Objects{
     if(awareOfObject.mod().tags.hero) {
       if(object.mod().tags.targetHeroOnAware) {
         if(object.mod().tags.homing) {
-          setHomingPath(object, awareOfObject)
+          setPathTarget(object, awareOfObject, true)
         }
         if(object.mod().tags.zombie) {
-          setTarget(object, awareOfObject)
+          setTarget(object, awareOfObject, true)
         }
       }
     } else if(awareOfObject.mod().tags.victim){
       if(object.mod().tags.targetVictimOnAware) {
         if(object.mod().tags.homing) {
-         setHomingPath(object, awareOfObject)
+         setPathTarget(object, awareOfObject, true)
         }
         if(object.mod().tags.zombie) {
-         setTarget(object, awareOfObject)
+         setTarget(object, awareOfObject, true)
         }
       }
     }
   }
 
-  onObjectUnaware(object, awareOfObject) {
-    if(object.mod().tags.targetClearOnAware) {
-      if(awareOfObject.id === object._targetId) {
-        object.path = null
-        object.target = null
-        delete object._targetId
+  onObjectUnaware(object, unawareOfObject) {
+    if(object.mod().tags.targetClearOnUnaware) {
+      if(unawareOfObject.id === object._targetPursueId) {
+        delete object._targetPursueId
       }
     }
+  }
+
+  chat({id, duration = 3, text}) {
+    const object = OBJECTS.getObjectOrHeroById(id)
+    object.chat = text
+    GAME.addOrResetTimeout(id + '-chat', duration, () => {
+      object.chat = null
+    })
   }
 }
 

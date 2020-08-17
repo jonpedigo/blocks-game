@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 import './editor.js'
 
-import creatorObjectLibrary from './creatorObjectLibrary.js'
+import creatorObjectLibrary from '../libraries/creatorObjectLibrary.js'
 
 class EditorUI {
   constructor() {

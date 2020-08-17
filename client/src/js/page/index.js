@@ -90,6 +90,7 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   load() {
+    window.onfocus = null
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
     PAGE.setupRemoteLogging()
@@ -197,6 +198,10 @@ class Page{
     }
   };
 
+  onGameReady() {
+    PAGE.isGameReady = true
+  }
+
   onGameLoaded() {
     if(!PAGE.loopStarted) {
       window.startGameLoop()
@@ -207,6 +212,10 @@ class Page{
       window.local.emit('onFirstPageGameLoaded')
     }
     PAGE.gameLoaded = true
+
+    if(GAME.world.tags.hasGameLog) {
+      PAGE.openLog()
+    }
   }
 
   resetStorage() {
@@ -266,6 +275,15 @@ class Page{
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  }
+
+  openLog() {
+    PAGE.isLogOpen = true
+    window.local.emit('onOpenLog')
+  }
+  closeLog() {
+    PAGE.isLogOpen = false
+    window.local.emit('onCloseLog')
   }
 }
 

@@ -11,7 +11,7 @@ function pathfindingAI(object) {
 
   if(object.tags && object.mod().tags['homing'] && autoTarget) {
     if(!object.path || (object.path && !object.path.length)) {
-      setHomingPath(object, hero)
+      setPathTarget(object, hero)
     }
   }
 
@@ -84,7 +84,7 @@ function pathfindingAI(object) {
   }
 }
 
-function setHomingPath(object, target) {
+function setPathTarget(object, target, pursue) {
   const { gridX, gridY } = gridUtil.convertToGridXY(object)
   object.gridX = gridX
   object.gridY = gridY
@@ -100,16 +100,16 @@ function setHomingPath(object, target) {
     x: target.gridX,
     y: target.gridY,
   }, { pathfindingLimit: object.mod().pathfindingLimit })
-  object._targetId = target.id
+  if(pursue) object._targetPursueId = target.id
 }
 
-function setTarget(object, target) {
-  object.target = { x: target.x, y: target.y }
-  object._targetId = target.id
+function setTarget(object, target, pursue) {
+  object.targetXY = { x: target.x, y: target.y }
+  if(pursue) object._targetPursueId = target.id
 }
 
 export {
   pathfindingAI,
-  setHomingPath,
+  setPathTarget,
   setTarget,
 }

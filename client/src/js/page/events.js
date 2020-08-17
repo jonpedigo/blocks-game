@@ -78,12 +78,12 @@ class EventEmitter {
         event.push(PIXIMAP[eventName])
       }
 
-      if(!PAGE.role.isPlayEditor && PLAYERUI[eventName]) {
-        event.push(PLAYERUI[eventName])
-      }
-
       if(!PAGE.role.isPlayEditor && EDITORUI[eventName]) {
         event.push(EDITORUI[eventName])
+      }
+
+      if(!PAGE.role.isPlayEditor && PLAYERUI[eventName]) {
+        event.push(PLAYERUI[eventName])
       }
 
       if(eventName === 'onRender' && !PAGE.role.isPlayEditor){

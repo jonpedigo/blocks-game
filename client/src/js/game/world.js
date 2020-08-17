@@ -10,6 +10,8 @@ function setDefault() {
     worldSpawnPointX: null,
     worldSpawnPointY: null,
     tags: {
+      hasGameLog: false,
+      allowHeroChat: false,
       preventHeroGridBypass: false,
       calculatePathCollisions: false,
       noCamping: false,

@@ -9,7 +9,7 @@ class PlayerUI {
     this.updateStateInterval = null
   }
 
-  onGameReady() {
+  onFirstPageGameLoaded() {
     // this.container = container
     const initialProps = {
       ref: ref => PLAYERUI.ref = ref
@@ -41,6 +41,18 @@ class PlayerUI {
     if(hero.id === HERO.id) {
       PLAYERUI.ref.onUpdateState(hero)
     }
+  }
+
+  onAddLog() {
+    PLAYERUI.ref.onUpdateState()
+  }
+
+  onOpenLog() {
+    PLAYERUI.ref.onUpdateState()
+  }
+
+  onCloseLog() {
+    PLAYERUI.ref.onUpdateState()
   }
 
   onHeroNotification(heroId, data) {

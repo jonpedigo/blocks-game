@@ -400,6 +400,10 @@ function init() {
     if(!PAGE.role.isHost) window.local.emit(eventName, arg1, arg2, arg3, arg4)
   })
 
+  window.socket.on('onAddLog', (data) => {
+    window.local.emit('onAddLog', data)
+  })
+
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {
     window.socket.on('onHostLog', (msg, arg1, arg2, arg3) => {
       let args = [msg, arg1, arg2, arg3].filter(i => !!i)
