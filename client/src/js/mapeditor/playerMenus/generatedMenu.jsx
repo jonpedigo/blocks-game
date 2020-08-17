@@ -205,8 +205,9 @@ export default class GeneratedMenu extends React.Component {
 
     return <Menu onClick={this._onHandleMenuClick}>
       {objectMenuObj.baseLevelMenu.map(item => {
+        console.log(item, 'item')
         if (item.subMenuKey) {
-          return this._renderSubMenu(objectMenuObj[item.subMenuKey], item.subMenuKey)
+          return this._renderSubMenu(objectMenuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
         } else {
           return this._fetchMenu(item)
         }
