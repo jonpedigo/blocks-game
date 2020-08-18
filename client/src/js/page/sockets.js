@@ -80,10 +80,6 @@ function init() {
       window.local.emit('onSendHeroKeyUp', keyCode, heroId)
     })
 
-    window.socket.on('onHeroNotification', (heroId, data) => {
-      window.local.emit('onHeroNotification', heroId, data)
-    })
-
     // EDITOR CALLS THIS
     window.socket.on('onResetHeroToDefault', (hero) => {
       window.local.emit('onResetHeroToDefault', hero)
@@ -402,6 +398,10 @@ function init() {
 
   window.socket.on('onAddLog', (data) => {
     window.local.emit('onAddLog', data)
+  })
+
+  window.socket.on('onSendNotification', (data) => {
+    window.local.emit('onSendNotification', data)
   })
 
   if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {

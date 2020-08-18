@@ -262,8 +262,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('sendHeroKeyUp', (keyCode, hero) => {
     io.emit('onSendHeroKeyUp', keyCode, hero)
   })
-  socket.on('heroNotification', (heroId, data) => {
-    io.emit('onHeroNotification', heroId, data)
+  socket.on('sendNotification', (data) => {
+    data.dateMilliseconds = Date.now()
+    io.emit('onSendNotification', data)
   })
 
   socket.on('updateHero', (hero) => {

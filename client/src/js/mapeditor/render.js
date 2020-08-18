@@ -148,9 +148,9 @@ function update() {
   if(PAGE.loadingScreen) {
     ctx.fillStyle = "#222"
     ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
-    if(PAGE.role.isAdmin) {
+    // if(PAGE.role.isAdmin) {
       drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
-    }
+    // }
     MAPEDITOR.loaderElement.style.display = "block"
   } else {
     MAPEDITOR.loaderElement.style.display = "none"

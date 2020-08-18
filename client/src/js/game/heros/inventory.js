@@ -23,7 +23,7 @@ function pickupObject(hero, collider) {
   if(!subObject.subObjectName) subObject.subObjectName = subObject.id
 
   if(hero.subObjects && hero.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
-    window.socket.emit('heroNotification', hero.id, { type: 'toast', message: 'You can\'t pick this up. You already have a ' + subObject.subObjectName})
+    window.socket.emit('sendNotification', { heroId: hero.id, toast: true, log: true, text: 'You can\'t pick this up. You already have a ' + subObject.subObjectName})
     return
   }
 
@@ -53,7 +53,7 @@ function pickupObject(hero, collider) {
   if(subObject.count > 1) {
     message = 'You picked up ' + subObject.count + ' ' + subObject.subObjectName
   }
-  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
+  window.socket.emit('sendNotification', { heroId: hero.id, toast: true, log: true, text: message})
   window.local.emit('onAddSubObject', hero, subObject, subObject.subObjectName )
 }
 
@@ -101,7 +101,7 @@ function dropObject(hero, subObject, dropAmount = 1) {
   if(object.count > 1) {
     message = 'You dropped ' + object.count + ' ' + object.subObjectName
   }
-  window.socket.emit('heroNotification', hero.id, { type: 'toast', message})
+  window.socket.emit('sendNotification', { heroId: hero.id, toast: true, log: true, text: message})
   window.socket.emit('addObjects', [object])
 }
 
@@ -110,7 +110,7 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const newObject = _.cloneDeep(subObject)
 
   if(withdrawer.tags.hero && withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
-    window.socket.emit('heroNotification', withdrawer.id, { type: 'toast', message: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
+    window.socket.emit('sendNotification', { heroId: withdrawer.id, toast: true, log: true, text: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
     return
   }
 
@@ -137,7 +137,7 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
     if(newObject.count > 1) {
       message = 'You withdrew ' + newObject.count + ' ' + newObject.subObjectName
     }
-    window.socket.emit('heroNotification', withdrawer.id, { type: 'toast', message})
+    window.socket.emit('sendNotification', { heroId: withdrawer.id, toast: true, log: true, text: message})
   }
 
   if(owner.tags.hero) {
@@ -145,7 +145,7 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
     if(newObject.count > 1) {
       message = 'You deposited ' + newObject.count + ' ' + newObject.subObjectName
     }
-    window.socket.emit('heroNotification', owner.id, { type: 'toast', message})
+    window.socket.emit('sendNotification', { heroId: owner.id, toast: true, log: true, text: message})
   }
 
   window.local.emit('onAddSubObject', withdrawer, newObject, subObjectName)

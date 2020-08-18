@@ -43,10 +43,6 @@ class PlayerUI {
     }
   }
 
-  onAddLog() {
-    PLAYERUI.ref.onUpdateState()
-  }
-
   onOpenLog() {
     PLAYERUI.ref.onUpdateState()
   }
@@ -55,9 +51,12 @@ class PlayerUI {
     PLAYERUI.ref.onUpdateState()
   }
 
-  onHeroNotification(heroId, data) {
-    if(heroId === HERO.id) {
-      PLAYERUI.ref.onHeroNotification(data)
+  onSendNotification(data) {
+    console.log(data.heroId, HERO.id)
+    if((data.toast || data.modal) && data.heroId === HERO.id) {
+      PLAYERUI.ref.onSendNotification(data)
+    } else if(data.log) {
+      PLAYERUI.ref.onUpdateState()
     }
   }
 

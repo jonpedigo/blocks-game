@@ -946,21 +946,25 @@ class Game{
     }
   }
 
-  onAddLog(options) {
-    GAME.addLog(options)
+  onSendNotification(options) {
+    if(options.log) {
+      GAME.addLog(options)
+    }
+    if(PAGE.role.isHost && options.chat) {
+      OBJECTS.chat({ id: options.authorId, text: options.text })
+    }
   }
 
-  addLog({ authorId, text, involvedIds, animation, type }) {
-    if(PAGE.role.isHost && type === 'chat') {
-      OBJECTS.chat({ id: authorId, text })
-    }
-
+  addLog({ authorId, text, involvedIds, animation, type, heroId, teamId, dateMilliseconds }) {
     GAME.gameState.logs.push({
+      teamId,
+      heroId,
       authorId,
       text,
       involvedIds,
       animation,
       type,
+      dateMilliseconds,
     })
   }
 }
