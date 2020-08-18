@@ -57,7 +57,7 @@ import { startSequence } from './sequence'
 
     // need global library of these
     // 'animation',
-    // notification -> 'toast/log/modal/chat event'
+    // notification -> chat, private chat, log, toast, modal
     // camera effect
 
     // 'anticipatedAdd',
@@ -96,8 +96,6 @@ import { startSequence } from './sequence'
     // skipHeroPosUpdate
     // setPathTarget
     // setTarget
-    // chat
-    // private chat
 
     // play sound FX
     // stop music

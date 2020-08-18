@@ -82,8 +82,9 @@ PIXIMAP.onGameStarted = function() {
   window.local.emit('onGameReady')
 }
 
-PIXIMAP.onDeleteHero = function(object) {
-  PIXIMAP.deleteObject(object)
+PIXIMAP.onDeleteHero = function(heroId) {
+  const hero = GAME.heros[heroId]
+  PIXIMAP.deleteObject(hero)
 }
 
 PIXIMAP.onDeleteObject = function(object) {

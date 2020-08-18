@@ -609,9 +609,10 @@ class Hero{
     GAME.heros[hero.id].removed = true
   }
 
-  onDeleteHero(hero) {
+  onDeleteHero(heroId) {
+    const hero = GAME.heros[heroId]
     HERO.deleteHero(hero)
-    delete GAME.heros[hero.id]
+    delete GAME.heros[heroId]
   }
 
   onDeleteQuest(heroId, questId) {

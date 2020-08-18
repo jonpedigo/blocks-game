@@ -10,6 +10,7 @@ function setDefault() {
     zombie: false,
     targetHeroOnAware: false,
     targetVictimOnAware: false,
+    targetSwitchOnAware: false,
     targetClearOnUnaware: false,
   }
 

@@ -300,9 +300,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       socket.emit('onUpdateHero', currentGame.heros[heroId])
     }
   })
-  socket.on('deleteHero', (hero) => {
-    delete currentGame.heros[hero.id]
-    io.emit('onDeleteHero', hero)
+  socket.on('deleteHero', (heroId) => {
+    delete currentGame.heros[heroId]
+    io.emit('onDeleteHero', heroId)
   })
 
   socket.on('openHeroModal', (hero, modalTitle, modalBody) => {
@@ -431,11 +431,11 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('deleteQuest', (heroId, questId) => {
     io.emit('onDeleteQuest', heroId, questId)
   })
-  socket.on('startQuest', (hero, questId) => {
-    io.emit('onHeroStartQuest', hero, questId)
+  socket.on('startQuest', (heroId, questId) => {
+    io.emit('onHeroStartQuest', heroId, questId)
   })
-  socket.on('completeQuest', (hero, questId) => {
-    io.emit('onHeroCompleteQuest', hero, questId)
+  socket.on('completeQuest', (heroId, questId) => {
+    io.emit('onHeroCompleteQuest', heroId, questId)
   })
 
   socket.on('emitGameEvent', (eventName, arg1, arg2, arg3, arg4) => {

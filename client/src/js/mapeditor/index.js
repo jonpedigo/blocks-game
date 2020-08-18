@@ -172,7 +172,7 @@ class MapEditor{
       const owner = OBJECTS.getOwner(object)
       window.socket.emit('deleteSubObject', owner, object.subObjectName)
     } else if(object.tags.hero) {
-      window.socket.emit('deleteHero', object)
+      window.socket.emit('deleteHero', object.id)
     } else if(object.id) {
       window.socket.emit('deleteObject', object)
     } else {

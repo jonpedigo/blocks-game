@@ -28,10 +28,6 @@ function init() {
     window.local.emit('onEditObjects', editedObjects)
   })
   if(PAGE.role.isHost) {
-    window.socket.on('onDropObject', (objectId, subObjectName) => {
-      window.local.emit('onDropObject', objectId, subObjectName)
-    })
-
     window.socket.on('onSpawnAllNow', (objectId) => {
       window.local.emit('onSpawnAllNow', objectId)
     })
@@ -39,15 +35,16 @@ function init() {
       window.local.emit('onDestroySpawnIds', objectId)
     })
 
-    window.socket.on('onDeleteSubObjectChance', (ownerI, subObjectName) => {
-      window.local.emit('onDeleteSubObjectChance', ownerI, subObjectName)
+    window.socket.on('onDeleteSubObjectChance', (ownerId, subObjectName) => {
+      window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
     })
 
+    // OBJECT => ID
     window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
       window.local.emit('onRemoveSubObject', ownerId, subObjectName)
     })
-    window.socket.on('onAddSubObject', (owner, subObject, subObjectName) => {
-      window.local.emit('onAddSubObject', owner, subObject, subObjectName)
+    window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName) => {
+      window.local.emit('onAddSubObject', ownerId, subObject, subObjectName)
     })
     window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
@@ -81,6 +78,7 @@ function init() {
     })
 
     // EDITOR CALLS THIS
+    // OBJECT -> ID
     window.socket.on('onResetHeroToDefault', (hero) => {
       window.local.emit('onResetHeroToDefault', hero)
     })
@@ -88,7 +86,6 @@ function init() {
     window.socket.on('onResetHeroToGameDefault', (hero) => {
       window.local.emit('onResetHeroToGameDefault', hero)
     })
-
     // EDITOR CALLS THIS
     window.socket.on('onRespawnHero', (hero) => {
       window.local.emit('onRespawnHero', hero)
@@ -271,6 +268,7 @@ function init() {
 
 
   // CLIENT HOST OR EDITOR CALL THIS
+  // OBJECT -> ID
   window.socket.on('onDeleteObject', (object) => {
     if(PAGE.role.isPlayEditor && window.objecteditor.get().id === object.id) {
       window.objecteditor.update({})
@@ -298,27 +296,15 @@ function init() {
   })
 
   // EDITOR CALLS THIS
-  window.socket.on('onDeleteHero', (hero) => {
-    if(PAGE.role.isPlayEditor && window.editingHero.id == hero.id) {
+  window.socket.on('onDeleteHero', (heroId) => {
+    if(PAGE.role.isPlayEditor && window.editingHero.id == heroId) {
       window.setEditingHero({})
     }
-    window.local.emit('onDeleteHero', hero)
+    window.local.emit('onDeleteHero', heroId)
   })
 
   window.socket.on('onDeleteQuest', (heroId, questId) => {
     window.local.emit('onDeleteQuest', heroId, questId)
-  })
-
-  window.socket.on('onHeroStartQuest', (hero, questId) => {
-    window.local.emit('onHeroStartQuest', hero, questId)
-  })
-
-  window.socket.on('onHeroCompleteQuest', (hero, questId) => {
-    window.local.emit('onHeroCompleteQuest', hero, questId)
-  })
-
-  window.socket.on('onOpenHeroModal', (hero, modalTitle, modalBody) => {
-    window.local.emit('onOpenHeroModal', hero, modalTitle, modalBody)
   })
 
   window.socket.on('onCopyGame', (game) => {
@@ -337,16 +323,16 @@ function init() {
     window.local.emit('onChangeGame', game)
   })
 
-  window.socket.on('onAskHeroToNameObject', (object, heroId) => {
-    window.local.emit('onAskHeroToNameObject', object, heroId)
-    // let ctx = document.getElementById('swal-canvas').getContext('2d')
-    // ctx.fillStyle = object.color
-    // ctx.fillRect(10, 10, object.width, object.height);
-  })
-
-  window.socket.on('onAskHeroToWriteDialogue', (object, heroId) => {
-    window.local.emit('onAskHeroToWriteDialogue', object, heroId)
-  })
+  // window.socket.on('onAskHeroToNameObject', (object, heroId) => {
+  //   window.local.emit('onAskHeroToNameObject', object, heroId)
+  //   // let ctx = document.getElementById('swal-canvas').getContext('2d')
+  //   // ctx.fillStyle = object.color
+  //   // ctx.fillRect(10, 10, object.width, object.height);
+  // })
+  //
+  // window.socket.on('onAskHeroToWriteDialogue', (object, heroId) => {
+  //   window.local.emit('onAskHeroToWriteDialogue', object, heroId)
+  // })
 
   window.socket.on('onHeroChooseOption', (heroId, optionId) => {
     window.local.emit('onHeroChooseOption', heroId, optionId)
@@ -410,6 +396,20 @@ function init() {
       console.log('host -> ', ...args)
     })
   }
+
+
+  // these are game events
+  window.socket.on('onHeroStartQuest', (heroId, questId) => {
+    window.local.emit('onHeroStartQuest', heroId, questId)
+  })
+
+  window.socket.on('onHeroCompleteQuest', (heroId, questId) => {
+    window.local.emit('onHeroCompleteQuest', heroId, questId)
+  })
+
+  window.socket.on('onDropObject', (objectId, subObjectName) => {
+    window.local.emit('onDropObject', objectId, subObjectName)
+  })
 }
 
 export default {

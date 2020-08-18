@@ -751,6 +751,11 @@ class Objects{
     window.local.emit('onUpdatePFgrid')
   }
 
+  onDeleteSubObjectChance(ownerId, subObjectName) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    delete owner.subObjectChances[subObjectName]
+  }
+
   onDeleteSubObject(owner, subObjectName) {
     const subObject = owner.subObjects[subObjectName]
     if(owner.tags.hero) {
@@ -1072,6 +1077,10 @@ class Objects{
   }
 
   onObjectAware(object, awareOfObject) {
+
+    // if this passes you are already pursuing something and shouldn't switch
+    if(object._targetPursueId && !object.mod().tags.targetSwitchOnAware) return
+
     if(awareOfObject.mod().tags.hero) {
       if(object.mod().tags.targetHeroOnAware) {
         if(object.mod().tags.homing) {

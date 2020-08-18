@@ -52,7 +52,6 @@ class PlayerUI {
   }
 
   onSendNotification(data) {
-    console.log(data.heroId, HERO.id)
     if((data.toast || data.modal) && data.heroId === HERO.id) {
       PLAYERUI.ref.onSendNotification(data)
     } else if(data.log) {
@@ -68,12 +67,12 @@ class PlayerUI {
     }
   }
 
-  onHeroStartQuest(hero, questId) {
-    PLAYERUI.ref.onHeroStartQuest(hero, questId)
+  onHeroStartQuest(heroId, questId) {
+    PLAYERUI.ref.onHeroStartQuest(heroId, questId)
   }
 
-  onHeroCompleteQuest(hero, questId) {
-    PLAYERUI.ref.onHeroCompleteQuest(hero, questId)
+  onHeroCompleteQuest(heroId, questId) {
+    PLAYERUI.ref.onHeroCompleteQuest(heroId, questId)
   }
 }
 

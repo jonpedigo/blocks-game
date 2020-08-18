@@ -14,6 +14,14 @@ function onPageLoaded() {
     onHeroLeave: { mainObject: 'hero', guestObject: 'anything' },
     onHeroStartQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
     onHeroCompleteQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
+    onHeroPickup: { mainObject: 'hero', guestObject: 'object' },
+    onHeroDrop: { mainObject: 'hero', guestObject: 'subobject' },
+    onHeroWithdraw: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroDeposit: { mainObject: 'hero', guestObject: 'object' },
+    onHeroRespawn: { mainObject: 'hero', guestObject: null },
+    onHeroEquip: { mainObject: 'hero', guestObject: 'anything'},
+    onGameStart: { mainObject: null, guestObject: null },
+    onStoryStart: { mainObject: null, guestObject: null },
     onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
     onObjectAware: { mainObject: 'object', guestObject: 'anything' },
     onObjectUnaware: { mainObject: 'object', guestObject: 'anything' },
@@ -21,17 +29,9 @@ function onPageLoaded() {
     onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
-    onGameStart: { mainObject: null, guestObject: null },
-    onStoryStart: { mainObject: null, guestObject: null },
   }
-  // -> onHeroPickup
-  // -> onHeroDrop
-  // -> onHeroDeposit
-  // -> onHeroWithdraw
-  // -> onHeroRespawned
-  // -> onHeroEquip
   // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
-  
+
     // 'onHeroChooseOption',
     // 'onObjectSpawn',
     // 'onHeroCanInteract'

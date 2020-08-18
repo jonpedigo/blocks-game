@@ -158,8 +158,10 @@ window.emitGameEvent = function(gameEvent, arg1, arg2, arg3, arg4, arg5) {
   if(arg2 && arg2.tags && arg2.tags.hero && arg2.interactableObject) {
     arg2 = { ...arg2, interactableObject: null, interactableObjectResult: null }
   }
-  window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
   window.local.emit(gameEvent, arg1, arg2, arg3, arg4, arg5)
+
+
+  window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
 }
 
 window.animateCSS = (element, animation, prefix = 'animate__') =>

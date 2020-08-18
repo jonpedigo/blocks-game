@@ -89,7 +89,6 @@ export default class GameLogs extends React.Component{
     )
   }
 
-
   _renderLogs(logs) {
     logs = [...logs]
     return logs.reverse().map((log, i) => {
