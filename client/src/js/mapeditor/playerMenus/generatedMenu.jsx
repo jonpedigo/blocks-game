@@ -16,7 +16,7 @@ import HookMenu from '../menus/HookMenu.jsx';
 import LiveMenu from '../menus/LiveMenu.jsx';
 import SpriteMenu from '../menus/SpriteMenu.jsx';
 import modals from '../modals.js'
-
+import { handleExtraMenuClicks } from './helper.js'
 // NATE::
 export default class GeneratedMenu extends React.Component {
   constructor(props) {
@@ -25,7 +25,6 @@ export default class GeneratedMenu extends React.Component {
     this._handleMenuClick = ({ key }) => {
       const { startResize, onStartDrag, deleteObject, onCopy, removeObject } = MAPEDITOR
 
-      //  NATE:: PUT TONS OF FUNCTIONS HERE AS THE LIBRARY
       if (key === 'resize') {
         if (subObject) {
           startResize(objectSelected, { snapToGrid: false })
@@ -57,6 +56,7 @@ export default class GeneratedMenu extends React.Component {
       if (key === 'drop') {
         window.socket.emit('dropObject', objectSelected.ownerId, objectSelected.subObjectName)
       }
+      handleExtraMenuClicks(key, objectSelected, this.props.openColorPicker)
     }
   }
 
@@ -79,7 +79,6 @@ export default class GeneratedMenu extends React.Component {
     const heroMenuObj = { baseLevelMenu: [] }
 
     objectMenuItems.forEach(item => {
-      console.log(item, 'item in objectmenu')
       if (item.hasOwnProperty('subMenu')) {
         if (!objectMenuObj[item.subMenu]) {
           objectMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
@@ -92,7 +91,6 @@ export default class GeneratedMenu extends React.Component {
     })
 
     heroMenuItems.forEach(item => {
-      console.log(item, 'item in objectmenu')
       if (item.hasOwnProperty('subMenu')) {
         if (!heroMenuObj[item.subMenu]) {
           heroMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
@@ -104,30 +102,10 @@ export default class GeneratedMenu extends React.Component {
       }
     })
 
-
-
-
-
-    //objectMenuItems = objectMenuItems.reduce((item, nextItem) => {
-    //   // NATE:: here youll have to turn the data into the format that you want to use in generatedMenu.jsx
-    //   // if theres a submenu mentioned youll need to create a sub array or something
-    //})
-
-    // heroMenuItems = heroMenuItems.reduce((item) => {
-
-    // })
-    //For submenus create an object { 'special actions': [...react component menu items], menuItems: [libraryObjs, menuItems(reactcompnt)]}
-
     return {
       heroMenuObj,
       objectMenuObj
     }
-  }
-
-  _renderMenu(menuItems) {
-    return menuItems.map(item => {
-      return this._fetchMenu(item)
-    })
   }
 
   _renderSubMenu(subMenuItems, key) {
@@ -141,7 +119,7 @@ export default class GeneratedMenu extends React.Component {
   }
 
   _fetchMenu(menuData, key) {
-    const { objectSelected, subObject, menuItemData, openColorPicker } = this.props
+    const { objectSelected, subObject, openColorPicker } = this.props
     switch (menuData.useExistingMenu) {
       case 'Dialogue':
         return (<DialogueMenu key={key} objectSelected={objectSelected} subObject={subObject} />)
@@ -197,17 +175,31 @@ export default class GeneratedMenu extends React.Component {
   render() {
     const { objectSelected, subObject, menuItemData } = this.props
     const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(menuItemData)
-    //console.log(heroMenuObj, objectMenuObj, 'menu objects')
+
     if (objectSelected.tags && objectSelected.tags.hero) {
       return <Menu onClick={this._onHandleMenuClick}>
+        {heroMenuObj.baseLevelMenu.map((item, index) => {
+          if (item.subMenuKey) {
+            return this._renderSubMenu(heroMenuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
+          } else if (item.useExistingMenu) {
+            return (<SubMenu title={item.title}>
+              {this._fetchMenu(item, index)}
+            </SubMenu>)
+          }
+          else {
+            return this._fetchMenu(item)
+          }
+        })}
       </Menu>
     }
-
     return <Menu onClick={this._onHandleMenuClick}>
-      {objectMenuObj.baseLevelMenu.map(item => {
-        console.log(item, 'item')
+      {objectMenuObj.baseLevelMenu.map((item, index) => {
         if (item.subMenuKey) {
           return this._renderSubMenu(objectMenuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
+        } else if (item.useExistingMenu) {
+          return (<SubMenu title={item.title}>
+            {this._fetchMenu(item, index)}
+          </SubMenu>)
         } else {
           return this._fetchMenu(item)
         }

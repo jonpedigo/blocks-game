@@ -1,7 +1,7 @@
 import modals from '../modals.js'
 
-export default handleExtraMenuClicks = ({ key, objectSelected, openColorPicker, selectSubObject, subObjectName }) => {
-    const { startResize, startRelativeDrag, onStartDrag, deleteObject, onCopy, removeObject, onStartSetPathfindingLimit, openConstructEditor, networkEditObject } = MAPEDITOR
+export function handleExtraMenuClicks({ key, objectSelected, openColorPicker }) {
+    const { startResize, startRelativeDrag, onStartDrag, selectSubObject, deleteObject, onCopy, removeObject, onStartSetPathfindingLimit, openConstructEditor, networkEditObject } = MAPEDITOR
     const { resourceLimit, resourceWithdrawAmount } = objectSelected
     const data = JSON.parse(key)
 
