@@ -4,17 +4,40 @@
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-IMPROVEMENTS
+TODO
+ON GAME START - Live Menu, Hero Menu, Right Click Menu goes away
+Construct editor - white only toggle
+
+0) Composer ( Creator, PlayerMenu, Compendium )
+   GENRE libraries ( platformer, shooter, sword, narrative )
+   COMPENDIUM - Particle, Animation + RANDOMNESS ( this is not live, write it kind of like it is though )
+   LIVE MENU - Camera, Physics
+1) IMPROVEMENTS
+2) Scenarios and stories
+3) COMBAT SYSTEM/ELEMENTAL SYSTEM
+
+-----
+
+AGGREGATION MENU
 subinteractmenu ( find all interact triggers involving this object and display all possible )
-actually build in this whole equipping system
-  quick equip menu
-  guns, swords, etc, I want it all WITH MODS TOO I WANNA SEE MOD WORKING WITH EQUIP
+// view everything this object is involved in
+// view all current modifications
+
+RESPAWN UPGRADE
 Hero removed -> respawn UI
-Add objects when you hit power world transform buttons
+HOOK UP RESPAWNS TO A SPAWN ZONE
 death by jump
-never close right click menu if shift is pressed
-Improve Add Sub Object
+
+EDITOR UPGRADES
 Light Editor
+never close right click menu if shift is pressed
+view and edit Tags applied
+Live menu's context
+
+Add objects when you hit power world transform buttons
+Improve Add Sub Object
+
+GAME FEEL UPGRADE
 MORE key actions.
   Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
   z and x accelerate and decelerate
@@ -23,21 +46,33 @@ more space bar actions -> 'double jump', 'dash'
 Bounce
 Implement special extra physics for objects, not just heros
 
-Make stationary the default, create a new tag called moving
-Make NOT collideable the default as well, create a new tag called collideable instead of notCollideable as a tag. WOW that would make physics really low key
-
+INVENTORY UPGRADE
 Inventory Context Menu -> Drop, Equip to Hero, Add to Shortcuts
 show inventory in HUD tag, like RTS resources VS team...yeahh
 // have CREATOR menu dissapear unless you hover over?
+actually build in this whole equipping system
+  quick equip menu
+  guns, swords, etc, I want it all WITH MODS TOO I WANNA SEE MOD WORKING WITH EQUIP
+// max inventory ( number )
+// drop last object when full ( boolean )
+// prevent add when full ( boolean )
 
-Hero notifications.. more!
+ANIMATION UPGRADE
+// a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
+// Needs to be attached to system ( AKA the combat system )
+allow chaining of animations and effects
+Save Animations to world ( save animation button )
+
+// TRIGGER EVENT EDITOR
+   eventName
+   mainObjectTag
+   mainObjectId
+   guestObjectTag
+   guestObjectId
+   eventThreshold ( event value )
+   triggerPool
 
 ---
-
-1) IMPROVMEENTS UNTIL I GET BORED
-2) Scenarios and stories til I get bored
-3) COMBAT SYSTEM/ELEMENTAL SYSTEM
-4) Random Particle Generator
 
 ---
 Scenarios/BeginEnd
@@ -101,6 +136,8 @@ COMPENDIUM
 PUZZLE INTERFACES
 LEVEL UP SYSTEM
 
+If we release sprites, also release a sprite editor!
+
 !!!!!!!! !!!! READY FOR HOME MADE ARCADE !!!! !!!!!!
 
 HERO CHOOSER
@@ -116,17 +153,11 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-// a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
-// Needs to be attached to system ( AKA the combat system )
-allow chaining of animations and effects
-Save Animations to world ( save animation button )
-
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
-HOOK UP RESPAWNS TO A SPAWN ZONE
 Object 'swinging' like on a rope. I mean... awesome right?
 in-game checkpoints
 input modifiers....'on ice', 'flat'
-ADMIN POWER HIGHLIGHT
+ADMIN POWER HIGHLIGHT - switch current user highlight to like.. a BORDER. Alsso make the admin highlight a border ( show all players highlights when game isnt started? )
 TRUE zelda camera work
 rotation having problems 1) object stage already pivoted for camera reason 2) admin canvas is not rotating with
 // gun that swaps places with what it hits! so cool..
@@ -139,10 +170,8 @@ rotation having problems 1) object stage already pivoted for camera reason 2) ad
 // KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
 // ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 // local mods? ( client only mods for specific players/situations )
-// world option for if it doesnt have a collideable event on it, dont add to physics system
+// pixiChild._stillUsed property as well as a PIXIMAP.objectsById system. We scrap app PIXICHILDs that arent in use every like 10s
 ////////////////////////////////////////////////////
-
-
 
 NOTES
 
@@ -198,23 +227,6 @@ light editor
 timer editor
 path editor
 quest editor ( inside of default hero editor )
-
-// TRIGGER EDITOR
-   eventName
-   mainObjectTag
-   mainObjectId
-   guestObjectTag
-   guestObjectId
-   eventThreshold ( event value )
-   triggerPool
-
-////////////////////////////////
-////////////////////////////////
-// INVENTORY NOTES
-GAME
-// max inventory ( number )
-// drop last object when full ( boolean )
-// prevent add when full ( boolean )
 
 ////////////////////////////////
 ////////////////////////////////

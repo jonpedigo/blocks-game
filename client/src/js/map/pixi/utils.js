@@ -234,7 +234,10 @@ function isColliding(hero, gameObject) {
 
 function getGameObjectStage(gameObject) {
   let object = gameObject
-  if(gameObject.part) object = OBJECTS.getObjectOrHeroById(gameObject.ownerId)
+  // if(gameObject.part) {
+  //   object = OBJECTS.getObjectOrHeroById(gameObject.ownerId)
+  // }
+  // if(!object) console.log(gameObject, object)
 
   let stage = PIXIMAP.objectStage
   if(object.tags.foreground) stage = PIXIMAP.foregroundStage

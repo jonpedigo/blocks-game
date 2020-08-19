@@ -13,6 +13,7 @@ window.PIXIMAP = {
   initialized: false,
   app: null,
   stage: null,
+  childrenById: {},
 }
 
 PIXIMAP.initializePixiObjectsFromGame = function() {
@@ -23,7 +24,6 @@ PIXIMAP.initializePixiObjectsFromGame = function() {
   GAME.objects.forEach((object) => {
     initPixiObject(object)
   })
-
 
   if(GAME.objectsById['globalConstructStationaryObstacle']) {
     PIXIMAP.deleteObject(GAME.objectsById['globalConstructStationaryObstacle'])
@@ -96,14 +96,15 @@ PIXIMAP.onDeleteSubObject = function(object, subObjectName) {
   PIXIMAP.deleteObject(subObject)
 }
 
-PIXIMAP.deleteObject = function(object) {
-  const stage = getGameObjectStage(object)
+PIXIMAP.deleteObject = function(object, stage) {
+  if(!stage) stage = getGameObjectStage(object)
 
   if(object.constructParts) {
     object.constructParts.forEach((part) => {
-      PIXIMAP.deleteObject(PIXIMAP.convertToPartObject(object, part))
+      PIXIMAP.deleteObject(part, stage)
     })
   }
+
   const pixiChild = stage.getChildByName(object.id)
   if(!pixiChild) return
   if(pixiChild.children && pixiChild.children.length) {

@@ -28,7 +28,7 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   // CONSTRUCT PARTS
   if(gameObject.constructParts) {
-    if((PAGE.resizingMap && !PAGE.loadingScreen) || !gameObject.tags.stationary) {
+    if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving && !gameObject.tags.stationary)) {
       gameObject.constructParts.forEach((part) => {
         const partObject = PIXIMAP.convertToPartObject(gameObject, part)
         updatePixiObject(partObject)
@@ -244,6 +244,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   /////////////////////
   // NAME SPRITE FOR LOOKUP
   addedChild.name = gameObject.id
+  PIXIMAP.childrenById[gameObject.id] = addedChild
 
   if(gameObject.id === HERO.id) {
     PIXIMAP.hero = addedChild

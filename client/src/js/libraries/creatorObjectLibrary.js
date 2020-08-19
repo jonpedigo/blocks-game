@@ -50,14 +50,14 @@ function onGameLoaded() {
       label: 'Background',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notCollideable: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notInCollisions: true })
       }
     },
     {
       label: 'Foreground',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notCollideable: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notInCollisions: true })
       }
     },
     // {
@@ -133,6 +133,7 @@ function onGameLoaded() {
       columnName: 'Items',
       JSON: {
         objectType: 'plainObject',
+        subObjectName: 'resource',
         tags: { obstacle: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
       }
     },
@@ -164,7 +165,7 @@ function onGameLoaded() {
         heroDialogue: [
           "hello!"
         ],
-        tags: { obstacle: true, wander: true, talker: true, talkOnHeroInteract: true },
+        tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
       }
     },
     {
@@ -172,7 +173,7 @@ function onGameLoaded() {
       columnName: 'Monsters',
       JSON: {
         objectType: 'plainObject',
-        tags: { obstacle: true, monster: true, homing: true, targetHeroOnAware: true },
+        tags: { obstacle: true, monster: true, moving: true, homing: true, targetHeroOnAware: true },
         subObjects: {
           awarenessTriggerArea: {
             x: 0, y: 0, width: 40, height: 40,

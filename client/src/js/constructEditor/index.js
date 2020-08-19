@@ -76,6 +76,7 @@ class ConstructEditor {
     this.objectId = object.id
     this.open = true
     this.tags = object.tags
+    if(PAGE.isLogOpen) PAGE.closeLog()
     if(GAME.world.gameBoundaries) {
       this.grid = new Grid(GAME.world.gameBoundaries.x, GAME.world.gameBoundaries.y, GAME.world.gameBoundaries.width/GAME.grid.nodeSize, GAME.world.gameBoundaries.height/GAME.grid.nodeSize, GAME.grid.nodeSize)
     } else {
@@ -130,7 +131,7 @@ class ConstructEditor {
     let color = startColor || object.color || GAME.world.defaultObjectColor || window.defaultObjectColor
     this.ref.open(color)
     this.selectColor(color)
-    
+
     window.local.emit('onConstructEditorStart', object)
   }
 

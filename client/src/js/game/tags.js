@@ -1,5 +1,6 @@
 function setDefault() {
   window.movementTags = {
+    moving: false,
     pacer: false,
     spelunker: false,
     lemmings: false,
@@ -18,7 +19,6 @@ function setDefault() {
     gravityY: false,
     ignoreWorldGravity: false,
     obstacle: false,
-    stationary: false,
     // projectile: false,
     onlyHeroAllowed: false,
     noHeroAllowed: false,
@@ -26,13 +26,32 @@ function setDefault() {
     heroPushable: false,
     skipHeroGravityOnCollide: false,
     rotateable: false,
-    notCollideable: false,
   }
 
-  window.otherTags = {
-    removeAfterTrigger: false,
-    showInteractBorder: false,
+  window.featureOptimizationTags = {
+    //no awareness, oncollide, interact, correction, anything
+    notInCollisions: false,
+
+    //skips correction phase ( it will not move for obstacles ) ( replace with stationary )
+    skipCorrectionPhase: false,
+
+    //skips awareness areas if false
+    noticeable: false,
+
+    // skips objects within tracking if false
+    trackObjectsWithin: false,
+
+    // shows interact border and checks for interaction
+    interactable: false,
+
+    // allows corrections and physics movement
+    moving: false,
   }
+
+  // window.otherTags = {
+  //   removeAfterTrigger: false,
+  //   showInteractBorder: false,
+  // }
 
   window.combatTags = {
     monsterDestroyer: false,
@@ -125,6 +144,8 @@ function setDefault() {
     seeThroughOnHeroCollide: false,
     hidden: false,
     // invisibleOnHeroCollide: false
+
+    // randomColor: false,
   }
 
   window.cameraTags = {
@@ -190,6 +211,7 @@ function setDefault() {
     ...window.particleTags,
     ...window.inventoryTags,
     ...window.animationTags,
+    ...window.featureOptimizationTags,
   }
 
   window.plainObjectTags = {
@@ -206,6 +228,8 @@ function setDefault() {
     rotateable: false,
     hidden: false,
     hasTrail: false,
+    moving: true,
+    noticeable: true,
     // allowCameraRotation: false,
   }
 

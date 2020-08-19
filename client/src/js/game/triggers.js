@@ -18,8 +18,8 @@ function onPageLoaded() {
     onHeroDrop: { mainObject: 'hero', guestObject: 'subobject' },
     onHeroWithdraw: { mainObject: 'hero', guestObject: 'anything' },
     onHeroDeposit: { mainObject: 'hero', guestObject: 'object' },
-    onHeroRespawn: { mainObject: 'hero', guestObject: null },
-    onHeroEquip: { mainObject: 'hero', guestObject: 'anything'},
+    // onHeroRespawn: { mainObject: 'hero', guestObject: null },
+    // onHeroEquip: { mainObject: 'hero', guestObject: 'anything'},
     onGameStart: { mainObject: null, guestObject: null },
     onStoryStart: { mainObject: null, guestObject: null },
     onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
@@ -31,7 +31,9 @@ function onPageLoaded() {
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
   }
   // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
-
+  // 'onHeroExamine' <-- only for notifications/logs
+  // 'onHeroSwitch'
+  
     // 'onHeroChooseOption',
     // 'onObjectSpawn',
     // 'onHeroCanInteract'

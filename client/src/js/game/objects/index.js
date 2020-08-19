@@ -352,7 +352,7 @@ class Objects{
 
     if(object.mod().tags['resourceDepositOnInteract'] && object.mod().tags.resourceZone) return true
 
-    if(object.mod().tags['showInteractBorder']) return true
+    if(object.mod().tags['interactable']) return true
 
     return false
   }
@@ -543,21 +543,23 @@ class Objects{
     if(update.constructParts) {
       if(object.constructParts) {
         object.constructParts.forEach((part) => {
-          if(!object.tags.notCollideable) {
-            PHYSICS.removeObject(part)
-          }
+          if(object.tags.notInCollisions) return
+          PHYSICS.removeObject(part)
         })
       } else {
-        PHYSICS.removeObject(object)
+        if(!object.tags.notInCollisions) {
+          PHYSICS.removeObject(object)
+        }
       }
       update.constructParts.forEach((part) => {
+        if(object.tags.notInCollisions) return
         part.ownerId = object.id
-        if(!object.tags.notCollideable) {
-          PHYSICS.addObject(part)
-        }
+        PHYSICS.addObject(part)
       })
-    } else if(object.constructParts &&!object.tags.notCollideable) {
-      PHYSICS.addObject(object)
+    } else if(object.constructParts) {
+      if(!object.tags.notInCollisions) {
+        PHYSICS.addObject(object)
+      }
     }
     object.path = null
     window.mergeDeep(object, update)
@@ -606,14 +608,10 @@ class Objects{
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part.ownerId = object.id
-        if(!object.tags.notCollideable) {
-          PHYSICS.addObject(part)
-        }
+        PHYSICS.addObject(part)
       })
     } else {
-      if(!object.tags.notCollideable) {
-        PHYSICS.addObject(object)
-      }
+      PHYSICS.addObject(object)
     }
 
     if(object.triggers) {

@@ -18,6 +18,7 @@ import {
   objectCollisionEffects,
   containObjectWithinGridBoundaries,
   shouldCheckConstructPart,
+  applyCorrection,
 } from './physicsTools.js'
 
 const objects = {}
@@ -74,6 +75,7 @@ function correctAndEffectAllObjectAndHeros (delta) {
 function updatePosition(object, delta) {
   if(object.removed || object.mod().relativeId) return
   if(object._skipPosUpdate) return
+  if(!object.mod().tags['moving']) return
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -119,7 +121,7 @@ function updatePosition(object, delta) {
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
-  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.tags.moving && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
     applyWorldGravity = true
   }
 
@@ -167,7 +169,7 @@ function updatePosition(object, delta) {
     }
   }
 
-  if(object.tags && object.mod().tags['stationary']) {
+  if(object.tags && object.mod().tags['stationary'] || !object.mod().tags['moving']) {
     object.velocityY = 0
     object.velocityX = 0
     object.velocityAngle = 0
@@ -195,7 +197,7 @@ function prepareObjectsAndHerosForMovementPhase() {
   // everything.forEach((object) => {
   //   if(object.subObjects) {
   //     OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-  //       if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+  //       if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
   //       everything.push(subObject)
   //     })
   //   }
@@ -228,7 +230,7 @@ function prepareObjectsAndHerosForMovementPhase() {
 
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+        if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
         subObject._objectsWithinNext = []
       })
     }
@@ -243,7 +245,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+        if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
         everything.push(subObject)
       })
     }
@@ -255,7 +257,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       return
     }
 
-    if(object.tags.notCollideable) {
+    if(object.mod().tags.notInCollisions) {
       return
     }
 
@@ -337,6 +339,11 @@ function objectPhysics() {
       if(po.gameObject.mod().relativeId) continue
       if(po.gameObject.removed) continue
       if(po.gameObject.mod().tags.hero) continue
+      if(po.gameObject.mod().tags['skipCorrectionPhase']) {
+        applyCorrection(po.gameObject, po)
+        continue
+      }
+      if(!po.gameObject.mod().tags['moving']) continue
       if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
       objectCorrection(po, final)
     }
@@ -366,7 +373,6 @@ function postPhysics() {
   GAME.objects.forEach((object, i) => {
     if(object.removed) return
     if(!object.mod().parentId && !object._parentId) {
-      attachToParent(object)
       containObjectWithinGridBoundaries(object)
       object._deltaX = object.x - object._initialX
       object._deltaY = object.y - object._initialY
@@ -377,7 +383,6 @@ function postPhysics() {
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(!hero.mod().parentId && !hero._parentId) {
-      attachToParent(hero)
       containObjectWithinGridBoundaries(hero)
       hero._deltaX = hero.x - hero._initialX
       hero._deltaY = hero.y - hero._initialY
@@ -425,7 +430,7 @@ function postPhysics() {
 }
 
 function processAwarenessAndWithinEvents(object) {
-  if(object.subObjects && object.subObjects.awarenessTriggerArea) {
+  if(object.mod().subObjects && object.mod().subObjects.awarenessTriggerArea) {
     if(object._objectsAwareOf) {
       const left = object._objectsAwareOf.filter((id) => {
         return object._objectsAwareOfNext.indexOf(id) == -1
@@ -454,7 +459,7 @@ function processAwarenessAndWithinEvents(object) {
     object._objectsAwareOf = object._objectsAwareOfNext
   }
 
-  if(object._objectsWithin) {
+  if(object.mod().tags.trackObjectsWithin && object._objectsWithin) {
     const left = object._objectsWithin.filter((id) => {
       return object._objectsWithinNext.indexOf(id) == -1
     })

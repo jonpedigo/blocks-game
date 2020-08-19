@@ -179,22 +179,7 @@ function heroCorrection(hero) {
         heroPO.x = hero._initialX
         heroPO.y = hero._initialY
       } else {
-        if(heroPO.x > hero._initialX) {
-          hero.directions.right = true
-        } else if(heroPO.x < hero._initialX) {
-          hero.directions.left = true
-        }
-        if(heroPO.y > hero._initialY) {
-          hero.directions.down = true
-        } else if(heroPO.y < hero._initialY) {
-          hero.directions.up = true
-        }
-        hero.x = heroPO.x
-        hero.y = heroPO.y
-        if(hero.mod().tags.rotateable) {
-          hero.x -= hero.width/2
-          hero.y -= hero.height/2
-        }
+        applyCorrection(hero, heroPO)
       }
     }
   }
@@ -219,6 +204,7 @@ function objectCollisionEffects(po) {
       continue
     }
     if(body.gameObject.removed) continue
+    // subobjects and construct parts dont collider with their owners
     if(po.gameObject.ownerId === body.gameObject.id) continue
     if(po.collides(body, result)) {
       let collider = body.gameObject
@@ -252,7 +238,7 @@ function objectCollisionEffects(po) {
         }
       }
 
-      if(agent.mod().tags['awarenessTriggerArea']) {
+      if(collider.mod().tags.noticeable && agent.mod().tags['awarenessTriggerArea']) {
         let owner = OBJECTS.getObjectOrHeroById(agent.ownerId)
         // sometimes a hero could be logged off?
         if(owner) {
@@ -260,13 +246,16 @@ function objectCollisionEffects(po) {
         }
       }
 
-      const isSafeZone = agent.mod().tags['monster'] && collider.mod().tags && collider.mod().tags['onlyHeroAllowed']
-      const bothAreObstacles = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['obstacle']
-      if(!isSafeZone && !bothAreObstacles) {
-        agent._objectsWithinNext.push(collider.id)
+
+      if(agent.mod().tags.trackObjectsWithin) {
+        const isSafeZone = agent.mod().tags['monster'] && collider.mod().tags && collider.mod().tags['onlyHeroAllowed']
+        const bothAreObstacles = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['obstacle']
+        if(!isSafeZone && !bothAreObstacles) {
+          agent._objectsWithinNext.push(collider.id)
+        }
       }
 
-      // subobjects and construct parts dont collider with their owners
+      // this will only not get called if you set ( notInCollisions )
       window.local.emit('onObjectCollide', agent, collider, result)
     }
   }
@@ -312,7 +301,7 @@ function objectCorrection(po, final) {
       // objects with NO path but SOME velocity get corrections
       let noPathButHasVelocity = (!po.gameObject.path && (po.gameObject.velocityY && po.gameObject.velocityY !== 0 || po.gameObject.velocityX && po.gameObject.velocityX !== 0))
       let bothAreObstacles = po.gameObject.tags && po.gameObject.mod().tags['obstacle'] && body.gameObject.tags && body.gameObject.mod().tags['obstacle']
-      if(!po.gameObject.mod().tags['stationary'] && bothAreObstacles && (noPathButHasVelocity || po.gameObject.mod().tags['heroPushable'])) {
+      if(bothAreObstacles && (noPathButHasVelocity || po.gameObject.mod().tags['heroPushable'])) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -324,7 +313,7 @@ function objectCorrection(po, final) {
         break;
       }
 
-      if(po.gameObject.tags && po.gameObject.mod().tags['heroPushable'] && body.gameObject.tags && body.gameObject.mod().tags['hero'] && !po.gameObject.mod().tags['stationary']) {
+      if(po.gameObject.tags && po.gameObject.mod().tags['heroPushable'] && body.gameObject.tags && body.gameObject.mod().tags['hero']) {
         if(Math.abs(result.overlap_x) !== 0) {
           illegal = true
           correction.x -= result.overlap * result.overlap_x
@@ -367,29 +356,12 @@ function objectCorrection(po, final) {
         correctConstructPart(po.constructPart, po.gameObject, po)
       }
     } else {
-
-      if(object.x > object._initialX) {
-        object._movementDirection = 'right'
-      } else if(object.x < object._initialX) {
-        object._movementDirection = 'left'
-      }
-      if(object.y > object._initialY) {
-        object._movementDirection = 'down'
-      } else if(object.y < object._initialY) {
-        object._movementDirection = 'up'
-      }
-
       // just give up correction and prevent any movement from these mother fuckers
       if(illegal) {
         object.x = object._initialX
         object.y = object._initialY
       } else {
-        object.x = po.x
-        object.y = po.y
-        if(object.mod().tags.rotateable) {
-          object.x -= object.width/2
-          object.y -= object.height/2
-        }
+        applyCorrection(object, po)
       }
     }
   }
@@ -594,6 +566,7 @@ function attachToRelative(object) {
 
 function addObject(object) {
   if(PHYSICS.objects[object.id]) return console.log("we already have added a physics object with id " + object.id)
+  if(object.tags && object.tags.notInCollisions) return
   const physicsObject = new Polygon(object.x, object.y, [ [ 0, 0], [object.width, 0], [object.width, object.height] , [0, object.height]])
   PHYSICS.system.insert(physicsObject)
   PHYSICS.objects[object.id] = physicsObject
@@ -601,6 +574,7 @@ function addObject(object) {
 }
 
 function removeObject(object) {
+  if(object.tagss && object.tags.notInCollisions) return
   try {
     PHYSICS.system.remove(PHYSICS.objects[object.id])
     delete PHYSICS.objects[object.id];
@@ -609,7 +583,40 @@ function removeObject(object) {
   }
 }
 
+function applyCorrection(object, po) {
+  if(object.mod().tags.hero) {
+    if(po.x > object._initialX) {
+      object.directions.right = true
+    } else if(po.x < object._initialX) {
+      object.directions.left = true
+    }
+    if(po.y > object._initialY) {
+      object.directions.down = true
+    } else if(po.y < object._initialY) {
+      object.directions.up = true
+    }
+  } else {
+    if(object.x > object._initialX) {
+      object._movementDirection = 'right'
+    } else if(object.x < object._initialX) {
+      object._movementDirection = 'left'
+    }
+    if(object.y > object._initialY) {
+      object._movementDirection = 'down'
+    } else if(object.y < object._initialY) {
+      object._movementDirection = 'up'
+    }
+  }
+  object.x = po.x
+  object.y = po.y
+  if(object.mod().tags.rotateable) {
+    object.x -= object.width/2
+    object.y -= object.height/2
+  }
+}
+
 export {
+  applyCorrection,
   attachToParent,
   attachToRelative,
   attachSubObjects,

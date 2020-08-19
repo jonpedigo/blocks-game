@@ -274,6 +274,7 @@ class Game{
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
 
+    GAME.objectsById = {}
     GAME.objects = game.objects.map((object) => {
       OBJECTS.addObject(object)
       if(!GAME.gameState.loaded) {
@@ -384,7 +385,7 @@ class Game{
   }
 
   addObstacle(object) {
-    if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+    if(((!object.path || !object.path.length) && (!object.tags.moving && object.tags.stationary) && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
       // pretend we are dealing with a 0,0 plane
       let x = object.x - GAME.grid.startX
       let y = object.y - GAME.grid.startY

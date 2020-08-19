@@ -208,8 +208,10 @@ export default class Root extends React.Component {
     }
 
     if(key === 'esc') {
-      this.gameLogRef.current.onEscPressed()
-      return
+      if(this.gameLogRef.current) {
+        this.gameLogRef.current.onEscPressed()
+        return
+      }
     }
 
     if(PAGE.typingMode) return
