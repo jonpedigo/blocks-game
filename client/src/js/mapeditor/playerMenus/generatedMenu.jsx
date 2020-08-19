@@ -32,36 +32,43 @@ export default class GeneratedMenu extends React.Component {
         } else {
           startResize(objectSelected)
         }
+        return
       }
 
       if (key === 'resize-grid') {
         startResize(objectSelected, { snapToGrid: true })
+        return
       }
 
       if (key === 'drag') {
         onStartDrag(objectSelected)
+        return
       }
 
       if (key === 'delete') {
         deleteObject(objectSelected)
+        return
       }
 
       if (key === 'remove') {
         removeObject(objectSelected)
+        return
       }
 
       if (key === 'copy') {
         onCopy(objectSelected)
+        return
       }
 
       if (key === 'drop') {
         window.socket.emit('dropObject', objectSelected.ownerId, objectSelected.subObjectName)
+        return
       }
+
       handleExtraMenuClicks(key, objectSelected, this.props.openColorPicker)
     }
   }
 
-  // NATE::
   _generateContextMenuItems(library) {
     let objectMenuItems = []
     let heroMenuItems = []
@@ -172,6 +179,21 @@ export default class GeneratedMenu extends React.Component {
   }
 
 
+  _renderGeneratedMenu(menuObj) {
+    return menuObj.baseLevelMenu.map((item, index) => {
+      if (item.subMenuKey) {
+        return this._renderSubMenu(menuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
+      } else if (item.useExistingMenu) {
+        return (<SubMenu title={item.title}>
+          {this._fetchMenu(item, index)}
+        </SubMenu>)
+      }
+      else {
+        return this._fetchMenu(item)
+      }
+    })
+  }
+
 
   render() {
     const { objectSelected, subObject, menuItemData } = this.props
@@ -179,32 +201,16 @@ export default class GeneratedMenu extends React.Component {
 
     if (objectSelected.tags && objectSelected.tags.hero) {
       return <Menu onClick={this._onHandleMenuClick}>
-        {heroMenuObj.baseLevelMenu.map((item, index) => {
-          if (item.subMenuKey) {
-            return this._renderSubMenu(heroMenuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
-          } else if (item.useExistingMenu) {
-            return (<SubMenu title={item.title}>
-              {this._fetchMenu(item, index)}
-            </SubMenu>)
-          }
-          else {
-            return this._fetchMenu(item)
-          }
-        })}
+        {this._renderGeneratedMenu(heroMenuObj)}
       </Menu>
     }
-    return <Menu onClick={this._handleMenuClick}>
-      {objectMenuObj.baseLevelMenu.map((item, index) => {
-        if (item.subMenuKey) {
-          return this._renderSubMenu(objectMenuObj[item.subMenuKey].subMenuItems, item.subMenuKey)
-        } else if (item.useExistingMenu) {
-          return (<SubMenu title={item.title}>
-            {this._fetchMenu(item, index)}
-          </SubMenu>)
-        } else {
-          return this._fetchMenu(item)
-        }
-      })}
-    </Menu>
+
+    if (objectSelected.id) {
+      return <Menu onClick={this._handleMenuClick}>
+        {this._renderGeneratedMenu(objectMenuObj)}
+      </Menu>
+    }
+
+    return null;
   }
 }
