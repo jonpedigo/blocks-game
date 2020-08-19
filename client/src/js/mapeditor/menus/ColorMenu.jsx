@@ -18,11 +18,12 @@ export default class ColorMenu extends React.Component{
         networkEditObject(objectSelected, { tags: { outline: !objectSelected.tags.outline }})
       }
 
-      if(key === 'toggle-visible') {
-        networkEditObject(objectSelected, { tags: { invisible: false, obstacle: true }})
-      }
       if(key === 'toggle-invisible') {
-        networkEditObject(objectSelected, { tags: { invisible: true, obstacle: false }})
+        if(objectSelected.tags.invisible) {
+          networkEditObject(objectSelected, { tags: { invisible: false, obstacle: true }})
+        } else {
+          networkEditObject(objectSelected, { tags: { invisible: true, obstacle: false }})
+        }
       }
     }
   }
@@ -33,7 +34,7 @@ export default class ColorMenu extends React.Component{
     return <Menu onClick={this._handleColorMenuClick}>
       {!objectSelected.constructParts && <MenuItem className='dont-close-menu' key="select-color">Color Picker</MenuItem>}
       <MenuItem key="toggle-outline">{ objectSelected.tags.outline ? 'On border only' : "Fill object" }</MenuItem>
-      {objectSelected.tags.invisible ? <MenuItem key="toggle-visible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
+      {objectSelected.tags.invisible ? <MenuItem key="toggle-invisible">Make visible</MenuItem> : <MenuItem key="toggle-invisible">Make invisible</MenuItem> }
     </Menu>
   }
 }
