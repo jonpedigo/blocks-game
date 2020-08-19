@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
-import './Editor.js'
+import './editor.js'
 
-import creatorObjectLibrary from './creatorObjectLibrary.js'
+import creatorObjectLibrary from '../libraries/creatorObjectLibrary.js'
 
 class EditorUI {
   constructor() {
@@ -11,7 +11,7 @@ class EditorUI {
     this.ref = null
   }
 
-  onGameLoaded() {
+  onFirstPageGameLoaded() {
     creatorObjectLibrary.onGameLoaded()
 
     // this.container = container
@@ -50,7 +50,7 @@ class EditorUI {
   }
 
   onUpdateGameState() {
-    EDITORUI.ref.forceUpdate()
+    if(EDITORUI.ref) EDITORUI.ref.forceUpdate()
   }
 
   onEditHero(hero) {

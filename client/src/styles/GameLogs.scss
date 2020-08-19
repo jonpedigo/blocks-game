@@ -1,0 +1,22 @@
+.GameLogsContainer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  text-align: left;
+  color: white;
+  font-style: Courier;
+  width: 20%;
+
+  .GameLogs {
+    width: 100%;
+    background: #0f0f0f;
+
+    &__list {
+      height: calc(100% - 47px);
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+}

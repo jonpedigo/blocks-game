@@ -15,7 +15,12 @@ class EventEmitter {
     } else event = []
 
     if(!this.mockSocket) {
-      if(eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onObjectInteractable' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide') console.log(eventName)
+      let debugEvent = (eventName == 'onObjectUnaware' || eventName == 'onObjectAware' || eventName == 'onObjectInteractable' || eventName == 'onObjectEnter' || eventName == 'onObjectLeave' || eventName == 'onHeroEnter' || eventName == 'onHeroLeave' || eventName == 'onHeroAware' || eventName == 'onHeroUnaware')
+      // debugEvent = true
+
+      // if(eventName == 'onObjectUnaware' || eventName == 'onObjectAware') console.log(eventName)
+
+      if(!debugEvent && eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide' && eventName !== 'onSendHeroKeyUp' && eventName !== 'onKeyUp') console.log(eventName)
 
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])
@@ -73,12 +78,12 @@ class EventEmitter {
         event.push(PIXIMAP[eventName])
       }
 
-      if(!PAGE.role.isPlayEditor && PLAYERUI[eventName]) {
-        event.push(PLAYERUI[eventName])
-      }
-
       if(!PAGE.role.isPlayEditor && EDITORUI[eventName]) {
         event.push(EDITORUI[eventName])
+      }
+
+      if(!PAGE.role.isPlayEditor && PLAYERUI[eventName]) {
+        event.push(PLAYERUI[eventName])
       }
 
       if(eventName === 'onRender' && !PAGE.role.isPlayEditor){
@@ -115,6 +120,10 @@ class EventEmitter {
 
       if(EDITOR[eventName]) {
         event.push(EDITOR[eventName])
+      }
+
+      if(PAGE.role.isHost && NOTIFICATIONSCONTROL[eventName]) {
+        event.push(NOTIFICATIONSCONTROL[eventName])
       }
     }
 

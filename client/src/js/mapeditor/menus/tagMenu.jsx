@@ -40,15 +40,16 @@ export default class TagMenu extends React.Component{
   render() {
     const { subObject } = this.props
 
+    // <SubMenu title="Behavior">
+    //   {this._renderTagMenuItems(window.behaviorTags)}
+    // </SubMenu>
+
     return <Menu onClick={this._handleTagMenuClick}>
       <SubMenu title="Physics">
         {this._renderTagMenuItems(window.physicsTags)}
       </SubMenu>
       <SubMenu title="Movement">
         {this._renderTagMenuItems(window.movementTags)}
-      </SubMenu>
-      <SubMenu title="Behavior">
-        {this._renderTagMenuItems(window.behaviorTags)}
       </SubMenu>
       <SubMenu title="Hero Update">
         {this._renderTagMenuItems(window.heroUpdateTags)}
@@ -86,8 +87,8 @@ export default class TagMenu extends React.Component{
       {subObject && <SubMenu title="Sub Object">
         {this._renderTagMenuItems(window.subObjectTags)}
       </SubMenu>}
-      <SubMenu title="Other">
-        {this._renderTagMenuItems(window.otherTags)}
+      <SubMenu title="Optimization">
+        {this._renderTagMenuItems(window.featureOptimizationTags)}
       </SubMenu>
     </Menu>
   }

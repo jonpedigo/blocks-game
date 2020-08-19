@@ -2,6 +2,50 @@
 
 }
 
+.ControlsInfo {
+  text-align: center;
+  color: white;
+
+  // &__content {
+  //   height: 100%;
+  //   overflow-y: scroll;
+  // }
+
+  &__item {
+    font-size: 20px;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+  }
+
+  &__header {
+    font-size: 30px;
+    margin: 0 auto;
+    padding: 20px;
+    font-weight: 700;
+  }
+
+  &__key {
+    width: 30%;
+    text-align: center;
+    padding: 10px;
+    div {
+      margin: 0 auto;
+      transform: scale(3);
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  }
+
+  &__behavior {
+    text-align: left;
+    width: 70%;
+  }
+}
+
 .Sprite {
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
@@ -11,6 +55,51 @@
 
 .PlayerUI {
   text-align: center;
+  font-family: Courier;
+
+  &__open-log, &__close-log {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    i {
+      position: relative;
+      color: #777;
+      padding: 10px 5px;
+      background: #0f0f0f;
+      cursor: pointer;
+      &:hover {
+        color: #fff;
+      }
+      // &:after {
+      //   content: " ";
+      //   position: absolute;
+      //   left: -15px;
+      //   top: 3px;
+      //   border-top: 15px solid transparent;
+      //   border-right: 15px solid black;
+      //   border-left: none;
+      //   border-bottom: 15px solid transparent;
+      // }
+    }
+  }
+
+  &__close-log {
+    right: 20%;
+  }
+}
+
+.ShortcutPanel {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  &__main-menu {
+    color: #eee;
+    font-size: 10px;
+    padding: 5px;
+  }
 }
 
 .DialogueBox--options {
@@ -49,33 +138,6 @@
     }
   }
 }
-
-.Inventory {
-  display: grid;
-  width: 100%;
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: auto auto auto;
-  grid-auto-rows: max-content;
-  background-color: #fff;
-  color: #444;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  // background-color: lightgray;
-  opacity: 0.5;
-
-  &__item {
-    background-color: #444;
-    color: #fff;
-    border-radius: 5px;
-    padding: 20px;
-    font-size: 150%;
-  }
-}
-
-
-
 
 @keyframes blinker {
   50% {

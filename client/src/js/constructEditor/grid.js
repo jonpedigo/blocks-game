@@ -95,7 +95,9 @@ class Grid {
     if(neighbor) {
       if(neighbor.data && neighbor.data[targetProp] === targetValue) {
         return this.findFurthestNodeInDirection(neighbor, direction, targetProp, targetValue)
-      } else return startNode
+      } else {
+        return startNode
+      }
     } else return null
   }
 

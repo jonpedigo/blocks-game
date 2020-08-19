@@ -22,9 +22,14 @@ function pickupObject(hero, collider) {
 
   if(!subObject.subObjectName) subObject.subObjectName = subObject.id
 
+  if(hero.subObjects && hero.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
+    window.emitGameEvent('onHeroPickupFail', hero, subObject)
+    return
+  }
+
   if(!collider.mod().tags['dontDestroyOnPickup']) {
-    collider._destroy = true
-    collider._destroyedBy = hero
+    collider._remove = true
+    collider._delete = true
   }
 
   subObject.inInventory = true
@@ -34,6 +39,8 @@ function pickupObject(hero, collider) {
     subObject.tags.potential = true
   }
 
+  hero.interactableObject = null
+  hero.interactableObjectResult = null
   if(subObject.tags['equipOnPickup']) {
     subObject.isEquipped = true
     window.local.emit('onHeroEquip', hero, subObject)
@@ -41,6 +48,8 @@ function pickupObject(hero, collider) {
 
   // window.local.emit('onHeroPickup', hero, subObject)
   delete subObject.subObjects
+
+  window.emitGameEvent('onHeroPickup', hero, subObject)
   window.local.emit('onAddSubObject', hero, subObject, subObject.subObjectName )
 }
 
@@ -53,8 +62,8 @@ function dropObject(hero, subObject, dropAmount = 1) {
     subObject.count -= dropAmount
     if(newSubObjectCount >= 1) {
       subObjectStillHasCount = true
-      object.id = 'stackable-' + window.uniqueID()
     }
+    object.id = 'stackable-' + window.uniqueID()
     object.count = dropAmount
   }
 
@@ -84,6 +93,7 @@ function dropObject(hero, subObject, dropAmount = 1) {
     window.socket.emit('deleteSubObject', hero, subObject.subObjectName)
   }
 
+  window.emitGameEvent('onHeroDrop', hero, object)
   window.socket.emit('addObjects', [object])
 }
 
@@ -91,23 +101,35 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const subObject = owner.subObjects[subObjectName]
   const newObject = _.cloneDeep(subObject)
 
+  if(withdrawer.tags.hero && withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
+    window.emitGameEvent('onHeroWithdrawFail', hero, subObject)
+    return
+  }
+
   let subObjectStillHasCount = false
   if(subObject.tags.stackable) {
     subObject.count -= withdrawAmount
     if(subObject.count >= 1) {
       subObjectStillHasCount = true
-      newObject.id = 'stackable-' + window.uniqueID()
     }
     newObject.count = withdrawAmount
+    newObject.id = 'stackable-' + window.uniqueID()
   }
   delete newObject.isEquipped
   newObject.inInventory = true
-
 
   if(!subObjectStillHasCount) {
     owner.interactableObject = null
     owner.interactableObjectResult = null
     window.socket.emit('deleteSubObject', owner, subObjectName)
+  }
+
+  if(withdrawer.tags.hero) {
+    window.emitGameEvent('onHeroWithdraw', withdrawer, newObject)
+  }
+
+  if(owner.tags.hero) {
+    window.emitGameEvent('onHeroDeposit', owner, newObject)
   }
 
   window.local.emit('onAddSubObject', withdrawer, newObject, subObjectName)

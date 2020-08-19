@@ -125,7 +125,7 @@ Object.defineProperty(Object.prototype, 'mod', { value: function() {
 window.isClickingMap = function(className) {
   if(typeof className !== 'string') return false
 
-  if(className == "EditorUI" || className == '') return true
+  if(className == "EditorUI" || className.indexOf('Creator__category-container') >= 0) return true
   else return false
 
   if(className == 'title' || className == 'label-text') return false
@@ -150,3 +150,35 @@ window.byteLength = function(str) {
   }
   return s;
 }
+
+window.emitGameEvent = function(gameEvent, arg1, arg2, arg3, arg4, arg5) {
+  if(arg1 && arg1.tags && arg1.tags.hero && arg1.interactableObject) {
+    arg1 = { ...arg1, interactableObject: null, interactableObjectResult: null }
+  }
+  if(arg2 && arg2.tags && arg2.tags.hero && arg2.interactableObject) {
+    arg2 = { ...arg2, interactableObject: null, interactableObjectResult: null }
+  }
+  window.local.emit(gameEvent, arg1, arg2, arg3, arg4, arg5)
+
+
+  window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
+}
+
+window.animateCSS = (element, animation, prefix = 'animate__') =>
+  // We create a Promise and return it
+  new Promise((resolve, reject) => {
+    const animationName = `${prefix}${animation}`;
+    const node = document.querySelector(element);
+
+    node.classList.add(`${prefix}animated`, animationName);
+
+    // When the animation ends, we clean the classes and resolve the Promise
+    function handleAnimationEnd() {
+      node.classList.remove(`${prefix}animated`, animationName);
+      node.removeEventListener('animationend', handleAnimationEnd);
+
+      resolve('Animation ended');
+    }
+
+    node.addEventListener('animationend', handleAnimationEnd);
+  });

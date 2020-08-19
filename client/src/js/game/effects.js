@@ -55,38 +55,36 @@ import { startSequence } from './sequence'
       tag: true,
     },
 
+    // need global library of these
     // 'animation',
-    // 'toast/log/modal/chat event'
+    // notification -> chat, private chat, log, toast, modal
+    // camera effect
+
     // 'anticipatedAdd',
     // 'goToStarView',
-    // 'emitEvent',
-    // 'disableSequence'
-    // 'enableSequence'
+    // 'sequenceDisable'
+    // 'sequenceEnable'
     // 'stopSequence',
     // 'morph',
-    // 'mod',
-    // 'coreBehavior',
     // 'duplicate',
-    // 'talkToHero',
     // 'heroQuestStart',
     // 'heroQuestComplete',
-    // 'heroMod',
     // 'spawnPoolIncrement',
     // 'spawnTotalIncrement',
     // 'spawnTotalRemove',
-    // 'spawnHold',
-    // 'spawnRelease',
-    // 'spawnToggle',
-    // 'movementToggle',
-    // 'movementRelease',
-    // 'movementHold',
+    // 'spawnPause',
+    // 'spawnResume',
+    // 'spawnPauseToggle',
+    // 'movementPauseToggle',
+    // 'movementResume',
+    // 'movementPause',
     // 'timerStart',
-    // 'timerHold',
-    // 'timerRelease',
-    // 'timerToggle',
+    // 'timerPause',
+    // 'timerResume',
+    // 'timerPauseToggle',
     // 'triggerDisable',
     // 'triggerEnable',
-    // 'triggerToggle',
+    // 'triggerToggleEnable',
     // 'increaseInputDirectionVelocity',
     // 'increaseMovementDirectionVelocity',
     // 'pathfindTo',
@@ -96,16 +94,14 @@ import { startSequence } from './sequence'
     // 'emitCustomEvent',
     // skipHeroGravity
     // skipHeroPosUpdate
+    // setPathTarget
+    // setTarget
+
     // play sound FX
     // stop music
     // start music
-    // camera shake
   }
 
-  // — speed up hero
-  // — slow down hero
-  // — increase speed parameter
-  // — decrease speed parameter
   // stop player (velocity)
 
   window.effectNameList = Object.keys(window.triggerEffects)
@@ -113,7 +109,7 @@ import { startSequence } from './sequence'
 function processEffect(effect, effected, effector) {
   const { effectName, effectValue, effectJSON } = effect
   if(effectName === 'mutate' && effectJSON) {
-    window.mergeDeep(effected, effectJSON)
+    OBJECTS.mergeWithJSON(effected, effectJSON)
   }
 
   // if(effectName === 'talkToHero' && hero) {
@@ -138,6 +134,7 @@ function processEffect(effect, effected, effector) {
       } else {
         effected.dialogueName = null
       }
+      window.emitGameEvent('onUpdatePlayerUI', effected)
     } else {
       console.log('cannot dialogue effect non hero')
     }

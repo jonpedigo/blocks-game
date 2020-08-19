@@ -18,6 +18,7 @@ import {
   objectCollisionEffects,
   containObjectWithinGridBoundaries,
   shouldCheckConstructPart,
+  applyCorrection,
 } from './physicsTools.js'
 
 const objects = {}
@@ -74,6 +75,7 @@ function correctAndEffectAllObjectAndHeros (delta) {
 function updatePosition(object, delta) {
   if(object.removed || object.mod().relativeId) return
   if(object._skipPosUpdate) return
+  if(!object.mod().tags['moving']) return
 
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
@@ -90,9 +92,10 @@ function updatePosition(object, delta) {
   //   }
   // }
 
+  const maxVelocityX = object.velocityMax + (object.velocityMaxXExtra || 0)
   if(object.velocityX) {
-    if(object.velocityX >= object.velocityMax) object.velocityX = object.velocityMax
-    else if(object.velocityX <= object.velocityMax * -1) object.velocityX = object.velocityMax * -1
+    if(object.velocityX >= maxVelocityX) object.velocityX = maxVelocityX
+    else if(object.velocityX <= maxVelocityX * -1) object.velocityX = maxVelocityX * -1
     object.x += object.velocityX * delta
   }
   if(object._flatVelocityX) {
@@ -118,7 +121,7 @@ function updatePosition(object, delta) {
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
-  if(GAME.world.tags.allMovingObjectsHaveGravityY && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.tags.moving && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
     applyWorldGravity = true
   }
 
@@ -130,12 +133,13 @@ function updatePosition(object, delta) {
     object.velocityY += (gravityVelocityY * delta)
   }
 
+  const maxVelocityY = object.velocityMax + (object.velocityMaxYExtra || 0)
   if(object.velocityY) {
-    if(object.velocityY >= object.velocityMax) {
-      object.velocityY = object.velocityMax
+    if(object.velocityY >= maxVelocityY) {
+      object.velocityY = maxVelocityY
     }
-    else if(object.velocityY <= object.velocityMax * -1) {
-      object.velocityY = object.velocityMax * -1
+    else if(object.velocityY <= maxVelocityY * -1) {
+      object.velocityY = maxVelocityY * -1
     }
 
     if(object.tags && !object.mod().tags.gravityY) {
@@ -144,7 +148,28 @@ function updatePosition(object, delta) {
   }
   if(object._flatVelocityY) object.y += object._flatVelocityY * delta
 
-  if(object.tags && object.mod().tags['stationary']) {
+  if(typeof object.velocityDecay == 'number') {
+    const velocityDecayY = object.velocityDecay + (object.velocityDecayYExtra || 0)
+    const velocityDecayX = object.velocityDecay + (object.velocityDecayXExtra || 0)
+
+    if(object.velocityX < 0) {
+      object.velocityX += (velocityDecayX * delta)
+      if(object.velocityX > 0) object.velocityX = 0
+    } else {
+      object.velocityX -= (velocityDecayX * delta)
+      if(object.velocityX < 0) object.velocityX = 0
+    }
+
+    if(object.velocityY < 0) {
+      object.velocityY += (velocityDecayY * delta)
+      if(object.velocityY > 0) object.velocityY = 0
+    } else {
+      object.velocityY -= (velocityDecayY * delta)
+      if(object.velocityY < 0) object.velocityY = 0
+    }
+  }
+
+  if(object.tags && object.mod().tags['stationary'] || !object.mod().tags['moving']) {
     object.velocityY = 0
     object.velocityX = 0
     object.velocityAngle = 0
@@ -169,6 +194,15 @@ function prepareObjectsAndHerosForMovementPhase() {
   everything.push(...allHeros)
   PHYSICS.correctedConstructs = {}
 
+  // everything.forEach((object) => {
+  //   if(object.subObjects) {
+  //     OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+  //       if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
+  //       everything.push(subObject)
+  //     })
+  //   }
+  // })
+
   everything.forEach((object, i) => {
     object._deltaX = 0
     object._deltaY = 0
@@ -179,11 +213,25 @@ function prepareObjectsAndHerosForMovementPhase() {
     delete object._flatVelocityX
     delete object._flatVelocityY
     object.interactableObject = null
+    object.interactableObjectResult = null
 
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part._initialX = part.x
         part._initialY = part.y
+      })
+    }
+
+    if(object.subObjects && object.subObjects.awarenessTriggerArea) {
+      object._objectsAwareOfNext = []
+    }
+
+    object._objectsWithinNext = []
+
+    if(object.subObjects) {
+      OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
+        if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
+        subObject._objectsWithinNext = []
       })
     }
   })
@@ -197,7 +245,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
   everything.forEach((object) => {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
-        if(subObject.mod().tags.potential || subObject.mod().tags.notCollideable) return
+        if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
         everything.push(subObject)
       })
     }
@@ -209,7 +257,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
       return
     }
 
-    if(object.tags.notCollideable) {
+    if(object.mod().tags.notInCollisions) {
       return
     }
 
@@ -291,6 +339,11 @@ function objectPhysics() {
       if(po.gameObject.mod().relativeId) continue
       if(po.gameObject.removed) continue
       if(po.gameObject.mod().tags.hero) continue
+      if(po.gameObject.mod().tags['skipCorrectionPhase']) {
+        applyCorrection(po.gameObject, po)
+        continue
+      }
+      if(!po.gameObject.mod().tags['moving']) continue
       if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
       objectCorrection(po, final)
     }
@@ -305,30 +358,31 @@ function postPhysics() {
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.local.emit('onObjectInteractable', hero.interactableObject, hero, hero.interactableObjectResult)
-      if(input && 'x' in input) {
-        window.local.emit('onHeroInteract', hero, hero.interactableObject, hero.interactableObjectResult)
+      window.emitGameEvent('onObjectInteractable', hero.interactableObject, hero)
+      if(input && input['e'] === true && !hero._cantInteract && !hero.flags.paused) {
+        window.local.emit('onHeroInteract', hero, hero.interactableObject)
+        hero._cantInteract = true
       }
       // bad for JSON
       delete hero.interactableObjectResult
     }
+    processAwarenessAndWithinEvents(hero)
   })
 
   // NON CHILD GO FIRST
   GAME.objects.forEach((object, i) => {
     if(object.removed) return
     if(!object.mod().parentId && !object._parentId) {
-      attachToParent(object)
       containObjectWithinGridBoundaries(object)
       object._deltaX = object.x - object._initialX
       object._deltaY = object.y - object._initialY
     }
+    processAwarenessAndWithinEvents(object)
   })
 
   allHeros.forEach((hero) => {
     if(hero.removed) return
     if(!hero.mod().parentId && !hero._parentId) {
-      attachToParent(hero)
       containObjectWithinGridBoundaries(hero)
       hero._deltaX = hero.x - hero._initialX
       hero._deltaY = hero.y - hero._initialY
@@ -375,6 +429,66 @@ function postPhysics() {
   })
 }
 
+function processAwarenessAndWithinEvents(object) {
+  if(object.mod().subObjects && object.mod().subObjects.awarenessTriggerArea) {
+    if(object._objectsAwareOf) {
+      const left = object._objectsAwareOf.filter((id) => {
+        return object._objectsAwareOfNext.indexOf(id) == -1
+      })
+      const entered = object._objectsAwareOfNext.filter((id) => {
+        return object._objectsAwareOf.indexOf(id) == -1
+      })
+
+      left.forEach((objectLeftId) => {
+        const objectLeft = OBJECTS.getObjectOrHeroById(objectLeftId)
+        if(object.tags && object.tags.hero) {
+          window.emitGameEvent('onHeroUnaware', object, objectLeft)
+        } else {
+          window.emitGameEvent('onObjectUnaware', object, objectLeft)
+        }
+      })
+      entered.forEach((objectEnteredId) => {
+        const objectEntered = OBJECTS.getObjectOrHeroById(objectEnteredId)
+        if(object.tags && object.tags.hero) {
+          window.emitGameEvent('onHeroAware', object, objectEntered)
+        } else {
+          window.emitGameEvent('onObjectAware', object, objectEntered)
+        }
+      })
+    }
+    object._objectsAwareOf = object._objectsAwareOfNext
+  }
+
+  if(object.mod().tags.trackObjectsWithin && object._objectsWithin) {
+    const left = object._objectsWithin.filter((id) => {
+      return object._objectsWithinNext.indexOf(id) == -1
+    })
+    const entered = object._objectsWithinNext.filter((id) => {
+      return object._objectsWithin.indexOf(id) == -1
+    })
+
+    left.forEach((objectLeftId) => {
+      const objectLeft = OBJECTS.getObjectOrHeroById(objectLeftId)
+      if(objectLeft.tags && objectLeft.tags.hero) {
+        window.emitGameEvent('onHeroLeave', objectLeft, object)
+      } else {
+        window.emitGameEvent('onObjectLeave', objectLeft, object)
+      }
+    })
+    entered.forEach((objectEnteredId) => {
+      const objectEntered = OBJECTS.getObjectOrHeroById(objectEnteredId)
+      if(objectEntered.tags && objectEntered.tags.hero) {
+        window.emitGameEvent('onHeroEnter', objectEntered, object)
+      } else {
+        window.emitGameEvent('onObjectEnter', objectEntered, object)
+      }
+    })
+  }
+
+  object._objectsWithin = object._objectsWithinNext
+}
+
+
 function removeAndRespawn() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
@@ -385,8 +499,7 @@ function removeAndRespawn() {
       } else hero._remove = true
       delete hero._destroy
       delete hero._destroyedBy
-      window.socket.emit('emitGameEvent', 'onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
-      window.local.emit('onHeroDestroyed', hero, hero._destroyedBy)
+      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
     }
 
     if(hero._respawn) {
@@ -398,29 +511,58 @@ function removeAndRespawn() {
       HERO.removeHero(hero)
       delete hero._remove
     }
+
+    if(hero.subObjects) {
+      Object.keys(hero.subObjects).forEach((subObjectName) => {
+        const subObject = hero.subObjects[subObjectName]
+        processSubObjectRemoval(subObject)
+      })
+    }
   })
 
-  GAME.objects.forEach((object) => {
-    if(object._destroy) {
-      if(object.mod().tags.respawn) {
-        object._respawn = true
-      } else object._remove = true
-      delete object._destroy
-      delete object._destroyedBy
-      window.socket.emit('emitGameEvent', 'onObjectDestroyed', object, object._destroyedBy)
-      window.local.emit('onObjectDestroyed', object, object._destroyedBy)
-    }
+  GAME.objects.forEach(processObjectRemoval)
+}
 
-    if(object._respawn) {
-      OBJECTS.respawn(object)
-      delete object._respawn
-    }
-    if(object._remove) {
-      object.removed = true
-      OBJECTS.removeObject(object)
-      delete object._remove
-    }
-  })
+function processSubObjectRemoval(object) {
+  if(object._destroy) {
+    object._remove = true
+    delete object._destroy
+    delete object._destroyedBy
+    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+  }
+
+  if(object._remove) {
+    object.removed = true
+    delete object._remove
+  }
+}
+
+function processObjectRemoval(object) {
+  if(object._destroy) {
+    if(object.mod().tags.respawn) {
+      object._respawn = true
+    } else object._remove = true
+    delete object._destroy
+    delete object._destroyedBy
+    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+  }
+
+  if(object._respawn) {
+    OBJECTS.respawn(object)
+    delete object._respawn
+  }
+  if(object._remove) {
+    object.removed = true
+    OBJECTS.removeObject(object)
+    delete object._remove
+  }
+
+  if(object.subObjects) {
+    Object.keys(object.subObjects).forEach((subObjectName) => {
+      const subObject = object.subObjects[subObjectName]
+      processSubObjectRemoval(subObject)
+    })
+  }
 }
 
 export default {

@@ -8,39 +8,39 @@ function onPageLoaded() {
     onHeroLand: { mainObject: 'hero', guestObject: 'anything' },
     onHeroInteract: { mainObject: 'hero', guestObject: 'anything' },
     onHeroDestroyed: { mainObject: 'hero', guestObject: 'anything', guestObjectOptional: true },
+    onHeroAware: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroUnaware: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroEnter: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroLeave: { mainObject: 'hero', guestObject: 'anything' },
     onHeroStartQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
     onHeroCompleteQuest: { mainObject: 'hero', guestObject: 'questId', guestObjectOptional: true },
-    onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
-    onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
-    onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
+    onHeroPickup: { mainObject: 'hero', guestObject: 'object' },
+    onHeroDrop: { mainObject: 'hero', guestObject: 'subobject' },
+    onHeroWithdraw: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroDeposit: { mainObject: 'hero', guestObject: 'object' },
+    // onHeroRespawn: { mainObject: 'hero', guestObject: null },
+    // onHeroEquip: { mainObject: 'hero', guestObject: 'anything'},
     onGameStart: { mainObject: null, guestObject: null },
     onStoryStart: { mainObject: null, guestObject: null },
+    onObjectDestroyed: { mainObject: 'object', guestObject: 'anything', guestObjectOptional: true },
+    onObjectAware: { mainObject: 'object', guestObject: 'anything' },
+    onObjectUnaware: { mainObject: 'object', guestObject: 'anything' },
+    onObjectEnter: { mainObject: 'object', guestObject: 'anything' },
+    onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
+    onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
+    onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
   }
-  // -> onHeroPickup
-  // -> onHeroDrop
-  // -> onHeroDeposit
-  // -> onHeroWithdraw
-  // -> onHeroDestroyed
-  // -> onHeroRespawned
-  // -> onHeroEquip
-  // -> onHeroAware
-
+  // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
+  // 'onHeroExamine' <-- only for notifications/logs
+  // 'onHeroSwitch'
+  
     // 'onHeroChooseOption',
     // 'onObjectSpawn',
-    // 'onObjectNoticed',
-    // 'onObjectNotice',
     // 'onHeroCanInteract'
-    // 'onHeroNoticed,
-    // 'onHeroNotice,
     // 'onQuestFail',
     // 'onObjectAwake',
     // 'onTimerEnd',
-    // 'onHeroEnter'
-    // 'onObjectEnter'
-    // 'onHeroLeave'
-    // 'onObjectLeave'
     // 'onUpdate' -> for sequences with conditions
-    // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
 }
 
 function deleteTrigger(object, triggerId) {
@@ -58,11 +58,15 @@ function addTrigger(ownerObject, trigger) {
   if(!ownerObject.triggers) ownerObject.triggers = {}
 
   ownerObject.triggers[trigger.id] = trigger
-  Object.assign(ownerObject.triggers[trigger.id], {
-    triggerPool: trigger.initialTriggerPool || 1,
-    eventCount: 0,
-    disabled: false,
-  })
+
+  // make sure not to reinitilize this trigger on page reload
+  if(typeof trigger.triggerPool !== 'number') {
+    Object.assign(ownerObject.triggers[trigger.id], {
+       triggerPool: trigger.initialTriggerPool || 1,
+       eventCount: 0,
+       disabled: false,
+     })
+  }
 
   ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)

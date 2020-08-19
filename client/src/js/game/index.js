@@ -207,6 +207,7 @@ class Game{
   }
 
   onGameLoaded() {
+    PAGE.gameLoaded = true
     GAME.gameState.loaded = true
     GAME.gameState.paused = false
     dayNightCycle.onGameLoaded()
@@ -268,10 +269,12 @@ class Game{
       GAME.gameState.activeModList = []
       GAME.gameState.timeouts = []
       GAME.gameState.timeoutsById = {}
+      // GAME.gameState.logs = []
     } else {
       GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
     }
 
+    GAME.objectsById = {}
     GAME.objects = game.objects.map((object) => {
       OBJECTS.addObject(object)
       if(!GAME.gameState.loaded) {
@@ -382,7 +385,7 @@ class Game{
   }
 
   addObstacle(object) {
-    if(((!object.path || !object.path.length) && object.tags.stationary && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+    if(((!object.path || !object.path.length) && (!object.tags.moving && object.tags.stationary) && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
       // pretend we are dealing with a 0,0 plane
       let x = object.x - GAME.grid.startX
       let y = object.y - GAME.grid.startY
@@ -623,7 +626,7 @@ class Game{
 
   onUpdateGameState(gameState) {
     if(!PAGE.gameLoaded) return
-    if(!PAGE.role.isHost) GAME.gameState = gameState
+    if(!PAGE.role.isHost) window.mergeDeep(GAME.gameState, gameState)
   }
 
   onChangeGame(game) {
@@ -703,8 +706,9 @@ class Game{
         if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
       }
 
-      if(key === 'tags' || key === 'editorTags') {
+      if(key === 'tags') {
         for(let tag in updatedWorld.tags) {
+          const tagVal = updatedWorld.tags[tag]
           if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -716,6 +720,14 @@ class Game{
             GAME.heroList.forEach((object) => {
               object.velocityY = 0
             });
+          }
+          if(PAGE.gameLoaded) {
+            if(tag === 'hasGameLog') {
+              if(!tagVal) PAGE.closeLog()
+              if(tagVal) {
+                PAGE.openLog()
+              }
+            }
           }
         }
       }
@@ -779,6 +791,23 @@ class Game{
     }
   }
 
+  testMod(mod, testObject) {
+    if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
+      if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
+        mod._disabled = false
+        return true
+      } else if(mod.testFailDestroyMod) {
+        if(mod.removeEventListener) mod.removeEventListener()
+        return false
+      } else {
+        mod._disabled = true
+        return true
+      }
+    }
+
+    return true
+  }
+
   updateActiveMods() {
     GAME.gameState.activeMods = {}
     GAME.modCache = {}
@@ -794,30 +823,41 @@ class Game{
       conditionTimerValue
       conditionValue
       testPassReverse
-
+      testFailDestroyMod
+      testAndModOwnerWhenEquipped
     }
     */
     GAME.gameState.activeModList = GAME.gameState.activeModList.filter(mod => {
-      const testObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
+      const modOwnerObject = OBJECTS.getObjectOrHeroById(mod.ownerId)
+
       if(mod._remove) {
         if(mod.removeEventListener) mod.removeEventListener()
         return false
-      } else if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none' && mod.conditionType !== 'onTimerEnd' && mod.conditionType !== 'onEvent') {
-        if(testCondition(mod, testObject, { testPassReverse: mod.testPassReverse })) {
+      }
+
+      // this means the owner of the mod's owner object, CONFUSING
+      if(mod.testAndModOwnerWhenEquipped) {
+        if(modOwnerObject.ownerId && modOwnerObject.isEquipped) {
+          const testObject = OBJECTS.getObjectOrHeroById(modOwnerObject.ownerId)
+          return GAME.testMod(mod, testObject)
+        } else {
+          mod._disabled = true
           return true
         }
-        if(mod.removeEventListener) mod.removeEventListener()
-        return false
       }
-      return true
+
+      const testObject = modOwnerObject
+      return GAME.testMod(mod, testObject)
     })
 
+    // create mods to effect the game in the next update
     GAME.gameState.activeModList.forEach((mod) => {
       if(!GAME.gameState.activeMods[mod.ownerId]) GAME.gameState.activeMods[mod.ownerId] = []
       GAME.gameState.activeMods[mod.ownerId].push(mod)
     })
   }
 
+  // actually mod an object
   mod(object) {
     if(!object.id || !GAME.modCache) {
       return object
@@ -864,7 +904,8 @@ class Game{
         // pathfindingLimit: object.pathfindingLimit,
 
       activeMods.forEach((mod) => {
-        window.mergeDeep(objectCopy, mod.effectJSON)
+        if(mod._disabled) return
+        OBJECTS.mergeWithJSON(objectCopy, mod.effectJSON)
       })
 
       if(objectCopy.subObjects) {
@@ -904,6 +945,28 @@ class Game{
     if(GAME.grid && GAME.grid.nodes && GAME.grid.nodes[x] && GAME.grid.nodes[x][y]) {
       Object.assign(GAME.grid.nodes[x][y], update)
     }
+  }
+
+  onSendNotification(options) {
+    if(options.log) {
+      GAME.addLog(options)
+    }
+    if(PAGE.role.isHost && options.chat) {
+      OBJECTS.chat({ id: options.authorId, text: options.text })
+    }
+  }
+
+  addLog({ authorId, text, involvedIds, animation, type, heroId, teamId, dateMilliseconds }) {
+    GAME.gameState.logs.push({
+      teamId,
+      heroId,
+      authorId,
+      text,
+      involvedIds,
+      animation,
+      type,
+      dateMilliseconds,
+    })
   }
 }
 

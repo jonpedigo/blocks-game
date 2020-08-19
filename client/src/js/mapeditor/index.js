@@ -38,6 +38,14 @@ class MapEditor {
     this.paused = false
   }
 
+  onPageLoaded() {
+    const loader = document.createElement('div')
+    loader.className = 'loader'
+    MAPEDITOR.loaderElement = loader
+    document.getElementById('GameContainer').appendChild(loader)
+    loader.style.display = "none"
+  }
+
   set(ctx, canvas, camera) {
     MAPEDITOR.ctx = ctx
     MAPEDITOR.canvas = canvas
@@ -62,9 +70,9 @@ class MapEditor {
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
   }
 
-  openConstructEditor(object, startAtHero) {
-    CONSTRUCTEDITOR.start(object, startAtHero)
-    window.socket.emit('editGameState', { paused: true })
+  openConstructEditor(object, startColor, startAtHero) {
+    CONSTRUCTEDITOR.start(object, startColor, startAtHero)
+    // window.socket.emit('editGameState', { paused: true })
 
     MAPEDITOR.initState()
     MAPEDITOR.pause()
@@ -73,7 +81,7 @@ class MapEditor {
       if (constructParts) {
         window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height }])
       }
-      window.socket.emit('editGameState', { paused: false })
+      // window.socket.emit('editGameState', { paused: false })
       MAPEDITOR.resume()
       removeListener()
     })
@@ -161,9 +169,9 @@ class MapEditor {
     if (object.tags.subObject && object.subObjectName && object.ownerId) {
       const owner = OBJECTS.getOwner(object)
       window.socket.emit('deleteSubObject', owner, object.subObjectName)
-    } else if (object.tags.hero) {
-      window.socket.emit('deleteHero', object)
-    } else if (object.id) {
+    } else if(object.tags.hero) {
+      window.socket.emit('deleteHero', object.id)
+    } else if(object.id) {
       window.socket.emit('deleteObject', object)
     } else {
       console.error('trying to delete object without id')
@@ -195,7 +203,14 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.x = ((event.clientX + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((event.clientY + camera.y) / camera.multiplier)
 
-  if (MAPEDITOR.copiedObject) {
+  if(MAPEDITOR.copiedObject) {
+    const subObjects = MAPEDITOR.copiedObject.subObjects
+    if(subObjects) {
+      Object.keys(subObjects).forEach((subObjectName) => {
+        const so = subObjects[subObjectName]
+        so.id = subObjectName + '-' + window.uniqueID()
+      })
+    }
     OBJECTS.create([MAPEDITOR.copiedObject])
     MAPEDITOR.copiedObject = null
   } else if (MAPEDITOR.isSettingPathfindingLimit) {

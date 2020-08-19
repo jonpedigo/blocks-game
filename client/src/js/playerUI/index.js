@@ -9,7 +9,7 @@ class PlayerUI {
     this.updateStateInterval = null
   }
 
-  onPageLoaded() {
+  onFirstPageGameLoaded() {
     // this.container = container
     const initialProps = {
       ref: ref => PLAYERUI.ref = ref
@@ -25,9 +25,7 @@ class PlayerUI {
       React.createElement(Root, initialProps),
       container
     )
-  }
 
-  onGameLoaded() {
     if(!PLAYERUI.updateStateInterval) {
       PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
     }
@@ -35,6 +33,28 @@ class PlayerUI {
 
   onKeyDown(key, hero) {
     if(hero.id === HERO.id) {
+      PLAYERUI.ref.onUpdateState()
+    }
+  }
+
+  onUpdatePlayerUI(hero) {
+    if(hero.id === HERO.id) {
+      PLAYERUI.ref.onUpdateState(hero)
+    }
+  }
+
+  onOpenLog() {
+    PLAYERUI.ref.onUpdateState()
+  }
+
+  onCloseLog() {
+    PLAYERUI.ref.onUpdateState()
+  }
+
+  onSendNotification(data) {
+    if((data.toast || data.modal) && data.heroId === HERO.id) {
+      PLAYERUI.ref.onSendNotification(data)
+    } else if(data.log) {
       PLAYERUI.ref.onUpdateState()
     }
   }
@@ -47,12 +67,12 @@ class PlayerUI {
     }
   }
 
-  onHeroStartQuest(hero, questId) {
-    PLAYERUI.ref.onHeroStartQuest(hero, questId)
+  onHeroStartQuest(heroId, questId) {
+    PLAYERUI.ref.onHeroStartQuest(heroId, questId)
   }
 
-  onHeroCompleteQuest(hero, questId) {
-    PLAYERUI.ref.onHeroCompleteQuest(hero, questId)
+  onHeroCompleteQuest(heroId, questId) {
+    PLAYERUI.ref.onHeroCompleteQuest(heroId, questId)
   }
 }
 

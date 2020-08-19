@@ -1,6 +1,10 @@
 function camera() {
-  this.x = 0
-  this.y = 0
+  this.x = null
+  this.y = null
+  this.targetX = 0
+  this.targetY = 0
+  this.tweenToTarget = true
+  this.tweenSpeed = 2
   this.limitX = null
   this.limitY = null
   this.centerX = null
@@ -32,10 +36,10 @@ function camera() {
   }
 
   this.setHeroX = function (hero = GAME.heros[HERO.id]) {
-    this.x = (((hero.x + hero.width/2)*this.multiplier)) - MAP.canvas.width/2
+    this.targetX = (((hero.x + hero.width/2)*this.multiplier)) - MAP.canvas.width/2
   }
   this.setHeroY = function(hero = GAME.heros[HERO.id]) {
-    this.y = (((hero.y + hero.height/2)*this.multiplier)) - MAP.canvas.height/2
+    this.targetY = (((hero.y + hero.height/2)*this.multiplier)) - MAP.canvas.height/2
   }
 
 
@@ -64,17 +68,16 @@ function camera() {
     if(EDITOR.preferences.zoomMultiplier > 0){
       this.setHeroX(hero)
       this.setHeroY(hero)
-      this.shake()
       return
     }
 
     if (this.limitX !== null && this.limitX >= 0) {
       const potentialX = ((hero.x + hero.width/2)*this.multiplier)
       if(potentialX > ((((this.centerX + this.limitX)*this.multiplier)) - (MAP.canvas.width/2))) {
-        this.x = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
+        this.targetX = (((this.centerX + this.limitX)*this.multiplier)) - MAP.canvas.width
         this.hasHitLimit = true
       } else if (potentialX < ((((this.centerX - this.limitX)*this.multiplier)) + (MAP.canvas.width/2))) {
-        this.x = (((this.centerX - this.limitX)*this.multiplier))
+        this.targetX = (((this.centerX - this.limitX)*this.multiplier))
         this.hasHitLimit = true
       } else {
         this.setHeroX(hero)
@@ -87,10 +90,10 @@ function camera() {
       const potentialY = ((hero.y + hero.height/2)*this.multiplier)
 
       if (potentialY > ((((this.centerY + this.limitY)*this.multiplier))- (MAP.canvas.height/2))) {
-        this.y = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
+        this.targetY = (((this.centerY + this.limitY)*this.multiplier)) - MAP.canvas.height
         this.hasHitLimit = true
       } else if (potentialY < ((((this.centerY - this.limitY)*this.multiplier)) + (MAP.canvas.height/2))) {
-        this.y = ((this.centerY - this.limitY)*this.multiplier)
+        this.targetY = ((this.centerY - this.limitY)*this.multiplier)
         this.hasHitLimit = true
       } else {
         this.setHeroY(hero)
@@ -98,8 +101,6 @@ function camera() {
     } else {
       this.setHeroY(hero)
     }
-
-    this.shake()
   }
 
   this.shake = function() {
@@ -109,6 +110,33 @@ function camera() {
     if(this.yShake && this.yShake.isShaking) {
       this.y -= this.yShake.amplitude() * this.shakeAmplitude
     }
+  }
+
+  function easeInOutQuad(t, b, c, d) {
+      t /= d/2;
+      if (t < 1) return c/2*t*t + b;
+      t--;
+      return -c/2 * (t*(t-2) - 1) + b;
+  };
+
+  this.update = function(hero, delta) {
+    const cameraTweenSpeedX = hero.cameraTweenSpeed + hero.cameraTweenSpeedXExtra
+    if(hero.cameraTweenToTargetX && typeof this.x == 'number') {
+      const distanceX = this.targetX - this.x
+      this.x += (distanceX) * delta * cameraTweenSpeedX
+    } else {
+      this.x = this.targetX
+    }
+
+    const cameraTweenSpeedY = hero.cameraTweenSpeed + hero.cameraTweenSpeedYExtra
+    if(hero.cameraTweenToTargetY && typeof this.y == 'number') {
+      const distanceY = this.targetY - this.y
+      this.y += (distanceY) * delta * cameraTweenSpeedY
+    } else {
+      this.y = this.targetY
+    }
+
+    this.shake()
   }
 }
 

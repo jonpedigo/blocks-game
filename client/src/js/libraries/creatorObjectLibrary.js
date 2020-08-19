@@ -2,11 +2,11 @@ import gridUtil from '../utils/grid.js'
 
 function constructEditorOnSelect(objectId, tags) {
   if(GAME.objectsById[objectId]) {
-    MAPEDITOR.openConstructEditor(GAME.objectsById[objectId], true)
+    MAPEDITOR.openConstructEditor(GAME.objectsById[objectId], EDITOR.preferences.creatorColorSelected, true)
   } else {
     const globalConstructStationaryObstacle = {reserved: true, x: 0, y: 0, width: GAME.grid.width, height: GAME.grid.height, tags, constructParts: [], id: objectId}
     OBJECTS.create(globalConstructStationaryObstacle)
-    MAPEDITOR.openConstructEditor(globalConstructStationaryObstacle, true)
+    MAPEDITOR.openConstructEditor(globalConstructStationaryObstacle, EDITOR.preferences.creatorColorSelected, true)
   }
   const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
     setTimeout(() => {
@@ -50,14 +50,14 @@ function onGameLoaded() {
       label: 'Background',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notCollideable: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notInCollisions: true })
       }
     },
     {
       label: 'Foreground',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notCollideable: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notInCollisions: true })
       }
     },
     // {
@@ -133,6 +133,7 @@ function onGameLoaded() {
       columnName: 'Items',
       JSON: {
         objectType: 'plainObject',
+        subObjectName: 'resource',
         tags: { obstacle: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
       }
     },
@@ -164,7 +165,27 @@ function onGameLoaded() {
         heroDialogue: [
           "hello!"
         ],
-        tags: { obstacle: true, wander: true, talker: true, talkOnHeroInteract: true },
+        tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
+      }
+    },
+    {
+      label: 'Homing',
+      columnName: 'Monsters',
+      JSON: {
+        objectType: 'plainObject',
+        tags: { obstacle: true, monster: true, moving: true, homing: true, targetHeroOnAware: true },
+        subObjects: {
+          awarenessTriggerArea: {
+            x: 0, y: 0, width: 40, height: 40,
+            relativeWidth: GAME.grid.nodeSize * 12,
+            relativeHeight: GAME.grid.nodeSize * 16,
+            relativeX: 0,
+            relativeY: -GAME.grid.nodeSize * 4,
+            opacity: 0.2,
+            color: 'yellow',
+            tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
+          }
+        }
       }
     },
   ]

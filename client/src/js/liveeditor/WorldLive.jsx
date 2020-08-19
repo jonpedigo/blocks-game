@@ -45,18 +45,23 @@ export default class WorldLive extends React.Component {
             <DatNumber path='world.gravityVelocityY' label='Gravity Velocity Y' min={0} max={5000} step={1} />
           </DatFolder>
           <DatFolder title='Tags'>
-            <DatBoolean label='All Moving Objects Have Gravity' path="world.tags.allMovingObjectsHaveGravityY"/>
-            <DatBoolean label='Prevent Hero From Leaving Grid' path="world.tags.preventHeroGridBypass"/>
             <DatBoolean label='No Monster Camping' path="world.tags.noCamping"/>
             <DatBoolean label='Calculate Moving Obstacle Paths' path="world.tags.calculatePathCollisions"/>
-            <DatBoolean label='Restore Hero Position When Reloaded' path="world.tags.shouldRestoreHero"/>
-            <DatBoolean label='Store Game State in Local Storage' path="world.tags.storeEntireGameState"/>
-            <DatBoolean label='Custom Editor Code Override Arcade' path="world.tags.overrideCustomGameCode"/>
+
+            <DatBoolean label='All Moving Objects Have Gravity' path="world.tags.allMovingObjectsHaveGravityY"/>
+            <DatBoolean label='Prevent Hero From Leaving Grid' path="world.tags.preventHeroGridBypass"/>
             <DatBoolean label='Destroy Hero if hit Game Boundaries' path="world.tags.gameBoundaryDestroyHero"/>
             <DatBoolean label='Destroy Hero if hit Game Botttom' path="world.tags.gameBoundaryBottomDestroyHero"/>
             <DatBoolean label='Destroy Objects if hit Game Boundaries' path="world.tags.gameBoundaryDestroyObjects"/>
+
+            <DatBoolean label='Allow player to view log' path="world.tags.hasGameLog"/>
+            <DatBoolean label='Allow player to chat' path="world.tags.allowHeroChat"/>
+
+            <DatBoolean label='Custom Editor Code Override Arcade' path="world.tags.overrideCustomGameCode"/>
+            <DatBoolean label='Restore Hero Position When Reloaded' path="world.tags.shouldRestoreHero"/>
+            <DatBoolean label='Store Game State in Local Storage' path="world.tags.storeEntireGameState"/>
           </DatFolder>
-          <DatFolder title='Game Boundaries' closed={false}>
+          <DatFolder title='Game Boundaries'>
             <DatSelect path='world.gameBoundaries.behavior' label='Behavior' options={['default','boundaryAll','pacmanFlip','purgatory']}/>
             <DatButton label="Set to grid" onClick={() => {
               EDITOR.setGameBoundaryTo('grid')
@@ -80,7 +85,7 @@ export default class WorldLive extends React.Component {
               EDITOR.clearProperty('gameBoundaries')
             }}></DatButton>
           </DatFolder>
-          <DatFolder title='Camera Lock' closed={false}>
+          <DatFolder title='Camera Lock'>
             <DatButton label="Set to grid" onClick={() => {
               EDITOR.setCameraLockTo('grid')
             }}></DatButton>
@@ -103,7 +108,7 @@ export default class WorldLive extends React.Component {
               EDITOR.clearProperty('lockCamera')
             }}></DatButton>
           </DatFolder>
-          <DatFolder title='Grid' closed={false}>
+          <DatFolder title='Grid'>
             <DatNumber path='grid.width' label='Grid Width' min={0} max={1000} step={1} />
             <DatNumber path='grid.height' label='Grid Height' min={0} max={1000} step={1} />
             <DatButton label="Make Smaller" onClick={() => {

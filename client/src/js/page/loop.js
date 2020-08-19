@@ -92,6 +92,7 @@ function render(delta) {
 }
 
 function mapNetworkUpdate() {
+  window.socket.emit('updateGameState', { ambientLight: GAME.gameState.ambientLight })
   window.socket.emit('updateObjects', GAME.objects.map(OBJECTS.getMapState))
   window.socket.emit('updateHeros', GAME.heroList.reduce((prev, hero) => {
     prev[hero.id] = HERO.getMapState(hero.mod())

@@ -13,7 +13,7 @@ export default class Creator extends React.Component {
       rows: [],
       columnsOpen: {},
       isColorPickerOpen: false,
-      colorSelected: '#FFFFFF'
+      colorSelected: EDITOR.preferences.creatorColorSelected
     }
 
     this._setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
@@ -84,6 +84,9 @@ export default class Creator extends React.Component {
         newObject.x = MAPEDITOR.objectHighlighted.x
         newObject.y = MAPEDITOR.objectHighlighted.y
         newObject.id = 'creator-'+window.uniqueID()
+        OBJECTS.forAllSubObjects(newObject.subObjects, (subObject) => {
+          subObject.id = 'subObject-'+window.uniqueID()
+        })
         if(colorSelected) newObject.color = colorSelected
         OBJECTS.create(newObject)
 
@@ -218,11 +221,13 @@ export default class Creator extends React.Component {
           this.setState({
             colorSelected: color.hex
           })
+          EDITOR.preferences.creatorColorSelected = color.hex
         }}
         onChangeComplete={ (color) => {
           this.setState({
             colorSelected: color.hex
           })
+          EDITOR.preferences.creatorColorSelected = color.hex
         }}
       />
     <br/>
@@ -232,6 +237,7 @@ export default class Creator extends React.Component {
         this.setState({
           colorSelected: color.hex
         })
+        EDITOR.preferences.creatorColorSelected = color.hex
       }}/>
     </div>
   }

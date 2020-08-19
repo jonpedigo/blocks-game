@@ -20,12 +20,16 @@ MAP.onPageLoaded = function() {
   if(PAGE.role.isPlayer) {
     function onResize() {
       if(GAME.world.tags && GAME.world.tags.shadow) return
-      MAP.canvasMultiplier = window.innerWidth/640;
+      let gameElementWidth = window.innerWidth
+      if(PAGE.isLogOpen) gameElementWidth = gameElementWidth * .8
+      MAP.canvasMultiplier = gameElementWidth/640;
       MAP.canvas.width = 640 * MAP.canvasMultiplier;
       MAP.canvas.height = 320 * MAP.canvasMultiplier;
       constellation.onResize(MAP.ctx)
     }
     window.addEventListener("resize", onResize);
+    window.local.on('onOpenLog', onResize)
+    window.local.on('onCloseLog', onResize)
     onResize()
   }
 
@@ -74,6 +78,8 @@ MAP.onRender = function(delta) {
   } else {
     if(hero) camera.set(hero)
   }
+
+  camera.update(hero, delta)
 
   if(camera.xShake && camera.xShake.isShaking) {
     camera.xShake.update()

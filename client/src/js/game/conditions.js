@@ -1,4 +1,5 @@
 import collisions from '../utils/collisions'
+import isMatchWith from 'lodash.ismatchwith'
 
 window.conditionTypes = {
   matchJSON: {
@@ -65,11 +66,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
   if(condition.conditionType === 'matchJSON') {
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject, options)
+        return testMatchJSONCondition(condition.conditionJSON, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testMatchJSONCondition(conditionJSON, testObject, options)
+        return testMatchJSONCondition(condition.conditionJSON, testObject, options)
       })
     }
   }
@@ -219,7 +220,19 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
 function testMatchJSONCondition(JSON, testObject, options) {
   if(options.testModdedVersion) testObject = testObject.mod()
-  return _.isMatch(testObject, JSON)
+  return isMatchWith(testObject, JSON, (objectValue, jsonValue) => {
+    if(typeof jsonValue === 'string' && typeof objectValue === 'number') {
+      if (jsonValue.startsWith("<")) {
+        const comparisonValue = Number(jsonValue.slice(1))
+        return comparisonValue < objectValue
+      } else if(jsonValue.startsWith(">")) {
+        const comparisonValue = Number(jsonValue.slice(1))
+        return comparisonValue > objectValue
+      }
+    }
+
+    return undefined
+  })
 }
 
 function testIsWithinObject(object, testObject, options) {

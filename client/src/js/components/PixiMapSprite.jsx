@@ -1,5 +1,5 @@
 import React from 'react'
-export default class Sprite extends React.Component {
+export default class PixiMapSprite extends React.Component {
   render() {
     const texture = PIXIMAP.textures[this.props.textureId]
 
@@ -18,7 +18,7 @@ export default class Sprite extends React.Component {
     const transform = `scale(${scale})`;
 
     const transformContainer = `translateX(${translate}) translateY(${translate})`
-    return <div style={{transform: transformContainer, width: desiredWidth, height: desiredHeight}}>
+    return <div className={this.props.className} style={{transform: transformContainer, width: desiredWidth, height: desiredHeight}}>
       <div className="Sprite" style = {{
           backgroundImage,
           backgroundPositionY,

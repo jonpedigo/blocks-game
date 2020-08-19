@@ -28,8 +28,6 @@ export default class Root extends React.Component {
   render() {
     const { open, selectedMenu } = this.state
 
-    console.log('selectedMenu', selectedMenu)
-
     if(!open) return null
 
     if(selectedMenu === 'sequence') {

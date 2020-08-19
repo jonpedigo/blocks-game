@@ -4,19 +4,19 @@ import Swal from 'sweetalert2/src/sweetalert2.js';
 class Editor {
   constructor() {
     this.preferences = {
-      zoomMultiplier: 0
+      zoomMultiplier: 0,
+      creatorColorSelected: window.defaultObjectColor
     }
     this.zoomDelta = .1250
 
-  }
-
-  onPageLoaded() {
     const storedPreferences = localStorage.getItem('editorPreferences')
 
     if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
-      EDITOR.preferences = JSON.parse(storedPreferences)
+      this.preferences = JSON.parse(storedPreferences)
     }
+  }
 
+  onPageLoaded() {
     window.addEventListener("keydown", function (e) {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = true
@@ -342,6 +342,49 @@ class Editor {
       const value = lockCamera
       lockCamera = { ...lockCamera, centerX: value.x + (value.width/2), centerY: value.y + (value.height/2), limitX: Math.abs(value.width/2), limitY: Math.abs(value.height/2) };
       sendWorldUpdate( { lockCamera })
+    }
+  }
+
+  setHeroZoomTo(propName) {
+    if(propName === 'gameBoundaries' && GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number') {
+      let zoomMultiplier = GAME.world.gameBoundaries.width/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'lockCamera' && GAME.world.lockCamera) {
+      let zoomMultiplier = GAME.world.lockCamera.width/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'grid') {
+      let zoomMultiplier = (GAME.grid.width * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridMinusOne') {
+      let zoomMultiplier = ((GAME.grid.width-4) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPadding') {
+      const padding = GAME.world.chunkGamePadding
+      let zoomMultiplier = ((GAME.grid.width - padding) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+    if(propName === 'gridPaddingMinusOne') {
+      const padding = GAME.world.chunkGamePadding - 4
+      let zoomMultiplier = ((GAME.grid.width-padding) * GAME.grid.nodeSize)/HERO.cameraWidth
+      sendHeroUpdate({ zoomMultiplier })
+    }
+
+    if(propName === 'larger') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
+    }
+    if(propName === 'smaller') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
+    }
+
+    if(propName === 'default') {
+      const hero = GAME.heros[HERO.id]
+      sendHeroUpdate({ zoomMultiplier: 1.875 })
     }
   }
 

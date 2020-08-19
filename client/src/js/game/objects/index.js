@@ -6,6 +6,7 @@ import triggers from '../triggers.js'
 import { dropObject } from '../heros/inventory.js'
 import { addHook, deleteHook } from '../hooks.js'
 import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
+import { setTarget, setPathTarget } from '../ai/pathfinders.js'
 
 class Objects{
   constructor() {
@@ -44,6 +45,7 @@ class Objects{
   }
 
   forAllSubObjects(subObjects, fx) {
+    if(!subObjects) return
     Object.keys(subObjects).forEach((id) => {
       fx(subObjects[id], id)
     })
@@ -101,10 +103,11 @@ class Objects{
       _deltaX: object._deltaX,
       velocityY: object.velocityY,
       velocityX: object.velocityX,
-      target: object.target,
+      target: object.targetXY,
       path: object.path,
       lastHeroUpdateId: object.lastHeroUpdateId,
-      direction: object.direction,
+      _movementDirection: object._movementDirection,
+      _goalDirection: object._goalDirection,
       fresh: object.fresh,
       gridX: object.gridX,
       gridY: object.gridY,
@@ -122,8 +125,12 @@ class Objects{
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
 
+
+      _targetId: object._targetPursueId,
+      _objectsWithin: object._objectsWithin,
+      _objectsAwareOf: object._objectsAwareOf,
+
       // IMPLEMENT...
-      objectsWithin: object.objectsWithin,
       conditionTestCounts: object.conditionTestCounts,
     }
 
@@ -235,7 +242,7 @@ class Objects{
     if(object.triggers) {
       properties.triggers = {}
       Object.keys(object.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+        const { id, testAndModOwnerWhenEquipped, testFailDestroyMod, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
                   conditionMainObjectTag,
                   conditionGuestObjectId,
                   conditionGuestObjectTag, } = object.triggers[triggerId]
@@ -263,6 +270,8 @@ class Objects{
           guestObjectTag,
 
           // for mod currently, might move to a .mod property and use these for actual condition on the trigger
+          testAndModOwnerWhenEquipped,
+          testFailDestroyMod,
           testPassReverse,
           testModdedVersion,
           conditionValue,
@@ -287,6 +296,7 @@ class Objects{
       id: object.id,
       x: object.x,
       y: object.y,
+      chat: object.chat,
       width: object.width,
       height: object.height,
       color: object.color,
@@ -314,6 +324,7 @@ class Objects{
       mapState.subObjects = {}
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
         mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].id = subObject.id
         mapState.subObjects[subObjectName].x = subObject.x
         mapState.subObjects[subObjectName].y = subObject.y
         mapState.subObjects[subObjectName].width = subObject.width
@@ -341,7 +352,7 @@ class Objects{
 
     if(object.mod().tags['resourceDepositOnInteract'] && object.mod().tags.resourceZone) return true
 
-    if(object.mod().tags['showInteractBorder']) return true
+    if(object.mod().tags['interactable']) return true
 
     return false
   }
@@ -532,17 +543,23 @@ class Objects{
     if(update.constructParts) {
       if(object.constructParts) {
         object.constructParts.forEach((part) => {
+          if(object.tags.notInCollisions) return
           PHYSICS.removeObject(part)
         })
       } else {
-        PHYSICS.removeObject(object)
+        if(!object.tags.notInCollisions) {
+          PHYSICS.removeObject(object)
+        }
       }
       update.constructParts.forEach((part) => {
+        if(object.tags.notInCollisions) return
         part.ownerId = object.id
         PHYSICS.addObject(part)
       })
     } else if(object.constructParts) {
-      PHYSICS.addObject(object)
+      if(!object.tags.notInCollisions) {
+        PHYSICS.addObject(object)
+      }
     }
     object.path = null
     window.mergeDeep(object, update)
@@ -591,14 +608,10 @@ class Objects{
     if(object.constructParts) {
       object.constructParts.forEach((part) => {
         part.ownerId = object.id
-        if(!object.tags.notCollideable) {
-          PHYSICS.addObject(part)
-        }
+        PHYSICS.addObject(part)
       })
     } else {
-      if(!object.tags.notCollideable) {
-        PHYSICS.addObject(object)
-      }
+      PHYSICS.addObject(object)
     }
 
     if(object.triggers) {
@@ -614,6 +627,7 @@ class Objects{
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
     if(!subObject.id) subObject.id = subObjectName + '-' + window.uniqueID()
+    GAME.objectsById[subObject.id] = subObject
 
     let subObjectAlreadyExisted = false
 
@@ -735,6 +749,11 @@ class Objects{
     window.local.emit('onUpdatePFgrid')
   }
 
+  onDeleteSubObjectChance(ownerId, subObjectName) {
+    const owner = OBJECTS.getObjectOrHeroById(ownerId)
+    delete owner.subObjectChances[subObjectName]
+  }
+
   onDeleteSubObject(owner, subObjectName) {
     const subObject = owner.subObjects[subObjectName]
     if(owner.tags.hero) {
@@ -796,6 +815,10 @@ class Objects{
       GAME.objects = objectsUpdated
       GAME.objects.forEach((object) => {
         GAME.objectsById[object.id] = object
+        // OBJECTS.forAllSubObjects(object.subObjects, (so) => {
+        //   console.log('?')
+        //   GAME.objectsById[so.id] = so
+        // })
       })
     }
   }
@@ -1027,6 +1050,70 @@ class Objects{
     if(object.mod().tags.spinOffOnDestroy) {
       window.socket.emit('objectAnimation', 'spinOff', object.id)
     }
+  }
+
+  mergeWithJSON(object, JSON) {
+    JSON = _.cloneDeep(JSON)
+
+    Object.keys(JSON).forEach((key) => {
+      const jsonValue = JSON[key]
+      const objectValue = object[key]
+      if(!objectValue) return
+
+      if(typeof jsonValue === 'string' && typeof objectValue === 'number') {
+        if (jsonValue.startsWith("+")) {
+          const equationValue = Number(jsonValue.slice(1))
+          JSON[key] = objectValue + equationValue
+        } else if(jsonValue.startsWith("-")) {
+          const equationValue = Number(jsonValue.slice(1))
+          JSON[key] = objectValue - equationValue
+        }
+      }
+    })
+
+    window.mergeDeep(object, JSON)
+  }
+
+  onObjectAware(object, awareOfObject) {
+
+    // if this passes you are already pursuing something and shouldn't switch
+    if(object._targetPursueId && !object.mod().tags.targetSwitchOnAware) return
+
+    if(awareOfObject.mod().tags.hero) {
+      if(object.mod().tags.targetHeroOnAware) {
+        if(object.mod().tags.homing) {
+          setPathTarget(object, awareOfObject, true)
+        }
+        if(object.mod().tags.zombie) {
+          setTarget(object, awareOfObject, true)
+        }
+      }
+    } else if(awareOfObject.mod().tags.victim){
+      if(object.mod().tags.targetVictimOnAware) {
+        if(object.mod().tags.homing) {
+         setPathTarget(object, awareOfObject, true)
+        }
+        if(object.mod().tags.zombie) {
+         setTarget(object, awareOfObject, true)
+        }
+      }
+    }
+  }
+
+  onObjectUnaware(object, unawareOfObject) {
+    if(object.mod().tags.targetClearOnUnaware) {
+      if(unawareOfObject.id === object._targetPursueId) {
+        delete object._targetPursueId
+      }
+    }
+  }
+
+  chat({id, duration = 3, text}) {
+    const object = OBJECTS.getObjectOrHeroById(id)
+    object.chat = text
+    GAME.addOrResetTimeout(id + '-chat', duration, () => {
+      object.chat = null
+    })
   }
 }
 

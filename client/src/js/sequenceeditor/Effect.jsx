@@ -10,6 +10,7 @@ import {
   MultiTagSelect,
   NextSelect,
 } from './SelectComponents.jsx'
+import Condition from './Condition.jsx'
 
 export default class Effect extends React.Component{
   render() {
@@ -71,12 +72,12 @@ export default class Effect extends React.Component{
           theme={window.reactSelectTheme}/>
         </div>)
       } else if(effectData.tag) {
-        chosenEffectForm.push(this.props._renderTagSelect('effectTags', (event) => {
+        chosenEffectForm.push(<MultiTagSelect title="Add Tags:" sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectTags' onChange={ (event) => {
           if(event) {
             sequenceItem.effectTags = event.map(({value}) => value)
             this.props.setState({sequenceItem})
           }
-        }, 'Add Tags:'))
+        }}/>)
       }
 
       if(effectData.effectorObject) {
@@ -90,7 +91,7 @@ export default class Effect extends React.Component{
       }
 
       if(effectData.condition) {
-        chosenEffectForm.push(this.props._renderCondition(true))
+        chosenEffectForm.push(<Condition nested {...this.props} setState={this.props.setState}/>)
       }
     }
 
@@ -107,7 +108,7 @@ export default class Effect extends React.Component{
         <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedIds' onChange={this.props._onAddEffectedId} title='Effected Ids:'/>
         <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedTags' onChange={this.props._onAddEffectedTag} title='Effected Tags:'/>
       </div>
-      <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.state.nextOptions} nextValue={sequenceItem.next} onChange={this.props._selectNext}/>
+      <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.next} onChange={this.props._selectNext}/>
     </div>
   }
 }

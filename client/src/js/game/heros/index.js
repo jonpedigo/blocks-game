@@ -41,6 +41,7 @@ class Hero{
     	velocityY: 0,
       _flatVelocityX: 0,
       _flatVelocityY: 0,
+      _cantInteract: false,
     	velocityMax: 400,
       color: 'white',
     	// accY: 0,
@@ -78,6 +79,12 @@ class Hero{
       triggers: {},
       triggerState: {},
       tags: {},
+      cameraTweenToTargetX: false,
+      cameraTweenToTargetY: false,
+      cameraTweenSpeedXExtra: 0,
+      cameraTweenSpeedYExtra: 0,
+      cameraTweenSpeed: 2,
+      // cameraRotation: 0,
     }
 
     window.local.on('onGridLoaded', () => {
@@ -90,12 +97,19 @@ class Hero{
       window.defaultHero.subObjects = {
         heroInteractTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
-          relativeToDirection: false,
           relativeWidth: GAME.grid.nodeSize * 2,
           relativeHeight: GAME.grid.nodeSize * 2,
-          relativeX: -GAME.grid.nodeSize,
-          relativeY: -GAME.grid.nodeSize,
+          relativeX: 0,
+          relativeY: 0,
           tags: { obstacle: false, invisible: true, stationary: true, heroInteractTriggerArea: true },
+        },
+        awarenessTriggerArea: {
+          x: 0, y: 0, width: 40, height: 40,
+          relativeWidth: GAME.grid.nodeSize * 12,
+          relativeHeight: GAME.grid.nodeSize * 16,
+          relativeX: 0,
+          relativeY: -GAME.grid.nodeSize * 4,
+          tags: { obstacle: false, invisible: true, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
         },
         // spear: {
         //   id: 'spear-'+window.uniqueID(),
@@ -334,6 +348,7 @@ class Hero{
       _deltaX: hero._deltaX,
       velocityY: hero.velocityY,
       velocityX: hero.velocityX,
+      _cantInteract: hero._cantInteract,
       _flatVelocityX: hero._flatVelocityX,
       _flatVelocityY: hero._flatVelocityY,
       _floatable: hero._floatable,
@@ -362,7 +377,8 @@ class Hero{
       angle: hero.angle,
       questState: hero.questState,
       customState: hero.customState,
-      objectsWithin: hero.objectsWithin,
+      _objectsWithin: hero._objectsWithin,
+      _objectsAwareOf: hero._objectsAwareOf,
       conditionTestCounts: hero.conditionTestCounts,
     }
 
@@ -399,9 +415,6 @@ class Hero{
       actionButtonBehavior: hero.actionButtonBehavior,
       arrowKeysBehavior: hero.arrowKeysBehavior,
       spaceBarBehavior: hero.spaceBarBehavior,
-      jumpVelocity: hero.jumpVelocity,
-      velocityMax: hero.velocityMax,
-      speed: hero.speed,
       width: hero.width,
       height: hero.height,
       flags: hero.flags,
@@ -425,10 +438,28 @@ class Hero{
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
       opacity: hero.opacity,
+      cameraTweenToTargetX: hero.cameraTweenToTargetX,
+      cameraTweenToTargetY: hero.cameraTweenToTargetY,
+      cameraTweenSpeedXExtra: hero.cameraTweenSpeedXExtra,
+      cameraTweenSpeedYExtra: hero.cameraTweenSpeedYExtra,
+      cameraTweenSpeed: hero.cameraTweenSpeed,
+      // cameraRotation: hero.cameraRotation,
 
       resourceWithdrawAmount: hero.resourceWithdrawAmount,
       resourceTags: hero.resourceTags,
       resourceLimit: hero.resourceLimit,
+
+      jumpVelocity: hero.jumpVelocity,
+      dashVelocity: hero.dashVelocity,
+      velocityMax: hero.velocityMax,
+      velocityMaxXExtra: hero.velocityMaxXExtra,
+      velocityMaxYExtra: hero.velocityMaxYExtra,
+      speed: hero.speed,
+      speedXExtra: hero.speedXExtra,
+      speedYExtra: hero.speedYExtra,
+      velocityDecay: hero.velocityDecay,
+      velocityDecayXExtra: hero.velocityDecayXExtra,
+      velocityDecayYExtra: hero.velocityDecayYExtra,
     }
 
     if(hero.subObjects) {
@@ -442,7 +473,7 @@ class Hero{
     if(hero.triggers) {
       properties.triggers = {}
       Object.keys(hero.triggers).forEach((triggerId) => {
-        const { id, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
+        const { id, testAndModOwnerWhenEquipped, testFailDestroyMod, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
                   conditionMainObjectTag,
                   conditionGuestObjectId,
                   conditionGuestObjectTag, } = hero.triggers[triggerId]
@@ -469,7 +500,9 @@ class Hero{
           guestObjectTag,
           initialTriggerPool,
 
-          // just for mods right now, not actual conditions
+          // just for mods right now, not actual Condition
+          testAndModOwnerWhenEquipped,
+          testFailDestroyMod,
           testPassReverse,
           testModdedVersion,
           conditionValue,
@@ -494,6 +527,7 @@ class Hero{
       id: hero.id,
       x: hero.x,
       y: hero.y,
+      chat: hero.chat,
       width: hero.width,
       height: hero.height,
       interactableObject: hero.interactableObject,
@@ -518,6 +552,7 @@ class Hero{
       mapState.subObjects = {}
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject, subObjectName) => {
         mapState.subObjects[subObjectName] = {}
+        mapState.subObjects[subObjectName].id = subObject.id
         mapState.subObjects[subObjectName].x = subObject.x
         mapState.subObjects[subObjectName].y = subObject.y
         mapState.subObjects[subObjectName].width = subObject.width
@@ -534,7 +569,7 @@ class Hero{
       updatedHero.velocityX = 0
       updatedHero.velocityY = 0
     }
-    if(updatedHero.zoomMultiplier !== GAME.heros[updatedHero.id].zoomMultiplier) {
+    if(updatedHero.zoomMultiplier && updatedHero.zoomMultiplier !== GAME.heros[updatedHero.id].zoomMultiplier) {
       window.local.emit('onZoomChange', updatedHero.id)
     }
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
@@ -574,9 +609,10 @@ class Hero{
     GAME.heros[hero.id].removed = true
   }
 
-  onDeleteHero(hero) {
+  onDeleteHero(heroId) {
+    const hero = GAME.heros[heroId]
     HERO.deleteHero(hero)
-    delete GAME.heros[hero.id]
+    delete GAME.heros[heroId]
   }
 
   onDeleteQuest(heroId, questId) {
@@ -602,6 +638,9 @@ class Hero{
 
   onNetworkUpdateHero(updatedHero) {
     if(!PAGE.gameLoaded) return
+    if(updatedHero.subObjects) OBJECTS.forAllSubObjects(updatedHero.subObjects, (so) => {
+      window.mergeDeep(GAME.objectsById[so.id], so)
+    })
     if(PAGE.role.isPlayEditor) HERO.resetReachablePlatformArea(updatedHero)
     if(!PAGE.role.isHost) {
       window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
@@ -625,6 +664,14 @@ class Hero{
     let hero = GAME.heros[heroId]
     input.onKeyDown(key, hero)
   }
+
+  onSendHeroKeyUp(key, heroId) {
+    // dont do keydown event for hosts hero since we've already done locally
+    if(PAGE.role.isHost && heroId == HERO.id) return
+    let hero = GAME.heros[heroId]
+    input.onKeyUp(key, hero)
+  }
+
 
   resetReachablePlatformArea(hero) {
     if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity) {

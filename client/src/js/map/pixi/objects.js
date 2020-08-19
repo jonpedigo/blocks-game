@@ -3,7 +3,7 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter } from './particles'
 import './pixi-layers'
-import { setColor, updateSprite, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha } from './utils'
+import { setColor, startAnimation, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha, getGameObjectStage } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
 const updatePixiObject = (gameObject) => {
@@ -28,7 +28,7 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   // CONSTRUCT PARTS
   if(gameObject.constructParts) {
-    if((PAGE.resizingMap && !PAGE.loadingScreen) || !gameObject.tags.stationary) {
+    if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving && !gameObject.tags.stationary)) {
       gameObject.constructParts.forEach((part) => {
         const partObject = PIXIMAP.convertToPartObject(gameObject, part)
         updatePixiObject(partObject)
@@ -41,11 +41,17 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   /////////////////////
   // GET CHILD
-  let pixiChild = PIXIMAP.objectStage.getChildByName(gameObject.id)
+  const stage = getGameObjectStage(gameObject)
+  let pixiChild = stage.getChildByName(gameObject.id)
   if(!pixiChild) {
     initPixiObject(gameObject)
     return
   }
+
+  /////////////////////
+  /////////////////////
+  // UPDATE CHATBOX
+  updateChatBox(pixiChild, gameObject)
 
 
   /////////////////////
@@ -86,8 +92,10 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
+  const stage = getGameObjectStage(gameObject)
+
   if(gameObject.tags.emitter && !pixiChild.emitter) {
-    PIXIMAP.objectStage.removeChild(pixiChild)
+    stage.removeChild(pixiChild)
     pixiChild = initEmitter(gameObject)
     return
   }
@@ -113,10 +121,10 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   /////////////////////
   // ROTATION
 
+  emitter.spawnPos.x = gameObject.width/2 * camera.multiplier
+  emitter.spawnPos.y =  gameObject.height/2 * camera.multiplier
   if(emitter.isAnimationEmitter) {
     emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
-    emitter.spawnPos.x = gameObject.width/2 * camera.multiplier
-    emitter.spawnPos.y =  gameObject.height/2 * camera.multiplier
   } else {
     if(gameObject.tags.rotateable) {
       pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
@@ -131,7 +139,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
 
   /////////////////////
   /////////////////////
-  // SCAL
+  // SCALE
   if(emitter.data.scale && emitter.startScale.next) {
     emitter.startScale.value = emitter.data.scale.start * camera.multiplier
     emitter.startScale.next.value = emitter.data.scale.end * camera.multiplier
@@ -140,7 +148,8 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
 
 function initEmitter(gameObject, emitterType = 'smallFire', options = {}, isAnimationEmitter) {
   const container = new PIXI.Container()
-  PIXIMAP.objectStage.addChild(container)
+  const stage = getGameObjectStage(gameObject)
+  stage.addChild(container)
 
   let emitter = createDefaultEmitter(container, gameObject, emitterType, options)
   PIXIMAP.objectStage.emitters.push(emitter)
@@ -229,13 +238,13 @@ const addGameObjectToStage = (gameObject, stage) => {
   // ADD TO STAGE
   let addedChild = stage.addChild(sprite)
 
-
   addedChild.texture = texture
 
   /////////////////////
   /////////////////////
   // NAME SPRITE FOR LOOKUP
   addedChild.name = gameObject.id
+  PIXIMAP.childrenById[gameObject.id] = addedChild
 
   if(gameObject.id === HERO.id) {
     PIXIMAP.hero = addedChild
@@ -243,11 +252,15 @@ const addGameObjectToStage = (gameObject, stage) => {
 
   updatePixiObject(gameObject)
 
+  if(gameObject.tags.fadeInOnInit) {
+    startAnimation('fadeIn', addedChild, gameObject)
+  }
+
   return addedChild
 }
 
 const initPixiObject = (gameObject) => {
-  const stage = PIXIMAP.objectStage
+  const stage = getGameObjectStage(gameObject)
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.tags.emitter) {
@@ -258,7 +271,7 @@ const initPixiObject = (gameObject) => {
   if(gameObject.constructParts) {
     gameObject.constructParts.forEach((part) => {
       const partObject = PIXIMAP.convertToPartObject(gameObject, part)
-      const pixiChild = addGameObjectToStage(partObject, PIXIMAP.objectStage)
+      const pixiChild = addGameObjectToStage(partObject, stage)
       pixiChild.ownerName = gameObject.id
     })
     return
@@ -267,12 +280,12 @@ const initPixiObject = (gameObject) => {
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
-      const pixiChild = addGameObjectToStage(subObject, PIXIMAP.objectStage)
+      const pixiChild = addGameObjectToStage(subObject, stage)
       pixiChild.ownerName = gameObject.id
     })
   }
 
-  addGameObjectToStage(gameObject, PIXIMAP.objectStage)
+  addGameObjectToStage(gameObject, stage)
 }
 
 function addFilter(pixiChild, filter) {

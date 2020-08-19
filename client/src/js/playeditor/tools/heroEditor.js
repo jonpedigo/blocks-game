@@ -61,7 +61,7 @@ function init() {
   resetHeroButton.addEventListener('click', resetHeroToDefault)
   var deleteButton = document.getElementById("delete-hero");
   deleteButton.addEventListener('click', () => {
-    window.socket.emit('deleteHero', window.editingHero)
+    window.socket.emit('deleteHero', window.editingHero.id)
   })
 
   window.clickToSetHeroSpawnToggle = document.getElementById('click-to-set-spawn-hero')
@@ -159,12 +159,12 @@ function init() {
   window.setEditorToAnyHero = function () {
     // init to any hero
     if(w.editingGame.heros.undefined) {
-      window.socket.emit('deleteHero', { id:'undefined' })
+      window.socket.emit('deleteHero', 'undefined')
       delete w.editingGame.heros.undefined
     }
 
     if(w.editingGame.heros.null) {
-      window.socket.emit('deleteHero', { id: 'null' })
+      window.socket.emit('deleteHero','null')
       delete w.editingGame.heros.null
     }
 

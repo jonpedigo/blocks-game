@@ -11,6 +11,7 @@ import {
   NextSelect,
 } from './SelectComponents.jsx'
 import Condition from './Condition.jsx'
+import Effect from './Effect.jsx'
 
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },

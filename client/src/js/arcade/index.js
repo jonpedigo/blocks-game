@@ -41,6 +41,12 @@ class Arcade{
     }
   }
 
+  onGameLoaded() {
+    if(PAGE.role.isArcadeMode) {
+      window.local.emit('onGameStart', { started: true })
+    }
+  }
+
   onGetCustomGameFx(customFx) {
     ARCADE.setLiveCustomFx(customFx)
   }

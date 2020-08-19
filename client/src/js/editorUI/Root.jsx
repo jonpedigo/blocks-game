@@ -1,5 +1,5 @@
 import React from 'react'
-import Creator from './Creator.jsx'
+import Creator from '../components/Creator.jsx'
 import Toolbar from './Toolbar.jsx'
 import FileUploader from '../components/FileUploader.jsx'
 

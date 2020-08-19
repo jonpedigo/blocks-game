@@ -71,11 +71,12 @@ class ConstructEditor {
     window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
   }
 
-  start(object, startAtHero = false) {
+  start(object, startColor, startAtHero = false) {
     this.initState()
     this.objectId = object.id
     this.open = true
     this.tags = object.tags
+    if(PAGE.isLogOpen) PAGE.closeLog()
     if(GAME.world.gameBoundaries) {
       this.grid = new Grid(GAME.world.gameBoundaries.x, GAME.world.gameBoundaries.y, GAME.world.gameBoundaries.width/GAME.grid.nodeSize, GAME.world.gameBoundaries.height/GAME.grid.nodeSize, GAME.grid.nodeSize)
     } else {
@@ -126,8 +127,10 @@ class ConstructEditor {
     }
     document.body.addEventListener("mouseup", this._mouseUpListener)
 
-    this.ref.open(object.color || GAME.world.defaultObjectColor || window.defaultObjectColor)
-    this.selectColor(object.color)
+
+    let color = startColor || object.color || GAME.world.defaultObjectColor || window.defaultObjectColor
+    this.ref.open(color)
+    this.selectColor(color)
 
     window.local.emit('onConstructEditorStart', object)
   }
