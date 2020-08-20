@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { darken, lighten, getColorHex } from './utils.js'
-import './particleLibrary.js'
+import '../../libraries/particleLibrary.js'
 
 const pixiParticles = require('pixi-particles');
 

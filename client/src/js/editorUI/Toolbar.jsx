@@ -121,7 +121,9 @@ export default class Toolbar extends React.Component {
         {/* Hero Edit -> Pull out */}
         <ToolbarRow open iconName='fa-street-view'>
           {/* Composer -> Menu */}
-          <ToolbarButton iconName="fa-blind"/>
+          <ToolbarButton iconName="fa-blind" onClick={() => {
+            LIVEEDITOR.open(hero, 'guidance')
+          }}/>
 
           <ToolbarButton iconName="fa-plus-square" onClick={() => {
             window.socket.emit('anticipateObject', { tags: { obstacle: true }});

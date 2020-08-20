@@ -52,7 +52,7 @@ export default class Root extends React.Component {
 
     return (
       <div className="EditorUI">
-        <Creator ref={this._creatorRef}></Creator>
+        <Creator ref={this._creatorRef} creatorObjects={window.adminCreatorObjects}></Creator>
         <Toolbar></Toolbar>
       </div>
     )

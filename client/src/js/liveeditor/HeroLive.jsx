@@ -66,6 +66,7 @@ export default class HeroLive extends React.Component {
     return (
       <div className='HeroLive'>
         <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
+          <div className="LiveEditor__title">{'Hero'}</div>
           <DatFolder title='Physics'>
             <DatNumber path='objectSelected.speed' label='Speed' min={0} max={1000} step={1} />
             <DatNumber path='objectSelected.velocityMax' label="Maximum Velocity" min={0} max={1000} step={1} />

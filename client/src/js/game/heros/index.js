@@ -74,6 +74,11 @@ class Hero{
         right: false,
         left: false,
       },
+      
+      heroMenu: {},
+      objectMenu: {},
+      creator: {},
+
       quests: {},
       questState: {},
       triggers: {},
@@ -412,20 +417,23 @@ class Hero{
     let properties = {
       id: hero.id,
       objectType: hero.objectType,
-      actionButtonBehavior: hero.actionButtonBehavior,
-      arrowKeysBehavior: hero.arrowKeysBehavior,
-      spaceBarBehavior: hero.spaceBarBehavior,
       width: hero.width,
       height: hero.height,
       flags: hero.flags,
       tags: hero.tags,
-      zoomMultiplier: hero.zoomMultiplier,
+
+      actionButtonBehavior: hero.actionButtonBehavior,
+      arrowKeysBehavior: hero.arrowKeysBehavior,
+      spaceBarBehavior: hero.spaceBarBehavior,
+
       color: hero.color,
       defaultSprite: hero.defaultSprite,
       upSprite: hero.upSprite,
       leftSprite: hero.leftSprite,
       downSprite: hero.downSprite,
       rightSprite: hero.rightSprite,
+      opacity: hero.opacity,
+
       lives: hero.lives,
       spawnPointX: hero.spawnPointX,
       spawnPointY: hero.spawnPointY,
@@ -437,7 +445,12 @@ class Hero{
       customProps: hero.customProps,
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
-      opacity: hero.opacity,
+
+      heroMenu: hero.heroMenu,
+      objectMenu: hero.objectMenu,
+      creator: hero.creator,
+
+      zoomMultiplier: hero.zoomMultiplier,
       cameraTweenToTargetX: hero.cameraTweenToTargetX,
       cameraTweenToTargetY: hero.cameraTweenToTargetY,
       cameraTweenSpeedXExtra: hero.cameraTweenSpeedXExtra,

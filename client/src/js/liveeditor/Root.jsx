@@ -2,6 +2,7 @@ import React from 'react'
 import PhysicsLive from './PhysicsLive.jsx'
 import HeroLive from './HeroLive.jsx'
 import WorldLive from './WorldLive.jsx'
+import GuidanceLive from './GuidanceLive.jsx'
 import DayNightLive from './DayNightLive.jsx'
 import 'react-dat-gui/dist/index.css';
 
@@ -41,6 +42,7 @@ export default class Root extends React.Component {
         {openEditorName === 'daynightcycle' && <DayNightLive />}
         {openEditorName === 'hero' && <HeroLive objectSelected={objectSelected} />}
         {openEditorName === 'world' && <WorldLive />}
+        {openEditorName === 'guidance' && <GuidanceLive objectSelected={objectSelected}/>}
       </div>
     )
   }

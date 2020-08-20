@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 import './editor.js'
 
-import creatorObjectLibrary from '../libraries/creatorObjectLibrary.js'
+import creatorLibrary from '../libraries/creatorLibrary.js'
 
 class EditorUI {
   constructor() {
@@ -12,7 +12,7 @@ class EditorUI {
   }
 
   onFirstPageGameLoaded() {
-    creatorObjectLibrary.onGameLoaded()
+    creatorLibrary.onGameLoaded()
 
     // this.container = container
     const initialProps = {

@@ -17,7 +17,7 @@ import LiveMenu from '../menus/LiveMenu.jsx';
 import SpriteMenu from '../menus/SpriteMenu.jsx';
 import modals from '../modals.js'
 import { handleExtraMenuClicks } from './helper.js'
-// NATE::
+
 export default class GeneratedMenu extends React.Component {
   constructor(props) {
     super(props)
@@ -69,24 +69,14 @@ export default class GeneratedMenu extends React.Component {
     }
   }
 
-  _generateContextMenuItems(library) {
-    let objectMenuItems = []
-    let heroMenuItems = []
-
-    library.forEach((menuItem) => {
-      if (menuItem.objectType === 'object') {
-        objectMenuItems.push(menuItem)
-      }
-      if (menuItem.objectType === 'hero') {
-        heroMenuItems.push(menuItem)
-      }
-    })
-
+  _generateContextMenuItems(objectMenuItems, heroMenuItems) {
     // <MenuItem> key=action </MenuItem>
     const objectMenuObj = { baseLevelMenu: [] }
     const heroMenuObj = { baseLevelMenu: [] }
 
-    objectMenuItems.forEach(item => {
+    Object.keys(objectMenuItems).forEach(itemName => {
+      if(objectMenuItems[itemName] == false) return
+      const item = window.playerMenuLibrary[itemName]
       if (item.hasOwnProperty('subMenu')) {
         if (!objectMenuObj[item.subMenu]) {
           objectMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
@@ -98,7 +88,10 @@ export default class GeneratedMenu extends React.Component {
       }
     })
 
-    heroMenuItems.forEach(item => {
+    Object.keys(heroMenuItems).forEach(itemName => {
+      if(heroMenuItems[itemName] == false) return
+      const item = window.playerMenuLibrary[itemName]
+
       if (item.hasOwnProperty('subMenu')) {
         if (!heroMenuObj[item.subMenu]) {
           heroMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
@@ -196,8 +189,8 @@ export default class GeneratedMenu extends React.Component {
 
 
   render() {
-    const { objectSelected, subObject, menuItemData } = this.props
-    const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(menuItemData)
+    const { objectSelected, subObject, heroMenuItems, objectMenuItems } = this.props
+    const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(objectMenuItems, heroMenuItems)
 
     if (objectSelected.tags && objectSelected.tags.hero) {
       return <Menu onClick={this._onHandleMenuClick}>

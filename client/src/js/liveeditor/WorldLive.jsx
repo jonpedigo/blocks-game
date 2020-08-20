@@ -40,6 +40,7 @@ export default class WorldLive extends React.Component {
     return (
       <div className='WorldLive'>
         <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
+          <div className="LiveEditor__title">{'World'}</div>
           <DatFolder title='Physics'>
             <DatNumber path='world.gravityVelocityX' label='Gravity Velocity X' min={0} max={5000} step={1} />
             <DatNumber path='world.gravityVelocityY' label='Gravity Velocity Y' min={0} max={5000} step={1} />

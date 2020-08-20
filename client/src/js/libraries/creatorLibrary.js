@@ -19,55 +19,61 @@ function constructEditorOnSelect(objectId, tags) {
 }
 
 function onGameLoaded() {
-  window.defaultCreatorObjects = [
-    {
+  window.creatorLibrary = {
+    selectColor: {
+      specialAction: 'selectColor',
+    },
+    drawStructure: {
       label: 'Structure',
       columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryObstacle', { obstacle: true, stationary: true })
       }
     },
-    // {
-    //   label: 'Outline',
-    //   columnName: 'Basic',
-    //   onSelect: function() {
-    //     if(GAME.objectsById['globalConstructStationaryObstacleOutline']) {
-    //       MAPEDITOR.openConstructEditor(GAME.objectsById['globalConstructStationaryObstacleOutline'])
-    //     } else {
-    //       const globalConstructStationaryObstacleOutline = {x: 0, y: 0, width: GAME.grid.width, height: GAME.grid.height, tags: { obstacle: true, stationary: true, outline: true }, constructParts: [], id: 'globalConstructStationaryObstacleOutline'}
-    //       OBJECTS.create(globalConstructStationaryObstacleOutline)
-    //       MAPEDITOR.openConstructEditor(globalConstructStationaryObstacleOutline)
-    //     }
-    //     const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
-    //       this.setState({
-    //         creatorObjectSelected: {}
-    //       })
-    //       removeListener()
-    //     })
-    //   }
-    // },
-    {
+    drawBackground: {
       label: 'Background',
       columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notInCollisions: true })
       }
     },
-    {
+    drawForeground: {
       label: 'Foreground',
       columnName: 'Draw',
       onSelect: function() {
         constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notInCollisions: true })
       }
     },
-    // {
-    //   label: 'Background',
-    //   columnName: 'Basic',
-    //   onMouseDown: (object, color) => {
-    //     const { gridX, gridY } = gridUtil.convertToGridXY(object)
-    //     window.socket.emit('updateGridNode', gridX, gridY, { sprite: 'solidcolorsprite', color })
-    //   }
-    // },
+    standingNPC: {
+      label: 'Standing',
+      columnName: 'NPCs',
+      JSON: {
+        objectType: 'plainObject',
+        heroDialogue: [
+          "hello!"
+        ],
+        tags: { obstacle: true, stationary: true, talker: true, talkOnHeroInteract: true },
+      }
+    },
+    wanderingNPC: {
+      label: 'Wandering',
+      columnName: 'NPCs',
+      JSON: {
+        objectType: 'plainObject',
+        heroDialogue: [
+          "hello!"
+        ],
+        tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
+      }
+    },
+  }
+
+
+  window.adminCreatorObjects = [
+    window.creatorLibrary.selectColor,
+    window.creatorLibrary.drawStructure,
+    window.creatorLibrary.drawBackground,
+    window.creatorLibrary.drawForeground,
     {
       label: 'Medium  Light',
       columnName: 'Lights',
@@ -146,28 +152,8 @@ function onGameLoaded() {
         spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
       }
     },
-    {
-      label: 'Standing',
-      columnName: 'NPCs',
-      JSON: {
-        objectType: 'plainObject',
-        heroDialogue: [
-          "hello!"
-        ],
-        tags: { obstacle: true, stationary: true, talker: true, talkOnHeroInteract: true },
-      }
-    },
-    {
-      label: 'Wandering',
-      columnName: 'NPCs',
-      JSON: {
-        objectType: 'plainObject',
-        heroDialogue: [
-          "hello!"
-        ],
-        tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
-      }
-    },
+    window.creatorLibrary.standingNPC,
+    window.creatorLibrary.wanderingNPC,
     {
       label: 'Homing',
       columnName: 'Monsters',

@@ -7,7 +7,7 @@ export default class Creator extends React.Component {
     super(props)
 
     this.state = {
-      creatorObjects: window.defaultCreatorObjects,
+      creatorObjects: this.props.creatorObjects,
       creatorObjectSelected : {},
       open: true,
       rows: [],
@@ -105,13 +105,20 @@ export default class Creator extends React.Component {
 
       let rows = {}
 
+      let hasSelectColor = false
       creatorObjects.forEach((object) => {
+        if(object.specialAction && object.specialAction == 'selectColor') {
+          hasSelectColor = true
+          return
+        }
         if(!rows[object.columnName]) rows[object.columnName] = []
         rows[object.columnName].push(object)
       })
 
       rows = Object.keys(rows).map((cName) => rows[cName])
 
+
+      if(hasSelectColor) rows.unshift({ specialAction: 'selectColor'})
       this.setState({
         rows
       })
@@ -259,8 +266,10 @@ export default class Creator extends React.Component {
 
     return (
       <div className="Creator">
-        {this._renderColorCategory()}
         {rows.map((column) => {
+          if(column.specialAction && column.specialAction == 'selectColor') {
+            return this._renderColorCategory()
+          }
           return this._renderColumn(column)
         })}
       </div>

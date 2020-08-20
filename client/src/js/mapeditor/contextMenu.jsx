@@ -6,7 +6,7 @@ import HeroContextMenu from './adminMenus/heroContextMenu.jsx';
 import ObjectContextMenu from './adminMenus/objectContextMenu.jsx';
 import WorldContextMenu from './adminMenus/worldContextMenu.jsx';
 import GeneratedMenu from './playerMenus/generatedMenu.jsx';
-import './playerMenus/playerMenuLibrary.js';
+import '../libraries/playerMenuLibrary.js';
 
 import modals from './modals.js';
 
@@ -27,6 +27,7 @@ class contextMenuEl extends React.Component{
 
     document.body.addEventListener("contextmenu", e => {
       if(!window.isClickingMap(e.target.className)) return
+
       if(!MAPEDITOR.paused) {
         e.preventDefault();
         const origin = {
@@ -64,6 +65,8 @@ class contextMenuEl extends React.Component{
         subObjectSelectedName: name,
       })
     }
+
+    console.log('?')
   }
 
   _toggleContextMenu(command) {
@@ -103,11 +106,13 @@ class contextMenuEl extends React.Component{
 
     MAPEDITOR.contextMenuVisible = true
 
+    const hero = GAME.heros[HERO.id]
     return <GeneratedMenu
       objectSelected={objectSelected}
       openColorPicker={this.openColorPicker}
       selectSubObject={this._selectSubObject}
-      menuItemData={window.defaultPlayerContextMenu}
+      heroMenuItems={hero.heroMenu}
+      objectMenuItems={hero.objectMenu}
     />
   }
 

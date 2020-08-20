@@ -60,16 +60,17 @@ export default class DayNightLive extends React.Component {
 
   render() {
     const { cycleData, ambientLight } = this.state;
-    
+
     return (
       <div className='DayNightLive'>
         <div>
-          <DatGui style={{ marginTop: '300px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
+          <DatGui style={{ marginTop: '330px' }} data={{ ambientLight }} onUpdate={this.handleLightUpdate}>
             <DatNumber path='ambientLight' label='ambientLight' min={0} max={1} step={.01} />
           </DatGui>
         </div>
         <div>
           <DatGui data={cycleData} onUpdate={this.handleUpdate}>
+            <div className="LiveEditor__title">{'Day Night Cycle'}</div>
             <DatBoolean path='autoCycle' label='autoCycle' />
             <DatBoolean path='alwaysDay' label='alwaysDay' />
             <DatBoolean path='alwaysNight' label='alwaysNight' />
