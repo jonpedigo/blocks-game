@@ -30,9 +30,10 @@ class contextMenuEl extends React.Component{
 
       if(!MAPEDITOR.paused) {
         e.preventDefault();
+        const { x, y } = window.convertToGameXY(e)
         const origin = {
-          left: e.pageX,
-          top: e.pageY
+          left: x,
+          top: y
         };
         this._setContextMenuPosition(origin);
         return false;
@@ -65,8 +66,6 @@ class contextMenuEl extends React.Component{
         subObjectSelectedName: name,
       })
     }
-
-    console.log('?')
   }
 
   _toggleContextMenu(command) {

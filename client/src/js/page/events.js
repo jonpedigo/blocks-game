@@ -122,6 +122,10 @@ class EventEmitter {
         event.push(EDITOR[eventName])
       }
 
+      if(CREATOR[eventName]) {
+        event.push(CREATOR[eventName])
+      }
+
       if(PAGE.role.isHost && NOTIFICATIONSCONTROL[eventName]) {
         event.push(NOTIFICATIONSCONTROL[eventName])
       }

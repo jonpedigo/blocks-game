@@ -66,15 +66,7 @@ function onGameLoaded() {
         tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
       }
     },
-  }
-
-
-  window.adminCreatorObjects = [
-    window.creatorLibrary.selectColor,
-    window.creatorLibrary.drawStructure,
-    window.creatorLibrary.drawBackground,
-    window.creatorLibrary.drawForeground,
-    {
+    light: {
       label: 'Medium  Light',
       columnName: 'Lights',
       JSON: {
@@ -85,7 +77,7 @@ function onGameLoaded() {
         }
       }
     },
-    {
+    fire: {
       label: 'Fire',
       columnName: 'Lights',
       JSON: {
@@ -96,7 +88,7 @@ function onGameLoaded() {
         }
       }
     },
-    {
+    spawnZone: {
       label: 'Spawn Zone',
       columnName: 'Zones',
       JSON: {
@@ -115,7 +107,7 @@ function onGameLoaded() {
         window.socket.emit('addSubObject', object, { tags: { potential: true } }, 'spawner')
       },
     },
-    {
+    resourceZone: {
       label: 'Resource Zone',
       columnName: 'Zones',
       JSON: {
@@ -126,15 +118,7 @@ function onGameLoaded() {
         resourceWithdrawAmount: 1, resourceLimit: -1, resourceTags: ['resource']
       }
     },
-    // {
-    //   label: 'Basic Item',
-    //   columnName: 'Items',
-    //   JSON: {
-    //     objectType: 'plainObject',
-    //     tags: { pickupable: true, pickupOnHeroInteract: true },
-    //   }
-    // },
-    {
+    resource: {
       label: 'Resource',
       columnName: 'Items',
       JSON: {
@@ -143,7 +127,7 @@ function onGameLoaded() {
         tags: { obstacle: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
       }
     },
-    {
+    chest: {
       label: 'Chest',
       columnName: 'Items',
       JSON: {
@@ -152,9 +136,7 @@ function onGameLoaded() {
         spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
       }
     },
-    window.creatorLibrary.standingNPC,
-    window.creatorLibrary.wanderingNPC,
-    {
+    homing: {
       label: 'Homing',
       columnName: 'Monsters',
       JSON: {
@@ -174,7 +156,32 @@ function onGameLoaded() {
         }
       }
     },
-  ]
+  }
+
+  window.homemadearcadeBasicLibrary = {
+    selectColor: false,
+    drawStructure: false,
+    drawBackground: false,
+    drawForeground: false,
+    standingNPC: false,
+    wanderingNPC: false,
+  }
+
+  window.adminCreatorObjects = {
+    selectColor: true,
+    drawStructure: true,
+    drawBackground: true,
+    drawForeground: true,
+    light: true,
+    fire: true,
+    spawnZone: true,
+    resourceZone: true,
+    resource: true,
+    homing: true,
+    chest: true,
+    standingNPC: true,
+    wanderingNPC: true,
+  }
 }
 
 export default {

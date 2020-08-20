@@ -1,5 +1,4 @@
 import React from 'react'
-import Creator from '../components/Creator.jsx'
 import Toolbar from './Toolbar.jsx'
 import FileUploader from '../components/FileUploader.jsx'
 
@@ -23,21 +22,6 @@ export default class Root extends React.Component {
         objectSelected: {},
       })
     }
-
-    this._handleKeyDown = (e) => {
-      if(e.keyCode === 27) {
-        this._creatorRef.current.clearSelectedCreatorObject()
-      }
-    }
-
-    this._creatorRef = React.createRef()
-  }
-
-  componentDidMount() {
-    document.addEventListener("keydown", this._handleKeyDown, false);
-  }
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this._handleKeyDown, false);
   }
 
   render() {
@@ -52,7 +36,6 @@ export default class Root extends React.Component {
 
     return (
       <div className="EditorUI">
-        <Creator ref={this._creatorRef} creatorObjects={window.adminCreatorObjects}></Creator>
         <Toolbar></Toolbar>
       </div>
     )

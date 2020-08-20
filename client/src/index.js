@@ -427,6 +427,7 @@ import './js/playerUI/index.js'
 import './js/editorUI/index.js'
 import './js/game/notificationscontrol.js'
 import './js/liveeditor/index.js'
+import './js/creator/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 

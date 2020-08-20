@@ -52,12 +52,13 @@ export default class GuidanceLive extends React.Component {
   render() {
     const { objectSelected } = this.state
 
+    console.log(objectSelected)
     return (
       <div className='GuidanceLive'>
         <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
           <div className="LiveEditor__title">{'Guidance'}</div>
           <DatFolder title='Creator Library'>
-            {this._renderLibrary('creator', window.creatorLibrary)}
+            {this._renderLibrary('creator', window.homemadearcadeBasicLibrary)}
           </DatFolder>
           <DatFolder title='Player Right Click Menu'>
             <DatFolder title='Hero'>

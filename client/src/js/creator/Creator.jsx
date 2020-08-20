@@ -9,7 +9,6 @@ export default class Creator extends React.Component {
     this.state = {
       creatorObjects: this.props.creatorObjects,
       creatorObjectSelected : {},
-      open: true,
       rows: [],
       columnsOpen: {},
       isColorPickerOpen: false,
@@ -25,18 +24,6 @@ export default class Creator extends React.Component {
     this.clearSelectedCreatorObject = () => {
       this.setState({
         creatorObjectSelected: {}
-      })
-    }
-
-    this._open = () => {
-      this.setState({
-        open: true,
-      })
-    }
-
-    this._close = () => {
-      this.setState({
-        open: false,
       })
     }
 
@@ -106,7 +93,11 @@ export default class Creator extends React.Component {
       let rows = {}
 
       let hasSelectColor = false
-      creatorObjects.forEach((object) => {
+      Object.keys(creatorObjects).forEach((objectName) => {
+        if(creatorObjects[objectName] === false) return
+
+        const object = window.creatorLibrary[objectName]
+
         if(object.specialAction && object.specialAction == 'selectColor') {
           hasSelectColor = true
           return
@@ -260,9 +251,9 @@ export default class Creator extends React.Component {
   }
 
   render() {
-    const { creatorObjects, open, rows } = this.state
+    const { creatorObjects, rows } = this.state
 
-    if(!open || CONSTRUCTEDITOR.open) return null
+    if(CONSTRUCTEDITOR.open) return null
 
     return (
       <div className="Creator">

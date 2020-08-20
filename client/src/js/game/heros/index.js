@@ -43,7 +43,7 @@ class Hero{
       _flatVelocityY: 0,
       _cantInteract: false,
     	velocityMax: 400,
-      color: 'white',
+      color: '#FFFFFF',
     	// accY: 0,
     	// accX: 0,
     	// accDecayX: 0,
@@ -74,7 +74,7 @@ class Hero{
         right: false,
         left: false,
       },
-      
+
       heroMenu: {},
       objectMenu: {},
       creator: {},

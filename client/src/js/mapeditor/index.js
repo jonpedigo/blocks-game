@@ -193,15 +193,19 @@ class MapEditor {
 
 function handleMouseUp(event) {
   const { camera } = MAPEDITOR
-  let clickEndX = ((event.clientX + camera.x) / camera.multiplier)
-  let clickEndY = ((event.clientY + camera.y) / camera.multiplier)
+  const { x, y } = window.convertToGameXY(event)
+
+  let clickEndX = ((x + camera.x) / camera.multiplier)
+  let clickEndY = ((y + camera.y) / camera.multiplier)
 }
 
 function handleMouseDown(event) {
   const { camera, networkEditObject } = MAPEDITOR
 
-  MAPEDITOR.clickStart.x = ((event.clientX + camera.x) / camera.multiplier)
-  MAPEDITOR.clickStart.y = ((event.clientY + camera.y) / camera.multiplier)
+
+  const { x, y } = window.convertToGameXY(event)
+  MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
+  MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)
 
   if(MAPEDITOR.copiedObject) {
     const subObjects = MAPEDITOR.copiedObject.subObjects
@@ -266,8 +270,10 @@ function handleMouseMove(event) {
     MAPEDITOR.skipRemoteStateUpdate = true
   }
 
-  MAPEDITOR.mousePos.x = ((event.clientX + camera.x) / camera.multiplier)
-  MAPEDITOR.mousePos.y = ((event.clientY + camera.y) / camera.multiplier)
+  const { x, y } = window.convertToGameXY(event)
+
+  MAPEDITOR.mousePos.x = ((x + camera.x) / camera.multiplier)
+  MAPEDITOR.mousePos.y = ((y + camera.y) / camera.multiplier)
 
   if (MAPEDITOR.draggingRelativeObject) {
     updateDraggingObject(MAPEDITOR.draggingRelativeObject)

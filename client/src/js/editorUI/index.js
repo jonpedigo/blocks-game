@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 import './editor.js'
 
-import creatorLibrary from '../libraries/creatorLibrary.js'
-
 class EditorUI {
   constructor() {
     this.container = null
@@ -12,8 +10,6 @@ class EditorUI {
   }
 
   onFirstPageGameLoaded() {
-    creatorLibrary.onGameLoaded()
-
     // this.container = container
     const initialProps = {
       ref: ref => EDITORUI.ref = ref

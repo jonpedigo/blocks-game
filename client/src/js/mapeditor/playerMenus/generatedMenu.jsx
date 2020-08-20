@@ -193,7 +193,7 @@ export default class GeneratedMenu extends React.Component {
     const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(objectMenuItems, heroMenuItems)
 
     if (objectSelected.tags && objectSelected.tags.hero) {
-      return <Menu onClick={this._onHandleMenuClick}>
+      return <Menu onClick={this._handleMenuClick}>
         {this._renderGeneratedMenu(heroMenuObj)}
       </Menu>
     }

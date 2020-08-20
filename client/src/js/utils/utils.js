@@ -182,3 +182,12 @@ window.animateCSS = (element, animation, prefix = 'animate__') =>
 
     node.addEventListener('animationend', handleAnimationEnd);
   });
+
+
+  window.convertToGameXY = function(event) {
+    var rect = PIXIMAP.app.view.getClientRects()[0];
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    }
+  }
