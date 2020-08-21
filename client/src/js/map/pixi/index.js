@@ -16,6 +16,14 @@ window.PIXIMAP = {
   childrenById: {},
 }
 
+PIXIMAP.onResetLiveParticle = function(objectId) {
+  let object = OBJECTS.getObjectOrHeroById(objectId)
+  const stage = getGameObjectStage(object)
+  const pixiChild = stage.getChildByName(objectId)
+  PIXIMAP.deleteEmitter(pixiChild.liveEmitter)
+  delete pixiChild.liveEmitter
+}
+
 PIXIMAP.initializePixiObjectsFromGame = function() {
   GAME.heroList.forEach((hero) => {
     initPixiObject(hero)

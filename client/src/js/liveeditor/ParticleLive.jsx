@@ -1,5 +1,5 @@
 import React from 'react';
-import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gui';
+import DatGui, { DatFolder, DatBoolean, DatButton, DatColor, DatNumber, DatString } from 'react-dat-gui';
 
 export default class ParticleLive extends React.Component {
   constructor(props) {
@@ -62,7 +62,8 @@ export default class ParticleLive extends React.Component {
       tags: {
         ...objectSelected.liveEmitterData,
         ...newData.tags
-      }
+      },
+      opacity: newData.opacity
     }
 
     if (PAGE.role.isHost) {
@@ -77,40 +78,73 @@ export default class ParticleLive extends React.Component {
 
     return (
       <div className='ParticleLive'>
-        <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
+        <DatGui labelWidth="64%" data={objectSelected} onUpdate={this.handleUpdate}>
           <div className="LiveEditor__title">{'Particle'}</div>
           <DatBoolean path={'tags.liveEmitter'} label="Live Update" />
-          <DatNumber path='liveEmitterData.alpha.start' label='Opacity Start' min={0} max={1} step={.1} />
-          <DatNumber path='liveEmitterData.alpha.end' label="Opacity End" min={0} max={1} step={.1} />
+          <DatNumber path='opacity' label='Object opacity' min={0} max={1} step={.1} />
+          <DatButton label="Save Animation" onClick={async () => {
+            const { value: name } = await Swal.fire({
+              title: "What is the name of this animation?",
+              input: 'text',
+              inputAttributes: {
+                autocapitalize: 'off'
+              },
+              showClass: {
+                popup: 'animated fadeInDown faster'
+              },
+              hideClass: {
+                popup: 'animated fadeOutUp faster'
+              },
+              confirmButtonText: 'Submit',
+            })
+            if(name) {
+              objectSelected.liveEmitterData.animationType = 'particle';
+              window.socket.emit('addAnimation', name, objectSelected.liveEmitterData)
+            }
+            }}></DatButton>
+            <DatButton label="Reset Animation" onClick={() => {
+              window.socket.emit('resetLiveParticle', objectSelected.id)
+            }}/>
+          <hr/>
+          <DatFolder title='Color'>
+            <DatNumber path='liveEmitterData.alpha.start' label='Opacity Start' min={0} max={1} step={.1} />
+            <DatNumber path='liveEmitterData.alpha.end' label="Opacity End" min={0} max={1} step={.1} />
+            <DatColor path='liveEmitterData.color.start' label="Color Start" />
+            <DatColor path='liveEmitterData.color.end' label="Color End" />
+            <DatBoolean path={'liveEmitterData.matchObjectColor'} label="Match color of object" />
+          </DatFolder>
+          <DatFolder title='Size'>
+            <DatNumber path='liveEmitterData.scale.start' label="Size Start" min={0} max={5} step={.1} />
+            <DatNumber path='liveEmitterData.scale.end' label="Size End" min={0} max={5} step={.1} />
+            <DatNumber path='liveEmitterData.scale.minimumScaleMultiplier' label="Minumum Size Multiplier" min={0} max={5} step={.1} />
+            <DatBoolean path={'liveEmitterData.scaleToGameObject'} label="Match object size" />
+          </DatFolder>
+          <DatFolder title='Speed'>
+            <DatNumber path='liveEmitterData.maxSpeed' label="Max Speed" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.speed.start' label="Speed Start" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.speed.end' label="Speed End" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.speed.minimumSpeedMultiplier' label="Minumum Speed Multiplier" min={0} max={5} step={.1} />
+            <DatNumber path='liveEmitterData.acceleration.x' label="Acceleration X" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.acceleration.y' label="Acceleration Y" min={0} max={2000} step={10} />
+          </DatFolder>
+          <DatFolder title='Rotation'>
+            <DatNumber path='liveEmitterData.startRotation.min' label="Rotation Start Min" min={0} max={360} step={1} />
+            <DatNumber path='liveEmitterData.startRotation.max' label="Rotation Start Max" min={0} max={360} step={1} />
+            <DatNumber path='liveEmitterData.rotationSpeed.min' label="Rotation Speed Min" min={0} max={360} step={1} />
+            <DatNumber path='liveEmitterData.rotationSpeed.max' label="Rotation Speed Max" min={0} max={360} step={1} />
+          </DatFolder>
 
-          <DatNumber path='liveEmitterData.scale.start' label="Scale Start" min={0} max={5} step={.1} />
-          <DatNumber path='liveEmitterData.scale.end' label="Scale End" min={0} max={5} step={.1} />
-          <DatNumber path='liveEmitterData.scale.minimumScaleMultiplier' label="Minumum Scale Multiplier" min={0} max={5} step={.1} />
+          <DatFolder title='Lifetime'>
+            <DatNumber path='liveEmitterData.lifetime.min' label="Particle Lifetime Min" min={0} max={10} step={.01} />
+            <DatNumber path='liveEmitterData.lifetime.max' label="Particle Lifetime Max" min={0} max={10} step={.01} />
+            <DatNumber path='liveEmitterData.emitterLifetime' label="Emitter Lifetime" min={-1} max={100} step={1} />
+            <DatBoolean path={'liveEmitterData.persistAfterRemoved'} label="Continue emitting after object removed" />
+          </DatFolder>
 
-          <DatColor path='liveEmitterData.color.start' label="Color Start" />
-          <DatColor path='liveEmitterData.color.end' label="Color End" />
-
-          <DatNumber path='liveEmitterData.maxSpeed' label="Max Speed" min={0} max={2000} step={10} />
-          <DatNumber path='liveEmitterData.speed.start' label="Speed Start" min={0} max={2000} step={10} />
-          <DatNumber path='liveEmitterData.speed.end' label="Speed End" min={0} max={2000} step={10} />
-          <DatNumber path='liveEmitterData.speed.minimumSpeedMultiplier' label="Minumum Speed Multiplier" min={0} max={5} step={.1} />
-
-          <DatNumber path='liveEmitterData.acceleration.x' label="Acceleration X" min={0} max={2000} step={10} />
-          <DatNumber path='liveEmitterData.acceleration.y' label="Acceleration Y" min={0} max={2000} step={10} />
-
-          <DatNumber path='liveEmitterData.startRotation.min' label="Rotation Start Min" min={0} max={360} step={1} />
-          <DatNumber path='liveEmitterData.startRotation.max' label="Rotation Start Max" min={0} max={360} step={1} />
-
-          <DatNumber path='liveEmitterData.rotationSpeed.min' label="Rotation Speed Min" min={0} max={360} step={1} />
-          <DatNumber path='liveEmitterData.rotationSpeed.max' label="Rotation Speed Max" min={0} max={360} step={1} />
-
-          <DatNumber path='liveEmitterData.lifetime.min' label="Lifetime Min" min={0} max={10} step={.01} />
-          <DatNumber path='liveEmitterData.lifetime.max' label="Lifetime Max" min={0} max={10} step={.01} />
-
-          <DatNumber path='liveEmitterData.emitterLifetime' label="Emitter Lifetime" min={-1} max={100} step={1} />
-
-          <DatNumber path='liveEmitterData.spawnWaitTime' label="Spawn Frequency" min={0} max={100} step={1} />
-          <DatNumber path='liveEmitterData.maxParticles' label="Max Particles" min={1} max={10000} step={10} />
+          <DatFolder title='Frequency'>
+            <DatNumber path='liveEmitterData.spawnWaitTime' label="Spawn Frequency" min={0} max={100} step={1} />
+            <DatNumber path='liveEmitterData.maxParticles' label="Max Particles" min={1} max={10000} step={10} />
+          </DatFolder>
         </DatGui>
       </div>
     )

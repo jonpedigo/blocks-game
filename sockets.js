@@ -445,6 +445,14 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('addLog', (data) => {
     io.emit('onAddLog', data)
   })
+
+  socket.on('addAnimation', (name, animationData) => {
+    io.emit('onAddAnimation', name, animationData)
+  })
+
+  socket.on('resetLiveParticle', (objectId) => {
+    io.emit('onResetLiveParticle', objectId)
+  })
 }
 
 module.exports = socketEvents

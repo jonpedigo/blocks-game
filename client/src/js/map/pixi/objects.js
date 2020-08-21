@@ -61,6 +61,11 @@ const updatePixiObject = (gameObject) => {
     updatePixiEmitter(pixiChild.trailEmitter, gameObject)
   }
 
+  if(pixiChild.liveEmitter && gameObject.tags.liveEmitter) {
+    updatePixiEmitterData(pixiChild.liveEmitter, gameObject.liveEmitterData)
+    updatePixiEmitter(pixiChild.liveEmitter, gameObject)
+  }
+
   if(gameObject.tags.emitter) {
     updatePixiEmitter(pixiChild, gameObject)
     return
@@ -137,7 +142,6 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     }
   }
 
-  console.log(emitter.startSpeed.next)
   /////////////////////
   /////////////////////
   // SCALE
@@ -196,10 +200,6 @@ function updateProperties(pixiChild, gameObject) {
 
   if(gameObject.tags.liveEmitter && !pixiChild.liveEmitter && gameObject.liveEmitterData) {
     pixiChild.liveEmitter = initEmitter(gameObject, 'custom', gameObject.liveEmitterData, true)
-  }
-
-  if(gameObject.tags.liveEmitter && pixiChild.liveEmitter) {
-    updatePixiEmitterData(pixiChild.liveEmitter, gameObject.liveEmitterData)
   }
 
   if(!gameObject.tags.liveEmitter && pixiChild.liveEmitter) {

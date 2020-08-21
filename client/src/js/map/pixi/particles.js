@@ -35,6 +35,7 @@ function updatePixiEmitterData(pixiChild, data, options) {
 
   emitter.noRotation = data.noRotation
   emitter.spawnType = data.spawnType
+
 // particleImages: [Textures]
 // frequency: getter?
 // emitterLifetime: 10
@@ -79,10 +80,10 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   }
 
   let particles = [PIXIMAP.textures.solidcolorsprite]
-  if(particleData.particles) {
-    particles = particleData.particles
-    particles = particles.map(p => PIXI.Texture.from(p))
-  }
+  // if(particleData.particles) {
+  //   particles = particleData.particles
+  //   particles = particles.map(p => PIXI.Texture.from(p))
+  // }
 
   if(options.scaleToGameObject) {
     const modifyScaleX = (gameObject.width/particles[0]._frame.width * MAP.camera.multiplier)

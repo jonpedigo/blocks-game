@@ -34,6 +34,7 @@ function setDefault() {
     chunkGamePadding: 6,
     chunkRenderPadding: 6,
     sequences: {},
+    animations: {}
   }
 
   window.local.on('onGridLoaded', () => {

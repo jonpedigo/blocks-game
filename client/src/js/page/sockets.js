@@ -410,6 +410,14 @@ function init() {
   window.socket.on('onDropObject', (objectId, subObjectName) => {
     window.local.emit('onDropObject', objectId, subObjectName)
   })
+
+  window.socket.on('onAddAnimation', (name, animationData) => {
+    window.local.emit('onAddAnimation', name, animationData)
+  })
+
+  window.socket.on('onResetLiveParticle', (objectId) => {
+    window.local.emit('onResetLiveParticle', objectId)
+  })
 }
 
 export default {

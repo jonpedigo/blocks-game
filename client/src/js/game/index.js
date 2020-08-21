@@ -295,6 +295,7 @@ class Game{
     // grid
     GAME.world = game.world
     if(!GAME.world.sequences) GAME.world.sequences = {}
+    if(!GAME.world.animations) GAME.world.animations = {}
     GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
     GAME.updateGridObstacles()
     GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -967,6 +968,10 @@ class Game{
       type,
       dateMilliseconds,
     })
+  }
+
+  onAddAnimation(name, animationData) {
+    GAME.world.animations[name] = animationData
   }
 }
 
