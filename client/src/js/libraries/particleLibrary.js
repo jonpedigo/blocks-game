@@ -1,12 +1,12 @@
-window.defaultParticleEmitterData = {
+window.particleEmitterLibrary = {
   smallFire: {
     "alpha": {
       "start": 0.62,
       "end": 0
     },
     "scale": {
-      "start": 0.05,
-      "end": 0.3,
+      "start": 0.3,
+      "end": .6,
       "minimumScaleMultiplier": .05
     },
     "color": {
@@ -60,7 +60,7 @@ window.defaultParticleEmitterData = {
   	},
   	"scale": {
   		"start": 1,
-  		"end": 0.3,
+  		"end": 1,
   		"minimumScaleMultiplier": 1
   	},
   	"color": {

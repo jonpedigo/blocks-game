@@ -21,6 +21,10 @@ export default class Root extends React.Component {
       })
     }
 
+    this.setCreatorObjects = (creatorObjects) => {
+      this._creatorRef.current.setCreatorObjects(creatorObjects)
+    }
+
     this._handleKeyDown = (e) => {
       if(e.keyCode === 27) {
         this._creatorRef.current.clearSelectedCreatorObject()
@@ -38,13 +42,15 @@ export default class Root extends React.Component {
   }
 
   render() {
-    if(!PAGE.role.isAdmin) {
+    if(PAGE.role.isAdmin) {
+      return (
+        <Creator ref={this._creatorRef} creatorObjects={window.adminCreatorObjects}></Creator>
+      )
+    }
+
+    if(!PAGE.role.isAdmin || PAGE.role.isGhost) {
       const hero = GAME.heros[HERO.id]
       return <Creator ref={this._creatorRef} creatorObjects={hero.creator}></Creator>
     }
-
-    return (
-      <Creator ref={this._creatorRef} creatorObjects={window.adminCreatorObjects}></Creator>
-    )
   }
 }

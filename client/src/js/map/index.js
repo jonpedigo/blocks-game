@@ -52,7 +52,7 @@ MAP.onHeroCameraEffect = function(type, heroId, options = {}) {
   }
 }
 
-MAP.cameraEffect = function(type, options) {
+MAP.cameraEffect = function(type, options = {}) {
   if(type === 'cameraShake' && MAP._readyForShake !== false) {
     MAP.camera.shakeAmplitude = options.amplitude || 32
     const duration = options.duration || 2000

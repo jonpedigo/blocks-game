@@ -4,10 +4,19 @@ import '../../libraries/particleLibrary.js'
 
 const pixiParticles = require('pixi-particles');
 
+function updatePixiEmitterData(emitter, newData, options) {
+  emitter.data = newData
+}
+
 function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   const startPos = {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}
 
-  const particleData = {..._.cloneDeep(window.defaultParticleEmitterData[emitterDataName]), pos: startPos}
+  let particleData
+  if(emitterDataName === 'custom' && options) {
+    particleData = {..._.cloneDeep(options), pos: startPos}
+  } else if(window.particleEmitterLibrary[emitterDataName]){
+    particleData = {..._.cloneDeep(window.particleEmitterLibrary[emitterDataName]), pos: startPos}
+  }
 
   if(options.matchObjectColor) {
     let color = gameObject.color || GAME.world.defaultObjectColor
@@ -26,11 +35,15 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   }
 
   if(options.scaleToGameObject) {
-    const modifyScaleX = (gameObject.width/particles[0]._frame.width)
+    const modifyScaleX = (gameObject.width/particles[0]._frame.width * MAP.camera.multiplier)
     // const modifyScaleY = (gameObject.height/particles[0]._frame.height)
     particleData.scale.start = modifyScaleX * particleData.scale.start
     particleData.scale.end = modifyScaleX * particleData.scale.end
-    // particleData.scale.minimumScaleMultiplier += modifyScaleX
+    // particleData.scale.minimumScaleMultiplier = particleData.scale.minimumScaleMultiplier * MAP.camera.multiplier
+  } else {
+    particleData.scale.start = MAP.camera.multiplier * particleData.scale.start
+    particleData.scale.end = MAP.camera.multiplier * particleData.scale.end
+    // particleData.scale.minimumScaleMultiplier = particleData.scale.minimumScaleMultiplier * MAP.camera.multiplier
   }
 
   var emitter = new pixiParticles.Emitter(
@@ -61,5 +74,6 @@ function trail(arg) {
 }
 
 export {
+  updatePixiEmitterData,
   createDefaultEmitter
 }

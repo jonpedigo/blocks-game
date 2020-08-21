@@ -15,9 +15,11 @@ export default class Creator extends React.Component {
       colorSelected: EDITOR.preferences.creatorColorSelected
     }
 
-    this._setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
+    this.setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
       this.setState({
         creatorObjects
+      }, () => {
+        this._categorizeCreatorObjects()
       })
     }
 
@@ -256,7 +258,7 @@ export default class Creator extends React.Component {
     if(CONSTRUCTEDITOR.open) return null
 
     return (
-      <div className="Creator">
+      <div className="Creator" style={rows.length ? { height: '45px'} : null}>
         {rows.map((column) => {
           if(column.specialAction && column.specialAction == 'selectColor') {
             return this._renderColorCategory()

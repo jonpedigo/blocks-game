@@ -52,7 +52,6 @@ export default class GuidanceLive extends React.Component {
   render() {
     const { objectSelected } = this.state
 
-    console.log(objectSelected)
     return (
       <div className='GuidanceLive'>
         <DatGui labelWidth="64%" data={this.state} onUpdate={this.handleUpdate}>
@@ -68,8 +67,7 @@ export default class GuidanceLive extends React.Component {
               {this._renderLibrary('objectMenu', window.objectMenuLibrary)}
             </DatFolder>
           </DatFolder>
-          <DatFolder title='Showcase Features'>
-            <DatColor path='animationColor' label="Color"/>
+          <DatFolder title='Demo'>
             <DatButton label="Send Explode" onClick={() => {
                 window.socket.emit('objectAnimation', 'explode', objectSelected.id)
             }}></DatButton>
@@ -83,7 +81,7 @@ export default class GuidanceLive extends React.Component {
                 window.socket.emit('objectAnimation', 'quickTrail', objectSelected.id)
             }}></DatButton>
             <DatButton label="Send Camera Shake" onClick={() => {
-                window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id)
+                window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, {})
               }}></DatButton>
           </DatFolder>
         </DatGui>

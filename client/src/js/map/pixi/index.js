@@ -454,6 +454,27 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
     }, 1000)
   }
 
+  if(type === 'custom') {
+    const customEmitter = initEmitter(object, 'custom', options, true)
+    setTimeout(() => {
+      PIXIMAP.deleteEmitter(customEmitter)
+    }, 3000)
+  }
+
+  // -> start pulse, stop pulse here
+  //shake
+  //spin
+  //pulseAlpha
+  //pulseDarken
+  //pulseLighten
+
+  // -> startAnimation here
+  // fadeIn
+
+
+
+
+
   // animationFadeIn: object.animationFadeIn,
   // animationFadeOut: object.animationFadeOut,
 

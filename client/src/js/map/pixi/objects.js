@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js'
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
-import { createDefaultEmitter } from './particles'
+import { createDefaultEmitter, updatePixiEmitterData } from './particles'
 import './pixi-layers'
-import { setColor, startAnimation, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, startPulse, updatePosition, updateAlpha, getGameObjectStage } from './utils'
+import { setColor, startAnimation, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, updatePosition, updateAlpha, getGameObjectStage } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
 const updatePixiObject = (gameObject) => {
@@ -191,6 +191,21 @@ function updateProperties(pixiChild, gameObject) {
     PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
     delete pixiChild.trailEmitter
   }
+
+
+  if(gameObject.tags.liveEmitter && !pixiChild.liveEmitter && gameObject.liveEmitterData) {
+    pixiChild.liveEmitter = initEmitter(gameObject, 'custom', gameObject.liveEmitterData, true)
+  }
+
+  if(gameObject.tags.liveEmitter && pixiChild.liveEmitter) {
+    updatePixiEmitterData(pixiChild.liveEmitter, gameObject.liveEmitterData)
+  }
+
+  if(!gameObject.tags.liveEmitter && pixiChild.liveEmitter) {
+    PIXIMAP.deleteEmitter(pixiChild.liveEmitter)
+    delete pixiChild.liveEmitter
+  }
+
 
   /////////////////////
   /////////////////////

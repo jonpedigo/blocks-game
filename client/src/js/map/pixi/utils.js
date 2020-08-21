@@ -42,14 +42,44 @@ function startAnimation(type, pixiChild, gameObject) {
   }
 }
 
+function stopPulse(pixiChild, type) {
+  if(type === 'shake') {
+    ease.removeEase(pixiChild, 'shake')
+    pixiChild.isAnimatingPosition = false
+    delete pixiChild.shakeEase
+  }
+
+  if(type === 'darken') {
+    ease.removeEase(pixiChild, 'blend')
+    pixiChild.isAnimatingColor = false
+    delete pixiChild.pulseDarknessEase
+  }
+
+  if(type === 'lighten') {
+    ease.removeEase(pixiChild, 'blend')
+    pixiChild.isAnimatingColor = false
+    delete pixiChild.pulseDarknessEase
+  }
+
+
+  if(type === 'alpha') {
+    ease.removeEase(pixiChild, 'alpha')
+    pixiChild.isAnimatingAlpha = false
+    delete pixiChild.pulseAlphaEase
+  }
+}
+
+
 function startPulse(pixiChild, gameObject, type) {
   if(type === 'darken') {
     const color = gameObject.color || GAME.world.defaultObjectColor
     pixiChild.pulseDarknessEase = ease.add(pixiChild, { blend: getHexColor(darken(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.isAnimatingColor = true
   }
   if(type === 'lighten') {
     const color = gameObject.color || GAME.world.defaultObjectColor
     pixiChild.pulseLightnessEase = ease.add(pixiChild, { blend: getHexColor(lighten(color)) }, { repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.isAnimatingColor = true
   }
 
   // if(type === 'scale') {
@@ -58,10 +88,12 @@ function startPulse(pixiChild, gameObject, type) {
 
   if(type === 'alpha') {
     pixiChild.pulseAlphaEase = ease.add(pixiChild, { alpha: 0 }, { reverse: true, repeat: true, duration: 1000, ease: 'linear' })
+    pixiChild.isAnimatingAlpha = true
   }
 
   if(type === 'shake') {
     pixiChild.shakeEase = ease.add(pixiChild, { shake: 5 }, { repeat: true, ease: 'linear' })
+    pixiChild.isAnimatingPosition = true
   }
 }
 
@@ -95,13 +127,10 @@ function updatePosition(pixiChild, gameObject) {
 
     if(gameObject.tags.shake && !pixiChild.shakeEase) {
       startPulse(pixiChild, gameObject, 'shake')
-      pixiChild.isAnimatingPosition = true
     }
 
     if(!gameObject.tags.shake && pixiChild.shakeEase) {
-      ease.removeEase(pixiChild, 'shake')
-      pixiChild.isAnimatingPosition = false
-      delete pixiChild.shakeEase
+      stopPulse(pixiChild, 'shake')
     }
   }
 }
@@ -131,13 +160,10 @@ function updateAlpha(pixiChild, gameObject) {
 
   if(gameObject.tags.pulseAlpha && !pixiChild.pulseAlphaEase) {
     startPulse(pixiChild, gameObject, 'alpha')
-    pixiChild.isAnimatingAlpha = true
   }
 
   if(!gameObject.tags.pulseAlpha && pixiChild.pulseAlphaEase) {
-    ease.removeEase(pixiChild, 'alpha')
-    pixiChild.isAnimatingAlpha = false
-    delete pixiChild.pulseAlphaEase
+    stopPulse(pixiChild, 'alpha')
   }
 }
 
@@ -151,19 +177,14 @@ function updateColor(pixiChild, gameObject) {
     pixiChild.isAnimatingColor = true
   }
   if(!gameObject.tags.pulseDarken && pixiChild.pulseDarknessEase) {
-    ease.removeEase(pixiChild, 'blend')
-    pixiChild.isAnimatingColor = false
-    delete pixiChild.pulseDarknessEase
+    stopPulse(pixiChild, 'darken')
   }
 
   if(gameObject.tags.pulseLighten && !pixiChild.pulseLightnessEase) {
     startPulse(pixiChild, gameObject, 'lighten')
-    pixiChild.isAnimatingColor = true
   }
   if(!gameObject.tags.pulseLighten && pixiChild.pulseLightnessEase) {
-    ease.removeEase(pixiChild, 'blend')
-    pixiChild.isAnimatingColor = false
-    delete pixiChild.pulseDarknessEase
+    stopPulse(pixiChild, 'lighten')
   }
 }
 

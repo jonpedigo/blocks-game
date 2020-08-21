@@ -146,6 +146,13 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-code" onClick={() => {
             modals.editObjectCode(hero, 'Editing Hero JSON', hero);
           }}/>
+          <ToolbarButton iconName="fa-cloud-meatball" onClick={() => {
+            LIVEEDITOR.open(hero, 'particle')
+          }}/>
+          <ToolbarButton iconName="fa-slash" onClick={() => {
+            window.socket.emit('resetHeroToGameDefault', hero)
+          }}/>
+
           {/*
             {/* go incognito}
           <ToolbarButton iconName="fa-save"></i>
