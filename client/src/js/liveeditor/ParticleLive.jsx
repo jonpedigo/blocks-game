@@ -1,5 +1,5 @@
 import React from 'react';
-import DatGui, { DatFolder, DatBoolean, DatButton, DatColor, DatNumber, DatString } from 'react-dat-gui';
+import DatGui, { DatFolder, DatSelect, DatBoolean, DatButton, DatColor, DatNumber, DatString } from 'react-dat-gui';
 
 export default class ParticleLive extends React.Component {
   constructor(props) {
@@ -9,6 +9,7 @@ export default class ParticleLive extends React.Component {
     if(!objectSelected.liveEmitterData) {
       objectSelected.liveEmitterData = window.particleEmitterLibrary.smallFire
       objectSelected.liveEmitterData.spawnWaitTime = 100
+      objectSelected.liveEmitterData.speedType = 'normal'
     }
     if(!objectSelected.tags.liveEmitter) {
       MAPEDITOR.networkEditObject({id: objectSelected.id, tags:{ ...objectSelected.tags, liveEmitter: true }})
@@ -31,36 +32,42 @@ export default class ParticleLive extends React.Component {
     })
 
     const emitterData = newData.liveEmitterData
+
+    if(emitterData.spawnRect.w) {
+      emitterData.spawnRect.x = -(emitterData.spawnRect.w/2)
+    }
+    if(emitterData.spawnRect.h) {
+      emitterData.spawnRect.y = -(emitterData.spawnRect.h/2)
+    }
     const updatedProps = {
       liveEmitterData: {
         ...objectSelected.liveEmitterData,
-        alpha: emitterData.alpha,
-        scale: emitterData.scale,
-        color: emitterData.color,
-        speed: emitterData.speed,
-        maxSpeed: emitterData.maxSpeed,
-        acceleration: emitterData.acceleration,
-        startRotation: emitterData.startRotation,
-        rotationSpeed: emitterData.rotationSpeed,
-        lifetime: emitterData.lifetime,
-
+        ...emitterData,
+        // alpha: emitterData.alpha,
+        // scale: emitterData.scale,
+        // color: emitterData.color,
+        // speed: emitterData.speed,
+        // maxSpeed: emitterData.maxSpeed,
+        // acceleration: emitterData.acceleration,
+        // startRotation: emitterData.startRotation,
+        // rotationSpeed: emitterData.rotationSpeed,
+        // lifetime: emitterData.lifetime,
+        //
+        // spawnWaitTime: emitterData.spawnWaitTime,
+        // emitterLifetime: emitterData.emitterLifetime,
+        // maxParticles: emitterData.maxParticles,
+        //
         "noRotation": false,
         blendMode: 'normal',
         addAtBack: false,
-
-        spawnType: 'point',
         "pos": {
           "x": 0,
           "y": 0
         },
         // particles: emitterData.particles,
         frequency: (101 - emitterData.spawnWaitTime)/300,
-        spawnWaitTime: emitterData.spawnWaitTime,
-        emitterLifetime: emitterData.emitterLifetime,
-        maxParticles: emitterData.maxParticles,
       },
       tags: {
-        ...objectSelected.liveEmitterData,
         ...newData.tags
       },
       opacity: newData.opacity
@@ -73,12 +80,73 @@ export default class ParticleLive extends React.Component {
     }
   }
 
+  _renderEmitterShape() {
+    const { objectSelected } = this.state;
+
+    if(objectSelected.liveEmitterData.spawnType === 'rect') {
+      // <DatNumber path='liveEmitterData.pos.x' label="x" min={0} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.pos.y' label="y" min={1} max={10000} step={10} />
+      // <DatNumber path='liveEmitterData.spawnRect.x' label="x" min={-100} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.spawnRect.y' label="y" min={-100} max={100} step={1} />
+      //
+      return <DatFolder title='Emitter Shape'>
+        <DatSelect path='liveEmitterData.spawnType' label="Emitter Shape" options={['point', 'circle', 'rect', 'ring', 'burst']}/>
+        <DatNumber path='liveEmitterData.spawnRect.w' label="Width" min={0} max={1000} step={1} />
+        <DatNumber path='liveEmitterData.spawnRect.h' label="Height" min={0} max={1000} step={1} />
+      </DatFolder>
+    }
+    if(objectSelected.liveEmitterData.spawnType === 'circle') {
+      // <DatNumber path='liveEmitterData.pos.x' label="Position x" min={0} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.pos.y' label="Position y" min={1} max={10000} step={10} />
+      // <DatNumber path='liveEmitterData.spawnCircle.x' label="x" min={-100} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.spawnCircle.y' label="y" min={-100} max={100} step={1} />
+      //
+      return <DatFolder title='Emitter Shape'>
+        <DatSelect path='liveEmitterData.spawnType' label="Emitter Shape" options={['point', 'circle', 'rect', 'ring', 'burst']}/>
+        <DatNumber path='liveEmitterData.spawnCircle.r' label="Radius" min={0} max={1000} step={1} />
+      </DatFolder>
+    }
+    if(objectSelected.liveEmitterData.spawnType === 'ring') {
+
+      // <DatNumber path='liveEmitterData.pos.x' label="x" min={0} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.pos.y' label="y" min={1} max={10000} step={10} />
+      // <DatNumber path='liveEmitterData.spawnCircle.x' label="x" min={-100} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.spawnCircle.y' label="y" min={-100} max={100} step={1} />
+      //
+      return <DatFolder title='Emitter Shape'>
+        <DatSelect path='liveEmitterData.spawnType' label="Emitter Shape" options={['point', 'circle', 'rect', 'ring', 'burst']}/>
+        <DatNumber path='liveEmitterData.spawnCircle.r' label="Max Radius" min={0} max={1000} step={1} />
+        <DatNumber path='liveEmitterData.spawnCircle.minR' label="Min Radius" min={0} max={1000} step={1} />
+      </DatFolder>
+    }
+    if(objectSelected.liveEmitterData.spawnType === 'burst') {
+      // <DatNumber path='liveEmitterData.pos.x' label="x" min={0} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.pos.y' label="y" min={1} max={10000} step={10} />
+
+      return <DatFolder title='Emitter Shape'>
+        <DatSelect path='liveEmitterData.spawnType' label="Emitter Shape" options={['point', 'circle', 'rect', 'ring', 'burst']}/>
+        <DatNumber path='liveEmitterData.particlesPerWave' label="Particles Per Burst" min={0} max={1000} step={1} />
+        <DatNumber path='liveEmitterData.particleSpacing' label="Particle Spacing" min={0} max={360} step={1} />
+        <DatNumber path='liveEmitterData.angleStart' label="Start Rotation" min={0} max={360} step={1} />
+      </DatFolder>
+    } else {
+      // <DatNumber path='liveEmitterData.pos.x' label="x" min={0} max={100} step={1} />
+      // <DatNumber path='liveEmitterData.pos.y' label="y" min={1} max={10000} step={10} />
+
+      return <DatFolder title='Emitter Shape'>
+        <DatSelect path='liveEmitterData.spawnType' label="Emitter Shape" options={['point', 'circle', 'rect', 'ring', 'burst']}/>
+        </DatFolder>
+    }
+
+
+  }
+
   render() {
     const { objectSelected } = this.state;
 
     return (
       <div className='ParticleLive'>
-        <DatGui labelWidth="64%" data={objectSelected} onUpdate={this.handleUpdate}>
+        <DatGui labelWidth="54%" data={objectSelected} onUpdate={this.handleUpdate}>
           <div className="LiveEditor__title">{'Particle'}</div>
           <DatBoolean path={'tags.liveEmitter'} label="Live Update" />
           <DatNumber path='opacity' label='Object opacity' min={0} max={1} step={.1} />
@@ -120,12 +188,12 @@ export default class ParticleLive extends React.Component {
             <DatBoolean path={'liveEmitterData.scaleToGameObject'} label="Match object size" />
           </DatFolder>
           <DatFolder title='Speed'>
-            <DatNumber path='liveEmitterData.maxSpeed' label="Max Speed" min={0} max={2000} step={10} />
-            <DatNumber path='liveEmitterData.speed.start' label="Speed Start" min={0} max={2000} step={10} />
-            <DatNumber path='liveEmitterData.speed.end' label="Speed End" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.speed.start' label="Speed Start" min={0} max={20000} step={10} />
+            <DatNumber path='liveEmitterData.speed.end' label="Speed End" min={0} max={20000} step={10} />
             <DatNumber path='liveEmitterData.speed.minimumSpeedMultiplier' label="Minumum Speed Multiplier" min={0} max={5} step={.1} />
-            <DatNumber path='liveEmitterData.acceleration.x' label="Acceleration X" min={0} max={2000} step={10} />
-            <DatNumber path='liveEmitterData.acceleration.y' label="Acceleration Y" min={0} max={2000} step={10} />
+            <DatNumber path='liveEmitterData.acceleration.x' label="Acceleration X" min={0} max={20000} step={10} />
+            <DatNumber path='liveEmitterData.acceleration.y' label="Acceleration Y" min={0} max={20000} step={10} />
+            <DatNumber path='liveEmitterData.maxSpeed' label="Max Speed" min={0} max={20000} step={10} />
           </DatFolder>
           <DatFolder title='Rotation'>
             <DatNumber path='liveEmitterData.startRotation.min' label="Rotation Start Min" min={0} max={360} step={1} />
@@ -142,9 +210,12 @@ export default class ParticleLive extends React.Component {
           </DatFolder>
 
           <DatFolder title='Frequency'>
+            <DatSelect path='liveEmitterData.speedType' label="Speed" options={['very slow', 'slow', 'normal', 'fast', 'very fast']}/>
             <DatNumber path='liveEmitterData.spawnWaitTime' label="Spawn Frequency" min={0} max={100} step={1} />
-            <DatNumber path='liveEmitterData.maxParticles' label="Max Particles" min={1} max={10000} step={10} />
+            <DatNumber path='liveEmitterData.maxParticles' label="Max Particles" min={1} max={1000} step={10} />
           </DatFolder>
+
+          {this._renderEmitterShape()}
         </DatGui>
       </div>
     )

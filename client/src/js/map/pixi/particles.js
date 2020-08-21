@@ -5,9 +5,10 @@ import tinycolor from 'tinycolor2'
 
 const pixiParticles = require('pixi-particles');
 
-function updatePixiEmitterData(pixiChild, data, options) {
+function updatePixiEmitterData(pixiChild, gameObject, options) {
 
   const emitter = pixiChild.emitter
+  const data = gameObject.liveEmitterData
   // console.log(emitter, data)
 
   emitter.maxSpeed = data.maxSpeed
@@ -36,23 +37,50 @@ function updatePixiEmitterData(pixiChild, data, options) {
   emitter.noRotation = data.noRotation
   emitter.spawnType = data.spawnType
 
-// particleImages: [Textures]
-// frequency: getter?
-// emitterLifetime: 10
+  emitter.angleStart = data.angleStart
+  emitter.particleSpacing = data.particleSpacing
+  emitter.particlesPerWave = data.particlesPerWave
 
+  if(emitter.spawnCircle) {
+    emitter.spawnCircle.radius = data.spawnCircle.r
+    emitter.spawnCircle.minRadius = data.spawnCircle.minR
+  } else if(PAGE.role.isHost && (emitter.spawnType === 'ring' || emitter.spawnType === 'circle')) {
+    window.socket.emit('resetLiveParticle', gameObject.id)
+  }
+
+  if(emitter.spawnRect) {
+    emitter.spawnRect.width = data.spawnRect.w
+    emitter.spawnRect.height = data.spawnRect.h
+    emitter.spawnRect.x = data.spawnRect.x
+    emitter.spawnRect.y = data.spawnRect.y
+  } else if(PAGE.role.isHost && emitter.spawnType === 'rect') {
+    window.socket.emit('resetLiveParticle', gameObject.id)
+  }
+// particleImages: [Textures]
 
   emitter.startScale.value = data.scale.start
   if(emitter.startScale.next) emitter.startScale.next.value = data.scale.end
+  else if(PAGE.role.isHost && data.scale.start !== data.scale.end) {
+   window.socket.emit('resetLiveParticle', gameObject.id)
+  }
 
   emitter.startAlpha.value = data.alpha.start
   if(emitter.startAlpha.next) emitter.startAlpha.next.value = data.alpha.end
+  else if(PAGE.role.isHost && data.alpha.start !== data.alpha.end) {
+   window.socket.emit('resetLiveParticle', gameObject.id)
+  }
 
   emitter.startSpeed.value = data.speed.start
   if(emitter.startSpeed.next) emitter.startSpeed.next.value = data.speed.end
+  else if(PAGE.role.isHost && data.speed.start !== data.speed.end && data.acceleration.x === 0 && data.acceleration.y === 0) {
+   window.socket.emit('resetLiveParticle', gameObject.id)
+  }
 
   emitter.startColor.value = tinycolor(data.color.start).toRgb()
   if(emitter.startColor.next) emitter.startColor.next.value = tinycolor(data.color.end).toRgb()
-
+  else if(PAGE.role.isHost && data.color.start !== data.color.end) {
+   window.socket.emit('resetLiveParticle', gameObject.id)
+  }
 // startColor: PropertyNode
 // value: {r: 255, g: 255, b: 255}
   // debugger;

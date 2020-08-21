@@ -62,7 +62,7 @@ const updatePixiObject = (gameObject) => {
   }
 
   if(pixiChild.liveEmitter && gameObject.tags.liveEmitter) {
-    updatePixiEmitterData(pixiChild.liveEmitter, gameObject.liveEmitterData)
+    updatePixiEmitterData(pixiChild.liveEmitter, gameObject)
     updatePixiEmitter(pixiChild.liveEmitter, gameObject)
   }
 
