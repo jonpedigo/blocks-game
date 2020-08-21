@@ -9,7 +9,7 @@ export default class ParticleLive extends React.Component {
     if(!objectSelected.liveEmitterData) {
       objectSelected.liveEmitterData = window.particleEmitterLibrary.smallFire
       objectSelected.liveEmitterData.spawnWaitTime = 100
-      objectSelected.liveEmitterData.speedType = 'normal'
+      objectSelected.liveEmitterData.speedType = 'very fast'
     }
     if(!objectSelected.tags.liveEmitter) {
       MAPEDITOR.networkEditObject({id: objectSelected.id, tags:{ ...objectSelected.tags, liveEmitter: true }})
@@ -33,12 +33,46 @@ export default class ParticleLive extends React.Component {
 
     const emitterData = newData.liveEmitterData
 
-    if(emitterData.spawnRect.w) {
-      emitterData.spawnRect.x = -(emitterData.spawnRect.w/2)
+    if(emitterData.spawnType == 'rect') {
+      if(!emitterData.spawnRect) {
+        emitterData.spawnRect = {}
+      }
+      if(!emitterData.spawnRect.w) {
+        emitterData.spawnRect.w = 200
+      }
+      if(!emitterData.spawnRect.h) {
+        emitterData.spawnRect.h = 200
+      }
+      if(emitterData.spawnRect) {
+        if(emitterData.spawnRect.w) {
+          emitterData.spawnRect.x = -(emitterData.spawnRect.w/2)
+        }
+        if(emitterData.spawnRect.h) {
+          emitterData.spawnRect.y = -(emitterData.spawnRect.h/2)
+        }
+      }
     }
-    if(emitterData.spawnRect.h) {
-      emitterData.spawnRect.y = -(emitterData.spawnRect.h/2)
+
+    let frequencyDivider = 1000
+    if(emitterData.speedType == 'slow') {
+      frequencyDivider = 100
     }
+    if(emitterData.speedType == 'normal') {
+      frequencyDivider = 1000
+    }
+    if(emitterData.speedType == 'fast') {
+      frequencyDivider = 10000
+    }
+
+    if(emitterData.spawnType !== 'burst') {
+      delete emitterData.angleStart
+      delete emitterData.particleSpacing
+      delete emitterData.particlesPerWave
+    }
+
+    const frequency =  (101 - emitterData.spawnWaitTime)/frequencyDivider
+    console.log(frequency)
+
     const updatedProps = {
       liveEmitterData: {
         ...objectSelected.liveEmitterData,
@@ -65,7 +99,7 @@ export default class ParticleLive extends React.Component {
           "y": 0
         },
         // particles: emitterData.particles,
-        frequency: (101 - emitterData.spawnWaitTime)/300,
+        frequency,
       },
       tags: {
         ...newData.tags
@@ -151,6 +185,7 @@ export default class ParticleLive extends React.Component {
           <DatBoolean path={'tags.liveEmitter'} label="Live Update" />
           <DatNumber path='opacity' label='Object opacity' min={0} max={1} step={.1} />
           <DatButton label="Save Animation" onClick={async () => {
+            PAGE.typingMode = true
             const { value: name } = await Swal.fire({
               title: "What is the name of this animation?",
               input: 'text',
@@ -165,6 +200,7 @@ export default class ParticleLive extends React.Component {
               },
               confirmButtonText: 'Submit',
             })
+            PAGE.typingMode = false
             if(name) {
               objectSelected.liveEmitterData.animationType = 'particle';
               window.socket.emit('addAnimation', name, objectSelected.liveEmitterData)
@@ -210,8 +246,8 @@ export default class ParticleLive extends React.Component {
           </DatFolder>
 
           <DatFolder title='Frequency'>
-            <DatSelect path='liveEmitterData.speedType' label="Speed" options={['very slow', 'slow', 'normal', 'fast', 'very fast']}/>
-            <DatNumber path='liveEmitterData.spawnWaitTime' label="Spawn Frequency" min={0} max={100} step={1} />
+            <DatSelect path='liveEmitterData.speedType' label="Class" options={['slow', 'normal', 'fast']}/>
+            <DatNumber path='liveEmitterData.spawnWaitTime' label="Frequency" min={0} max={100} step={1} />
             <DatNumber path='liveEmitterData.maxParticles' label="Max Particles" min={1} max={1000} step={10} />
           </DatFolder>
 

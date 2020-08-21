@@ -35,26 +35,38 @@ function updatePixiEmitterData(pixiChild, gameObject, options) {
   // emitter._emitterLifetime = data.emitterLifetime
 
   emitter.noRotation = data.noRotation
-  emitter.spawnType = data.spawnType
 
-  emitter.angleStart = data.angleStart
-  emitter.particleSpacing = data.particleSpacing
-  emitter.particlesPerWave = data.particlesPerWave
-
-  if(emitter.spawnCircle) {
-    emitter.spawnCircle.radius = data.spawnCircle.r
-    emitter.spawnCircle.minRadius = data.spawnCircle.minR
-  } else if(PAGE.role.isHost && (emitter.spawnType === 'ring' || emitter.spawnType === 'circle')) {
+  if(PAGE.role.isHost && emitter.spawnType !== data.spawnType) {
     window.socket.emit('resetLiveParticle', gameObject.id)
+    return
   }
 
-  if(emitter.spawnRect) {
+  emitter.spawnType = data.spawnType
+
+  if(emitter.spawnType === 'burst') {
+    emitter.angleStart = data.angleStart
+    emitter.particleSpacing = data.particleSpacing
+    emitter.particlesPerWave = data.particlesPerWave
+  }
+
+  const usesCircle = (emitter.spawnType === 'ring' || emitter.spawnType === 'circle')
+  if(emitter.spawnCircle && usesCircle) {
+    emitter.spawnCircle.radius = data.spawnCircle.r
+    emitter.spawnCircle.minRadius = data.spawnCircle.minR
+  } else if(PAGE.role.isHost && usesCircle) {
+    window.socket.emit('resetLiveParticle', gameObject.id)
+    return
+  }
+
+  const usesRect = emitter.spawnType === 'rect'
+  if(emitter.spawnRect && usesRect) {
     emitter.spawnRect.width = data.spawnRect.w
     emitter.spawnRect.height = data.spawnRect.h
     emitter.spawnRect.x = data.spawnRect.x
     emitter.spawnRect.y = data.spawnRect.y
-  } else if(PAGE.role.isHost && emitter.spawnType === 'rect') {
+  } else if(PAGE.role.isHost && usesRect) {
     window.socket.emit('resetLiveParticle', gameObject.id)
+    return
   }
 // particleImages: [Textures]
 
@@ -62,24 +74,28 @@ function updatePixiEmitterData(pixiChild, gameObject, options) {
   if(emitter.startScale.next) emitter.startScale.next.value = data.scale.end
   else if(PAGE.role.isHost && data.scale.start !== data.scale.end) {
    window.socket.emit('resetLiveParticle', gameObject.id)
+   return
   }
 
   emitter.startAlpha.value = data.alpha.start
   if(emitter.startAlpha.next) emitter.startAlpha.next.value = data.alpha.end
   else if(PAGE.role.isHost && data.alpha.start !== data.alpha.end) {
    window.socket.emit('resetLiveParticle', gameObject.id)
+   return
   }
 
   emitter.startSpeed.value = data.speed.start
   if(emitter.startSpeed.next) emitter.startSpeed.next.value = data.speed.end
   else if(PAGE.role.isHost && data.speed.start !== data.speed.end && data.acceleration.x === 0 && data.acceleration.y === 0) {
    window.socket.emit('resetLiveParticle', gameObject.id)
+   return
   }
 
   emitter.startColor.value = tinycolor(data.color.start).toRgb()
   if(emitter.startColor.next) emitter.startColor.next.value = tinycolor(data.color.end).toRgb()
   else if(PAGE.role.isHost && data.color.start !== data.color.end) {
    window.socket.emit('resetLiveParticle', gameObject.id)
+   return
   }
 // startColor: PropertyNode
 // value: {r: 255, g: 255, b: 255}
