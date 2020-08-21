@@ -7,7 +7,7 @@ export default class PhysicsLive extends React.Component {
     this.state = {
       objectSelected: this.props.objectSelected
     }
-    this.handleUpdate = this.handleUpdate.bind(this)
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 100)
   }
 
   // Update current state with changes from controls

@@ -21,7 +21,7 @@ export default class HeroLive extends React.Component {
       cameraShakeFrequency: 40,
     }
 
-    this.handleUpdate = this.handleUpdate.bind(this)
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 100)
   }
 
   // Update current state with changes from controls

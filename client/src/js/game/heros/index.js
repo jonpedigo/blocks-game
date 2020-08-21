@@ -384,7 +384,8 @@ class Hero{
       customState: hero.customState,
       _objectsWithin: hero._objectsWithin,
       _objectsAwareOf: hero._objectsAwareOf,
-      conditionTestCounts: hero.conditionTestCounts,
+      // conditionTestCounts: hero.conditionTestCounts,
+      liveEmitterData: hero.liveEmitterData
     }
 
     if(hero.subObjects) {
@@ -558,6 +559,7 @@ class Hero{
       removed: hero.removed,
       questState: hero.questState,
       angle: hero.angle,
+      liveEmitterData: hero.liveEmitterData,
       customMapState: hero.customMapState,
     }
 

@@ -137,12 +137,13 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     }
   }
 
+  console.log(emitter.startSpeed.next)
   /////////////////////
   /////////////////////
   // SCALE
   if(emitter.data.scale && emitter.startScale.next) {
     emitter.startScale.value = emitter.data.scale.start * camera.multiplier
-    emitter.startScale.next.value = emitter.data.scale.end * camera.multiplier
+    if(emitter.startScale.next) emitter.startScale.next.value = emitter.data.scale.end * camera.multiplier
   }
 }
 

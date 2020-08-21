@@ -125,6 +125,7 @@ class Objects{
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
 
+      liveEmitterData: object.liveEmitterData,
 
       _targetId: object._targetPursueId,
       _objectsWithin: object._objectsWithin,
@@ -307,6 +308,7 @@ class Objects{
       angle: object.angle,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
+      liveEmitterData: object.liveEmitterData,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
           id: part.id,

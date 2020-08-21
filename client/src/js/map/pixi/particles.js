@@ -1,11 +1,61 @@
 import * as PIXI from 'pixi.js';
 import { darken, lighten, getColorHex } from './utils.js'
 import '../../libraries/particleLibrary.js'
+import tinycolor from 'tinycolor2'
 
 const pixiParticles = require('pixi-particles');
 
-function updatePixiEmitterData(emitter, newData, options) {
-  emitter.data = newData
+function updatePixiEmitterData(pixiChild, data, options) {
+
+  const emitter = pixiChild.emitter
+  // console.log(emitter, data)
+
+  emitter.maxSpeed = data.maxSpeed
+  emitter.acceleration.x = data.acceleration.x
+  emitter.acceleration.y = data.acceleration.y
+
+  emitter.maxLifetime = data.lifetime.max
+  emitter.minLifetime = data.lifetime.min
+
+  emitter.maxParticles= data.maxParticles
+  emitter.minStartRotation = data.startRotation.min
+  emitter.maxStartRotation = data.startRotation.max
+
+  emitter.minimumScaleMultiplier = data.scale.minimumScaleMultiplier
+  emitter.minimumSpeedMultiplier = data.speed.minimumSpeedMultiplier
+
+  emitter.maxRotationSpeed = data.rotationSpeed.max
+  emitter.minRotationSpeed = data.rotationSpeed.min
+
+  emitter.frequency = data.frequency
+  // emitter._frequency = data.frequency
+
+  emitter.emitterLifetime = data.emitterLifetime
+  // emitter._emitterLifetime = data.emitterLifetime
+
+  emitter.noRotation = data.noRotation
+  emitter.spawnType = data.spawnType
+// particleImages: [Textures]
+// frequency: getter?
+// emitterLifetime: 10
+
+
+  emitter.startScale.value = data.scale.start
+  if(emitter.startScale.next) emitter.startScale.next.value = data.scale.end
+
+  emitter.startAlpha.value = data.alpha.start
+  if(emitter.startAlpha.next) emitter.startAlpha.next.value = data.alpha.end
+
+  emitter.startSpeed.value = data.speed.start
+  if(emitter.startSpeed.next) emitter.startSpeed.next.value = data.speed.end
+
+  emitter.startColor.value = tinycolor(data.color.start).toRgb()
+  if(emitter.startColor.next) emitter.startColor.next.value = tinycolor(data.color.end).toRgb()
+
+// startColor: PropertyNode
+// value: {r: 255, g: 255, b: 255}
+  // debugger;
+  emitter.data = data
 }
 
 function createDefaultEmitter(stage, gameObject, emitterDataName, options) {

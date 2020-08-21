@@ -8,8 +8,8 @@ export default class DayNightLive extends React.Component {
       cycleData: {},
       ambientLight: null,
     }
-    this.handleUpdate = this.handleUpdate.bind(this)
-    this.handleLightUpdate = this.handleLightUpdate.bind(this)
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 100)
+    this.handleLightUpdate = _.debounce(this.handleLightUpdate.bind(this), 100)
   }
 
   componentDidMount() {

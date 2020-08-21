@@ -149,9 +149,13 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-cloud-meatball" onClick={() => {
             LIVEEDITOR.open(hero, 'particle')
           }}/>
-          <ToolbarButton iconName="fa-slash" onClick={() => {
-            window.socket.emit('resetHeroToGameDefault', hero)
-          }}/>
+          <ToolbarButton iconName="fa-recycle" onClick={() => {
+              window.socket.emit('resetHeroToGameDefault', hero)
+            }}
+            onShiftClick={() => {
+              window.socket.emit('resetHeroToDefault', hero)
+            }}
+          />
 
           {/*
             {/* go incognito}

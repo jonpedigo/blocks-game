@@ -17,7 +17,7 @@ export default class GuidanceLive extends React.Component {
       animationColor: '#FFF',
     }
 
-    this.handleUpdate = this.handleUpdate.bind(this)
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 100)
   }
 
   // Update current state with changes from controls

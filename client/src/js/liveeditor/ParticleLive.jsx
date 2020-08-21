@@ -4,10 +4,20 @@ import DatGui, { DatBoolean, DatColor, DatNumber, DatString } from 'react-dat-gu
 export default class ParticleLive extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      objectSelected: this.props.objectSelected
+    const objectSelected = this.props.objectSelected
+
+    if(!objectSelected.liveEmitterData) {
+      objectSelected.liveEmitterData = window.particleEmitterLibrary.smallFire
+      objectSelected.liveEmitterData.spawnWaitTime = 100
     }
-    this.handleUpdate = this.handleUpdate.bind(this)
+    if(!objectSelected.tags.liveEmitter) {
+      MAPEDITOR.networkEditObject({id: objectSelected.id, tags:{ ...objectSelected.tags, liveEmitter: true }})
+      objectSelected.tags.liveEmitter = true
+    }
+    this.state = {
+      objectSelected
+    }
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 20)
   }
 
   // Update current state with changes from controls
@@ -22,36 +32,43 @@ export default class ParticleLive extends React.Component {
 
     const emitterData = newData.liveEmitterData
     const updatedProps = {
-      alpha: emitterData.alpha,
-      scale: emitterData.scale,
-      color: emitterData.color,
-      speed: emitterData.speed,
-      maxSpeed: emitterData.maxSpeed,
-      acceleration: emitterData.acceleration,
-      startRotation: emitterData.startRotation,
-      rotationSpeed: emitterData.rotationSpeed,
-      lifetime: emitterData.lifetime,
+      liveEmitterData: {
+        ...objectSelected.liveEmitterData,
+        alpha: emitterData.alpha,
+        scale: emitterData.scale,
+        color: emitterData.color,
+        speed: emitterData.speed,
+        maxSpeed: emitterData.maxSpeed,
+        acceleration: emitterData.acceleration,
+        startRotation: emitterData.startRotation,
+        rotationSpeed: emitterData.rotationSpeed,
+        lifetime: emitterData.lifetime,
 
-      "noRotation": false,
-      blendMode: 'normal',
-      addAtBack: false,
+        "noRotation": false,
+        blendMode: 'normal',
+        addAtBack: false,
 
-      spawnType: 'point',
-      "pos": {
-        "x": 0,
-        "y": 0
+        spawnType: 'point',
+        "pos": {
+          "x": 0,
+          "y": 0
+        },
+        // particles: emitterData.particles,
+        frequency: (101 - emitterData.spawnWaitTime)/300,
+        spawnWaitTime: emitterData.spawnWaitTime,
+        emitterLifetime: emitterData.emitterLifetime,
+        maxParticles: emitterData.maxParticles,
       },
-      // particles: emitterData.particles,
-      frequency: (101 - emitterData.spawnWaitTime)/300,
-      spawnWaitTime: emitterData.spawnWaitTime,
-      emitterLifetime: emitterData.emitterLifetime,
-      maxParticles: emitterData.maxParticles,
+      tags: {
+        ...objectSelected.liveEmitterData,
+        ...newData.tags
+      }
     }
 
     if (PAGE.role.isHost) {
-      Object.assign(OBJECTS.getObjectOrHeroById(id), { tags: {liveEmitter: true}, liveEmitterData: updatedProps})
+      Object.assign(OBJECTS.getObjectOrHeroById(id), updatedProps)
     } else {
-      networkEditObject({id, tags: {...objectSelected.tags, liveEmitter: true }, liveEmitterData: updatedProps})
+      networkEditObject({id, ...updatedProps})
     }
   }
 
@@ -62,6 +79,7 @@ export default class ParticleLive extends React.Component {
       <div className='ParticleLive'>
         <DatGui data={objectSelected} onUpdate={this.handleUpdate}>
           <div className="LiveEditor__title">{'Particle'}</div>
+          <DatBoolean path={'tags.liveEmitter'} label="Live Update" />
           <DatNumber path='liveEmitterData.alpha.start' label='Opacity Start' min={0} max={1} step={.1} />
           <DatNumber path='liveEmitterData.alpha.end' label="Opacity End" min={0} max={1} step={.1} />
 
@@ -86,8 +104,8 @@ export default class ParticleLive extends React.Component {
           <DatNumber path='liveEmitterData.rotationSpeed.min' label="Rotation Speed Min" min={0} max={360} step={1} />
           <DatNumber path='liveEmitterData.rotationSpeed.max' label="Rotation Speed Max" min={0} max={360} step={1} />
 
-          <DatNumber path='liveEmitterData.lifetime.min' label="Lifetime Min" min={0} max={10} step={.1} />
-          <DatNumber path='liveEmitterData.lifetime.max' label="Lifetime Max" min={0} max={10} step={.1} />
+          <DatNumber path='liveEmitterData.lifetime.min' label="Lifetime Min" min={0} max={10} step={.01} />
+          <DatNumber path='liveEmitterData.lifetime.max' label="Lifetime Max" min={0} max={10} step={.01} />
 
           <DatNumber path='liveEmitterData.emitterLifetime' label="Emitter Lifetime" min={-1} max={100} step={1} />
 
