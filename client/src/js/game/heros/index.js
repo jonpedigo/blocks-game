@@ -463,6 +463,8 @@ class Hero{
       resourceTags: hero.resourceTags,
       resourceLimit: hero.resourceLimit,
 
+      liveEmitterData: hero.liveEmitterData,
+
       jumpVelocity: hero.jumpVelocity,
       dashVelocity: hero.dashVelocity,
       velocityMax: hero.velocityMax,
@@ -559,7 +561,6 @@ class Hero{
       removed: hero.removed,
       questState: hero.questState,
       angle: hero.angle,
-      liveEmitterData: hero.liveEmitterData,
       customMapState: hero.customMapState,
     }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import DatGui, { DatFolder, DatSelect, DatBoolean, DatButton, DatColor, DatNumber, DatString } from 'react-dat-gui';
+import modals from '../mapeditor/modals.js'
 
 export default class ParticleLive extends React.Component {
   constructor(props) {
@@ -8,7 +9,11 @@ export default class ParticleLive extends React.Component {
 
     if(!objectSelected.liveEmitterData) {
       objectSelected.liveEmitterData = window.particleEmitterLibrary.smallFire
+    }
+    if(!objectSelected.liveEmitterData.spawnWaitTime) {
       objectSelected.liveEmitterData.spawnWaitTime = 100
+    }
+    if(!objectSelected.liveEmitterData.speedType) {
       objectSelected.liveEmitterData.speedType = 'very fast'
     }
     if(!objectSelected.tags.liveEmitter) {
@@ -18,11 +23,11 @@ export default class ParticleLive extends React.Component {
     this.state = {
       objectSelected
     }
-    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 20)
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 5)
   }
 
   // Update current state with changes from controls
-  handleUpdate(newData) {
+  handleUpdate(newData, fromLoad) {
     const { networkEditObject } = MAPEDITOR
     const { objectSelected } = this.state
     const id = objectSelected.id
@@ -33,7 +38,7 @@ export default class ParticleLive extends React.Component {
 
     const emitterData = newData.liveEmitterData
 
-    if(emitterData.spawnType == 'rect') {
+    if(emitterData.spawnType == 'rect' && !fromLoad) {
       if(!emitterData.spawnRect) {
         emitterData.spawnRect = {}
       }
@@ -53,58 +58,65 @@ export default class ParticleLive extends React.Component {
       }
     }
 
+    let frequency = emitterData.frequency
     let frequencyDivider = 1000
-    if(emitterData.speedType == 'slow') {
-      frequencyDivider = 100
-    }
-    if(emitterData.speedType == 'normal') {
-      frequencyDivider = 1000
-    }
-    if(emitterData.speedType == 'fast') {
-      frequencyDivider = 10000
+    if(!fromLoad) {
+      if(emitterData.speedType == 'slow') {
+        frequencyDivider = 100
+      }
+      if(emitterData.speedType == 'normal') {
+        frequencyDivider = 1000
+      }
+      if(emitterData.speedType == 'fast') {
+        frequencyDivider = 10000
+      }
+
+      frequency = (101 - emitterData.spawnWaitTime)/frequencyDivider
+
+      if(emitterData.spawnType !== 'burst') {
+        delete emitterData.angleStart
+        delete emitterData.particleSpacing
+        delete emitterData.particlesPerWave
+      }
     }
 
-    if(emitterData.spawnType !== 'burst') {
-      delete emitterData.angleStart
-      delete emitterData.particleSpacing
-      delete emitterData.particlesPerWave
-    }
-
-    const frequency =  (101 - emitterData.spawnWaitTime)/frequencyDivider
-    console.log(frequency)
-
-    const updatedProps = {
-      liveEmitterData: {
-        ...objectSelected.liveEmitterData,
-        ...emitterData,
-        // alpha: emitterData.alpha,
-        // scale: emitterData.scale,
-        // color: emitterData.color,
-        // speed: emitterData.speed,
-        // maxSpeed: emitterData.maxSpeed,
-        // acceleration: emitterData.acceleration,
-        // startRotation: emitterData.startRotation,
-        // rotationSpeed: emitterData.rotationSpeed,
-        // lifetime: emitterData.lifetime,
-        //
-        // spawnWaitTime: emitterData.spawnWaitTime,
-        // emitterLifetime: emitterData.emitterLifetime,
-        // maxParticles: emitterData.maxParticles,
-        //
-        "noRotation": false,
-        blendMode: 'normal',
-        addAtBack: false,
-        "pos": {
-          "x": 0,
-          "y": 0
+    let updatedProps = {}
+    if(fromLoad) {
+      updatedProps = { liveEmitterData: emitterData }
+    } else {
+     updatedProps = {
+        liveEmitterData: {
+          ...objectSelected.liveEmitterData,
+          ...emitterData,
+          // alpha: emitterData.alpha,
+          // scale: emitterData.scale,
+          // color: emitterData.color,
+          // speed: emitterData.speed,
+          // maxSpeed: emitterData.maxSpeed,
+          // acceleration: emitterData.acceleration,
+          // startRotation: emitterData.startRotation,
+          // rotationSpeed: emitterData.rotationSpeed,
+          // lifetime: emitterData.lifetime,
+          //
+          // spawnWaitTime: emitterData.spawnWaitTime,
+          // emitterLifetime: emitterData.emitterLifetime,
+          // maxParticles: emitterData.maxParticles,
+          //
+          "noRotation": false,
+          blendMode: 'normal',
+          addAtBack: false,
+          "pos": {
+            "x": 0,
+            "y": 0
+          },
+          // particles: emitterData.particles,
+          frequency,
         },
-        // particles: emitterData.particles,
-        frequency,
-      },
-      tags: {
-        ...newData.tags
-      },
-      opacity: newData.opacity
+        tags: {
+          ...newData.tags
+        },
+        opacity: newData.opacity
+      }
     }
 
     if (PAGE.role.isHost) {
@@ -208,6 +220,13 @@ export default class ParticleLive extends React.Component {
             }}></DatButton>
             <DatButton label="Reset Animation" onClick={() => {
               window.socket.emit('resetLiveParticle', objectSelected.id)
+            }}/>
+            <DatButton label="Open animation" onClick={() => {
+              modals.openSelectParticleAnimation((result) => {
+                if(result && result.value) {
+                  this.handleUpdate({ liveEmitterData: result.value}, true)
+                }
+              })
             }}/>
           <hr/>
           <DatFolder title='Color'>

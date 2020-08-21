@@ -124,9 +124,6 @@ class Objects{
       customState: object.customState,
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
-
-      liveEmitterData: object.liveEmitterData,
-
       _targetId: object._targetPursueId,
       _objectsWithin: object._objectsWithin,
       _objectsAwareOf: object._objectsAwareOf,
@@ -193,6 +190,8 @@ class Objects{
       spawned: object.spawned,
       reserved: object.reserved,
       opacity: object.opacity,
+
+      liveEmitterData: object.liveEmitterData,
 
       // inventory
       count: object.count,

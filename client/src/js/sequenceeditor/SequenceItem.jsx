@@ -9,7 +9,7 @@ import {
   MultiIdSelect,
   MultiTagSelect,
   NextSelect,
-} from './SelectComponents.jsx'
+} from '../components/SelectComponents.jsx'
 import Condition from './Condition.jsx'
 import Effect from './Effect.jsx'
 

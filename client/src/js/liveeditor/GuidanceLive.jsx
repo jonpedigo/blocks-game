@@ -1,13 +1,5 @@
 import React from 'react';
 import DatGui, { DatBoolean, DatButton, DatFolder, DatColor, DatNumber, DatString } from 'react-dat-gui';
-import {
-  SingleEventSelect,
-  SingleTagSelect,
-  SingleIdSelect,
-  MultiIdSelect,
-  MultiTagSelect,
-  NextSelect,
-} from '../sequenceeditor/SelectComponents.jsx'
 
 export default class GuidanceLive extends React.Component {
   constructor(props) {

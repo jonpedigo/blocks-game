@@ -9,7 +9,7 @@ import {
   MultiIdSelect,
   MultiTagSelect,
   NextSelect,
-} from './SelectComponents.jsx'
+} from '../components/SelectComponents.jsx'
 
 export default class Condition extends React.Component {
   render() {

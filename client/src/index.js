@@ -8,9 +8,8 @@ TODO
 ON GAME START - Live Menu, Hero Menu, Right Click Menu goes away
 Construct editor - white only toggle
 
-0) Composer ( Creator, PlayerMenu, Compendium )
+0) Composer ( Creator, PlayerMenu )
    GENRE libraries ( platformer, shooter, sword, narrative )
-   COMPENDIUM - Particle, Animation + RANDOMNESS ( this is not live, write it kind of like it is though )
    LIVE MENU - Camera, Physics
 1) IMPROVEMENTS
 2) Scenarios and stories
@@ -61,7 +60,6 @@ ANIMATION UPGRADE
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
-Save Animations to world ( save animation button )
 
 // TRIGGER EVENT EDITOR
    eventName

@@ -261,6 +261,54 @@ function openSelectTag(cb) {
   }).then(cb)
 }
 
+function openSelectParticleAnimation(cb) {
+
+  const inputOptions = Object.keys({...GAME.world.animations, ...window.particleEmitterLibrary}).filter((name) => {
+    if(window.particleEmitterLibrary[name]) return true
+    if(GAME.world.animations[name]) {
+      const animation = GAME.world.animations[name]
+      if(animation.animationType === 'particle') return true
+    }
+  })
+
+  const inputOptionValues = inputOptions.map((name) => {
+    if(GAME.world.animations[name]) return GAME.world.animations[name]
+    if(window.particleEmitterLibrary[name]) return window.particleEmitterLibrary[name]
+  })
+
+  Swal.fire({
+    title: 'Select a particle animation',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'select',
+    inputOptions,
+    preConfirm: (result) => {
+      return inputOptionValues[result]
+    }
+  }).then(cb)
+}
+
+function openSelectEaseAnimation(cb) {
+  Swal.fire({
+    title: 'Select an object animation',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    input: 'select',
+    inputOptions: Object.keys(GAME.world.animations).filter((name) => {
+      const animation = GAME.world.animations[name]
+      if(animation.animationType === 'ease') return true
+    }),
+  }).then(cb)
+}
+
 function openAddTrigger(cb) {
   Swal.fire({
     title: 'What is the name of this trigger?',
@@ -628,6 +676,8 @@ export default {
   openEditCodeModal,
   openEditNumberModal,
   openSelectTag,
+  openSelectEaseAnimation,
+  openSelectParticleAnimation,
   editTriggerEvent,
   editTriggerEffect,
   editSubObjectChanceConditions
