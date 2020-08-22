@@ -164,7 +164,8 @@ window.particleEmitterLibrary = {
   		"y": 0
   	},
   	"addAtBack": true,
-  	"spawnType": "point"
+  	"spawnType": "point",
+    persistAfterRemoved: true, scaleToGameObject: true, matchObjectColor: true
   },
   explode: {
   	"alpha": {
@@ -229,7 +230,8 @@ window.particleEmitterLibrary = {
   		"y": 0
   	},
   	"addAtBack": true,
-  	"spawnType": "point"
+  	"spawnType": "point",
+    persistAfterRemoved: true, matchObjectColor: true,
   }
 }
 

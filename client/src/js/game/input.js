@@ -16,45 +16,70 @@ window.defaultArrowKeys =  {
 function setDefault() {
   window.arrowKeysBehavior = {
     'flatDiagonal' : {
+      ...window.defaultArrowKeys,
+    },
+    'velocity': {
+      ...window.defaultArrowKeys,
+    },
+    'skating': {
+      ...window.defaultArrowKeys,
+    },
+    'flatRecent': {
+      ...window.defaultArrowKeys,
+    },
+    'angle' : {
+      up: 'Face Up',
+      down: 'Face Down',
+      left: 'Face Left',
+      right: 'Face Right',
+    },
+    'angleAndVelocity' : {
+      up: 'Move Forward',
+      down: 'Move Backward',
+      left: 'Rotate Left',
+      right: 'Rotate Right',
+    },
+    'none' : {
+    }
+  }
+
+  window.arrowKeysBehavior2 = {
+    'flatDiagonal' : {
       ...window.defaultWASD,
-      // ...window.defaultArrowKeys,
     },
     'velocity': {
       ...window.defaultWASD,
-      // ...window.defaultArrowKeys,
     },
     'skating': {
       ...window.defaultWASD,
-      // ...window.defaultArrowKeys,
     },
     'flatRecent': {
       ...window.defaultWASD,
-      // ...window.defaultArrowKeys,
     },
     'angleAndVelocity' : {
       w: 'Move Forward',
       s: 'Move Backward',
       a: 'Rotate Left',
       d: 'Rotate Right',
-      // up: 'Move Forward',
-      // down: 'Move Backward',
-      // left: 'Rotate Left',
-      // right: 'Rotate Right',
+    },
+    'angle' : {
+      w: 'Face Up',
+      s: 'Face Down',
+      a: 'Face Left',
+      d: 'Face Right',
     },
     'none' : {
     }
+
   }
 
   window.actionButtonBehavior = {
-    'dropWall': {
-      'm': 'Drop Wall',
-    },
-    'shootBullet': {
-      'm': 'Shoot Bullet',
-    },
-    'none': {
-
-    }
+    'dropWall': 'Drop Wall',
+    'shootBullet': 'Shoot Bullet',
+    'accelerate': 'Accelerate',
+    'accelerateBackwards': 'Go Backwards',
+    'deccelerateToZero': 'Slow Down',
+    'brakeToZero': 'Fast Stop'
   }
 
   window.spaceBarBehavior = {
@@ -129,12 +154,53 @@ function onPageLoaded(){
 }
 
 function onKeyUp(key, hero) {
-  if(key === 'e') {
+  if(key === 'e' || key === 'v') {
     hero._cantInteract = false
   }
   delete GAME.heroInputs[hero.id][key]
 
   window.local.emit('onKeyUp', key, hero)
+}
+
+function handleActionButtonBehavior(hero, action, delta) {
+  if(action === 'accelerate') {
+    hero.velocityAngle += hero.speed * delta
+  }
+  if(action === 'deccelerateToZero') {
+    if((hero.velocityAngle < .1 && hero.velocityAngle > 0) ||  (hero.velocityAngle > -.1 && hero.velocityAngle < 0)) {
+      hero.velocityAngle = 0
+      hero.velocityX = 0
+      hero.velocityY = 0
+      return
+    }
+    if(hero.velocityAngle > 0) {
+      hero.velocityAngle -= hero.speed * delta
+      return
+    }
+    if(hero.velocityAngle < 0) {
+      hero.velocityAngle += hero.speed * delta
+      return
+    }
+  }
+  if(action === 'brakeToZero') {
+    if((hero.velocityAngle < 20 && hero.velocityAngle > 0) ||  (hero.velocityAngle > -20 && hero.velocityAngle < 0)) {
+      hero.velocityAngle = 0
+      hero.velocityX = 0
+      hero.velocityY = 0
+      return
+    }
+    if(hero.velocityAngle > 0) {
+      hero.velocityAngle -= hero.speed * delta * 4
+      return
+    }
+    if(hero.velocityAngle < 0) {
+      hero.velocityAngle += hero.speed * delta * 4
+      return
+    }
+  }
+  if(action === 'accelerateBackwards') {
+    hero.velocityAngle -= hero.speed * delta
+  }
 }
 
 function onUpdate(hero, keysDown, delta) {
@@ -179,6 +245,15 @@ function onUpdate(hero, keysDown, delta) {
   /// DEFAULT GAME FX
   if(hero.flags.paused || GAME.gameState.paused) return
 
+  if('z' in keysDown && hero.tags.zButtonOnce != true && hero.zButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.zButtonBehavior, delta)
+  }
+  if('x' in keysDown && hero.tags.xButtonOnce != true && hero.xButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.xButtonBehavior, delta)
+  }
+  if('c' in keysDown && hero.tags.cButtonOnce != true && hero.cButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.cButtonBehavior, delta)
+  }
 
   const xSpeed = hero.mod().speed + (hero.mod().speedXExtra || 0)
   const ySpeed = hero.mod().speed + (hero.mod().speedYExtra || 0)
@@ -228,10 +303,6 @@ function onUpdate(hero, keysDown, delta) {
     if (rightPressed) {
       hero.angle += 1 * delta
     }
-
-    const angleCorrection = window.degreesToRadians(90)
-    hero.velocityX = hero.velocityAngle * Math.cos(hero.angle - angleCorrection)
-    hero.velocityY = hero.velocityAngle * Math.sin(hero.angle - angleCorrection)
   }
 
   if(hero.mod().arrowKeysBehavior === 'skating') {
@@ -244,6 +315,29 @@ function onUpdate(hero, keysDown, delta) {
     } else if(hero.inputDirection === 'right') {
       hero.x += Math.ceil(xSpeed * delta);
     }
+  }
+
+  if(hero.mod().arrowKeysBehavior === 'angle') {
+    if(typeof hero.angle !== 'number') hero.angle = 0
+    if(typeof hero.velocityAngle !== 'number') hero.velocityAngle = 0
+
+    if (upPressed) {
+      hero.angle = angleTowardsDegree(hero.angle, window.degreesToRadians(0), delta)
+    }
+    if (downPressed) {
+      // console.log(hero.angle, window.degreesToRadians(180))
+      hero.angle = angleTowardsDegree(hero.angle, window.degreesToRadians(180), delta)
+    }
+    if (leftPressed) {
+      hero.angle = angleTowardsDegree(hero.angle, window.degreesToRadians(270), delta)
+    }
+    if (rightPressed) {
+      hero.angle = angleTowardsDegree(hero.angle, window.degreesToRadians(90), delta)
+    }
+
+    const angleCorrection = window.degreesToRadians(90)
+    hero.velocityX = hero.velocityAngle * Math.cos(hero.angle - angleCorrection)
+    hero.velocityY = hero.velocityAngle * Math.sin(hero.angle - angleCorrection)
   }
 
   function positionInput() {
@@ -323,7 +417,7 @@ function onUpdate(hero, keysDown, delta) {
 }
 
 function onKeyDown(key, hero) {
-  if('e' === key) {
+  if('e' === key || 'v' === key) {
     if(hero.dialogue && hero.dialogue.length) {
       hero.dialogue.shift()
       if(!hero.dialogue.length) {
@@ -332,7 +426,6 @@ function onKeyDown(key, hero) {
         hero.onGround = false
       }
       hero._cantInteract = true
-      console.log('cant Interact false, exiting dialogue')
       window.emitGameEvent('onUpdatePlayerUI', hero)
     }
   }
@@ -400,6 +493,37 @@ function onKeyDown(key, hero) {
   }
 
   window.local.emit('onKeyDown', key, hero)
+}
+
+// cool that I pulled this off put please remove someday
+Object.defineProperty(Number.prototype, 'mod', { value: function(n) {
+  return ((this % n) + n) % n;
+}})
+
+const oneEighty = window.degreesToRadians(180)
+const threeSixty = window.degreesToRadians(360)
+function angleTowardsDegree(current, goal, delta) {
+  current = (current % threeSixty)
+  let distance = goal - current
+
+  const verySmallDistance = (distance < .1 && distance >= 0) || (distance <= 0 && distance > -.1)
+  const altDistance = threeSixty - distance
+  const wrappedAllAround = (altDistance < .1 && altDistance >= 0) || (altDistance <= 0 && altDistance > -.1)
+
+  if(verySmallDistance || wrappedAllAround) {
+    return goal
+  }
+
+  if(distance > oneEighty) {
+    goal = -(threeSixty - goal)
+  }
+
+  if(distance < -oneEighty) {
+    goal = threeSixty + goal
+  }
+
+  if(current < goal) return current + (1 * delta)
+  if(current > goal) return current - (1 * delta)
 }
 
 export default {

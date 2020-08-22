@@ -160,6 +160,10 @@ function initEmitter(gameObject, emitterType = 'smallFire', options = {}, isAnim
   PIXIMAP.objectStage.emitters.push(emitter)
   // container.parentGroup = PixiLights.diffuseGroup
 
+  //TODO: an options tag for FOLLOW EMITTER OWNER,
+  //this will be for the event animations
+  // and also for like addAnimation removeAnimation for like a powerup you feel me?
+
   if(!isAnimationEmitter) container.name = gameObject.id
   container.emitter = emitter
   container.emitter.type = emitterType
@@ -199,7 +203,7 @@ function updateProperties(pixiChild, gameObject) {
 
 
   if(gameObject.tags.liveEmitter && !pixiChild.liveEmitter && gameObject.liveEmitterData) {
-    pixiChild.liveEmitter = initEmitter(gameObject, 'custom', gameObject.liveEmitterData, true)
+    pixiChild.liveEmitter = initEmitter(gameObject, 'live', gameObject.liveEmitterData, true)
   }
 
   if(!gameObject.tags.liveEmitter && pixiChild.liveEmitter) {

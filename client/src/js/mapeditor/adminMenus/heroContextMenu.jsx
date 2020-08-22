@@ -201,7 +201,13 @@ export default class HeroContextMenu extends React.Component{
           {this._renderInputBehaviorMenu('arrowKeysBehavior', Object.keys(window.arrowKeysBehavior))}
         </SubMenu>
         <SubMenu title="Z Key">
-          {this._renderInputBehaviorMenu('actionButtonBehavior', Object.keys(window.actionButtonBehavior))}
+          {this._renderInputBehaviorMenu('zButtonBehavior', Object.keys(window.actionButtonBehavior))}
+        </SubMenu>
+        <SubMenu title="X Key">
+          {this._renderInputBehaviorMenu('xButtonBehavior', Object.keys(window.actionButtonBehavior))}
+        </SubMenu>
+        <SubMenu title="C Key">
+          {this._renderInputBehaviorMenu('cButtonBehavior', Object.keys(window.actionButtonBehavior))}
         </SubMenu>
         <SubMenu title="Space Bar">
           {this._renderInputBehaviorMenu('spaceBarBehavior', Object.keys(window.spaceBarBehavior))}

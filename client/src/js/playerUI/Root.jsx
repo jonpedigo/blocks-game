@@ -80,13 +80,23 @@ export default class Root extends React.Component {
     document.removeEventListener("keydown", this._onKeyDown, false);
   }
 
-  onSendNotification(data) {
+  onSendNotification = (data) => {
     if(data.toast) {
-      toast(data.text, {
+      const toastInfo = {
         position: "top-right",
         autoClose: data.duration || 3000,
         newestOnTop: true,
-      })
+      }
+      if(data.viewControlsOnClick) {
+        console.log('?')
+        toastInfo.onClick = () => {
+          console.log('???')
+          this.setState({
+            showControlsInfoModal: true
+          })
+        }
+      }
+      toast(data.text, toastInfo)
     }
   }
 

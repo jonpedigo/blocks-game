@@ -11,22 +11,46 @@ const KeySpriteSheetData = [{"name":"esc","x":1,"y":1,"width":17,"height":11},{"
 export default class ControlsInfo extends React.Component {
 
   _getUsedKeys = (hero) => {
-    const keys = []
+    const scheme1 = []
 
-    keys.push({ key: 'e', behavior: 'Interact'})
-    keys.push(...this._getKeyDataArray('arrowKeysBehavior', hero))
-    keys.push(...this._getKeyDataArray('spaceBarBehavior', hero))
-    keys.push(...this._getKeyDataArray('actionButtonBehavior', hero))
+    scheme1.push({ key: 'v', behavior: 'Interact'})
+    scheme1.push(...this._getKeyDataArray('arrowKeysBehavior', hero))
+    scheme1.push(...this._getKeyDataArray('spaceBarBehavior', hero))
+    scheme1.push(this._getKeyDataArray('zButtonBehavior', hero))
+    scheme1.push(this._getKeyDataArray('xButtonBehavior', hero))
+    scheme1.push(this._getKeyDataArray('cButtonBehavior', hero))
 
-    return keys
+    const scheme2 = []
+    scheme2.push({ key: 'e', behavior: 'Interact'})
+    scheme2.push(...this._getKeyDataArray('arrowKeysBehavior', hero, true))
+    scheme2.push(...this._getKeyDataArray('spaceBarBehavior', hero))
+    scheme2.push(this._getKeyDataArray('mButtonBehavior', hero))
+    scheme2.push(this._getKeyDataArray('nButtonBehavior', hero))
+    scheme2.push(this._getKeyDataArray('bButtonBehavior', hero))
+
+    return { scheme1, scheme2 }
   }
 
-  _getKeyDataArray(behavior, hero) {
-    if(!window[behavior][hero[behavior]]) return []
+  _getKeyDataArray(behavior, hero, alt) {
+    let windowName = behavior
+    let key
 
-    return Object.keys(window[behavior][hero[behavior]]).map((key) => {
+    if(behavior === 'mButtonBehavior' || behavior === 'nButtonBehavior' ||  behavior === 'bButtonBehavior' ||  behavior === 'xButtonBehavior' ||  behavior === 'zButtonBehavior' ||  behavior === 'cButtonBehavior') {
+      if(!hero[behavior]) return null
+      windowName = 'actionButtonBehavior'
+      const key = behavior.charAt(0)
       return {
-        behavior: window[behavior][hero[behavior]][key],
+        behavior: window[windowName][hero[behavior]],
+        key
+      }
+    }
+
+    if(alt) windowName+='2'
+    if(!window[windowName][hero[behavior]]) return []
+
+    return Object.keys(window[windowName][hero[behavior]]).map((key) => {
+      return {
+        behavior: window[windowName][hero[behavior]][key],
         key,
       }
     })
@@ -39,12 +63,21 @@ export default class ControlsInfo extends React.Component {
   render() {
     const { onClose } = this.props;
 
-    const keys = this._getUsedKeys(GAME.heros[HERO.id])
+    const { scheme1, scheme2 } = this._getUsedKeys(GAME.heros[HERO.id])
 
     return <div className="ControlsInfo">
-       <div className="ControlsInfo__header">Controls</div>
+       <div className="ControlsInfo__header">Control Scheme</div>
        <div className="ControlsInfo__content">
-      {keys.map((data) => {
+      {scheme1.map((data) => {
+        if(!data) return null
+        return <div className="ControlsInfo__item">
+          <div className="ControlsInfo__key">{this._renderKeySprite(data.key)}</div>
+          <div className="ControlsInfo__behavior">{data.behavior}</div>
+        </div>
+      })}
+      <div className="ControlsInfo__header">Alternative Control Scheme</div>
+      {scheme2.map((data) => {
+        if(!data) return null
         return <div className="ControlsInfo__item">
           <div className="ControlsInfo__key">{this._renderKeySprite(data.key)}</div>
           <div className="ControlsInfo__behavior">{data.behavior}</div>

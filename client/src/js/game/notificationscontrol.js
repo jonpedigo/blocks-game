@@ -37,6 +37,12 @@ class NotificationsControl{
   onHeroPickupFail(hero, subObject) {
     window.socket.emit('sendNotification', { heroId: hero.id, toast: true, log: true, text: 'You can\'t pick this up. You already have a ' + subObject.subObjectName})
   }
+
+  onEditHero(updatedHero) {
+    if(updatedHero.arrowKeysBehavior || updatedHero.spaceBarBehavior || updatedHero.zButtonBehavior || updatedHero.xButtonBehavior || updatedHero.cButtonBehavior) {
+      window.socket.emit('sendNotification', { heroId: updatedHero.id, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
+    }
+  }
 }
 
 window.NOTIFICATIONSCONTROL = new NotificationsControl()

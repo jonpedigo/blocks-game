@@ -423,7 +423,9 @@ class Hero{
       flags: hero.flags,
       tags: hero.tags,
 
-      actionButtonBehavior: hero.actionButtonBehavior,
+      zBehavior: hero.zBehavior,
+      xBehavior: hero.xBehavior,
+      cBehavior: hero.cBehavior,
       arrowKeysBehavior: hero.arrowKeysBehavior,
       spaceBarBehavior: hero.spaceBarBehavior,
 

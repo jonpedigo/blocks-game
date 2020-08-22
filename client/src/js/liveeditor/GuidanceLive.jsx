@@ -51,7 +51,7 @@ export default class GuidanceLive extends React.Component {
           <DatFolder title='Creator Library'>
             {this._renderLibrary('creator', window.homemadearcadeBasicLibrary)}
           </DatFolder>
-          <DatFolder title='Player Right Click Menu'>
+          <DatFolder title='Right Click Menu'>
             <DatFolder title='Hero'>
               {this._renderLibrary('heroMenu', window.heroMenuLibrary)}
             </DatFolder>

@@ -107,10 +107,13 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   const startPos = {x: gameObject.width/2 * MAP.camera.multiplier, y: gameObject.height/2 * MAP.camera.multiplier}
 
   let particleData
-  if(emitterDataName === 'custom' && options) {
+  if(emitterDataName === 'live') {
     particleData = {..._.cloneDeep(options), pos: startPos}
-  } else if(window.particleEmitterLibrary[emitterDataName]){
+  } if(window.particleEmitterLibrary[emitterDataName]){
     particleData = {..._.cloneDeep(window.particleEmitterLibrary[emitterDataName]), pos: startPos}
+  }
+  if(GAME.world.animations[emitterDataName]){
+    particleData = {..._.cloneDeep(GAME.world.animations[emitterDataName]), pos: startPos}
   }
 
   if(options.matchObjectColor) {

@@ -462,11 +462,11 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
     }, 1000)
   }
 
-  if(type === 'custom') {
-    const customEmitter = initEmitter(object, 'custom', options, true)
+  if(options.animationType === 'particle') {
+    const customEmitter = initEmitter(object, options.particleAnimationName, options, true)
     setTimeout(() => {
       PIXIMAP.deleteEmitter(customEmitter)
-    }, 3000)
+    }, 10000)
   }
 
   // -> start pulse, stop pulse here

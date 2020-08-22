@@ -72,6 +72,12 @@ function correctAndEffectAllObjectAndHeros (delta) {
   removeAndRespawn()
 }
 
+function setAngleVelocity(hero) {
+  const angleCorrection = window.degreesToRadians(90)
+  hero.velocityX = hero.velocityAngle * Math.cos(hero.angle - angleCorrection)
+  hero.velocityY = hero.velocityAngle * Math.sin(hero.angle - angleCorrection)
+}
+
 function updatePosition(object, delta) {
   if(object.removed || object.mod().relativeId) return
   if(object._skipPosUpdate) return
@@ -91,6 +97,8 @@ function updatePosition(object, delta) {
   //     }
   //   }
   // }
+
+  if(object.tags.rotateable && typeof object.velocityAngle === 'number') setAngleVelocity(object)
 
   const maxVelocityX = object.velocityMax + (object.velocityMaxXExtra || 0)
   if(object.velocityX) {
@@ -359,7 +367,7 @@ function postPhysics() {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
       window.emitGameEvent('onObjectInteractable', hero.interactableObject, hero)
-      if(input && input['e'] === true && !hero._cantInteract && !hero.flags.paused) {
+      if(input && (input['e'] === true || input['v'] === true) && !hero._cantInteract && !hero.flags.paused) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject)
         hero._cantInteract = true
       }

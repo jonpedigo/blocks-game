@@ -48,7 +48,6 @@ Implement special extra physics for objects, not just heros
 INVENTORY UPGRADE
 Inventory Context Menu -> Drop, Equip to Hero, Add to Shortcuts
 show inventory in HUD tag, like RTS resources VS team...yeahh
-// have CREATOR menu dissapear unless you hover over?
 actually build in this whole equipping system
   quick equip menu
   guns, swords, etc, I want it all WITH MODS TOO I WANNA SEE MOD WORKING WITH EQUIP
@@ -151,6 +150,9 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+Background animation tag ( perhaps background stage and everything…)
+Add animations to an object, custom animations? More than one like an array of them.. lol
+add custom input behavior is broken but maybe thats good
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 Object 'swinging' like on a rope. I mean... awesome right?
 in-game checkpoints
