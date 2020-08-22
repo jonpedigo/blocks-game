@@ -431,6 +431,8 @@ import './js/creator/index.js'
 import './styles/index.scss'
 import './styles/jsoneditor.css'
 
+import './js/libraries/modLibrary.js'
+
 if(document.hasFocus()) {
   PAGE.load()
 } else {

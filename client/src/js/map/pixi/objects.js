@@ -128,9 +128,16 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
 
   emitter.spawnPos.x = gameObject.width/2 * camera.multiplier
   emitter.spawnPos.y =  gameObject.height/2 * camera.multiplier
-  if(emitter.isAnimationEmitter) {
-    emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
-  } else {
+  if(emitter.useUpdateOwnerPos) {
+    // if(gameObject.tags.rotateable) {
+    //   // pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
+    //   // pixiChild.rotation = gameObject.angle || 0
+    //   // emitter.updateOwnerPos((gameObject.x + gameObject.width/2) * camera.multiplier, (gameObject.y + gameObject.height/2) * camera.multiplier)
+    //   // emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+    // } else {
+      emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
+    // }
+  } else if(!emitter.hasNoOwner) {
     if(gameObject.tags.rotateable) {
       pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
       pixiChild.rotation = gameObject.angle || 0
@@ -151,7 +158,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   }
 }
 
-function initEmitter(gameObject, emitterType = 'smallFire', options = {}, isAnimationEmitter) {
+function initEmitter(gameObject, emitterType = 'smallFire', options = {}, metaOptions = {}) {
   const container = new PIXI.Container()
   const stage = getGameObjectStage(gameObject)
   stage.addChild(container)
@@ -164,10 +171,11 @@ function initEmitter(gameObject, emitterType = 'smallFire', options = {}, isAnim
   //this will be for the event animations
   // and also for like addAnimation removeAnimation for like a powerup you feel me?
 
-  if(!isAnimationEmitter) container.name = gameObject.id
+  if(metaOptions.hasNoOwner) container.name = gameObject.id
   container.emitter = emitter
+  container.emitter.hasNoOwner = metaOptions.hasNoOwner
   container.emitter.type = emitterType
-  container.emitter.isAnimationEmitter = isAnimationEmitter
+  container.emitter.useUpdateOwnerPos = options.useUpdateOwnerPos
 
   updatePixiEmitter(container, gameObject)
 
@@ -194,7 +202,7 @@ function updateProperties(pixiChild, gameObject) {
   updateAlpha(pixiChild, gameObject)
 
   if(gameObject.tags.hasTrail && !pixiChild.trailEmitter) {
-    pixiChild.trailEmitter = initEmitter(gameObject, 'trail', { scaleToGameObject: true, matchObjectColor: true }, true)
+    pixiChild.trailEmitter = initEmitter(gameObject, 'trail', { scaleToGameObject: true, matchObjectColor: true, useUpdateOwnerPos: true })
   }
   if(!gameObject.tags.hasTrail && pixiChild.trailEmitter) {
     PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
@@ -203,7 +211,7 @@ function updateProperties(pixiChild, gameObject) {
 
 
   if(gameObject.tags.liveEmitter && !pixiChild.liveEmitter && gameObject.liveEmitterData) {
-    pixiChild.liveEmitter = initEmitter(gameObject, 'live', gameObject.liveEmitterData, true)
+    pixiChild.liveEmitter = initEmitter(gameObject, 'live', gameObject.liveEmitterData)
   }
 
   if(!gameObject.tags.liveEmitter && pixiChild.liveEmitter) {

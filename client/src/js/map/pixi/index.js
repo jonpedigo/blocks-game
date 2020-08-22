@@ -448,7 +448,7 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
   }
 
   if(type === 'explode') {
-    pixiChild.explodeEmitter = initEmitter(object, 'explode', { persistAfterRemoved: true, matchObjectColor: true }, true)
+    pixiChild.explodeEmitter = initEmitter(object, 'explode', { persistAfterRemoved: true, matchObjectColor: true, useUpdateOwnerPos: true }, { hasNoOwner: true })
     setTimeout(() => {
       PIXIMAP.deleteEmitter(pixiChild.explodeEmitter)
       delete pixiChild.explodeEmitter
@@ -456,14 +456,15 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
   }
 
   if(type === 'spinOff') {
-    const explosionEmitter = initEmitter(object, 'spinOff', { persistAfterRemoved: true, scaleToGameObject: true, matchObjectColor: true }, true)
+    const explosionEmitter = initEmitter(object, 'spinOff', { persistAfterRemoved: true, scaleToGameObject: true, matchObjectColor: true, useUpdateOwnerPos: true }, { hasNoOwner: true })
     setTimeout(() => {
       PIXIMAP.deleteEmitter(explosionEmitter)
     }, 1000)
   }
 
+  // fail safe animate the rest
   if(options.animationType === 'particle') {
-    const customEmitter = initEmitter(object, options.particleAnimationName, options, true)
+    const customEmitter = initEmitter(object, options.particleAnimationName, options, { hasNoOwner: true })
     setTimeout(() => {
       PIXIMAP.deleteEmitter(customEmitter)
     }, 10000)

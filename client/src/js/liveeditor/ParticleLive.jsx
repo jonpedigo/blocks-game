@@ -255,6 +255,7 @@ export default class ParticleLive extends React.Component {
             <DatNumber path='liveEmitterData.startRotation.max' label="Rotation Start Max" min={0} max={360} step={1} />
             <DatNumber path='liveEmitterData.rotationSpeed.min' label="Rotation Speed Min" min={0} max={360} step={1} />
             <DatNumber path='liveEmitterData.rotationSpeed.max' label="Rotation Speed Max" min={0} max={360} step={1} />
+            <DatBoolean path={'liveEmitterData.useUpdateOwnerPos'} label="Don't rotate particles with object" />
           </DatFolder>
 
           <DatFolder title='Lifetime'>

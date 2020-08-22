@@ -598,6 +598,17 @@ class Objects{
     }
   }
 
+  onUpdateHero(hero, keysDown, delta) {
+    if(hero.mod().tags.realRotate) {
+      if(typeof hero.angle != 'number') hero.angle = 0
+      hero.angle += 1 * delta
+    }
+    if(hero.mod().tags.realRotateFast) {
+      if(typeof hero.angle != 'number') hero.angle = 0
+      hero.angle += 7 * delta
+    }
+  }
+
   addObject(object) {
     // object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
     GAME.objectsById[object.id] = object

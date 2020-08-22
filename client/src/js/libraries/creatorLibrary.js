@@ -18,6 +18,10 @@ function constructEditorOnSelect(objectId, tags) {
   })
 }
 
+function applyHeroMod() {
+
+}
+
 function onGameLoaded() {
   window.creatorLibrary = {
     selectColor: {
@@ -156,6 +160,37 @@ function onGameLoaded() {
         }
       }
     },
+    spear: {
+      label: 'Spear',
+      columnName: 'Hero',
+      JSON: {
+        subObjects: {
+          spear: {
+            x: 0, y: 0, width: 8, height: 40,
+            relativeWidth: 0,
+            relativeHeight: 0,
+            relativeX: -(GAME.grid.nodeSize/3),
+            relativeY: -(GAME.grid.nodeSize/2),
+            opacity: 1,
+            color: 'yellow',
+            tags: { obstacle: true, monsterDestroyer: true, relativeToAngle: true, relativeToDirection: true },
+          }
+        },
+        tags: {}
+      },
+      onSelect: () => {
+        const mod = {
+          ownerId: HERO.id,
+          effectJSON: window.modLibrary.spin
+        }
+        GAME.gameState.activeModList.push(mod)
+        // console.log(window.creatorLibrary.spear.JSON)
+      },
+      onUnselect: () => {
+
+      }
+    }
+
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -165,6 +200,7 @@ function onGameLoaded() {
     drawForeground: false,
     standingNPC: false,
     wanderingNPC: false,
+    spear: true,
   }
 
   window.adminCreatorObjects = {
@@ -181,6 +217,7 @@ function onGameLoaded() {
     chest: true,
     standingNPC: true,
     wanderingNPC: true,
+    spear: true,
   }
 }
 
