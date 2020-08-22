@@ -115,6 +115,15 @@ function updatePosition(pixiChild, gameObject) {
     pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
     pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
   } else {
+    if(pixiChild.rotation) {
+      if(isContainer) {
+        pixiChild.pivot.set(0, 0)
+      } else {
+        pixiChild.anchor.set(0, 0)
+      }
+      pixiChild.rotation= 0
+    }
+
     if(pixiChild.shakeEase) {
       pixiChild.shakeEase.eases[0].start.x = (gameObject.x) * camera.multiplier
       pixiChild.shakeEase.eases[0].start.y = (gameObject.y) * camera.multiplier

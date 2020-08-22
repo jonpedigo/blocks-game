@@ -1127,6 +1127,16 @@ class Objects{
       object.chat = null
     })
   }
+
+  onResetPhysicsProperties(objectId) {
+    const object = OBJECTS.getObjectOrHeroById(objectId)
+    object.velocityY = 0
+    object.velocityX = 0
+    object.velocityAngle = 0
+    object._skipPosUpdate = true
+    object._skipNextGravity = true
+    object.angle = null
+  }
 }
 
 window.OBJECTS = new Objects()

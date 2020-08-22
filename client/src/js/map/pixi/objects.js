@@ -144,6 +144,10 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
       pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
       pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
     } else {
+      if(pixiChild.rotation) {
+        pixiChild.pivot.set(0, 0)
+        pixiChild.rotation= 0
+      }
       pixiChild.x = (gameObject.x) * camera.multiplier
       pixiChild.y = (gameObject.y) * camera.multiplier
     }
@@ -172,6 +176,7 @@ function initEmitter(gameObject, emitterType = 'smallFire', options = {}, metaOp
   // and also for like addAnimation removeAnimation for like a powerup you feel me?
 
   if(metaOptions.hasNoOwner) container.name = gameObject.id
+  else container.ownerName = gameObject.id
   container.emitter = emitter
   container.emitter.hasNoOwner = metaOptions.hasNoOwner
   container.emitter.type = emitterType

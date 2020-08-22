@@ -453,6 +453,17 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('resetLiveParticle', (objectId) => {
     io.emit('onResetLiveParticle', objectId)
   })
+
+  socket.on('startMod', (mod) => {
+    io.emit('onStartMod', mod)
+  })
+  socket.on('endMod', (manualRevertId) => {
+    io.emit('onEndMod', manualRevertId)
+  })
+
+  socket.on('resetPhysicsProperties', (objectId) => {
+    io.emit('onResetPhysicsProperties', objectId)
+  })
 }
 
 module.exports = socketEvents

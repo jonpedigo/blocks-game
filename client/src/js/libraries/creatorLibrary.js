@@ -18,8 +18,23 @@ function constructEditorOnSelect(objectId, tags) {
   })
 }
 
-function applyHeroMod() {
-
+function toggleMod(modId) {
+  let objectId = null
+  return {
+    onToggleOn: () => {
+      const mod = {
+        ownerId: objectId || HERO.id,
+        effectJSON: window.modLibrary[modId],
+        manualRevertId: modId,
+      }
+      window.socket.emit('startMod', mod)
+      window.socket.emit('resetPhysicsProperties', objectId || HERO.id)
+    },
+    onToggleOff: () => {
+      window.socket.emit('endMod', modId)
+      window.socket.emit('resetPhysicsProperties', objectId || HERO.id)
+    }
+  }
 }
 
 function onGameLoaded() {
@@ -160,37 +175,48 @@ function onGameLoaded() {
         }
       }
     },
-    spear: {
-      label: 'Spear',
+    spin: {
+      label: 'Spin',
       columnName: 'Hero',
-      JSON: {
-        subObjects: {
-          spear: {
-            x: 0, y: 0, width: 8, height: 40,
-            relativeWidth: 0,
-            relativeHeight: 0,
-            relativeX: -(GAME.grid.nodeSize/3),
-            relativeY: -(GAME.grid.nodeSize/2),
-            opacity: 1,
-            color: 'yellow',
-            tags: { obstacle: true, monsterDestroyer: true, relativeToAngle: true, relativeToDirection: true },
-          }
-        },
-        tags: {}
-      },
-      onSelect: () => {
-        const mod = {
-          ownerId: HERO.id,
-          effectJSON: window.modLibrary.spin
-        }
-        GAME.gameState.activeModList.push(mod)
-        // console.log(window.creatorLibrary.spear.JSON)
-      },
-      onUnselect: () => {
-
-      }
-    }
-
+      toggleId: 'heroSpin',
+      ...toggleMod('spin')
+    },
+    mario: {
+      label: 'Mario',
+      columnName: 'Hero',
+      toggleId: 'mario',
+      ...toggleMod('mario')
+    },
+    kirby: {
+      label: 'Kirby',
+      columnName: 'Hero',
+      toggleId: 'kirby',
+      ...toggleMod('kirby')
+    },
+    zelda: {
+      label: 'Zelda',
+      columnName: 'Hero',
+      toggleId: 'zelda',
+      ...toggleMod('zelda')
+    },
+    ufo: {
+      label: 'UFO',
+      columnName: 'Hero',
+      toggleId: 'ufo',
+      ...toggleMod('ufo')
+    },
+    asteroids: {
+      label: 'Asteroids',
+      columnName: 'Hero',
+      toggleId: 'asteroids',
+      ...toggleMod('asteroids')
+    },
+    car: {
+      label: 'Car',
+      columnName: 'Hero',
+      toggleId: 'car',
+      ...toggleMod('car')
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -200,7 +226,13 @@ function onGameLoaded() {
     drawForeground: false,
     standingNPC: false,
     wanderingNPC: false,
-    spear: true,
+    spin: true,
+    mario: true,
+    zelda: true,
+    asteroids: true,
+    car: true,
+    ufo: true,
+    kirby: true,
   }
 
   window.adminCreatorObjects = {
@@ -217,7 +249,13 @@ function onGameLoaded() {
     chest: true,
     standingNPC: true,
     wanderingNPC: true,
-    spear: true,
+    spin: true,
+    mario: true,
+    zelda: true,
+    asteroids: true,
+    car: true,
+    ufo: true,
+    kirby: true,
   }
 }
 

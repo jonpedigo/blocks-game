@@ -11,6 +11,7 @@ export default class Creator extends React.Component {
       creatorObjectSelected : {},
       rows: [],
       columnsOpen: {},
+      creatorObjectsToggled: {},
       isColorPickerOpen: false,
       colorSelected: EDITOR.preferences.creatorColorSelected
     }
@@ -154,15 +155,34 @@ export default class Creator extends React.Component {
   }
 
   _selectCreatorObject(object) {
-    if(object.onSelect) object.onSelect.bind(this)()
-    // window.setFontAwesomeCursor("\uf041", 'white')
-    this.setState({
-      creatorObjectSelected: object
-    })
+    const { creatorObjectsToggled } = this.state;
+    if(object.onToggleOn && !creatorObjectsToggled[object.toggleId]) {
+      object.onToggleOn.bind(this)()
+      this.setState({
+        creatorObjectsToggled: {
+          ...creatorObjectsToggled,
+          [object.toggleId]: true
+        }
+      })
+    } else if(object.onToggleOff && creatorObjectsToggled[object.toggleId]) {
+      object.onToggleOff.bind(this)()
+      this.setState({
+        creatorObjectsToggled: {
+          ...creatorObjectsToggled,
+          [object.toggleId]: false
+        }
+      })
+    } else if(object.onSelect) {
+      object.onSelect.bind(this)()
+    } else {
+      this.setState({
+        creatorObjectSelected: object
+      })
+    }
   }
 
   _renderColumn(column) {
-    const { columnsOpen, creatorObjectSelected } = this.state
+    const { columnsOpen, creatorObjectSelected, creatorObjectsToggled } = this.state
 
     const name = column[0].columnName
     const selected = name === creatorObjectSelected.columnName
@@ -192,10 +212,12 @@ export default class Creator extends React.Component {
       {open &&
         column.map((object) => {
           const selected = object.label === creatorObjectSelected.label
+          const toggledOn = creatorObjectsToggled[object.toggleId]
           return <div className={classnames("Creator__category-item", { "Creator__category-item--selected": selected })} onClick={() => {
               this._selectCreatorObject(object)
             }}>
             {object.label}
+            {toggledOn && <i className="fa fas fa-check"/>}
           </div>
         })
       }

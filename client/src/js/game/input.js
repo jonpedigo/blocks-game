@@ -245,14 +245,14 @@ function onUpdate(hero, keysDown, delta) {
   /// DEFAULT GAME FX
   if(hero.flags.paused || GAME.gameState.paused) return
 
-  if('z' in keysDown && hero.tags.zButtonOnce != true && hero.zButtonBehavior) {
-    handleActionButtonBehavior(hero, hero.zButtonBehavior, delta)
+  if('z' in keysDown && hero.mod().tags.zButtonOnce != true && hero.mod().zButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.mod().zButtonBehavior, delta)
   }
-  if('x' in keysDown && hero.tags.xButtonOnce != true && hero.xButtonBehavior) {
-    handleActionButtonBehavior(hero, hero.xButtonBehavior, delta)
+  if('x' in keysDown && hero.mod().tags.xButtonOnce != true && hero.mod().xButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.mod().xButtonBehavior, delta)
   }
-  if('c' in keysDown && hero.tags.cButtonOnce != true && hero.cButtonBehavior) {
-    handleActionButtonBehavior(hero, hero.cButtonBehavior, delta)
+  if('c' in keysDown && hero.mod().tags.cButtonOnce != true && hero.mod().cButtonBehavior) {
+    handleActionButtonBehavior(hero, hero.mod().cButtonBehavior, delta)
   }
 
   const xSpeed = hero.mod().speed + (hero.mod().speedXExtra || 0)
@@ -386,7 +386,7 @@ function onUpdate(hero, keysDown, delta) {
         return
       }
 
-      if (upPressed && !hero.tags.disableUpKeyMovement) {
+      if (upPressed && !hero.mod().tags.disableUpKeyMovement) {
         hero._flatVelocityY = -Math.ceil(ySpeed * delta) * 100
       }
 

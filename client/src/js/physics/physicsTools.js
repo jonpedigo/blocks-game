@@ -506,7 +506,7 @@ function attachSubObjects(owner, subObjects) {
 
       let radians = 0
 
-      if(subObject.mod().tags.relativeToAngle) {
+      if(subObject.mod().tags.relativeToAngle && typeof owner.angle == 'number') {
         radians = owner.angle
       } else if(subObject.mod().tags.relativeToDirection) {
         if(direction === 'right') {

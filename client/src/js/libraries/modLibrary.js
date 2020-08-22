@@ -4,5 +4,44 @@ window.modLibrary = {
       rotateable: true,
       realRotateFast: true
      }
-  }
+  },
+  asteroids: {
+    arrowKeysBehavior: 'angleAndVelocity',
+    zButtonBehavior: 'brakeToZero',
+    tags: {
+      rotateable: true,
+    }
+  },
+  car: {
+    arrowKeysBehavior: 'angle',
+    zButtonBehavior: 'accelerate',
+    xButtonBehavior: 'brakeToZero',
+    tags: {
+      rotateable: true,
+    }
+  },
+  ufo: {
+    arrowKeysBehavior: 'velocity',
+  },
+  zelda: {
+    arrowKeysBehavior: 'flatDiagonal',
+  },
+  kirby: {
+    arrowKeysBehavior: 'flatDiagonal',
+    spaceBarBehavior: 'floatJump',
+    tags: {
+      gravityY: true,
+    },
+    jumpVelocity: -480,
+    velocityMax: 480,
+  },
+  mario: {
+    arrowKeysBehavior: 'flatDiagonal',
+    spaceBarBehavior: 'jump',
+    tags: {
+      gravityY: true,
+    },
+    jumpVelocity: -480,
+    velocityMax: 480,
+  },
 }

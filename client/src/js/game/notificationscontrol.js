@@ -43,6 +43,24 @@ class NotificationsControl{
       window.socket.emit('sendNotification', { heroId: updatedHero.id, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
     }
   }
+
+  onStartMod(mod) {
+    console.log(mod)
+    if(mod.effectJSON.arrowKeysBehavior || mod.effectJSON.spaceBarBehavior || mod.effectJSON.zButtonBehavior || mod.effectJSON.xButtonBehavior || mod.effectJSON.cButtonBehavior) {
+      window.socket.emit('sendNotification', { heroId: mod.ownerId, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
+    }
+  }
+
+  onEndMod(manualRevertId) {
+    const mod = GAME.gameState.activeModList.filter((mod) => {
+      if(mod.manualRevertId === manualRevertId) return true
+      else return false
+    })[0]
+    if(!mod) return
+    if(mod.effectJSON.arrowKeysBehavior || mod.effectJSON.spaceBarBehavior || mod.effectJSON.zButtonBehavior || mod.effectJSON.xButtonBehavior || mod.effectJSON.cButtonBehavior) {
+      window.socket.emit('sendNotification', { heroId: mod.ownerId, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
+    }
+  }
 }
 
 window.NOTIFICATIONSCONTROL = new NotificationsControl()

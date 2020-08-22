@@ -418,6 +418,16 @@ function init() {
   window.socket.on('onResetLiveParticle', (objectId) => {
     window.local.emit('onResetLiveParticle', objectId)
   })
+
+  window.socket.on('onStartMod', (mod) => {
+    window.local.emit('onStartMod', mod)
+  })
+  window.socket.on('onEndMod', (manualRevertId) => {
+    window.local.emit('onEndMod', manualRevertId)
+  })
+  window.socket.on('onResetPhysicsProperties', (objectId) => {
+    window.local.emit('onResetPhysicsProperties', objectId)
+  })
 }
 
 export default {

@@ -123,7 +123,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   // SORT GROUP
   PIXIMAP.sortGroup = new PIXI.display.Group(0, true);
   PIXIMAP.sortGroup.on('sort', function(sprite) {
-      // emitters are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
+      // emitters and chats are just kinda messed up and need a high zOrder I guess. They dont have a correct sprite.y?
       // WORK AROUND -> I could put foreground elements on a different higher stage than the emitters
       if(sprite.emitter || sprite.isChat) {
         sprite.zOrder = 1000000000000
@@ -144,14 +144,17 @@ const initPixiApp = (canvasRef, onLoad) => {
 
       if(object && object.tags.obstacle){
         sprite.zOrder = sprite.y + 10000
+        if(sprite.ownerName) sprite.zOrder += 1000
         return
       }
       if(object && object.tags.hero) {
         sprite.zOrder = sprite.y + 100000
+        if(sprite.ownerName) sprite.zOrder += 1000
         return
       }
 
       sprite.zOrder = sprite.y;
+      if(sprite.ownerName) sprite.zOrder += 1000
   });
 
   PIXIMAP.sortGroup.enableSort = true;

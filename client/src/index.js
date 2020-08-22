@@ -150,6 +150,7 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+By view so you can see certain objects based on ur view like 'xray goggles'! teehee
 Background animation tag ( perhaps background stage and everything…)
 Add animations to an object, custom animations? More than one like an array of them.. lol
 add custom input behavior is broken but maybe thats good
@@ -307,6 +308,12 @@ Engine trail on a car u know what I mean?
 /// INFRASTRUCTURE
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// allow pixi child sub object to go underneath their owner instead of always above, use tags please the whole time
+
+// event system for physics, game logic, rendering, network update, ui, seperating helps!
+
+// this is really scary. the host CANNOT refresh the page if any mods are used. The server is saving the modded version of the game currently because thats what we send to the clients
+
 // revise physics system structure, allow like 'center point' to be changed and have it be used by default.
 // ^^ so that rotation isnt a hack
 // Rotational velocity also needs to be default.
@@ -432,6 +439,7 @@ import './styles/index.scss'
 import './styles/jsoneditor.css'
 
 import './js/libraries/modLibrary.js'
+import './js/libraries/subObjectLibrary.js'
 
 if(document.hasFocus()) {
   PAGE.load()

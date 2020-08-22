@@ -68,6 +68,13 @@ class Game{
             PHYSICS.heroCorrection(hero, [], [])
             PHYSICS.postPhysics([], [])
           })
+
+          GAME.objects.forEach((object) => {
+            if(object.removed) return
+            window.local.emit('onUpdateObject', object, delta)
+          })
+
+          GAME.loadActiveMods()
         }
 
         dayNightCycle.update(delta)
@@ -810,9 +817,6 @@ class Game{
   }
 
   updateActiveMods() {
-    GAME.gameState.activeMods = {}
-    GAME.modCache = {}
-
     /*
     {
       //modname
@@ -851,6 +855,12 @@ class Game{
       return GAME.testMod(mod, testObject)
     })
 
+    GAME.loadActiveMods()
+  }
+
+  loadActiveMods() {
+    GAME.gameState.activeMods = {}
+    GAME.modCache = {}
     // create mods to effect the game in the next update
     GAME.gameState.activeModList.forEach((mod) => {
       if(!GAME.gameState.activeMods[mod.ownerId]) GAME.gameState.activeMods[mod.ownerId] = []
@@ -972,6 +982,17 @@ class Game{
 
   onAddAnimation(name, animationData) {
     GAME.world.animations[name] = animationData
+  }
+
+  onStartMod(mod) {
+    GAME.startMod(mod.ownerId, mod)
+  }
+  onEndMod(manualRevertId) {
+    GAME.gameState.activeModList = GAME.gameState.activeModList.filter((mod) => {
+      mod._remove = true
+      if(mod.manualRevertId === manualRevertId) return false
+      return true
+    })
   }
 }
 

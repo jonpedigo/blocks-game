@@ -125,6 +125,10 @@ PIXIMAP.deleteObject = function(object, stage) {
     PIXIMAP.deleteEmitter(pixiChild.emitter)
     delete pixiChild.emitter
   }
+  if(pixiChild.liveEmitter) {
+    PIXIMAP.deleteEmitter(pixiChild.liveEmitter)
+    delete pixiChild.liveEmitter
+  }
   if(pixiChild.trailEmitter) {
     PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
     delete pixiChild.trailEmitter

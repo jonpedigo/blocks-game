@@ -70,6 +70,12 @@ function updatePixiEmitterData(pixiChild, gameObject, options) {
   }
 // particleImages: [Textures]
 
+  if(data.scaleToGameObject) {
+    const modifyScaleX = (gameObject.width/PIXIMAP.textures.solidcolorsprite._frame.width * MAP.camera.multiplier)
+    data.scale.start = modifyScaleX
+    data.scale.end = modifyScaleX
+  }
+
   emitter.startScale.value = data.scale.start
   if(emitter.startScale.next) emitter.startScale.next.value = data.scale.end
   else if(PAGE.role.isHost && data.scale.start !== data.scale.end) {
@@ -132,11 +138,15 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   //   particles = particles.map(p => PIXI.Texture.from(p))
   // }
 
+
+  particleData.particle = particles
+
   if(options.scaleToGameObject) {
     const modifyScaleX = (gameObject.width/particles[0]._frame.width * MAP.camera.multiplier)
     // const modifyScaleY = (gameObject.height/particles[0]._frame.height)
-    particleData.scale.start = modifyScaleX * particleData.scale.start
-    particleData.scale.end = modifyScaleX * particleData.scale.end
+    particleData.scale.start = modifyScaleX
+    particleData.scale.end = modifyScaleX
+
     // particleData.scale.minimumScaleMultiplier = particleData.scale.minimumScaleMultiplier * MAP.camera.multiplier
   } else {
     particleData.scale.start = MAP.camera.multiplier * particleData.scale.start

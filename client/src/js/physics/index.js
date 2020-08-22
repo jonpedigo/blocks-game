@@ -98,9 +98,9 @@ function updatePosition(object, delta) {
   //   }
   // }
 
-  if(object.tags.rotateable && typeof object.velocityAngle === 'number') setAngleVelocity(object)
+  if(object.mod().tags.rotateable && typeof object.velocityAngle === 'number') setAngleVelocity(object)
 
-  const maxVelocityX = object.velocityMax + (object.velocityMaxXExtra || 0)
+  const maxVelocityX = object.mod().velocityMax + (object.mod().velocityMaxXExtra || 0)
   if(object.velocityX) {
     if(object.velocityX >= maxVelocityX) object.velocityX = maxVelocityX
     else if(object.velocityX <= maxVelocityX * -1) object.velocityX = maxVelocityX * -1
@@ -129,7 +129,7 @@ function updatePosition(object, delta) {
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
-  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.tags.moving && !object.tags.stationary && !object.tags.ignoreWorldGravity) {
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.mod().tags.moving && !object.mod().tags.stationary && !object.mod().tags.ignoreWorldGravity) {
     applyWorldGravity = true
   }
 
@@ -141,7 +141,7 @@ function updatePosition(object, delta) {
     object.velocityY += (gravityVelocityY * delta)
   }
 
-  const maxVelocityY = object.velocityMax + (object.velocityMaxYExtra || 0)
+  const maxVelocityY = object.mod().velocityMax + (object.mod().velocityMaxYExtra || 0)
   if(object.velocityY) {
     if(object.velocityY >= maxVelocityY) {
       object.velocityY = maxVelocityY
@@ -156,9 +156,9 @@ function updatePosition(object, delta) {
   }
   if(object._flatVelocityY) object.y += object._flatVelocityY * delta
 
-  if(typeof object.velocityDecay == 'number') {
-    const velocityDecayY = object.velocityDecay + (object.velocityDecayYExtra || 0)
-    const velocityDecayX = object.velocityDecay + (object.velocityDecayXExtra || 0)
+  if(typeof object.mod().velocityDecay == 'number') {
+    const velocityDecayY = object.mod().velocityDecay + (object.mod().velocityDecayYExtra || 0)
+    const velocityDecayX = object.mod().velocityDecay + (object.mod().velocityDecayXExtra || 0)
 
     if(object.velocityX < 0) {
       object.velocityX += (velocityDecayX * delta)

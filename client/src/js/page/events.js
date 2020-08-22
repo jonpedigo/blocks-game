@@ -22,6 +22,10 @@ class EventEmitter {
 
       if(!debugEvent && eventName !== 'onNetworkUpdateObjectsComplete' && eventName !== 'onHeroLand' && eventName !== 'onSendHeroInput' && eventName !== 'onKeyDown' && eventName !== 'onSendHeroMapEditor' && eventName !== 'onUpdateGameState' && eventName !== 'onNetworkUpdateHero' && eventName !== 'onNetworkUpdateObjects' && eventName !== 'onUpdate' && eventName !== 'onRender' && eventName !== 'onUpdateHero' && eventName !== 'onUpdateObject' && eventName !== 'onObjectCollide' && eventName !== 'onHeroCollide' && eventName !== 'onSendHeroKeyUp' && eventName !== 'onKeyUp') console.log(eventName)
 
+      if(PAGE.role.isHost && NOTIFICATIONSCONTROL[eventName]) {
+        event.push(NOTIFICATIONSCONTROL[eventName])
+      }
+      
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])
       }
@@ -124,10 +128,6 @@ class EventEmitter {
 
       if(CREATOR[eventName]) {
         event.push(CREATOR[eventName])
-      }
-
-      if(PAGE.role.isHost && NOTIFICATIONSCONTROL[eventName]) {
-        event.push(NOTIFICATIONSCONTROL[eventName])
       }
     }
 
