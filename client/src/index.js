@@ -37,9 +37,6 @@ Add objects when you hit power world transform buttons
 Improve Add Sub Object
 
 GAME FEEL UPGRADE
-MORE key actions.
-  Arrow keys are ALL rotation, up brings rotation to front, right brings it to 90 degrees, etc, down to 180, etc
-  z and x accelerate and decelerate
 more space bar actions -> 'double jump', 'dash'
 // all objects fade in, all objects fade in random
 Bounce
@@ -150,26 +147,36 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+right click - follow, follow path
+
+ATTACK which is like initial acceleration when there is no acceleration yet, jump attack speed, etc
+tag: sharpTurns ( velocity is positive and decreasing, increase this power )
+event: onObjectTurn
+Object 'swinging' like on a rope. I mean... awesome right?
+input modifiers....'on ice', 'flat'
+// planet gravity! Would be cool to have..
+
+ADMIN POWER HIGHLIGHT - switch current user highlight to like.. a BORDER. Alsso make the admin highlight a border ( show all players highlights when game isnt started? )
+
+I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
+TRUE zelda camera work
+
+mini-map
+map rotation having problems 1) object stage already pivoted for camera reason 2) admin canvas is not rotating with
+
+// ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 By view so you can see certain objects based on ur view like 'xray goggles'! teehee
 Background animation tag ( perhaps background stage and everything…)
 Add animations to an object, custom animations? More than one like an array of them.. lol
 add custom input behavior is broken but maybe thats good
-I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
-Object 'swinging' like on a rope. I mean... awesome right?
 in-game checkpoints
-input modifiers....'on ice', 'flat'
-ADMIN POWER HIGHLIGHT - switch current user highlight to like.. a BORDER. Alsso make the admin highlight a border ( show all players highlights when game isnt started? )
-TRUE zelda camera work
-rotation having problems 1) object stage already pivoted for camera reason 2) admin canvas is not rotating with
 // gun that swaps places with what it hits! so cool..
-// planet gravity! Would be cool to have..
 // 3d sound effects system from papa bear
 // layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
 // run local simulation
 // add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
 // KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
-// ELEVATION IS POSSIBLE THROUGH A VISUAL ILLUSION ( see littlewood game )
 // local mods? ( client only mods for specific players/situations )
 // pixiChild._stillUsed property as well as a PIXIMAP.objectsById system. We scrap app PIXICHILDs that arent in use every like 10s
 ////////////////////////////////////////////////////

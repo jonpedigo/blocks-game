@@ -186,6 +186,7 @@ function setDefault() {
     pulseDarken: false,
     pulseLighten: false,
     fadeInOnInit: false,
+    flipYAtMaxVelocity: false,
     // realHover: false,
   }
 

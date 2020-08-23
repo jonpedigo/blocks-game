@@ -186,6 +186,12 @@ function updatePosition(object, delta) {
     object.x = object._initialX
     object.y = object._initialY
   }
+
+
+  if(object.mod().tags.flipYAtMaxVelocity && Math.abs(object.velocityY) == object.mod().velocityMax) {
+    object._flipY = true
+    console.log(object._flipY)
+  }
 }
 
 function getAllHeros() {
@@ -217,6 +223,9 @@ function prepareObjectsAndHerosForMovementPhase() {
     object._parentId = null
     object._initialX = object.x
     object._initialY = object.y
+
+    object._flipY = false
+
     delete object._skipPosUpdate
     delete object._flatVelocityX
     delete object._flatVelocityY

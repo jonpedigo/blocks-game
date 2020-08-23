@@ -381,6 +381,7 @@ PIXIMAP.onUpdateGridNode = function(x, y, update) {
   }
   // PIXIMAP.updateBlockSprites()
 }
+
 PIXIMAP.updateBlockSprites = function() {
   if(!PIXIMAP.grid) return
 

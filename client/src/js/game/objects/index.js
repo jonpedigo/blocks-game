@@ -305,6 +305,7 @@ class Objects{
       namePos: object.namePos,
       removed: object.removed,
       angle: object.angle,
+      _flipY: object._flipY,
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       liveEmitterData: object.liveEmitterData,

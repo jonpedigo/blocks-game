@@ -67,6 +67,11 @@ function stopPulse(pixiChild, type) {
     pixiChild.isAnimatingAlpha = false
     delete pixiChild.pulseAlphaEase
   }
+
+  // if(type === 'flipY') {
+  //   ease.removeEase(pixiChild, 'skewX')
+  //   delete pixiChild.skewEase
+  // }
 }
 
 
@@ -95,6 +100,10 @@ function startPulse(pixiChild, gameObject, type) {
     pixiChild.shakeEase = ease.add(pixiChild, { shake: 5 }, { repeat: true, ease: 'linear' })
     pixiChild.isAnimatingPosition = true
   }
+  // 
+  // if(type === 'flipY') {
+  //   pixiChild.skewEase = ease.add(pixiChild, { skewX: 6.34 }, { repeat: true, ease: 'linear' })
+  // }
 }
 
 function updatePosition(pixiChild, gameObject) {
@@ -311,6 +320,7 @@ export {
   getVisibility,
   setColor,
   startPulse,
+  stopPulse,
   startAnimation,
   updatePosition,
   updateAlpha,

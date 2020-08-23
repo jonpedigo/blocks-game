@@ -559,6 +559,7 @@ class Hero{
       color: hero.color,
       inputDirection: hero.inputDirection,
       lives: hero.lives,
+      _flipY: hero._flipY,
       score: hero.score,
       removed: hero.removed,
       questState: hero.questState,

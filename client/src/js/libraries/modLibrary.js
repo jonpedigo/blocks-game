@@ -37,7 +37,7 @@ window.modLibrary = {
   },
   mario: {
     arrowKeysBehavior: 'flatDiagonal',
-    spaceBarBehavior: 'jump',
+    spaceBarBehavior: 'groundJump',
     tags: {
       gravityY: true,
     },

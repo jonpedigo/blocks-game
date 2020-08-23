@@ -3,7 +3,7 @@ import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter, updatePixiEmitterData } from './particles'
 import './pixi-layers'
-import { setColor, startAnimation, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, updatePosition, updateAlpha, getGameObjectStage } from './utils'
+import { setColor, startAnimation, startPulse, stopPulse, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, updatePosition, updateAlpha, getGameObjectStage } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
 const updatePixiObject = (gameObject) => {
@@ -53,6 +53,13 @@ const updatePixiObject = (gameObject) => {
   // UPDATE CHATBOX
   updateChatBox(pixiChild, gameObject)
 
+
+  // if(gameObject.tags.hero) console.log(gameObject._flipY)
+  if(gameObject._flipY) {
+    pixiChild.skew.x+= 1
+  } else {
+    pixiChild.skew.x = 0
+  }
 
   /////////////////////
   /////////////////////
