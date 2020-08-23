@@ -9,6 +9,7 @@ function setDefault() {
     activeMods: {},
     activeModList: [],
     ambientLight: .2,
+    dayNightCycle: {},
     logs: [],
   }
   if(!localStorage.getItem('gameStates')) {

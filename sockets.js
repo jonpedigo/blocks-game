@@ -126,7 +126,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('editGameState', (gameState) => {
-    currentGame.gameState = gameState
     io.emit('onEditGameState', gameState)
   })
 
@@ -165,8 +164,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onAnticipateObject', object)
   })
   socket.on('updateObjectsComplete', (updatedobjects) => {
-    currentGame.objects = updatedobjects
-    io.emit('onUpdateObjectsComplete', currentGame.objects)
+    io.emit('onUpdateObjectsComplete', updatedObjects)
   })
   socket.on('updateObjects', (updatedobjects) => {
     io.emit('onUpdateObjects', updatedobjects)
@@ -193,7 +191,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
-    currentGame.objects.push(...addedobjects)
     io.emit('onAddObjects', addedobjects)
   })
 
@@ -236,14 +233,13 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onUpdateWorld', currentGame.world)
   })
   socket.on('updateWorld', (updatedWorld) => {
-    mergeDeep(currentGame.world, updatedWorld)
     io.emit('onUpdateWorld', updatedWorld)
   })
   socket.on('resetWorld', () => {
     io.emit('onResetWorld')
   })
-  socket.on('updateWorldOnServerOnly', (updatedWorld) => {
-    mergeDeep(currentGame.world, updatedWorld)
+  socket.on('updateGameOnServerOnly', (game) => {
+    currentGame = game
   })
 
 
@@ -268,7 +264,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('updateHero', (hero) => {
-    currentGame.heros[hero.id] = hero
     io.emit('onUpdateHero', hero)
   })
   socket.on('updateHeros', (heros) => {
@@ -277,13 +272,12 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     })
   })
   socket.on('updateHerosComplete', (heros) => {
-    currentGame.heros = heros
-    Object.keys(currentGame.heros).forEach((id) => {
-      io.emit('onUpdateHero', currentGame.heros[id])
+    Object.keys(heros).forEach((id) => {
+      io.emit('onUpdateHero', heros[id])
     })
   })
   socket.on('editHero', (hero) => {
-    // window.mergeDeep(currentGame.heros[hero.id], hero)
+    // window.mergeDeep(heros[hero.id], hero)
     io.emit('onEditHero', hero)
   })
   socket.on('resetHeroToDefault', (hero) => {
@@ -295,13 +289,12 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('respawnHero', (hero) => {
     io.emit('onRespawnHero', hero)
   })
-  socket.on('askHeros', () => {
-    for(let heroId in currentGame.heros) {
-      socket.emit('onUpdateHero', currentGame.heros[heroId])
-    }
-  })
+  // socket.on('askHeros', () => {
+  //   for(let heroId in currentGame.heros) {
+  //     socket.emit('onUpdateHero', currentGame.heros[heroId])
+  //   }
+  // })
   socket.on('deleteHero', (heroId) => {
-    delete currentGame.heros[heroId]
     io.emit('onDeleteHero', heroId)
   })
 

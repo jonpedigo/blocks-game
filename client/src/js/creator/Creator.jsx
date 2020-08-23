@@ -154,15 +154,41 @@ export default class Creator extends React.Component {
     this.setState({columnsOpen})
   }
 
-  _selectCreatorObject(object) {
+  _untoggleExclusivesInColumn(columnName) {
+    const { creatorObjects, creatorObjectsToggled } = this.state;
+    return new Promise((resolve, reject) => {
+      const toggleOff = {}
+      Object.keys(creatorObjects).forEach((objectName) => {
+        if(creatorObjects[objectName] === false) return
+
+        const object = window.creatorLibrary[objectName]
+        if(object.columnName === columnName && object.columnExclusiveToggle && creatorObjectsToggled[object.toggleId] && object.onToggleOff) {
+          object.onToggleOff()
+          toggleOff[object.toggleId] = false
+        }
+      })
+
+      this.setState({
+        creatorObjectsToggled: {
+          ...creatorObjectsToggled,
+          ...toggleOff
+        }
+      }, () => {
+        resolve()
+      })
+    })
+  }
+
+  async _selectCreatorObject(object) {
     const { creatorObjectsToggled } = this.state;
     if(object.onShiftClick && EDITOR.shiftPressed) {
       object.onShiftClick.bind(this)()
     } else if(object.onToggleOn && !creatorObjectsToggled[object.toggleId]) {
+      if(object.columnExclusiveToggle) await this._untoggleExclusivesInColumn(object.columnName)
       object.onToggleOn.bind(this)()
       this.setState({
         creatorObjectsToggled: {
-          ...creatorObjectsToggled,
+          ...this.state.creatorObjectsToggled,
           [object.toggleId]: true
         }
       })

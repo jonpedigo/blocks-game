@@ -272,8 +272,9 @@ class Game{
     if(game.gameState && game.gameState.loaded) {
       GAME.gameState = game.gameState
       if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-      GAME.gameState.sequenceQueue = []
-      GAME.gameState.activeModList = []
+      // GAME.gameState.sequenceQueue = []
+      // GAME.gameState.activeModList = []
+      //( remove timouts from this list when you can convert this functions to strings and use eval..)
       GAME.gameState.timeouts = []
       GAME.gameState.timeoutsById = {}
       // GAME.gameState.logs = []

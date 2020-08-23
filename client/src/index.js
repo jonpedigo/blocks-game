@@ -147,7 +147,13 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-right click - follow, follow path
+Camera filters ??? Yeah? Like the pixie demo? Let them customize the LOOK and feel of it all
+
+Randomize animations and physics?
+
+Select emitter from right click menu list, this is not a live emitter, its a direct lookup :)
+
+right click - follow object, follow with path object
 
 ATTACK which is like initial acceleration when there is no acceleration yet, jump attack speed, etc
 tag: sharpTurns ( velocity is positive and decreasing, increase this power )

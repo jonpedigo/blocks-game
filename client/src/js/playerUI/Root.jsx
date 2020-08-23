@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import modals from './modals.js';
 import keycode from 'keycode'
 
+window.readyForControlsToast = true
+
 export default class Root extends React.Component {
   constructor(props) {
     super(props)
@@ -88,13 +90,17 @@ export default class Root extends React.Component {
         newestOnTop: true,
       }
       if(data.viewControlsOnClick) {
-        console.log('?')
+        // sometimes we edit the controls a lot... so we dont show if theres too many. We need a... id control system for this
+        if(!window.readyForControlsToast) return
         toastInfo.onClick = () => {
-          console.log('???')
           this.setState({
             showControlsInfoModal: true
           })
         }
+        window.readyForControlsToast = false
+        setTimeout(() => {
+          window.readyForControlsToast = true
+        }, 3000)
       }
       toast(data.text, toastInfo)
     }

@@ -189,42 +189,49 @@ function onGameLoaded() {
     mario: {
       label: 'Mario',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'mario',
       ...toggleMod('mario')
     },
     kirby: {
       label: 'Kirby',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'kirby',
       ...toggleMod('kirby')
     },
     zelda: {
       label: 'Zelda',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'zelda',
       ...toggleMod('zelda')
     },
     ufo: {
       label: 'UFO',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'ufo',
       ...toggleMod('ufo')
     },
     asteroids: {
       label: 'Asteroids',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'asteroids',
       ...toggleMod('asteroids')
     },
     car: {
       label: 'Car',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'car',
       ...toggleMod('car')
     },
     snake: {
       label: 'Snake',
       columnName: 'Hero',
+      columnExclusiveToggle: true,
       toggleId: 'snake',
       ...toggleMod('snake')
     },
