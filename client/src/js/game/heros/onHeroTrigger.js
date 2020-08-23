@@ -72,27 +72,27 @@ export default function onHeroTrigger(hero, collider, result, options = { fromIn
     }
   }
 
-  if(collider.tags && collider.mod().tags['heroCameraShakeOnHeroCollide_quickrumble']) {
+  if(collider.tags && collider.mod().tags['cameraShakeOnCollide_quickrumble']) {
     window.socket.emit('heroCameraEffect', 'cameraShake', hero.id, { duration: 50, frequency: 10, amplitude: 5})
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['heroCameraShakeOnHeroCollide_longrumble']) {
+  if(collider.tags && collider.mod().tags['cameraShakeOnCollide_longrumble']) {
     window.socket.emit('heroCameraEffect', 'cameraShake', hero.id, { duration: 3000, frequency: 10, amplitude: 8 })
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['heroCameraShakeOnHeroCollide_quick']) {
+  if(collider.tags && collider.mod().tags['cameraShakeOnCollide_quick']) {
     window.socket.emit('heroCameraEffect', 'cameraShake', hero.id, { duration: 50, frequency: 10, amplitude: 24})
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['heroCameraShakeOnHeroCollide_short']) {
+  if(collider.tags && collider.mod().tags['cameraShakeOnCollide_short']) {
     window.socket.emit('heroCameraEffect', 'cameraShake', hero.id, { duration: 500, frequency: 20, amplitude: 36 })
     triggered = true
   }
 
-  if(collider.tags && collider.mod().tags['heroCameraShakeOnHeroCollide_long']) {
+  if(collider.tags && collider.mod().tags['cameraShakeOnCollide_long']) {
     window.socket.emit('heroCameraEffect', 'cameraShake', hero.id, { duration: 2000, frequency: 40, amplitude: 36 })
     triggered = true
   }

@@ -60,6 +60,9 @@ import { startSequence } from './sequence'
     // notification -> chat, private chat, log, toast, modal
     // camera effect
 
+    // move Camera to, cameraAnimateZoomTo, ( lets use the camera delay tool ...)
+    // this ^ can also include showing UI popover on game object.. I mean welcome to CLEAR onboarding
+
     // 'anticipatedAdd',
     // 'goToStarView',
     // 'sequenceDisable'

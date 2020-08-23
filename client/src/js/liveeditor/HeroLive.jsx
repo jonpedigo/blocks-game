@@ -43,6 +43,7 @@ export default class HeroLive extends React.Component {
       velocityDecay: hero.velocityDecay,
       velocityDecayXExtra: hero.velocityDecayXExtra,
       velocityDecayYExtra: hero.velocityDecayYExtra,
+      floatJumpTimeout: hero.floatJumpTimeout,
     }
 
     if (PAGE.role.isHost) {
@@ -64,6 +65,7 @@ export default class HeroLive extends React.Component {
             <DatNumber path='objectSelected.velocityMax' label="Maximum Velocity" min={0} max={1000} step={1} />
             <DatNumber path='objectSelected.jumpVelocity' label="Jump Velocity" min={-1000} max={1000} />
             <DatNumber path='objectSelected.velocityDecay' label="Velocity Decay" min={0} max={1000} />
+            <DatNumber path='objectSelected.floatJumpTimeout' label="Float Jump Reset (Seconds)" min={0} max={5} step={.1}/>
             <DatFolder title='Additional X/Y'>
               <DatNumber path='objectSelected.speedXExtra' label="Additional Speed X" min={0} max={1000} step={1} />
               <DatNumber path='objectSelected.speedYExtra' label="Additional Speed Y" min={0} max={1000} step={1} />

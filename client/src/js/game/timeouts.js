@@ -59,11 +59,20 @@ function completeTimeout(id) {
   GAME.gameState.timeoutsById[id].timeRemaining = 0
 }
 
+function clearTimeout(id) {
+  GAME.gameState.timeouts = GAME.gameState.timeouts.filter((timeout) => {
+    if(timeout.id === id) return false
+    return true
+  })
+  delete GAME.gameState.timeoutsById[id]
+}
+
 export default {
   setDefault,
   onUpdate,
   addTimeout,
   completeTimeout,
+  clearTimeout,
   incrementTimeout,
   resetTimeout,
   addOrResetTimeout,

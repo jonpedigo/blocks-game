@@ -29,7 +29,6 @@ class Creator {
   }
 
   onEditHero(hero) {
-    console.log(hero.id, HERO.id)
     if(hero.id === HERO.id && hero.creator) {
       CREATOR.ref.setCreatorObjects(hero.creator)
     }

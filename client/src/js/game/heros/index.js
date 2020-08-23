@@ -384,6 +384,7 @@ class Hero{
       customState: hero.customState,
       _objectsWithin: hero._objectsWithin,
       _objectsAwareOf: hero._objectsAwareOf,
+      _flipY: hero._flipY,
       // conditionTestCounts: hero.conditionTestCounts,
       liveEmitterData: hero.liveEmitterData
     }
@@ -478,6 +479,7 @@ class Hero{
       velocityDecay: hero.velocityDecay,
       velocityDecayXExtra: hero.velocityDecayXExtra,
       velocityDecayYExtra: hero.velocityDecayYExtra,
+      floatJumpTimeout: hero.floatJumpTimeout,
     }
 
     if(hero.subObjects) {

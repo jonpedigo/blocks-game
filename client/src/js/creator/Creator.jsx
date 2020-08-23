@@ -156,7 +156,9 @@ export default class Creator extends React.Component {
 
   _selectCreatorObject(object) {
     const { creatorObjectsToggled } = this.state;
-    if(object.onToggleOn && !creatorObjectsToggled[object.toggleId]) {
+    if(object.onShiftClick && EDITOR.shiftPressed) {
+      object.onShiftClick.bind(this)()
+    } else if(object.onToggleOn && !creatorObjectsToggled[object.toggleId]) {
       object.onToggleOn.bind(this)()
       this.setState({
         creatorObjectsToggled: {
@@ -211,9 +213,10 @@ export default class Creator extends React.Component {
       </div>
       {open &&
         column.map((object) => {
+          const hasShiftClick = object.onShiftClick && EDITOR.shiftPressed
           const selected = object.label === creatorObjectSelected.label
           const toggledOn = creatorObjectsToggled[object.toggleId]
-          return <div className={classnames("Creator__category-item", { "Creator__category-item--selected": selected })} onClick={() => {
+          return <div className={classnames("Creator__category-item", { "Creator__category-item--selected": selected, "Creator__category-item--shift": hasShiftClick })} onClick={() => {
               this._selectCreatorObject(object)
             }}>
             {object.label}

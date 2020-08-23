@@ -443,7 +443,7 @@ function onKeyDown(key, hero) {
 
     if(hero.mod().spaceBarBehavior === 'floatJump') {
       if(hero._floatable === false && hero.onGround) {
-        if(GAME.gameState.timeoutsById[hero.id + '-floatable']) GAME.completeTimeout(hero.id + '-floatable')
+        if(GAME.gameState.timeoutsById[hero.id + '-floatable']) GAME.clearTimeout(hero.id + '-floatable')
         hero._floatable = true
       }
 

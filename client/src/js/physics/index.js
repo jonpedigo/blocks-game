@@ -190,7 +190,6 @@ function updatePosition(object, delta) {
 
   if(object.mod().tags.flipYAtMaxVelocity && Math.abs(object.velocityY) == object.mod().velocityMax) {
     object._flipY = true
-    console.log(object._flipY)
   }
 }
 

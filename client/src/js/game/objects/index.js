@@ -127,6 +127,7 @@ class Objects{
       _targetId: object._targetPursueId,
       _objectsWithin: object._objectsWithin,
       _objectsAwareOf: object._objectsAwareOf,
+      _flipY: object._flipY,
 
       // IMPLEMENT...
       conditionTestCounts: object.conditionTestCounts,

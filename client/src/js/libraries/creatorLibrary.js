@@ -21,10 +21,15 @@ function constructEditorOnSelect(objectId, tags) {
 function toggleMod(modId) {
   let objectId = null
   return {
+    onShiftClick: () => {
+      const json = window.modLibrary[modId]
+      window.socket.emit('editHero', { id: HERO.id, ...json})
+    },
     onToggleOn: () => {
+      const json = window.modLibrary[modId]
       const mod = {
         ownerId: objectId || HERO.id,
-        effectJSON: window.modLibrary[modId],
+        effectJSON: json,
         manualRevertId: modId,
       }
       window.socket.emit('startMod', mod)
@@ -217,6 +222,12 @@ function onGameLoaded() {
       toggleId: 'car',
       ...toggleMod('car')
     },
+    snake: {
+      label: 'Snake',
+      columnName: 'Hero',
+      toggleId: 'snake',
+      ...toggleMod('snake')
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -233,6 +244,7 @@ function onGameLoaded() {
     car: true,
     ufo: true,
     kirby: true,
+    snake: true,
   }
 
   window.adminCreatorObjects = {
@@ -256,6 +268,7 @@ function onGameLoaded() {
     car: true,
     ufo: true,
     kirby: true,
+    snake: true,
   }
 }
 

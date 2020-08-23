@@ -149,11 +149,11 @@ function setDefault() {
   }
 
   window.cameraTags = {
-    heroCameraShakeOnHeroCollide_quickrumble: false,
-    heroCameraShakeOnHeroCollide_longrumble: false,
-    heroCameraShakeOnHeroCollide_quick: false,
-    heroCameraShakeOnHeroCollide_short: false,
-    heroCameraShakeOnHeroCollide_long: false,
+    cameraShakeOnCollide_quickrumble: false,
+    cameraShakeOnCollide_longrumble: false,
+    cameraShakeOnCollide_quick: false,
+    cameraShakeOnCollide_short: false,
+    cameraShakeOnCollide_long: false,
   }
 
   window.inventoryTags = {
@@ -167,7 +167,6 @@ function setDefault() {
     stackable: false,
     // onMapWhenEquipped: false, //cant change
     // dropOnOwnerDestroyed: false,
-    allowDuplication: false,
   }
 
   window.particleTags = {

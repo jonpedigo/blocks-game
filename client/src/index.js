@@ -406,7 +406,6 @@ http://gizma.com/easing/#quad1
 
 GAVE ME GREAT IDEA FOR LIKE EDGES OF THE GRID NODES
 https://www.mipui.net/
-
 IdK ANOTHER ONLINE https://hextml.playest.net/
 
 THIS IS FOR GENERATING SPRITESHEET JSON
@@ -415,6 +414,8 @@ https://www.leshylabs.com/apps/sstool/
 IMPROVE AESTHETIC AND GAME AESHTIC CUSTOMIZATION
 https://www.transparenttextures.com/
 
+THINGS COULD GET FUCKIN NUTS WITH THIS HERE
+https://www.iwm-tuebingen.de/iwmbrowser/lib/pixi/flippable.html
 
 
 */

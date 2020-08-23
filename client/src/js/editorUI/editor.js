@@ -21,11 +21,13 @@ class Editor {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = true
         EDITORUI.ref.forceUpdate()
+        CREATOR.ref._creatorRef.current.forceUpdate()
       }
     })
     window.addEventListener("keyup", function (e) {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = false
+        CREATOR.ref._creatorRef.current.forceUpdate()
         EDITORUI.ref.forceUpdate()
       }
     })

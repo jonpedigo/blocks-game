@@ -44,4 +44,7 @@ window.modLibrary = {
     jumpVelocity: -480,
     velocityMax: 480,
   },
+  snake: {
+    arrowKeysBehavior: 'skating',
+  },
 }

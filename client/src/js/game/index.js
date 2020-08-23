@@ -73,7 +73,7 @@ class Game{
             if(object.removed) return
             window.local.emit('onUpdateObject', object, delta)
           })
-
+          timeouts.onUpdate(delta)
           GAME.loadActiveMods()
         }
 
@@ -496,6 +496,9 @@ class Game{
   }
   completeTimeout(id) {
     timeouts.completeTimeout(id)
+  }
+  clearTimeout(id) {
+    timeouts.clearTimeout(id)
   }
 
   onAddTrigger(ownerId, trigger) {
