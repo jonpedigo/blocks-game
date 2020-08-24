@@ -150,7 +150,7 @@ function onPageLoaded(){
         window.socket.emit('sendHeroKeyUp', key, HERO.id)
       }
     }
-    window.socket.emit('sendHeroKeyUp', key, HERO.id)
+    // window.socket.emit('sendHeroKeyUp', key, HERO.id)
   }, false)
 }
 
@@ -509,6 +509,7 @@ function onKeyDown(key, hero) {
   if (rightPressed) {
     hero.inputDirection = 'right'
   }
+  console.log(hero.inputDirection)
 
   window.local.emit('onKeyDown', key, hero)
 }

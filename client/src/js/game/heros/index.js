@@ -667,7 +667,7 @@ class Hero{
 
   onSendHeroInput(input, heroId) {
     // dont update input for hosts hero since we've already locally updated
-    if(PAGE.role.isPlayer && GAME.heros[HERO.id] && heroId == HERO.id) {
+    if(PAGE.role.isHost && GAME.heros[HERO.id] && heroId == HERO.originalId) {
       return
     }
     GAME.heroInputs[heroId] = input
@@ -675,14 +675,14 @@ class Hero{
 
   onSendHeroKeyDown(key, heroId) {
     // dont do keydown event for hosts hero since we've already done locally
-    if(PAGE.role.isPlayer && heroId == HERO.id) return
+    if(PAGE.role.isPlayer && heroId == HERO.originalId) return
     let hero = GAME.heros[heroId]
     input.onKeyDown(key, hero)
   }
 
   onSendHeroKeyUp(key, heroId) {
     // dont do keydown event for hosts hero since we've already done locally
-    if(PAGE.role.isHost && heroId == HERO.id) return
+    if(PAGE.role.isHost && heroId == HERO.originalId) return
     let hero = GAME.heros[heroId]
     input.onKeyUp(key, hero)
   }
