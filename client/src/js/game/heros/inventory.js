@@ -42,8 +42,7 @@ function pickupObject(hero, collider) {
   hero.interactableObject = null
   hero.interactableObjectResult = null
   if(subObject.tags['equipOnPickup']) {
-    subObject.isEquipped = true
-    window.local.emit('onHeroEquip', hero, subObject)
+    equipSubObject(hero, subObject)
   }
 
   // window.local.emit('onHeroPickup', hero, subObject)
@@ -139,9 +138,47 @@ function depositToInventory(depositor, retriever, subObjectName, amount) {
 
 }
 
+function equipSubObject(hero, subObject, keyBinding = 'available') {
+  if(keyBinding === 'available') {
+    if(!hero.zButtonBehavior || hero.zButtonBehavior === '') {
+      hero.zButtonBehavior = subObject.id
+    } else if(!hero.xButtonBehavior || hero.xButtonBehavior === '') {
+      hero.xButtonBehavior = subObject.id
+    } else if(!hero.cButtonBehavior || hero.cButtonBehavior === '') {
+      hero.cButtonBehavior = subObject.id
+    }
+  } else if(keyBinding === 'z') {
+    hero.zButtonBehavior = subObject.id
+  } else if(keyBinding === 'x') {
+    hero.xButtonBehavior = subObject.id
+  } else if(keyBinding === 'c') {
+    hero.cButtonBehavior = subObject.id
+  }
+
+  subObject.isEquipped = true
+
+  window.local.emit('onHeroEquip', hero, subObject)
+}
+
+function unequipSubObject(hero, subObject) {
+  if(hero.zButtonBehavior === subObject.id) {
+    hero.zButtonBehavior = null
+  } else if(hero.xButtonBehavior === subObject.id) {
+    hero.xButtonBehavior = null
+  } else if(hero.cButtonBehavior === subObject.id) {
+    hero.cButtonBehavior = null
+  }
+
+  subObject.isEquipped = false
+
+  window.local.emit('onHeroUnequip', hero, subObject)
+}
+
 export {
   pickupObject,
   dropObject,
   withdrawFromInventory,
   depositToInventory,
+  equipSubObject,
+  unequipSubObject,
 }

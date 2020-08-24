@@ -1,4 +1,5 @@
 import keycode from 'keycode'
+import { shootBullet, dropWall } from './action.js';
 
 window.defaultWASD =  {
   w: 'Move Up',
@@ -75,7 +76,7 @@ function setDefault() {
 
   window.actionButtonBehavior = {
     'dropWall': 'Drop Wall',
-    'shootBullet': 'Shoot Bullet',
+    'shoot': 'Shoot Bullet',
     'accelerate': 'Accelerate',
     'accelerateBackwards': 'Go Backwards',
     'deccelerateToZero': 'Slow Down',
@@ -163,6 +164,23 @@ function onKeyUp(key, hero) {
 }
 
 function handleActionButtonBehavior(hero, action, delta) {
+  let subObject = false
+  Object.keys(hero.subObjects).forEach((name) => {
+    const so = hero.subObjects[name]
+    if(so.id === action) {
+      action = so.actionButtonBehavior
+      subObject = so
+    }
+  })
+
+  if(action === 'shoot') {
+    if(subObject) {
+      shootBullet({directions: hero.directions, pos: subObject, tags: subObject.actionProps.shootTags})
+    } else {
+      shootBullet({directions: hero.directions, pos: hero, tags: { monsterDestroyer: true }})
+    }
+  }
+
   if(action === 'accelerate') {
     hero.velocityAngle += hero.speed * delta
   }

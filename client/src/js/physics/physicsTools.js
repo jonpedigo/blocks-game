@@ -501,12 +501,12 @@ function attachSubObjects(owner, subObjects) {
     if(subObject.relativeWidth) subObject.width = owner.width + (subObject.relativeWidth)
     if(subObject.relativeHeight) subObject.height = owner.height + (subObject.relativeHeight)
 
-    if((subObject.mod().tags.relativeToDirection || subObject.mod().tags.relativeToAngle)) {
+    if(subObject.mod().tags.rotateable && (subObject.mod().tags.relativeToDirection || subObject.mod().tags.relativeToAngle)) {
       const direction = owner.inputDirection || owner._movementDirection
 
       let radians = 0
 
-      if(subObject.mod().tags.relativeToAngle && typeof owner.angle == 'number') {
+      if(subObject.mod().tags.relativeToAngle && owner.mod().tags.rotateable) {
         radians = owner.angle
       } else if(subObject.mod().tags.relativeToDirection) {
         if(direction === 'right') {
@@ -532,7 +532,6 @@ function attachSubObjects(owner, subObjects) {
       subObject.y = owner.y + owner.height/2 + rotatedRelativeY - subObject.height/2
 
       subObject.angle = radians
-      subObject.mod().tags.rotateable = true
     } else {
       if(typeof subObject.mod().relativeX === 'number') subObject.x = owner.x + owner.width/2 + subObject.mod().relativeX - subObject.width/2
       if(typeof subObject.mod().relativeY === 'number') subObject.y = owner.y + owner.height/2 + subObject.mod().relativeY - subObject.height/2

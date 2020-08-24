@@ -1,7 +1,7 @@
 import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import pathfinding from '../../utils/pathfinding.js'
-import action from './action'
+// import action from './action'
 import particles from '../../map/particles.js'
 
 export default class CustomGame{

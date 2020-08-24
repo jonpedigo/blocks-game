@@ -1,43 +1,36 @@
-import collisions from '../../utils/collisions'
-import gridUtil from '../../utils/grid.js'
-import pathfinding from '../../utils/pathfinding.js'
-
-function shootBullet(hero) {
-  let directions = hero.directions
+function shootBullet({ pos, tags, directions }) {
   let shooted = {
     id: 'bullet-' + window.uniqueID(),
     width: 4,
     height: 4,
     tags: {
-      bullet: true,
+      monsterDestroyer: true,
     },
   }
 
   if(directions.up) {
     Object.assign(shooted, {
-      x: hero.x + (hero.width/2),
-      y: hero.y,
+      x: pos.x + (pos.width/2),
+      y: pos.y,
+      veloctyY: -10,
     })
-  }
-
-  if(directions.down) {
+  } else if(directions.down) {
     Object.assign(shooted, {
-      x: hero.x + (hero.width/2),
-      y: hero.y + hero.height,
+      x: pos.x + (pos.width/2),
+      y: pos.y + pos.height,
+      veloctyY: 10,
     })
-  }
-
-  if(directions.right) {
+  } else if(directions.right) {
     Object.assign(shooted, {
-      x: hero.x + hero.width,
-      y: hero.y + (hero.height/2),
+      x: pos.x + pos.width,
+      y: pos.y + (pos.height/2),
+      veloctyX: 10,
     })
-  }
-
-  if(directions.left) {
+  } else if(directions.left) {
     Object.assign(shooted, {
-      x: hero.x,
-      y: hero.y + (hero.height/2),
+      x: pos.x,
+      y: pos.y + (pos.height/2),
+      veloctyX: -10,
     })
   }
 
@@ -87,7 +80,7 @@ function dropWall(hero) {
   OBJECTS.create([wall], { fromLiveGame: true })
 }
 
-export default {
+export {
   shootBullet,
   dropWall,
 }

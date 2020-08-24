@@ -75,6 +75,8 @@ class Game{
           })
           timeouts.onUpdate(delta)
           GAME.loadActiveMods()
+
+          MAP._isOutOfDate = true
         }
 
         dayNightCycle.update(delta)
@@ -179,11 +181,16 @@ class Game{
           if(PAGE.role.isPlayer) OBJECTS.anticipatedAdd(GAME.heros[HERO.id])
           else if(PAGE.role.isPlayEditor) OBJECTS.anticipatedAdd(window.editingHero)
         }
+
+
+        MAP._isOutOfDate = true
         //////////////////////////////
         //// SPECIAL EVENT PHASE - END
         //////////////////////////////
         //////////////////////////////
       }
+    } else {
+      MAP._isOutOfDate = true
     }
 
     if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.tags.calculatePathCollisions) {

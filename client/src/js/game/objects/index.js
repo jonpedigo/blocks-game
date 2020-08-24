@@ -3,7 +3,7 @@ import pathfinding from '../../utils/pathfinding.js'
 import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import triggers from '../triggers.js'
-import { dropObject } from '../heros/inventory.js'
+import { dropObject, equipSubObject, unequipSubObject } from '../heros/inventory.js'
 import { addHook, deleteHook } from '../hooks.js'
 import { spawnAllNow, destroySpawnIds } from '../spawnZone.js'
 import { setTarget, setPathTarget } from '../ai/pathfinders.js'
@@ -129,6 +129,7 @@ class Objects{
       _objectsAwareOf: object._objectsAwareOf,
       _flipY: object._flipY,
 
+
       // IMPLEMENT...
       conditionTestCounts: object.conditionTestCounts,
     }
@@ -193,6 +194,10 @@ class Objects{
       opacity: object.opacity,
 
       liveEmitterData: object.liveEmitterData,
+
+      // equipment
+      actionButtonBehavior: object.actionButtonBehavior,
+      actionProps: object.actionProps,
 
       // inventory
       count: object.count,
@@ -326,12 +331,7 @@ class Objects{
     if(object.subObjects) {
       mapState.subObjects = {}
       OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
-        mapState.subObjects[subObjectName] = {}
-        mapState.subObjects[subObjectName].id = subObject.id
-        mapState.subObjects[subObjectName].x = subObject.x
-        mapState.subObjects[subObjectName].y = subObject.y
-        mapState.subObjects[subObjectName].width = subObject.width
-        mapState.subObjects[subObjectName].height = subObject.height
+        mapState.subObjects[subObjectName] = OBJECTS.getMapState(subObject)
       })
     }
 
@@ -636,7 +636,7 @@ class Objects{
     }
   }
 
-  addSubObject(owner, subObject, subObjectName) {
+  addSubObject(owner, subObject, subObjectName, options = {}) {
     subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
@@ -675,9 +675,14 @@ class Objects{
         })
       }
     }
+
+    if(options.equipAfterCreated) {
+      equipSubObject(OBJECTS.getObjectOrHeroById(owner.id), subObject)
+    }
   }
 
   deleteSubObject(owner, subObject, subObjectName) {
+    if(subObject.isEquipped) unequipSubObject(owner, subObject)
     PIXIMAP.deleteObject(subObject)
     if(!subObject.tags.potential) PHYSICS.removeObject(subObject)
     delete owner.subObjects[subObjectName]
@@ -783,13 +788,13 @@ class Objects{
     }
   }
 
-  onAddSubObject(owner, subObject, subObjectName) {
+  onAddSubObject(owner, subObject, subObjectName, options) {
     if(owner.tags.hero) {
       if(!GAME.heros[owner.id].subObjects) GAME.heros[owner.id].subObjects = {}
-      OBJECTS.addSubObject(GAME.heros[owner.id], subObject, subObjectName)
+      OBJECTS.addSubObject(GAME.heros[owner.id], subObject, subObjectName, options)
     } else {
       if(!GAME.objectsById[owner.id].subObjects) GAME.objectsById[owner.id].subObjects = {}
-      OBJECTS.addSubObject(GAME.objectsById[owner.id], subObject, subObjectName)
+      OBJECTS.addSubObject(GAME.objectsById[owner.id], subObject, subObjectName, options)
     }
   }
 

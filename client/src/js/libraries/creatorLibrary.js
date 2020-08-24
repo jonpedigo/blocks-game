@@ -42,6 +42,19 @@ function toggleMod(modId) {
   }
 }
 
+function toggleSubObject(subObjectId, modId) {
+  let objectId = null
+  return {
+    onToggleOn: () => {
+      const so = _.cloneDeep(window.subObjectLibrary[subObjectId])
+      window.socket.emit('addSubObject', GAME.heros[HERO.id], so, subObjectId, { equipAfterCreated: !!so.actionButtonBehavior })
+    },
+    onToggleOff: () => {
+      window.socket.emit('deleteSubObject', GAME.heros[HERO.id], subObjectId)
+    }
+  }
+}
+
 function onGameLoaded() {
   window.creatorLibrary = {
     selectColor: {
@@ -235,6 +248,18 @@ function onGameLoaded() {
       toggleId: 'snake',
       ...toggleMod('snake')
     },
+    spear: {
+      label: 'Spear',
+      columnName: 'Equipment',
+      toggleId: 'spear',
+      ...toggleSubObject('spear')
+    },
+    gun: {
+      label: 'Gun',
+      columnName: 'Equipment',
+      toggleId: 'gun',
+      ...toggleSubObject('gun')
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -252,6 +277,8 @@ function onGameLoaded() {
     ufo: true,
     kirby: true,
     snake: true,
+    spear: true,
+    gun: true,
   }
 
   window.adminCreatorObjects = {
@@ -276,6 +303,8 @@ function onGameLoaded() {
     ufo: true,
     kirby: true,
     snake: true,
+    spear: true,
+    gun: true,
   }
 }
 

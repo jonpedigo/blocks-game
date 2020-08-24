@@ -14,6 +14,10 @@ const updatePixiObject = (gameObject) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
+  // if(gameObject.subObjectName === 'gun') console.log('updating gun')
+  // if(gameObject.tags.hero) console.log('hero')
+
+
   /////////////////////
   /////////////////////
   // SUB OBJECTS

@@ -116,8 +116,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   // great to have a constantly updating object shared on all computers
   socket.on('updateGameState', (gameState) => {
-    if(!currentGame.gameState) currentGame.gameState = gameState
-    Object.assign(currentGame.gameState, gameState)
+    // if(!currentGame.gameState) currentGame.gameState = gameState
+    // Object.assign(currentGame.gameState, gameState)
     io.emit('onUpdateGameState', gameState)
   })
 
@@ -163,7 +163,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('anticipateObject', (object) => {
     io.emit('onAnticipateObject', object)
   })
-  socket.on('updateObjectsComplete', (updatedobjects) => {
+  socket.on('updateObjectsComplete', (updatedObjects) => {
     io.emit('onUpdateObjectsComplete', updatedObjects)
   })
   socket.on('updateObjects', (updatedobjects) => {
@@ -211,8 +211,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('deleteSubObject', (owner, subObjectName) => {
     io.emit('onDeleteSubObject', owner, subObjectName)
   })
-  socket.on('addSubObject', (owner, subObject, subObjectName) => {
-    io.emit('onAddSubObject', owner, subObject, subObjectName)
+  socket.on('addSubObject', (owner, subObject, subObjectName, options) => {
+    io.emit('onAddSubObject', owner, subObject, subObjectName, options)
   })
   socket.on('removeSubObject', (ownerId, subObjectName) => {
     io.emit('onRemoveSubObject', ownerId, subObjectName)

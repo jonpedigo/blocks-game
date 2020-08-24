@@ -43,8 +43,8 @@ function init() {
     window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
       window.local.emit('onRemoveSubObject', ownerId, subObjectName)
     })
-    window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName) => {
-      window.local.emit('onAddSubObject', ownerId, subObject, subObjectName)
+    window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName, options) => {
+      window.local.emit('onAddSubObject', ownerId, subObject, subObjectName, options)
     })
     window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
@@ -151,74 +151,83 @@ function init() {
   ///////////////////////////////
   // UPDATING GAME STATE EVENTS, EDITOR UPDATES ITS OWN STATE IF SYNCED
   ///////////////////////////////
-  // HOST CALLS THIS
-  window.socket.on('onUpdateGameState', (gameState) => {
-    window.local.emit('onUpdateGameState', gameState)
-    if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
-      window.gamestateeditor.update(gameState)
-    }
-  })
 
-  // host CALLS THIS
-  window.socket.on('onUpdateObjectsComplete', (objectsUpdated) => {
-    window.local.emit('onNetworkUpdateObjectsComplete', objectsUpdated)
-  })
-
-  // host CALLS THIS
-  window.socket.on('onUpdateObjects', (objectsUpdated) => {
-    window.local.emit('onNetworkUpdateObjects', objectsUpdated)
-      // old interpolation code
-      // if(PAGE.role.isPlayer) {
-      //   objectsUpdated.forEach((obj) => {
-      //     let go = GAME.objectsById[obj.id]
-      //     if(!go) {
-      //       GAME.objectsById[obj.id] = obj
-      //       go = obj
-      //     }
-      //     go._lerpX = obj.x
-      //     go._lerpY = obj.y
-      //     delete obj.x
-      //     delete obj.y
-      //     window.mergeDeep(go, obj)
-      //   })
-      // } else if(PAGE.role.isPlayEditor) {
-      //   GAME.objects = objectsUpdated
-      //   GAME.objectsById = GAME.objects.reduce((prev, next) => {
-      //     prev[next.id] = next
-      //     return prev
-      //   }, {})
-      // }
-
-    if(PAGE.role.isPlayEditor && window.objecteditor.get().id) {
-      if(window.syncObjectsToggle.checked) {
-        window.objecteditor.update(GAME.objectsById[window.objecteditor.get().id])
+  if(!PAGE.role.isHost) {
+    // HOST CALLS THIS
+    window.socket.on('onUpdateGameState', (gameState) => {
+      window.local.emit('onUpdateGameState', gameState)
+      if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
+        window.gamestateeditor.update(gameState)
       }
-    }
-  })
+    })
 
-  // HOST CALLS THIS
-  window.socket.on('onUpdateHero', (updatedHero) => {
-    window.local.emit('onNetworkUpdateHero', updatedHero)
-    // old interpolation code
-    // } else if(PAGE.role.isPlayEditor) {
-    //   window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
-    // } else if(PAGE.role.isPlayer) {
-    //   let hero = GAME.heros[updatedHero.id]
-    //   if(!hero) GAME.heros[updatedHero.id] = updatedHero
-    //   hero._lerpX = updatedHero.x
-    //   hero._lerpY = updatedHero.y
-    //   delete updatedHero.x
-    //   delete updatedHero.y
-    //   window.mergeDeep(hero, updatedHero)
-    if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
-      if(window.editingHero.id === updatedHero.id) {
-        window.editingHero = GAME.heros[updatedHero.id]
-        if(GAME.world.syncHero) {
-          window.setEditingHero(GAME.heros[updatedHero.id])
+    // host CALLS THIS
+    window.socket.on('onUpdateObjectsComplete', (objectsUpdated) => {
+      window.local.emit('onNetworkUpdateObjectsComplete', objectsUpdated)
+    })
+
+    // host CALLS THIS
+    window.socket.on('onUpdateObjects', (objectsUpdated) => {
+      window.local.emit('onNetworkUpdateObjects', objectsUpdated)
+        // old interpolation code
+        // if(PAGE.role.isPlayer) {
+        //   objectsUpdated.forEach((obj) => {
+        //     let go = GAME.objectsById[obj.id]
+        //     if(!go) {
+        //       GAME.objectsById[obj.id] = obj
+        //       go = obj
+        //     }
+        //     go._lerpX = obj.x
+        //     go._lerpY = obj.y
+        //     delete obj.x
+        //     delete obj.y
+        //     window.mergeDeep(go, obj)
+        //   })
+        // } else if(PAGE.role.isPlayEditor) {
+        //   GAME.objects = objectsUpdated
+        //   GAME.objectsById = GAME.objects.reduce((prev, next) => {
+        //     prev[next.id] = next
+        //     return prev
+        //   }, {})
+        // }
+
+      if(PAGE.role.isPlayEditor && window.objecteditor.get().id) {
+        if(window.syncObjectsToggle.checked) {
+          window.objecteditor.update(GAME.objectsById[window.objecteditor.get().id])
         }
       }
-    }
-  })
+    })
+
+    // HOST CALLS THIS
+    window.socket.on('onUpdateHero', (updatedHero) => {
+      window.local.emit('onNetworkUpdateHero', updatedHero)
+      // old interpolation code
+      // } else if(PAGE.role.isPlayEditor) {
+      //   window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
+      // } else if(PAGE.role.isPlayer) {
+      //   let hero = GAME.heros[updatedHero.id]
+      //   if(!hero) GAME.heros[updatedHero.id] = updatedHero
+      //   hero._lerpX = updatedHero.x
+      //   hero._lerpY = updatedHero.y
+      //   delete updatedHero.x
+      //   delete updatedHero.y
+      //   window.mergeDeep(hero, updatedHero)
+      if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
+        if(window.editingHero.id === updatedHero.id) {
+          window.editingHero = GAME.heros[updatedHero.id]
+          if(GAME.world.syncHero) {
+            window.setEditingHero(GAME.heros[updatedHero.id])
+          }
+        }
+      }
+    })
+
+    // EDITOR CALLS THIS
+    window.socket.on('onUpdateWorld', (updatedWorld) => {
+      window.local.emit('onUpdateWorld', updatedWorld)
+    })
+
+  }
 
   ///////////////////////////////
   ///////////////////////////////
@@ -242,11 +251,6 @@ function init() {
   // EDITOR CALLS THIS
   window.socket.on('onResetWorld', () => {
     window.local.emit('onResetWorld')
-  })
-
-  // EDITOR CALLS THIS
-  window.socket.on('onUpdateWorld', (updatedWorld) => {
-    window.local.emit('onUpdateWorld', updatedWorld)
   })
 
   // EDITORS and PLAYERS call this

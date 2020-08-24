@@ -157,6 +157,10 @@ PIXIMAP.onResetObjects = function() {
 }
 
 PIXIMAP.onRender = function() {
+  if(!MAP._isOutOfDate) {
+    console.log('prevented extra render')
+    return
+  }
 
   if(PAGE.loadingGame) return
 
@@ -207,6 +211,8 @@ PIXIMAP.onRender = function() {
     // if(pixiMapInvisible) {
     //   PIXIMAP.stage.visible = false
     // } else PIXIMAP.stage.visible = true
+
+    MAP._isOutOfDate = false
   }
 }
 

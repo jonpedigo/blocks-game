@@ -107,7 +107,7 @@ function completeNetworkUpdate() {
     return prev
   }, {}))
   window.socket.emit('updateGameState', GAME.gameState)
-  window.socket.emit('updateGameOnServerOnly')
+  window.socket.emit('updateGameOnServerOnly', GAME)
   if(GAME.gameState.started && GAME.world.tags.storeEntireGameState) {
     let storedGameState = localStorage.getItem('gameStates')
     localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))

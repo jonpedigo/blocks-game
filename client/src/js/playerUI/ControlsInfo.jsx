@@ -32,6 +32,12 @@ export default class ControlsInfo extends React.Component {
   }
 
   _getKeyDataArray(behavior, hero, alt) {
+    Object.keys(hero.subObjects).forEach((name) => {
+      if(behavior === hero.subObjects[name].id) {
+        behavior = hero.subObjects.actionButtonBehavior
+      }
+    })
+
     let windowName = behavior
     let key
 
