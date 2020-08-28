@@ -31,32 +31,43 @@ export default class ControlsInfo extends React.Component {
     return { scheme1, scheme2 }
   }
 
-  _getKeyDataArray(behavior, hero, alt) {
+  _getKeyDataArray(behaviorPropName, hero, alt) {
+    let actionNameFromSubObject;
+    let actionName;
     Object.keys(hero.subObjects).forEach((name) => {
-      if(behavior === hero.subObjects[name].id) {
-        behavior = hero.subObjects.actionButtonBehavior
+      if(hero[behaviorPropName] === hero.subObjects[name].id) {
+        actionName = hero.subObjects.actionButtonBehavior
+        actionNameFromSubObject = name
       }
     })
 
-    let windowName = behavior
+    if(actionNameFromSubObject) {
+      const key = behaviorPropName.charAt(0)
+      return {
+        behavior: window.actionButtonBehavior[hero.subObjects[actionNameFromSubObject].actionButtonBehavior],
+        key
+      }
+    }
+
+    let windowName = behaviorPropName
     let key
 
-    if(behavior === 'mButtonBehavior' || behavior === 'nButtonBehavior' ||  behavior === 'bButtonBehavior' ||  behavior === 'xButtonBehavior' ||  behavior === 'zButtonBehavior' ||  behavior === 'cButtonBehavior') {
-      if(!hero[behavior]) return null
+    if(behaviorPropName === 'mButtonBehavior' || behaviorPropName === 'nButtonBehavior' ||  behaviorPropName === 'bButtonBehavior' ||  behaviorPropName === 'xButtonBehavior' ||  behaviorPropName === 'zButtonBehavior' ||  behaviorPropName === 'cButtonBehavior') {
+      if(!hero[behaviorPropName]) return null
       windowName = 'actionButtonBehavior'
-      const key = behavior.charAt(0)
+      const key = behaviorPropName.charAt(0)
       return {
-        behavior: window[windowName][hero[behavior]],
+        behavior: window[windowName][hero[behaviorPropName]],
         key
       }
     }
 
     if(alt) windowName+='2'
-    if(!window[windowName][hero[behavior]]) return []
+    if(!window[windowName][hero[behaviorPropName]]) return []
 
-    return Object.keys(window[windowName][hero[behavior]]).map((key) => {
+    return Object.keys(window[windowName][hero[behaviorPropName]]).map((key) => {
       return {
-        behavior: window[windowName][hero[behavior]][key],
+        behavior: window[windowName][hero[behaviorPropName]][key],
         key,
       }
     })
@@ -69,7 +80,7 @@ export default class ControlsInfo extends React.Component {
   render() {
     const { onClose } = this.props;
 
-    const { scheme1, scheme2 } = this._getUsedKeys(GAME.heros[HERO.id])
+    const { scheme1, scheme2 } = this._getUsedKeys(GAME.heros[HERO.id].mod())
 
     return <div className="ControlsInfo">
        <div className="ControlsInfo__header">Control Scheme</div>

@@ -47,7 +47,6 @@ Inventory Context Menu -> Drop, Equip to Hero, Add to Shortcuts
 show inventory in HUD tag, like RTS resources VS team...yeahh
 actually build in this whole equipping system
   quick equip menu
-  guns, swords, etc, I want it all WITH MODS TOO I WANNA SEE MOD WORKING WITH EQUIP
 // max inventory ( number )
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
@@ -65,8 +64,6 @@ allow chaining of animations and effects
    guestObjectId
    eventThreshold ( event value )
    triggerPool
-
----
 
 ---
 Scenarios/BeginEnd
@@ -216,6 +213,9 @@ and update things accordingly
 /////////////////////////////
 
 PATHFINDING editor / advancements <---- !
+a path should just be an object...easy as that
+Theres the grid path ( doesnt update )
+and then u can make other paths that update often, they be smaller paths, but can be for larger objects even!
 TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
 // objects have their own path?
 // pathfinding editor should fit inside of the sequence editor

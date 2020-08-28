@@ -44,6 +44,12 @@ class NotificationsControl{
     }
   }
 
+  onHeroEquip(hero, subObject) {
+    if(subObject.actionButtonBehavior) {
+      window.socket.emit('sendNotification', { heroId: hero.id, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
+    }
+  }
+
   onStartMod(mod) {
     if(mod.effectJSON.arrowKeysBehavior || mod.effectJSON.spaceBarBehavior || mod.effectJSON.zButtonBehavior || mod.effectJSON.xButtonBehavior || mod.effectJSON.cButtonBehavior) {
       window.socket.emit('sendNotification', { heroId: mod.ownerId, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })

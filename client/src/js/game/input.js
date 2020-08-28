@@ -175,9 +175,9 @@ function handleActionButtonBehavior(hero, action, delta) {
 
   if(action === 'shoot') {
     if(subObject) {
-      shootBullet({directions: hero.directions, pos: subObject, tags: subObject.actionProps.shootTags})
+      shootBullet({direction: hero.inputDirection, pos: subObject, tags: subObject.actionProps.shootTags})
     } else {
-      shootBullet({directions: hero.directions, pos: hero, tags: { monsterDestroyer: true }})
+      shootBullet({direction: hero.inputDirection, pos: hero, tags: { monsterDestroyer: true }})
     }
   }
 
@@ -509,7 +509,6 @@ function onKeyDown(key, hero) {
   if (rightPressed) {
     hero.inputDirection = 'right'
   }
-  console.log(hero.inputDirection)
 
   window.local.emit('onKeyDown', key, hero)
 }

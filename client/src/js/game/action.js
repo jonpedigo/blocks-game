@@ -1,4 +1,4 @@
-function shootBullet({ pos, tags, directions }) {
+function shootBullet({ pos, tags, direction }) {
   let shooted = {
     id: 'bullet-' + window.uniqueID(),
     width: 4,
@@ -8,25 +8,25 @@ function shootBullet({ pos, tags, directions }) {
     },
   }
 
-  if(directions.up) {
+  if(direction === 'up') {
     Object.assign(shooted, {
       x: pos.x + (pos.width/2),
       y: pos.y,
       veloctyY: -10,
     })
-  } else if(directions.down) {
+  } else if(direction === 'down') {
     Object.assign(shooted, {
       x: pos.x + (pos.width/2),
       y: pos.y + pos.height,
       veloctyY: 10,
     })
-  } else if(directions.right) {
+  } else if(direction === 'right') {
     Object.assign(shooted, {
       x: pos.x + pos.width,
       y: pos.y + (pos.height/2),
       veloctyX: 10,
     })
-  } else if(directions.left) {
+  } else if(direction === 'left') {
     Object.assign(shooted, {
       x: pos.x,
       y: pos.y + (pos.height/2),
@@ -49,28 +49,28 @@ function dropWall(hero) {
     },
   }
 
-  if(directions.up) {
+  if(direction === 'up') {
     Object.assign(wall, {
       x: hero.x,
       y: hero.y - hero.height,
     })
   }
 
-  if(directions.down) {
+  if(direction === 'down') {
     Object.assign(wall, {
       x: hero.x,
       y: hero.y + hero.height,
     })
   }
 
-  if(directions.right) {
+  if(direction === 'right') {
     Object.assign(wall, {
       x: hero.x + hero.width,
       y: hero.y,
     })
   }
 
-  if(directions.left) {
+  if(direction === 'left') {
     Object.assign(wall, {
       x: hero.x - hero.width,
       y: hero.y,
