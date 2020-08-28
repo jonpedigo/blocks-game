@@ -29,7 +29,7 @@ class Creator {
   }
 
   onEditHero(hero) {
-    if(hero.id === HERO.id && hero.creator) {
+    if(!PAGE.role.isAdmin && hero.id === HERO.id && hero.creator) {
       CREATOR.ref.setCreatorObjects(hero.creator)
     }
   }

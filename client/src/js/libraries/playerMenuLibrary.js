@@ -8,14 +8,40 @@ window.local.on('onFirstPageGameLoaded', () => {
       useExistingMenu: 'Dialogue', // this looks up DialogueMenu.jsx and plugs it in as a subMenu. See how DialogueMenu.jsx is added to objectContextMenu
       title: 'Dialogue'
     },
+    resize: {
+      action: 'resize',
+      title: 'Resize',
+    },
+    copy: {
+      action: 'copy',
+      title: 'Copy',
+    },
+    delete: {
+      action: 'delete',
+      title: 'Delete',
+    },
+    respawn: {
+      action: 'respawn',
+      title: 'Respawn',
+    },
+    color: {
+      useExistingMenu: 'Color', // this looks up DialogueMenu.jsx and plugs it in as a subMenu. See how DialogueMenu.jsx is added to objectContextMenu
+      title: 'Color'
+    },
   }
 
   window.heroMenuLibrary = {
-    move: false
+    move: false,
+    color: false,
+    respawn: false,
   }
 
   window.objectMenuLibrary = {
     move: false,
-    dialogue: false
+    dialogue: false,
+    color: false,
+    resize: false,
+    copy: false,
+    delete: false,
   }
 })

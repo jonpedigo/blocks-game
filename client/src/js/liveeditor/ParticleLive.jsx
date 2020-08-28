@@ -26,6 +26,13 @@ export default class ParticleLive extends React.Component {
     this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 5)
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.objectSelected.id !== prevState.objectSelected.id) {
+      return { objectSelected: nextProps.objectSelected };
+    }
+    else return null;
+  }
+
   // Update current state with changes from controls
   handleUpdate(newData, fromLoad) {
     const { networkEditObject } = MAPEDITOR
@@ -82,7 +89,7 @@ export default class ParticleLive extends React.Component {
 
     let updatedProps = {}
     if(fromLoad) {
-      updatedProps = { liveEmitterData: emitterData }
+      updatedProps = { liveEmitterData: emitterData, tags: { ...objectSelected.tags}, }
     } else {
      updatedProps = {
         liveEmitterData: {
@@ -121,6 +128,7 @@ export default class ParticleLive extends React.Component {
 
     if (PAGE.role.isHost) {
       Object.assign(OBJECTS.getObjectOrHeroById(id), updatedProps)
+      networkEditObject({id, ...updatedProps})
     } else {
       networkEditObject({id, ...updatedProps})
     }

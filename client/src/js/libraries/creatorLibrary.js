@@ -250,13 +250,13 @@ function onGameLoaded() {
     },
     spear: {
       label: 'Spear',
-      columnName: 'Equipment',
+      columnName: 'Equip',
       toggleId: 'spear',
       ...toggleSubObject('spear')
     },
     gun: {
       label: 'Gun',
-      columnName: 'Equipment',
+      columnName: 'Equip',
       toggleId: 'gun',
       ...toggleSubObject('gun')
     },

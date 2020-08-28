@@ -16,6 +16,15 @@ export default class HeroLive extends React.Component {
     this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 100)
   }
 
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.objectSelected.id !== prevState.objectSelected.id) {
+      return { objectSelected: nextProps.objectSelected };
+    }
+    else return null;
+  }
+
+
   // Update current state with changes from controls
   handleUpdate(newData) {
     const id = this.state.objectSelected.id

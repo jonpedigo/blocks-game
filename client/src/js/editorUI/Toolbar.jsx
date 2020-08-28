@@ -122,7 +122,7 @@ export default class Toolbar extends React.Component {
         <ToolbarRow open iconName='fa-street-view'>
           {/* Composer -> Menu */}
           <ToolbarButton iconName="fa-blind" onClick={() => {
-            LIVEEDITOR.open(hero, 'guidance')
+            LIVEEDITOR.open(GAME.heros[HERO.id], 'guidance')
           }}/>
 
           <ToolbarButton iconName="fa-plus-square" onClick={() => {
@@ -130,7 +130,7 @@ export default class Toolbar extends React.Component {
             // window.socket.emit('anticipateObject', {...window.objecteditor.get(), wall: true});
           }}/>
           <ToolbarButton iconName="fa-sliders-h" onClick={() => {
-            LIVEEDITOR.open(hero, 'hero')
+            LIVEEDITOR.open(GAME.heros[HERO.id], 'hero')
           }}/>
           {/* star view */}
           {hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
@@ -147,7 +147,7 @@ export default class Toolbar extends React.Component {
             modals.editObjectCode(hero, 'Editing Hero JSON', hero);
           }}/>
           <ToolbarButton iconName="fa-cloud-meatball" onClick={() => {
-            LIVEEDITOR.open(hero, 'particle')
+            LIVEEDITOR.open(GAME.heros[HERO.id], 'particle')
           }}/>
           <ToolbarButton iconName="fa-recycle" onClick={() => {
               window.socket.emit('resetHeroToGameDefault', hero)
