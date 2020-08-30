@@ -8,12 +8,11 @@ TODO
 ON GAME START - Live Menu, Hero Menu, Right Click Menu goes away
 Construct editor - white only toggle
 
-0) Composer ( Creator, PlayerMenu )
-   GENRE libraries ( platformer, shooter, sword, narrative )
-   LIVE MENU - Camera, Physics
-1) IMPROVEMENTS
-2) Scenarios and stories
-3) COMBAT SYSTEM/ELEMENTAL SYSTEM
+STORY SCREENSHOTS
+SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
+PIXEL EDITOR
+PATHFINDING EDITOR
+IMPROVEMENTS
 
 -----
 
@@ -119,12 +118,12 @@ Scenario's and Stories
 Random Particle Designer
 GENRE libraries ( creator, generatedMenu )
 
-(ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
-( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
-
+PUZZLE INTERFACES
 Pathfinding upgrade
 COMPENDIUM
-PUZZLE INTERFACES
+
+(ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
+( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
 LEVEL UP SYSTEM
 
 If we release sprites, also release a sprite editor!
@@ -143,6 +142,8 @@ LEVELS ( sub worlds )
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+Allow circles and triangles?
 
 Camera filters ??? Yeah? Like the pixie demo? Let them customize the LOOK and feel of it all
 
@@ -321,6 +322,10 @@ Engine trail on a car u know what I mean?
 /// INFRASTRUCTURE
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// HOST GAME VS CLIENT GAME and their physics system, etc. right now non-hosts dont add subobjects for what reaason?? Its because adding aa sub object is quite complicated logic
+
+// event system main problem is the different between onDeleteObject and 'onDeletedObject', very important, causing many issues :(
+
 // allow pixi child sub object to go underneath their owner instead of always above, use tags please the whole time
 
 // event system for physics, game logic, rendering, network update, ui, seperating helps!

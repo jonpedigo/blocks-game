@@ -155,9 +155,9 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
       pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
       pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
     } else {
-      if(pixiChild.rotation) {
+      if(typeof pixiChild.rotation === 'number') {
         pixiChild.pivot.set(0, 0)
-        pixiChild.rotation= 0
+        pixiChild.rotation= null
       }
       pixiChild.x = (gameObject.x) * camera.multiplier
       pixiChild.y = (gameObject.y) * camera.multiplier

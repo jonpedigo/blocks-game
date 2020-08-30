@@ -100,7 +100,7 @@ function startPulse(pixiChild, gameObject, type) {
     pixiChild.shakeEase = ease.add(pixiChild, { shake: 5 }, { repeat: true, ease: 'linear' })
     pixiChild.isAnimatingPosition = true
   }
-  // 
+  //
   // if(type === 'flipY') {
   //   pixiChild.skewEase = ease.add(pixiChild, { skewX: 6.34 }, { repeat: true, ease: 'linear' })
   // }
@@ -124,13 +124,13 @@ function updatePosition(pixiChild, gameObject) {
     pixiChild.x = (gameObject.x + gameObject.width/2) * camera.multiplier
     pixiChild.y = (gameObject.y + gameObject.height/2) * camera.multiplier
   } else {
-    if(pixiChild.rotation) {
+    if(typeof pixiChild.rotation === 'number') {
       if(isContainer) {
         pixiChild.pivot.set(0, 0)
       } else {
         pixiChild.anchor.set(0, 0)
       }
-      pixiChild.rotation= 0
+      pixiChild.rotation = null
     }
 
     if(pixiChild.shakeEase) {
@@ -311,6 +311,41 @@ function updateChatBox(pixiChild, gameObject) {
     }
     updatePosition(pixiChild.chatBox, {...gameObject, x: gameObject.x - (pixiChild.chatBox.textWidth/2), y: gameObject.y - 18 - pixiChild.chatBox.textHeight })
   }
+}
+
+function createTriangle(xPos, yPos, i)
+{
+  var triangle = new PIXI.Graphics();
+
+  triangle.x = xPos;
+  triangle.y = yPos;
+
+  var triangleWidth = 100,
+      triangleHeight = triangleWidth,
+      triangleHalfway = triangleWidth/2;
+
+  // draw triangle
+  triangle.beginFill(0xFF0000, 1);
+  triangle.lineStyle(0, 0xFF0000, 1);
+  triangle.moveTo(triangleWidth, 0);
+  triangle.lineTo(triangleHalfway, triangleHeight);
+  triangle.lineTo(0, 0);
+  triangle.lineTo(triangleHalfway, 0);
+  triangle.endFill();
+
+  triangle.interactive = true;
+  triangle.buttonMode = true;
+  triangle.on("pointertap", function(e) {
+    console.log(i);
+  });
+
+  pixi.stage.addChild(triangle);
+
+//   var img = new PIXI.Sprite(triangle.generateTexture());
+//   pixi.stage.addChild(img);
+
+//   img.anchor.set(1);
+//   TweenMax.set(img, {pixi:{rotation:180}}, 0);
 }
 
 export {

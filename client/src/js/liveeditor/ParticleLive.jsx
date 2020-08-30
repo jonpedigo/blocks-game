@@ -7,6 +7,14 @@ export default class ParticleLive extends React.Component {
     super(props)
     const objectSelected = this.props.objectSelected
 
+    this._initObjectForParticleLive(objectSelected);
+    this.state = {
+      objectSelected
+    }
+    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 5)
+  }
+
+  _initObjectForParticleLive(objectSelected) {
     if(!objectSelected.liveEmitterData) {
       objectSelected.liveEmitterData = window.particleEmitterLibrary.smallFire
     }
@@ -20,14 +28,11 @@ export default class ParticleLive extends React.Component {
       MAPEDITOR.networkEditObject({id: objectSelected.id, tags:{ ...objectSelected.tags, liveEmitter: true }})
       objectSelected.tags.liveEmitter = true
     }
-    this.state = {
-      objectSelected
-    }
-    this.handleUpdate = _.debounce(this.handleUpdate.bind(this), 5)
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps = (nextProps, prevState) => {
     if (nextProps.objectSelected.id !== prevState.objectSelected.id) {
+      this.constructor._initObjectForParticleLive(nextProps.objectSelected)
       return { objectSelected: nextProps.objectSelected };
     }
     else return null;
@@ -128,9 +133,9 @@ export default class ParticleLive extends React.Component {
 
     if (PAGE.role.isHost) {
       Object.assign(OBJECTS.getObjectOrHeroById(id), updatedProps)
-      networkEditObject({id, ...updatedProps})
+      networkEditObject(objectSelected, updatedProps)
     } else {
-      networkEditObject({id, ...updatedProps})
+      networkEditObject(objectSelected, updatedProps)
     }
   }
 

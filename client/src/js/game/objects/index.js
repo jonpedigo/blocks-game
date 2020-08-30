@@ -315,6 +315,7 @@ class Objects{
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       liveEmitterData: object.liveEmitterData,
+      tags: object.tags,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
           id: part.id,
@@ -637,6 +638,7 @@ class Objects{
   }
 
   addSubObject(owner, subObject, subObjectName, options = {}) {
+    if(!PAGE.role.isHost) return
     subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName
@@ -684,7 +686,7 @@ class Objects{
   deleteSubObject(owner, subObject, subObjectName) {
     if(subObject.isEquipped) unequipSubObject(owner, subObject)
     PIXIMAP.deleteObject(subObject)
-    if(!subObject.tags.potential) PHYSICS.removeObject(subObject)
+    if(PAGE.role.isHost && !subObject.tags.potential) PHYSICS.removeObject(subObject)
     delete owner.subObjects[subObjectName]
   }
 

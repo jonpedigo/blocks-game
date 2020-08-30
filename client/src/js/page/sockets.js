@@ -39,13 +39,6 @@ function init() {
       window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
     })
 
-    // OBJECT => ID
-    window.socket.on('onRemoveSubObject', (ownerId, subObjectName) => {
-      window.local.emit('onRemoveSubObject', ownerId, subObjectName)
-    })
-    window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName, options) => {
-      window.local.emit('onAddSubObject', ownerId, subObject, subObjectName, options)
-    })
     window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
     })
@@ -132,20 +125,11 @@ function init() {
     window.socket.on('onEditHook', (ownerId, hookId, hook) => {
       window.local.emit('onEditHook', ownerId, hookId, hook)
     })
+
+    window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName, options) => {
+      window.local.emit('onAddSubObject', ownerId, subObject, subObjectName, options)
+    })
   }
-
-  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
-    window.local.emit('onDeleteTrigger', ownerId, triggerId)
-  })
-  window.socket.on('onDeleteHook', (ownerId, hookId) => {
-    window.local.emit('onDeleteHook', ownerId, hookId)
-  })
-
-  window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
-    if(PAGE.role.isGhost) {
-      window.local.emit('onSendHeroMapEditor', remoteState, heroId)
-    }
-  })
 
   ///////////////////////////////
   ///////////////////////////////
@@ -226,7 +210,6 @@ function init() {
     window.socket.on('onUpdateWorld', (updatedWorld) => {
       window.local.emit('onUpdateWorld', updatedWorld)
     })
-
   }
 
   ///////////////////////////////
@@ -256,20 +239,20 @@ function init() {
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
     window.local.emit('onEditHero', updatedHero)
-
-    if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
-      if(window.editingHero.id === updatedHero.id) {
-        window.editingHero = GAME.heros[updatedHero.id]
-        if(GAME.world.syncHero) {
-          window.setEditingHero(GAME.heros[updatedHero.id])
-        }
-      }
-      if(!window.editingHero.id) {
-        window.setEditorToAnyHero()
-      }
-    }
   })
 
+  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
+    window.local.emit('onDeleteTrigger', ownerId, triggerId)
+  })
+  window.socket.on('onDeleteHook', (ownerId, hookId) => {
+    window.local.emit('onDeleteHook', ownerId, hookId)
+  })
+
+  window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
+    if(PAGE.role.isGhost) {
+      window.local.emit('onSendHeroMapEditor', remoteState, heroId)
+    }
+  })
 
   // CLIENT HOST OR EDITOR CALL THIS
   // OBJECT -> ID

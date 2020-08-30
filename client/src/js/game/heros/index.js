@@ -627,6 +627,7 @@ class Hero{
   onDeleteHero(heroId) {
     const hero = GAME.heros[heroId]
     HERO.deleteHero(hero)
+    window.local.emit('onDeletedHero', hero)
     delete GAME.heros[heroId]
   }
 
