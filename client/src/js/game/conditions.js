@@ -82,9 +82,6 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
     if(GAME.objectsByTag[tag]) {
       areaObjects = areaObjects.concat(GAME.objectsByTag[tag])
     }
-    if(GAME.herosByTag[tag]) {
-      areaObjects = areaObjects.concat(GAME.herosByTag[tag])
-    }
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {

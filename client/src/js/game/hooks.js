@@ -29,9 +29,6 @@ function testHookCondition(mainObject, guestObject, ownerObject, hook) {
       if(GAME.objectsByTag[tag]) {
         newArr = newArr.concat(GAME.objectsByTag[tag])
       }
-      if(GAME.herosByTag[tag]) {
-        newArr = newArr.concat(GAME.herosByTag[tag])
-      }
       return newArr
     }, []))
   }

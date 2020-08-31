@@ -29,11 +29,11 @@ function onPageLoaded() {
     onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
+    onTagDepleted: { mainObject: 'tag' }
   }
-  // 'onTagDepleted', <-- ugh would be instead of crazy event thresholds
   // 'onHeroExamine' <-- only for notifications/logs
   // 'onHeroSwitch'
-  
+
     // 'onHeroChooseOption',
     // 'onObjectSpawn',
     // 'onHeroCanInteract'
@@ -70,7 +70,14 @@ function addTrigger(ownerObject, trigger) {
 
   ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
-    const eventMatch = testEventMatch(eventName, mainObject, guestObject, trigger, ownerObject)
+
+    let eventMatch = false
+
+    if(eventName === 'onTagDepleted') {
+      eventMatch = mainObject === trigger.mainObjectTag
+    } else {
+      eventMatch = testEventMatch(eventName, mainObject, guestObject, trigger, ownerObject)
+    }
 
     if(eventMatch) {
       if(trigger.triggerPool == 0) return

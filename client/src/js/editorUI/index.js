@@ -39,10 +39,14 @@ class EditorUI {
   }
 
   onStopGame() {
-    EDITORUI.ref.forceUpdate()
+    setTimeout(() => {
+      EDITORUI.ref.forceUpdate()
+    }, 100)
   }
   onGameStart() {
-    EDITORUI.ref.forceUpdate()
+    setTimeout(() => {
+      EDITORUI.ref.forceUpdate()
+    }, 100)
   }
 
   onUpdateGameState() {

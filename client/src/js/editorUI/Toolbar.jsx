@@ -127,8 +127,11 @@ export default class Toolbar extends React.Component {
 
           <ToolbarButton iconName="fa-plus-square" onClick={() => {
             window.socket.emit('anticipateObject', { tags: { obstacle: true }});
-            // window.socket.emit('anticipateObject', {...window.objecteditor.get(), wall: true});
-          }}/>
+          }}
+          onShiftClick={() => {
+            window.socket.emit('anticipateObject', { tags: { obstacle: true }, wall: true});
+          }}
+          />
           <ToolbarButton iconName="fa-sliders-h" onClick={() => {
             LIVEEDITOR.open(GAME.heros[HERO.id], 'hero')
           }}/>

@@ -303,6 +303,7 @@ class Game{
     // }
 
     // for host to find themselves ONRELOAD really is all...
+    // also useed when starting stopping a game
     if(game.heros) {
       GAME.heros = game.heros
     }
@@ -557,8 +558,10 @@ class Game{
     window.local.emit('onLoadingScreenStart')
 
     setTimeout(() => {
+      const initialGameState = GAME.cleanForSave(GAME)
+      initialGameState.heros = GAME.heros
       // remove all references to the objects, state, heros, world, etc so we can consider them state while the game is running!
-      localStorage.setItem('initialGameState', JSON.stringify(GAME.cleanForSave(GAME)))
+      localStorage.setItem('initialGameState', JSON.stringify(initialGameState))
 
       GAME.heroList.forEach((hero) => {
         HERO.spawn(hero)
@@ -943,20 +946,30 @@ class Game{
   }
 
   getObjectsByTag() {
+    const previousObjectsByTag = GAME.objectsByTag
+
     GAME.objectsByTag = GAME.objects.reduce((map, object) => {
+      if(object.removed) return map
       Object.keys(object.mod().tags).forEach((tag) => {
         if(!map[tag]) map[tag] = []
         if(object.mod().tags[tag] === true) map[tag].push(object)
       })
       return map
     }, {})
-    GAME.herosByTag = GAME.heroList.reduce((map, hero) => {
+    GAME.objectsByTag = GAME.heroList.reduce((map, hero) => {
+      if(hero.removed) return map
       Object.keys(hero.mod().tags).forEach((tag) => {
         if(!map[tag]) map[tag] = []
         if(hero.mod().tags[tag] === true) map[tag].push(hero)
       })
       return map
-    }, {})
+    }, GAME.objectsByTag)
+
+    if(PAGE.role.isHost) {
+      Object.keys(previousObjectsByTag).forEach((tag) => {
+        if(!GAME.objectsByTag[tag]) window.emitGameEvent('onTagDepleted', tag)
+      })
+    }
   }
 
   onUpdateGridNode(x, y, update) {

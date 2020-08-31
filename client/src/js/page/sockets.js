@@ -102,16 +102,6 @@ function init() {
       window.local.emit('onAnticipateObject', object)
   	})
 
-    // EDITOR CALLS THIS
-    window.socket.on('onStopGame', () => {
-      window.local.emit('onStopGame')
-    })
-
-    // EDITOR CALLS THIS
-    window.socket.on('onGameStart', () => {
-      window.local.emit('onGameStart')
-    })
-
     window.socket.on('onAddTrigger', (ownerId, trigger) => {
       window.local.emit('onAddTrigger', ownerId, trigger)
     })
@@ -216,6 +206,16 @@ function init() {
   ///////////////////////////////
   //shared events
   ///////////////////////////////
+
+  // EDITOR CALLS THIS
+  window.socket.on('onStopGame', () => {
+    window.local.emit('onStopGame')
+  })
+
+  // EDITOR CALLS THIS
+  window.socket.on('onGameStart', () => {
+    window.local.emit('onGameStart')
+  })
 
   // EVERYONE CALLS THIS
   window.socket.on('onAddObjects', (objectsAdded) => {
