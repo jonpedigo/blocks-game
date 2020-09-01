@@ -164,13 +164,16 @@ window.emitGameEvent = function(gameEvent, arg1, arg2, arg3, arg4, arg5) {
   window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
 }
 
-window.getDiff = function(object, base) {
+window.getObjectDiff = function(object, base) {
 	function changes(object, base) {
-		return _.transform(object, function(result, value, key) {
+		let diff = _.transform(object, function(result, value, key) {
 			if (!_.isEqual(value, base[key])) {
 				result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
 			}
 		});
+    if(!diff) diff = {}
+    if(object.id) diff.id = object.id
+    return diff
 	}
 	return changes(object, base);
 }

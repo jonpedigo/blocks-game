@@ -101,7 +101,7 @@ function mapNetworkUpdate() {
   let diff
   let nextMapUpdate = GAME.objects.map(OBJECTS.getMapState)
   if(lastMapUpdate) {
-    diff = window.getDiff(lastMapUpdate, nextMapUpdate)
+    diff = window.getObjectDiff(lastMapUpdate, nextMapUpdate)
   } else {
     diff = nextMapUpdate
   }
