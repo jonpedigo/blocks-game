@@ -195,12 +195,12 @@ function init() {
         }
       }
     })
-
-    // EDITOR CALLS THIS
-    window.socket.on('onUpdateWorld', (updatedWorld) => {
-      window.local.emit('onUpdateWorld', updatedWorld)
-    })
   }
+
+  // EDITOR CALLS THIS
+  window.socket.on('onUpdateWorld', (updatedWorld) => {
+    window.local.emit('onUpdateWorld', updatedWorld)
+  })
 
   ///////////////////////////////
   ///////////////////////////////

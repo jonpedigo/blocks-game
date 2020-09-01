@@ -164,6 +164,17 @@ window.emitGameEvent = function(gameEvent, arg1, arg2, arg3, arg4, arg5) {
   window.socket.emit('emitGameEvent', gameEvent, arg1, arg2, arg3, arg4, arg5)
 }
 
+window.getDiff = function(object, base) {
+	function changes(object, base) {
+		return _.transform(object, function(result, value, key) {
+			if (!_.isEqual(value, base[key])) {
+				result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
+			}
+		});
+	}
+	return changes(object, base);
+}
+
 window.animateCSS = (element, animation, prefix = 'animate__') =>
   // We create a Promise and return it
   new Promise((resolve, reject) => {

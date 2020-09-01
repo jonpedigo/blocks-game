@@ -7,7 +7,7 @@
 let updateInterval = 1000/60
 let renderInterval = 1000/24
 let mapNetworkInterval = 1000/24
-let completeNetworkInterval = 1000/1
+let completeNetworkInterval = 1000/.01
 var frameCount = 0;
 var fps, startTime, now, deltaRender, deltaMapNetwork, deltaCompleteNetwork, thenRender, thenMapNetwork, thenCompleteNetwork, thenUpdate, deltaUpdate;
 window.w = window;
@@ -27,6 +27,9 @@ window.startGameLoop = function() {
 
   // begin main loop
   mainLoop()
+  setInterval(() => {
+    window.socket.emit('updateGameOnServerOnly', { id: GAME.id, heros: GAME.heros, gameState: GAME.gameState, objects: GAME.objects, world: GAME.world, grid: GAME.grid, defaultHero: GAME.defaultHero, tags: GAME.tags })
+  }, 1000)
 }
 
 var mainLoop = function () {
@@ -91,9 +94,19 @@ function render(delta) {
   window.local.emit('onRender', delta)
 }
 
+let lastMapUpdate
 function mapNetworkUpdate() {
   window.socket.emit('updateGameState', { ambientLight: GAME.gameState.ambientLight })
-  window.socket.emit('updateObjects', GAME.objects.map(OBJECTS.getMapState))
+
+  let diff
+  let nextMapUpdate = GAME.objects.map(OBJECTS.getMapState)
+  if(lastMapUpdate) {
+    diff = window.getDiff(lastMapUpdate, nextMapUpdate)
+  } else {
+    diff = nextMapUpdate
+  }
+  lastMapUpdate = nextMapUpdate
+  window.socket.emit('updateObjects', diff)
   window.socket.emit('updateHeros', GAME.heroList.reduce((prev, hero) => {
     prev[hero.id] = HERO.getMapState(hero.mod())
     return prev
@@ -106,8 +119,6 @@ function completeNetworkUpdate() {
     prev[hero.id] = hero.mod()
     return prev
   }, {}))
-  window.socket.emit('updateGameState', GAME.gameState)
-  window.socket.emit('updateGameOnServerOnly', GAME)
   if(GAME.gameState.started && GAME.world.tags.storeEntireGameState) {
     let storedGameState = localStorage.getItem('gameStates')
     localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))

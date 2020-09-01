@@ -14,9 +14,10 @@ const updatePixiObject = (gameObject) => {
     camera = CONSTRUCTEDITOR.camera
   }
 
-  // if(gameObject.subObjectName === 'gun') console.log('updating gun')
-  // if(gameObject.tags.hero) console.log('hero')
-
+  const child = PIXIMAP.childrenById[gameObject.id]
+  if(child) {
+    child._lastRenderId = PIXIMAP.renderId
+  }
 
   /////////////////////
   /////////////////////
@@ -32,6 +33,12 @@ const updatePixiObject = (gameObject) => {
   /////////////////////
   // CONSTRUCT PARTS
   if(gameObject.constructParts) {
+    gameObject.constructParts.forEach((part) => {
+      const partChild = PIXIMAP.childrenById[part.id]
+      if(partChild) {
+        partChild._lastRenderId = PIXIMAP.renderId
+      }
+    })
     if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving && !gameObject.tags.stationary)) {
       gameObject.constructParts.forEach((part) => {
         const partObject = PIXIMAP.convertToPartObject(gameObject, part)

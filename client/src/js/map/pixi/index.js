@@ -55,7 +55,7 @@ PIXIMAP.initializePixiObjectsFromGame = function() {
 }
 
 PIXIMAP.onAssetsLoaded = function() {
-  PIXIMAP.initializeDarknessSprites()
+  // PIXIMAP.initializeDarknessSprites()
   PIXIMAP.initializePixiObjectsFromGame()
 }
 
@@ -69,24 +69,24 @@ PIXIMAP.onGameLoaded = function() {
       window.local.emit('onAssetsLoaded')
       window.local.emit('onGameReady')
       setInterval(() => {
-        PIXIMAP.initializeDarknessSprites()
-        PIXIMAP.resetDarkness()
-        PIXIMAP.updateDarknessSprites()
+        // PIXIMAP.initializeDarknessSprites()
+        // PIXIMAP.resetDarkness()
+        // PIXIMAP.updateDarknessSprites()
       }, 200)
     })
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
     PIXIMAP.objectStage.removeChildren()
     PIXIMAP.foregroundStage.removeChildren()
-    PIXIMAP.initializeDarknessSprites()
+    // PIXIMAP.initializeDarknessSprites()
     PIXIMAP.initializePixiObjectsFromGame()
     window.local.emit('onGameReady')
   }
 }
 
 PIXIMAP.onGameStarted = function() {
-  PIXIMAP.initializeDarknessSprites()
-  PIXIMAP.resetDarkness()
+  // PIXIMAP.initializeDarknessSprites()
+  // PIXIMAP.resetDarkness()
   window.local.emit('onGameReady')
 }
 
@@ -212,6 +212,15 @@ PIXIMAP.onRender = function() {
     // } else PIXIMAP.stage.visible = true
 
     MAP._isOutOfDate = false
+
+    // PIXIMAP.objectStage.children.forEach((child) => {
+    //   if(child._lastRenderId !== PIXIMAP.renderId) {
+    //     console.log(child._lastRenderId, PIXIMAP.renderId)
+    //     PIXIMAP.objectStage.removeChild(child)
+    //   }
+    // })
+
+    PIXIMAP.renderId += .0001
   }
 }
 
@@ -369,9 +378,9 @@ PIXIMAP.onUpdateGrid = function() {
   if(!window.resettingDarkness) {
     setTimeout(() => {
       if(PIXIMAP.initialized) {
-        PIXIMAP.initializeDarknessSprites()
-        PIXIMAP.resetDarkness()
-        PIXIMAP.updateDarknessSprites()
+        // PIXIMAP.initializeDarknessSprites()
+        // PIXIMAP.resetDarkness()
+        // PIXIMAP.updateDarknessSprites()
       }
       window.resettingDarkness = false
     }, 100)

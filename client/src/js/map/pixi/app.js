@@ -92,6 +92,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   app.view.id = "pixi-canvas"
   document.getElementById('GameContainer').appendChild(app.view);
   PIXIMAP.app = app
+  PIXIMAP.renderId = .0001
 
   app.stage = new PIXI.display.Stage();
 
