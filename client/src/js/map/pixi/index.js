@@ -55,7 +55,7 @@ PIXIMAP.initializePixiObjectsFromGame = function() {
 }
 
 PIXIMAP.onAssetsLoaded = function() {
-  // PIXIMAP.initializeDarknessSprites()
+  PIXIMAP.initializeDarknessSprites()
   PIXIMAP.initializePixiObjectsFromGame()
 }
 
@@ -69,24 +69,24 @@ PIXIMAP.onGameLoaded = function() {
       window.local.emit('onAssetsLoaded')
       window.local.emit('onGameReady')
       setInterval(() => {
-        // PIXIMAP.initializeDarknessSprites()
-        // PIXIMAP.resetDarkness()
-        // PIXIMAP.updateDarknessSprites()
+        PIXIMAP.initializeDarknessSprites()
+        PIXIMAP.resetDarkness()
+        PIXIMAP.updateDarknessSprites()
       }, 200)
     })
   } else if(PIXIMAP.assetsLoaded) {
     PIXIMAP.shadowStage.removeChildren()
     PIXIMAP.objectStage.removeChildren()
     PIXIMAP.foregroundStage.removeChildren()
-    // PIXIMAP.initializeDarknessSprites()
+    PIXIMAP.initializeDarknessSprites()
     PIXIMAP.initializePixiObjectsFromGame()
     window.local.emit('onGameReady')
   }
 }
 
 PIXIMAP.onGameStarted = function() {
-  // PIXIMAP.initializeDarknessSprites()
-  // PIXIMAP.resetDarkness()
+  PIXIMAP.initializeDarknessSprites()
+  PIXIMAP.resetDarkness()
   window.local.emit('onGameReady')
 }
 
@@ -156,6 +156,7 @@ PIXIMAP.onResetObjects = function() {
 }
 
 PIXIMAP.onRender = function() {
+
   if(!MAP._isOutOfDate) {
     console.log('prevented extra render')
     return
@@ -378,9 +379,9 @@ PIXIMAP.onUpdateGrid = function() {
   if(!window.resettingDarkness) {
     setTimeout(() => {
       if(PIXIMAP.initialized) {
-        // PIXIMAP.initializeDarknessSprites()
-        // PIXIMAP.resetDarkness()
-        // PIXIMAP.updateDarknessSprites()
+        PIXIMAP.initializeDarknessSprites()
+        PIXIMAP.resetDarkness()
+        PIXIMAP.updateDarknessSprites()
       }
       window.resettingDarkness = false
     }, 100)

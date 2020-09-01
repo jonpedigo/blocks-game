@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js'
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter, updatePixiEmitterData } from './particles'
-import './pixi-layers'
 import { setColor, startAnimation, startPulse, stopPulse, updateSprite, updateChatBox, updateScale, updateColor, getVisibility, getHexColor, updatePosition, updateAlpha, getGameObjectStage } from './utils'
 import { Ease, ease } from 'pixi-ease'
 
@@ -88,6 +87,7 @@ const updatePixiObject = (gameObject) => {
     updatePixiEmitter(pixiChild, gameObject)
     return
   } else if(pixiChild.emitter) {
+    console.log('?')
     PIXIMAP.deleteEmitter(pixiChild.emitter)
     delete pixiChild.emitter
 
@@ -119,7 +119,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
 
   if(gameObject.tags.emitter && !pixiChild.emitter) {
     stage.removeChild(pixiChild)
-    pixiChild = initEmitter(gameObject)
+    pixiChild = initEmitter(gameObject, 'smallFire', {}, { hasNoOwner: true })
     return
   }
 
@@ -155,7 +155,7 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
     // } else {
       emitter.updateOwnerPos(gameObject.x * camera.multiplier, gameObject.y * camera.multiplier)
     // }
-  } else if(!emitter.hasNoOwner) {
+  } else {
     if(gameObject.tags.rotateable) {
       pixiChild.pivot.set(gameObject.width/2, gameObject.height/2)
       pixiChild.rotation = gameObject.angle || 0
@@ -315,8 +315,7 @@ const initPixiObject = (gameObject) => {
   if(PAGE.role.isHost) gameObject = gameObject.mod()
 
   if(gameObject.tags.emitter) {
-    initEmitter(gameObject)
-    return
+    initEmitter(gameObject, 'smallFire', {}, { hasNoOwner: true })
   }
 
   if(gameObject.constructParts) {

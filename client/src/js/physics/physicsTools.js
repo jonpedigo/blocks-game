@@ -457,7 +457,7 @@ function containObjectWithinGridBoundaries(object) {
       object.path = null
     }
 
-    if(!legal && !object.tags.hero && !object.constructParts && GAME.world.tags.gameBoundaryDestroyObjects) {
+    if(!legal && !object.tags.hero && !object.reserved && GAME.world.tags.gameBoundaryDestroyObjects) {
       object._destroy = true
     }
     if(!legal && object.tags.hero && GAME.world.tags.gameBoundaryDestroyHero) {
