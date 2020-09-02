@@ -6,12 +6,13 @@ import SpriteMenu from '../menus/SpriteMenu.jsx';
 import HookMenu from '../menus/HookMenu.jsx';
 import LiveMenu from '../menus/LiveMenu.jsx';
 import TagMenu from '../menus/tagMenu.jsx';
+import CurrentTagMenu from '../menus/CurrentTagsMenu.jsx';
 import modals from '../modals.js'
 
 const editQuestPrefix = 'edit-quest-'
 const deleteQuestPrefix = 'delete-quest-'
 
-export default class HeroContextMenu extends React.Component{
+export default class HeroContextMenu extends React.Component {
   constructor(props) {
     super(props)
 
@@ -219,12 +220,15 @@ export default class HeroContextMenu extends React.Component{
         </SubMenu>
       </SubMenu>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
-        <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
+        <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject} />
       </SubMenu>}
-      { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
+      {GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem>}
       <SubMenu title="Advanced">
         <SubMenu title="Tags">
           <TagMenu objectSelected={objectSelected}></TagMenu>
+        </SubMenu>
+        <SubMenu title="CurrentTags">
+          <CurrentTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagMenu>
         </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="reset-to-game-default">Reset To Game Default</MenuItem>
