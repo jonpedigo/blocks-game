@@ -410,7 +410,7 @@ function containObjectWithinGridBoundaries(object) {
     } else if(gameBoundaries.behavior === 'pacmanFlip' || (gameBoundaries.behavior === 'purgatory' && object.id.indexOf('hero') > -1)) {
 
       if(objectToEdit.x < gameBoundaries.x - objectToEdit.width) {
-        objectToEdit.x = gameBoundaries.x - objectToEdit.width
+        objectToEdit.x = gameBoundaries.x + gameBoundaries.width
         legal = false
       }
       if (objectToEdit.x > gameBoundaries.x + gameBoundaries.width) {

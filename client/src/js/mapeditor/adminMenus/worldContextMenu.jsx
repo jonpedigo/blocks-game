@@ -8,7 +8,7 @@ export default class WorldContextMenu extends React.Component{
     super(props)
 
     this._handleMapMenuClick = ({ key }) => {
-      const { objectSelected } = this.props
+      const { objectSelected, openColorPicker } = this.props
 
       if(key === 'create-object') {
         OBJECTS.create({...objectSelected, tags: {obstacle: true}})
@@ -31,10 +31,10 @@ export default class WorldContextMenu extends React.Component{
       }
 
       if(key === 'select-world-background-color') {
-        this.openColorPicker('worldBackground')
+        openColorPicker('worldBackground')
       }
       if(key === 'select-default-object-color') {
-        this.openColorPicker('defaultObject')
+        openColorPicker('defaultObject')
       }
 
       if(key === 'open-sequence-editor') {

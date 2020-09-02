@@ -20,6 +20,16 @@ const updatePixiObject = (gameObject) => {
 
   /////////////////////
   /////////////////////
+  // GET CHILD
+  const stage = getGameObjectStage(gameObject)
+  let pixiChild = stage.getChildByName(gameObject.id)
+  if(!pixiChild) {
+    initPixiObject(gameObject)
+    return
+  }
+
+  /////////////////////
+  /////////////////////
   // SUB OBJECTS
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
@@ -45,16 +55,6 @@ const updatePixiObject = (gameObject) => {
       })
     }
 
-    return
-  }
-
-  /////////////////////
-  /////////////////////
-  // GET CHILD
-  const stage = getGameObjectStage(gameObject)
-  let pixiChild = stage.getChildByName(gameObject.id)
-  if(!pixiChild) {
-    initPixiObject(gameObject)
     return
   }
 
@@ -87,7 +87,6 @@ const updatePixiObject = (gameObject) => {
     updatePixiEmitter(pixiChild, gameObject)
     return
   } else if(pixiChild.emitter) {
-    console.log('?')
     PIXIMAP.deleteEmitter(pixiChild.emitter)
     delete pixiChild.emitter
 
@@ -288,7 +287,6 @@ const addGameObjectToStage = (gameObject, stage) => {
   /////////////////////
   // ADD TO STAGE
   let addedChild = stage.addChild(sprite)
-
   addedChild.texture = texture
 
   /////////////////////
@@ -316,6 +314,7 @@ const initPixiObject = (gameObject) => {
 
   if(gameObject.tags.emitter) {
     initEmitter(gameObject, 'smallFire', {}, { hasNoOwner: true })
+    return
   }
 
   if(gameObject.constructParts) {

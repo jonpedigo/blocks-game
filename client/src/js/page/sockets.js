@@ -23,10 +23,6 @@ function init() {
   // just for host
   ///////////////////////////////
 
-  // EDITOR CALLS THIS
-  window.socket.on('onEditObjects', (editedObjects) => {
-    window.local.emit('onEditObjects', editedObjects)
-  })
   if(PAGE.role.isHost) {
     window.socket.on('onSpawnAllNow', (objectId) => {
       window.local.emit('onSpawnAllNow', objectId)
@@ -35,22 +31,9 @@ function init() {
       window.local.emit('onDestroySpawnIds', objectId)
     })
 
-    window.socket.on('onDeleteSubObjectChance', (ownerId, subObjectName) => {
-      window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
-    })
 
     window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
-    })
-
-    // CLIENT HOST OR EDITOR CALL THIS
-    window.socket.on('onRemoveObject', (object) => {
-      OBJECTS.removeObject(object)
-    })
-
-    // CLIENT HOST OR EDITOR CALL THIS
-    window.socket.on('onRemoveHero', (hero) => {
-      HERO.removeHero(hero)
     })
 
     window.socket.on('onAskJoinGame', (heroId) => {
@@ -120,6 +103,37 @@ function init() {
       window.local.emit('onAddSubObject', ownerId, subObject, subObjectName, options)
     })
   }
+
+  // CLIENT HOST OR EDITOR CALL THIS
+  window.socket.on('onRemoveObject', (object) => {
+    OBJECTS.removeObject(object)
+  })
+
+  // CLIENT HOST OR EDITOR CALL THIS
+  window.socket.on('onRemoveHero', (hero) => {
+    HERO.removeHero(hero)
+  })
+
+  window.socket.on('onDeleteSubObjectChance', (ownerId, subObjectName) => {
+    window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
+  })
+
+  // EDITORS and PLAYERS call this
+  window.socket.on('onEditHero', (updatedHero) => {
+    window.local.emit('onEditHero', updatedHero)
+  })
+
+  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
+    window.local.emit('onDeleteTrigger', ownerId, triggerId)
+  })
+  window.socket.on('onDeleteHook', (ownerId, hookId) => {
+    window.local.emit('onDeleteHook', ownerId, hookId)
+  })
+
+  // EDITOR CALLS THIS
+  window.socket.on('onEditObjects', (editedObjects) => {
+    window.local.emit('onEditObjects', editedObjects)
+  })
 
   ///////////////////////////////
   ///////////////////////////////
@@ -236,18 +250,6 @@ function init() {
     window.local.emit('onResetWorld')
   })
 
-  // EDITORS and PLAYERS call this
-  window.socket.on('onEditHero', (updatedHero) => {
-    window.local.emit('onEditHero', updatedHero)
-  })
-
-  window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
-    window.local.emit('onDeleteTrigger', ownerId, triggerId)
-  })
-  window.socket.on('onDeleteHook', (ownerId, hookId) => {
-    window.local.emit('onDeleteHook', ownerId, hookId)
-  })
-
   window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
     if(PAGE.role.isGhost) {
       window.local.emit('onSendHeroMapEditor', remoteState, heroId)
@@ -257,11 +259,6 @@ function init() {
   // CLIENT HOST OR EDITOR CALL THIS
   // OBJECT -> ID
   window.socket.on('onDeleteObject', (object) => {
-    if(PAGE.role.isPlayEditor && window.objecteditor.get().id === object.id) {
-      window.objecteditor.update({})
-      window.objecteditor.saved = true
-      window.updateObjectEditorNotifier()
-    }
     window.local.emit('onDeleteObject', object)
   })
 
