@@ -54,7 +54,16 @@ import { startSequence } from './sequence'
     tagToggle: {
       tag: true,
     },
-
+    openWorld: {
+      smallText: true,
+      noEffected: true,
+    },
+    anticipatedAdd: {
+      libraryObject: true,
+    },
+    anticipatedAddWall: {
+      libraryObject: true,
+    }
     // need global library of these
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
@@ -106,6 +115,13 @@ import { startSequence } from './sequence'
   }
 
   // stop player (velocity)
+
+
+  // apply mod from library
+  // add library object to open space
+  // send to star view
+  // anticipatedAdd
+  //
 
   window.effectNameList = Object.keys(window.triggerEffects)
 
@@ -213,6 +229,19 @@ function processEffect(effect, effected, effector) {
 
   if(effectName === 'mod') {
     GAME.startMod(effected.id, effect)
+  }
+
+  if(effectName === 'openWorld') {
+    EDITOR.transformWorldTo(effectValue)
+  }
+
+  if(effectName === 'anticipatedAdd' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', object);
+  }
+  if(effectName === 'anticipatedAddWall' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, wall: true });
   }
 }
 

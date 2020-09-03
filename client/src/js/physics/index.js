@@ -129,7 +129,7 @@ function updatePosition(object, delta) {
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
-  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.mod().tags.moving && !object.mod().tags.stationary && !object.mod().tags.ignoreWorldGravity) {
+  if(GAME.world.tags.allMovingObjectsHaveGravityY && object.mod().tags.moving && !object.mod().tags.ignoreWorldGravity) {
     applyWorldGravity = true
   }
 
@@ -177,7 +177,7 @@ function updatePosition(object, delta) {
     }
   }
 
-  if(object.tags && object.mod().tags['stationary'] || !object.mod().tags['moving']) {
+  if(object.tags && !object.mod().tags['moving']) {
     object.velocityY = 0
     object.velocityX = 0
     object.velocityAngle = 0

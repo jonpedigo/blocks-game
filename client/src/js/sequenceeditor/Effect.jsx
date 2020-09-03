@@ -3,6 +3,7 @@ import modals from './modals.js'
 import Select from 'react-select'
 import classnames from 'classnames'
 import {
+  SingleLibraryObjectSelect,
   SingleEventSelect,
   SingleTagSelect,
   SingleIdSelect,
@@ -13,6 +14,22 @@ import {
 import Condition from './Condition.jsx'
 
 export default class Effect extends React.Component{
+  _renderEffecteds() {
+    const { isTrigger } = this.props
+    const { sequenceItem } = this.props
+    const { effectName } = sequenceItem
+    const effectData = window.triggerEffects[effectName]
+
+    if(effectName.length && effectData.noEffected) return null
+
+    return <React.Fragment>
+      <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedMainObject')} checked={sequenceItem.effectedMainObject} type="checkbox"></input>Effect Main Object</div>
+      <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedGuestObject} type="checkbox"></input>Effect Guest Object</div>
+      <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedWorldObject')} checked={sequenceItem.effectedWorldObject} type="checkbox"></input>Effect World Object</div>
+      <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedIds' onChange={this.props._onAddEffectedId} title='Effected Ids:'/>
+      <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedTags' onChange={this.props._onAddEffectedTag} title='Effected Tags:'/>
+    </React.Fragment>
+  }
   render() {
     // effector: false,
     // position: false,
@@ -93,6 +110,15 @@ export default class Effect extends React.Component{
       if(effectData.condition) {
         chosenEffectForm.push(<Condition nested {...this.props} setState={this.props.setState}/>)
       }
+
+      if(effectData.libraryObject) {
+        chosenEffectForm.push(<SingleLibraryObjectSelect sequenceItem={sequenceItem} valueProp='effectLibraryObject' onChange={(event) => {
+         if(event.value) {
+           sequenceItem.effectLibraryObject = event.value
+           this.props.setState({sequenceItem})
+         }
+       }}/>)
+      }
     }
 
     return <div className="SequenceItem__effect">
@@ -102,11 +128,7 @@ export default class Effect extends React.Component{
           {chosenEffectForm}
         </div>
         {isTrigger && <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedOwnerObject} type="checkbox"></input>Effect Owner Object</div>}
-        <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedMainObject')} checked={sequenceItem.effectedMainObject} type="checkbox"></input>Effect Main Object</div>
-        <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedGuestObject} type="checkbox"></input>Effect Guest Object</div>
-        <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedWorldObject')} checked={sequenceItem.effectedWorldObject} type="checkbox"></input>Effect World Object</div>
-        <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedIds' onChange={this.props._onAddEffectedId} title='Effected Ids:'/>
-        <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedTags' onChange={this.props._onAddEffectedTag} title='Effected Tags:'/>
+        {this._renderEffecteds()}
       </div>
       <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.next} onChange={this.props._selectNext}/>
     </div>

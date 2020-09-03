@@ -459,6 +459,7 @@ import './styles/jsoneditor.css'
 
 import './js/libraries/modLibrary.js'
 import './js/libraries/subObjectLibrary.js'
+import './js/libraries/objectLibrary.js'
 
 if(document.hasFocus()) {
   PAGE.load()

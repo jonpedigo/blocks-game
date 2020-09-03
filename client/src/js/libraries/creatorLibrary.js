@@ -64,134 +64,70 @@ function onGameLoaded() {
       label: 'Structure',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryObstacle', { obstacle: true, stationary: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryObstacle', { obstacle: true,})
       }
     },
     drawBackground: {
       label: 'Background',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, stationary: true, notInCollisions: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryBackground', { background: true, notInCollisions: true })
       }
     },
     drawForeground: {
       label: 'Foreground',
       columnName: 'Draw',
       onSelect: function() {
-        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, stationary: true, notInCollisions: true })
+        constructEditorOnSelect.call(this, 'globalConstructStationaryForeground', { foreground: true, notInCollisions: true })
       }
     },
     standingNPC: {
       label: 'Standing',
       columnName: 'NPCs',
-      JSON: {
-        objectType: 'plainObject',
-        heroDialogue: [
-          "hello!"
-        ],
-        tags: { obstacle: true, stationary: true, talker: true, talkOnHeroInteract: true },
-      }
+      JSON: window.objectLibrary.standingNPC,
     },
     wanderingNPC: {
       label: 'Wandering',
       columnName: 'NPCs',
-      JSON: {
-        objectType: 'plainObject',
-        heroDialogue: [
-          "hello!"
-        ],
-        tags: { obstacle: true, wander: true, moving: true, talker: true, talkOnHeroInteract: true },
-      }
+      JSON: window.objectLibrary.wanderingNPC,
     },
     light: {
       label: 'Medium  Light',
       columnName: 'Lights',
-      JSON: {
-        objectType: 'plainObject',
-        tags: {
-          light: true,
-          invisible: true,
-        }
-      }
+      JSON: window.objectLibrary.light,
     },
     fire: {
       label: 'Fire',
       columnName: 'Lights',
-      JSON: {
-        objectType: 'plainObject',
-        tags: {
-          emitter: true,
-          light: true,
-        }
-      }
+      JSON: window.objectLibrary.fire,
     },
     spawnZone: {
       label: 'Spawn Zone',
       columnName: 'Zones',
-      JSON: {
-        objectType: 'plainObject',
-        width: GAME.grid.nodeSize * 2,
-        height: GAME.grid.nodeSize * 2,
-        tags: {
-          spawnZone: true,
-          spawnRandomlyWithin: true,
-          spawnOnInterval: true,
-          invisible: true,
-        },
-        spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
-      },
-      onCreateObject: (object) => {
-        window.socket.emit('addSubObject', object, { tags: { potential: true } }, 'spawner')
-      },
+      JSON: window.objectLibrary.spawnZone,
+      // onCreateObject: (object) => {
+      //   window.socket.emit('addSubObject', object, { tags: { potential: true } }, 'spawner')
+      // },
     },
     resourceZone: {
       label: 'Resource Zone',
       columnName: 'Zones',
-      JSON: {
-        objectType: 'plainObject',
-        width: GAME.grid.nodeSize * 2,
-        height: GAME.grid.nodeSize * 2,
-        tags: { outline: true, resourceZone: true, resourceDepositOnCollide: true, resourceWithdrawOnInteract: true },
-        resourceWithdrawAmount: 1, resourceLimit: -1, resourceTags: ['resource']
-      }
+      JSON: window.objectLibrary.resourceZone
     },
     resource: {
       label: 'Resource',
       columnName: 'Items',
-      JSON: {
-        objectType: 'plainObject',
-        subObjectName: 'resource',
-        tags: { obstacle: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
-      }
+      JSON: window.objectLibrary.resource
     },
     chest: {
       label: 'Chest',
       columnName: 'Items',
-      JSON: {
-        objectType: 'plainObject',
-        tags: { obstacle: true, spawnZone: true, spawnAllInHeroInventoryOnHeroInteract: true, destroyOnSpawnPoolDepleted: true },
-        spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
-      }
+      JSON: window.objectLibrary.chest,
     },
     homing: {
       label: 'Homing',
       columnName: 'Monsters',
-      JSON: {
-        objectType: 'plainObject',
-        tags: { obstacle: true, monster: true, moving: true, homing: true, targetHeroOnAware: true },
-        subObjects: {
-          awarenessTriggerArea: {
-            x: 0, y: 0, width: 40, height: 40,
-            relativeWidth: GAME.grid.nodeSize * 12,
-            relativeHeight: GAME.grid.nodeSize * 16,
-            relativeX: 0,
-            relativeY: -GAME.grid.nodeSize * 4,
-            opacity: 0.2,
-            color: 'yellow',
-            tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
-          }
-        }
-      }
+      JSON: window.objectLibrary.homing,
     },
     spin: {
       label: 'Spin',

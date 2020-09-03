@@ -106,7 +106,7 @@ class Hero{
           relativeHeight: GAME.grid.nodeSize * 2,
           relativeX: 0,
           relativeY: 0,
-          tags: { obstacle: false, invisible: true, stationary: true, heroInteractTriggerArea: true },
+          tags: { obstacle: false, invisible: true, heroInteractTriggerArea: true },
         },
         awarenessTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
@@ -114,7 +114,7 @@ class Hero{
           relativeHeight: GAME.grid.nodeSize * 16,
           relativeX: 0,
           relativeY: -GAME.grid.nodeSize * 4,
-          tags: { obstacle: false, invisible: true, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
+          tags: { obstacle: false, invisible: true, awarenessTriggerArea: true, relativeToDirection: true, },
         },
         // spear: {
         //   id: 'spear-'+window.uniqueID(),

@@ -190,8 +190,12 @@ function setDefault() {
   }
 
   window.descriptiveTags = {
+    plain: false,
+    hero: false,
     fresh: false,
     spawned: false,
+    npc: false,
+    alive: false,
     removed: false,
   }
 
@@ -213,10 +217,6 @@ function setDefault() {
     ...window.inventoryTags,
     ...window.animationTags,
     ...window.featureOptimizationTags,
-  }
-
-  window.plainObjectTags = {
-    plain: true,
   }
 
   window.heroTags = {
@@ -258,6 +258,7 @@ function setDefault() {
     ...window.keyInputTags,
     ...window.heroTags,
     ...window.subObjectTags,
+    ...window.descriptiveTags
   }
 }
 

@@ -23,6 +23,10 @@ class Editor {
         EDITORUI.ref.forceUpdate()
         CREATOR.ref._creatorRef.current.forceUpdate()
       }
+
+      if(EDITOR.shiftPressed && e.keyCode == 82) {
+        PAGE.resetStorage()
+      }
     })
     window.addEventListener("keyup", function (e) {
       if(e.keyCode === 16) {
@@ -126,12 +130,12 @@ class Editor {
         setTimeout(() => {
           respawnAllHeros()
         })
+        setHerosZoomTo('default')
       }
 
       setGameBoundaryBehavior('default')
       setGameBoundaryTo('grid')
-      setCameraLockTo('gridPadding')
-      setHerosZoomTo('default')
+      setCameraLockTo('gridMinusOne')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags, allMovingObjectsHaveGravityY: true, gameBoundaryBottomDestroyHero: true }})
     }
 
@@ -170,6 +174,7 @@ class Editor {
       setGameBoundaryTo('gridMinusOne')
       setCameraLockTo('gridMinusOne')
       setHerosZoomTo('gridMinusOne')
+
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 

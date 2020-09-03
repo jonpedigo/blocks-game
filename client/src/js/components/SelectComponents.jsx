@@ -74,10 +74,21 @@ function SingleTagSelect({sequenceItem, valueProp, onChange, title}) {
   </div>
 }
 
+function SingleLibraryObjectSelect({sequenceItem, valueProp, onChange, title}) {
+  return <div className="SequenceItem__test">{title || 'Library Object Name'}<Select
+    value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
+    onChange={onChange}
+    options={Object.keys(window.objectLibrary).map(objectName => { return { value: objectName, label: objectName }})}
+    styles={window.reactSelectStyle}
+    theme={window.reactSelectTheme}/>
+  </div>
+}
+
 export {
   SingleEventSelect,
   SingleTagSelect,
   SingleIdSelect,
+  SingleLibraryObjectSelect,
   MultiIdSelect,
   MultiTagSelect,
   NextSelect,
