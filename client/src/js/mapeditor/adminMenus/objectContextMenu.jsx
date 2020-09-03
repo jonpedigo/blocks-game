@@ -1,6 +1,7 @@
 import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import TagMenu from '../menus/tagMenu.jsx';
+import CurrentTagsMenu from '../menus/CurrentTagsMenu.jsx';
 import ColorMenu from '../menus/ColorMenu.jsx';
 import GameTagMenu from '../menus/GameTagMenu.jsx';
 import DialogueMenu from '../menus/DialogueMenu.jsx';
@@ -129,6 +130,9 @@ export default class ObjectContextMenu extends React.Component{
         <HookMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Tags">
+        <CurrentsTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagMenu>
+      </SubMenu>
+      <SubMenu title="All Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
       </SubMenu>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
