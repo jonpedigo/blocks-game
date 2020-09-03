@@ -64,9 +64,14 @@ import { startSequence } from './sequence'
     anticipatedAddWall: {
       libraryObject: true,
     },
+    randomAdd: {
+      libraryObject: true,
+    },
+    randomAddWall: {
+      libraryObject: true,
+    },
     starViewGo: {},
     starViewReturn: {},
-    // need global library of these
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
     // camera effect
@@ -74,15 +79,37 @@ import { startSequence } from './sequence'
     // move Camera to, cameraAnimateZoomTo, ( lets use the camera delay tool ...)
     // this ^ can also include showing UI popover on game object.. I mean welcome to CLEAR onboarding
 
-    // 'anticipatedAdd',
-    // 'goToStarView',
     // 'sequenceDisable'
     // 'sequenceEnable'
     // 'stopSequence',
     // 'morph',
     // 'duplicate',
-    // 'heroQuestStart',
-    // 'heroQuestComplete',
+    // 'questStart',
+    // 'questComplete',
+
+    // 'increaseInputDirectionVelocity',
+    // 'increaseMovementDirectionVelocity',
+
+    // 'pathfindTo',
+    // 'moveTo',
+    // 'attachToEffectorAsParent'
+    // 'attachToEffectorAsRelative'
+    // 'emitCustomEvent',
+
+    // setPathTarget
+    // setTarget
+
+    // play sound FX
+    // stop music
+    // start music
+
+    // rest player physics
+
+
+
+    // THESE ARE MAYBE JUST MUTATE? EXCEPT FOR TOGGLE, MAYBE ADD THAT TO SPECIAL SYNTAX
+    // skipHeroGravity
+    // skipHeroPosUpdate
     // 'spawnPoolIncrement',
     // 'spawnTotalIncrement',
     // 'spawnTotalRemove',
@@ -99,31 +126,10 @@ import { startSequence } from './sequence'
     // 'triggerDisable',
     // 'triggerEnable',
     // 'triggerToggleEnable',
-    // 'increaseInputDirectionVelocity',
-    // 'increaseMovementDirectionVelocity',
-    // 'pathfindTo',
-    // 'moveTo',
-    // 'attachToEffectorAsParent'
-    // 'attachToEffectorAsRelative'
-    // 'emitCustomEvent',
-    // skipHeroGravity
-    // skipHeroPosUpdate
-    // setPathTarget
-    // setTarget
-
-    // play sound FX
-    // stop music
-    // start music
   }
-
-  // stop player (velocity)
-
 
   // apply mod from library
   // add library object to open space
-  // send to star view
-  // anticipatedAdd
-  //
 
   window.effectNameList = Object.keys(window.triggerEffects)
 
@@ -134,9 +140,6 @@ function processEffect(effect, effected, effector, ownerObject) {
     OBJECTS.mergeWithJSON(effected, effectJSON)
   }
 
-  // if(effectName === 'talkToHero' && hero) {
-  //   onTalk(hero, owner)
-  // }
   //
   // if(effectName === 'heroQuestStart' && hero) {
   //   startQuest(hero, effectValue)
@@ -174,20 +177,20 @@ function processEffect(effect, effected, effector, ownerObject) {
     OBJECTS.removeObject(effected)
   }
 
-  if(effectName === 'spawnTotalIncrement') {
-    effected.spawnTotal += effectValue || 1
-  }
+  // if(effectName === 'spawnTotalIncrement') {
+  //   effected.spawnTotal += effectValue || 1
+  // }
 
   //
   // if(effectName === 'spawnTotalRemove') {
   //   effected.spawnTotal = -1
   // }
 
-  if(effectName === 'spawnPoolIncrement') {
-    effected.spawnPool += effectValue || 1
-    // effected.spawnWait=false
-    // if(effected.spawnWaitTimerId) delete GAME.gameState.timeoutsById[effected.spawnWaitTimerId]
-  }
+  // if(effectName === 'spawnPoolIncrement') {
+  //   effected.spawnPool += effectValue || 1
+  //   // effected.spawnWait=false
+  //   // if(effected.spawnWaitTimerId) delete GAME.gameState.timeoutsById[effected.spawnWaitTimerId]
+  // }
 
   if(effectName === 'tagAdd') {
     if(effect.effectTags) {
@@ -248,9 +251,17 @@ function processEffect(effect, effected, effector, ownerObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, wall: true });
   }
+  if(effectName === 'randomAdd' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', {...object, random: true});
+  }
+  if(effectName === 'randomAddWall' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, wall: true, random: true });
+  }
+
 
   if(effectName === 'starViewGo') {
-    console.log(effect)
     const hero = GAME.heros[effected.id]
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })
   }

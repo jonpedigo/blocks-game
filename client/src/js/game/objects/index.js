@@ -365,8 +365,36 @@ class Objects{
     const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = HERO.getViewBoundaries(hero)
 
     let isWall = OBJECTS.anticipatedForAdd.wall
+    let isRandom = OBJECTS.anticipatedForAdd.random
 
-    if (leftDiff < 1 && hero.directions.left) {
+    if(isRandom) {
+      let newObject
+      if(isWall) {
+        if(Math.random() > .5) {
+          newObject = {
+            x: minX + (GAME.grid.nodeSize * 2),
+            y: gridUtil.getRandomGridWithinXY(minY, maxY),
+            width: (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4),
+            height: GAME.grid.nodeSize,
+          }
+        } else {
+          newObject = {
+            x: gridUtil.getRandomGridWithinXY(minX, maxX),
+            y: minY + ( GAME.grid.nodeSize * 2),
+            width: GAME.grid.nodeSize,
+            height: (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3)
+          }
+        }
+      } else {
+        newObject = {
+          x: gridUtil.getRandomGridWithinXY(minX, maxX),
+          y: gridUtil.getRandomGridWithinXY(minY, maxY),
+          width: GAME.grid.nodeSize,
+          height: GAME.grid.nodeSize,
+        }
+      }
+      addAnticipatedObject(newObject)
+    } else if (leftDiff < 1 && hero.directions.left) {
       let newObject = {
         x: minX - GAME.grid.nodeSize,
         y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
@@ -1088,6 +1116,12 @@ class Objects{
         } else if(jsonValue.startsWith("-")) {
           const equationValue = Number(jsonValue.slice(1))
           JSON[key] = objectValue - equationValue
+        }
+      }
+
+      if((typeof objectValue === 'boolean' || objectValue === undefined) && typeof jsonValue === 'string') {
+        if (jsonValue.startsWith("toggle")) {
+          JSON[key] = !JSON[key]
         }
       }
     })
