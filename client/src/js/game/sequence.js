@@ -76,6 +76,7 @@ function startSequence(sequenceId, context) {
 
   sequence.mainObject = context.mainObject
   sequence.guestObject = context.guestObject
+  sequence.ownerObject = context.ownerObject
   sequence.currentItemId = sequence.items[0].id
   sequence.eventListeners = []
   sequence.itemMap = mapSequenceItems(items)
@@ -99,11 +100,13 @@ function processSequence(sequence) {
   }
 
   if(item.sequenceType === 'sequenceEffect') {
-    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject)
+    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
 
     let effector = defaultEffector
     if(item.effectorObject) {
-      if(item.effectorObject === 'mainObject') {
+      if(item.effectorObject === 'ownerObject') {
+        effector = sequence.ownerObject
+      } else if(item.effectorObject === 'mainObject') {
         effector = item.mainObject
       } else if(item.effectorObject === 'guestObject') {
         effector = item.guestObject

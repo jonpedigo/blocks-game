@@ -129,7 +129,7 @@ function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
   }
 
   effectedObjects.forEach((effected) => {
-    effects.processEffect(trigger, effected, effector)
+    effects.processEffect(trigger, effected, effector, ownerObject)
   })
 }
 

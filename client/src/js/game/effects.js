@@ -63,7 +63,9 @@ import { startSequence } from './sequence'
     },
     anticipatedAddWall: {
       libraryObject: true,
-    }
+    },
+    starViewGo: {},
+    starViewReturn: {},
     // need global library of these
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
@@ -125,7 +127,8 @@ import { startSequence } from './sequence'
 
   window.effectNameList = Object.keys(window.triggerEffects)
 
-function processEffect(effect, effected, effector) {
+// owner object is just for sequences
+function processEffect(effect, effected, effector, ownerObject) {
   const { effectName, effectValue, effectJSON } = effect
   if(effectName === 'mutate' && effectJSON) {
     OBJECTS.mergeWithJSON(effected, effectJSON)
@@ -223,7 +226,9 @@ function processEffect(effect, effected, effector) {
     const context = {
       mainObject: effected,
       guestObject: effector,
+      ownerObject,
     }
+    console.log('ctx owner', context.ownerObject)
     startSequence(effect.effectSequenceId, context)
   }
 
@@ -242,6 +247,17 @@ function processEffect(effect, effected, effector) {
   if(effectName === 'anticipatedAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, wall: true });
+  }
+
+  if(effectName === 'starViewGo') {
+    console.log(effect)
+    const hero = GAME.heros[effected.id]
+    window.socket.emit('editHero', { id: effected.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })
+  }
+
+  if(effectName === 'starViewReturn') {
+    const hero = GAME.heros[effected.id]
+    window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
   }
 }
 
