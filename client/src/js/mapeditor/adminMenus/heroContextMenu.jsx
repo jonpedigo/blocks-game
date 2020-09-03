@@ -188,6 +188,9 @@ export default class HeroContextMenu extends React.Component {
       <SubMenu title="Tags">
         <CurrentsTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagMenu>
       </SubMenu>
+      <SubMenu title="All Tags">
+        <TagMenu objectSelected={objectSelected}></TagMenu>
+      </SubMenu>
       <SubMenu title="Triggers">
         <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
@@ -222,9 +225,6 @@ export default class HeroContextMenu extends React.Component {
       </SubMenu>}
       {GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem>}
       <SubMenu title="Advanced">
-        <SubMenu title="Tags">
-          <TagMenu objectSelected={objectSelected}></TagMenu>
-        </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="reset-to-game-default">Reset To Game Default</MenuItem>
         <MenuItem key="reset-to-core-default">Reset To Core Default</MenuItem>
