@@ -41,11 +41,7 @@ export default class CurrentTagsMenu extends React.Component {
 
         return <Menu onClick={this._handleTagMenuClick}>
             {tagsToRender.map((tag, index) => {
-                return (
-                    <SubMenu key={index} title={tag}>
-                        {this._renderTagMenuItems(tag)}
-                    </SubMenu>
-                )
+                return this._renderTagMenuItems(tag)
             })}
             {/* <SubMenu title="Physics">
                 {this._renderTagMenuItems(window.physicsTags)}
