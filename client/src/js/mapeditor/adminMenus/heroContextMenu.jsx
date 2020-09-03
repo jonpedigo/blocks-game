@@ -186,7 +186,7 @@ export default class HeroContextMenu extends React.Component {
         {this._renderDeleteQuestList(objectSelected.quests)}
       </SubMenu>
       <SubMenu title="Tags">
-        <CurrentsTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagsMenu>
+        <CurrentTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagsMenu>
       </SubMenu>
       <SubMenu title="All Tags">
         <TagMenu objectSelected={objectSelected}></TagMenu>
