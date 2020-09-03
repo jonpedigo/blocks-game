@@ -130,7 +130,7 @@ export default class ObjectContextMenu extends React.Component{
         <HookMenu objectSelected={objectSelected}/>
       </SubMenu>
       <SubMenu title="Tags">
-        <CurrentsTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagsMenu>
+        <CurrentsTagsMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagsMenu>
       </SubMenu>
       <SubMenu title="All Tags">
         <TagMenu objectSelected={objectSelected} subObject={subObject}></TagMenu>
