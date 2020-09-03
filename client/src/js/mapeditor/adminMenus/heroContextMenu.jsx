@@ -6,7 +6,7 @@ import SpriteMenu from '../menus/SpriteMenu.jsx';
 import HookMenu from '../menus/HookMenu.jsx';
 import LiveMenu from '../menus/LiveMenu.jsx';
 import TagMenu from '../menus/tagMenu.jsx';
-import CurrentTagMenu from '../menus/CurrentTagsMenu.jsx';
+import CurrentTagsMenu from '../menus/CurrentTagsMenu.jsx';
 import modals from '../modals.js'
 
 const editQuestPrefix = 'edit-quest-'
@@ -186,9 +186,7 @@ export default class HeroContextMenu extends React.Component {
         {this._renderDeleteQuestList(objectSelected.quests)}
       </SubMenu>
       <SubMenu title="Tags">
-        <Menu onClick={this._handleTagMenuClick}>
-          {this._renderTagMenuItems(window.heroTags)}
-        </Menu>
+        <CurrentsTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagMenu>
       </SubMenu>
       <SubMenu title="Triggers">
         <TriggerMenu objectSelected={objectSelected}/>
@@ -226,9 +224,6 @@ export default class HeroContextMenu extends React.Component {
       <SubMenu title="Advanced">
         <SubMenu title="Tags">
           <TagMenu objectSelected={objectSelected}></TagMenu>
-        </SubMenu>
-        <SubMenu title="CurrentTags">
-          <CurrentTagMenu objectSelected={objectSelected} currentTags={objectSelected.tags}></CurrentTagMenu>
         </SubMenu>
         <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
         <MenuItem key="reset-to-game-default">Reset To Game Default</MenuItem>
