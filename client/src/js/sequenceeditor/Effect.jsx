@@ -77,7 +77,9 @@ export default class Effect extends React.Component{
         chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={this.props._openWriteDialogueModal}/>)
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{effectValue}</div>)
       } else if(effectData.number) {
-
+        chosenEffectForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('effectValue') }}/>
+      {effectData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.effectValue}</div>
+        </div>)
       } else if(effectData.sequenceId) {
         chosenEffectForm.push(<div className="SequenceItem__effected">Sequence Id:<Select
           value={{value: effectSequenceId, label: effectSequenceId}}

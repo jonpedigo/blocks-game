@@ -1,5 +1,9 @@
 window.local.on('onFirstPageGameLoaded', () => {
   window.objectLibrary = {
+    defaultObject: {
+      objectType: 'plainObject',
+      tags: { obstacle: true },
+    },
     standingNPC: {
       objectType: 'plainObject',
       heroDialogue: [
@@ -76,6 +80,28 @@ window.local.on('onFirstPageGameLoaded', () => {
         }
       }
     },
+    pacmanMonster: {
+      objectType: 'plainObject',
+      tags: { monster: true, moving: true, spelunker: true },
+      color: 'cyan',
+    },
+    pacmanDot: {
+      objectType: 'plainObject',
+      width: 10,
+      height: 10,
+      tags: { coin: true, behaviorOnHeroCollide: true },
+      color: 'yellow',
+    },
+    pacmanPowerup: {
+      objectType: 'plainObject',
+      tags: { heroUpdate: true, rotateable: true, realRotate: true, updateHeroOnHeroCollide: true, revertHeroUpdateAfterTimeout: true, oneTimeHeroUpdate: true, destroyAfterTrigger: true },
+      color: 'yellow',
+      heroUpdate: {
+        tags: { monsterDestroyer: true },
+        color: 'yellow',
+      },
+      powerUpTimer: 2,
+    }
   }
 
 })

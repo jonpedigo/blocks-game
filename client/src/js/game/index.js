@@ -173,13 +173,8 @@ class Game{
         })
         //////////////////////////////
         //// ANTICIPATE OBJECT
-        if(PAGE.role.isHost && OBJECTS.anticipatedForAdd) {
-          let hero = GAME.heros[HERO.id]
-          if(PAGE.role.isPlayEditor) {
-            hero = window.editingHero
-          }
-          if(PAGE.role.isPlayer) OBJECTS.anticipatedAdd(GAME.heros[HERO.id])
-          else if(PAGE.role.isPlayEditor) OBJECTS.anticipatedAdd(window.editingHero)
+        if(PAGE.role.isHost && OBJECTS.anticipatedForAdd && OBJECTS.anticipatedForAdd.length) {
+          OBJECTS.anticipatedAdd(GAME.heros[HERO.id], OBJECTS.anticipatedForAdd[0])
         }
 
 

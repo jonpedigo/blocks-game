@@ -361,11 +361,12 @@ class Objects{
     return false
   }
 
-  anticipatedAdd(hero) {
+  anticipatedAdd(hero, object) {
     const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = HERO.getViewBoundaries(hero)
 
-    let isWall = OBJECTS.anticipatedForAdd.wall
-    let isRandom = OBJECTS.anticipatedForAdd.random
+    let isWall = object.wall
+    let isBlock = object.block
+    let isRandom = object.random
 
     if(isRandom) {
       let newObject
@@ -383,6 +384,22 @@ class Objects{
             y: minY + ( GAME.grid.nodeSize * 2),
             width: GAME.grid.nodeSize,
             height: (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3)
+          }
+        }
+      } else if(isBlock) {
+        if(Math.random() > .5) {
+          newObject = {
+            x: gridUtil.getRandomGridWithinXY(minX, maxX),
+            y: gridUtil.getRandomGridWithinXY(minY, maxY),
+            width: GAME.grid.nodeSize * 5,
+            height: GAME.grid.nodeSize,
+          }
+        } else {
+          newObject = {
+            x: gridUtil.getRandomGridWithinXY(minX, maxX),
+            y: gridUtil.getRandomGridWithinXY(minY, maxY),
+            width: GAME.grid.nodeSize,
+            height: GAME.grid.nodeSize * 5,
           }
         }
       } else {
@@ -430,9 +447,17 @@ class Objects{
 
     function addAnticipatedObject(newObject) {
       let {x , y} = gridUtil.snapXYToGrid(newObject.x, newObject.y)
-      if(gridUtil.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && gridUtil.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
-        OBJECTS.create([{...newObject, ...OBJECTS.anticipatedForAdd}])
-        OBJECTS.anticipatedForAdd = null
+      if(!collisions.check(newObject, GAME.objects) && gridUtil.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && gridUtil.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
+        const createMe = {...newObject, ...object}
+        createMe.tags.fadeInOnInit = true
+        OBJECTS.create([createMe])
+        if(object.numberToAdd) {
+          object.numberToAdd--
+        } else {
+          OBJECTS.anticipatedForAdd = OBJECTS.anticipatedForAdd.filter((antObject) => {
+            return antObject !== object
+          })
+        }
       }
     }
   }
@@ -615,7 +640,8 @@ class Objects{
   }
 
   onAnticipateObject(object) {
-    OBJECTS.anticipatedForAdd = object
+    if(!OBJECTS.anticipatedForAdd) OBJECTS.anticipatedForAdd = []
+    OBJECTS.anticipatedForAdd.push(object)
   }
 
   onUpdateObject(object, delta) {

@@ -244,7 +244,7 @@ function exploreCave(object) {
       'down',
     ].filter((dir) => dir !== object._goalDirection)
     object._goalDirection = directions[Math.floor(Math.random() * (object._goalDirection ? 3 : 4))]
-  } else {
+  } else if(availableGrids.length) {
     let grid = shuffle(availableGrids)[0]
     object._goalDirection = grid.direction
     return grid

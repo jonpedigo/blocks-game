@@ -66,9 +66,15 @@ import { startSequence } from './sequence'
     },
     randomAdd: {
       libraryObject: true,
+      number: true,
+    },
+    randomAddBlock: {
+      libraryObject: true,
+      number: true,
     },
     randomAddWall: {
       libraryObject: true,
+      number: true,
     },
     starViewGo: {},
     starViewReturn: {},
@@ -253,11 +259,15 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
   if(effectName === 'randomAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', {...object, random: true});
+    window.socket.emit('anticipateObject', {...object, random: true, numberToAdd: effectValue });
   }
   if(effectName === 'randomAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, wall: true, random: true });
+    window.socket.emit('anticipateObject', { ...object, wall: true, random: true, numberToAdd: effectValue });
+  }
+  if(effectName === 'randomAddBlock' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, block: true, random: true, numberToAdd: effectValue });
   }
 
 
