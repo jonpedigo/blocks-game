@@ -454,7 +454,7 @@ class Objects{
         if(object.numberToAdd) {
           object.numberToAdd--
         } else {
-          OBJECTS.anticipatedForAdd = OBJECTS.anticipatedForAdd.filter((antObject) => {
+          GAME.gameState.anticipatedForAdd = GAME.gameState.anticipatedForAdd.filter((antObject) => {
             return antObject !== object
           })
         }
@@ -640,8 +640,8 @@ class Objects{
   }
 
   onAnticipateObject(object) {
-    if(!OBJECTS.anticipatedForAdd) OBJECTS.anticipatedForAdd = []
-    OBJECTS.anticipatedForAdd.push(object)
+    if(!GAME.gameState.anticipatedForAdd) GAME.gameState.anticipatedForAdd = []
+    GAME.gameState.anticipatedForAdd.push(object)
   }
 
   onUpdateObject(object, delta) {

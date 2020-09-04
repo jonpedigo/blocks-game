@@ -24,13 +24,24 @@ function init() {
   ///////////////////////////////
 
   if(PAGE.role.isHost) {
+    // should be editor event
+    window.socket.on('onStartSequence', (sequenceId, ownerId) => {
+      window.local.emit('onStartSequence', sequenceId, ownerId)
+    })
+    window.socket.on('onTogglePauseSequence', (sequenceId) => {
+      window.local.emit('onTogglePauseSequence', sequenceId)
+    })
+    window.socket.on('onStopSequence', (sequenceId) => {
+      window.local.emit('onStopSequence', sequenceId)
+    })
+
+    // these are editor events
     window.socket.on('onSpawnAllNow', (objectId) => {
       window.local.emit('onSpawnAllNow', objectId)
     })
     window.socket.on('onDestroySpawnIds', (objectId) => {
       window.local.emit('onDestroySpawnIds', objectId)
     })
-
 
     window.socket.on('onEditSubObject', (ownerId, subObjectName, update) => {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
@@ -409,6 +420,7 @@ function init() {
   window.socket.on('onEndMod', (manualRevertId) => {
     window.local.emit('onEndMod', manualRevertId)
   })
+
   window.socket.on('onResetPhysicsProperties', (objectId) => {
     window.local.emit('onResetPhysicsProperties', objectId)
   })

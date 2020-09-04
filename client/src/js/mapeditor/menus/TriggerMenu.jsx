@@ -13,15 +13,15 @@ export default class TriggerMenu extends React.Component{
       const data = JSON.parse(key)
 
       if(data.action === 'add') {
-        modals.addTrigger(objectSelected, data.eventName)
+        modals.addTrigger(objectSelected)
       }
 
-      if(data.action === 'edit-event') {
-        modals.editTriggerEvent(objectSelected, data.trigger)
-      }
+      // if(data.action === 'edit-event') {
+      //   modals.editTriggerEvent(objectSelected, data.trigger)
+      // }
 
-      if(data.action === 'edit-effect') {
-        modals.editTriggerEffect(objectSelected, data.trigger)
+      if(data.action === 'edit') {
+        modals.editTrigger(objectSelected, data.trigger)
       }
 
       if(data.action === 'delete') {
@@ -30,39 +30,39 @@ export default class TriggerMenu extends React.Component{
     }
   }
 
-  _renderEventEffects(eventName) {
-    const { objectSelected } = this.props
-
-    if(!objectSelected.triggers) {
-      objectSelected.triggers = {}
-    }
-
-    const items = []
-
-    Object.keys(objectSelected.triggers).forEach((triggerId) => {
-      const trigger = objectSelected.triggers[triggerId]
-
-      if(trigger.eventName === eventName) {
-        items.push(
-          <MenuItem key={JSON.stringify({action: 'edit-effect', trigger})}>{`Edit ${trigger.id} Effect`}</MenuItem>,
-          <MenuItem key={JSON.stringify({action: 'edit-event', trigger})}>{`Edit ${trigger.id} Event`}</MenuItem>,
-          <MenuItem key={JSON.stringify({action: 'delete', trigger})}>{`Delete ${trigger.id}`}</MenuItem>)
-      }
-    })
-
-    return items
-  }
+  // _renderEventEffects(eventName) {
+  //   const { objectSelected } = this.props
+  //
+  //   if(!objectSelected.triggers) {
+  //     objectSelected.triggers = {}
+  //   }
+  //
+  //   const items = []
+  //
+  //   Object.keys(objectSelected.triggers).forEach((triggerId) => {
+  //     const trigger = objectSelected.triggers[triggerId]
+  //
+  //     if(trigger.eventName === eventName) {
+  //       items.push(
+  //         }
+  //   })
+  //
+  //   return items
+  // }
 
   _renderTriggerMenu() {
     const { objectSelected } = this.props
 
     const items = []
+    if(!objectSelected.triggers) return items
 
-    Object.keys(window.triggerEvents).forEach((eventName) => {
-      items.push(<SubMenu key={eventName} title={eventName}>
-          <MenuItem key={JSON.stringify({eventName, action: 'add'})}>Add Trigger</MenuItem>
-          {this._renderEventEffects(eventName)}
-        </SubMenu>)
+    Object.keys(objectSelected.triggers).forEach((triggerName) => {
+      const trigger = objectSelected.triggers[triggerName]
+
+      items.push(
+        <MenuItem key={JSON.stringify({action: 'edit', trigger})}>{`Edit ${trigger.id}`}</MenuItem>,
+        <MenuItem key={JSON.stringify({action: 'delete', trigger})}>{`Delete ${trigger.id}`}</MenuItem>
+      )
     })
 
     return items
@@ -71,6 +71,7 @@ export default class TriggerMenu extends React.Component{
   render() {
     return <Menu onClick={this._handleTriggerMenuClick}>
       {this._renderTriggerMenu()}
+      <MenuItem key={JSON.stringify({action: 'add'})}>Add Trigger</MenuItem>
     </Menu>
   }
 }

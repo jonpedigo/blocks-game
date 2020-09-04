@@ -229,7 +229,7 @@ function onUpdate(hero, keysDown, delta) {
   const downPressed = 's' in keysDown || 'down' in keysDown
   const leftPressed = 'a' in keysDown || 'left' in keysDown
 
-  if((!GAME.gameState.started || PAGE.role.isAdmin) && 'shift' in keysDown) {
+  if((!GAME.gameState.started) && 'shift' in keysDown) {
     if (upPressed) {
       hero.y -= GAME.grid.nodeSize
     }

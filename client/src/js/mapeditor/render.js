@@ -138,7 +138,7 @@ function update() {
     });
   }
 
-  const gameEligibleForLoading = true || (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
   const loadingState = (PAGE.loadingGame)
   PAGE.loadingScreen = gameEligibleForLoading && loadingState
 

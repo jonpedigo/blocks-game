@@ -31,13 +31,31 @@
 .SequenceList {
   padding-top: 22px;
   &__sequence {
+    position: relative;
     border: 1px solid #333;
     font-size: 30px;
     padding: 10px;
+  }
+
+  &__sequence-options {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    height: 100%;
+    font-size: 30px;
+    text-align: center;
+    color: #ddd;
+    background-color: #333;
+    cursor: pointer;
     &:hover {
-      background-color: #555;
+      color: #fff;
     }
   }
+
+  &__sequence-option {
+    width: 40px;
+  }
+
 }
 
 .SequenceEditor--condition-list {

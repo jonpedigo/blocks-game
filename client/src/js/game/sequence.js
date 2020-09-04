@@ -84,13 +84,29 @@ function startSequence(sequenceId, context) {
   GAME.gameState.sequenceQueue.push(sequence)
 }
 
+function togglePauseSequence(sequence) {
+  if(sequence.paused) {
+    sequence.paused = false
+    if(sequence.currentTimerId) {
+      GAME.gameState.timeoutsById[sequence.currentTimerId] = false
+    }
+  } else {
+    console.log("XXX")
+    sequence.paused = true
+    if(sequence.currentTimerId) {
+      GAME.gameState.timeoutsById[sequence.currentTimerId] = true
+    }
+  }
+}
+
 function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
   if(!item) return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
 
-  if(item.waiting) {
+  console.log(sequence.paused)
+  if(item.waiting || sequence.paused) {
     return
   }
 
@@ -165,9 +181,10 @@ function processSequence(sequence) {
   if(item.sequenceType === 'sequenceWait') {
     item.waiting = true
     if(item.conditionType === 'onTimerEnd') {
-      GAME.addTimeout(window.uniqueID(), item.conditionValue || 10, () => {
+      sequence.currentTimerId = GAME.addTimeout(window.uniqueID(), item.conditionValue || 10, () => {
         item.waiting = false
         sequence.currentItemId = item.next
+        sequence.currentTimerId = null
       })
     } else if(item.conditionType === 'onEvent') {
       const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
@@ -225,4 +242,6 @@ function processSequence(sequence) {
 export {
   processSequence,
   startSequence,
+  togglePauseSequence,
+  endSequence,
 }

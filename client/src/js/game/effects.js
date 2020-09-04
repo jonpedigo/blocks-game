@@ -237,7 +237,6 @@ function processEffect(effect, effected, effector, ownerObject) {
       guestObject: effector,
       ownerObject,
     }
-    console.log('ctx owner', context.ownerObject)
     startSequence(effect.effectSequenceId, context)
   }
 

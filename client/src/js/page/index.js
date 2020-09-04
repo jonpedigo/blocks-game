@@ -18,6 +18,7 @@ class Page{
     // ROLE SETUP
     PAGE.role.isHost = false
     PAGE.role.isPlayer = true
+    PAGE.role.isHA = true
 
     if(PAGE.getParameterByName('playEditor')) {
       PAGE.role.isPlayEditor = true
@@ -284,6 +285,14 @@ class Page{
   closeLog() {
     PAGE.isLogOpen = false
     window.local.emit('onCloseLog')
+  }
+
+  showEditorTools() {
+    if(PAGE.role.isHA && !PAGE.role.isAdmin && GAME.gameState.started) {
+      return false
+    }
+
+    return true
   }
 }
 

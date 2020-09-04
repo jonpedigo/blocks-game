@@ -42,6 +42,18 @@ class Creator {
     CREATOR.ref.open()
   }
 
+  onGameStart() {
+    setTimeout(() => {
+      CREATOR.ref.forceUpdate()
+    }, 100)
+  }
+
+  onStopGame() {
+    setTimeout(() => {
+      CREATOR.ref.forceUpdate()
+    }, 100)
+  }
+
   onConstructEditorClose() {
     CREATOR.ref.forceUpdate()
   }

@@ -11,6 +11,7 @@ import {
   NextSelect,
 } from '../components/SelectComponents.jsx'
 import Condition from './Condition.jsx'
+import Trigger from './Trigger.jsx'
 import Effect from './Effect.jsx'
 
 const initialNextOptions = [
@@ -43,6 +44,7 @@ export default class SequenceItem extends React.Component{
     this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
     this._onChangeEffectName = this._onChangeEffectName.bind(this)
+    this._onSetPropValue = this._onSetPropValue.bind(this)
   }
 
   componentDidMount() {
@@ -264,6 +266,7 @@ export default class SequenceItem extends React.Component{
         {!isTrigger && <div className="SequenceItem__type">{sequenceItem.sequenceType}</div>}
         {!isTrigger && <i className="SequenceButton SequenceItem__delete fa fas fa-times" onClick={onDelete}></i>}
         <div className="SequenceItem__body">
+          {isTrigger && <Trigger {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceDialogue' && this._renderDialogue()}
           {sequenceItem.sequenceType == 'sequenceChoice' && this._renderChoice()}
           {sequenceItem.sequenceType == 'sequenceCondition' && <Condition {...this} {...this.props} {...this.state} setState={this.setState}/>}

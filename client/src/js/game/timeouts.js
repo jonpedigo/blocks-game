@@ -7,6 +7,7 @@ function setDefault() {
 
 function onUpdate(delta) {
   GAME.gameState.timeouts = GAME.gameState.timeouts.filter((timeout) => {
+    if(timeout.paused) return true
     timeout.timeRemaining -= delta
     if(timeout.timeRemaining <= 0) {
       if(timeout.fx) timeout.fx()
@@ -21,6 +22,7 @@ function addTimeout(id, numberOfSeconds, fx) {
   if(PAGE.role.isHost) {
     if(numberOfSeconds <= 0) {
       fx()
+      return -1
     } else {
       let timeout = {
         id,
@@ -42,6 +44,8 @@ function addOrResetTimeout(id, numberOfSeconds, fx) {
   } else {
     GAME.resetTimeout(id, numberOfSeconds)
   }
+
+  return id
 }
 
 function resetTimeout(id, numberOfSeconds) {
@@ -67,6 +71,14 @@ function clearTimeout(id) {
   delete GAME.gameState.timeoutsById[id]
 }
 
+function pauseTimeout(id) {
+  GAME.gameState.timeoutsById[id].paused = true
+}
+
+function resumeTimeout(id) {
+  GAME.gameState.timeoutsById[id].paused = false
+}
+
 export default {
   setDefault,
   onUpdate,
@@ -76,4 +88,6 @@ export default {
   incrementTimeout,
   resetTimeout,
   addOrResetTimeout,
+  pauseTimeout,
+  resumeTimeout,
 }

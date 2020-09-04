@@ -13,7 +13,7 @@ import dayNightCycle from './daynightcycle.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
-import { processSequence } from './sequence'
+import { startSequence, processSequence, togglePauseSequence, endSequence } from './sequence'
 import { testCondition, testEventMatch } from './conditions'
 
 import './objects'
@@ -173,10 +173,9 @@ class Game{
         })
         //////////////////////////////
         //// ANTICIPATE OBJECT
-        if(PAGE.role.isHost && OBJECTS.anticipatedForAdd && OBJECTS.anticipatedForAdd.length) {
-          OBJECTS.anticipatedAdd(GAME.heros[HERO.id], OBJECTS.anticipatedForAdd[0])
+        if(PAGE.role.isHost && GAME.gameState.anticipatedForAdd && GAME.gameState.anticipatedForAdd.length) {
+          OBJECTS.anticipatedAdd(GAME.heros[HERO.id], GAME.gameState.anticipatedForAdd[0])
         }
-
 
         MAP._isOutOfDate = true
         //////////////////////////////
@@ -1012,6 +1011,21 @@ class Game{
       if(mod.manualRevertId === manualRevertId) return false
       return true
     })
+  }
+
+  onStartSequence(sequenceId, ownerId) {
+    const ownerObject = OBJECTS.getObjectOrHeroById(ownerId)
+    startSequence(sequenceId, { ownerObject })
+  }
+
+  onTogglePauseSequence(sequenceId) {
+    const sequence = GAME.gameState.sequenceQueue.find(({id}) => sequenceId)
+    if(sequence) togglePauseSequence(sequence)
+  }
+
+  onStopSequence(sequenceId) {
+    const sequence = GAME.gameState.sequenceQueue.find(({id}) => sequenceId)
+    if(sequence) endSequence(sequence)
   }
 }
 

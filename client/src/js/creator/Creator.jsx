@@ -307,6 +307,9 @@ export default class Creator extends React.Component {
     const { creatorObjects, rows } = this.state
 
     if(CONSTRUCTEDITOR.open) return null
+    if(!PAGE.showEditorTools()) {
+      return null
+    }
 
     return (
       <div className="Creator" style={rows.length ? { height: '45px'} : null}>

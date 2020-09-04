@@ -69,7 +69,7 @@ export default class Condition extends React.Component {
       }
 
       if(conditionData.event) {
-        chosenConditionForm.push(<SingleEventSelect isTrigger={this.props.isTrigger} valueProp='conditionEventName' onChange={(event) => {
+        chosenConditionForm.push(<SingleEventSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} valueProp='conditionEventName' onChange={(event) => {
          if(event.value) {
            sequenceItem.conditionEventName = event.value
            this.props.setState({sequenceItem})

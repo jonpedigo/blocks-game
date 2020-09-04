@@ -28,6 +28,10 @@ class contextMenuEl extends React.Component{
     document.body.addEventListener("contextmenu", e => {
       if(!window.isClickingMap(e.target.className)) return
 
+      if(!PAGE.showEditorTools()) {
+        return null
+      }
+
       if(!MAPEDITOR.paused) {
         e.preventDefault();
         const { x, y } = window.convertToGameXY(e)

@@ -1,6 +1,6 @@
 import React from 'react'
 import SequenceItem from './SequenceItem.jsx'
-import SequenceList from './SequenceList.jsx'
+import SequenceListItem from './SequenceListItem.jsx'
 import Select from 'react-select';
 import modals from './modals';
 
@@ -58,6 +58,17 @@ window.defaultSequenceEffect = {
   effectedTags: [],
 }
 
+window.defaultSequenceTrigger = {
+  "sequenceType": "sequenceTrigger",
+  "effector": "ownerObject",
+  "mainObjectTag": "",
+  "mainObjectId": "",
+  "guestObjectTag": "",
+  "guestObjectId": "",
+  "initialTriggerPool": 1,
+  "eventThreshold": -1
+}
+
 window.reactSelectTheme = theme => ({
       ...theme,
       borderRadius: 0,
@@ -84,6 +95,7 @@ export default class SequenceEditor extends React.Component {
       sequence: null,
       selectedType: null,
       sequenceItemRefs: [],
+      sequenceIdList : []
     }
 
     this.download = this.download.bind(this)
@@ -99,6 +111,9 @@ export default class SequenceEditor extends React.Component {
   componentDidMount() {
     // const { sequence } = this.state
     // this._generateRefs(sequence.items)
+    this.setState({
+      sequenceIdList: Object.keys(GAME.world.sequences)
+    })
   }
 
   _openEditIdModal() {
@@ -237,7 +252,7 @@ export default class SequenceEditor extends React.Component {
   }
 
   render() {
-    const { sequence, selectedType, sequenceItemRefs } = this.state
+    const { sequence, selectedType, sequenceItemRefs, sequenceIdList } = this.state
 
     if(!sequence) {
       return <div className="SequenceEditor">
@@ -246,7 +261,12 @@ export default class SequenceEditor extends React.Component {
           <i className="SequenceButton fa fas fa-times" onClick={WORLDMANAGER.close}></i>
           </div>
         </div>
-        <SequenceList openSequence={this.openSequence} newSequence={this.newSequence}></SequenceList>
+        <div className="SequenceList">
+          {sequenceIdList.map((id) => {
+            return <SequenceListItem openSequence={this.openSequence} id={id}></SequenceListItem>
+          })}
+          <div className="SequenceList__sequence" onClick={this.newSequence}>New Sequence</div>
+        </div>
       </div>
     }
 

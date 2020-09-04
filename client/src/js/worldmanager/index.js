@@ -16,6 +16,14 @@ class WorldManager {
     this.ref.close()
   }
 
+  onStopGame(){
+    this.ref.forceUpdate()
+  }
+
+  onGameStart() {
+
+  }
+
   onPageLoaded() {
     const initialProps = {
       ref: ref => WORLDMANAGER.ref = ref

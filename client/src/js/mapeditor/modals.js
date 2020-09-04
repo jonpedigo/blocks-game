@@ -5,9 +5,9 @@ import SequenceItem from '../sequenceeditor/SequenceItem.jsx'
 import ConditionList from '../sequenceeditor/ConditionList.jsx'
 import SubObjectModal from './SubObjectModal.jsx'
 
-function editTriggerEffect(owner, trigger, cb) {
+function editTrigger(owner, trigger, cb) {
   PAGE.typingMode = true
-  openEditEffectModal(trigger, (result) => {
+  openEditTriggerModal(trigger, (result) => {
     if (result && result.value) {
       const triggerUpdate = result.value
       const oldId = trigger.id
@@ -48,13 +48,17 @@ function editSubObjectChanceConditions(object, subObjectName, cb) {
   })
 }
 
-function addTrigger(owner, eventName) {
+function addTrigger(owner) {
   PAGE.typingMode = true
   openAddTrigger((result) => {
     if(result && result.value) {
-      const trigger = { id: result.value, eventName, effectedMainObject: false, effectedOwnerObject: true }
-      window.socket.emit('addTrigger', owner.id, trigger)
-      editTriggerEffect(owner, trigger, () => {
+      const trigger = { id: result.value, effectedMainObject: false, effectedOwnerObject: true }
+      PAGE.typingMode = true
+      openEditTriggerModal(trigger, (result) => {
+        if (result && result.value) {
+          const trigger = result.value
+          window.socket.emit('addTrigger', owner.id, trigger)
+        }
         PAGE.typingMode = false
       })
     }
@@ -74,36 +78,36 @@ function addHook(owner, eventName) {
   })
 }
 
-function editTriggerEvent(owner, trigger) {
-  PAGE.typingMode = true
-  openTriggerModal(trigger, ({value}) => {
-    PAGE.typingMode = false
-
-    if(!value) return
-    const id = value[0]
-    const mainObjectTag = value[1]
-    const mainObjectId = value[2]
-    const guestObjectTag = value[3]
-    const guestObjectId = value[4]
-    const initialTriggerPool = Number(value[5])
-    const eventThreshold = Number(value[6])
-
-    const triggerUpdate = {
-      ...trigger,
-      id,
-      mainObjectTag,
-      mainObjectId,
-      guestObjectTag,
-      guestObjectId,
-      initialTriggerPool,
-      eventThreshold,
-    }
-
-    window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
-
-    window.socket.emit('editTrigger', owner.id, trigger.id, triggerUpdate)
-  })
-}
+// function editTriggerEvent(owner, trigger) {
+//   PAGE.typingMode = true
+//   openTriggerModal(trigger, ({value}) => {
+//     PAGE.typingMode = false
+//
+//     if(!value) return
+//     const id = value[0]
+//     const mainObjectTag = value[1]
+//     const mainObjectId = value[2]
+//     const guestObjectTag = value[3]
+//     const guestObjectId = value[4]
+//     const initialTriggerPool = Number(value[5])
+//     const eventThreshold = Number(value[6])
+//
+//     const triggerUpdate = {
+//       ...trigger,
+//       id,
+//       mainObjectTag,
+//       mainObjectId,
+//       guestObjectTag,
+//       guestObjectId,
+//       initialTriggerPool,
+//       eventThreshold,
+//     }
+//
+//     window.removeProps(triggerUpdate, { empty: true, null: true, undefined: true })
+//
+//     window.socket.emit('editTrigger', owner.id, trigger.id, triggerUpdate)
+//   })
+// }
 
 function addNewSubObject(owner) {
   PAGE.typingMode = true
@@ -502,37 +506,37 @@ function openQuestModal(quest = { id: '', startMessage: '', goal: '', completion
   }).then(cb)
 }
 
-function openTriggerModal(trigger, cb) {
-  const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'ownerObject', effectorObject: "auto"}, trigger)
-
-  Swal.fire({
-    title: 'Trigger Editor',
-    showClass: {
-      popup: 'animated fadeInDown faster'
-    },
-    hideClass: {
-      popup: 'animated fadeOutUp faster'
-    },
-    html:`<div class='swal-modal-input-label'>Trigger Id</div><input autocomplete="new-password" class='swal-modal-input' id='trigger-id' value='${newTrigger.id}'></input>
-    <div class='swal-modal-input-label'>Main Object Tag</div><input class='swal-modal-input' id='main-object-tag' value='${newTrigger.mainObjectTag}'>
-    <div class='swal-modal-input-label'>Main Object Id</div><input class='swal-modal-input' id='main-object-id' value='${newTrigger.mainObjectId}'>
-    <div class='swal-modal-input-label'>Guest Object Tag</div><input class='swal-modal-input' id='guest-object-tag' value='${newTrigger.guestObjectTag}'>
-    <div class='swal-modal-input-label'>Guest Object Id</div><input class='swal-modal-input' id='guest-object-id' value='${newTrigger.guestObjectId}'>
-    <div class='swal-modal-input-label'>Trigger Pool</div><input type="number" class='swal-modal-input' id='initial-trigger-pool' value='${newTrigger.initialTriggerPool}'>
-    <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>`,
-    preConfirm: (result) => {
-      return [
-        document.getElementById('trigger-id').value,
-        document.getElementById('main-object-tag').value,
-        document.getElementById('main-object-id').value,
-        document.getElementById('guest-object-tag').value,
-        document.getElementById('guest-object-id').value,
-        document.getElementById('initial-trigger-pool').value,
-        document.getElementById('event-threshold').value,
-      ]
-    }
-  }).then(cb)
-}
+// function openTriggerModal(trigger, cb) {
+//   const newTrigger = Object.assign({ id: '', effectValue: '', subObjectName: '', mainObjectId: '', mainObjectTag: '', guestObjectId: '', guestObjectTag: '', initialTriggerPool: 1, eventThreshold: -1, effectedObject: 'ownerObject', effectorObject: "auto"}, trigger)
+//
+//   Swal.fire({
+//     title: 'Trigger Editor',
+//     showClass: {
+//       popup: 'animated fadeInDown faster'
+//     },
+//     hideClass: {
+//       popup: 'animated fadeOutUp faster'
+//     },
+//     html:`<div class='swal-modal-input-label'>Trigger Id</div><input autocomplete="new-password" class='swal-modal-input' id='trigger-id' value='${newTrigger.id}'></input>
+//     <div class='swal-modal-input-label'>Main Object Tag</div><input class='swal-modal-input' id='main-object-tag' value='${newTrigger.mainObjectTag}'>
+//     <div class='swal-modal-input-label'>Main Object Id</div><input class='swal-modal-input' id='main-object-id' value='${newTrigger.mainObjectId}'>
+//     <div class='swal-modal-input-label'>Guest Object Tag</div><input class='swal-modal-input' id='guest-object-tag' value='${newTrigger.guestObjectTag}'>
+//     <div class='swal-modal-input-label'>Guest Object Id</div><input class='swal-modal-input' id='guest-object-id' value='${newTrigger.guestObjectId}'>
+//     <div class='swal-modal-input-label'>Trigger Pool</div><input type="number" class='swal-modal-input' id='initial-trigger-pool' value='${newTrigger.initialTriggerPool}'>
+//     <div class='swal-modal-input-label'>Event Threshold</div><input type="number" class='swal-modal-input' id='event-threshold' value='${newTrigger.eventThreshold}'>`,
+//     preConfirm: (result) => {
+//       return [
+//         document.getElementById('trigger-id').value,
+//         document.getElementById('main-object-tag').value,
+//         document.getElementById('main-object-id').value,
+//         document.getElementById('guest-object-tag').value,
+//         document.getElementById('guest-object-id').value,
+//         document.getElementById('initial-trigger-pool').value,
+//         document.getElementById('event-threshold').value,
+//       ]
+//     }
+//   }).then(cb)
+// }
 
 function openEditTextModal(property, currentValue, cb) {
   Swal.fire({
@@ -570,18 +574,20 @@ function openEditNumberModal(property, currentValue = 0, options = { range: fals
   }).then(cb)
 }
 
-function openEditEffectModal(effect, cb) {
+function openEditTriggerModal(effect, cb) {
+  const triggerData = JSON.parse(JSON.stringify(window.defaultSequenceTrigger))
   const newEffect = JSON.parse(JSON.stringify(window.defaultSequenceEffect))
-  Object.assign(newEffect, effect)
+  Object.assign(newEffect, triggerData, effect)
+
   Swal.fire({
-    title: 'Edit Effect',
+    title: 'Edit Trigger',
     showClass: {
       popup: 'animated fadeInDown faster'
     },
     hideClass: {
       popup: 'animated fadeOutUp faster'
     },
-    html:`<div id='edit-effect-container'></div>`,
+    html:`<div id='edit-trigger-container'></div>`,
     preConfirm: (result) => {
       return ref.current.getItemValue()
     }
@@ -592,7 +598,7 @@ function openEditEffectModal(effect, cb) {
   const ref = React.createRef()
   ReactDOM.render(
     React.createElement(SequenceItem, { sequenceItem: newEffect, ref, isTrigger: true }),
-    document.getElementById('edit-effect-container')
+    document.getElementById('edit-trigger-container')
   )
 
 }
@@ -678,7 +684,7 @@ export default {
   openSelectTag,
   openSelectEaseAnimation,
   openSelectParticleAnimation,
-  editTriggerEvent,
-  editTriggerEffect,
+  // editTriggerEvent,
+  editTrigger,
   editSubObjectChanceConditions
 }

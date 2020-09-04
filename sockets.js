@@ -454,6 +454,16 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onEndMod', manualRevertId)
   })
 
+  socket.on('startSequence', (sequenceId, ownerId) => {
+    io.emit('onStartSequence', sequenceId, ownerId)
+  })
+  socket.on('togglePauseSequence', (sequenceId) => {
+    io.emit('onTogglePauseSequence', sequenceId)
+  })
+  socket.on('stopSequence', (sequenceId) => {
+    io.emit('onStopSequence', sequenceId)
+  })
+
   socket.on('resetPhysicsProperties', (objectId) => {
     io.emit('onResetPhysicsProperties', objectId)
   })

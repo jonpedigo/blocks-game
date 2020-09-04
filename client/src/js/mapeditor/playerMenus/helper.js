@@ -273,13 +273,13 @@ export function handleExtraMenuClicks({ key, objectSelected, openColorPicker }) 
         return
     }
 
-    if (data.action === 'edit-trigger-event') {
-        modals.editTriggerEvent(objectSelected, data.trigger)
-        return
-    }
+    // if (data.action === 'edit-trigger-event') {
+    //     modals.editTriggerEvent(objectSelected, data.trigger)
+    //     return
+    // }
 
-    if (data.action === 'edit-trigger-effect') {
-        modals.editTriggerEffect(objectSelected, data.trigger)
+    if (data.action === 'edit-trigger') {
+        modals.editTrigger(objectSelected, data.trigger)
         return
     }
 
