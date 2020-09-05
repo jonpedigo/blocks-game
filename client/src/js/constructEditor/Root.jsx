@@ -75,8 +75,10 @@ export default class Root extends React.Component{
   _renderMenu() {
     const { selectedColor, isColorPickerOpen } = this.state
 
+    const colorSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorColor
+
     return <div className="ConstructEditor__menu-list">
-      {!isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
+      {colorSelection && !isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
       {isColorPickerOpen && <div className="ConstructEditor__menu-item fas fa-times" onClick={this._closeColorPicker}></div>}
       <div className="ConstructEditor__menu-item fas fa-paint-brush" onClick={this._paintBrushClick}></div>
       <div className="ConstructEditor__menu-item fas fa-eye-dropper" onClick={this._eyeDropperClick}></div>

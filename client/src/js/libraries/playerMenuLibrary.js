@@ -30,6 +30,17 @@ window.local.on('onFirstPageGameLoaded', () => {
     },
   }
 
+  window.heroFlags = {
+    paused: false,
+    showScore: false,
+    // showDialogue: false,
+    showLives: false,
+    highlightMap: false,
+    showOtherUsersMapHighlight: false,
+    constructEditorColor: false,
+    constructEditorSprite: false,
+  }
+
   window.heroMenuLibrary = {
     move: false,
     color: false,

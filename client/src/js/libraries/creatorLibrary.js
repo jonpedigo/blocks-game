@@ -196,6 +196,26 @@ function onGameLoaded() {
       toggleId: 'gun',
       ...toggleSubObject('gun')
     },
+    zeldaPowerBlock: {
+      label: 'Zelda',
+      columnName: 'Blocks',
+      JSON: window.objectLibrary.zeldaPowerBlock,
+    },
+    marioPowerBlock: {
+      label: 'Mario',
+      columnName: 'Blocks',
+      JSON: window.objectLibrary.marioPowerBlock,
+    },
+    asteroidsPowerBlock: {
+      label: 'Asteroids',
+      columnName: 'Blocks',
+      JSON: window.objectLibrary.asteroidsPowerBlock,
+    },
+    starViewBlock: {
+      label: 'Star View',
+      columnName: 'Blocks',
+      JSON: window.objectLibrary.starViewBlock,
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -241,6 +261,10 @@ function onGameLoaded() {
     snake: true,
     spear: true,
     gun: true,
+    zeldaPowerBlock: true,
+    marioPowerBlock: true,
+    asteroidsPowerBlock: true,
+    starViewBlock: true,
   }
 }
 

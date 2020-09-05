@@ -127,7 +127,6 @@ class ConstructEditor {
     }
     document.body.addEventListener("mouseup", this._mouseUpListener)
 
-
     let color = startColor || object.color || GAME.world.defaultObjectColor || window.defaultObjectColor
     this.ref.open(color)
     this.selectColor(color)

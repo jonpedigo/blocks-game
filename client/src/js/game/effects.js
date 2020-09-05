@@ -249,6 +249,7 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'libraryMod') {
     const json = window.modLibrary[effect.effectLibraryMod]
+    console.log(json, effect.effectLibraryMod)
     const mod = {
       manualRevertId: effect.effectLibraryMod,
       effectJSON: json,

@@ -249,7 +249,7 @@ const initPixiApp = (canvasRef, onLoad) => {
         PAGE.resizingMap = false
         window.local.emit('onLoadingScreenEnd')
         loadingTimeout = null
-      }, 150)
+      }, 200)
       let gameElementWidth = window.innerWidth
       if(PAGE.isLogOpen) gameElementWidth = gameElementWidth * .8
       MAP.canvasMultiplier = gameElementWidth/640;

@@ -32,6 +32,7 @@ export default class GuidanceLive extends React.Component {
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       creator: hero.creator,
+      flags: hero.flags
     }
 
     window.socket.emit('editHero', { id, ...updatedObjectProps })
@@ -61,6 +62,9 @@ export default class GuidanceLive extends React.Component {
             <DatFolder title='Objects'>
               {this._renderLibrary('objectMenu', window.objectMenuLibrary)}
             </DatFolder>
+          </DatFolder>
+          <DatFolder title='Other'>
+            {this._renderLibrary('flags', window.heroFlags)}
           </DatFolder>
           <DatFolder title='Demo'>
             <DatButton label="Send Explode" onClick={() => {

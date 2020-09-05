@@ -533,7 +533,7 @@ PIXIMAP.onConstructEditorStart = function() {
 PIXIMAP.onResize = function() {
   setTimeout(() => {
     resetConstructParts()
-  }, 100)
+  }, 150)
 }
 
 function resetConstructParts() {

@@ -496,7 +496,9 @@ class Hero{
         const { id, testAndModOwnerWhenEquipped, testFailDestroyMod, testPassReverse, testModdedVersion, conditionValue, conditionType, conditionJSON, conditionEventName, eventName, effectName, eventThreshold, effectValue, effectJSON, mainObjectId, mainObjectTag, guestObjectId, guestObjectTag, initialTriggerPool, effectorObject, effectedMainObject, effectedGuestObject, effectedWorldObject, effectedOwnerObject, effectedIds, effectedTags, effectSequenceId, effectTags,           conditionMainObjectId,
                   conditionMainObjectTag,
                   conditionGuestObjectId,
-                  conditionGuestObjectTag, } = hero.triggers[triggerId]
+                  conditionGuestObjectTag,
+                effectLibraryMod,
+              effectLibraryObject } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -512,6 +514,8 @@ class Hero{
           effectedTags,
           effectTags,
           effectSequenceId,
+          effectLibraryMod,
+          effectLibraryObject,
           eventName,
           eventThreshold,
           mainObjectId,

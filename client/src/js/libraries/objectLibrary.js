@@ -101,6 +101,89 @@ window.local.on('onFirstPageGameLoaded', () => {
         color: 'yellow',
       },
       powerUpTimer: 2,
+    },
+    marioPowerBlock: {
+    	"objectType": "plainObject",
+    	"tags": {
+    		"obstacle": true,
+    		"interactable": true
+    	},
+    	"color": "#b71c1c",
+    	"triggers": {
+    		"turnIntoMario": {
+    			"effectName": "libraryMod",
+    			"effectedMainObject": true,
+    			"sequenceType": "sequenceEffect",
+    			"effector": "ownerObject",
+    			"initialTriggerPool": -1,
+    			"eventThreshold": -1,
+    			"id": "turnIntoMario",
+    			"eventName": "onHeroCollide",
+    			"effectLibraryMod": "mario",
+    		}
+    	}
+    },
+    asteroidsPowerBlock: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        "interactable": true
+      },
+      "color": "#9575cd",
+      "triggers": {
+        "turnIntoAsteroids": {
+          "effectName": "libraryMod",
+          "effectedMainObject": true,
+          "sequenceType": "sequenceEffect",
+          "effector": "ownerObject",
+          "initialTriggerPool": -1,
+          "eventThreshold": -1,
+          "id": "turnIntoAsteroids",
+          "eventName": "onHeroCollide",
+          "effectLibraryMod": "asteroids",
+        }
+      }
+    },
+    zeldaPowerBlock: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        "interactable": true
+      },
+      "color": "#33691e",
+      "triggers": {
+        "turnIntoZelda": {
+          "effectName": "libraryMod",
+          "effectedMainObject": true,
+          "sequenceType": "sequenceEffect",
+          "effector": "ownerObject",
+          "initialTriggerPool": -1,
+          "eventThreshold": -1,
+          "id": "turnIntoZelda",
+          "eventName": "onHeroCollide",
+          "effectLibraryMod": "zelda",
+        }
+      }
+    },
+    starViewBlock: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        "interactable": true
+      },
+      "color": "#fff9c4",
+      "triggers": {
+    		"goToStarView": {
+    			"effectName": "starViewGo",
+    			"effectedMainObject": true,
+    			"sequenceType": "sequenceEffect",
+    			"effector": "ownerObject",
+    			"initialTriggerPool": 1,
+    			"eventThreshold": -1,
+    			"id": "goToStarView",
+    			"eventName": "onHeroCollide",
+    		}
+    	}
     }
   }
 

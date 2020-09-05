@@ -8,6 +8,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     },
     asteroids: {
       arrowKeysBehavior: 'angleAndVelocity',
+      xButtonBehavior: 'accelerate',
       zButtonBehavior: 'brakeToZero',
       tags: {
         rotateable: true,

@@ -36,6 +36,7 @@ class MapEditor {
     this.pathfindingLimit = null
     this.isSettingPathfindingLimit = false
     this.paused = false
+    this.groupGridHighlights = {}
   }
 
   onPageLoaded() {
@@ -96,13 +97,11 @@ class MapEditor {
   }
 
   onUpdate(delta) {
-    if (MAPEDITOR.remoteState && !MAPEDITOR.skipRemoteStateUpdate) {
-      updateGridHighlight(MAPEDITOR.remoteState.mousePos)
-    }
+    // if (MAPEDITOR.groupGridHighlights && !MAPEDITOR.skipRemoteStateUpdate) {
+    //   updateGridHighlight(MAPEDITOR.groupGridHighlights.mousePos)
+    // }
 
-    if (!PAGE.role.isGhost && PAGE.role.isPlayer && GAME.heros[HERO.id]) {
-      window.socket.emit('sendHeroMapEditor', { mousePos: MAPEDITOR.mousePos }, HERO.id)
-    }
+    if(MAPEDITOR.objectHighlighted) window.socket.emit('sendHeroMapEditor', MAPEDITOR.objectHighlighted, HERO.id)
   }
 
   startResize(object, options = { snapToGrid: true }) {
@@ -137,9 +136,8 @@ class MapEditor {
   }
 
   onSendHeroMapEditor(remoteState, heroId) {
-    if (GAME.heros[HERO.id] && HERO.id === heroId) {
-      MAPEDITOR.remoteState = remoteState
-    }
+    if(!MAPEDITOR.groupGridHighlights) MAPEDITOR.groupGridHighlights = {}
+    MAPEDITOR.groupGridHighlights[heroId] = remoteState
   }
 
   onAskHeroToNameObject(object, heroId) {
@@ -293,6 +291,7 @@ function handleMouseMove(event) {
 }
 
 function updateGridHighlight(location) {
+  if(!PAGE.role.isAdmin && !GAME.heros[HERO.id].flags.showMapHighlight) return
   if (MAPEDITOR.contextMenuVisible) return
 
   const { x, y } = gridUtil.snapXYToGrid(location.x, location.y, { closest: false })

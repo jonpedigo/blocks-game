@@ -262,9 +262,7 @@ function init() {
   })
 
   window.socket.on('onSendHeroMapEditor', (remoteState, heroId) => {
-    if(PAGE.role.isGhost) {
-      window.local.emit('onSendHeroMapEditor', remoteState, heroId)
-    }
+    window.local.emit('onSendHeroMapEditor', remoteState, heroId)
   })
 
   // CLIENT HOST OR EDITOR CALL THIS

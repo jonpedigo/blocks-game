@@ -30,16 +30,18 @@ function update() {
   }
 
   if(objectHighlighted && !objectHighlighted.CREATOR) {
-    let color = 'rgba(255,255,255,0.2)'
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
-      color = 'rgba(255,255,255,0.2)'
+      let color = 'rgba(255,255,255,0.2)'
+      drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
+    } else {
+      let color = 'white'
+      drawTools.drawBorder(ctx, {...objectHighlighted, color}, camera)
     }
 
     // if(objectHighlighted.tags && objectHighlighted.tags.subObject) {
     //   const
     //   drawTools.drawFilledObject(ctx, {...objectHighlighted, color x: }, camera)
     // } else {
-      drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
     // }
 
     if(!GAME.gameState.started) {
@@ -56,6 +58,14 @@ function update() {
         color = 'rgba(255,255,255,0.1)'
       }
       drawTools.drawFilledObject(ctx, {...object, color}, camera)
+    })
+  }
+
+  if(MAPEDITOR.groupGridHighlights && (PAGE.role.isAdmin || GAME.heros[HERO.id] && GAME.heros[HERO.id].flags && GAME.heros[HERO.id].flags.showOtherUsersMapHighlight)) {
+    Object.keys(MAPEDITOR.groupGridHighlights).forEach((heroId) => {
+      if(heroId !== HERO.originalId) {
+        drawTools.drawBorder(ctx, {...MAPEDITOR.groupGridHighlights[heroId], color: 'rgba(255,255,255,0.4)'}, camera)
+      }
     })
   }
 

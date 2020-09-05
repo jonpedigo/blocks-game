@@ -32,11 +32,11 @@ class Ghost{
   }
 
   onHerosLoaded(){
-    if(!PAGE.role.isAdmin) return
     if(!HERO.originalId) {
       console.log('WARNING TELL JON -> reset hero original id')
       HERO.originalId = HERO.id
     }
+    if(!PAGE.role.isAdmin) return
     window.addEventListener("keydown", function (e) {
       keysDown[e.keyCode] = true
 
