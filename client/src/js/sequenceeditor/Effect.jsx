@@ -132,6 +132,10 @@ export default class Effect extends React.Component{
          }
        }}/>)
       }
+
+      if(effectName === 'mod' || effectName === 'libraryMod') {
+        chosenEffectForm.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('modEndOthers')} checked={sequenceItem.modEndOthers} type="checkbox"></input>Mod End Others?</div>)
+      }
     }
 
     return <div className="SequenceItem__effect">

@@ -105,7 +105,6 @@ function processSequence(sequence) {
   let defaultEffected = sequence.mainObject
   let defaultEffector = sequence.guestObject
 
-  console.log(sequence.paused)
   if(item.waiting || sequence.paused) {
     return
   }

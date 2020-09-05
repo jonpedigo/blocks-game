@@ -1,53 +1,76 @@
 window.local.on('onFirstPageGameLoaded', () => {
   window.modLibrary = {
     spin: {
-      tags: {
-        rotateable: true,
-        realRotateFast: true
-       }
+      effectJSON: {
+        tags: {
+          rotateable: true,
+          realRotateFast: true
+         }
+      },
     },
     asteroids: {
-      arrowKeysBehavior: 'angleAndVelocity',
-      xButtonBehavior: 'accelerate',
-      zButtonBehavior: 'brakeToZero',
-      tags: {
-        rotateable: true,
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'angleAndVelocity',
+        xButtonBehavior: 'accelerate',
+        zButtonBehavior: 'brakeToZero',
+        tags: {
+          rotateable: true,
+        }
       }
     },
     car: {
-      arrowKeysBehavior: 'angle',
-      zButtonBehavior: 'accelerate',
-      xButtonBehavior: 'brakeToZero',
-      tags: {
-        rotateable: true,
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'angle',
+        zButtonBehavior: 'accelerate',
+        xButtonBehavior: 'brakeToZero',
+        tags: {
+          rotateable: true,
+        }
       }
     },
     ufo: {
-      arrowKeysBehavior: 'velocity',
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'velocity',
+      }
     },
     zelda: {
-      arrowKeysBehavior: 'flatDiagonal',
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'flatDiagonal',
+      }
     },
     kirby: {
-      arrowKeysBehavior: 'flatDiagonal',
-      spaceBarBehavior: 'floatJump',
-      tags: {
-        gravityY: true,
-      },
-      jumpVelocity: -480,
-      velocityMax: 480,
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'flatDiagonal',
+        spaceBarBehavior: 'floatJump',
+        tags: {
+          gravityY: true,
+        },
+        jumpVelocity: -480,
+        velocityMax: 480,
+      }
     },
     mario: {
-      arrowKeysBehavior: 'flatDiagonal',
-      spaceBarBehavior: 'groundJump',
-      tags: {
-        gravityY: true,
-      },
-      jumpVelocity: -480,
-      velocityMax: 480,
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'flatDiagonal',
+        spaceBarBehavior: 'groundJump',
+        tags: {
+          gravityY: true,
+        },
+        jumpVelocity: -480,
+        velocityMax: 480,
+      }
     },
     snake: {
-      arrowKeysBehavior: 'skating',
+      modEndOthers: true,
+      effectJSON: {
+        arrowKeysBehavior: 'skating',
+      }
     },
   }
 })

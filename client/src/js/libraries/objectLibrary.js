@@ -1,6 +1,6 @@
 window.local.on('onFirstPageGameLoaded', () => {
   window.objectLibrary = {
-    defaultObject: {
+    default: {
       objectType: 'plainObject',
       tags: { obstacle: true },
     },
@@ -141,6 +141,27 @@ window.local.on('onFirstPageGameLoaded', () => {
           "id": "turnIntoAsteroids",
           "eventName": "onHeroCollide",
           "effectLibraryMod": "asteroids",
+        }
+      }
+    },
+    ufoPowerBlock: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        "interactable": true
+      },
+      "color": "#9575cd",
+      "triggers": {
+        "turnIntoUfo": {
+          "effectName": "libraryMod",
+          "effectedMainObject": true,
+          "sequenceType": "sequenceEffect",
+          "effector": "ownerObject",
+          "initialTriggerPool": -1,
+          "eventThreshold": -1,
+          "id": "turnIntoAsteroids",
+          "eventName": "onHeroCollide",
+          "effectLibraryMod": "ufo",
         }
       }
     },

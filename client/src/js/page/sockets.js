@@ -47,8 +47,8 @@ function init() {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
     })
 
-    window.socket.on('onAskJoinGame', (heroId) => {
-      window.local.emit('onAskJoinGame', heroId)
+    window.socket.on('onAskJoinGame', (heroId, role) => {
+      window.local.emit('onAskJoinGame', heroId, role)
     })
 
     // PLAYERS CALL THIS

@@ -32,13 +32,14 @@ window.local.on('onFirstPageGameLoaded', () => {
 
   window.heroFlags = {
     paused: false,
-    showScore: false,
+    isAdmin: false,
+    // showScore: false,
     // showDialogue: false,
-    showLives: false,
-    highlightMap: false,
+    // showLives: false,
+    showMapHighlight: false,
     showOtherUsersMapHighlight: false,
     constructEditorColor: false,
-    constructEditorSprite: false,
+    // constructEditorSprite: false,
   }
 
   window.heroMenuLibrary = {

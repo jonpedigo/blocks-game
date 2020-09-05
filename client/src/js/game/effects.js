@@ -64,6 +64,9 @@ import { startSequence } from './sequence'
     anticipatedAddWall: {
       libraryObject: true,
     },
+    anticipatedAddPlatform: {
+      libraryObject: true,
+    },
     randomAdd: {
       libraryObject: true,
       number: true,
@@ -244,17 +247,17 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
 
   if(effectName === 'mod') {
-    GAME.startMod(effected.id, effect)
+    window.emitGameEvent('onStartMod', {ownerId: effected.id, ...effect})
   }
 
   if(effectName === 'libraryMod') {
-    const json = window.modLibrary[effect.effectLibraryMod]
-    console.log(json, effect.effectLibraryMod)
+    const libraryMod = window.modLibrary[effect.effectLibraryMod]
     const mod = {
+      ownerId: effected.id,
       manualRevertId: effect.effectLibraryMod,
-      effectJSON: json,
+      ...libraryMod
     }
-    GAME.startMod(effected.id, mod)
+    window.emitGameEvent('onStartMod', mod)
   }
 
   if(effectName === 'openWorld') {
@@ -268,6 +271,10 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'anticipatedAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, wall: true });
+  }
+  if(effectName === 'anticipatedAddPlatform' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, platform: true });
   }
   if(effectName === 'randomAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]

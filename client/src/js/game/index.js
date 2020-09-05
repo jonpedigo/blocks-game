@@ -193,11 +193,12 @@ class Game{
     }
   }
 
-  onAskJoinGame(heroId) {
+  onAskJoinGame(heroId, role) {
     let hero = GAME.heros[heroId]
     if(!hero) {
       hero = HERO.summonFromGameData({id: heroId})
       hero.id = heroId
+      if(role.isAdmin) hero.flags.isAdmin = true
       window.socket.emit('heroJoinedGamed', hero)
     }
   }
@@ -231,7 +232,7 @@ class Game{
       if(GAME.heros[HERO.id]) {
         window.local.emit('onHeroFound', GAME.heros[HERO.id])
       } else {
-        window.socket.emit('askJoinGame', HERO.id)
+        window.socket.emit('askJoinGame', HERO.id, PAGE.role)
       }
     } else {
       GAME.loadHeros(GAME)
@@ -785,6 +786,9 @@ class Game{
   startMod(ownerId, mod) {
     mod = JSON.parse(JSON.stringify(mod))
     mod.ownerId = ownerId
+    if(mod.modEndOthers) {
+      GAME.gameState.activeModList = GAME.gameState.activeModList.filter(({ownerId}) => mod.ownerId !== ownerId)
+    }
     GAME.gameState.activeModList.push(mod)
 
     if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {

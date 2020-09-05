@@ -92,6 +92,7 @@ PIXIMAP.onGameStarted = function() {
 
 PIXIMAP.onDeletedHero = function(hero) {
   PIXIMAP.deleteObject(hero)
+  console.log('pixi trying to delete', hero)
 }
 
 PIXIMAP.onDeleteObject = function(object) {

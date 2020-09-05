@@ -456,8 +456,8 @@ class Objects{
         const createMe = {...newObject, ...object}
         createMe.tags.fadeInOnInit = true
         OBJECTS.create([createMe])
+        object.numberToAdd--
         if(object.numberToAdd) {
-          object.numberToAdd--
         } else {
           GAME.gameState.anticipatedForAdd = GAME.gameState.anticipatedForAdd.filter((antObject) => {
             return antObject !== object

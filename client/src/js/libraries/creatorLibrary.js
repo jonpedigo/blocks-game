@@ -22,15 +22,15 @@ function toggleMod(modId) {
   let objectId = null
   return {
     onShiftClick: () => {
-      const json = window.modLibrary[modId]
+      const json = window.modLibrary[modId].effectJSON
       window.socket.emit('editHero', { id: HERO.id, ...json})
     },
     onToggleOn: () => {
-      const json = window.modLibrary[modId]
+      const libraryMod = window.modLibrary[modId]
       const mod = {
         ownerId: objectId || HERO.id,
-        effectJSON: json,
         manualRevertId: modId,
+        ...libraryMod
       }
       window.socket.emit('startMod', mod)
       window.socket.emit('resetPhysicsProperties', objectId || HERO.id)
@@ -211,11 +211,17 @@ function onGameLoaded() {
       columnName: 'Blocks',
       JSON: window.objectLibrary.asteroidsPowerBlock,
     },
+    ufoPowerBlock: {
+      label: 'UFO',
+      columnName: 'Blocks',
+      JSON: window.objectLibrary.ufoPowerBlock,
+    },
     starViewBlock: {
       label: 'Star View',
       columnName: 'Blocks',
       JSON: window.objectLibrary.starViewBlock,
     },
+
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -264,6 +270,7 @@ function onGameLoaded() {
     zeldaPowerBlock: true,
     marioPowerBlock: true,
     asteroidsPowerBlock: true,
+    ufoPowerBlock: true,
     starViewBlock: true,
   }
 }

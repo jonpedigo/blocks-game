@@ -14,6 +14,9 @@ PIXEL EDITOR
 PATHFINDING EDITOR
 IMPROVEMENTS
 
+
+
+
 -----
 
 AGGREGATION MENU
@@ -133,6 +136,16 @@ LEVELS ( sub worlds )
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
+
+BUG: Pathfinding pacman right 3 blocks can’t find paths?
+
+Anticipate add platform
+
+Drag and drop sequence items
+
+Admin info on heros. Like a little color in the corner would be nice if its an admin or not you know what I mean, you feel me??
 
 Allow circles and triangles?
 

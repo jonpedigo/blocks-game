@@ -97,8 +97,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     }});
   })
 
-  socket.on('askJoinGame', (heroId) => {
-    io.emit('onAskJoinGame', heroId)
+  socket.on('askJoinGame', (heroId, role) => {
+    io.emit('onAskJoinGame', heroId, role)
   })
 
   socket.on('heroJoinedGamed', (hero) => {
