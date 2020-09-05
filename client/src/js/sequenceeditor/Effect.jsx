@@ -3,6 +3,7 @@ import modals from './modals.js'
 import Select from 'react-select'
 import classnames from 'classnames'
 import {
+  SingleLibraryModSelect,
   SingleLibraryObjectSelect,
   SingleEventSelect,
   SingleTagSelect,
@@ -118,6 +119,15 @@ export default class Effect extends React.Component{
         chosenEffectForm.push(<SingleLibraryObjectSelect sequenceItem={sequenceItem} valueProp='effectLibraryObject' onChange={(event) => {
          if(event.value) {
            sequenceItem.effectLibraryObject = event.value
+           this.props.setState({sequenceItem})
+         }
+       }}/>)
+      }
+
+      if(effectData.libraryMod) {
+        chosenEffectForm.push(<SingleLibraryModSelect sequenceItem={sequenceItem} valueProp='effectLibraryMod' onChange={(event) => {
+         if(event.value) {
+           sequenceItem.effectLibraryMod = event.value
            this.props.setState({sequenceItem})
          }
        }}/>)

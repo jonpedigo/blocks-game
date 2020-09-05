@@ -78,6 +78,9 @@ import { startSequence } from './sequence'
     },
     starViewGo: {},
     starViewReturn: {},
+    libraryMod: {
+      libraryMod: true,
+    }
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
     // camera effect
@@ -242,6 +245,15 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'mod') {
     GAME.startMod(effected.id, effect)
+  }
+
+  if(effectName === 'libraryMod') {
+    const json = window.modLibrary[effect.effectLibraryMod]
+    const mod = {
+      manualRevertId: effect.effectLibraryMod,
+      effectJSON: json,
+    }
+    GAME.startMod(effected.id, mod)
   }
 
   if(effectName === 'openWorld') {

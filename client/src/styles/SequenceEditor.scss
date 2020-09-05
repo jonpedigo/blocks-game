@@ -35,6 +35,9 @@
     border: 1px solid #333;
     font-size: 30px;
     padding: 10px;
+    &:hover {
+      background-color: #222;
+    }
   }
 
   &__sequence-options {
@@ -53,6 +56,7 @@
   }
 
   &__sequence-option {
+    padding-top: 10px;
     width: 40px;
   }
 

@@ -75,10 +75,20 @@ function SingleTagSelect({sequenceItem, valueProp, onChange, title}) {
 }
 
 function SingleLibraryObjectSelect({sequenceItem, valueProp, onChange, title}) {
-  return <div className="SequenceItem__test">{title || 'Library Object Name'}<Select
+  return <div className="SequenceItem__test">{title || 'Library Object Name:'}<Select
     value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
     onChange={onChange}
     options={Object.keys(window.objectLibrary).map(objectName => { return { value: objectName, label: objectName }})}
+    styles={window.reactSelectStyle}
+    theme={window.reactSelectTheme}/>
+  </div>
+}
+
+function SingleLibraryModSelect({sequenceItem, valueProp, onChange, title}) {
+  return <div className="SequenceItem__test">{title || 'Mod Object Name:'}<Select
+    value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
+    onChange={onChange}
+    options={Object.keys(window.modLibrary).map(objectName => { return { value: objectName, label: objectName }})}
     styles={window.reactSelectStyle}
     theme={window.reactSelectTheme}/>
   </div>
@@ -89,6 +99,7 @@ export {
   SingleTagSelect,
   SingleIdSelect,
   SingleLibraryObjectSelect,
+  SingleLibraryModSelect,
   MultiIdSelect,
   MultiTagSelect,
   NextSelect,

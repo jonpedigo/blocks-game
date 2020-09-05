@@ -55,15 +55,6 @@ ANIMATION UPGRADE
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
 
-// TRIGGER EVENT EDITOR
-   eventName
-   mainObjectTag
-   mainObjectId
-   guestObjectTag
-   guestObjectId
-   eventThreshold ( event value )
-   triggerPool
-
 ---
 Scenarios/BeginEnd
   TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS

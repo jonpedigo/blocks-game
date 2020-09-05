@@ -4,6 +4,7 @@ import SelectSubObjectMenu from '../menus/SelectSubObjectMenu.jsx';
 import TriggerMenu from '../menus/TriggerMenu.jsx';
 import SpriteMenu from '../menus/SpriteMenu.jsx';
 import HookMenu from '../menus/HookMenu.jsx';
+import ModMenu from '../menus/ModMenu.jsx';
 import LiveMenu from '../menus/LiveMenu.jsx';
 import TagMenu from '../menus/tagMenu.jsx';
 import CurrentTagsMenu from '../menus/CurrentTagsMenu.jsx';
@@ -191,6 +192,9 @@ export default class HeroContextMenu extends React.Component {
       <SubMenu title="All Tags">
         <TagMenu objectSelected={objectSelected}></TagMenu>
       </SubMenu>
+      {GAME.gameState.activeMods[objectSelected.id] && <SubMenu title="Mods">
+        <ModMenu objectSelected={objectSelected}/>
+      </SubMenu>}
       <SubMenu title="Triggers">
         <TriggerMenu objectSelected={objectSelected}/>
       </SubMenu>
