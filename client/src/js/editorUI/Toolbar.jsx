@@ -213,7 +213,7 @@ export default class Toolbar extends React.Component {
           }}/>
         </ToolbarRow>
 
-        <ToolbarRow active={HERO.originalId && HERO.id !== HERO.originalId} iconName="fa-mask">
+        <ToolbarRow active={HERO.editingId !== HERO.originalId} iconName="fa-mask">
           {/* go incognito */}
           <ToolbarButton active={GAME.heros[HERO.originalId].tags.hidden} iconName="fa-eye-slash" onClick={() => {
             if(GAME.heros[HERO.originalId].tags.hidden) {
@@ -222,26 +222,31 @@ export default class Toolbar extends React.Component {
               window.socket.emit('editHero', { id: HERO.originalId, tags: { hidden: true } })
             }
           }}/>
+          <ToolbarButton active={HERO.id === HERO.editingId && HERO.id !== HERO.originalId} iconName="fa-user-secret" onClick={() => {
+              if(HERO.id === HERO.originalId) {
+                HERO.id = HERO.editingId
+              } else {
+                HERO.id = HERO.originalId
+              }
+              EDITORUI.ref.forceUpdate()
+            }}/>
+            <ToolbarButton iconName="fa-gamepad" active={HERO.ghostControl} onClick={() => {
+              HERO.ghostControl = !HERO.ghostControl
+              EDITORUI.ref.forceUpdate()
+            }}/>
           <ToolbarButton iconName="fa-chevron-left" onClick={() => {
             GHOST.previousHero()
+            EDITORUI.ref.forceUpdate()
           }}/>
           <ToolbarButton iconName="fa-chevron-right" onClick={() => {
             GHOST.nextHero()
+            EDITORUI.ref.forceUpdate()
           }}/>
-        <ToolbarButton iconName="fa-times" onClick={() => {
-            HERO.id = HERO.originalId
-            HERO.editingId = HERO.originalId
-          }}/>
-          <ToolbarButton iconName="fa-gamepad" active={HERO.ghostControl} onClick={() => {
-            HERO.ghostControl = !HERO.ghostControl
-          }}/>
-        <ToolbarButton active={HERO.id === HERO.editingId && HERO.id !== HERO.originalId} iconName="fa-user-secret" onClick={() => {
-            if(HERO.id === HERO.originalId) {
-              HERO.id = HERO.editingId
-            } else {
+          <ToolbarButton iconName="fa-times" onClick={() => {
               HERO.id = HERO.originalId
-            }
-          }}/>
+              HERO.editingId = HERO.originalId
+              EDITORUI.ref.forceUpdate()
+            }}/>
         </ToolbarRow>
 
 

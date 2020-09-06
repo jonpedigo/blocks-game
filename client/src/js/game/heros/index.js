@@ -135,6 +135,7 @@ class Hero{
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
       // we are locally updating the hero input as host
       if(!PAGE.role.isHost && !PAGE.typingMode) {
+        console.log('???')
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }

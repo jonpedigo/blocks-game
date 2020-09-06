@@ -148,6 +148,9 @@ function update() {
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
     });
+
+    const editingHero = GAME.heros[HERO.editingId]
+    drawTools.drawBorder(ctx, {...editingHero, color: '#0A0'}, camera, {thickness: 5})
   }
 
   const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)

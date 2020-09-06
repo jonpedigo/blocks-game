@@ -127,7 +127,8 @@ function onPageLoaded(){
       }
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
-        GAME.heroInputs[HERO.id] = GAME.keysDown
+        if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
+        GAME.heroInputs[HERO.id][key] = true
         onKeyDown(key, GAME.heros[HERO.id])
       } else {
         window.socket.emit('sendHeroKeyDown', key, HERO.id)
@@ -144,8 +145,9 @@ function onPageLoaded(){
       delete GAME.keysDown[key]
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
+        if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
         onKeyUp(key, GAME.heros[HERO.id])
-        GAME.heroInputs[HERO.id] = GAME.keysDown
+        delete GAME.heroInputs[HERO.id][key]
       } else {
         window.socket.emit('sendHeroKeyUp', key, HERO.id)
       }
