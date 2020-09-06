@@ -67,6 +67,8 @@ function update() {
         drawTools.drawBorder(ctx, {...MAPEDITOR.groupGridHighlights[heroId], color: 'rgba(255,255,255,0.4)'}, camera)
       }
     })
+  } else {
+    console.log("NOT!")
   }
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject || draggingRelativeObject

@@ -40,22 +40,23 @@ const updatePixiObject = (gameObject) => {
 
   /////////////////////
   /////////////////////
-  // GET CHILD
-  const stage = getGameObjectStage(gameObject)
-  let pixiChild = stage.getChildByName(gameObject.id)
-  if(!pixiChild) {
-    initPixiObject(gameObject)
-    return
-  }
-
-  /////////////////////
-  /////////////////////
   // SUB OBJECTS
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
       updatePixiObject(subObject)
     })
+  }
+
+
+  /////////////////////
+  /////////////////////
+  // GET CHILD
+  const stage = getGameObjectStage(gameObject)
+  let pixiChild = stage.getChildByName(gameObject.id)
+  if(!pixiChild) {
+    initPixiObject(gameObject)
+    return
   }
 
   /////////////////////

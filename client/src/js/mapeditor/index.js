@@ -305,6 +305,11 @@ function updateGridHighlight(location) {
 
   MAPEDITOR.objectHighlighted = mouseLocation
 
+  if(MAPEDITOR.objectHighlighted.CREATOR) {
+    console.log('??')
+    return
+  }
+
   // find the smallest one stacked up
   let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects.filter(({ reserved }) => !reserved))
 

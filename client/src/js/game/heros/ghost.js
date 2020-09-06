@@ -6,11 +6,11 @@ class Ghost{
   previousHero() {
     let heroIds = Object.keys(GAME.heros)
     for(let i = 0; i < heroIds.length; i++) {
-      if(GAME.heros[heroIds[i]].id === HERO.id) {
+      if(GAME.heros[heroIds[i]].id === HERO.editingId) {
         if(i === 0) {
-          HERO.id = GAME.heros[heroIds[heroIds.length-1]].id
+          HERO.editingId = GAME.heros[heroIds[heroIds.length-1]].id
         } else {
-          HERO.id = GAME.heros[heroIds[i-1]].id
+          HERO.editingId = GAME.heros[heroIds[i-1]].id
         }
         break;
       }
@@ -20,11 +20,11 @@ class Ghost{
   nextHero() {
     let heroIds = Object.keys(GAME.heros)
     for(let i = 0; i < heroIds.length; i++) {
-      if(GAME.heros[heroIds[i]].id === HERO.id) {
+      if(GAME.heros[heroIds[i]].id === HERO.editingId) {
         if(i === heroIds.length - 1) {
-          HERO.id = GAME.heros[heroIds[0]].id
+          HERO.editingId = GAME.heros[heroIds[0]].id
         } else {
-          HERO.id = GAME.heros[heroIds[i+1]].id
+          HERO.editingId = GAME.heros[heroIds[i+1]].id
         }
         break;
       }
@@ -37,6 +37,9 @@ class Ghost{
       HERO.originalId = HERO.id
     }
     if(!PAGE.role.isAdmin) return
+    if(!HERO.editingId) {
+      HERO.editingId = HERO.id
+    }
     window.addEventListener("keydown", function (e) {
       keysDown[e.keyCode] = true
 

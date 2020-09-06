@@ -24,7 +24,7 @@ export default class GeneratedMenu extends React.Component {
 
     this._handleMenuClick = ({ key }) => {
       const { startResize, onStartDrag, deleteObject, onCopy, removeObject } = MAPEDITOR
-      const { objectSelected } = this.props;
+      const { objectSelected, subObject } = this.props;
 
       if (key === 'resize') {
         if (subObject) {
@@ -65,7 +65,7 @@ export default class GeneratedMenu extends React.Component {
         return
       }
 
-      handleExtraMenuClicks(key, objectSelected, this.props.openColorPicker)
+      handleExtraMenuClicks(key, objectSelected, this.props.openColorPicker, subObject)
     }
   }
 

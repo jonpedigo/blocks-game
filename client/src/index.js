@@ -137,6 +137,10 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+editor checkpoint. Switch edited objects to new checkpoint after change.
+You'd get a diff of what we just made vs what we are comparing it to. I can create an effect that switches to that checkpoint instead
+LORDD ^^
+
 WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
 
 BUG: Pathfinding pacman right 3 blocks can’t find paths?

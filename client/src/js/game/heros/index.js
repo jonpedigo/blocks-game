@@ -131,7 +131,7 @@ class Hero{
   }
 
   onUpdate() {
-    if(PAGE.role.isPlayer && !PAGE.role.isGhost){
+    if(PAGE.role.isPlayer && HERO.originalId === HERO.id){
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
       // we are locally updating the hero input as host
       if(!PAGE.role.isHost && !PAGE.typingMode) {
@@ -571,6 +571,10 @@ class Hero{
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
+
+      heroMenu: hero.heroMenu,
+      objectMenu: hero.objectMenu,
+      creator: hero.creator,
     }
 
     if(hero.subObjects) {

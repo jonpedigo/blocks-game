@@ -16,8 +16,8 @@ class WorldManager {
     this.ref.close()
   }
 
-  onStopGame(){
-    this.ref.forceUpdate()
+  onStopGame = () => {
+    if(this.ref) this.ref.forceUpdate()
   }
 
   onGameStart() {

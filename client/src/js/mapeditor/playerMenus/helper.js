@@ -8,7 +8,7 @@ const questGivingIdSelectPrefix = 'quest-id-'
 
 const removeResourceTagPrefix = 'remove-resource-tag-'
 
-export function handleExtraMenuClicks({ key, objectSelected, openColorPicker }) {
+export function handleExtraMenuClicks({ key, objectSelected, openColorPicker, subObject }) {
     const { startResize, startRelativeDrag, onStartDrag, selectSubObject, deleteObject, onCopy, removeObject, onStartSetPathfindingLimit, openConstructEditor, networkEditObject } = MAPEDITOR
     const { resourceLimit, resourceWithdrawAmount } = objectSelected
     const { spawnLimit, spawnPoolInitial, spawnWaitTimer } = objectSelected

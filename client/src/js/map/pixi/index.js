@@ -133,6 +133,7 @@ PIXIMAP.deleteObject = function(object, stage) {
     PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
     delete pixiChild.trailEmitter
   }
+  console.log('and removing?')
   stage.removeChild(pixiChild)
 }
 

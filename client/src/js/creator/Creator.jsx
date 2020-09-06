@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { SketchPicker, SwatchesPicker } from 'react-color';
+import gridUtil from '../utils/grid.js'
 
 export default class Creator extends React.Component {
   constructor(props) {
@@ -52,11 +53,17 @@ export default class Creator extends React.Component {
         creatorObjectSelected.onMouseDown(MAPEDITOR.objectHighlighted, colorSelected)
       }
 
-      if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
+      const isObstacle = MAPEDITOR.objectHighlighted.id && MAPEDITOR.objectHighlighted.tags.obstacle
+      if(!isObstacle && creatorObjectSelected.JSON) {
         const { height, width, tags, color } = creatorObjectSelected.JSON
         if(width) MAPEDITOR.objectHighlighted.width = width
+        else MAPEDITOR.objectHighlighted.width = GAME.grid.nodeSize
         if(height) MAPEDITOR.objectHighlighted.height = height
+        else MAPEDITOR.objectHighlighted.height = GAME.grid.nodeSize
         if(tags) MAPEDITOR.objectHighlighted.tags = tags
+        const { x, y } = gridUtil.snapXYToGrid(MAPEDITOR.mousePos.x, MAPEDITOR.mousePos.y, { closest: false })
+        MAPEDITOR.objectHighlighted.x = x
+        MAPEDITOR.objectHighlighted.y = y
         MAPEDITOR.objectHighlighted.color = color || 'white'
         if(colorSelected) MAPEDITOR.objectHighlighted.color = colorSelected
         MAPEDITOR.objectHighlighted.CREATOR = true

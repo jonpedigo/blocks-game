@@ -326,6 +326,7 @@ class Game{
   loadHeros(heros) {
     if(!GAME.gameState.loaded) {
       GAME.heroList.forEach((hero) => {
+        console.log('summoning')
         GAME.heros[hero.id] = HERO.summonFromGameData(hero)
         GAME.heros[hero.id].id = hero.id
       })
@@ -370,7 +371,9 @@ class Game{
       if(mod.removeEventListener) mod.removeEventListener()
     })
 
-    GAME.gameState = null
+    const wasLoaded = GAME.gameState.loaded
+    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+    GAME.gameState.loaded = wasLoaded
   }
 
   snapToGrid() {

@@ -119,7 +119,7 @@ function onPageLoaded(){
   window.addEventListener("keydown", function (e) {
     const key = keycode(e.keyCode)
 
-    if(PAGE.role.isGhost) {
+    if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {
       if(!PAGE.typingMode) {
@@ -138,7 +138,7 @@ function onPageLoaded(){
   window.addEventListener("keyup", function (e) {
     const key = keycode(e.keyCode)
 
-    if(PAGE.role.isGhost) {
+    if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {
       delete GAME.keysDown[key]

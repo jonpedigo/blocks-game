@@ -374,7 +374,7 @@ function postPhysics() {
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
-      window.emitGameEvent('onObjectInteractable', hero.interactableObject, hero)
+      // window.emitGameEvent('onObjectInteractable', hero.interactableObject, hero)
       if(input && (input['e'] === true || input['v'] === true) && !hero._cantInteract && !hero.flags.paused) {
         window.local.emit('onHeroInteract', hero, hero.interactableObject)
         hero._cantInteract = true

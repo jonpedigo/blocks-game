@@ -801,6 +801,8 @@ class Objects{
     } else {
       if(PHYSICS.objects[object.id]) {
         PHYSICS.removeObject(object)
+      } else {
+        console.log('ok this is why its not')
       }
     }
     if(PAGE.role.isHost && object.triggers) {

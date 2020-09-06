@@ -32,7 +32,7 @@ export default class Toolbar extends React.Component {
 
     if(!open || CONSTRUCTEDITOR.open) return null
 
-    const hero = GAME.heros[HERO.id]
+    const hero = GAME.heros[HERO.editingId]
 
     return (
       <div className="Toolbar">
@@ -122,7 +122,7 @@ export default class Toolbar extends React.Component {
         <ToolbarRow open iconName='fa-street-view'>
           {/* Composer -> Menu */}
           <ToolbarButton iconName="fa-blind" onClick={() => {
-            LIVEEDITOR.open(GAME.heros[HERO.id], 'guidance')
+            LIVEEDITOR.open(GAME.heros[HERO.editingId], 'guidance')
           }}/>
 
           <ToolbarButton iconName="fa-plus-square" onClick={() => {
@@ -133,7 +133,7 @@ export default class Toolbar extends React.Component {
           }}
           />
           <ToolbarButton iconName="fa-sliders-h" onClick={() => {
-            LIVEEDITOR.open(GAME.heros[HERO.id], 'hero')
+            LIVEEDITOR.open(GAME.heros[HERO.editingId], 'hero')
           }}/>
           {/* star view */}
           {hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
@@ -144,13 +144,13 @@ export default class Toolbar extends React.Component {
 
           {/* camera shake */}
           <ToolbarButton iconName="fa-camera" onClick={() => {
-            window.socket.emit('heroCameraEffect', 'cameraShake', HERO.id, { duration: 500, frequency: 20, amplitude: 36 })
+            window.socket.emit('heroCameraEffect', 'cameraShake', HERO.editingId, { duration: 500, frequency: 20, amplitude: 36 })
           }}/>
           <ToolbarButton iconName="fa-code" onClick={() => {
             modals.editObjectCode(hero, 'Editing Hero JSON', hero);
           }}/>
           <ToolbarButton iconName="fa-cloud-meatball" onClick={() => {
-            LIVEEDITOR.open(GAME.heros[HERO.id], 'particle')
+            LIVEEDITOR.open(GAME.heros[HERO.editingId], 'particle')
           }}/>
           <ToolbarButton iconName="fa-recycle" onClick={() => {
               window.socket.emit('resetHeroToGameDefault', hero)
@@ -201,15 +201,15 @@ export default class Toolbar extends React.Component {
         <ToolbarRow iconName='fa-search'>
           <ToolbarButton iconName="fa-search-plus" onClick={() => {
             EDITOR.preferences.zoomMultiplier -= (EDITOR.zoomDelta * 4)
-            window.local.emit('onZoomChange', HERO.id)
+            window.local.emit('onZoomChange', HERO.editingId)
           }}/>
           <ToolbarButton iconName="fa-search-minus" onClick={() => {
             EDITOR.preferences.zoomMultiplier += (EDITOR.zoomDelta * 4)
-            window.local.emit('onZoomChange', HERO.id)
+            window.local.emit('onZoomChange', HERO.editingId)
           }}/>
           <ToolbarButton iconName="fa-times" onClick={() => {
             EDITOR.preferences.zoomMultiplier = 0
-            window.local.emit('onZoomChange', HERO.id)
+            window.local.emit('onZoomChange', HERO.editingId)
           }}/>
         </ToolbarRow>
 
@@ -228,8 +228,19 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-chevron-right" onClick={() => {
             GHOST.nextHero()
           }}/>
-          <ToolbarButton iconName="fa-times" onClick={() => {
+        <ToolbarButton iconName="fa-times" onClick={() => {
             HERO.id = HERO.originalId
+            HERO.editingId = HERO.originalId
+          }}/>
+          <ToolbarButton iconName="fa-gamepad" active={HERO.ghostControl} onClick={() => {
+            HERO.ghostControl = !HERO.ghostControl
+          }}/>
+        <ToolbarButton active={HERO.id === HERO.editingId && HERO.id !== HERO.originalId} iconName="fa-user-secret" onClick={() => {
+            if(HERO.id === HERO.originalId) {
+              HERO.id = HERO.editingId
+            } else {
+              HERO.id = HERO.originalId
+            }
           }}/>
         </ToolbarRow>
 
