@@ -221,10 +221,15 @@ function onGameLoaded() {
       columnName: 'Blocks',
       JSON: window.objectLibrary.starViewBlock,
     },
-
+    obstacle: {
+      label: 'Obstacle',
+      columnName: 'Basic',
+      JSON: window.objectLibrary.default,
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
+    obstacle: false,
     selectColor: false,
     drawStructure: false,
     drawBackground: false,

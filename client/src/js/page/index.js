@@ -130,7 +130,7 @@ class Page{
           const game = JSON.parse(result.value)
           GAME.loadGridWorldObjectsCompendiumState(game)
           GAME.heros = []
-          HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
           window.local.emit('onGameLoaded')
         })
         return
@@ -139,7 +139,7 @@ class Page{
       window.networkSocket.on('onGetGame', (game) => {
         GAME.loadGridWorldObjectsCompendiumState(game)
         GAME.heros = []
-        HERO.addHero(HERO.summonFromGameData({ id: HERO.id }))
+        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
         window.local.emit('onGameLoaded')
       })
       window.networkSocket.emit('getGame', gameId)

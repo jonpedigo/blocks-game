@@ -329,19 +329,31 @@ class Hero{
       console.log('failed to find hero with id' + HERO.id)
     }
 
-    if(!GAME.world.tags.isAsymmetric && GAME.defaultHero) {
-      delete GAME.defaultHero.id
-      const id = hero.id
-      hero = JSON.parse(JSON.stringify(GAME.defaultHero))
-      OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-        subObject.id = 'subObject-'+window.uniqueID()
-      })
-      hero.id = id
-      HERO.respawn(hero)
-      return hero
+    let newHero
+    const id = hero.id
+    const heroSummonType = hero.heroSummonType
+
+    if(heroSummonType === 'default' && GAME.defaultHero) {
+      newHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+    } else if(heroSummonType){
+      const libraryHero = window.heroLibrary[heroSummonType]
+      if(libraryHero) {
+        newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), libraryHero)
+      }
     }
 
-    return HERO.resetToDefault(hero)
+
+    if(newHero) {
+      newHero.id = id
+      newHero.heroSummonType = heroSummonType
+      OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
+        subObject.id = 'subObject-'+window.uniqueID()
+      })
+      HERO.respawn(newHero)
+      return newHero
+    } else {
+      return HERO.resetToDefault(hero)
+    }
   }
 
   getState(hero) {
@@ -424,6 +436,8 @@ class Hero{
       height: hero.height,
       flags: hero.flags,
       tags: hero.tags,
+
+      heroSummonType: hero.heroSummonType,
 
       zBehavior: hero.zBehavior,
       xBehavior: hero.xBehavior,

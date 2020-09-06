@@ -246,7 +246,7 @@ function updateProperties(pixiChild, gameObject) {
   /////////////////////
   /////////////////////
   // INTERACT HIGHLIGHT
-  if(HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
+  if(gameObject.tags.glowing || HERO.id && GAME.heros[HERO.id] && GAME.heros[HERO.id].interactableObject && gameObject.id === GAME.heros[HERO.id].interactableObject.id) {
     pixiChild.filters = [new GlowFilter(12, 0xFFFFFF)];
   } else {
     removeFilter(pixiChild, GlowFilter)

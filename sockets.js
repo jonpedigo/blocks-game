@@ -467,6 +467,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('resetPhysicsProperties', (objectId) => {
     io.emit('onResetPhysicsProperties', objectId)
   })
+
+  socket.on('editGameHeroJSON', (gameHeroName, json) => {
+    io.emit('onEditGameHeroJSON', gameHeroName, json)
+  })
 }
 
 module.exports = socketEvents

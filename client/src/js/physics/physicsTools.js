@@ -574,7 +574,7 @@ function addObject(object) {
 }
 
 function removeObject(object) {
-  if(object.tagss && object.tags.notInCollisions) return
+  if(object.tags && object.tags.notInCollisions) return
   try {
     PHYSICS.system.remove(PHYSICS.objects[object.id])
     delete PHYSICS.objects[object.id];

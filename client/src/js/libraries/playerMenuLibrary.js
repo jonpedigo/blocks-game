@@ -25,8 +25,12 @@ window.local.on('onFirstPageGameLoaded', () => {
       title: 'Respawn',
     },
     color: {
-      useExistingMenu: 'Color', // this looks up DialogueMenu.jsx and plugs it in as a subMenu. See how DialogueMenu.jsx is added to objectContextMenu
+      useExistingMenu: 'Color',
       title: 'Color'
+    },
+    name: {
+      useExistingMenu: 'Name',
+      title: 'Name'
     },
   }
 
@@ -54,6 +58,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     color: false,
     resize: false,
     copy: false,
+    name: false,
     delete: false,
   }
 })

@@ -113,6 +113,10 @@ function init() {
     window.socket.on('onAddSubObject', (ownerId, subObject, subObjectName, options) => {
       window.local.emit('onAddSubObject', ownerId, subObject, subObjectName, options)
     })
+
+    window.socket.on('onEditGameHeroJSON', (gameHeroName, JSON) => {
+      window.local.emit('onEditGameHeroJSON', gameHeroName, JSON)
+    })
   }
 
   // CLIENT HOST OR EDITOR CALL THIS

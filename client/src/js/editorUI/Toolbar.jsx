@@ -190,7 +190,16 @@ export default class Toolbar extends React.Component {
             WORLDMANAGER.open('sequence')
           }}/>
           {/* Default Heros -> Menu */}
-          <ToolbarButton iconName="fa-theater-masks"/>
+          <ToolbarButton iconName="fa-theater-masks" onClick={() => {
+            PAGE.typingMode = true
+            modals.openEditCodeModal('Edit Default Hero JSON', GAME.defaultHero || window.defaultHero, (result) => {
+              if(result && result.value) {
+                const editedCode = JSON.parse(result.value)
+                window.socket.emit('editGameHeroJSON', 'default', editedCode)
+              }
+              PAGE.typingMode = false
+            })
+          }}/>
           {/* Compendium -> Menu */}
           <ToolbarButton iconName="fa-book-dead"/>
         </ToolbarRow>

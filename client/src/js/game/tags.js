@@ -223,7 +223,7 @@ function setDefault() {
     hero: true,
     respawn: true,
     gravityY: false,
-    default: false,
+    saveAsDefault: false,
     monsterDestroyer: false,
     obstacle: false,
     rotateable: false,

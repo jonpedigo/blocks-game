@@ -196,9 +196,8 @@ class Game{
   onAskJoinGame(heroId, role) {
     let hero = GAME.heros[heroId]
     if(!hero) {
-      hero = HERO.summonFromGameData({id: heroId})
+      hero = HERO.summonFromGameData({id: heroId, heroSummonType: role })
       hero.id = heroId
-      if(role.isAdmin) hero.flags.isAdmin = true
       window.socket.emit('heroJoinedGamed', hero)
     }
   }
@@ -231,8 +230,10 @@ class Game{
     if(PAGE.role.isPlayer && !GAME.heros[HERO.id]) {
       if(GAME.heros[HERO.id]) {
         window.local.emit('onHeroFound', GAME.heros[HERO.id])
+      } else if(PAGE.role.isAdmin) {
+        window.socket.emit('askJoinGame', HERO.id, 'admin')
       } else {
-        window.socket.emit('askJoinGame', HERO.id, PAGE.role)
+        window.socket.emit('askJoinGame', HERO.id, 'default')
       }
     } else {
       GAME.loadHeros(GAME)
@@ -273,7 +274,7 @@ class Game{
     // game state
     if(game.gameState && game.gameState.loaded) {
       GAME.gameState = game.gameState
-      if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      // if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       // GAME.gameState.sequenceQueue = []
       // GAME.gameState.activeModList = []
       //( remove timouts from this list when you can convert this functions to strings and use eval..)
@@ -326,7 +327,6 @@ class Game{
   loadHeros(heros) {
     if(!GAME.gameState.loaded) {
       GAME.heroList.forEach((hero) => {
-        console.log('summoning')
         GAME.heros[hero.id] = HERO.summonFromGameData(hero)
         GAME.heros[hero.id].id = hero.id
       })
@@ -371,9 +371,7 @@ class Game{
       if(mod.removeEventListener) mod.removeEventListener()
     })
 
-    const wasLoaded = GAME.gameState.loaded
-    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
-    GAME.gameState.loaded = wasLoaded
+    GAME.gameState = null
   }
 
   snapToGrid() {
@@ -603,20 +601,25 @@ class Game{
       grid: game.grid,
       tags: game.tags,
       customInputBehavior: game.customInputBehavior,
-      // defaultHero: game.defaultHero,
+      defaultHero: game.defaultHero,
     }))
 
-    if(!gameCopy.world.tags.shouldRestoreHero && !gameCopy.world.tags.isAsymmetric && game.heros) {
+    if(game.heros) {
       for(var heroId in game.heros) {
-        if(game.heros[heroId].tags.default) {
+        if(game.heros[heroId].tags.saveAsDefaultHero) {
           gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
         }
       }
-      if(!gameCopy.defaultHero && game.heros[heroId]) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
-      else if(!gameCopy.defaultHero && game.heroList.length) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heroList[0]))
-      else if(!gameCopy.defaultHero && game.defaultHero) gameCopy.defaultHero = game.hero
-      else if(!gameCopy.defaultHero) return alert('could not find a game hero')
     }
+
+    if(!gameCopy.world.tags.shouldRestoreHero && !gameCopy.world.tags.isAsymmetric && game.heros || !gameCopy.defaultHero) {
+      // if(!gameCopy.defaultHero && game.heros[heroId]) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
+      if(game.heroList.length) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heroList[0]))
+      else if(!game.defaultHero) gameCopy.defaultHero = game.hero
+      else return alert('could not find a game hero')
+    }
+
+    gameCopy.defaultHero.tags.saveAsDefaultHero = false
 
     if(!gameCopy.id) {
       gameCopy.id = 'game-' + window.uniqueID()
@@ -1033,6 +1036,12 @@ class Game{
   onStopSequence(sequenceId) {
     const sequence = GAME.gameState.sequenceQueue.find(({id}) => sequenceId)
     if(sequence) endSequence(sequence)
+  }
+
+  onEditGameHeroJSON(gameHeroName, JSON) {
+    if(gameHeroName === 'default') {
+      GAME.defaultHero = JSON
+    }
   }
 }
 
