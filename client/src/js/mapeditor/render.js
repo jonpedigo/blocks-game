@@ -1,5 +1,17 @@
 import drawTools from './drawTools';
 
+function drawTextCenter(ctx, object, color, text, camera) {
+  ctx.fillStyle = color || "rgb(250, 250, 250)";
+  let fontSize = 20*(camera.multiplier)
+  if(fontSize < 12) fontSize = 12
+  ctx.font = `${fontSize}px Courier New`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  let lineWidth = (object.width - fontSize)*camera.multiplier
+  let { width, height } = window.measureWrapText(ctx, text, 0, 0, lineWidth, fontSize)
+  window.wrapText(ctx, text, (object.x+(object.width/2))*camera.multiplier - camera.x, ((object.y+(object.height/2))*camera.multiplier - camera.y - (height/2)), lineWidth, fontSize)
+}
+
 function update() {
 
   if(MAPEDITOR.paused) return
@@ -146,6 +158,12 @@ function update() {
         let height = hero.reachablePlatformHeight
         let color = 'rgba(50, 255, 50, 0.5)'
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
+      }
+
+      if(hero.flags.isAdmin) {
+        drawTextCenter(ctx, hero, '#0A0', 'admin', camera)
+      } else {
+        drawTextCenter(ctx, hero, '#0A0', 'player', camera)
       }
     });
 
