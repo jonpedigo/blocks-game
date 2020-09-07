@@ -31,7 +31,7 @@ function onPageLoaded() {
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
     onTagDepleted: { mainObject: 'tag' },
     onAnticipateCompleted: {},
-    onSequenceCompleted: {}
+    onSequenceEnded: {}
   }
   // 'onHeroExamine' <-- only for notifications/logs
   // 'onHeroSwitch'

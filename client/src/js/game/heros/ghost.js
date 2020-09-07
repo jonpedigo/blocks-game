@@ -14,7 +14,7 @@ class Ghost{
         }
         if(keysDown['16']) {
           HERO.id = HERO.editingId
-          HERO.ghostControl = true
+          // HERO.ghostControl = true
         }
         break;
       }
@@ -32,7 +32,7 @@ class Ghost{
         }
         if(keysDown['16']) {
           HERO.id = HERO.editingId
-          HERO.ghostControl = true
+          // HERO.ghostControl = true
         }
         break;
       }
@@ -66,8 +66,6 @@ class Ghost{
       if(HERO.id !== HERO.originalId) PAGE.role.isGhost = true
       else PAGE.role.isGhost = false
     }, false)
-
-
 
     window.addEventListener("keyup", function (e) {
   	   delete keysDown[e.keyCode]

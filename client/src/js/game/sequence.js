@@ -9,6 +9,8 @@ function endSequence(sequence) {
     GAME.gameState.paused = false
   }
 
+  window.local.emit('onSequenceEnded', sequence.id)
+
   GAME.gameState.sequenceQueue = GAME.gameState.sequenceQueue.filter((s) => {
     if(s.id === sequence.id) return false
     return true
@@ -186,12 +188,9 @@ function processSequence(sequence) {
         sequence.currentTimerId = null
       })
     } else if(item.conditionType === 'onEvent') {
-      console.log(item.conditionEventName)
       const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
-        console.log('???CONDITION EVENT NAME')
-        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
+        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, sequence.ownerObject, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
         if(eventMatch) {
-          console.log('event match')
           item.waiting = false
           sequence.currentItemId = item.next
           removeEventListener()

@@ -317,7 +317,7 @@ function testEventMatch(eventName, mainObject, guestObject, condition, ownerObje
     }
   }
 
-  if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0 || eventName.indexOf('Anticipate') >= 0) {
+  if(eventName.indexOf('Game') >= 0 || eventName.indexOf('Quest') >= 0 || eventName.indexOf('Anticipate') >= 0 || eventName.indexOf('Sequence') >= 0) {
     eventMatch = true
   }
 
