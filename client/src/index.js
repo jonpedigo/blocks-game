@@ -26,8 +26,6 @@ death by jump
 EDITOR UPGRADES
 Light Editor
 never close right click menu if shift is pressed
-view and edit Tags applied
-Live menu's context
 
 Add objects when you hit power world transform buttons
 Improve Add Sub Object
@@ -130,6 +128,8 @@ LEVELS ( sub worlds )
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+Combine spawning with anticipatedAdd. create like spawnType variable which defaults to, hatchFromParent
 
 editor checkpoint. Switch edited objects to new checkpoint after change.
 You'd get a diff of what we just made vs what we are comparing it to. I can create an effect that switches to that checkpoint instead

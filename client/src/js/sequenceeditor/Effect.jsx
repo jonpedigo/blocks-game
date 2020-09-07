@@ -59,8 +59,8 @@ export default class Effect extends React.Component{
     </div>
 
     let chosenEffectForm = []
-    if(effectName.length) {
-      const effectData = window.triggerEffects[effectName]
+    const effectData = window.triggerEffects[effectName]
+    if(effectName.length && effectData) {
 
       const { effectValue, effectSequenceId } = sequenceItem
       if(effectData.JSON) {

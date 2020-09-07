@@ -60,22 +60,29 @@ import { startSequence } from './sequence'
     },
     anticipatedAdd: {
       libraryObject: true,
+      number: true,
     },
     anticipatedAddWall: {
       libraryObject: true,
+      number: true,
     },
     anticipatedAddPlatform: {
       libraryObject: true,
+      number: true,
     },
-    randomAdd: {
+    viewAdd: {
       libraryObject: true,
       number: true,
     },
-    randomAddBlock: {
+    viewAddBlock: {
       libraryObject: true,
       number: true,
     },
-    randomAddWall: {
+    viewAddWall: {
+      libraryObject: true,
+      number: true,
+    },
+    viewAddPlatform: {
       libraryObject: true,
       number: true,
     },
@@ -270,23 +277,27 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
   if(effectName === 'anticipatedAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, wall: true });
+    window.socket.emit('anticipateObject', { ...object, wall: true, numberToAdd: effectValue  });
   }
   if(effectName === 'anticipatedAddPlatform' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, platform: true });
+    window.socket.emit('anticipateObject', { ...object, platform: true, numberToAdd: effectValue  });
   }
-  if(effectName === 'randomAdd' && effect.effectLibraryObject) {
+  if(effectName === 'viewAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', {...object, random: true, numberToAdd: effectValue });
   }
-  if(effectName === 'randomAddWall' && effect.effectLibraryObject) {
+  if(effectName === 'viewAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, wall: true, random: true, numberToAdd: effectValue });
   }
-  if(effectName === 'randomAddBlock' && effect.effectLibraryObject) {
+  if(effectName === 'viewAddBlock' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, block: true, random: true, numberToAdd: effectValue });
+  }
+  if(effectName === 'viewAddPlatform' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, platform: true, random: true, numberToAdd: effectValue });
   }
 
 
