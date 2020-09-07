@@ -223,7 +223,7 @@ function setDefault() {
     hero: true,
     respawn: true,
     gravityY: false,
-    saveAsDefault: false,
+    saveAsDefaultHero: false,
     monsterDestroyer: false,
     obstacle: false,
     rotateable: false,
@@ -258,7 +258,12 @@ function setDefault() {
     ...window.keyInputTags,
     ...window.heroTags,
     ...window.subObjectTags,
-    ...window.descriptiveTags
+    ...window.descriptiveTags,
+    ...window.generatedTags,
+  }
+
+  window.generatedTags = {
+    lastAnticipatedObject: false,
   }
 }
 

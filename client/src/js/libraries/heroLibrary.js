@@ -3,6 +3,9 @@ window.local.on('onPageLoaded', () => {
     admin: {
       flags: {
         isAdmin: true,
+      },
+      tags: {
+        hidden: true,
       }
     }
   }

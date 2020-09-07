@@ -29,7 +29,9 @@ function onPageLoaded() {
     onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
     onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
-    onTagDepleted: { mainObject: 'tag' }
+    onTagDepleted: { mainObject: 'tag' },
+    onAnticipateCompleted: {},
+    onSequenceCompleted: {}
   }
   // 'onHeroExamine' <-- only for notifications/logs
   // 'onHeroSwitch'

@@ -186,9 +186,12 @@ function processSequence(sequence) {
         sequence.currentTimerId = null
       })
     } else if(item.conditionType === 'onEvent') {
+      console.log(item.conditionEventName)
       const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
+        console.log('???CONDITION EVENT NAME')
         const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
         if(eventMatch) {
+          console.log('event match')
           item.waiting = false
           sequence.currentItemId = item.next
           removeEventListener()

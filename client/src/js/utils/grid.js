@@ -194,15 +194,20 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+  let debug = false
   if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - 1) {
+      if(debug) console.log('rejecting reason 1')
       return false
     } else if(attemptingX < gridX) {
+      if(debug) console.log('rejecting reason 1')
       return false
     } else if(attemptingY > gridY + height - 1) {
+      if(debug) console.log('rejecting reason 1')
       return false
     } else if(attemptingY < gridY) {
+      if(debug) console.log('rejecting reason 1')
       return false
     }
   }
@@ -215,12 +220,16 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+      if(debug) console.log('rejecting reason 2')
       return false
     } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+      if(debug) console.log('rejecting reason 2')
       return false
     } else if(attemptingY > gridY + height - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+      if(debug) console.log('rejecting reason 2')
       return false
     } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+      if(debug) console.log('rejecting reason 2')
       return false
     }
   }
@@ -228,24 +237,38 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   const pathfindingLimit = options.pathfindingLimit
   if(pathfindingLimit){
     if(attemptingX > pathfindingLimit.gridX + pathfindingLimit.gridWidth - 1) {
+      if(debug) console.log('rejecting reason 3')
       return false
     } else if(attemptingX < pathfindingLimit.gridX) {
+      if(debug) console.log('rejecting reason 3')
       return false
     } else if(attemptingY > pathfindingLimit.gridY + pathfindingLimit.gridHeight - 1) {
+      if(debug) console.log('rejecting reason 3')
       return false
     } else if(attemptingY < pathfindingLimit.gridY) {
+      if(debug) console.log('rejecting reason 3')
       return false
     }
   }
 
   //prevents someone from trying to path find off the grid.... BREAKS CODE
-  if(attemptingX >= (GAME.grid.startX/GAME.grid.nodeSize) && attemptingX < GAME.grid.width + (GAME.grid.startX/GAME.grid.nodeSize)) {
-    if(attemptingY >= (GAME.grid.startY/GAME.grid.nodeSize) && attemptingY < GAME.grid.height + (GAME.grid.startY/GAME.grid.nodeSize)) {
-      return true
-    }
+  // i think this might be useless? im not sure
+  // if(attemptingX >= (GAME.grid.startX/GAME.grid.nodeSize) && attemptingX < GAME.grid.width + Math.abs((GAME.grid.startX/GAME.grid.nodeSize))) {
+  //   if(attemptingY >= (GAME.grid.startY/GAME.grid.nodeSize) && attemptingY < GAME.grid.height + Math.abs((GAME.grid.startY/GAME.grid.nodeSize))) {
+  //     return true
+  //   }
+  // }
+
+  if(!GAME.grid.nodes[attemptingX]) {
+    if(debug) console.log('rejecting reason 4')
+    return false
+  }
+  if(!GAME.grid.nodes[attemptingX][attemptingY]) {
+    if(debug) console.log('rejecting reason 4')
+    return false
   }
 
-  return false
+  return true
 }
 
 export default {

@@ -79,8 +79,6 @@ function update() {
         drawTools.drawBorder(ctx, {...MAPEDITOR.groupGridHighlights[heroId], color: 'rgba(255,255,255,0.4)'}, camera)
       }
     })
-  } else {
-    console.log("NOT!")
   }
 
   let currentObject = resizingObject || pathfindingLimit || draggingObject || copiedObject || draggingRelativeObject
@@ -151,12 +149,12 @@ function update() {
         drawTools.drawBorder(ctx, {color: '#0A0', x: hero.x - (HERO.cameraWidth * hero.zoomMultiplier)/2 + hero.width/2, y: hero.y - (HERO.cameraHeight * hero.zoomMultiplier)/2 + hero.height/2, width: (HERO.cameraWidth * hero.zoomMultiplier), height: (HERO.cameraHeight * hero.zoomMultiplier)}, camera)
       }
 
-      if(hero.reachablePlatformHeight && hero.tags.gravityY) {
+      if(hero.reachablePlatformHeight && (hero.tags.gravityY || GAME.world.allMovingObjectsHaveGravityY)) {
         let y = (hero.y + hero.height)
         let x = hero.x - hero.reachablePlatformWidth
         let width = (hero.reachablePlatformWidth * 2) + (hero.width)
         let height = hero.reachablePlatformHeight
-        let color = 'rgba(50, 255, 50, 0.5)'
+        let color = 'rgba(0, 150, 0, 0.3)'
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
 

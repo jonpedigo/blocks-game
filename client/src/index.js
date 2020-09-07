@@ -5,17 +5,11 @@
 ////////////////////////////////////////////////////
 
 TODO
-ON GAME START - Live Menu, Hero Menu, Right Click Menu goes away
-Construct editor - white only toggle
-
 STORY SCREENSHOTS
 SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
 PIXEL EDITOR
 PATHFINDING EDITOR
 IMPROVEMENTS
-
-
-
 
 -----
 
@@ -436,7 +430,13 @@ https://www.transparenttextures.com/
 THINGS COULD GET FUCKIN NUTS WITH THIS HERE
 https://www.iwm-tuebingen.de/iwmbrowser/lib/pixi/flippable.html
 
-
+PROCEDURAL
+https://github.com/sequitur/improv
+https://github.com/redblobgames/mapgen2
+https://github.com/BrianMacIntosh/icon-machine
+https://github.com/redblobgames/mapgen4
+https://github.com/kchapelier/procedural-generation
+https://github.com/Dannark/BWO
 */
 
 // MARKETING IDEA

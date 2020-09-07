@@ -416,38 +416,40 @@ class Objects{
         }
       }
       addAnticipatedObject(newObject)
-    } else if (leftDiff < 1 && hero.directions.left) {
-      let newObject = {
-        x: minX - GAME.grid.nodeSize,
-        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
-        width: GAME.grid.nodeSize,
-        height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
+    } else {
+      if (leftDiff < 1 && hero.directions.left) {
+        let newObject = {
+          x: minX - GAME.grid.nodeSize,
+          y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
+          width: GAME.grid.nodeSize,
+          height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 3) : GAME.grid.nodeSize,
+        }
+        addAnticipatedObject(newObject)
+      } else if (topDiff < 1 && hero.directions.up) {
+        let newObject = {
+          x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
+          y: minY - GAME.grid.nodeSize,
+          width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+          height: GAME.grid.nodeSize,
+        }
+        addAnticipatedObject(newObject)
+      } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
+        let newObject = {
+          x: maxX + GAME.grid.nodeSize,
+          y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
+          width: GAME.grid.nodeSize,
+          height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+        }
+        addAnticipatedObject(newObject)
+      } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
+        let newObject = {
+          x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
+          y: maxY + GAME.grid.nodeSize,
+          width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
+          height: GAME.grid.nodeSize,
+        }
+        addAnticipatedObject(newObject)
       }
-      addAnticipatedObject(newObject)
-    } else if (topDiff < 1 && hero.directions.up) {
-      let newObject = {
-        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
-        y: minY - GAME.grid.nodeSize,
-        width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
-        height: GAME.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
-      let newObject = {
-        x: maxX + GAME.grid.nodeSize,
-        y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
-        width: GAME.grid.nodeSize,
-        height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
-    } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
-      let newObject = {
-        x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
-        y: maxY + GAME.grid.nodeSize,
-        width: isWall ? (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 4) : GAME.grid.nodeSize,
-        height: GAME.grid.nodeSize,
-      }
-      addAnticipatedObject(newObject)
     }
 
     function addAnticipatedObject(newObject) {
@@ -455,10 +457,12 @@ class Objects{
       if(!collisions.check(newObject, GAME.objects) && gridUtil.keepGridXYWithinBoundaries(x/GAME.grid.nodeSize, y/GAME.grid.nodeSize) && gridUtil.keepGridXYWithinBoundaries((x + newObject.width)/GAME.grid.nodeSize, (y + newObject.height)/GAME.grid.nodeSize)) {
         const createMe = {...newObject, ...object}
         createMe.tags.fadeInOnInit = true
-        OBJECTS.create([createMe])
+        const created = OBJECTS.create([createMe])
+        GAME.lastAnticipatedObjectId = created[0].id
         object.numberToAdd--
         if(object.numberToAdd) {
         } else {
+          window.local.emit('onAnticipateCompleted', object)
           GAME.gameState.anticipatedForAdd = GAME.gameState.anticipatedForAdd.filter((antObject) => {
             return antObject !== object
           })
@@ -657,6 +661,12 @@ class Objects{
     if(object.mod().tags.realRotateFast) {
       if(typeof object.angle != 'number') object.angle = 0
       object.angle += 7 * delta
+    }
+
+    if(object.id === GAME.lastAnticipatedObjectId) {
+      object.tags.lastAnticipatedObject = true
+    } else {
+      delete object.tags.lastAnticipatedObject
     }
   }
 

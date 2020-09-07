@@ -12,6 +12,10 @@ class Ghost{
         } else {
           HERO.editingId = GAME.heros[heroIds[i-1]].id
         }
+        if(keysDown['16']) {
+          HERO.id = HERO.editingId
+          HERO.ghostControl = true
+        }
         break;
       }
     }
@@ -25,6 +29,10 @@ class Ghost{
           HERO.editingId = GAME.heros[heroIds[0]].id
         } else {
           HERO.editingId = GAME.heros[heroIds[i+1]].id
+        }
+        if(keysDown['16']) {
+          HERO.id = HERO.editingId
+          HERO.ghostControl = true
         }
         break;
       }
@@ -52,6 +60,8 @@ class Ghost{
       if(keysDown['190']){
         GHOST.nextHero()
       }
+
+      EDITORUI.ref.forceUpdate()
 
       if(HERO.id !== HERO.originalId) PAGE.role.isGhost = true
       else PAGE.role.isGhost = false

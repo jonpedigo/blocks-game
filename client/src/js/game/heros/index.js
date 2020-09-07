@@ -131,11 +131,13 @@ class Hero{
   }
 
   onUpdate() {
-    if(PAGE.role.isPlayer && HERO.originalId === HERO.id){
+    if(PAGE.role.isPlayer && (HERO.originalId === HERO.id)){
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
-      // we are locally updating the hero input as host
+    }
+
+    if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
+      // we locally update the hero input as host so hosts do not send
       if(!PAGE.role.isHost && !PAGE.typingMode) {
-        console.log('???')
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }
@@ -338,7 +340,7 @@ class Hero{
     } else if(heroSummonType){
       const libraryHero = window.heroLibrary[heroSummonType]
       if(libraryHero) {
-        newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), libraryHero)
+        newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), _.cloneDeep(libraryHero))
       }
     }
 
@@ -610,6 +612,7 @@ class Hero{
     if(updatedHero.zoomMultiplier && updatedHero.zoomMultiplier !== GAME.heros[updatedHero.id].zoomMultiplier) {
       window.local.emit('onZoomChange', updatedHero.id)
     }
+    HERO.resetReachablePlatformArea(updatedHero)
     window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
   }
 
@@ -680,7 +683,6 @@ class Hero{
     if(updatedHero.subObjects) OBJECTS.forAllSubObjects(updatedHero.subObjects, (so) => {
       window.mergeDeep(GAME.objectsById[so.id], so)
     })
-    if(PAGE.role.isPlayEditor) HERO.resetReachablePlatformArea(updatedHero)
     if(!PAGE.role.isHost) {
       window.mergeDeep(GAME.heros[updatedHero.id], updatedHero)
       if(PAGE.role.isPlayer && HERO.id === updatedHero.id) {
@@ -691,9 +693,9 @@ class Hero{
 
   onSendHeroInput(input, heroId) {
     // dont update input for hosts hero since we've already locally updated
-    if(PAGE.role.isHost && GAME.heros[HERO.id] && heroId == HERO.originalId) {
-      return
-    }
+    // if(PAGE.role.isHost && GAME.heros[HERO.id] && heroId == HERO.originalId) {
+    //   return
+    // }
     GAME.heroInputs[heroId] = input
   }
 
@@ -712,13 +714,20 @@ class Hero{
   }
 
 
+  // if the top is within this its definitely reachable. some areas are reachable outside of this
   resetReachablePlatformArea(hero) {
-    if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity) {
-      hero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[hero.id])
+    if(GAME.heros[hero.id].spaceBarBehavior === 'groundJump') {
+      if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity || !hero.reachablePlatformHeight) {
+        hero.reachablePlatformHeight = HERO.resetReachablePlatformHeight(GAME.heros[hero.id])
+      }
+      if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity || hero.speed !== GAME.heros[hero.id].speed || !hero.reachablePlatformWidth) {
+        hero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[hero.id])
+      }
+    } else {
+      hero.reachablePlatformHeight = 0
+      hero.reachablePlatformWidth = 0
     }
-    if(hero.jumpVelocity !== GAME.heros[hero.id].jumpVelocity || hero.speed !== GAME.heros[hero.id].speed) {
-      hero.reachablePlatformWidth = HERO.resetReachablePlatformWidth(GAME.heros[hero.id])
-    }
+
   }
 
   resetReachablePlatformHeight(hero) {

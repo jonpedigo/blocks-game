@@ -243,11 +243,11 @@ export default class Toolbar extends React.Component {
               HERO.ghostControl = !HERO.ghostControl
               EDITORUI.ref.forceUpdate()
             }}/>
-          <ToolbarButton iconName="fa-chevron-left" onClick={() => {
+          <ToolbarButton iconName="fa-chevron-left" onShiftClick onClick={() => {
             GHOST.previousHero()
             EDITORUI.ref.forceUpdate()
           }}/>
-          <ToolbarButton iconName="fa-chevron-right" onClick={() => {
+          <ToolbarButton iconName="fa-chevron-right" onShiftClick onClick={() => {
             GHOST.nextHero()
             EDITORUI.ref.forceUpdate()
           }}/>
