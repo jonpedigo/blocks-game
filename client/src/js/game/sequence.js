@@ -189,7 +189,7 @@ function processSequence(sequence) {
       })
     } else if(item.conditionType === 'onEvent') {
       const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
-        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, sequence.ownerObject, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
+        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
         if(eventMatch) {
           item.waiting = false
           sequence.currentItemId = item.next

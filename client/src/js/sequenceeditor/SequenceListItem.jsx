@@ -49,7 +49,7 @@ export default class SequenceListItem extends React.Component {
       return <i
         className="fas fa-play SequenceList__sequence-option"
         onClick={(e) => {
-          window.socket.emit('startSequence', id, HERO.id)
+          window.socket.emit('startSequence', id, HERO.editingId)
           e.stopPropagation()
           this.setState({
             isStarted: true

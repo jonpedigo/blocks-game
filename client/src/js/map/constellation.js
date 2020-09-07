@@ -4,7 +4,7 @@ function Star(x,y,r,color){
     this.x = x;
     this.y = y;
     this.r = r;
-    this.rChange = 0.01;
+    this.rChange = 0.02;
     // this.vx = Math.floor(Math.random()*4+1);
     // this.vy = Math.floor(Math.random()*4+1);
     this.color = color;
@@ -31,7 +31,7 @@ Star.prototype = {
       context.fill();
     },
     update: function(){
-       if (this.r > .505 || this.r < .01 || ((Math.random() * 1) < .1)){
+       if (this.r > .505 || this.r < .02 || ((Math.random() * 1) < .1)){
            this.rChange = - this.rChange;
        }
        this.r += this.rChange;

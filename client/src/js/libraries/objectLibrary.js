@@ -106,7 +106,8 @@ window.local.on('onFirstPageGameLoaded', () => {
     	"objectType": "plainObject",
     	"tags": {
     		"obstacle": true,
-    		"interactable": true
+    		// "interactable": true,
+        "glowing": true,
     	},
     	"color": "#b71c1c",
     	"triggers": {
@@ -148,7 +149,10 @@ window.local.on('onFirstPageGameLoaded', () => {
       "objectType": "plainObject",
       "tags": {
         "obstacle": true,
-        "interactable": true
+        // "interactable": true,
+        "glowing": true,
+        "rotateable": true,
+        "realRotate": true,
       },
       "color": "#9575cd",
       "triggers": {
@@ -169,7 +173,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       "objectType": "plainObject",
       "tags": {
         "obstacle": true,
-        "interactable": true
+        // "interactable": true
       },
       "color": "#33691e",
       "triggers": {
@@ -190,9 +194,10 @@ window.local.on('onFirstPageGameLoaded', () => {
       "objectType": "plainObject",
       "tags": {
         "obstacle": true,
-        "interactable": true
+        // "interactable": true,
+        "glowing": true,
       },
-      "color": "#fff9c4",
+      // "color": "#fff9c4",
       "triggers": {
     		"goToStarView": {
     			"effectName": "starViewGo",

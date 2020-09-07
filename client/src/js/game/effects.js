@@ -58,6 +58,10 @@ import { startSequence } from './sequence'
       smallText: true,
       noEffected: true,
     },
+    clearToWorld: {
+      smallText: true,
+      noEffected: true,
+    },
     anticipatedAdd: {
       libraryObject: true,
       number: true,
@@ -270,6 +274,11 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'openWorld') {
     EDITOR.transformWorldTo(effectValue)
   }
+  if(effectName === 'clearToWorld') {
+    EDITOR.shiftPressed = true
+    EDITOR.transformWorldTo(effectValue)
+    EDITOR.shiftPressed = false
+  }
 
   if(effectName === 'anticipatedAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
@@ -303,11 +312,13 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'starViewGo') {
     const hero = GAME.heros[effected.id]
+    console.log("go", effected.id)
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })
   }
 
   if(effectName === 'starViewReturn') {
     const hero = GAME.heros[effected.id]
+    console.log("return", effected.id)
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
   }
 }

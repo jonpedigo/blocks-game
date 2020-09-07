@@ -34,6 +34,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'velocity',
+        color: '#9575cd',
       }
     },
     zelda: {
@@ -57,6 +58,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     mario: {
       modEndOthers: true,
       effectJSON: {
+        "color": "#b71c1c",
         arrowKeysBehavior: 'flatDiagonal',
         spaceBarBehavior: 'groundJump',
         tags: {

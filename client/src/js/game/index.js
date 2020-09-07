@@ -363,7 +363,7 @@ class Game{
 
     GAME.gameState.sequenceQueue.forEach((sequence) => {
       sequence.eventListeners.forEach((remove) => {
-        remove()
+        if(remove) remove()
       })
     })
 
@@ -423,12 +423,17 @@ class Game{
   }
 
   hasObstacleUpdate(x, y, hasObstacle) {
-    if(x >= 0 && x < GAME.grid.width) {
-      if(y >= 0 && y < GAME.grid.height) {
-        let gridNode = GAME.grid.nodes[x][y]
-        gridNode.hasObstacle = hasObstacle
+    try {
+      if(x >= 0 && x < GAME.grid.width) {
+        if(y >= 0 && y < GAME.grid.height) {
+          let gridNode = GAME.grid.nodes[x][y]
+          gridNode.hasObstacle = hasObstacle
+        }
       }
+    } catch(e) {
+      console.log(x, y)
     }
+
   }
 
   removeObstacle(object) {

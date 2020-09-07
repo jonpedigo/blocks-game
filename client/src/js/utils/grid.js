@@ -194,20 +194,21 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  let debug = false
+  let debug = true
   if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
+    console.log("TESTING THIS", attemptingX, attemptingY, gridX, gridY, width, height)
     if(attemptingX > gridX + width - 1) {
-      if(debug) console.log('rejecting reason 1')
+      if(debug) console.log('rejecting reason 1a')
       return false
     } else if(attemptingX < gridX) {
-      if(debug) console.log('rejecting reason 1')
+      if(debug) console.log('rejecting reason 1b')
       return false
-    } else if(attemptingY > gridY + height - 1) {
-      if(debug) console.log('rejecting reason 1')
+    } else if(attemptingY > gridY + height - 2) {
+      if(debug) console.log('rejecting reason 1c')
       return false
     } else if(attemptingY < gridY) {
-      if(debug) console.log('rejecting reason 1')
+      if(debug) console.log('rejecting reason 1d')
       return false
     }
   }
