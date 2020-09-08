@@ -90,6 +90,12 @@ import { startSequence } from './sequence'
       libraryObject: true,
       number: true,
     },
+    addOnTop: {
+      tag: true,
+      number: true,
+      libraryObject: true,
+      label: 'How many nodes on top'
+    },
     starViewGo: {},
     starViewReturn: {},
     libraryMod: {
@@ -307,6 +313,10 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'viewAddPlatform' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.socket.emit('anticipateObject', { ...object, platform: true, random: true, numberToAdd: effectValue });
+  }
+  if(effectName === 'addOnTop' && effect.effectLibraryObject) {
+    const object = window.objectLibrary[effect.effectLibraryObject]
+    window.socket.emit('anticipateObject', { ...object, onTop: true, nodesAbove: effectValue, targetTags: effect.effectTags });
   }
 
 

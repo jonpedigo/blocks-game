@@ -50,14 +50,14 @@
     color: #ddd;
     background-color: #333;
     cursor: pointer;
-    &:hover {
-      color: #fff;
-    }
   }
 
   &__sequence-option {
     padding-top: 10px;
     width: 40px;
+    &:hover {
+      color: #fff;
+    }
   }
 
 }

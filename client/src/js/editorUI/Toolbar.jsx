@@ -126,10 +126,10 @@ export default class Toolbar extends React.Component {
           }}/>
 
           <ToolbarButton iconName="fa-plus-square" onClick={() => {
-            window.socket.emit('anticipateObject', { tags: { obstacle: true }});
+            window.socket.emit('anticipateObject', { tags: { obstacle: true }}, HERO.editingId);
           }}
           onShiftClick={() => {
-            window.socket.emit('anticipateObject', { tags: { obstacle: true }, wall: true});
+            window.socket.emit('anticipateObject', { tags: { obstacle: true }, wall: true}, HERO.editingId);
           }}
           />
           <ToolbarButton iconName="fa-sliders-h" onClick={() => {

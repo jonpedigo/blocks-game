@@ -367,12 +367,29 @@ class Objects{
   }
 
   anticipatedAdd(hero, object) {
-    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = HERO.getViewBoundaries(hero)
 
     let isWall = object.wall
     let isBlock = object.block
     let isRandom = object.random
     let isPlatform = object.platform
+    let isOnTop = object.onTop
+
+    if(isOnTop) {
+      if(!object.targetTags && object.targetTags.length === 0) return complete()
+      if(!GAME.objectsByTag[object.targetTags[0]]) return complete()
+      let target = GAME.objectsByTag[object.targetTags[0]][0]
+      let newObject = {
+        x: gridUtil.getRandomGridWithinXY(target.x, target.x + target.width),
+        y: target.y - ((object.nodesAbove + 1) * GAME.grid.nodeSize),
+        width: GAME.grid.nodeSize,
+        height: GAME.grid.nodeSize,
+      }
+
+      addAnticipatedObject(newObject)
+      return
+    }
+
+    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = HERO.getViewBoundaries(hero)
 
     if(isRandom) {
       let newObject
@@ -410,9 +427,9 @@ class Objects{
         }
       } else if(isPlatform) {
         newObject = {
-          x: minX + (GAME.grid.nodeSize * 2),
+          x: hero.x - (GAME.grid.nodeSize * 4),
           y: gridUtil.getRandomGridWithinXY(maxY - 3, maxY),
-          width: (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 12),
+          width: GAME.grid.nodeSize * 9,
           height: GAME.grid.nodeSize,
         }
       } else {
@@ -427,9 +444,9 @@ class Objects{
     } else {
       if(isPlatform) {
         let newObject = {
-          x: minX + ( GAME.grid.nodeSize * 2),
+          x: hero.x - (GAME.grid.nodeSize * 4),
           y: maxY + GAME.grid.nodeSize,
-          width: (HERO.cameraWidth * 2) - (GAME.grid.nodeSize * 12),
+          width: GAME.grid.nodeSize * 9,
           height: GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
@@ -470,22 +487,25 @@ class Objects{
 
     function addAnticipatedObject(newObject) {
       let {x , y} = gridUtil.snapXYToGrid(newObject.x, newObject.y)
-      console.log('adding', x, y)
       if((!collisions.check(newObject, GAME.objects) || isPlatform) && gridUtil.keepXYWithinBoundaries({x, y}) && gridUtil.keepXYWithinBoundaries({x: (x + newObject.width), y: (y + newObject.height)})) {
         const createMe = {...newObject, ...object}
         createMe.tags.fadeInOnInit = true
+        createMe.tags.heroHomePlatform = isPlatform
         const created = OBJECTS.create([createMe])
         GAME.lastAnticipatedObjectId = created[0].id
-        console.log('passed')
         object.numberToAdd--
         if(object.numberToAdd) {
         } else {
           window.local.emit('onAnticipateCompleted', object)
-          GAME.gameState.anticipatedForAdd = GAME.gameState.anticipatedForAdd.filter((antObject) => {
-            return antObject !== object
-          })
+          complete()
         }
       }
+    }
+
+    function complete() {
+      GAME.gameState.anticipatedForAdd = GAME.gameState.anticipatedForAdd.filter((antObject) => {
+        return antObject !== object
+      })
     }
   }
 

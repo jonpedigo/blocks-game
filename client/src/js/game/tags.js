@@ -199,6 +199,10 @@ function setDefault() {
     removed: false,
   }
 
+  window.proceduralTags = {
+    heroHomePlatform: false,
+  }
+
   window.defaultTags = {
     ...window.physicsTags,
     ...window.spawnZoneTags,
@@ -217,6 +221,7 @@ function setDefault() {
     ...window.inventoryTags,
     ...window.animationTags,
     ...window.featureOptimizationTags,
+    ...window.proceduralTags,
   }
 
   window.heroTags = {
@@ -231,6 +236,7 @@ function setDefault() {
     hasTrail: false,
     moving: true,
     noticeable: true,
+    centerOfAttention: false,
     // allowCameraRotation: false,
   }
 

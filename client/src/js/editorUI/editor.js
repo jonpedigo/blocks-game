@@ -192,6 +192,10 @@ class Editor {
       setGameBoundaryTo('grid')
       clearProperty('lockCamera')
       setHerosZoomTo('default')
+      setHerosZoomTo('smaller')
+      setHerosZoomTo('smaller')
+      setHerosZoomTo('smaller')
+      setHerosZoomTo('smaller')
       sendWorldUpdate({ tags: { ...window.defaultWorld.tags }})
     }
 
@@ -381,16 +385,16 @@ class Editor {
     }
 
     if(propName === 'larger') {
-      const hero = GAME.heros[HERO.id]
+      const hero = GAME.heros[HERO.editingId]
       sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
     }
     if(propName === 'smaller') {
-      const hero = GAME.heros[HERO.id]
+      const hero = GAME.heros[HERO.editingId]
       sendHeroUpdate({ zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
     }
 
     if(propName === 'default') {
-      const hero = GAME.heros[HERO.id]
+      const hero = GAME.heros[HERO.editingId]
       sendHeroUpdate({ zoomMultiplier: 1.875 })
     }
   }
@@ -424,16 +428,19 @@ class Editor {
     }
 
     if(propName === 'larger') {
-      const hero = GAME.heros[HERO.id]
-      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier + EDITOR.zoomDelta })
+      const hero = GAME.heros[HERO.editingId]
+      hero.zoomMultiplier += EDITOR.zoomDelta
+      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier })
     }
     if(propName === 'smaller') {
-      const hero = GAME.heros[HERO.id]
-      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier - EDITOR.zoomDelta })
+      const hero = GAME.heros[HERO.editingId]
+      hero.zoomMultiplier -= EDITOR.zoomDelta
+      sendHerosUpdate({ zoomMultiplier: hero.zoomMultiplier })
     }
 
     if(propName === 'default') {
-      const hero = GAME.heros[HERO.id]
+      const hero = GAME.heros[HERO.editingId]
+      hero.zoomMultiplier = 1.875
       sendHerosUpdate({ zoomMultiplier: 1.875 })
     }
   }
@@ -497,7 +504,7 @@ function expandGrid(newObject) {
 }
 
 function getHeroCameraValue() {
-  const hero = GAME.heros[HERO.id]
+  const hero = GAME.heros[HERO.editingId]
   const value = {
     width: HERO.cameraWidth * hero.zoomMultiplier,
     height: HERO.cameraHeight * hero.zoomMultiplier,
@@ -558,7 +565,7 @@ function choseGameCallback(gameId) {
 }
 
 function sendHeroUpdate(update) {
-  window.socket.emit('editHero', { id: HERO.id, ...update })
+  window.socket.emit('editHero', { id: HERO.editingId, ...update })
 }
 
 function sendHerosUpdate(update) {

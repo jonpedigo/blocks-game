@@ -129,6 +129,9 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+add object needs to be its own thing with effect, wait, condition, etc.
+Its getting really complicated. For now im going to cheat it. It should have its own service and its own sequence type, feel me?
+
 Combine spawning with anticipatedAdd. create like spawnType variable which defaults to, hatchFromParent
 
 editor checkpoint. Switch edited objects to new checkpoint after change.

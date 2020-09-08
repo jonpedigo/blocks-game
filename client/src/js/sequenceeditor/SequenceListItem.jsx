@@ -18,11 +18,12 @@ export default class SequenceListItem extends React.Component {
     const { id } = this.props;
     const { isStarted, isPaused } = this.state;
 
+    let playIcons
     if(isStarted) {
       let icon = 'fa-pause'
       if(isPaused) icon = 'fa-play'
 
-      return <React.Fragment>
+      playIcons= <React.Fragment>
         <i
           className="fas fa-stop SequenceList__sequence-option"
           onClick={(e) => {
@@ -46,7 +47,7 @@ export default class SequenceListItem extends React.Component {
         />
       </React.Fragment>
     } else {
-      return <i
+      playIcons= <i
         className="fas fa-play SequenceList__sequence-option"
         onClick={(e) => {
           window.socket.emit('startSequence', id, HERO.editingId)
@@ -57,6 +58,31 @@ export default class SequenceListItem extends React.Component {
         }}
       />
     }
+
+    return <React.Fragment>
+      {playIcons}
+      <i
+        className="fas fa-trash SequenceList__sequence-option"
+        onClick={async (e) => {
+          e.stopPropagation()
+          const { value: confirm } = await Swal.fire({
+            title: "Are you sure you want to delete this sequence?",
+            showClass: {
+              popup: 'animated fadeInDown faster'
+            },
+            hideClass: {
+              popup: 'animated fadeOutUp faster'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete this sequence',
+          })
+          if(confirm) {
+            this.props.deleteSequence(id)
+          }
+        }}
+      />
+    </React.Fragment>
+
   }
 
   render() {

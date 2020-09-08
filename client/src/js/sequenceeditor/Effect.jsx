@@ -79,9 +79,11 @@ export default class Effect extends React.Component{
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{effectValue}</div>)
       } else if(effectData.number) {
         chosenEffectForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('effectValue') }}/>
-      {effectData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.effectValue}</div>
+        <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.effectValue}</div>
         </div>)
-      } else if(effectData.sequenceId) {
+      }
+
+      if(effectData.sequenceId) {
         chosenEffectForm.push(<div className="SequenceItem__effected">Sequence Id:<Select
           value={{value: effectSequenceId, label: effectSequenceId}}
           onChange={(event) => {
@@ -92,7 +94,9 @@ export default class Effect extends React.Component{
           styles={window.reactSelectStyle}
           theme={window.reactSelectTheme}/>
         </div>)
-      } else if(effectData.tag) {
+      }
+
+      if(effectData.tag) {
         chosenEffectForm.push(<MultiTagSelect title="Add Tags:" sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectTags' onChange={ (event) => {
           if(event) {
             sequenceItem.effectTags = event.map(({value}) => value)
@@ -134,7 +138,7 @@ export default class Effect extends React.Component{
       }
 
       if(effectName === 'mod' || effectName === 'libraryMod') {
-        chosenEffectForm.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('modEndOthers')} checked={sequenceItem.modEndOthers} type="checkbox"></input>Mod End Others?</div>)
+        chosenEffectForm.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('modEndOthers')} checked={sequenceItem.modEndOthers} type="checkbox"></input>Mod End Others</div>)
       }
     }
 

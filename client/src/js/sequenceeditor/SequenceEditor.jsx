@@ -219,11 +219,36 @@ export default class SequenceEditor extends React.Component {
     this._generateRefs([])
   }
 
+  deleteSequence = (idToDelete) => {
+    const { sequenceIdList } = this.state
+
+    const newSequenceIdList = sequenceIdList.slice()
+
+    const index = newSequenceIdList.indexOf(idToDelete)
+    if(index !== -1) newSequenceIdList.splice(index, 1)
+
+    this.setState({
+      sequenceIdList: newSequenceIdList
+    })
+
+    delete GAME.world.sequences[idToDelete]
+    window.socket.emit('updateWorld', { sequences: GAME.world.sequences })
+  }
+
   saveSequence() {
-    const { sequence } = this.state
+    const { sequence, sequenceIdList } = this.state
 
     GAME.world.sequences[sequence.id] = this._getSequenceJSON()
     window.socket.emit('updateWorld', { sequences: GAME.world.sequences })
+
+
+    if(!sequenceIdList[sequence.id]) {
+      const newSequenceIdList = sequenceIdList.slice()
+      newSequenceIdList.push(sequence.id)
+      this.setState({
+        sequenceIdList: newSequenceIdList
+      })
+    }
 
     this.setState({
       sequence: null
@@ -261,7 +286,7 @@ export default class SequenceEditor extends React.Component {
         </div>
         <div className="SequenceList">
           {sequenceIdList.map((id) => {
-            return <SequenceListItem openSequence={this.openSequence} id={id}></SequenceListItem>
+            return <SequenceListItem deleteSequence={this.deleteSequence} openSequence={this.openSequence} id={id}></SequenceListItem>
           })}
           <div className="SequenceList__sequence" onClick={this.newSequence}>New Sequence</div>
         </div>

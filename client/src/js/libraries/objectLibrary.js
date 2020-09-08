@@ -150,7 +150,6 @@ window.local.on('onFirstPageGameLoaded', () => {
       "tags": {
         "obstacle": true,
         // "interactable": true,
-        "glowing": true,
         "rotateable": true,
         "realRotate": true,
       },
@@ -163,7 +162,7 @@ window.local.on('onFirstPageGameLoaded', () => {
           "effector": "ownerObject",
           "initialTriggerPool": -1,
           "eventThreshold": -1,
-          "id": "turnIntoAsteroids",
+          "id": "turnIntoUfo",
           "eventName": "onHeroCollide",
           "effectLibraryMod": "ufo",
         }
@@ -209,7 +208,41 @@ window.local.on('onFirstPageGameLoaded', () => {
     			"id": "goToStarView",
     			"eventName": "onHeroCollide",
     		}
-    	}
+    	},
+    },
+    starViewBlockBlue: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        // "interactable": true,
+        "glowing": true,
+      },
+      color: 'blue',
+      "triggers": {
+    		"goToStarView": {
+    			"effectName": "starViewGo",
+    			"effectedMainObject": true,
+    			"sequenceType": "sequenceEffect",
+    			"effector": "ownerObject",
+    			"initialTriggerPool": 1,
+    			"eventThreshold": -1,
+    			"id": "goToStarView",
+    			"eventName": "onHeroCollide",
+    		}
+    	},
+    },
+    gravityBlock: {
+      "objectType": "plainObject",
+      "tags": {
+        "obstacle": true,
+        "glowing": true,
+        'heroUpdate': true,
+        updateHeroOnHeroCollide: true,
+        'oneTimeHeroUpdate': true,
+      },
+      heroUpdate: {
+        tags: { gravityY: true },
+      },
     }
   }
 
