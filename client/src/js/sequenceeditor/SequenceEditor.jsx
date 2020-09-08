@@ -112,7 +112,7 @@ export default class SequenceEditor extends React.Component {
     // const { sequence } = this.state
     // this._generateRefs(sequence.items)
     this.setState({
-      sequenceIdList: Object.keys(GAME.world.sequences)
+      sequenceIdList: Object.keys(GAME.library.sequences)
     })
   }
 
@@ -207,9 +207,9 @@ export default class SequenceEditor extends React.Component {
 
   openSequence(id) {
     this.setState({
-      sequence: JSON.parse(JSON.stringify(GAME.world.sequences[id]))
+      sequence: JSON.parse(JSON.stringify(GAME.library.sequences[id]))
     })
-    this._generateRefs(GAME.world.sequences[id].items)
+    this._generateRefs(GAME.library.sequences[id].items)
   }
 
   newSequence() {
@@ -231,15 +231,15 @@ export default class SequenceEditor extends React.Component {
       sequenceIdList: newSequenceIdList
     })
 
-    delete GAME.world.sequences[idToDelete]
-    window.socket.emit('updateWorld', { sequences: GAME.world.sequences })
+    delete GAME.library.sequences[idToDelete]
+    window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
   }
 
   saveSequence() {
     const { sequence, sequenceIdList } = this.state
 
-    GAME.world.sequences[sequence.id] = this._getSequenceJSON()
-    window.socket.emit('updateWorld', { sequences: GAME.world.sequences })
+    GAME.library.sequences[sequence.id] = this._getSequenceJSON()
+    window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
 
 
     if(!sequenceIdList[sequence.id]) {

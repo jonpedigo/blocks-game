@@ -29,7 +29,7 @@ class Game{
     this.world = {}
     this.grid = {}
     this.state = {}
-    this.ai = ai
+    this.library = {}
   }
 
   onPageLoaded() {
@@ -106,7 +106,7 @@ class Game{
         })
         //////////////////////////////
         //// OBJECTS
-        GAME.ai.onUpdate(GAME.objects, delta)
+        ai.onUpdate(GAME.objects, delta)
         GAME.resetPaths = false
         GAME.objects.forEach((object) => {
           if(object.removed) return
@@ -247,10 +247,11 @@ class Game{
     window.local.emit('onGridLoaded')
 
     tags.setDefault()
-    if(game.tags) {
-      tags.addGameTags(game.tags)
-      GAME.tags = game.tags
-    } else GAME.tags = {}
+    if(game.library) GAME.library = game.library
+    if(game.library.tags) {
+      tags.addGameTags(game.library.tags)
+      GAME.library.tags = game.library.tags
+    } else GAME.library.tags = {}
 
     input.setDefault()
     if(game.customInputBehavior) {
@@ -306,8 +307,8 @@ class Game{
 
     // grid
     GAME.world = game.world
-    if(!GAME.world.sequences) GAME.world.sequences = {}
-    if(!GAME.world.animations) GAME.world.animations = {}
+    if(!GAME.library.sequences) GAME.library.sequences = {}
+    if(!GAME.library.animations) GAME.library.animations = {}
     GAME.grid.nodes = gridUtil.generateGridNodes(GAME.grid)
     GAME.updateGridObstacles()
     GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
@@ -387,7 +388,7 @@ class Game{
   }
 
   onAddGameTag(tagName) {
-    GAME.tags[tagName] = false
+    GAME.library.tags[tagName] = false
     tags.addGameTags({[tagName]: false})
   }
 
@@ -604,15 +605,17 @@ class Game{
       objects: game.objects,
       world: game.world,
       grid: game.grid,
-      tags: game.tags,
+      tags: game.library.tags,
       customInputBehavior: game.customInputBehavior,
       defaultHero: game.defaultHero,
+      library: game.library,
     }))
 
     if(game.heros) {
       for(var heroId in game.heros) {
         if(game.heros[heroId].tags.saveAsDefaultHero) {
           gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
+          game.defaultHero = gameCopy.defaultHero
         }
       }
     }
@@ -697,6 +700,19 @@ class Game{
     GAME.updateGridObstacles()
     if(PAGE.role.isHost) {
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+    }
+  }
+
+  onUpdateLibrary(updatedLibrary) {
+    for(let key in updatedLibrary) {
+      const value = updatedLibrary[key]
+
+      if(value instanceof Object) {
+        GAME.library[key] = {}
+        window.mergeDeep(GAME.library[key], value)
+      } else {
+        GAME.library[key] = value
+      }
     }
   }
 
@@ -791,7 +807,7 @@ class Game{
   }
 
   addSequence(sequence) {
-    GAME.world.sequences[sequence.id] = sequence
+    GAME.library.sequences[sequence.id] = sequence
   }
 
   startMod(ownerId, mod) {
@@ -1014,7 +1030,7 @@ class Game{
   }
 
   onAddAnimation(name, animationData) {
-    GAME.world.animations[name] = animationData
+    GAME.library.animations[name] = animationData
   }
 
   onStartMod(mod) {

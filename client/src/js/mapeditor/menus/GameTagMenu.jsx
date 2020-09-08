@@ -22,7 +22,7 @@ export default class GameTagMenu extends React.Component{
   _renderGameTagMenu() {
     const { objectSelected } = this.props
 
-    const tagList = Object.keys(GAME.tags)
+    const tagList = Object.keys(GAME.library.tags)
     return tagList.map((tag) => {
       if(objectSelected.tags && objectSelected.tags[tag]) {
         return <MenuItem key={tag}>{tag}<i style={{marginLeft:'6px'}} className="fas fa-check"></i></MenuItem>

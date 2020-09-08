@@ -130,10 +130,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('addGameTag', (tagName) => {
-    if(!currentGame.tags) {
-      currentGame.tags = {}
+    if(!currentGame.library.tags) {
+      currentGame.library.tags = {}
     }
-    currentGame.tags[tagName] = false
+    currentGame.library.tags[tagName] = false
     io.emit('onAddGameTag', tagName)
   })
 
@@ -234,6 +234,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
   socket.on('updateWorld', (updatedWorld) => {
     io.emit('onUpdateWorld', updatedWorld)
+  })
+  socket.on('updateLibrary', (updatedLibrary) => {
+    io.emit('onUpdateLibrary', updatedLibrary)
   })
   socket.on('resetWorld', () => {
     io.emit('onResetWorld')

@@ -376,7 +376,8 @@ class Objects{
 
     if(isOnTop) {
       if(!object.targetTags && object.targetTags.length === 0) return complete()
-      if(!GAME.objectsByTag[object.targetTags[0]]) return complete()
+      if(!GAME.objectsByTag[object.targetTags[0]]) return
+      if(!GAME.objectsByTag[object.targetTags[0]][0]) return
       let target = GAME.objectsByTag[object.targetTags[0]][0]
       let newObject = {
         x: gridUtil.getRandomGridWithinXY(target.x, target.x + target.width),
@@ -445,7 +446,8 @@ class Objects{
       if(isPlatform) {
         let newObject = {
           x: hero.x - (GAME.grid.nodeSize * 4),
-          y: maxY + GAME.grid.nodeSize,
+          // honestly this + is just so we dont add a platform where nothing can be added above it
+          y: maxY + (GAME.grid.nodeSize * 6),
           width: GAME.grid.nodeSize * 9,
           height: GAME.grid.nodeSize,
         }
@@ -489,7 +491,10 @@ class Objects{
       let {x , y} = gridUtil.snapXYToGrid(newObject.x, newObject.y)
       if((!collisions.check(newObject, GAME.objects) || isPlatform) && gridUtil.keepXYWithinBoundaries({x, y}) && gridUtil.keepXYWithinBoundaries({x: (x + newObject.width), y: (y + newObject.height)})) {
         const createMe = {...newObject, ...object}
+
+        //here be dragons
         createMe.tags.fadeInOnInit = true
+        // createMe.tags.lastAnticipatedObject = true
         createMe.tags.heroHomePlatform = isPlatform
         const created = OBJECTS.create([createMe])
         GAME.lastAnticipatedObjectId = created[0].id
@@ -689,6 +694,10 @@ class Objects{
   onAnticipateObject(object) {
     if(!GAME.gameState.anticipatedForAdd) GAME.gameState.anticipatedForAdd = []
     GAME.gameState.anticipatedForAdd.push(object)
+    GAME.lastAnticipatedObjectId = null
+    if(GAME.objectsByTag['lastAnticipatedObject']) GAME.objectsByTag['lastAnticipatedObject'].forEach((o) => {
+      o.tags.lastAnticipatedObject = false
+    })
   }
 
   onUpdateObject(object, delta) {

@@ -231,6 +231,10 @@ function init() {
     window.local.emit('onUpdateWorld', updatedWorld)
   })
 
+  window.socket.on('onUpdateLibrary', (updatedLibrary) => {
+    window.local.emit('onUpdateLibrary', updatedLibrary)
+  })
+
   ///////////////////////////////
   ///////////////////////////////
   //shared events

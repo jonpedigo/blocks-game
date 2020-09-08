@@ -118,8 +118,8 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   } if(window.particleEmitterLibrary[emitterDataName]){
     particleData = {..._.cloneDeep(window.particleEmitterLibrary[emitterDataName]), pos: startPos}
   }
-  if(GAME.world.animations[emitterDataName]){
-    particleData = {..._.cloneDeep(GAME.world.animations[emitterDataName]), pos: startPos}
+  if(GAME.library.animations[emitterDataName]){
+    particleData = {..._.cloneDeep(GAME.library.animations[emitterDataName]), pos: startPos}
   }
 
   if(options.matchObjectColor) {

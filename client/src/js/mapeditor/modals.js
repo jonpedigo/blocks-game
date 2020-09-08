@@ -267,16 +267,16 @@ function openSelectTag(cb) {
 
 function openSelectParticleAnimation(cb) {
 
-  const inputOptions = Object.keys({...GAME.world.animations, ...window.particleEmitterLibrary}).filter((name) => {
+  const inputOptions = Object.keys({...GAME.library.animations, ...window.particleEmitterLibrary}).filter((name) => {
     if(window.particleEmitterLibrary[name]) return true
-    if(GAME.world.animations[name]) {
-      const animation = GAME.world.animations[name]
+    if(GAME.library.animations[name]) {
+      const animation = GAME.library.animations[name]
       if(animation.animationType === 'particle') return true
     }
   })
 
   const inputOptionValues = inputOptions.map((name) => {
-    if(GAME.world.animations[name]) return GAME.world.animations[name]
+    if(GAME.library.animations[name]) return GAME.library.animations[name]
     if(window.particleEmitterLibrary[name]) return window.particleEmitterLibrary[name]
   })
 
@@ -306,8 +306,8 @@ function openSelectEaseAnimation(cb) {
       popup: 'animated fadeOutUp faster'
     },
     input: 'select',
-    inputOptions: Object.keys(GAME.world.animations).filter((name) => {
-      const animation = GAME.world.animations[name]
+    inputOptions: Object.keys(GAME.library.animations).filter((name) => {
+      const animation = GAME.library.animations[name]
       if(animation.animationType === 'ease') return true
     }),
   }).then(cb)

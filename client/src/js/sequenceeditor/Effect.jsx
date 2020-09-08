@@ -90,7 +90,7 @@ export default class Effect extends React.Component{
             sequenceItem.effectSequenceId = event.value
             this.props.setState({sequenceItem})
           }}
-          options={Object.keys(GAME.world.sequences).map((id) => { return {value: id, label: id} })}
+          options={Object.keys(GAME.library.sequences).map((id) => { return {value: id, label: id} })}
           styles={window.reactSelectStyle}
           theme={window.reactSelectTheme}/>
         </div>)

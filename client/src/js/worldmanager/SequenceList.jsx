@@ -13,7 +13,7 @@ export default class SequenceList extends React.Component {
 
   componentDidMount() {
     this.setState({
-      sequenceIdList: Object.keys(GAME.world.sequences)
+      sequenceIdList: Object.keys(GAME.library.sequences)
     })
   }
 

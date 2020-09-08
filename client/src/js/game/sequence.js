@@ -65,7 +65,7 @@ function mapSequenceItems(sequenceItems) {
 }
 
 function startSequence(sequenceId, context) {
-  const sequence = {...GAME.world.sequences[sequenceId]}
+  const sequence = {...GAME.library.sequences[sequenceId]}
 
   if(sequence.state && sequence.state.disabled) return console.log('sequence disabled', sequenceId)
 
@@ -111,9 +111,11 @@ function processSequence(sequence) {
     return
   }
 
+  console.log('processing', sequence.currentItemId, sequence.id)
+
   if(item.sequenceType === 'sequenceDialogue') {
     item.effectName = 'dialogue'
-    effects.processEffect(item, defaultEffected, defaultEffector)
+    effects.processEffect(item, defaultEffected, defaultEffector, sequence.ownerObject)
   }
 
   if(item.sequenceType === 'sequenceEffect') {
@@ -150,7 +152,7 @@ function processSequence(sequence) {
     }
 
     effectedObjects.forEach((effected) => {
-      effects.processEffect(item, effected, effector)
+      effects.processEffect(item, effected, effector, sequence.ownerObject)
     })
   }
 
@@ -188,15 +190,19 @@ function processSequence(sequence) {
         sequence.currentTimerId = null
       })
     } else if(item.conditionType === 'onEvent') {
-      const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
-        const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
-        if(eventMatch) {
-          item.waiting = false
-          sequence.currentItemId = item.next
-          removeEventListener()
-        }
-      })
-      sequence.eventListeners.push(removeEventListener)
+      if(item.conditionEventName === 'onAnticipateCompleted' && !OBJECTS.anticipatedForAdd) {
+        sequence.currentItemId = item.next
+      } else {
+        const removeEventListener = window.local.on(item.conditionEventName, (mainObject, guestObject) => {
+          const eventMatch = testEventMatch(item.conditionEventName, mainObject, guestObject, item, null, { testPassReverse: item.testPassReverse, testModdedVersion: item.testModdedVersion })
+          if(eventMatch) {
+            item.waiting = false
+            sequence.currentItemId = item.next
+            removeEventListener()
+          }
+        })
+        sequence.eventListeners.push(removeEventListener)
+      }
     }
   }
 
@@ -230,8 +236,6 @@ function processSequence(sequence) {
     }
 
   }
-
-  console.log('processing', sequence.currentItemId, sequence.id)
 
   if(item.next === 'end') {
     endSequence(sequence)

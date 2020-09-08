@@ -131,6 +131,7 @@ function update() {
         drawTools.drawBorder(ctx, valueWhite, camera);
       }
     } else {
+      if(PAGE.role.isAdmin) {
       ctx.strokeStyle='white';
       let value = {
         x: GAME.world.gameBoundaries.x-1,
@@ -140,6 +141,7 @@ function update() {
         color: 'white'
       }
       drawTools.drawBorder(ctx, value, camera);
+      }
     }
   }
 

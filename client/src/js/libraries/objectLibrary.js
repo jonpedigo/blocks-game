@@ -153,7 +153,7 @@ window.local.on('onFirstPageGameLoaded', () => {
         "rotateable": true,
         "realRotate": true,
       },
-      "color": "#9575cd",
+      "color": 'yellow',
       "triggers": {
         "turnIntoUfo": {
           "effectName": "libraryMod",

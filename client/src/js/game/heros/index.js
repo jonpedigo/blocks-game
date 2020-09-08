@@ -206,8 +206,19 @@ class Hero{
     hero.subObjects = {}
     hero.triggers = {}
     let newHero = JSON.parse(JSON.stringify(window.defaultHero))
-    if(GAME.defaultHero && useGame) {
-      newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.defaultHero)))
+    if(useGame) {
+      const id = hero.id
+      const heroSummonType = hero.heroSummonType
+      if(heroSummonType === 'default' && GAME.defaultHero) {
+        newHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      } else if(heroSummonType){
+        const libraryHero = window.heroLibrary[heroSummonType]
+        if(libraryHero) {
+          newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), _.cloneDeep(libraryHero))
+        }
+      }
+      newHero.heroSummonType = heroSummonType
+      // newHero = JSON.parse(JSON.stringify(window.mergeDeep(newHero, GAME.defaultHero)))
     }
     OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
       subObject.id = 'subObject-'+window.uniqueID()

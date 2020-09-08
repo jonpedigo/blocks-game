@@ -260,6 +260,7 @@ function processEffect(effect, effected, effector, ownerObject) {
       guestObject: effector,
       ownerObject,
     }
+    console.log(effect.effectSequenceId, context)
     startSequence(effect.effectSequenceId, context)
   }
 
@@ -288,35 +289,35 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'anticipatedAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', object);
+    window.local.emit('onAnticipateObject', object);
   }
   if(effectName === 'anticipatedAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, wall: true, numberToAdd: effectValue  });
+    window.local.emit('onAnticipateObject', { ...object, wall: true, numberToAdd: effectValue  });
   }
   if(effectName === 'anticipatedAddPlatform' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, platform: true, numberToAdd: effectValue  });
+    window.local.emit('onAnticipateObject', { ...object, platform: true, numberToAdd: effectValue  });
   }
   if(effectName === 'viewAdd' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', {...object, random: true, numberToAdd: effectValue });
+    window.local.emit('onAnticipateObject', {...object, random: true, numberToAdd: effectValue });
   }
   if(effectName === 'viewAddWall' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, wall: true, random: true, numberToAdd: effectValue });
+    window.local.emit('onAnticipateObject', { ...object, wall: true, random: true, numberToAdd: effectValue });
   }
   if(effectName === 'viewAddBlock' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, block: true, random: true, numberToAdd: effectValue });
+    window.local.emit('onAnticipateObject', { ...object, block: true, random: true, numberToAdd: effectValue });
   }
   if(effectName === 'viewAddPlatform' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, platform: true, random: true, numberToAdd: effectValue });
+    window.local.emit('onAnticipateObject', { ...object, platform: true, random: true, numberToAdd: effectValue });
   }
   if(effectName === 'addOnTop' && effect.effectLibraryObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
-    window.socket.emit('anticipateObject', { ...object, onTop: true, nodesAbove: effectValue, targetTags: effect.effectTags });
+    window.local.emit('onAnticipateObject', { ...object, onTop: true, nodesAbove: effectValue, targetTags: effect.effectTags });
   }
 
 
