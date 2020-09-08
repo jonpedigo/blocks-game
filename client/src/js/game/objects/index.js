@@ -385,6 +385,14 @@ class Objects{
         width: GAME.grid.nodeSize,
         height: GAME.grid.nodeSize,
       }
+      if(object.failCount > 20) {
+        if(Math.random() > .5) {
+          newObject.y -= GAME.grid.nodeSize
+        } else {
+          newObject.y += GAME.grid.nodeSize
+        }
+        object.failCount = 0
+      }
 
       addAnticipatedObject(newObject)
       return
@@ -504,6 +512,9 @@ class Objects{
           window.local.emit('onAnticipateCompleted', object)
           complete()
         }
+      } else {
+        if(!object.failedCount) object.failedCount = 0
+        object.failedCount++
       }
     }
 

@@ -34,7 +34,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'velocity',
-        color: '#9575cd',
+        color: 'yellow',
       }
     },
     zelda: {
