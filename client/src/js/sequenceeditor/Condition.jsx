@@ -10,6 +10,7 @@ import {
   MultiTagSelect,
   NextSelect,
 } from '../components/SelectComponents.jsx'
+import Collapsible from 'react-collapsible';
 
 export default class Condition extends React.Component {
   render() {
@@ -104,30 +105,36 @@ export default class Condition extends React.Component {
           {nested && <h4>Mod Condition</h4>}
           {conditionTypeChooser}
           <div className="SequenceItem__condition-body">
-            {chosenConditionForm}
-            {!isMod && !isWait && <React.Fragment>
+
+            <Collapsible trigger="Conditions Properties">{chosenConditionForm}</Collapsible>
+
+            {!isMod && !isWait &&  <Collapsible trigger="Test Objects">
               <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testMainObject')} checked={sequenceItem.testMainObject} type="checkbox"></input>Test Main Object</div>
               <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testGuestObject')} checked={sequenceItem.testGuestObject} type="checkbox"></input>Test Guest Object</div>
               <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testWorldObject')} checked={sequenceItem.testWorldObject} type="checkbox"></input>Test World Object</div>
               <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='testIds' onChange={this.props._onAddConditionTestId}/>
               <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='testTags' onChange={this.props._onAddConditionTestTag}/>
               <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('allTestedMustPass')} checked={sequenceItem.allTestedMustPass} type="checkbox"></input>All Tested Must Pass</div>
-            </React.Fragment>}
-            <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
+            </Collapsible>}
+
+
+            <Collapsible trigger="Test Options"><div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testPassReverse')} checked={sequenceItem.testPassReverse} type="checkbox"></input>Reverse Pass and Fail</div>
             <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testModdedVersion')} checked={sequenceItem.testModdedVersion} type="checkbox"></input>Test Modded Version</div>
             {isMod && <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testFailDestroyMod')} checked={sequenceItem.testFailDestroyMod} type="checkbox"></input>Test Fail Destroys Mod</div>}
             {isMod && <div className="SequenceItem__condition-input"><input onChange={() => this.props._onToggleValue('testAndModOwnerWhenEquipped')} checked={sequenceItem.testAndModOwnerWhenEquipped} type="checkbox"></input>Test and mod owner when equipped</div>}
+            </Collapsible>
             {nested && <hr></hr>}
-          </div>
-          {!isHook && !isWait && !nested && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.passNext} onChange={(event) => {
-            this.props._selectNext(event, 'passNext')
-          }} title='Pass Next:'/>}
-          {!isHook && !isWait && !nested && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.failNext} onChange={(event) => {
-            this.props._selectNext(event, 'failNext')
-          }} title='Fail Next:'/>}
-          {!isHook && isWait && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.next} onChange={(event) => {
-            this.props._selectNext(event, 'next')
-          }} title='Next:'/>}
+            </div>
+
+            {!isHook && !isWait && !nested && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.passNext} onChange={(event) => {
+              this.props._selectNext(event, 'passNext')
+            }} title='Pass Next:'/>}
+            {!isHook && !isWait && !nested && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.failNext} onChange={(event) => {
+              this.props._selectNext(event, 'failNext')
+            }} title='Fail Next:'/>}
+            {!isHook && isWait && <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.next} onChange={(event) => {
+              this.props._selectNext(event, 'next')
+            }} title='Next:'/>}
         </div>
   }
 }

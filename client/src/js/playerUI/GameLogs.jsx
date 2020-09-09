@@ -48,7 +48,7 @@ export default class GameLogs extends React.Component{
   submit = () => {
     if(this.state.chat == '') return
 
-    window.socket.emit('sendNotification', { authorId: HERO.id, text: this.state.chat, chat: true, log: true })
+    window.socket.emit('sendNotification', { logAuthorId: HERO.id, chatId: HERO.id, text: this.state.chat, chat: true, log: true })
 
     this.setState({
       chat: '',
@@ -96,10 +96,10 @@ export default class GameLogs extends React.Component{
       // if(i % 2) background = '#1a1a1a'
 
       if(!log.text || log.text.trim().length === 0) return
-      if(log.heroId && log.heroId !== HERO.id) return
+      if(log.logRecipientId && log.logRecipientId !== HERO.id) return
 
       return <div style={{background, padding: '8px 15px'}}>
-        {log.authorId && <div style={{color: 'white', fontSize:'12px', fontWeight:200, color: '#aaa', marginBottom:'2px'}}>{this._getAuthorName(log.authorId)}</div>}
+        {log.logAuthorId && <div style={{color: 'white', fontSize:'12px', fontWeight:200, color: '#aaa', marginBottom:'2px'}}>{this._getAuthorName(log.logAuthorId)}</div>}
         <div style={{fontWeight:500}}>{log.text}</div>
       </div>
     })

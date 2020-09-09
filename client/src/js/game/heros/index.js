@@ -90,6 +90,7 @@ class Hero{
       cameraTweenSpeedYExtra: 0,
       cameraTweenSpeed: 2,
       // cameraRotation: 0,
+      heroSummonType: 'default',
     }
 
     window.local.on('onGridLoaded', () => {
@@ -348,6 +349,7 @@ class Hero{
 
     if(heroSummonType === 'default' && GAME.defaultHero) {
       newHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      console.log('summoning from default', GAME.defaultHero)
     } else if(heroSummonType){
       const libraryHero = window.heroLibrary[heroSummonType]
       if(libraryHero) {
@@ -526,7 +528,15 @@ class Hero{
                   conditionGuestObjectId,
                   conditionGuestObjectTag,
                 effectLibraryMod,
-              effectLibraryObject } = hero.triggers[triggerId]
+              effectLibraryObject,
+              triggerNotificationLog,
+              triggerNotificationChat,
+              triggerNotificationToast,
+              triggerNotificationText,
+              triggerNotificationModal,
+              triggerNotificationAllHeros,
+              triggerNotificationAllHerosInvolved,
+            } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
           id,
@@ -565,6 +575,14 @@ class Hero{
           conditionMainObjectTag,
           conditionGuestObjectId,
           conditionGuestObjectTag,
+
+          triggerNotificationLog,
+          triggerNotificationChat,
+          triggerNotificationToast,
+          triggerNotificationText,
+          triggerNotificationModal,
+          triggerNotificationAllHeros,
+          triggerNotificationAllHerosInvolved,
         }
 
         window.removeFalsey(properties.triggers[triggerId])
@@ -599,11 +617,14 @@ class Hero{
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
+
       navigationTargetId: hero.navigationTargetId,
 
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       creator: hero.creator,
+
+      heroSummonType: hero.heroSummonType,
     }
 
     if(hero.subObjects) {

@@ -254,6 +254,13 @@ class Objects{
                   conditionGuestObjectTag,
                   effectLibraryMod,
                   effectLibraryObject,
+                  triggerNotificationLog,
+                  triggerNotificationChat,
+                  triggerNotificationToast,
+                  triggerNotificationText,
+                  triggerNotificationModal,
+                  triggerNotificationAllHeros,
+                  triggerNotificationAllHerosInvolved,
                  } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
@@ -293,6 +300,14 @@ class Objects{
           conditionMainObjectTag,
           conditionGuestObjectId,
           conditionGuestObjectTag,
+
+          triggerNotificationLog,
+          triggerNotificationChat,
+          triggerNotificationToast,
+          triggerNotificationModal,
+          triggerNotificationText,
+          triggerNotificationAllHeros,
+          triggerNotificationAllHerosInvolved,
         }
 
         window.removeFalsey(properties.triggers[triggerId])
@@ -966,7 +981,6 @@ class Objects{
       GAME.objects.forEach((object) => {
         GAME.objectsById[object.id] = object
         // OBJECTS.forAllSubObjects(object.subObjects, (so) => {
-        //   console.log('?')
         //   GAME.objectsById[so.id] = so
         // })
       })

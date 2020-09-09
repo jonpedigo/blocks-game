@@ -249,7 +249,7 @@ class Game{
     tags.setDefault()
     if(game.library) GAME.library = game.library
     else GAME.library = {}
-    
+
     if(game.library.tags) {
       tags.addGameTags(game.library.tags)
       GAME.library.tags = game.library.tags
@@ -263,7 +263,7 @@ class Game{
 
     if(game.compendium) window.compendium = game.compendium
 
-    GAME.defaultHero = game.defaultHero || game.hero || window.defaultHero
+    GAME.defaultHero = game.defaultHero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
 
     // let storedGameState = localStorage.getItem('gameStates')
@@ -330,7 +330,9 @@ class Game{
   loadHeros(heros) {
     if(!GAME.gameState.loaded) {
       GAME.heroList.forEach((hero) => {
+        const oldTags = hero.tags
         GAME.heros[hero.id] = HERO.summonFromGameData(hero)
+        GAME.heros[hero.id].tags.saveAsDefaultHero = oldTags.saveAsDefaultHero
         GAME.heros[hero.id].id = hero.id
       })
     }
@@ -616,20 +618,23 @@ class Game{
     if(game.heros) {
       for(var heroId in game.heros) {
         if(game.heros[heroId].tags.saveAsDefaultHero) {
+          console.log('setting save tag hero as default hero')
           gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
-          game.defaultHero = gameCopy.defaultHero
+          game.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
+          game.defaultHero.tags.saveAsDefaultHero = false
+          game.defaultHero.tags.saveAsDefaultHero = false
         }
       }
-    }
+    } else console.log('no game heros')
 
-    if(!gameCopy.world.tags.shouldRestoreHero && !gameCopy.world.tags.isAsymmetric && game.heros || !gameCopy.defaultHero) {
+//!gameCopy.world.tags.shouldRestoreHero && !gameCopy.world.tags.isAsymmetric ||
+    if(!gameCopy.defaultHero) {
       // if(!gameCopy.defaultHero && game.heros[heroId]) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heros[heroId]))
-      if(game.heroList.length) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heroList[0]))
-      else if(!game.defaultHero) gameCopy.defaultHero = game.hero
-      else return alert('could not find a game hero')
+      console.log('setting any hero as default hero')
+      // if(game.heroList.length) gameCopy.defaultHero = JSON.parse(JSON.stringify(game.heroList[0]))
+      gameCopy.defaultHero = JSON.parse(JSON.stringify(window.defaultHero))
+      // else return alert('could not find a game hero')
     }
-
-    gameCopy.defaultHero.tags.saveAsDefaultHero = false
 
     if(!gameCopy.id) {
       gameCopy.id = 'game-' + window.uniqueID()
@@ -1014,15 +1019,16 @@ class Game{
       GAME.addLog(options)
     }
     if(PAGE.role.isHost && options.chat) {
-      OBJECTS.chat({ id: options.authorId, text: options.text })
+      OBJECTS.chat({ id: options.chatId, text: options.text })
     }
   }
 
-  addLog({ authorId, text, involvedIds, animation, type, heroId, teamId, dateMilliseconds }) {
+  addLog({ logAuthorId, logRecipientId, playerUIHeroId, text, involvedIds, animation, type, heroId, teamId, dateMilliseconds }) {
     GAME.gameState.logs.push({
+      playerUIHeroId,
       teamId,
-      heroId,
-      authorId,
+      logRecipientId,
+      logAuthorId,
       text,
       involvedIds,
       animation,
@@ -1064,6 +1070,7 @@ class Game{
   onEditGameHeroJSON(gameHeroName, JSON) {
     if(gameHeroName === 'default') {
       GAME.defaultHero = JSON
+      console.log(JSON)
     }
   }
 }

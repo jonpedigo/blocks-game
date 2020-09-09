@@ -2,6 +2,7 @@ import React from 'react'
 import modals from './modals.js'
 import Select from 'react-select'
 import classnames from 'classnames'
+import Collapsible from 'react-collapsible';
 import {
   SingleLibraryModSelect,
   SingleLibraryObjectSelect,
@@ -47,7 +48,7 @@ export default class Effect extends React.Component{
     // sequenceId: false
     const { isTrigger } = this.props
     const { sequenceItem } = this.props
-    const { effectName } = sequenceItem
+    const { effectName, effectValue, effectSequenceId, triggerNotificationText } = sequenceItem
 
     const effectChooser = <div className="SequenceItem__condition-type-chooser">
       Effect Name: <Select
@@ -62,7 +63,6 @@ export default class Effect extends React.Component{
     const effectData = window.triggerEffects[effectName]
     if(effectName.length && effectData) {
 
-      const { effectValue, effectSequenceId } = sequenceItem
       if(effectData.JSON) {
         chosenEffectForm.push(effectData.JSONlabel || '')
         chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditCodeModal('edit effect JSON', 'effectJSON')}/>)
@@ -142,13 +142,26 @@ export default class Effect extends React.Component{
       }
     }
 
+    let notificationOptions = []
+    if(isTrigger) {
+      notificationOptions.push('Notification text:')
+      notificationOptions.push(<i className="fa fas fa-edit SequenceButton" onClick={this.props._openEditNotificationModal}/>)
+      notificationOptions.push(<div className="SequenceItem__summary SequenceItem__summary--json">{triggerNotificationText}</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationLog')} checked={sequenceItem.triggerNotificationLog} type="checkbox"></input>Log</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationChat')} checked={sequenceItem.triggerNotificationChat} type="checkbox"></input>Chat</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationToast')} checked={sequenceItem.triggerNotificationToast} type="checkbox"></input>Toast</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationModal')} checked={sequenceItem.triggerNotificationModal} type="checkbox"></input>Modal</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationAllHeros')} checked={sequenceItem.triggerNotificationAllHeros} type="checkbox"></input>Notify All Heros</div>)
+    }
+
     return <div className="SequenceItem__effect">
       {effectChooser}
       <div className="SequenceItem__effect-body">
         <div className="SequenceItem__effect-form">
-          {chosenEffectForm}
+          <Collapsible trigger='Effect properties'>{chosenEffectForm}</Collapsible>
+          {notificationOptions.length > 0 && <Collapsible trigger='Notifications'>{notificationOptions}</Collapsible>}
         </div>
-        {this._renderEffecteds()}
+        <Collapsible trigger='Effected objects'>{this._renderEffecteds()}</Collapsible>
       </div>
       <NextSelect isTrigger={this.props.isTrigger} sequenceItem={sequenceItem} nextOptions={this.props.nextOptions} nextValue={sequenceItem.next} onChange={this.props._selectNext}/>
     </div>

@@ -52,7 +52,7 @@ class PlayerUI {
   }
 
   onSendNotification(data) {
-    if((data.toast || data.modal) && data.heroId === HERO.id) {
+    if((data.toast || data.modal) && (!data.playerUIHeroId || data.playerUIHeroId === HERO.id)) {
       PLAYERUI.ref.onSendNotification(data)
     } else if(data.log) {
       PLAYERUI.ref.onUpdateState()

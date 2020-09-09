@@ -96,7 +96,8 @@ function render(delta) {
 
 let lastMapUpdate
 function mapNetworkUpdate() {
-  window.socket.emit('updateGameState', { ambientLight: GAME.gameState.ambientLight })
+  window.socket.emit('updateGameState', GAME.gameState )
+  // window.socket.emit('updateGameState', { ambientLight: GAME.gameState.ambientLight })
 
   let diff
   let nextMapUpdate = _.cloneDeep(GAME.objects.map(OBJECTS.getMapState))

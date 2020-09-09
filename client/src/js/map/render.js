@@ -40,6 +40,28 @@ function drawArrow(ctx, fromx, fromy, tox, toy, options){
     ctx.stroke();
     ctx.fillStyle = "#ccc";
     ctx.fill();
+
+//     var hyp = Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+// 
+// ctx.save();
+// ctx.translate(p1.x, p1.y);
+// ctx.rotate(angle);
+//
+// // line
+// ctx.beginPath();
+// ctx.moveTo(0, 0);
+// ctx.lineTo(hyp - size, 0);
+// ctx.stroke();
+//
+// // triangle
+// ctx.fillStyle = 'blue';
+// ctx.beginPath();
+// ctx.lineTo(hyp - size, size);
+// ctx.lineTo(hyp, 0);
+// ctx.lineTo(hyp - size, -size);
+// ctx.fill();
+//
+// ctx.restore();
 }
 
 function drawNameCenter(ctx, object, camera) {

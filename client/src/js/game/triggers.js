@@ -70,6 +70,10 @@ function addTrigger(ownerObject, trigger) {
      })
   }
 
+  // honestly cant believe this was happening..lol I got a lot of work to do
+  if(!PAGE.role.isHost) return
+
+
   ownerObject.triggers[trigger.id].removeEventListener = window.local.on(eventName, (mainObject, guestObject) => {
     let fx = () => triggerEffectSmart(trigger, ownerObject, mainObject, guestObject)
 
@@ -130,9 +134,42 @@ function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
     }
   }
 
+  const herosNotified = []
   effectedObjects.forEach((effected) => {
+    if(trigger.triggerNotificationText) {
+      if(effected.tags.hero) {
+        window.socket.emit('sendNotification', { playerUIHeroId: effected.id, chatId: effected.id, logRecipientId: effected.id, toast: trigger.triggerNotificationToast, log: trigger.triggerNotificationLog, chat: trigger.triggerNotificationChat, text: trigger.triggerNotificationText })
+        herosNotified.push(effected.id)
+      } else window.socket.emit('sendNotification', { chatId: effected.id, log: trigger.triggerNotificationLog, chat: trigger.triggerNotificationChat, text: trigger.triggerNotificationText })
+    }
+
     effects.processEffect(trigger, effected, effector, ownerObject)
   })
+
+  // if(trigger.triggerNotificationAllHerosInvolved) {
+  //   let heroId = null
+  //   if(ownerObject.tags.hero) {
+  //     heroId = ownerObject.id
+  //   }
+  //   if(mainObject.tags.hero) {
+  //     heroId = ownerObject.id
+  //   }
+  //   if(guestObject.tags.hero) {
+  //     heroId = ownerObject.id
+  //   }
+  //   window.socket.emit('sendNotification', { heroId, toast: trigger.triggerNotificationToast, log: trigger.triggerNotificationLog, chat: trigger.triggerNotificationChat, text: trigger.notificationText })
+  // }
+
+  if(trigger.triggerNotificationAllHeros) {
+    GAME.heroList.forEach((hero) => {
+      if(herosNotified.indexOf(hero.id) > -1) return
+      window.socket.emit('sendNotification', { playerUIHeroId: hero.id, logRecipientId: hero.id, chatId: hero.id, toast: trigger.triggerNotificationToast, chat: trigger.triggerNotificationChat, text: trigger.triggerNotificationText, log: trigger.triggerNotificationLog})
+    })
+  }
+
+  // if(trigger.triggerRemoverOwnerAfter) {
+  //   GAME.objectsById[trigger.ownerId]._remove = true
+  // }
 }
 
 export default {

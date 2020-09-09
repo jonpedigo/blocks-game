@@ -43,7 +43,6 @@ export default class Toolbar extends React.Component {
 
         Bulldoze -> Map Action
         <i className="Toolbar__tool-selector fa fas fa-snowplow" onMouseEnter={() => {
-          console.log('?')
           window.setFontAwesomeCursor("\uf7d2", "#FFF")
         }} onMouseLeave={() => {
           document.body.style.cursor = 'default';

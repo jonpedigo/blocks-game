@@ -42,6 +42,7 @@ export default class SequenceItem extends React.Component{
     this._openEditNumberModal = this._openEditNumberModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
     this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
+    this._openEditNotificationModal = this._openEditNotificationModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
     this._onChangeEffectName = this._onChangeEffectName.bind(this)
     this._onSetPropValue = this._onSetPropValue.bind(this)
@@ -114,6 +115,17 @@ export default class SequenceItem extends React.Component{
     modals.openEditTextModal('edit condition value', sequenceItem.conditionValue, (result) => {
       if(result && result.value) {
         sequenceItem.conditionValue = result.value
+        this.setState({sequenceItem})
+      }
+    })
+  }
+
+  _openEditNotificationModal() {
+    const { sequenceItem } = this.state;
+
+    modals.openEditTextModal('edit notification text', sequenceItem.triggerNotificationText, (result) => {
+      if(result && result.value) {
+        sequenceItem.triggerNotificationText = result.value
         this.setState({sequenceItem})
       }
     })
