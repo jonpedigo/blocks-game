@@ -529,13 +529,15 @@ class Hero{
                   conditionGuestObjectTag,
                 effectLibraryMod,
               effectLibraryObject,
-              triggerNotificationLog,
-              triggerNotificationChat,
-              triggerNotificationToast,
-              triggerNotificationText,
-              triggerNotificationModal,
-              triggerNotificationAllHeros,
-              triggerNotificationAllHerosInvolved,
+              notificationLog,
+              notificationChat,
+              notificationToast,
+              notificationModal,
+              notificationModalHeader,
+              notificationText,
+              notificationAllHeros,
+              notificationAllHerosInvolved,
+              notificationDuration,
             } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
@@ -576,13 +578,15 @@ class Hero{
           conditionGuestObjectId,
           conditionGuestObjectTag,
 
-          triggerNotificationLog,
-          triggerNotificationChat,
-          triggerNotificationToast,
-          triggerNotificationText,
-          triggerNotificationModal,
-          triggerNotificationAllHeros,
-          triggerNotificationAllHerosInvolved,
+          notificationLog,
+          notificationChat,
+          notificationToast,
+          notificationModal,
+          notificationModalHeader,
+          notificationText,
+          notificationAllHeros,
+          notificationAllHerosInvolved,
+          notificationDuration,
         }
 
         window.removeFalsey(properties.triggers[triggerId])

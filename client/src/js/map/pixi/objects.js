@@ -189,10 +189,6 @@ function initEmitter(gameObject, emitterType = 'smallFire', options = {}, metaOp
   PIXIMAP.objectStage.emitters.push(emitter)
   // container.parentGroup = PixiLights.diffuseGroup
 
-  //TODO: an options tag for FOLLOW EMITTER OWNER,
-  //this will be for the event animations
-  // and also for like addAnimation removeAnimation for like a powerup you feel me?
-
   if(metaOptions.hasNoOwner) container.name = gameObject.id
   else container.ownerName = gameObject.id
   container.emitter = emitter

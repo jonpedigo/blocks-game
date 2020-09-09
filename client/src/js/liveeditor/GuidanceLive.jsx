@@ -82,6 +82,9 @@ export default class GuidanceLive extends React.Component {
             <DatButton label="Send Camera Shake" onClick={() => {
                 window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, {})
               }}></DatButton>
+            <DatButton label="Send Camera Shake" onClick={() => {
+                window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, {})
+              }}></DatButton>
           </DatFolder>
         </DatGui>
       </div>

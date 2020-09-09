@@ -13,6 +13,7 @@ import {
 import Condition from './Condition.jsx'
 import Trigger from './Trigger.jsx'
 import Effect from './Effect.jsx'
+import Notification from './Notification.jsx'
 
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },
@@ -42,7 +43,7 @@ export default class SequenceItem extends React.Component{
     this._openEditNumberModal = this._openEditNumberModal.bind(this)
     this._openEditCodeModal = this._openEditCodeModal.bind(this)
     this._openEditConditionValueModal = this._openEditConditionValueModal.bind(this)
-    this._openEditNotificationModal = this._openEditNotificationModal.bind(this)
+    this._openEditTextValueModal = this._openEditTextValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
     this._onChangeEffectName = this._onChangeEffectName.bind(this)
     this._onSetPropValue = this._onSetPropValue.bind(this)
@@ -120,12 +121,12 @@ export default class SequenceItem extends React.Component{
     })
   }
 
-  _openEditNotificationModal() {
+  _openEditTextValueModal(value) {
     const { sequenceItem } = this.state;
 
-    modals.openEditTextModal('edit notification text', sequenceItem.triggerNotificationText, (result) => {
+    modals.openEditTextModal('edit text', sequenceItem[value], (result) => {
       if(result && result.value) {
-        sequenceItem.triggerNotificationText = result.value
+        sequenceItem[value] = result.value
         this.setState({sequenceItem})
       }
     })
@@ -284,6 +285,7 @@ export default class SequenceItem extends React.Component{
           {sequenceItem.sequenceType == 'sequenceCondition' && <Condition {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceEffect' && <Effect {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceWait' && <Condition {...this} {...this.props} {...this.state} setState={this.setState}/>}
+          {sequenceItem.sequenceType == 'sequenceNotification' && <Notification {...this} {...this.props} {...this.state} setState={this.setState}/>}
         </div>
       </div>
     )

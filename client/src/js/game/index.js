@@ -1019,7 +1019,7 @@ class Game{
       GAME.addLog(options)
     }
     if(PAGE.role.isHost && options.chat) {
-      OBJECTS.chat({ id: options.chatId, text: options.text })
+      OBJECTS.chat({ id: options.chatId, duration: options.duration, text: options.text })
     }
   }
 

@@ -48,7 +48,7 @@ export default class Effect extends React.Component{
     // sequenceId: false
     const { isTrigger } = this.props
     const { sequenceItem } = this.props
-    const { effectName, effectValue, effectSequenceId, triggerNotificationText } = sequenceItem
+    const { effectName, effectValue, effectSequenceId, notificationText } = sequenceItem
 
     const effectChooser = <div className="SequenceItem__condition-type-chooser">
       Effect Name: <Select
@@ -145,13 +145,25 @@ export default class Effect extends React.Component{
     let notificationOptions = []
     if(isTrigger) {
       notificationOptions.push('Notification text:')
-      notificationOptions.push(<i className="fa fas fa-edit SequenceButton" onClick={this.props._openEditNotificationModal}/>)
-      notificationOptions.push(<div className="SequenceItem__summary SequenceItem__summary--json">{triggerNotificationText}</div>)
-      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationLog')} checked={sequenceItem.triggerNotificationLog} type="checkbox"></input>Log</div>)
-      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationChat')} checked={sequenceItem.triggerNotificationChat} type="checkbox"></input>Chat</div>)
-      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationToast')} checked={sequenceItem.triggerNotificationToast} type="checkbox"></input>Toast</div>)
-      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationModal')} checked={sequenceItem.triggerNotificationModal} type="checkbox"></input>Modal</div>)
-      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('triggerNotificationAllHeros')} checked={sequenceItem.triggerNotificationAllHeros} type="checkbox"></input>Notify All Heros</div>)
+      notificationOptions.push(<i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationText')}/>)
+      notificationOptions.push(<div className="SequenceItem__summary SequenceItem__summary--json">{notificationText}</div>)
+
+      notificationOptions.push('Duration:');
+      notificationOptions.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('notificationDuration') }}/>
+      <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationDuration}</div>
+      </div>);
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationLog')} checked={sequenceItem.notificationLog} type="checkbox"></input>Log</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationChat')} checked={sequenceItem.notificationChat} type="checkbox"></input>Chat</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationToast')} checked={sequenceItem.notificationToast} type="checkbox"></input>Toast</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationModal')} checked={sequenceItem.notificationModal} type="checkbox"></input>Modal</div>)
+      notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationAllHeros')} checked={sequenceItem.notificationAllHeros} type="checkbox"></input>Notify All Heros</div>)
+      if(sequenceItem.notificationModal) {
+        notificationOptions.push('Modal Header:');
+        notificationOptions.push(<React.Fragment>
+          <i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationModalHeader')}/>
+          <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationModalHeader}</div>
+        </React.Fragment>)
+      }
     }
 
     return <div className="SequenceItem__effect">

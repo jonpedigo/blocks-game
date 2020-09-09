@@ -56,8 +56,8 @@ export default class TriggerMenu extends React.Component{
     const items = []
     if(!objectSelected.triggers) return items
 
-    Object.keys(objectSelected.triggers).forEach((triggerName) => {
-      const trigger = objectSelected.triggers[triggerName]
+    Object.keys(objectSelected.triggers).forEach((name) => {
+      const trigger = objectSelected.triggers[name]
 
       items.push(
         <MenuItem key={JSON.stringify({action: 'edit', trigger})}>{`Edit ${trigger.id}`}</MenuItem>,

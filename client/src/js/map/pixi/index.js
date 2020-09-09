@@ -486,7 +486,7 @@ PIXIMAP.onObjectAnimation = function(type, objectId, options = {}) {
 
   // fail safe animate the rest
   if(options.animationType === 'particle') {
-    const customEmitter = initEmitter(object, options.particleAnimationName, options, { hasNoOwner: true })
+    const customEmitter = initEmitter(object, options.libraryAnimationName, options, { hasNoOwner: true })
     setTimeout(() => {
       PIXIMAP.deleteEmitter(customEmitter)
     }, 10000)

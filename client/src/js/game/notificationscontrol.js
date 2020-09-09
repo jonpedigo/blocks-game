@@ -1,3 +1,15 @@
+// notificationLog,
+// notificationChat,
+// notificationToast,
+// notificationModal,
+// notificationModalHeader,
+// notificationText,
+
+// notificationDuration,
+
+// notificationAllHeros,
+// notificationAllHerosInvolved,
+
 class NotificationsControl{
   onHeroDeposit(hero, newObject) {
     let message =  'You deposited ' + newObject.subObjectName

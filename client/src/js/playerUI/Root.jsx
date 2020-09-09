@@ -86,8 +86,9 @@ export default class Root extends React.Component {
     if(data.toast) {
       const toastInfo = {
         position: "top-right",
-        autoClose: data.duration || 3000,
+        autoClose: (data.duration * 1000) || 4000,
         newestOnTop: true,
+        closeOnClick: data.duration <= 0,
       }
       if(data.viewControlsOnClick) {
         // sometimes we edit the controls a lot... so we dont show if theres too many. We need a... id control system for this
@@ -100,9 +101,13 @@ export default class Root extends React.Component {
         window.readyForControlsToast = false
         setTimeout(() => {
           window.readyForControlsToast = true
-        }, 3000)
+        }, 4000)
       }
       toast(data.text, toastInfo)
+    }
+
+    if(data.modal) {
+      modals.openModal(data.modalHeader, data.text)
     }
   }
 

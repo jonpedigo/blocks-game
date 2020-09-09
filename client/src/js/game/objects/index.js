@@ -254,13 +254,15 @@ class Objects{
                   conditionGuestObjectTag,
                   effectLibraryMod,
                   effectLibraryObject,
-                  triggerNotificationLog,
-                  triggerNotificationChat,
-                  triggerNotificationToast,
-                  triggerNotificationText,
-                  triggerNotificationModal,
-                  triggerNotificationAllHeros,
-                  triggerNotificationAllHerosInvolved,
+                  notificationLog,
+                  notificationChat,
+                  notificationToast,
+                  notificationModal,
+                  notificationModalHeader,
+                  notificationText,
+                  notificationAllHeros,
+                  notificationAllHerosInvolved,
+                  notificationDuration,
                  } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
@@ -301,13 +303,15 @@ class Objects{
           conditionGuestObjectId,
           conditionGuestObjectTag,
 
-          triggerNotificationLog,
-          triggerNotificationChat,
-          triggerNotificationToast,
-          triggerNotificationModal,
-          triggerNotificationText,
-          triggerNotificationAllHeros,
-          triggerNotificationAllHerosInvolved,
+          notificationLog,
+          notificationChat,
+          notificationToast,
+          notificationModal,
+          notificationModalHeader,
+          notificationText,
+          notificationAllHeros,
+          notificationAllHerosInvolved,
+          notificationDuration,
         }
 
         window.removeFalsey(properties.triggers[triggerId])
@@ -1278,9 +1282,10 @@ class Objects{
     }
   }
 
-  chat({id, duration = 3, text}) {
+  chat({id, duration = 4, text}) {
     const object = OBJECTS.getObjectOrHeroById(id)
     object.chat = text
+    if(duration <= 0) return
     GAME.addOrResetTimeout(id + '-chat', duration, () => {
       object.chat = null
     })
