@@ -248,6 +248,8 @@ class Game{
 
     tags.setDefault()
     if(game.library) GAME.library = game.library
+    else GAME.library = {}
+    
     if(game.library.tags) {
       tags.addGameTags(game.library.tags)
       GAME.library.tags = game.library.tags
@@ -275,7 +277,7 @@ class Game{
     // game state
     if(game.gameState && game.gameState.loaded) {
       GAME.gameState = game.gameState
-      // if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+      if(!GAME.gameState) GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
       // GAME.gameState.sequenceQueue = []
       // GAME.gameState.activeModList = []
       //( remove timouts from this list when you can convert this functions to strings and use eval..)
@@ -372,7 +374,7 @@ class Game{
       if(mod.removeEventListener) mod.removeEventListener()
     })
 
-    GAME.gameState = null
+    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   }
 
   snapToGrid() {

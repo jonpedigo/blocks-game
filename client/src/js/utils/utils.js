@@ -198,10 +198,20 @@ window.animateCSS = (element, animation, prefix = 'animate__') =>
   });
 
 
-  window.convertToGameXY = function(event) {
-    var rect = PIXIMAP.app.view.getClientRects()[0];
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    }
+window.convertToGameXY = function(event) {
+  var rect = PIXIMAP.app.view.getClientRects()[0];
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
   }
+}
+
+window.getAngle = function(cx, cy, ex, ey) {
+  var dy = ey - cy;
+  var dx = ex - cx;
+  var theta = Math.atan2(dy, dx); // range (-PI, PI]
+  return theta
+  theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+  //if (theta < 0) theta = 360 + theta; // range [0, 360)
+  return theta;
+}

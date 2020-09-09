@@ -194,10 +194,9 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  let debug = true
+  let debug = false
   if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
-    console.log("TESTING THIS", attemptingX, attemptingY, gridX, gridY, width, height)
     if(attemptingX > gridX + width - 1) {
       if(debug) console.log('rejecting reason 1a')
       return false
@@ -221,16 +220,16 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     }
     const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
     if(attemptingX > gridX + width - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
-      if(debug) console.log('rejecting reason 2')
+      if(debug) console.log('rejecting reason 2a')
       return false
     } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
-      if(debug) console.log('rejecting reason 2')
+      if(debug) console.log('rejecting reason 2b')
       return false
     } else if(attemptingY > gridY + height - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
-      if(debug) console.log('rejecting reason 2')
+      if(debug) console.log('rejecting reason 2c')
       return false
     } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
-      if(debug) console.log('rejecting reason 2')
+      if(debug) console.log('rejecting reason 2d')
       return false
     }
   }

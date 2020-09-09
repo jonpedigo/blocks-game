@@ -599,6 +599,7 @@ class Hero{
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
+      navigationTargetId: hero.navigationTargetId,
 
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,

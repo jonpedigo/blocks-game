@@ -3,6 +3,45 @@ import feedback from './feedback.js'
 import drawTools from '../mapeditor/drawTools.js'
 import collisionsUtil from '../utils/collisions.js'
 
+function drawArrow(ctx, fromx, fromy, tox, toy, options){
+    var headlen = 10;
+
+    let size = options.size
+    if(!size) size = 1
+
+    let angle = options.angle
+    if(!angle) {
+      angle = Math.atan2(toy-fromy,tox-fromx);
+      // if(theta) angle = theta
+      //starting path of the arrow from the start square to the end square and drawing the stroke
+      ctx.beginPath();
+      ctx.moveTo(fromx, fromy);
+      ctx.lineTo(tox, toy);
+      ctx.strokeStyle = "#ccc";
+      ctx.lineWidth = 22 * options.size;
+      ctx.stroke();
+    }
+
+    //starting a new path from the head of the arrow to one of the sides of the point
+    ctx.beginPath();
+    ctx.moveTo(tox, toy);
+    ctx.lineTo(tox-(headlen)*Math.cos(angle-Math.PI/7),toy-(headlen)*Math.sin(angle-Math.PI/7));
+
+    //path from the side point of the arrow, to the other side point
+    ctx.lineTo(tox-(headlen)*Math.cos(angle+Math.PI/7),toy-(headlen)*Math.sin(angle+Math.PI/7));
+
+    //path from the side point back to the tip of the arrow, and then again to the opposite side point
+    ctx.lineTo(tox, toy);
+    ctx.lineTo(tox-(headlen)*Math.cos(angle-Math.PI/7),toy-(headlen)*Math.sin(angle-Math.PI/7));
+
+    //draws the paths created above
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 22 * options.size;
+    ctx.stroke();
+    ctx.fillStyle = "#ccc";
+    ctx.fill();
+}
+
 function drawNameCenter(ctx, object, camera) {
   ctx.fillStyle = "rgb(250, 250, 250)";
   let fontSize = 20*(camera.multiplier)
@@ -124,11 +163,26 @@ function update(camera) {
     }
   }
 
-  ctx.textAlign = 'start'
-	ctx.textBaseline = 'alphabetic'
-  ctx.font =`24pt Arial`
-	ctx.fillStyle="rgba(255,255,255,0.3)"
-  ctx.fillText(Math.ceil(PAGE.fps), MAP.canvas.width - 50, 40)
+  if(PAGE.role.isAdmin) {
+    ctx.textAlign = 'start'
+    ctx.textBaseline = 'alphabetic'
+    ctx.font =`24pt Arial`
+    ctx.fillStyle="rgba(255,255,255,0.3)"
+    ctx.fillText(Math.ceil(PAGE.fps), MAP.canvas.width - 50, 40)
+  }
+
+  if(clientHero.navigationTargetId) {
+    const { minX, maxX, minY, maxY, centerY, centerX, leftDiff, rightDiff, topDiff, bottomDiff, cameraHeight, cameraWidth } = HERO.getViewBoundaries(clientHero)
+
+    const target = GAME.objectsById[clientHero.navigationTargetId]
+    const inView = collisionsUtil.checkObject(target, {x: clientHero.x - (HERO.cameraWidth * clientHero.zoomMultiplier)/2 + clientHero.width/2, y: clientHero.y - (HERO.cameraHeight * clientHero.zoomMultiplier)/2 + clientHero.height/2, width: (HERO.cameraWidth * clientHero.zoomMultiplier), height: (HERO.cameraHeight * clientHero.zoomMultiplier)})
+
+    if(inView) {
+      drawArrow(ctx, ((target.x + target.width/2) *camera.multiplier - camera.x), ((target.y - 60) *camera.multiplier - camera.y), ((target.x + target.width/2) *camera.multiplier - camera.x), ((target.y - 20) *camera.multiplier - camera.y), { size: .2 })
+    }
+    const angle = window.getAngle(clientHero.x, clientHero.y, target.x, target.y )
+    drawArrow(ctx, MAP.canvas.width - 100, 50, MAP.canvas.width - 100, 50, { angle, size: 1 })
+  }
 
   return
 
