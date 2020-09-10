@@ -24,7 +24,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   // })
 
   function getGame(id, cb) {
-    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+    fs.readFile('./data/game/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {
@@ -35,6 +35,46 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     }});
   }
 
+  function getSpriteSheet(id, cb) {
+    fs.readFile('./data/sprite/' +id+'.json', 'utf8', function readFileCallback(err, data){
+      if (err){
+          console.log(err);
+      } else {
+      let spritesheet = JSON.parse(data); //now it an spritesheetect
+      return cb(spritesheet)
+    }});
+  }
+
+  function saveSpriteSheet(id, json) {
+    fs.writeFile('data/sprite/' + id + '.json', JSON.stringify(json), 'utf8', (e) => {
+      if(e) return console.log(e)
+      else console.log('spritesheet: ' + id + ' saved')
+    });
+  }
+
+  // socket.on('getSpriteSheetJSON', (id) => {
+  //   getSpriteSheet(id, (spriteSheet) => {
+  //     socket.emit('onGetSpriteSheetJSON', spriteSheet)
+  //   })
+  // })
+
+  socket.on('getSpriteSheetsJSON', (ids) => {
+    const sss = []
+
+    ids.forEach((id) => {
+      getSpriteSheet(id, (spriteSheet) => {
+        sss.push(spriteSheet)
+        if(sss.length === ids.length) socket.emit('onGetSpriteSheetsJSON', sss)
+        console.log(sss.length, ids.length)
+      })
+    })
+  })
+
+  socket.on('saveSpriteSheetJSON', (id, json) => {
+    saveSpriteSheet(id, json)
+  })
+
+
   ///////////////////////////
   ///////////////////////////
   ///////////////////////////
@@ -43,7 +83,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   ///////////////////////////
   ///////////////////////////
   socket.on('saveGame', (game) => {
-    fs.writeFile('data/' + game.id + '.json', JSON.stringify(game), 'utf8', (e) => {
+    fs.writeFile('data/game/' + game.id + '.json', JSON.stringify(game), 'utf8', (e) => {
       if(e) return console.log(e)
       else console.log('game: ' + game.id + ' saved')
     });
@@ -53,7 +93,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   // this is for when one player on a network wants to get a currentGame... should all be 1 -hero worlds?
   socket.on('getGame', (id) => {
-    fs.readFile('data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+    fs.readFile('data/game/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {
@@ -86,7 +126,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   // this is when the editor asks to load up a game
   socket.on('setAndLoadCurrentGame', (id) => {
-    fs.readFile('./data/' +id+'.json', 'utf8', function readFileCallback(err, data){
+    fs.readFile('./data/game/' +id+'.json', 'utf8', function readFileCallback(err, data){
       if (err){
           console.log(err);
       } else {

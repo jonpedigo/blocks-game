@@ -3,7 +3,6 @@ window.PIXI = PIXI
 import './pixi-layers'
 import { GlowFilter, ColorMatrixFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
-import tileset from './tileset.json'
 
 const textures = {};
 let stage
@@ -281,40 +280,95 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   applyFilters()
 
+  const spritesheetsLoading = {
+    'basictileset-1': true,
+    'kenney-voxel': true,
+    'lordofthebling-1': true,
+    // 'oryx-24px-scifi-environment': true,
+    // 'oryx-24px-scifi-transports': true,
+    // 'oryx-24px-scifi-characters': true,
+    // 'oryx-16px-scifi-items': true,
+    'oryx-24px-scifi-creatures': true,
+    'candy-1': true,
+    'retro-1': true,
+    'overworld-1': true,
+    'platformer-1': true,
+  }
+
+  window.spriteSheetAuthors = {
+    original: true,
+    unknown: true,
+    lordofthebling: true,
+    oryx: true,
+    timefantasy: true,
+    amsimuz: true,
+    kenney: true,
+    shackal: true,
+    unknownRetro: true,
+    unknownCandy: true,
+    unknownGlitch: true,
+    unknownOverworld: true,
+    unknownPlatformer: true,
+  }
+
+  const spritesheetsRequested = Object.keys(spritesheetsLoading).filter((name) => {
+    if(spritesheetsLoading[name]) return true
+  })
+
+  window.socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
+    console.log('got sss', spriteSheets)
+    startLoadingAssets(spriteSheets.map((ss) => {
+      ss.serverImageUrl = 'assets/images/' + ss.imageUrl
+      return ss
+    }))
+  })
+  window.socket.emit('getSpriteSheetsJSON', spritesheetsRequested)
+
   ///////////////
   ///////////////
   ///////////////
   // SPRITES
-  app.loader.add('assets/images/tileset.png').load((loaded) => {
-    tileset.forEach((tile) => {
-      let baseTexture = PIXI.BaseTexture.from('assets/images/tileset.png');
-      baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
-      let texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(tile.x, tile.y, tile.width, tile.height));
-      texture.id = tile.id
-      textures[tile.id] = texture
-    })
 
-    app.loader.add(['assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
-      let texture = PIXI.Texture.from('assets/images/firepit-1.png');
-      texture.id = 'firepit-1'
-      textures['firepit-1'] = texture
-
-      texture = PIXI.Texture.from('assets/images/entarkia-1.png');
-      texture.id = 'entarkia-1'
-      textures['entarkia-1'] = texture
+  function startLoadingAssets(spriteSheets) {
+    console.log(spriteSheets)
+    spriteSheets.reduce((prev, next) => {
+      return prev.add(next.serverImageUrl)
+    }, app.loader).load((loaded) => {
+      spriteSheets.forEach((ss) => {
+        ss.sprites.forEach((tile) => {
+          let baseTexture = PIXI.BaseTexture.from(ss.serverImageUrl);
+          baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
+          let texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(tile.x, tile.y, tile.width, tile.height));
+          if(tile.id) texture.id = ss.id + '-' + tile.id
+          if(tile.name) texture.id = ss.id + '-' +  tile.name
+          textures[texture.id] = texture
+          texture.ssauthor = ss.author
+          texture.ssId = ss.id
+        })
+      })
 
       textures['solidcolorsprite'] = PIXI.Texture.WHITE
       PIXI.Texture.WHITE.id = 'solidcolorsprite'
-      texture.scaleMode = PIXI.SCALE_MODES.NEAREST
 
-      texture = PIXI.Texture.from('assets/images/spencer-1.png');
-      texture.id = 'spencer-1'
-      textures['spencer-1'] = texture
       PIXIMAP.textures = textures
       PIXIMAP.assetsLoaded = true
       onLoad(app, textures)
+
+      // app.loader.add(['assets/images/firepit-1.png', 'assets/images/entarkia-1.png']).load((loaded) => {
+      //   // let texture = PIXI.Texture.from('assets/images/firepit-1.png');
+      //   // texture.id = 'firepit-1'
+      //   // textures['firepit-1'] = texture
+      //   //
+      //   // texture = PIXI.Texture.from('assets/images/entarkia-1.png');
+      //   // texture.id = 'entarkia-1'
+      //   // textures['entarkia-1'] = texture
+      //   // texture = PIXI.Texture.from('assets/images/spencer-1.png');
+      //   // texture.id = 'spencer-1'
+      //   // textures['spencer-1'] = texture
+
+      // })
     })
-  })
+  }
 
     // Create a light that casts shadows
   // var light = PIXIMAP.createLight('point', 700, 4, 0x000000);

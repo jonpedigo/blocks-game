@@ -226,6 +226,11 @@ function onGameLoaded() {
       columnName: 'Basic',
       JSON: window.objectLibrary.default,
     },
+    roof: {
+      label: 'Roof',
+      columnName: 'Basic',
+      JSON: window.objectLibrary.roof,
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -246,9 +251,12 @@ function onGameLoaded() {
     snake: true,
     spear: true,
     gun: true,
+    roof: true,
   }
 
   window.adminCreatorObjects = {
+    roof: true,
+    obstacle: true,
     selectColor: true,
     drawStructure: true,
     drawBackground: true,

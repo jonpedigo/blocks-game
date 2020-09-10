@@ -82,8 +82,17 @@ export default class GuidanceLive extends React.Component {
             <DatButton label="Send Camera Shake" onClick={() => {
                 window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, {})
               }}></DatButton>
-            <DatButton label="Send Camera Shake" onClick={() => {
-                window.socket.emit('heroCameraEffect', 'cameraShake', objectSelected.id, {})
+            <DatButton label="Send Toast" onClick={() => {
+                window.socket.emit('sendNotification', { playerUIHeroId: objectSelected.id, toast: true, text: 'This is a toast' })
+              }}></DatButton>
+            <DatButton label="Send Chat" onClick={() => {
+                window.socket.emit('sendNotification', { chatId: objectSelected.id, chat: true, text: 'This is a chat' })
+              }}></DatButton>
+            <DatButton label="Send Modal" onClick={() => {
+              window.socket.emit('sendNotification', { playerUIHeroId: objectSelected.id, modal: true, text: 'This is the modal text', modalHeader: 'This is the modal header'})
+              }}></DatButton>
+            <DatButton label="Send Log" onClick={() => {
+              window.socket.emit('sendNotification', { logRecipientId: objectSelected.id, logAuthorId: HERO.id, log: true, text: 'This is a log'})
               }}></DatButton>
           </DatFolder>
         </DatGui>

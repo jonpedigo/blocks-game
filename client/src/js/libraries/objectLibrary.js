@@ -68,15 +68,23 @@ window.local.on('onFirstPageGameLoaded', () => {
       objectType: 'plainObject',
       tags: { obstacle: true, monster: true, moving: true, homing: true, targetHeroOnAware: true },
       subObjects: {
+        // awarenessTriggerArea: {
+        //   x: 0, y: 0, width: 40, height: 40,
+        //   relativeWidth: GAME.grid.nodeSize * 12,
+        //   relativeHeight: GAME.grid.nodeSize * 16,
+        //   relativeX: 0,
+        //   relativeY: -GAME.grid.nodeSize * 4,
+        //   opacity: 0,
+        //   tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
+        // }
         awarenessTriggerArea: {
           x: 0, y: 0, width: 40, height: 40,
           relativeWidth: GAME.grid.nodeSize * 12,
-          relativeHeight: GAME.grid.nodeSize * 16,
+          relativeHeight: GAME.grid.nodeSize * 12,
           relativeX: 0,
-          relativeY: -GAME.grid.nodeSize * 4,
-          opacity: 0.2,
-          color: 'yellow',
-          tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true, relativeToDirection: true, },
+          relativeY: 0,
+          opacity: 0,
+          tags: { obstacle: false, invisible: false, stationary: true, awarenessTriggerArea: true },
         }
       }
     },
@@ -243,6 +251,12 @@ window.local.on('onFirstPageGameLoaded', () => {
       heroUpdate: {
         tags: { gravityY: true },
       },
+    },
+    roof: {
+      tags: {
+        seeThroughOnHeroCollide: true,
+        foreground: true,
+      }
     }
   }
 

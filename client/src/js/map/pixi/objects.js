@@ -274,7 +274,7 @@ const addGameObjectToStage = (gameObject, stage) => {
   const texture = PIXIMAP.textures[gameObject.sprite]
   let sprite
   if(gameObject.tags.tilingSprite) {
-    sprite = new PIXI.extras.TilingSprite(texture, gameObject.width, gameObject.height)
+    sprite = new PIXI.TilingSprite(texture, gameObject.width, gameObject.height)
   } else {
     sprite = new PIXI.Sprite(texture)
   }
