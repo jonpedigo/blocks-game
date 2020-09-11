@@ -240,6 +240,12 @@ function setDefault() {
     // allowCameraRotation: false,
   }
 
+  window.pathTags = {
+    pathfindingLimit: false,
+    path: false,
+    pfGridUpdateOnLoop: false,
+  }
+
   window.subObjectTags = {
     subObject: true,
     heroInteractTriggerArea: false,

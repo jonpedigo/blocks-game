@@ -61,9 +61,9 @@ class MapEditor {
     document.body.addEventListener("mouseup", (e) => {
       if (!MAPEDITOR.paused) handleMouseUp(event)
     })
-    document.body.addEventListener("mouseout", (e) => {
-      if (!MAPEDITOR.paused) handleMouseOut(event)
-    })
+    // document.body.addEventListener("mouseout", (e) => {
+    //   if (!MAPEDITOR.paused) handleMouseOut(event)
+    // })
 
     contextMenu.init(MAPEDITOR)
     keyInput.init()

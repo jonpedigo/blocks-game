@@ -133,9 +133,12 @@ class Objects{
       //^^ older
 
       targetFollowId:  object.targetFollowId,
-      pathId:  object.pathId,
+
+      pathIdIndex: object.pathIdIndex,
       pathOnWayBack:  object.pathOnWayBack,
-      pathNavigation:  object.pathNavigation, // loop,  patrol
+
+      _pathNeedsOwnPfGrid: object.pathNeedsOwnPfGrid,
+      _pfGrid: object.pfGrid,
 
       navigationTargetId:  object.navigationTargetId,
 
@@ -224,6 +227,8 @@ class Objects{
       }),
 
       pathParts:  object.pathParts,
+      pathId:  object.pathId,
+      pathNavigation:  object.pathNavigation, // loop,  patrol
 
       // sub objects
       relativeWidth: object.relativeWidth,
@@ -350,6 +355,7 @@ class Objects{
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       liveEmitterData: object.liveEmitterData,
+      navigationTargetId:  object.navigationTargetId,
       tags: object.tags,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {

@@ -1,17 +1,18 @@
 import collisions from '../utils/collisions'
 
 class Grid {
-  constructor(startX, startY, gridWidth, gridHeight, nodeSize) {
+  constructor(startX, startY, gridWidth, gridHeight, nodeWidth, nodeHeight) {
     this.startX = startX
     this.startY = startY
-    this.nodeSize = nodeSize
-    this.gridWidth = gridWidth
-    this.gridHeight = gridHeight
+    this.nodeWidth = nodeWidth
+    this.nodeHeight = nodeHeight
+    this.gridWidth = Math.floor(gridWidth *  (GAME.grid.nodeSize/this.nodeWidth))
+    this.gridHeight = Math.floor(gridHeight *  (GAME.grid.nodeSize/this.nodeHeight))
     this.x = startX
     this.y = startY
-    this.width = startX + (gridWidth * nodeSize)
-    this.height = startX + (gridHeight * nodeSize)
-    this.nodes = this.generateNodes(gridWidth, gridHeight)
+    this.width = startX + (this.gridWidth * nodeWidth)
+    this.height = startX + (this.gridHeight * nodeHeight)
+    this.nodes = this.generateNodes(this.gridWidth, this.gridHeight)
   }
 
   getGridXYfromXY(x, y) {
@@ -19,13 +20,13 @@ class Grid {
     x = x - this.startX
     y = y - this.startY
 
-    let diffX = x % this.nodeSize
+    let diffX = x % this.nodeWidth
     x -= diffX
-    let gridX = x/this.nodeSize
+    let gridX = x/this.nodeWidth
 
-    let diffY = y % this.nodeSize
+    let diffY = y % this.nodeHeight
     y -= diffY
-    let gridY = y/this.nodeSize
+    let gridY = y/this.nodeHeight
 
     // const gridX = Math.floor(x/this.nodeSize)
     // const gridY = Math.floor(y/this.nodeSize)
@@ -42,7 +43,7 @@ class Grid {
     for(var i = 0; i < gridWidth; i++) {
       grid.push([])
       for(var j = 0; j < gridHeight; j++) {
-        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startY + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
+        grid[i].push({x: this.startX + (i * this.nodeWidth), y: this.startY + (j * this.nodeHeight), width: this.nodeWidth, height: this.nodeHeight, gridX: i, gridY: j, data: {}})
       }
     }
 
@@ -111,6 +112,34 @@ class Grid {
         fx(this.nodes[i][j])
       }
     }
+  }
+
+  snapXYToGrid(x, y, options = { closest: true }) {
+    let diffX = x % this.nodeWidth;
+
+    if(diffX < 0) {
+      x -= diffX
+      x -= this.nodeWidth
+    } else {
+      if(diffX > this.nodeWidth/2 && options.closest) {
+        x += (this.nodeWidth - diffX)
+      } else {
+        x -= diffX
+      }
+    }
+
+    let diffY = y % this.nodeHeight;
+    if(diffY < 0) {
+      y -= diffY
+      y -= this.nodeHeight
+    } else {
+      if(diffY > this.nodeHeight/2 && options.closest) {
+        y += (this.nodeHeight - diffY)
+      } else {
+        y -= diffY
+      }
+    }
+    return { x, y }
   }
 }
 

@@ -533,6 +533,15 @@ PIXIMAP.onConstructEditorClose = function() {
 PIXIMAP.onConstructEditorStart = function() {
   resetConstructParts()
 }
+PIXIMAP.onPathEditorClose = function() {
+  setTimeout(() => {
+    resetConstructParts()
+  },  50)
+}
+
+PIXIMAP.onPathEditorStart = function() {
+  resetConstructParts()
+}
 
 PIXIMAP.onResize = function() {
   setTimeout(() => {

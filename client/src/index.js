@@ -5,7 +5,21 @@
 ////////////////////////////////////////////////////
 
 TODO
-PATHFINDING EDITOR
+PATHFINDING editor / advancements <---- !
+a path should just be an object...easy as that
+Theres the grid path ( doesnt update )
+and then u can make other paths that update often, they be smaller paths, but can be for larger objects even!
+TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
+// objects have their own path?
+// pathfinding editor should fit inside of the sequence editor
+// path goals AKA patrol
+// path 1, path 2, path 3 with conditions
+// Set Target, Set Pathfinding Target
+// Pathfinding for something larger than one grid node
+// Perhaps not PATHFINDING but… targeting
+// 'with patience' tag AKA pathfind less often
+// 'dont backtrack' tag where they remember where they went
+
 paths {
   [name]: {
     type: patrol/cycle/container
@@ -17,7 +31,8 @@ pathCurrent: 'pathName'
 pathReverse: // is moving on this path in reverse order
 pathfindingLimit: // still use this but the container will be more advanced and not that performant
 
-
+MUTATE UI
+create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
 STORY SCREENSHOTS
 
@@ -27,6 +42,10 @@ SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
 PIXEL EDITOR
 
 IMPROVEMENTS
+
+RELATED TO PATHS, SPAWNS, PARENTS, RELATIVES, etc
+need a UI for selecting an object for spawning, pathfinding, or just selecting parent/relative
+This can also help with sequences needed to select map spot
 
 -----
 
@@ -146,8 +165,12 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+special camera relation, 0, .5, 2, 10, etc. might wanna encapsulale the camera changing logic into a function?
+
 add object needs to be its own thing with effect, wait, condition, etc.
 Its getting really complicated. For now im going to cheat it. It should have its own service and its own sequence type, feel me?
+
+Drag and drop sequence items
 
 Combine spawning with anticipatedAdd. create like spawnType variable which defaults to, hatchFromParent
 
@@ -156,8 +179,6 @@ You'd get a diff of what we just made vs what we are comparing it to. I can crea
 LORDD ^^
 
 WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
-
-Drag and drop sequence items
 
 Allow circles and triangles?
 
@@ -226,21 +247,6 @@ and update things accordingly
 ////////////////////////////////////////////////////
 /// ALL SORTS OF EDITOR NOTES
 /////////////////////////////
-
-PATHFINDING editor / advancements <---- !
-a path should just be an object...easy as that
-Theres the grid path ( doesnt update )
-and then u can make other paths that update often, they be smaller paths, but can be for larger objects even!
-TURN PATHFINDING AREAS, PATHS, ETC, into their own SPECIAL OBJECTS. Allow objects to hook into them like spawn zones
-// objects have their own path?
-// pathfinding editor should fit inside of the sequence editor
-// path goals AKA patrol
-// path 1, path 2, path 3 with conditions
-// Set Target, Set Pathfinding Target
-// Pathfinding for something larger than one grid node
-// Perhaps not PATHFINDING but… targeting
-// 'with patience' tag AKA pathfind less often
-// 'dont backtrack' tag where they remember where they went
 
 ADD SUB OBJECT
 Spear

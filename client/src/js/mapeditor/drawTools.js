@@ -13,9 +13,9 @@ function drawConstructParts(ctx, camera, object) {
   }
 }
 
-function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalLineWidth = .25, specialLineWidth = .6, color = 'white'}, camera) {
-  let height = nodeSize * gridHeight
-  let width = nodeSize * gridWidth
+function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWidth,  nodeHeight,  normalLineWidth = .25, specialLineWidth = .6, color = 'white'}, camera) {
+  let height = (nodeHeight || nodeSize)  * gridHeight
+  let width = (nodeWidth || nodeSize)  * gridWidth
 
   ctx.strokeStyle = "#999";
   if(color) {
@@ -27,12 +27,12 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalL
       ctx.lineWidth = specialLineWidth
     }
     drawVertice(ctx, {a: {
-      x: startX + (x * nodeSize),
+      x: startX + (x * (nodeWidth || nodeSize)),
       y: startY,
       color
     },
     b: {
-      x: startX + (x * nodeSize),
+      x: startX + (x * (nodeWidth || nodeSize)),
       y: startY + height,
       color
     }}, camera)
@@ -44,12 +44,12 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, normalL
     }
     drawVertice(ctx, {a: {
       x: startX,
-      y: startY + (y * nodeSize),
+      y: startY + (y * (nodeHeight || nodeSize)),
       color
     },
     b: {
       x: startX + width,
-      y: startY + (y * nodeSize),
+      y: startY + (y * (nodeHeight || nodeSize)),
       color
     }}, camera)
   }
@@ -158,6 +158,16 @@ function drawObject(ctx, object, camera, options = {showInvisible: false, stroke
     drawFilledObject(ctx, object, camera, options);
   } else {
     drawFilledObject(ctx, object, camera, {...options, strokeRect: true});
+  }
+
+  if(typeof object.characterTextInside === 'number' || typeof object.characterTextInside === 'string') {
+    ctx.fillStyle = "rgb(250, 250, 250)";
+    let fontSize = 20*(camera.multiplier)
+    if(fontSize < 12) fontSize = 12
+    ctx.font = `${fontSize}px Courier New`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(object.characterTextInside, (object.x * camera.multiplier - camera.x), (object.y * camera.multiplier - camera.y))
   }
 
   ctx.restore()

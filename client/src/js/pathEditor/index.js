@@ -7,9 +7,9 @@ import drawTools from '../mapeditor/drawTools'
 import keyInput from './keyInput'
 import Root from './Root.jsx'
 
-//  the modes the editor are grid mode  vs not grid mode
+//  the modes the editor are grid mode vs point mode
 //  the type of each path node can be
-  //  direct vs obstacle avoidance vs teleport
+  //  direct vs pathfind vs teleport
 
 
 class PathEditor {
@@ -43,6 +43,7 @@ class PathEditor {
     this.painting = false
     this.erasing = false
     this.selectedColor = null
+    this.pathParts = []
   }
 
   cancel() {
@@ -61,16 +62,18 @@ class PathEditor {
   }
 
   finish() {
-    const pathParts = []
-    this.grid.forEachNode((node) => {
-      if(node.data.filled) {
-        pathParts.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize })
-      }
-    })
+    // const pathParts = []
+    // this.grid.forEachNode((node) => {
+    //   if(node.data.filled) {
+    //     pathParts.push({ index: node.data.index, x: node.x, y: node.y, gridX: node.gridX, gridY: node.gridY, width: this.grid.nodeWidth, height: this.grid.nodeHeight})
+    //   }
+    // })
     //const { x, y, width, height } = this.getBoundingBox(pathParts)
     //, x, y, width, height
+    const pathParts = this.pathParts
     this.close()
     window.local.emit('onPathEditorClose', {pathParts})
+
   }
 
   start(object, startAtHero = false) {
@@ -79,9 +82,9 @@ class PathEditor {
     this.open = true
     if(PAGE.isLogOpen) PAGE.closeLog()
     if(GAME.world.gameBoundaries) {
-      this.grid = new Grid(GAME.world.gameBoundaries.x, GAME.world.gameBoundaries.y, GAME.world.gameBoundaries.width/GAME.grid.nodeSize, GAME.world.gameBoundaries.height/GAME.grid.nodeSize, GAME.grid.nodeSize)
+      this.grid = new Grid(GAME.world.gameBoundaries.x, GAME.world.gameBoundaries.y, GAME.world.gameBoundaries.width/GAME.grid.nodeSize, GAME.world.gameBoundaries.height/GAME.grid.nodeSize, object.width, object.height)
     } else {
-      this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, GAME.grid.nodeSize)
+      this.grid = new Grid(GAME.grid.startX, GAME.grid.startY, GAME.grid.width, GAME.grid.height, object.width, object.height)
     }
     this.spawnPointX = object.spawnPointX
     this.spawnPointY = object.spawnPointY
@@ -90,10 +93,10 @@ class PathEditor {
     // const gridObject = {x: 0, y: 0, width: this.grid.gridWidth * this.grid.nodeSize, height: this.grid.gridHeight * this.grid.nodeSize}
     // this.camera.setLimitRect(gridObject)
 
-    let gridWidth = (object.width/this.grid.nodeSize)
-    let gridHeight = (object.height/this.grid.nodeSize)
-    if(gridWidth < GAME.grid.nodeSize) gridWidth = GAME.grid.nodeSize
-    if(gridHeight < GAME.grid.nodeSize) gridHeight = GAME.grid.nodeSize
+    let gridWidth = (object.width/this.grid.nodeWidth)
+    let gridHeight = (object.height/this.grid.nodeHeight)
+    if(gridWidth < GAME.grid.nodeWidth) gridWidth = GAME.grid.nodeWidth
+    if(gridHeight < GAME.grid.nodeHeight) gridHeight = GAME.grid.nodeHeight
     const zoomMultiplierX = (gridWidth)/16
     const zoomMultiplierY = (gridHeight)/16
     let zoomMultiplier = zoomMultiplierX
@@ -128,7 +131,7 @@ class PathEditor {
     }
     document.body.addEventListener("mouseup", this._mouseUpListener)
 
-    let color = 'cyan'
+    let color = 'rgba(0,0,255, 0.4)'
     this.ref.open(color)
     this.selectColor(color)
 
@@ -204,48 +207,40 @@ class PathEditor {
   initializeGridNodes(object) {
     const squares = []
 
-    if(object.pathParts) {
-      object.pathParts.forEach((part) => {
-        const x = part.x
-        const y = part.y
-        squares.push({
-          x, y,
-          ...this.grid.getGridXYfromXY(x, y),
-          color: part.color,
-        })
-      })
-    }
-
-    squares.forEach((square) => {
-      this.grid.updateNode(square.gridX, square.gridY, { color: square.color, filled: true })
+    this.pathParts = object.pathParts || []
+    this.pathParts.forEach((square) => {
+      this.grid.updateNode(square.gridX, square.gridY, { color: square.color, filled: true, index: square.index })
     })
   }
-
-  getBoundingBox(rectangles) {
-    let minX = this.grid.x + this.grid.width
-    let minY = this.grid.y + this.grid.height
-    let maxX = this.grid.x
-    let maxY = this.grid.y
-
-    rectangles.forEach((rect) => {
-      if(rect.x < minX) minX = rect.x
-      if(rect.y < minY) minY = rect.y
-      if(rect.x + rect.width > maxX) maxX = rect.x + rect.width
-      if(rect.y + rect.height > maxY) maxY = rect.y + rect.height
-    })
-
-    return {
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY
-    }
-  }
+  //
+  // getBoundingBox(rectangles) {
+  //   let minX = this.grid.x + this.grid.width
+  //   let minY = this.grid.y + this.grid.height
+  //   let maxX = this.grid.x
+  //   let maxY = this.grid.y
+  //
+  //   rectangles.forEach((rect) => {
+  //     if(rect.x < minX) minX = rect.x
+  //     if(rect.y < minY) minY = rect.y
+  //     if(rect.x + rect.width > maxX) maxX = rect.x + rect.width
+  //     if(rect.y + rect.height > maxY) maxY = rect.y + rect.height
+  //   })
+  //
+  //   return {
+  //     x: minX,
+  //     y: minY,
+  //     width: maxX - minX,
+  //     height: maxY - minY
+  //   }
+  // }
 
   paintNodeXY(x, y) {
     const { selectedColor, grid } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
-    this.fillNode(gridX, gridY, selectedColor)
+
+    if(this.grid.nodes[gridX] && this.grid.nodes[gridX][gridY] && this.grid.nodes[gridX][gridY].data && typeof this.grid.nodes[gridX][gridY].data.index != 'number') {
+      this.fillNode(gridX, gridY, selectedColor)
+    }
   }
 
   unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
@@ -257,7 +252,15 @@ class PathEditor {
   }
 
   unfillNode(gridX, gridY) {
-    this.grid.updateNode(gridX, gridY, {filled: false, color: null})
+    if(this.grid.nodes[gridX] && this.grid.nodes[gridX][gridY] && this.grid.nodes[gridX][gridY].data && typeof this.grid.nodes[gridX][gridY].data.index == 'number') {
+      this.grid.forEachNode((node) => {
+        if(node.data.index > this.grid.nodes[gridX][gridY].data.index) {
+          node.data.index--
+        }
+      })
+      this.grid.updateNode(gridX, gridY, {filled: false, color: null, index: null})
+      this.pathParts.splice(this.grid.nodes[gridX][gridY].data.index, 1)
+    }
   }
 
   unfillNodeXY(x, y) {
@@ -274,17 +277,24 @@ class PathEditor {
   }
 
   fillNode(gridX, gridY, color) {
-    this.grid.updateNode(gridX, gridY, {filled: true, color})
+    this.grid.updateNode(gridX, gridY, {filled: true, color, index: this.pathParts.length})
+    this.pathParts.push({
+      x: (gridX * this.grid.nodeWidth) + this.grid.startX,
+      y: (gridY * this.grid.nodeHeight) + this.grid.startY,
+      gridX,
+      gridY,
+      index: this.pathParts.length,
+    })
   }
 
   updateNodeHighlight(location) {
-    const { x,y } = gridUtil.snapXYToGrid(location.x, location.y, { closest: false })
+    const { x,y } = this.grid.snapXYToGrid(location.x, location.y, { closest: false })
 
     let mouseLocation = {
       x,
       y,
-      width: this.grid.nodeSize,
-      height: this.grid.nodeSize
+      width: this.grid.nodeWidth,
+      height: this.grid.nodeHeight
     }
 
     this.nodeHighlighted = mouseLocation
@@ -303,20 +313,21 @@ class PathEditor {
     const {ctx, canvas, camera, grid, nodeHighlighted, open, tool, selectedColor } = PATHEDITOR
     if(!open) return
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    // ctx.fillStyle = 'rgba(0, 0, 0, 0.75)'
+    // ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     drawTools.drawGrid(ctx, grid, camera)
 
     grid.forEachNode((node) => {
       if(node.data.filled) {
-        drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color }, camera)
+        const object = {x: node.x, y: node.y, height: node.height, width: node.width, color: 'rgba(0,0,255, 0.4)', opacity: .4, characterTextInside: node.data.index + 1 }
+        drawTools.drawObject(ctx, object, camera)
       }
     })
 
     if(nodeHighlighted) {
       if(tool === 'paintBrush') {
-        drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: 'rgba(0,0,255, 0.4)', opacity: .4 }, camera)
       } else if(tool === 'eraser'){
         drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
       } else {

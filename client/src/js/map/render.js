@@ -172,18 +172,20 @@ function update(camera) {
     })
   }
 
-  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue && clientHero.interactableObject.tags.outline) {
+  if(clientHero && clientHero.interactableObject && !clientHero.flags.showDialogue) {
     const { interactableObject } = clientHero
 
-    if(interactableObject.tags.invisible) {
+    // if(interactableObject.tags.invisible) {
       ctx.fillStyle = "rgb(255, 255, 255)";
-      let text = "Press X to interact"
+      let text = "Press V to interact"
       ctx.textAlign = 'center'
       // ctx.textBaseline = 'alphabetic'
       ctx.font =`${18 * MAP.canvasMultiplier}pt Courier New`
       // console.log(MAP.canvas.width/2 - (200 * MAP.canvasMultiplier), 240 * MAP.canvasMultiplier)
       ctx.fillText(text, MAP.canvas.width/2, MAP.canvas.height - (36 * MAP.canvasMultiplier))
-    } else {
+    // }
+
+    if(interactableObject.tags.outline) {
       let thickness = 3
       drawTools.drawBorder(ctx, {color: 'white', x: interactableObject.x-thickness, y: interactableObject.y - thickness, width: interactableObject.width + (thickness*2), height: interactableObject.height + (thickness*2)}, camera, { thickness })
     }

@@ -1,3 +1,25 @@
+// pathIdIndex: object.pathIdIndex,
+// pathOnWayBack:  object.pathOnWayBack,
+//
+// _pathNeedsOwnPfGrid: object.pathNeedsOwnPfGrid,
+// _pfGrid: object.pfGrid,
+
+// window.pathTags = {
+//   pathfindingLimit: false,
+//   path: false,
+//   pfGridUpdateOnLoop: false,
+// }
+
+// pathParts:  [
+//  gridX,
+//  gridY,
+//  x, y
+//  width, height
+// ]
+// pathId:  object.pathId,
+// pathNavigation:  object.pathNavigation, // loop,  patrol
+
+
 import pathfinding from '../../utils/pathfinding.js'
 import collision from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
