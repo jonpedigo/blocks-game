@@ -184,6 +184,20 @@ export default class Root extends React.Component {
     return activeQuest
   }
 
+  hideUIGoalToast() {
+    const {
+      editorGoalToastId
+    } = this.state;
+
+    toast.dismiss(editorGoalToastId)
+  }
+
+  showUIGoalToast(text) {
+    this.setState({
+      editorGoalToastId: toast(text)
+    })
+  }
+
   _showActiveQuestGoalToast() {
     const {
       activeQuest,

@@ -96,9 +96,13 @@ class MapEditor {
     MAPEDITOR.initState()
     MAPEDITOR.pause()
 
-    const removeListener = window.local.on('onPathEditorClose', ({ pathParts }) => {
+    const removeListener = window.local.on('onPathEditorClose', ({ pathParts, customGridProps }) => {
       if (pathParts) {
-        window.socket.emit('editObjects', [{ id: object.id, pathParts }])
+        if(customGridProps) {
+          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: true, { path: true }, customGridProps }])
+        } else {
+          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: false, tags: { path: true } }])
+        }
       }
       // window.socket.emit('editGameState', { paused: false })
       MAPEDITOR.resume()
@@ -249,7 +253,9 @@ function handleMouseDown(event) {
     MAPEDITOR.resizingObject = null
   } else if (MAPEDITOR.draggingObject) {
     const { draggingObject } = MAPEDITOR
-    if (draggingObject.constructParts) {
+    if (draggingObject.pathParts) {
+      networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, pathParts: draggingObject.pathParts })
+    } else if (draggingObject.constructParts) {
       networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts })
     } else if (GAME.gameState.started) {
       networkEditObject(draggingObject, { id: draggingObject.id, x: draggingObject.x, y: draggingObject.y })

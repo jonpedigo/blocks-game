@@ -74,6 +74,13 @@ class PlayerUI {
   onHeroCompleteQuest(heroId, questId) {
     PLAYERUI.ref.onHeroCompleteQuest(heroId, questId)
   }
+
+  onShowUIGoalToast(text) {
+    PLAYERUI.ref.onShowUIGoalToast(text)
+  }
+  onCloseUIGoalToast() {
+    PLAYERUI.ref.onCloseUIGoalToast()
+  }
 }
 
 window.PLAYERUI = new PlayerUI()

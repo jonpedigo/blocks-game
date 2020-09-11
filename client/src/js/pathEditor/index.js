@@ -68,11 +68,22 @@ class PathEditor {
     //     pathParts.push({ index: node.data.index, x: node.x, y: node.y, gridX: node.gridX, gridY: node.gridY, width: this.grid.nodeWidth, height: this.grid.nodeHeight})
     //   }
     // })
-    //const { x, y, width, height } = this.getBoundingBox(pathParts)
     //, x, y, width, height
-    const pathParts = this.pathParts
+    const pathParts = this.pathParts.map((part, index) => {
+      part.index = index
+      part.width = this.grid.nodeWidth
+      part.height = this.grid.nodeHeight
+      return part
+    })
     this.close()
-    window.local.emit('onPathEditorClose', {pathParts})
+    if(this.grid.nodeWidth !== GAME.grid.nodeSize || this.grid.nodeHeight !== GAME.grid.nodeSize) {
+      const { x, y, width, height } = this.getBoundingBox(pathParts)
+      const customGridProps = {
+        x, y, width, height,
+        nodeWidth: this.grid.nodeWidth, nodeHeight: this.grid.nodeHeight
+      }
+      window.local.emit('onPathEditorClose', {pathParts, customGridProps })
+    } else window.local.emit('onPathEditorClose', {pathParts })
 
   }
 
@@ -212,27 +223,27 @@ class PathEditor {
       this.grid.updateNode(square.gridX, square.gridY, { color: square.color, filled: true, index: square.index })
     })
   }
-  //
-  // getBoundingBox(rectangles) {
-  //   let minX = this.grid.x + this.grid.width
-  //   let minY = this.grid.y + this.grid.height
-  //   let maxX = this.grid.x
-  //   let maxY = this.grid.y
-  //
-  //   rectangles.forEach((rect) => {
-  //     if(rect.x < minX) minX = rect.x
-  //     if(rect.y < minY) minY = rect.y
-  //     if(rect.x + rect.width > maxX) maxX = rect.x + rect.width
-  //     if(rect.y + rect.height > maxY) maxY = rect.y + rect.height
-  //   })
-  //
-  //   return {
-  //     x: minX,
-  //     y: minY,
-  //     width: maxX - minX,
-  //     height: maxY - minY
-  //   }
-  // }
+
+  getBoundingBox(rectangles) {
+    let minX = this.grid.x + this.grid.width
+    let minY = this.grid.y + this.grid.height
+    let maxX = this.grid.x
+    let maxY = this.grid.y
+
+    rectangles.forEach((rect) => {
+      if(rect.x < minX) minX = rect.x
+      if(rect.y < minY) minY = rect.y
+      if(rect.x + rect.width > maxX) maxX = rect.x + rect.width
+      if(rect.y + rect.height > maxY) maxY = rect.y + rect.height
+    })
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY
+    }
+  }
 
   paintNodeXY(x, y) {
     const { selectedColor, grid } = this

@@ -57,6 +57,13 @@ function update() {
     // }
 
     if(!GAME.gameState.started) {
+      if(objectHighlighted.pathParts) {
+        objectHighlighted.pathParts.forEach((part, i) => {
+          const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,0,255, .6)', opacity: .4, characterTextInside: part.index + 1 }
+          drawTools.drawObject(ctx, object, camera)
+        });
+      }
+
       const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
       drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
       drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)

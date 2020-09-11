@@ -132,12 +132,11 @@ class Objects{
       _targetPursueId: object._targetPursueId,
       //^^ older
 
-      targetFollowId:  object.targetFollowId,
+      // targetFollowId:  object.targetFollowId,
 
       pathIdIndex: object.pathIdIndex,
       pathOnWayBack:  object.pathOnWayBack,
 
-      _pathNeedsOwnPfGrid: object.pathNeedsOwnPfGrid,
       _pfGrid: object.pfGrid,
 
       navigationTargetId:  object.navigationTargetId,
@@ -228,7 +227,12 @@ class Objects{
 
       pathParts:  object.pathParts,
       pathId:  object.pathId,
-      pathNavigation:  object.pathNavigation, // loop,  patrol
+      pathNavigationStyle:  object.pathNavigationStyle, // loop,  patrol
+      pathNodeBufferTime: object.pathNodeBufferTime,
+
+      _pathUsesCustomGrid: object._pathUsesCustomGridPfGrid,
+      customGridProps: object.customGridProps,
+
 
       // sub objects
       relativeWidth: object.relativeWidth,

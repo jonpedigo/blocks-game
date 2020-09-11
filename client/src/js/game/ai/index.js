@@ -1,24 +1,30 @@
+
+// OBJECT USING PATH
 // pathIdIndex: object.pathIdIndex,
 // pathOnWayBack:  object.pathOnWayBack,
-//
-// _pathNeedsOwnPfGrid: object.pathNeedsOwnPfGrid,
-// _pfGrid: object.pfGrid,
 
+// pathId:  object.pathId,
+// pathNavigationStyle:  object.pathNavigation, // loop,  patrol
+// pathNodeBufferTime: time before starting next path
+
+
+// PATH OBJECT
 // window.pathTags = {
 //   pathfindingLimit: false,
 //   path: false,
-//   pfGridUpdateOnLoop: false,
+//   gridUpdateOnLoop: false,
 // }
-
 // pathParts:  [
 //  gridX,
 //  gridY,
 //  x, y
 //  width, height
+//  index
 // ]
-// pathId:  object.pathId,
-// pathNavigation:  object.pathNavigation, // loop,  patrol
+// _pathUsesCustomGrid: object._pathUsesCustomGrid,
+// customGridProps: object.customGridProps
 
+// _pfGrid: object.pfGrid,
 
 import pathfinding from '../../utils/pathfinding.js'
 import collision from '../../utils/collisions'
