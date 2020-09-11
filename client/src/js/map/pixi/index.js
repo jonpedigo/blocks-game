@@ -169,6 +169,8 @@ PIXIMAP.onRender = function() {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open){
+    camera = PATHEDITOR.camera
   }
 
   if(PIXIMAP.assetsLoaded) {

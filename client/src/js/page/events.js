@@ -25,7 +25,7 @@ class EventEmitter {
       if(PAGE.role.isHost && NOTIFICATIONSCONTROL[eventName]) {
         event.push(NOTIFICATIONSCONTROL[eventName])
       }
-      
+
       if(PAGE[eventName]) {
         event.push(PAGE[eventName])
       }
@@ -112,6 +112,10 @@ class EventEmitter {
 
       if(CONSTRUCTEDITOR[eventName]) {
         event.push(CONSTRUCTEDITOR[eventName])
+      }
+
+      if(PATHEDITOR[eventName]) {
+        event.push(PATHEDITOR[eventName])
       }
 
       if(WORLDMANAGER[eventName]) {

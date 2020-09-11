@@ -37,6 +37,12 @@ class EditorUI {
   onConstructEditorStart() {
     EDITORUI.ref.forceUpdate()
   }
+  onPathEditorClose() {
+    EDITORUI.ref.forceUpdate()
+  }
+  onPathEditorStart() {
+    EDITORUI.ref.forceUpdate()
+  }
 
   onStopGame() {
     setTimeout(() => {

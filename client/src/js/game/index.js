@@ -250,9 +250,9 @@ class Game{
     if(game.library) GAME.library = game.library
     else GAME.library = {}
 
-    if(game.library.tags) {
-      tags.addGameTags(game.library.tags)
-      GAME.library.tags = game.library.tags
+    if(GAME.library.tags) {
+      tags.addGameTags(GAME.library.tags)
+      GAME.library.tags = GAME.library.tags
     } else GAME.library.tags = {}
 
     input.setDefault()

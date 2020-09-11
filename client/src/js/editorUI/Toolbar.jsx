@@ -30,7 +30,7 @@ export default class Toolbar extends React.Component {
   render() {
     const { open } = this.state
 
-    if(!open || CONSTRUCTEDITOR.open) return null
+    if(!open || CONSTRUCTEDITOR.open || PATHEDITOR.open) return null
 
     const hero = GAME.heros[HERO.editingId]
 

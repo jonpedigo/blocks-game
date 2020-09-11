@@ -123,7 +123,7 @@ export default class Root extends React.Component {
 
   render() {
     const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
-    if (CONSTRUCTEDITOR.open) return null
+    if (CONSTRUCTEDITOR.open || PATHEDITOR.open) return null
     if (!GAME.gameState || !GAME.gameState.loaded) return null
 
     // <div className="ShortcutPanel">

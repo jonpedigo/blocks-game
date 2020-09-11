@@ -71,7 +71,7 @@ export default class Creator extends React.Component {
     }
 
     this._onClick = (event) => {
-      if(CONSTRUCTEDITOR.open) return
+      if(CONSTRUCTEDITOR.open || PATHEDITOR.open) return
       if(!window.isClickingMap(event.target.className)) return
       const { creatorObjectSelected, colorSelected } = this.state
 
@@ -313,7 +313,7 @@ export default class Creator extends React.Component {
   render() {
     const { creatorObjects, rows } = this.state
 
-    if(CONSTRUCTEDITOR.open) return null
+    if(CONSTRUCTEDITOR.open || PATHEDITOR.open) return null
     if(!PAGE.showEditorTools()) {
       return null
     }

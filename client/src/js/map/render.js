@@ -42,7 +42,7 @@ function drawArrow(ctx, fromx, fromy, tox, toy, options){
     ctx.fill();
 
 //     var hyp = Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
-// 
+//
 // ctx.save();
 // ctx.translate(p1.x, p1.y);
 // ctx.rotate(angle);
@@ -118,9 +118,13 @@ function update(camera) {
     object = object.mod()
 
     if(object.removed) return
-    if(object.id === CONSTRUCTEDITOR.objectId) return
+    if(object.id === CONSTRUCTEDITOR.objectId || object.id === PATHEDITOR.objectId) return
     if(object.tags.outline) {
       if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
+        if(PAGE.role.isAdmin && object.pathParts) {
+          drawTools.drawConstructParts(ctx, camera, { constructParts: object.pathParts, ...object})
+        }
+
         if(object.constructParts) {
           drawTools.drawConstructParts(ctx, camera, object)
         } else {

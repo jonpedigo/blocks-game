@@ -103,8 +103,6 @@ class Objects{
       _deltaX: object._deltaX,
       velocityY: object.velocityY,
       velocityX: object.velocityX,
-      target: object.targetXY,
-      path: object.path,
       lastHeroUpdateId: object.lastHeroUpdateId,
       _movementDirection: object._movementDirection,
       _goalDirection: object._goalDirection,
@@ -124,11 +122,22 @@ class Objects{
       customState: object.customState,
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
-      _targetId: object._targetPursueId,
       _objectsWithin: object._objectsWithin,
       _objectsAwareOf: object._objectsAwareOf,
       _flipY: object._flipY,
 
+
+      targetXY: object.targetXY,
+      path: object.path,
+      _targetPursueId: object._targetPursueId,
+      //^^ older
+
+      targetFollowId:  object.targetFollowId,
+      pathId:  object.pathId,
+      pathOnWayBack:  object.pathOnWayBack,
+      pathNavigation:  object.pathNavigation, // loop,  patrol
+
+      navigationTargetId:  object.navigationTargetId,
 
       // IMPLEMENT...
       conditionTestCounts: object.conditionTestCounts,
@@ -213,6 +222,8 @@ class Objects{
           ownerId: part.ownerId,
         }
       }),
+
+      pathParts:  object.pathParts,
 
       // sub objects
       relativeWidth: object.relativeWidth,

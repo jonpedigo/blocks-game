@@ -60,6 +60,13 @@ class Creator {
   onConstructEditorStart() {
     CREATOR.ref.forceUpdate()
   }
+  onPathEditorClose() {
+    CREATOR.ref.forceUpdate()
+  }
+  onPathEditorStart() {
+    CREATOR.ref.forceUpdate()
+  }
+
 }
 
 window.CREATOR = new Creator()

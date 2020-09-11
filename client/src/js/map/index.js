@@ -75,6 +75,8 @@ MAP.onRender = function(delta) {
   //set camera so we render everything in the right place
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   } else {
     if(hero) camera.set(hero)
   }
@@ -90,7 +92,7 @@ MAP.onRender = function(delta) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if(PIXIMAP.assetsLoaded && (!GAME.gameState.paused || CONSTRUCTEDITOR.open)) {
+  if(PIXIMAP.assetsLoaded && (!GAME.gameState.paused || CONSTRUCTEDITOR.open || PATHEDITOR.open)) {
     render.update(camera)
   } else {
     canvas.style.backgroundColor = '#222'

@@ -110,6 +110,8 @@ function updatePosition(pixiChild, gameObject) {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   }
 
   const isContainer = pixiChild.children && pixiChild.children.length
@@ -210,6 +212,8 @@ function updateScale(pixiChild, gameObject) {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   }
 
   if(!pixiChild.isAnimatingScale) {

@@ -11,8 +11,9 @@ const updatePixiObject = (gameObject) => {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   }
-
   const child = PIXIMAP.childrenById[gameObject.id]
   if(child) {
     child._lastRenderId = PIXIMAP.renderId
@@ -113,6 +114,8 @@ const updatePixiEmitter = (pixiChild, gameObject) => {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   }
 
   const stage = getGameObjectStage(gameObject)
@@ -256,6 +259,8 @@ const addGameObjectToStage = (gameObject, stage) => {
   let camera = MAP.camera
   if(CONSTRUCTEDITOR.open) {
     camera = CONSTRUCTEDITOR.camera
+  } else if(PATHEDITOR.open) {
+    camera = PATHEDITOR.camera
   }
 
   if(PAGE.role.isHost) gameObject = gameObject.mod()

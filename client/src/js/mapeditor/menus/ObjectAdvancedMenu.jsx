@@ -55,6 +55,10 @@ export default class ObjectAdvancedMenu extends React.Component{
         openConstructEditor(objectSelected)
       }
 
+      if(key === 'open-path-editor') {
+        MAPEDITOR.openPathEditor(objectSelected)
+      }
+
       if (key === "open-physics-live-editor") {
         LIVEEDITOR.open(objectSelected, 'physics')
       }
@@ -79,6 +83,7 @@ export default class ObjectAdvancedMenu extends React.Component{
       <MenuItem key='set-object-respawn-point'>Set current position as object respawn point</MenuItem>
       <MenuItem key='set-world-respawn-point'>Set current position as world respawn point</MenuItem>
       <MenuItem key='open-construct-editor'>Open construct editor</MenuItem>
+      <MenuItem key='open-path-editor'>Open path editor</MenuItem>
       <MenuItem key='open-physics-live-editor'>Live Edit Physics</MenuItem>
     </Menu>
   }

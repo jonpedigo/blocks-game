@@ -69,6 +69,7 @@ class MapEditor {
     keyInput.init()
 
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
+    PATHEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
   }
 
   openConstructEditor(object, startColor, startAtHero) {
@@ -88,6 +89,24 @@ class MapEditor {
     })
   }
 
+  openPathEditor(object, startAtHero) {
+    PATHEDITOR.start(object, startAtHero)
+    // window.socket.emit('editGameState', { paused: true })
+
+    MAPEDITOR.initState()
+    MAPEDITOR.pause()
+
+    const removeListener = window.local.on('onPathEditorClose', ({ pathParts }) => {
+      if (pathParts) {
+        window.socket.emit('editObjects', [{ id: object.id, pathParts }])
+      }
+      // window.socket.emit('editGameState', { paused: false })
+      MAPEDITOR.resume()
+      removeListener()
+    })
+  }
+
+
   pause() {
     MAPEDITOR.paused = true
   }
@@ -97,10 +116,6 @@ class MapEditor {
   }
 
   onUpdate(delta) {
-    // if (MAPEDITOR.groupGridHighlights && !MAPEDITOR.skipRemoteStateUpdate) {
-    //   updateGridHighlight(MAPEDITOR.groupGridHighlights.mousePos)
-    // }
-
     if(MAPEDITOR.objectHighlighted) window.socket.emit('sendHeroMapEditor', MAPEDITOR.objectHighlighted, HERO.id)
   }
 
@@ -253,20 +268,10 @@ function handleMouseDown(event) {
   MAPEDITOR.snapToGrid = true
 }
 
-function handleMouseOut(event) {
-  if (PAGE.role.isGhost) {
-    MAPEDITOR.skipRemoteStateUpdate = false
-  }
-}
-
 function handleMouseMove(event) {
   const { camera } = MAPEDITOR
 
   if (!window.isClickingMap(event.target.className)) return
-
-  if (PAGE.role.isGhost) {
-    MAPEDITOR.skipRemoteStateUpdate = true
-  }
 
   const { x, y } = window.convertToGameXY(event)
 
@@ -306,7 +311,6 @@ function updateGridHighlight(location) {
   MAPEDITOR.objectHighlighted = mouseLocation
 
   if(MAPEDITOR.objectHighlighted.CREATOR) {
-    console.log('??')
     return
   }
 
@@ -382,6 +386,14 @@ function updateDraggingObject(object) {
 
   if (object.constructParts) {
     object.constructParts.forEach((part) => {
+      part.x += diffX
+      part.y += diffY
+      return part
+    })
+  }
+
+  if (object.pathParts) {
+    object.pathParts.forEach((part) => {
       part.x += diffX
       part.y += diffY
       return part

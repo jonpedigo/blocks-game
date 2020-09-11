@@ -62,6 +62,7 @@ class Hero{
       dialogue: [],
       defaultSprite: 'solidcolorsprite',
       sprite: 'solidcolorsprite',
+      paths: {},
       flags : {
         showDialogue: false,
         showScore: false,

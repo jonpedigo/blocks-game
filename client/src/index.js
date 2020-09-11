@@ -5,10 +5,27 @@
 ////////////////////////////////////////////////////
 
 TODO
-STORY SCREENSHOTS
-SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
-PIXEL EDITOR
 PATHFINDING EDITOR
+paths {
+  [name]: {
+    type: patrol/cycle/container
+      remove pathfinding limit idea and replace with contain?
+    if(container) behavior: 'various movement tags'
+  }
+}
+pathCurrent: 'pathName'
+pathReverse: // is moving on this path in reverse order
+pathfindingLimit: // still use this but the container will be more advanced and not that performant
+
+
+
+STORY SCREENSHOTS
+
+SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
+  We need a LEFTHAND sprite selection pixi map. Its searchable by author, platformer, topdown, scifi,fantasy
+  Well also need a ADMIN to reselect sprites and save that info to the sprite json, remove sprites, combine sprites into animations
+PIXEL EDITOR
+
 IMPROVEMENTS
 
 -----
@@ -140,13 +157,7 @@ LORDD ^^
 
 WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
 
-BUG: Pathfinding pacman right 3 blocks can’t find paths?
-
-Anticipate add platform
-
 Drag and drop sequence items
-
-Admin info on heros. Like a little color in the corner would be nice if its an admin or not you know what I mean, you feel me??
 
 Allow circles and triangles?
 
@@ -164,8 +175,6 @@ event: onObjectTurn
 Object 'swinging' like on a rope. I mean... awesome right?
 input modifiers....'on ice', 'flat'
 // planet gravity! Would be cool to have..
-
-ADMIN POWER HIGHLIGHT - switch current user highlight to like.. a BORDER. Alsso make the admin highlight a border ( show all players highlights when game isnt started? )
 
 I want actual grid node by grid node movement and grid collision system. I want grid movement for OBJECTS too
 TRUE zelda camera work
@@ -432,6 +441,7 @@ https://www.leshylabs.com/apps/sstool/
 
 SpriteSheet
 https://pixanna.nl/products/ancient-dungeons-base-pack/
+https://craftpix.net/
 
 IMPROVE AESTHETIC AND GAME AESHTIC CUSTOMIZATION
 https://www.transparenttextures.com/
@@ -462,6 +472,7 @@ import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
+import './js/pathEditor/index.js'
 import './js/worldmanager/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'

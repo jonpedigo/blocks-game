@@ -136,6 +136,8 @@ window.isClickingMap = function(className) {
 
   if(className.indexOf('ConstructEditor') >= 0) return false
 
+  if(className.indexOf('PathEditor') >= 0) return false
+
   return true
 }
 
