@@ -52,7 +52,11 @@ class MapEditor {
     MAPEDITOR.canvas = canvas
     MAPEDITOR.camera = camera
 
-    document.body.addEventListener("mousedown", (e) => {
+    contextMenu.init(MAPEDITOR)
+    keyInput.init()
+
+    document.body.addEventListener("click", (e) => {
+      if(e.button === 2) return
       if (!MAPEDITOR.paused) handleMouseDown(event)
     })
     document.body.addEventListener("mousemove", (e) => {
@@ -64,9 +68,6 @@ class MapEditor {
     // document.body.addEventListener("mouseout", (e) => {
     //   if (!MAPEDITOR.paused) handleMouseOut(event)
     // })
-
-    contextMenu.init(MAPEDITOR)
-    keyInput.init()
 
     CONSTRUCTEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
     PATHEDITOR.set(MAPEDITOR.ctx, MAPEDITOR.canvas, new Camera())
@@ -99,7 +100,7 @@ class MapEditor {
     const removeListener = window.local.on('onPathEditorClose', ({ pathParts, customGridProps }) => {
       if (pathParts) {
         if(customGridProps) {
-          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: true, { path: true }, customGridProps }])
+          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: true, tags: { path: true }, customGridProps }])
         } else {
           window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: false, tags: { path: true } }])
         }
@@ -224,6 +225,15 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)
 
+  let selectionAllowed = true
+  if(event.target.className.indexOf('dont-close-menu') >= 0) {
+  } else if(MAPEDITOR.contextMenuVisible) {
+    selectionAllowed = false
+    setTimeout(() => {
+      MAPEDITOR.contextMenuRef._toggleContextMenu("hide");
+    })
+  }
+
   if(MAPEDITOR.copiedObject) {
     const subObjects = MAPEDITOR.copiedObject.subObjects
     if(subObjects) {
@@ -269,6 +279,14 @@ function handleMouseDown(event) {
     const { relativeX, relativeY } = OBJECTS.getRelativeCenterXY(draggingRelativeObject, owner)
     networkEditObject(draggingRelativeObject, { id: draggingRelativeObject.id, relativeX, relativeY })
     MAPEDITOR.draggingRelativeObject = null
+  } else if(selectionAllowed && MAPEDITOR.objectHighlighted && MAPEDITOR.objectHighlighted.id){
+    if(OBJECTS.editingId === MAPEDITOR.objectHighlighted.id) {
+      OBJECTS.editingId = null;
+    } else {
+      OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
+    }
+  } else if(selectionAllowed){
+    OBJECTS.editingId = null
   }
 
   MAPEDITOR.snapToGrid = true

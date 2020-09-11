@@ -114,6 +114,11 @@ function update() {
     drawTools.drawBorder(ctx, { color: '#0A0', ...GAME.world.lockCamera }, camera, { thickness: 2} );
   }
 
+  if(OBJECTS.editingId) {
+    const editingObject = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)
+    drawTools.drawBorder(ctx, {...editingObject, color: '#00A'}, camera, {thickness: 5})
+  }
+
   if(GAME.world && GAME.world.gameBoundaries) {
     if(GAME.world.gameBoundaries.behavior == 'purgatory') {
       if(PAGE.role.isAdmin) {
@@ -151,6 +156,7 @@ function update() {
       }
     }
   }
+
 
   if(PAGE.role.isAdmin) {
     GAME.heroList.forEach((hero) => {

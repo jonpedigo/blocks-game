@@ -4,6 +4,7 @@ import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import { SwatchesPicker } from 'react-color';
 import HeroContextMenu from './adminMenus/heroContextMenu.jsx';
 import ObjectContextMenu from './adminMenus/objectContextMenu.jsx';
+import EditingObjectContextMenu from './adminMenus/EditingObjectContextMenu.jsx';
 import WorldContextMenu from './adminMenus/worldContextMenu.jsx';
 import GeneratedMenu from './playerMenus/generatedMenu.jsx';
 import '../libraries/playerMenuLibrary.js';
@@ -44,13 +45,6 @@ class contextMenuEl extends React.Component{
       }
     });
 
-    window.addEventListener("click", e => {
-      if(e.target.className.indexOf('dont-close-menu') >= 0) {
-      } else {
-        this._toggleContextMenu("hide");
-      }
-    });
-
     this.state = {
       hide: true,
       objectSelected: {},
@@ -72,7 +66,7 @@ class contextMenuEl extends React.Component{
     }
   }
 
-  _toggleContextMenu(command) {
+  _toggleContextMenu = (command) => {
     if(command === "show") {
       this.setState({ hide: false, objectSelected: MAPEDITOR.objectHighlighted })
     } else {
@@ -80,7 +74,7 @@ class contextMenuEl extends React.Component{
     }
   }
 
-  _setContextMenuPosition({ top, left }) {
+  _setContextMenuPosition = ({ top, left }) => {
     // THIS ADJUSTS THE SIZE OF THE CONTEXT MENU IF ITS TOO CLOSE TO THE EDGES
     if(MAPEDITOR.objectHighlighted.id) {
       const heightDesired = 350
@@ -125,7 +119,35 @@ class contextMenuEl extends React.Component{
 
     MAPEDITOR.contextMenuVisible = true
 
+    const showEditingObjectMenu = OBJECTS.editingId && objectSelected.id && OBJECTS.editingId !== objectSelected.id
+    if(showEditingObjectMenu) {
+      const objectEditing = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)
+      if(objectEditing) {
+        return <EditingObjectContextMenu
+          objectEditing={objectEditing}
+          objectSelected={objectSelected}
+          openColorPicker={this.openColorPicker}
+          selectSubObject={this._selectSubObject}
+        />
+      } else {
+        OBJECTS.editingId = null
+      }
+    }
+
     if(subObjectSelected && subObjectSelectedName) {
+      if(showEditingObjectMenu) {
+        const objectEditing = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)
+        if(objectEditing) {
+          return <EditingObjectContextMenu
+            objectEditing={objectEditing}
+            objectSelected={subObjectSelected}
+            openColorPicker={this.openColorPicker}
+            selectSubObject={this._selectSubObject}
+          />
+        } else {
+          OBJECTS.editingId = null
+        }
+      }
       return <ObjectContextMenu
         objectSelected={subObjectSelected}
         openColorPicker={this.openColorPicker}
