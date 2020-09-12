@@ -176,7 +176,13 @@ PIXIMAP.onRender = function() {
   if(PIXIMAP.assetsLoaded) {
     MAP.canvas.style.backgroundColor = ''
     // PIXIMAP.app.renderer.backgroundColor = getHexColor(GAME.world.backgroundColor)
-    if(!PIXIMAP.backgroundOverlay.isAnimatingColor) PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
+    if(!PIXIMAP.backgroundOverlay.isAnimatingColor) {
+      if(!GAME.gameState.started && GAME.heros[HERO.id].keysDown && GAME.heros[HERO.id].keysDown['caps lock'] !== true) {
+        PIXIMAP.backgroundOverlay.tint = 0x000000
+      } else {
+        PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)
+      }
+    }
 
     if(PIXIMAP.objectStage._reInitialize) {
       PIXIMAP.objectStage._reInitialize = false

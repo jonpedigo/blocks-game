@@ -315,14 +315,18 @@ const initPixiApp = (canvasRef, onLoad) => {
     if(spritesheetsLoading[name]) return true
   })
 
-  window.socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
+  let socket = window.socket
+  if(PAGE.role.isArcadeMode) {
+    socket = window.networkSocket
+  }
+  socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
     console.log('got sss', spriteSheets)
     startLoadingAssets(spriteSheets.map((ss) => {
       ss.serverImageUrl = 'assets/images/' + ss.imageUrl
       return ss
     }))
   })
-  window.socket.emit('getSpriteSheetsJSON', spritesheetsRequested)
+  socket.emit('getSpriteSheetsJSON', spritesheetsRequested)
 
   ///////////////
   ///////////////

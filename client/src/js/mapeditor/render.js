@@ -35,13 +35,13 @@ function update() {
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
-  if(!GAME.gameState.started && objectHighlighted && objectHighlighted.tags && (objectHighlighted.tags.hero)) {
+  if((PAGE.role.isAdmin || !GAME.gameState.started) && objectHighlighted && objectHighlighted.tags && (objectHighlighted.tags.hero)) {
     const {x, y} = HERO.getSpawnCoords(objectHighlighted)
     drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
     drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
   }
 
-  if(objectHighlighted && !objectHighlighted.CREATOR) {
+  if((PAGE.role.isAdmin || !GAME.gameState.started) && objectHighlighted && !objectHighlighted.CREATOR) {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       let color = 'rgba(255,255,255,0.2)'
       drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
@@ -59,7 +59,7 @@ function update() {
     if(!GAME.gameState.started) {
       if(objectHighlighted.pathParts) {
         objectHighlighted.pathParts.forEach((part, i) => {
-          const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,0,255, .6)', opacity: .4, characterTextInside: part.index + 1 }
+          const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,170,0, .6)', opacity: .4, characterTextInside: part.index + 1 }
           drawTools.drawObject(ctx, object, camera)
         });
       }
@@ -116,7 +116,7 @@ function update() {
 
   if(OBJECTS.editingId) {
     const editingObject = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)
-    drawTools.drawBorder(ctx, {...editingObject, color: '#00A'}, camera, {thickness: 5})
+    drawTools.drawBorder(ctx, {...editingObject, color: '#0A0'}, camera, {thickness: 5})
   }
 
   if(GAME.world && GAME.world.gameBoundaries) {

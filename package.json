@@ -49,6 +49,7 @@
     "generate-maze-by-clustering": "0.0.4",
     "html-webpack-plugin": "^3.2.0",
     "ismobilejs": "^1.1.1",
+    "jquery": "^3.5.1",
     "jsoneditor": "^7.0.4",
     "keycode": "^2.2.0",
     "lodash": "^4.17.15",

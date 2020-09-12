@@ -129,6 +129,7 @@ function onPageLoaded(){
       if(PAGE.role.isHost) {
         if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
         GAME.heroInputs[HERO.id][key] = true
+        GAME.heros[HERO.id].keysDown = GAME.heroInputs[HERO.id]
         onKeyDown(key, GAME.heros[HERO.id])
       } else {
         window.socket.emit('sendHeroKeyDown', key, HERO.id)
@@ -231,7 +232,7 @@ function onUpdate(hero, keysDown, delta) {
   const downPressed = 's' in keysDown || 'down' in keysDown
   const leftPressed = 'a' in keysDown || 'left' in keysDown
 
-  if((!GAME.gameState.started || hero.flags.isAdmin) && 'shift' in keysDown) {
+  if((!GAME.gameState.started || hero.flags.isAdmin) && ('shift' in keysDown || 'caps lock' in keysDown)) {
     if (upPressed) {
       hero.y -= GAME.grid.nodeSize
     }

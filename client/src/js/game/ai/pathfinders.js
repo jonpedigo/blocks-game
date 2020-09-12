@@ -4,7 +4,7 @@ import gridUtil from '../../utils/grid.js'
 function pathfindingAI(object) {
   let hero = GAME.heroList[0]
 
-  const autoTarget = !object.mod().tags['targetHeroOnAware'] && !object.mod().tags['targetVictimOnAware']
+  const autoTarget = !object.mod().tags['targetAuto'] && !object.mod().tags['targetHeroOnAware'] && !object.mod().tags['targetVictimOnAware']
   if(object.tags && object.mod().tags['zombie'] && autoTarget) {
     setTarget(object, hero)
   }

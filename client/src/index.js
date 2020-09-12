@@ -165,6 +165,8 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
+bouncing ball
+
 special camera relation, 0, .5, 2, 10, etc. might wanna encapsulale the camera changing logic into a function?
 
 add object needs to be its own thing with effect, wait, condition, etc.

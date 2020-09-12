@@ -45,6 +45,13 @@ class contextMenuEl extends React.Component{
       }
     });
 
+    // window.addEventListener("click", e => {
+    //   if(e.target.className.indexOf('dont-close-menu') >= 0) {
+    //   } else {
+    //     this._toggleContextMenu("hide");
+    //   }
+    // }); 
+
     this.state = {
       hide: true,
       objectSelected: {},

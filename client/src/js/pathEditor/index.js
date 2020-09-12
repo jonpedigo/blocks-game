@@ -331,7 +331,7 @@ class PathEditor {
 
     grid.forEachNode((node) => {
       if(node.data.filled) {
-        const object = {x: node.x, y: node.y, height: node.height, width: node.width, color: 'rgba(0,0,255, 0.4)', opacity: .4, characterTextInside: node.data.index + 1 }
+        const object = {x: node.x, y: node.y, height: node.height, width: node.width, color: 'rgba(0,170,0, 0.4)', opacity: .4, characterTextInside: node.data.index + 1 }
         drawTools.drawObject(ctx, object, camera)
       }
     })

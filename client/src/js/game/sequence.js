@@ -188,6 +188,9 @@ function processSequence(sequence) {
         item.waiting = false
         sequence.currentItemId = item.next
         sequence.currentTimerId = null
+        if(sequence.currentItemId === 'end') {
+          endSequence(sequence)
+        }
       })
     } else if(item.conditionType === 'onEvent') {
       if(item.conditionEventName === 'onAnticipateCompleted' && !OBJECTS.anticipatedForAdd) {
@@ -198,6 +201,9 @@ function processSequence(sequence) {
           if(eventMatch) {
             item.waiting = false
             sequence.currentItemId = item.next
+            if(sequence.currentItemId === 'end') {
+              endSequence(sequence)
+            }
             removeEventListener()
           }
         })
@@ -237,7 +243,7 @@ function processSequence(sequence) {
 
   }
 
-  if(item.next === 'end') {
+  if(!item.waiting && item.next === 'end') {
     endSequence(sequence)
   } else if(!item.waiting && item.next) {
     sequence.currentItemId = item.next

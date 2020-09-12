@@ -7,8 +7,12 @@ function setDefault() {
     wander: false,
     goomba: false,
     goombaSideways: false,
+  }
+
+  window.targetTags = {
     homing: false,
     zombie: false,
+    targetAuto: false,
     targetHeroOnAware: false,
     targetVictimOnAware: false,
     targetSwitchOnAware: false,
@@ -272,6 +276,7 @@ function setDefault() {
     ...window.subObjectTags,
     ...window.descriptiveTags,
     ...window.generatedTags,
+    ...window.targetTags,
   }
 
   window.generatedTags = {
