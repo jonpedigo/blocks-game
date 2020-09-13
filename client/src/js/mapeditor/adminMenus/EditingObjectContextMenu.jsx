@@ -23,18 +23,33 @@ export default class EditingObjectContextMenu extends React.Component{
     super(props)
 
     this._handleObjectMenuClick = ({ key }) => {
-      console.log('handling the click')
-      const { selectSubObject, objectSelected, subObject } = this.props;
+      const { selectSubObject, objectSelected, subObject, objectEditing } = this.props;
       const { networkEditObject } = MAPEDITOR
 
-      if(key === 'setAsPath') {
+      if(key === 'set-as-path') {
+        networkEditObject(objectEditing, { pathId: objectSelected.id })
+      }
 
+      if(key === 'set-as-parent') {
+        networkEditObject(objectEditing, { parentId: objectSelected.id })
+      }
+
+      if(key === 'set-as-relative') {
+        const relativeX = objectEditing.x - objectSelected.x
+        const relativeY = objectEditing.y - objectSelected.y
+        networkEditObject(objectEditing, { relativeId: objectSelected.id, relativeX, relativeY })
+      }
+
+      if(key === 'clear-object-selection') {
+        OBJECTS.editingId = null;
       }
     }
   }
 
   render() {
     const { objectSelected, subObject } = this.props
+
+    // <MenuItem key="follow">Follow</MenuItem>
 
     return <Menu onClick={this._handleObjectMenuClick}>
       {objectSelected.tags.path && <MenuItem key="set-as-path">Set as Path</MenuItem>}
@@ -44,7 +59,6 @@ export default class EditingObjectContextMenu extends React.Component{
       <MenuItem key="set-as-relative">Set as Relative</MenuItem>
       <MenuItem key="pathfind-to">Pathfind to</MenuItem>
       <MenuItem key="go-to">Go to</MenuItem>
-      <MenuItem key="follow">Follow</MenuItem>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}

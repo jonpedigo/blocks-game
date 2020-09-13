@@ -56,7 +56,14 @@ function update() {
     // } else {
     // }
 
-    if(!GAME.gameState.started) {
+    if(PAGE.role.isAdmin || !GAME.gameState.started) {
+      if(objectHighlighted.path) {
+        objectHighlighted.path.forEach((path, i) => {
+          const object = {x: (path.x * GAME.grid.nodeSize) + GAME.grid.startX, y: (path.y * GAME.grid.nodeSize) + GAME.grid.startY, width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, color: 'rgba(0,170,0, .6)' }
+          drawTools.drawObject(ctx, object, camera)
+        });
+      }
+
       if(objectHighlighted.pathParts) {
         objectHighlighted.pathParts.forEach((part, i) => {
           const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,170,0, .6)', opacity: .4, characterTextInside: part.index + 1 }

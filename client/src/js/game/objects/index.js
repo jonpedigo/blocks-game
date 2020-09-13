@@ -134,8 +134,8 @@ class Objects{
 
       // targetFollowId:  object.targetFollowId,
 
-      pathIdIndex: object.pathIdIndex,
-      pathOnWayBack:  object.pathOnWayBack,
+      _pathIdIndex: object._pathIdIndex,
+      _pathOnWayBack:  object._pathOnWayBack,
 
       _pfGrid: object.pfGrid,
 
@@ -227,8 +227,6 @@ class Objects{
 
       pathParts:  object.pathParts,
       pathId:  object.pathId,
-      pathNavigationStyle:  object.pathNavigationStyle, // loop,  patrol
-      pathNodeBufferTime: object.pathNodeBufferTime,
 
       _pathUsesCustomGrid: object._pathUsesCustomGridPfGrid,
       customGridProps: object.customGridProps,

@@ -248,6 +248,9 @@ function setDefault() {
     pathfindingLimit: false,
     path: false,
     pfGridUpdateOnLoop: false,
+    pathfindLoop: false,
+    pathfindDumb: false,
+    pathfindWait: false,
   }
 
   window.subObjectTags = {

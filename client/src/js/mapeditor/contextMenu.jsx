@@ -50,7 +50,7 @@ class contextMenuEl extends React.Component{
     //   } else {
     //     this._toggleContextMenu("hide");
     //   }
-    // }); 
+    // });
 
     this.state = {
       hide: true,

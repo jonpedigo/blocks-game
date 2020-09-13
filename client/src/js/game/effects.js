@@ -260,7 +260,6 @@ function processEffect(effect, effected, effector, ownerObject) {
       guestObject: effector,
       ownerObject,
     }
-    console.log(effect.effectSequenceId, context)
     startSequence(effect.effectSequenceId, context)
   }
 
@@ -319,7 +318,6 @@ function processEffect(effect, effected, effector, ownerObject) {
     const object = window.objectLibrary[effect.effectLibraryObject]
     window.local.emit('onAnticipateObject', { ...object, onTop: true, nodesAbove: effectValue, targetTags: effect.effectTags });
   }
-
 
   if(effectName === 'starViewGo') {
     const hero = GAME.heros[effected.id]

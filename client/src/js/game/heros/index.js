@@ -348,13 +348,15 @@ class Hero{
     const id = hero.id
     const heroSummonType = hero.heroSummonType
 
+    const defaultHero = _.cloneDeep(window.defaultHero)
     if(heroSummonType === 'default' && GAME.defaultHero) {
-      newHero = JSON.parse(JSON.stringify(GAME.defaultHero))
-      console.log('summoning from default', GAME.defaultHero)
+      const gameDefaultHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      newHero = window.mergeDeep(defaultHero, gameDefaultHero)
+      // console.log('summoning from default', GAME.defaultHero)
     } else if(heroSummonType){
-      const libraryHero = window.heroLibrary[heroSummonType]
+      const libraryHero = _.cloneDeep(window.heroLibrary[heroSummonType])
       if(libraryHero) {
-        newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), _.cloneDeep(libraryHero))
+        newHero = window.mergeDeep(defaultHero, libraryHero)
       }
     }
 

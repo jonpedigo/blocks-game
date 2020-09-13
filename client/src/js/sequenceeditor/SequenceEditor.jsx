@@ -3,6 +3,7 @@ import SequenceItem from './SequenceItem.jsx'
 import SequenceListItem from './SequenceListItem.jsx'
 import Select from 'react-select';
 import modals from './modals';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 window.defaultSequence = {
   items: [],
@@ -86,6 +87,15 @@ const typeOptions = [
   { value: 'sequenceChoice', label: 'Choice' },
   { value: 'sequenceWait', label: 'Wait' },
 ];
+
+// a little function to help us with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 export default class SequenceEditor extends React.Component {
   constructor(props) {
@@ -255,6 +265,27 @@ export default class SequenceEditor extends React.Component {
     this._generateRefs([])
   }
 
+
+  _onDragEnd = (result) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const items = reorder(
+      this.state.sequence.items,
+      result.source.index,
+      result.destination.index
+    );
+
+    this.setState({
+      sequence: {
+        ...this.state.sequence,
+        items
+      }
+    });
+}
+
   closeSequence() {
     this.setState({
       sequence: null
@@ -309,14 +340,32 @@ export default class SequenceEditor extends React.Component {
             <i className="SequenceButton fa fas fa-plus" onClick={this._onAddItem}></i>
           </div>
         </div>
-        {sequence.items.map((sequenceItem, index) => {
-          return <SequenceItem ref={sequenceItemRefs[index]} key={sequenceItem.id} sequenceList={sequence.items} sequenceItem={sequenceItem} onDelete={() => {
-              const newSequenceItems = sequence.items.slice()
-              newSequenceItems.splice(index, 1)
-              this.setState({sequence: { ...sequence, items: newSequenceItems }})
-              this._generateRefs(newSequenceItems)
-            }}/>
-        })}
+        <DragDropContext onDragEnd={this._onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {sequence.items.map((sequenceItem, index) => {
+                  return <Draggable key={sequenceItem.id} draggableId={sequenceItem.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                        <SequenceItem ref={sequenceItemRefs[index]} key={sequenceItem.id} sequenceList={sequence.items} sequenceItem={sequenceItem} onDelete={() => {
+                          const newSequenceItems = sequence.items.slice()
+                          newSequenceItems.splice(index, 1)
+                          this.setState({sequence: { ...sequence, items: newSequenceItems }})
+                          this._generateRefs(newSequenceItems)
+                        }}/>
+                      </div>
+                    )}
+                  </Draggable>
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
     )
   }

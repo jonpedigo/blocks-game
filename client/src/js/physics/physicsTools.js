@@ -434,20 +434,32 @@ function containObjectWithinGridBoundaries(object) {
       const shouldContain = gameBoundaries.behavior == 'boundaryAll' || objectToEdit.id.indexOf('hero') > -1
       //CONTAIN WITHIN BOUNDARIES OF THE GAME BOUNDARY PREF!!
       if(objectToEdit.x + objectToEdit.width > gameBoundaries.x + gameBoundaries.width) {
-        if(shouldContain) objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
+        if(shouldContain) {
+          objectToEdit.x = gameBoundaries.x + gameBoundaries.width - objectToEdit.width
+          objectToEdit.velocityX = 0
+        }
         legal = false
       }
       if(objectToEdit.y + objectToEdit.height > gameBoundaries.y + gameBoundaries.height) {
-        if(shouldContain) objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
+        if(shouldContain) {
+          objectToEdit.y = gameBoundaries.y + gameBoundaries.height - objectToEdit.height
+          objectToEdit.velocityY = 0
+        }
         legal = false
         bottom = true
       }
       if(objectToEdit.x < gameBoundaries.x) {
-        if(shouldContain)  objectToEdit.x = gameBoundaries.x
+        if(shouldContain)  {
+          objectToEdit.x = gameBoundaries.x
+          objectToEdit.velocityX = 0
+        }
         legal = false
       }
       if(objectToEdit.y < gameBoundaries.y) {
-        if(shouldContain) objectToEdit.y = gameBoundaries.y
+        if(shouldContain) {
+          objectToEdit.y = gameBoundaries.y
+          objectToEdit.velocityY = 0
+        }
         legal = false
       }
     }
@@ -485,7 +497,6 @@ function containObjectWithinGridBoundaries(object) {
   }
 }
 
-
 function rotatePoint(point, center, radian){
   // console.log(point.x - center.x)
     var rotatedX = Math.cos(radian) * (point.x - center.x) - Math.sin(radian) * (point.y-center.y) + center.x;
@@ -494,8 +505,6 @@ function rotatePoint(point, center, radian){
 
     return {rotatedX, rotatedY}
 }
-
-
 
 function attachSubObjects(owner, subObjects) {
   OBJECTS.forAllSubObjects(subObjects, (subObject) => {

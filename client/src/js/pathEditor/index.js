@@ -75,15 +75,18 @@ class PathEditor {
       part.height = this.grid.nodeHeight
       return part
     })
-    this.close()
     if(this.grid.nodeWidth !== GAME.grid.nodeSize || this.grid.nodeHeight !== GAME.grid.nodeSize) {
       const { x, y, width, height } = this.getBoundingBox(pathParts)
       const customGridProps = {
         x, y, width, height,
         nodeWidth: this.grid.nodeWidth, nodeHeight: this.grid.nodeHeight
       }
+      this.close()
       window.local.emit('onPathEditorClose', {pathParts, customGridProps })
-    } else window.local.emit('onPathEditorClose', {pathParts })
+    } else {
+      this.close()
+      window.local.emit('onPathEditorClose', {pathParts })
+    }
 
   }
 
@@ -112,6 +115,7 @@ class PathEditor {
     const zoomMultiplierY = (gridHeight)/16
     let zoomMultiplier = zoomMultiplierX
     if(zoomMultiplierY > zoomMultiplier) zoomMultiplier = zoomMultiplierY
+    if(zoomMultiplier < GAME.heros[HERO.id].zoomMultiplier) zoomMultiplier = GAME.heros[HERO.id].zoomMultiplier
 
     const width = zoomMultiplier * HERO.cameraWidth
     const height = zoomMultiplier * HERO.cameraHeight

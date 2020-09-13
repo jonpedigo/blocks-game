@@ -54,6 +54,9 @@ export default class TagMenu extends React.Component{
       <SubMenu title="Target">
         {this._renderTagMenuItems(window.targetTags)}
       </SubMenu>
+      <SubMenu title="Path">
+        {this._renderTagMenuItems(window.pathTags)}
+      </SubMenu>
       <SubMenu title="Hero Update">
         {this._renderTagMenuItems(window.heroUpdateTags)}
       </SubMenu>

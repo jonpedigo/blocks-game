@@ -1,19 +1,11 @@
 
 // OBJECT USING PATH
-// pathIdIndex: object.pathIdIndex,
-// pathOnWayBack:  object.pathOnWayBack,
+// _pathIdIndex: object._pathIdIndex,
+// _pathOnWayBack:  object._pathOnWayBack,
 
 // pathId:  object.pathId,
-// pathNavigationStyle:  object.pathNavigation, // loop,  patrol
-// pathNodeBufferTime: time before starting next path
-
 
 // PATH OBJECT
-// window.pathTags = {
-//   pathfindingLimit: false,
-//   path: false,
-//   gridUpdateOnLoop: false,
-// }
 // pathParts:  [
 //  gridX,
 //  gridY,
@@ -116,22 +108,50 @@ function onUpdate(objects, delta) {
     //MOVEMENT
     //////////////////////////////////////////
     //////////////////////////////////////////
-    if(object._targetPursueId && object.mod().tags['zombie']) {
+
+    const shouldPursue = !object.pathId && (!object.path || object.path.length === 0) && object._targetPursueId
+    if(shouldPursue && object.mod().tags['zombie']) {
       const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
       setTarget(object, target)
     }
 
-    if((object.path && object.path.length === 0) && object._targetPursueId && object.mod().tags['homing']) {
+    if(shouldPursue && object.mod().tags['homing']) {
       const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
       setPathTarget(object, target)
     }
 
+    if(object.pathId && (!object.path || (object.path && object.path.length === 0))) {
+      const target = OBJECTS.getObjectOrHeroById(object.pathId)
+      if(typeof object._pathIdIndex === 'number') {
+        object._pathIdIndex++
+      } else {
+        object._pathIdIndex = 0
+      }
+
+      if (target && target.pathParts && target.pathParts.length) {
+        if(target.pathParts[object._pathIdIndex]) {
+          setPathTarget(object, target.pathParts[object._pathIdIndex])
+        } else if(object.mod().tags.pathfindLoop){
+          object._pathIdIndex = 0
+          setPathTarget(object, target.pathParts[object._pathIdIndex])
+        } else {
+          object.pathId = null
+          object._pathIdIndex = null
+        }
+      } else {
+        delete object.pathId
+        delete object._pathIdIndex
+      }
+    }
+
     if(object.path && object.path.length) {
-      if(GAME.resetPaths) {
+      if(GAME.resetPaths && !object.pathId) {
         object.path = []
         object.velocityX = 0
         object.velocityY = 0
-      } else moveOnPath(object, delta)
+      } else {
+        moveOnPath(object, delta)
+      }
     } else if(object.targetXY) {
       moveTowardsTarget(object, object.targetXY, delta)
     }
