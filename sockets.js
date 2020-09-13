@@ -514,6 +514,17 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('editGameHeroJSON', (gameHeroName, json) => {
     io.emit('onEditGameHeroJSON', gameHeroName, json)
   })
+
+  socket.on('requestAdminApproval', (action, data) => {
+    io.emit('onRequestAdminApproval', action, data)
+  })
+  socket.on('resolveAdminApproval', (action, data) => {
+    io.emit('onResolveAdminApproval', action, data)
+  })
+
+  socket.on('resolveSequenceItem', (id) => {
+    io.emit('onResolveSequenceItem', id)
+  })
 }
 
 module.exports = socketEvents

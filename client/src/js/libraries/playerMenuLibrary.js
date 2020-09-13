@@ -28,6 +28,14 @@ window.local.on('onFirstPageGameLoaded', () => {
       useExistingMenu: 'Color',
       title: 'Color'
     },
+    sprite: {
+      useExistingMenu: 'Sprite',
+      title: 'Sprite'
+    },
+    physics: {
+      action: 'open-physics-live-menu',
+      title: 'Physics'
+    },
     name: {
       useExistingMenu: 'Name',
       title: 'Name'
@@ -43,6 +51,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     showMapHighlight: false,
     showOtherUsersMapHighlight: false,
     constructEditorColor: false,
+    canStartStopGame: false,
     // constructEditorSprite: false,
   }
 
@@ -50,6 +59,8 @@ window.local.on('onFirstPageGameLoaded', () => {
     move: false,
     color: false,
     respawn: false,
+    sprite: false,
+    physics: false,
   }
 
   window.objectMenuLibrary = {
@@ -60,5 +71,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     copy: false,
     name: false,
     delete: false,
+    sprite: false,
+    physics: false,
   }
 })

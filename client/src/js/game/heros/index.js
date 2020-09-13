@@ -140,7 +140,6 @@ class Hero{
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
       // we locally update the hero input as host so hosts do not send
       if(!PAGE.role.isHost && !PAGE.typingMode) {
-        GAME.keysDown.capsLock = window.isCapsLockOn
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }
@@ -737,7 +736,7 @@ class Hero{
     //   return
     // }
     GAME.heroInputs[heroId] = input
-    GAME.heros[heroId].keysDown = input
+    if(GAME.heros[heroId]) GAME.heros[heroId].keysDown = input
   }
 
   onSendHeroKeyDown(key, heroId) {

@@ -143,12 +143,13 @@ function onPageLoaded(){
     if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {
-      delete GAME.keysDown[key]
+      GAME.keysDown[key] = false
       //locally update the host input! ( teehee this is the magic! )
       if(PAGE.role.isHost) {
         if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
         onKeyUp(key, GAME.heros[HERO.id])
-        delete GAME.heroInputs[HERO.id][key]
+        GAME.heros[HERO.id].keysDown = GAME.heroInputs[HERO.id]
+        GAME.heroInputs[HERO.id][key] = false
       } else {
         window.socket.emit('sendHeroKeyUp', key, HERO.id)
       }
@@ -161,7 +162,7 @@ function onKeyUp(key, hero) {
   if(key === 'e' || key === 'v') {
     hero._cantInteract = false
   }
-  delete GAME.heroInputs[hero.id][key]
+  GAME.heroInputs[hero.id][key] = false
 
   window.local.emit('onKeyUp', key, hero)
 }
@@ -227,12 +228,12 @@ function handleActionButtonBehavior(hero, action, delta) {
 function onUpdate(hero, keysDown, delta) {
   if(hero.flags.paused) return
 
-  const upPressed = 'w' in keysDown || 'up' in keysDown
-  const rightPressed = 'd' in keysDown || 'right' in keysDown
-  const downPressed = 's' in keysDown || 'down' in keysDown
-  const leftPressed = 'a' in keysDown || 'left' in keysDown
+  const upPressed = keysDown['w'] || keysDown['up']
+  const rightPressed = keysDown['d'] || keysDown['right']
+  const downPressed = keysDown['s'] || keysDown['down']
+  const leftPressed = keysDown['a'] || keysDown['left']
 
-  if((!GAME.gameState.started || hero.flags.isAdmin) && ('shift' in keysDown || 'caps lock' in keysDown)) {
+  if((!GAME.gameState.started || hero.flags.isAdmin) && (keysDown['shift'] || keysDown['caps lock'])) {
     if (upPressed) {
       hero.y -= GAME.grid.nodeSize
     }
@@ -266,13 +267,13 @@ function onUpdate(hero, keysDown, delta) {
   /// DEFAULT GAME FX
   if(hero.flags.paused || GAME.gameState.paused) return
 
-  if('z' in keysDown && hero.mod().tags.zButtonOnce != true && hero.mod().zButtonBehavior) {
+  if(keysDown['z'] && hero.mod().tags.zButtonOnce != true && hero.mod().zButtonBehavior) {
     handleActionButtonBehavior(hero, hero.mod().zButtonBehavior, delta)
   }
-  if('x' in keysDown && hero.mod().tags.xButtonOnce != true && hero.mod().xButtonBehavior) {
+  if(keysDown['x'] && hero.mod().tags.xButtonOnce != true && hero.mod().xButtonBehavior) {
     handleActionButtonBehavior(hero, hero.mod().xButtonBehavior, delta)
   }
-  if('c' in keysDown && hero.mod().tags.cButtonOnce != true && hero.mod().cButtonBehavior) {
+  if(keysDown['c'] && hero.mod().tags.cButtonOnce != true && hero.mod().cButtonBehavior) {
     handleActionButtonBehavior(hero, hero.mod().cButtonBehavior, delta)
   }
 

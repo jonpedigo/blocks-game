@@ -1,4 +1,5 @@
 import React from 'react'
+import Toolbar from './Toolbar.jsx'
 import DialogueBox from './DialogueBox.jsx'
 import InventoryModal from './InventoryModal.jsx'
 import MainMenuModal from './MainMenuModal.jsx'
@@ -163,7 +164,8 @@ export default class Root extends React.Component {
           draggable={false}
           transition={Slide}
         />
-      {this._renderGameLog()}
+        {this._renderGameLog()}
+        <Toolbar/>
       </div>
     )
   }

@@ -54,6 +54,7 @@ window.conditionTypes = {
     number: true,
     label: 'Timer seconds:'
   },
+  onAdminApproval: {}
 }
 
 function testCondition(condition, testObjects, options = { allTestedMustPass: false, testPassReverse: false, testModdedVersion: false }) {

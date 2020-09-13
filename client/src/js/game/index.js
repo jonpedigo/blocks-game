@@ -1058,7 +1058,7 @@ class Game{
   }
 
   onTogglePauseSequence(sequenceId) {
-    const sequence = GAME.gameState.sequenceQueue.find(({id}) => sequenceId)
+    const sequence = GAME.gameState.sequenceQueue.find(({id}) => id === sequenceId)
     if(sequence) togglePauseSequence(sequence)
   }
 

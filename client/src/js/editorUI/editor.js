@@ -10,8 +10,7 @@ class Editor {
     this.zoomDelta = .1250
 
     const storedPreferences = localStorage.getItem('editorPreferences')
-
-    if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
+    if(PAGE.role.isAdmin && storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
       this.preferences = JSON.parse(storedPreferences)
     }
   }
@@ -38,7 +37,9 @@ class Editor {
   }
 
   onUpdate() {
-    localStorage.setItem('editorPreferences', JSON.stringify(EDITOR.preferences))
+    if(PAGE.role.isAdmin) {
+      localStorage.setItem('editorPreferences', JSON.stringify(EDITOR.preferences))
+    }
   }
 
   async loadGame() {

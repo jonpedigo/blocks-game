@@ -241,8 +241,7 @@ export default class SequenceEditor extends React.Component {
     GAME.library.sequences[sequence.id] = this._getSequenceJSON()
     window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
 
-
-    if(!sequenceIdList[sequence.id]) {
+    if(sequenceIdList.indexOf(sequence.id) == -1) {
       const newSequenceIdList = sequenceIdList.slice()
       newSequenceIdList.push(sequence.id)
       this.setState({

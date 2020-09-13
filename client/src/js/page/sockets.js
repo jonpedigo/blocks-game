@@ -430,6 +430,14 @@ function init() {
   window.socket.on('onResetPhysicsProperties', (objectId) => {
     window.local.emit('onResetPhysicsProperties', objectId)
   })
+
+  window.socket.on('onRequestAdminApproval', (action, data) => {
+    window.local.emit('onRequestAdminApproval', action, data)
+  })
+
+  window.socket.on('onResolveAdminApproval', (action, data) => {
+    window.local.emit('onResolveAdminApproval', action, data)
+  })
 }
 
 export default {

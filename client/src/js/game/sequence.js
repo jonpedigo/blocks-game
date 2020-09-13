@@ -93,7 +93,6 @@ function togglePauseSequence(sequence) {
       GAME.gameState.timeoutsById[sequence.currentTimerId] = false
     }
   } else {
-    console.log("XXX")
     sequence.paused = true
     if(sequence.currentTimerId) {
       GAME.gameState.timeoutsById[sequence.currentTimerId] = true
@@ -103,13 +102,20 @@ function togglePauseSequence(sequence) {
 
 function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
-  if(!item) return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
-  let defaultEffected = sequence.mainObject
-  let defaultEffector = sequence.guestObject
-
+  if(!item) {
+    console.log(sequence.paused)
+    if(sequence.currentItemId === 'end' && !sequence.paused) {
+      endSequence(sequence)
+    }
+    return
+    // return console.log('sequenceid: ', sequence.id, ' without item: ', sequence.currentItemId)
+  }
   if(item.waiting || sequence.paused) {
     return
   }
+
+  let defaultEffected = sequence.mainObject
+  let defaultEffector = sequence.guestObject
 
   console.log('processing', sequence.currentItemId, sequence.id)
 
@@ -208,6 +214,15 @@ function processSequence(sequence) {
           }
         })
         sequence.eventListeners.push(removeEventListener)
+      }
+    } else if(item.conditionType === 'onAdminApproval') {
+      if(PAGE.role.isArcadeMode) {
+        sequence.currentItemId = item.next
+      } else {
+        sequence.paused = true
+        sequence.currentItemId = item.next
+        window.socket.emit('requestAdminApproval', 'unpauseSequence', { sequenceId: sequence.id, text: 'Sequence ' + sequence.id + ' needs approval to continue', approveButtonText: 'Resume', rejectButtonText: 'Stop', requestId: 'request-'+window.uniqueID()})
+        return
       }
     }
   }

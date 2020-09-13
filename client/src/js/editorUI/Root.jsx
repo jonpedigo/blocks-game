@@ -1,7 +1,9 @@
 import React from 'react'
 import Toolbar from './Toolbar.jsx'
 import FileUploader from '../components/FileUploader.jsx'
+import { ToastContainer, toast, Slide, Zoom, Flip, Bounce } from 'react-toastify';
 
+window.toastIds = {}
 export default class Root extends React.Component {
   constructor(props) {
     super(props)
@@ -22,6 +24,41 @@ export default class Root extends React.Component {
         objectSelected: {},
       })
     }
+  }
+
+  onRequestAdminApproval = (action, data) => {
+    const toastInfo = {
+      autoClose: false,
+      newestOnTop: true,
+      closeOnClick: false,
+    }
+
+    const toastId = toast(<div>
+      <div>
+        {data.text}
+      </div>
+      <button onClick={() => {
+        if(action === 'startGame') window.socket.emit('startGame')
+        if(action === 'stopGame') window.socket.emit('stopGame')
+        if(action === 'resolveSequenceItem') window.socket.emit('resolveSequenceItem', data.sequenceId)
+        if(action === 'unpauseSequence') window.socket.emit('togglePauseSequence', data.sequenceId)
+        window.socket.emit('resolveAdminApproval', window.toastIds[data.requestId])
+      }}>
+        {data.approveButtonText || 'Approve'}
+      </button>
+      <button onClick={() => {
+        if(action === 'unpauseSequence') window.socket.emit('stopSequence', data.sequenceId)
+        window.socket.emit('resolveAdminApproval', window.toastIds[data.requestId])
+      }}>
+        {data.rejectButtonText || 'Reject'}
+      </button>
+    </div>, toastInfo)
+
+    window.toastIds[data.requestId] = toastId
+  }
+
+  onResolveAdminApproval(id) {
+    toast.dismiss(window.toastIds[id])
   }
 
   render() {

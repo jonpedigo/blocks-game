@@ -64,6 +64,18 @@ class EditorUI {
       EDITORUI.ref.forceUpdate()
     }
   }
+
+  onRequestAdminApproval(action, data) {
+    if(PAGE.role.isAdmin) {
+      EDITORUI.ref.onRequestAdminApproval(action, data)
+    }
+  }
+
+  onResolveAdminApproval(id) {
+    if(PAGE.role.isAdmin) {
+      EDITORUI.ref.onResolveAdminApproval(id)
+    }
+  }
 }
 
 window.EDITORUI = new EditorUI()
