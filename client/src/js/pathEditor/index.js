@@ -78,6 +78,7 @@ class PathEditor {
     if(this.grid.nodeWidth !== GAME.grid.nodeSize || this.grid.nodeHeight !== GAME.grid.nodeSize) {
       const { x, y, width, height } = this.getBoundingBox(pathParts)
       const customGridProps = {
+        gridX: 0, gridY: 0,
         startX: x, startY: y, gridWidth: width/this.grid.nodeWidth, gridHeight: height/this.grid.nodeHeight,
         nodeWidth: this.grid.nodeWidth, nodeHeight: this.grid.nodeHeight
       }

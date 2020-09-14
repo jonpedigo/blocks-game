@@ -100,9 +100,9 @@ class MapEditor {
     const removeListener = window.local.on('onPathEditorClose', ({ pathParts, customGridProps }) => {
       if (pathParts) {
         if(customGridProps) {
-          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: true, tags: { path: true }, customGridProps }])
+          window.socket.emit('editObjects', [{ id: object.id, pathParts, tags: { path: true }, customGridProps }])
         } else {
-          window.socket.emit('editObjects', [{ id: object.id, pathParts, _pathUsesCustomGrid: false, tags: { path: true } }])
+          window.socket.emit('editObjects', [{ id: object.id, pathParts, customGridProps: null, tags: { path: true } }])
         }
       }
       // window.socket.emit('editGameState', { paused: false })

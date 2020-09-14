@@ -27,7 +27,13 @@ export default class EditingObjectContextMenu extends React.Component{
       const { networkEditObject } = MAPEDITOR
 
       if(key === 'set-as-path') {
-        networkEditObject(objectEditing, { pathId: objectSelected.id })
+        const update = { pathId: objectSelected.id }
+        if(objectSelected.customGridProps) {
+          update.pathfindingGridId = objectSelected.id
+        } else {
+          update.pathfindingGridId = null
+        }
+        networkEditObject(objectEditing, update)
       }
 
       if(key === 'set-as-parent') {

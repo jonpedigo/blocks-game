@@ -227,9 +227,7 @@ class Objects{
       }),
 
       pathParts:  object.pathParts,
-      _pathUsesCustomGrid: object._pathUsesCustomGridPfGrid,
       customGridProps: object.customGridProps,
-      customGridNodes: object.customGridNodes,
 
       pathId:  object.pathId,
       pathfindingLimitId: object.pathfindingLimitId,

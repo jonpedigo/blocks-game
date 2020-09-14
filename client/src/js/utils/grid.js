@@ -13,10 +13,10 @@ function convertToGridXY(object, options = { }) {
   y -= diffY
   let gridY = y/(options.nodeHeight || GAME.grid.nodeSize)
 
-  let width = Math.floor(object.width / (options.nodeWidth || GAME.grid.nodeSize))
-  let height = Math.floor(object.height / (options.nodeHeight || GAME.grid.nodeSize))
+  let gridWidth = Math.floor(object.width / (options.nodeWidth || GAME.grid.nodeSize))
+  let gridHeight = Math.floor(object.height / (options.nodeHeight || GAME.grid.nodeSize))
 
-  return { x, y, gridX, gridY, diffX, diffY, width, height }
+  return { x, y, gridX, gridY, diffX, diffY, gridWidth, gridHeight }
 }
 
 function generateGridNodes(gridProps) {
@@ -194,16 +194,16 @@ function keepXYWithinBoundaries(object, options = { bypassGameBoundaries : false
 }
 
 function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
-  let debug = false
+  let debug = true
   if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && (GAME.world.gameBoundaries.behavior === 'boundaryAll' || GAME.world.gameBoundaries.behavior === 'pacmanFlip') && !options.bypassGameBoundaries) {
-    const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
-    if(attemptingX > gridX + width - 1) {
+    const {gridX, gridY, gridWidth, gridHeight } = convertToGridXY(GAME.world.gameBoundaries)
+    if(attemptingX > gridX + gridWidth - 1) {
       if(debug) console.log('rejecting reason 1a')
       return false
     } else if(attemptingX < gridX) {
       if(debug) console.log('rejecting reason 1b')
       return false
-    } else if(attemptingY > gridY + height - 2) {
+    } else if(attemptingY > gridY + gridHeight - 2) {
       if(debug) console.log('rejecting reason 1c')
       return false
     } else if(attemptingY < gridY) {
@@ -218,14 +218,14 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
       hero = window.editingHero
       // single player only feature
     }
-    const {gridX, gridY, width, height } = convertToGridXY(GAME.world.gameBoundaries)
-    if(attemptingX > gridX + width - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+    const {gridX, gridY, gridWidth, gridHeight } = convertToGridXY(GAME.world.gameBoundaries)
+    if(attemptingX > gridX + gridWidth - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       if(debug) console.log('rejecting reason 2a')
       return false
     } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
       if(debug) console.log('rejecting reason 2b')
       return false
-    } else if(attemptingY > gridY + height - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
+    } else if(attemptingY > gridY + gridHeight - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       if(debug) console.log('rejecting reason 2c')
       return false
     } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
@@ -237,16 +237,16 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   const pathfindingLimit = options.pathfindingLimit
   if(pathfindingLimit){
     if(attemptingX > pathfindingLimit.gridX + pathfindingLimit.gridWidth - 1) {
-      if(debug) console.log('rejecting reason 3')
+      if(debug) console.log('rejecting reason 3a')
       return false
     } else if(attemptingX < pathfindingLimit.gridX) {
-      if(debug) console.log('rejecting reason 3')
+      if(debug) console.log('rejecting reason 3b')
       return false
     } else if(attemptingY > pathfindingLimit.gridY + pathfindingLimit.gridHeight - 1) {
-      if(debug) console.log('rejecting reason 3')
+      if(debug) console.log('rejecting reason 3c')
       return false
     } else if(attemptingY < pathfindingLimit.gridY) {
-      if(debug) console.log('rejecting reason 3')
+      if(debug) console.log('rejecting reason 3d')
       return false
     }
   }

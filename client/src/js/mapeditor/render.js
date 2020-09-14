@@ -58,8 +58,22 @@ function update() {
 
     if(PAGE.role.isAdmin || !GAME.gameState.started) {
       if(objectHighlighted.path) {
+        let pathX, pathY, pathWidth, pathHeight;
+
         objectHighlighted.path.forEach((path, i) => {
-          const object = {x: (path.x * GAME.grid.nodeSize) + GAME.grid.startX, y: (path.y * GAME.grid.nodeSize) + GAME.grid.startY, width: GAME.grid.nodeSize, height: GAME.grid.nodeSize, color: 'rgba(0,170,0, .6)' }
+          if(objectHighlighted.pathfindingGridId && GAME.objectsById[objectHighlighted.pathfindingGridId]) {
+            const grid = GAME.objectsById[objectHighlighted.pathfindingGridId].customGridProps
+            pathX = (path.x * grid.nodeWidth) + grid.startX
+            pathY = (path.y * grid.nodeHeight) + grid.startY
+            pathWidth = grid.nodeWidth
+            pathHeight = grid.nodeHeight
+          } else {
+            pathX = (path.x * GAME.grid.nodeSize) + GAME.grid.startX
+            pathY = (path.y * GAME.grid.nodeSize) + GAME.grid.startY
+            pathWidth = GAME.grid.nodeSize
+            pathHeight = GAME.grid.nodeSize
+          }
+          const object = {x: pathX, y: pathY, width: pathWidth, height: pathHeight, color: 'rgba(0,170,0, .6)' }
           drawTools.drawObject(ctx, object, camera)
         });
       }

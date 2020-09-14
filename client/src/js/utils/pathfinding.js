@@ -88,14 +88,20 @@ function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosi
 }
 
 // these x and ys are in gridFormat
-function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
+function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : false, pathfindingLimit: null, customPfGridId: null, }) {
   const fromX = fromPosition.x
   const fromY = fromPosition.y
   const toX = toPosition.x
   const toY = toPosition.y
 
   if(gridUtil.keepGridXYWithinBoundaries(toX, toY, options)) {
-    var gridBackup = GAME.pfgrid.clone();
+    let gridBackup
+    if(options.customPfGridId && GAME.objectsById[options.customPfGridId] && GAME.objectsById[options.customPfGridId]._pfGrid) {
+      console.log(options)
+      gridBackup = GAME.objectsById[options.customPfGridId]._pfGrid.clone();
+    } else {
+      gridBackup = GAME.pfgrid.clone();
+    }
     return finder.findPath(fromX, fromY, toX, toY, gridBackup).map((path) => {
       return {x: path[0], y: path[1]}
     });

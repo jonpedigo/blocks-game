@@ -798,7 +798,7 @@ class Game{
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
 
       GAME.objects.forEach((object) => {
-        if(object._pathUsesCustomGrid) {
+        if(object.customGridProps) {
           object._pfGrid = pathfinding.convertCustomGridToPathfindingGrid(object.customGridProps)
         }
       })

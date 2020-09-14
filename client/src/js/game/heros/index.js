@@ -307,13 +307,13 @@ class Hero{
     const { leftDiff, rightDiff, topDiff, bottomDiff } = gridUtil.getAllDiffs(value)
     gridUtil.snapDragToGrid(value)
 
-    const { gridX, gridY, width, height } = gridUtil.convertToGridXY(value)
+    const { gridX, gridY, gridWidth, gridHeight } = gridUtil.convertToGridXY(value)
 
     return {
       gridX,
       gridY,
-      gridWidth: width,
-      gridHeight: height,
+      gridWidth,
+      gridHeight,
       centerX: value.centerX,
       centerY: value.centerY,
       minX: value.x,

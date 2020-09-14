@@ -85,21 +85,64 @@ function pathfindingAI(object) {
 }
 
 function setPathTarget(object, target, pursue) {
-  const { gridX, gridY } = gridUtil.convertToGridXY(object)
-  object.gridX = gridX
-  object.gridY = gridY
+  const pfOptions = {}
 
-  const targetGridPos = gridUtil.convertToGridXY(target)
-  target.gridX = targetGridPos.gridX
-  target.gridY = targetGridPos.gridY
+  if(object.pathfindingGridId && GAME.objectsById[object.pathfindingGridId]) {
+    pfOptions.customPfGridId = object.pathfindingGridId
+    pfOptions.pathfindingLimit = GAME.objectsById[object.pathfindingGridId].customGridProps
+  }
 
-  object.path = pathfinding.findPath({
-    x: gridX,
-    y: gridY,
-  }, {
-    x: target.gridX,
-    y: target.gridY,
-  }, { pathfindingLimit: object.mod().pathfindingLimit })
+  if(object.pathfindingLimitId && GAME.objectsById[object.pathfindingLimitId]) {
+    const pfLimit = GAME.objectsById[object.pathfindingLimitId]
+    pfOptions.pathfindingLimit = gridUtil.convertToGridXY(pfLimit)
+  }
+
+
+  let pathTo
+  let pathFrom
+  if(pfOptions.customPfGridId) {
+    const { gridX, gridY } = gridUtil.convertToGridXY(object, pfOptions.pathfindingLimit)
+    object.gridX = gridX
+    object.gridY = gridY
+
+    const targetGridPos = gridUtil.convertToGridXY(target, pfOptions.pathfindingLimit)
+    target.gridX = targetGridPos.gridX
+    target.gridY = targetGridPos.gridY
+
+    pathTo = {
+      x: gridX,
+      y: gridY,
+    }
+
+    pathFrom = {
+      x: target.gridX,
+      y: target.gridY,
+    }
+
+    console.log('putsode', pathTo, pathFrom, pfOptions)
+
+  } else {
+    const { gridX, gridY } = gridUtil.convertToGridXY(object)
+    object.gridX = gridX
+    object.gridY = gridY
+
+    const targetGridPos = gridUtil.convertToGridXY(target)
+    target.gridX = targetGridPos.gridX
+    target.gridY = targetGridPos.gridY
+
+    pathTo = {
+      x: gridX,
+      y: gridY,
+    }
+
+    pathFrom = {
+      x: target.gridX,
+      y: target.gridY,
+    }
+  }
+
+
+  object.path = pathfinding.findPath(pathTo, pathFrom, pfOptions)
   if(pursue) object._targetPursueId = target.id
 }
 

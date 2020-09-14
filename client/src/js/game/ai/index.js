@@ -13,7 +13,7 @@
 //  width, height
 //  index
 // ]
-// _pathUsesCustomGrid: object._pathUsesCustomGrid,
+// customGridProps: object.customGridProps,
 // customGridProps: object.customGridProps
 
 // _pfGrid: object.pfGrid,
@@ -64,8 +64,23 @@ function moveTowardsTarget(object, target, delta, options = { flat: false}) {
 }
 
 function moveOnPath(object, delta) {
-  let pathX = (object.path[0].x * GAME.grid.nodeSize) + GAME.grid.startX
-  let pathY = (object.path[0].y * GAME.grid.nodeSize) + GAME.grid.startY
+  let pathX;
+  let pathY;
+  if(object.pathfindingGridId && GAME.objectsById[object.pathfindingGridId]) {
+    const grid = GAME.objectsById[object.pathfindingGridId].customGridProps
+    pathX = (object.path[0].x * grid.nodeWidth) + grid.startX
+    pathY = (object.path[0].y * grid.nodeHeight) + grid.startY
+    const { gridX, gridY } = gridUtil.convertToGridXY(object, grid)
+    object.gridX = gridX
+    object.gridY = gridY
+  } else {
+    pathX = (object.path[0].x * GAME.grid.nodeSize) + GAME.grid.startX
+    pathY = (object.path[0].y * GAME.grid.nodeSize) + GAME.grid.startY
+    const { gridX, gridY } = gridUtil.convertToGridXY(object)
+    object.gridX = gridX
+    object.gridY = gridY
+  }
+
 
   let pathSpeedX = object.mod().speed || -100
   let pathSpeedY = object.mod().speed || -100
@@ -74,10 +89,6 @@ function moveOnPath(object, delta) {
 
   let diffX = Math.abs(object.x - pathX)
   let diffY = Math.abs(object.y - pathY)
-
-  const { gridX, gridY, x, y } = gridUtil.convertToGridXY(object)
-  object.gridX = gridX
-  object.gridY = gridY
 
   if(object.gridX == object.path[0].x && diffX <= 2) {
     object.x = pathX

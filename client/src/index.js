@@ -361,6 +361,8 @@ Engine trail on a car u know what I mean?
 
 // CLIENT_GAME vs HOST_GAME
 
+// local vs global positions, it makes total sense when you realize OH I need a global X for the entire game and local one thats more for the immediate surrounds and whats being rendere. Thers TWO axis
+
 // ok so inssteadd of aappendding all these children to the dom, we should have a specified order so that we dont have to be gnarly with z ordering
 
 // separate hero and PLAYER. the hero is just a game object then...
