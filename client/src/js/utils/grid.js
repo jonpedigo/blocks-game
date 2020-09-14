@@ -2,19 +2,19 @@ import collisions from './collisions'
 
 function convertToGridXY(object, options = { }) {
   // pretend we are dealing with a 0,0 plane
-  let x = object.x - GAME.grid.nodes[0][0].x
-  let y = object.y - GAME.grid.nodes[0][0].y
+  let x = object.x - (options.startX || GAME.grid.nodes[0][0].x)
+  let y = object.y - (options.startY || GAME.grid.nodes[0][0].y)
 
-  let diffX = x % GAME.grid.nodeSize
+  let diffX = x % (options.nodeWidth || GAME.grid.nodeSize)
   x -= diffX
-  let gridX = x/GAME.grid.nodeSize
+  let gridX = x/(options.nodeWidth || GAME.grid.nodeSize)
 
-  let diffY = y % GAME.grid.nodeSize
+  let diffY = y % (options.nodeHeight || GAME.grid.nodeSize)
   y -= diffY
-  let gridY = y/GAME.grid.nodeSize
+  let gridY = y/(options.nodeHeight || GAME.grid.nodeSize)
 
-  let width = Math.floor(object.width / GAME.grid.nodeSize)
-  let height = Math.floor(object.height / GAME.grid.nodeSize)
+  let width = Math.floor(object.width / (options.nodeWidth || GAME.grid.nodeSize))
+  let height = Math.floor(object.height / (options.nodeHeight || GAME.grid.nodeSize))
 
   return { x, y, gridX, gridY, diffX, diffY, width, height }
 }

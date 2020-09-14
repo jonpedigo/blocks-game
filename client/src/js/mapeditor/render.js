@@ -20,7 +20,7 @@ function update() {
   if(!ctx) return
 
   if(PAGE.role.isAdmin) {
-    drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height, color: 'white' }, camera)
+    drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height, color: '#999' }, camera)
   }
 
   if(PAGE.role.isAdmin || !GAME.gameState.started) {
@@ -71,9 +71,26 @@ function update() {
         });
       }
 
+      if(objectHighlighted._pfGrid) {
+        const _pfGrid = objectHighlighted._pfGrid
+        const customGridProps = objectHighlighted.customGridProps
+        drawTools.drawGrid(ctx, {...objectHighlighted.customGridProps, color:'rgba(0,170,0, 1)', normalLineWidth: .6, specialLineWidth: .6}, camera)
+        drawTools.drawPFGrid(ctx, camera, _pfGrid, customGridProps, { style: 'alt'})
+      }
+
+      if(PAGE.role.isAdmin && GAME.pfgrid) drawTools.drawPFGrid(ctx, camera, GAME.pfgrid, { nodeWidth: GAME.grid.nodeSize, nodeHeight: GAME.grid.nodeSize, startX: GAME.grid.startX, startY: GAME.grid.startY})
+
       const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
       drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
       drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+
+      if(objectHighlighted.targetXY) {
+        let {x, y}= objectHighlighted.targetXY
+        if(!x) x= objectHighlighted.x
+        if(!y) y= objectHighlighted.y
+
+        drawTools.drawVertice(ctx, { thickness: 4, color: 'rgba(0,170,0, .6)', a: { x: objectHighlighted.x, y: objectHighlighted.y}, b: {x: x, y: y}}, camera)
+      }
     }
   }
 

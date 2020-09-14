@@ -187,7 +187,7 @@ class Game{
       MAP._isOutOfDate = true
     }
 
-    if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.tags.calculatePathCollisions) {
+    if((PAGE.role.isHost || PAGE.role.isPlayEditor) && GAME.world.tags.calculateMovingObstaclePaths) {
       GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
     }
@@ -403,7 +403,7 @@ class Game{
   }
 
   addObstacle(object) {
-    if(((!object.path || !object.path.length) && (!object.tags.moving) && object.tags.obstacle) || GAME.world.tags.calculatePathCollisions || object.tags.onlyHeroAllowed) {
+    if(((!object.path || !object.path.length) && (!object.tags.moving) && object.tags.obstacle) || GAME.world.tags.calculateMovingObstaclePaths || object.tags.onlyHeroAllowed) {
       // pretend we are dealing with a 0,0 plane
       let x = object.x - GAME.grid.startX
       let y = object.y - GAME.grid.startY
@@ -760,7 +760,7 @@ class Game{
       if(key === 'tags') {
         for(let tag in updatedWorld.tags) {
           const tagVal = updatedWorld.tags[tag]
-          if(tag === 'calculatePathCollisions' && GAME.grid.nodes) {
+          if(tag === 'calculateMovingObstaclePaths' && GAME.grid.nodes) {
             GAME.updateGridObstacles()
             if(PAGE.role.isHost) GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
           }
@@ -784,7 +784,7 @@ class Game{
       }
     }
 
-    window.local.emit('onUpdatePFgrid')
+    window.local.emit('onUpdatePFgrid', 'reset')
 
     if(PAGE.role.isPlayEditor) {
       // window.worldeditor.update(GAME.world)
@@ -793,9 +793,15 @@ class Game{
   }
 
   onUpdatePFgrid() {
-    if(!GAME.world.tags.calculatePathCollisions) {
+    if(!GAME.world.tags.calculateMovingObstaclePaths) {
       GAME.updateGridObstacles()
       GAME.pfgrid = pathfinding.convertGridToPathfindingGrid(GAME.grid.nodes)
+
+      GAME.objects.forEach((object) => {
+        if(object._pathUsesCustomGrid) {
+          object._pfGrid = pathfinding.convertCustomGridToPathfindingGrid(object.customGridProps)
+        }
+      })
     }
   }
 

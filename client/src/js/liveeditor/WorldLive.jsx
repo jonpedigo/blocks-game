@@ -47,7 +47,7 @@ export default class WorldLive extends React.Component {
           </DatFolder>
           <DatFolder title='Tags'>
             <DatBoolean label='No Monster Camping' path="world.tags.noCamping"/>
-            <DatBoolean label='Calculate Moving Obstacle Paths' path="world.tags.calculatePathCollisions"/>
+            <DatBoolean label='Calculate Moving Obstacle Paths' path="world.tags.calculateMovingObstaclePaths"/>
 
             <DatBoolean label='All Moving Objects Have Gravity' path="world.tags.allMovingObjectsHaveGravityY"/>
             <DatBoolean label='Prevent Hero From Leaving Grid' path="world.tags.preventHeroGridBypass"/>

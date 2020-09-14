@@ -82,8 +82,8 @@ class Objects{
     if(object.mod().pathfindingLimit) {
       // you need to make sure diffX, diffY is also at the x, y grid locations ( the object could be inbetween grids if it has velocity )
       const { x, y } = gridUtil.snapXYToGrid(diffX, diffY)
-      object.mod().pathfindingLimit.x += x
-      object.mod().pathfindingLimit.y += y
+      object.pathfindingLimit.x += x
+      object.pathfindingLimit.y += y
       // grid.snapDragToGrid(object.pathfindingLimit, {dragging: true})
     }
 
@@ -135,6 +135,7 @@ class Objects{
       // targetFollowId:  object.targetFollowId,
 
       _pathIdIndex: object._pathIdIndex,
+      _pathWait: object._pathWait,
       _pathOnWayBack:  object._pathOnWayBack,
 
       _pfGrid: object.pfGrid,
@@ -226,11 +227,13 @@ class Objects{
       }),
 
       pathParts:  object.pathParts,
-      pathId:  object.pathId,
-
       _pathUsesCustomGrid: object._pathUsesCustomGridPfGrid,
       customGridProps: object.customGridProps,
+      customGridNodes: object.customGridNodes,
 
+      pathId:  object.pathId,
+      pathfindingLimitId: object.pathfindingLimitId,
+      pathfindingGridId: object.pathfindingGridId,
 
       // sub objects
       relativeWidth: object.relativeWidth,
@@ -357,7 +360,6 @@ class Objects{
       spawnPointX: object.spawnPointX,
       spawnPointY: object.spawnPointY,
       liveEmitterData: object.liveEmitterData,
-      navigationTargetId:  object.navigationTargetId,
       tags: object.tags,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
@@ -370,6 +372,9 @@ class Objects{
           width: part.width,
         }
       }),
+
+      path: object.path,
+      targetXY: object.targetXY,
     }
 
     if(object.subObjects) {
@@ -586,7 +591,7 @@ class Objects{
       newObject.spawnPointX = newObject.x
       newObject.spawnPointY = newObject.y
 
-      if(!GAME.world.tags.calculatePathCollisions) {
+      if(!GAME.world.tags.calculateMovingObstaclePaths) {
         GAME.addObstacle(newObject)
       }
 
@@ -737,7 +742,7 @@ class Objects{
 
     GAME.resetPaths = true
 
-    window.local.emit('onUpdatePFgrid')
+    window.local.emit('onUpdatePFgrid', 'edit', editedObjects)
   }
 
   onAnticipateObject(object) {
@@ -889,7 +894,7 @@ class Objects{
         subObject.removed = true
       })
     }
-    window.local.emit('onUpdatePFgrid')
+    window.local.emit('onUpdatePFgrid', 'remove', object)
   }
 
   unloadObject(object) {
@@ -934,7 +939,7 @@ class Objects{
 
   onDeleteObject(object) {
     OBJECTS.deleteObject(object)
-    window.local.emit('onUpdatePFgrid')
+    window.local.emit('onUpdatePFgrid', 'delete', object)
   }
 
   onDeleteSubObjectChance(ownerId, subObjectName) {
@@ -1015,7 +1020,7 @@ class Objects{
     objectsAdded.forEach((object) => {
       OBJECTS.addObject(object)
     })
-    window.local.emit('onUpdatePFgrid')
+    window.local.emit('onUpdatePFgrid', 'add', objectsAdded)
   }
 
   getRelativeXY(object, relative) {

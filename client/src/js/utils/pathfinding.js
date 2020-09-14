@@ -39,6 +39,45 @@ function convertGridToPathfindingGrid(grid, saveToWindow = true) {
   return pfgrid;
 }
 
+function convertCustomGridToPathfindingGrid(props) {
+  const pfgrid = new PF.Grid(props.gridWidth, props.gridHeight);
+
+  GAME.objects.forEach((object) => {
+    if((object.tags.obstacle || object.tags.onlyHeroAllowed) && (!object.tags.moving || GAME.world.tags.calculateMovingObstaclePaths)) {
+      // pretend we are dealing with a 0,0 plane
+      let x = object.x - props.startX
+      let y = object.y - props.startY
+
+      let diffX = x % props.nodeWidth
+      x -= diffX
+      x = x/props.nodeWidth
+
+      let diffY = y % props.nodeHeight
+      y -= diffY
+      y = y/props.nodeHeight
+
+      let gridWidth = object.width / props.nodeWidth;
+      let gridHeight = object.height / props.nodeHeight;
+
+      for(let currentx = x; currentx < x + gridWidth; currentx++) {
+        for(let currenty = y; currenty < y + gridHeight; currenty++) {
+
+          try {
+            if(x >= 0 && x < props.gridWidth) {
+              if(y >= 0 && y < props.gridHeight) {
+                pfgrid.setWalkableAt(x, y, false)
+              }
+            }
+          } catch(e) {
+            console.log(x, y)
+          }
+        }
+      }
+    }
+  })
+  return pfgrid;
+}
+
 function findOpenPath({ fromPosition, toPosition, prioritizeNear = { x: fromPosition.x, y: fromPosition.x }, onFail = () => {} }) {
   const fromX = fromPosition.x
   const fromY = fromPosition.y
@@ -408,6 +447,7 @@ function sortByDistance(coordsA, coordsB, comparedTo){
 export default {
   findPath,
   convertGridToPathfindingGrid,
+  convertCustomGridToPathfindingGrid,
   walkAround,
   walkWithPurpose,
   walkIntoWall,

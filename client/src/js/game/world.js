@@ -13,7 +13,7 @@ function setDefault() {
       hasGameLog: false,
       allowHeroChat: false,
       preventHeroGridBypass: false,
-      calculatePathCollisions: false,
+      calculateMovingObstaclePaths: false,
       noCamping: false,
       // targetOnSight: false,
       // isAsymmetric: false,

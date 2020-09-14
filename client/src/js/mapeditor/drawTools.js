@@ -13,10 +13,11 @@ function drawConstructParts(ctx, camera, object) {
   }
 }
 
-function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWidth,  nodeHeight,  normalLineWidth = .25, specialLineWidth = .6, color = 'white'}, camera) {
+function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWidth,  nodeHeight,  normalLineWidth = .25, specialLineWidth = .6, color = '#999'}, camera) {
   let height = (nodeHeight || nodeSize)  * gridHeight
   let width = (nodeWidth || nodeSize)  * gridWidth
 
+  ctx.save()
   ctx.strokeStyle = "#999";
   if(color) {
     ctx.strokeStyle = color;
@@ -29,13 +30,13 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWid
     drawVertice(ctx, {a: {
       x: startX + (x * (nodeWidth || nodeSize)),
       y: startY,
-      color
     },
     b: {
       x: startX + (x * (nodeWidth || nodeSize)),
       y: startY + height,
-      color
-    }}, camera)
+    },
+    color
+  }, camera)
   }
   for(var y = 0; y <= gridHeight; y++) {
     ctx.lineWidth = normalLineWidth
@@ -45,16 +46,17 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWid
     drawVertice(ctx, {a: {
       x: startX,
       y: startY + (y * (nodeHeight || nodeSize)),
-      color
     },
     b: {
       x: startX + width,
       y: startY + (y * (nodeHeight || nodeSize)),
-      color
-    }}, camera)
+    },
+    color
+    }, camera)
   }
 
-  ctx.lineWidth = 1
+  ctx.lineWidth = .25
+  ctx.restore()
 }
 
 function getObjectVertices(ctx, object, camera, options = {}) {
@@ -193,6 +195,35 @@ function drawLine(ctx, pointA, pointB, options, camera) {
   }
 }
 
+function drawPFGrid(ctx, camera, pfGrid, props, options = {}) {
+  pfGrid.nodes.forEach((nodeRow) => {
+    nodeRow.forEach((node) => {
+      if(node.walkable !== true) {
+        if(options.style === 'alt') {
+          drawVertice(ctx, {a: {
+            x: (node.x + 1) * props.nodeWidth + props.startX,
+            y: node.y * props.nodeHeight + props.startY,
+          },
+          b: {
+            x: (node.x) * props.nodeWidth + props.startX,
+            y: (node.y + 1) * props.nodeHeight + props.startY,
+          }, color: 'rgba(255, 0,0, 0.3)', thickness: 4}, camera)
+
+        } else {
+          drawVertice(ctx, {a: {
+            x: (node.x) * props.nodeWidth + props.startX,
+            y: node.y * props.nodeHeight + props.startY,
+          },
+          b: {
+            x: (node.x + 1) * props.nodeWidth + props.startX,
+            y: (node.y + 1) * props.nodeHeight + props.startY,
+          }, color: 'rgba(255, 0,0, 0.3)', thickness: 4}, camera)
+        }
+      }
+    })
+  })
+}
+
 export default {
   drawConstructParts,
   getObjectVertices,
@@ -202,4 +233,5 @@ export default {
   drawBorder,
   drawFilledObject,
   drawGrid,
+  drawPFGrid,
 }

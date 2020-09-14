@@ -78,7 +78,7 @@ class PathEditor {
     if(this.grid.nodeWidth !== GAME.grid.nodeSize || this.grid.nodeHeight !== GAME.grid.nodeSize) {
       const { x, y, width, height } = this.getBoundingBox(pathParts)
       const customGridProps = {
-        x, y, width, height,
+        startX: x, startY: y, gridWidth: width/this.grid.nodeWidth, gridHeight: height/this.grid.nodeHeight,
         nodeWidth: this.grid.nodeWidth, nodeHeight: this.grid.nodeHeight
       }
       this.close()
@@ -222,6 +222,13 @@ class PathEditor {
   initializeGridNodes(object) {
     const squares = []
 
+    if(object.pathParts) {
+      if(object.pathParts[0].width !== this.grid.nodeWidth || object.pathParts[0].height !== this.grid.nodeHeight) {
+        this.pathParts = []
+        return
+      }
+    }
+
     this.pathParts = object.pathParts || []
     this.pathParts.forEach((square) => {
       this.grid.updateNode(square.gridX, square.gridY, { color: square.color, filled: true, index: square.index })
@@ -342,7 +349,7 @@ class PathEditor {
 
     if(nodeHighlighted) {
       if(tool === 'paintBrush') {
-        drawTools.drawObject(ctx, {...nodeHighlighted, color: 'rgba(0,0,255, 0.4)', opacity: .4 }, camera)
+        drawTools.drawObject(ctx, {...nodeHighlighted, color: 'rgba(0,170,0, .6)', opacity: .4 }, camera)
       } else if(tool === 'eraser'){
         drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
       } else {

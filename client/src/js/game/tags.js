@@ -249,6 +249,7 @@ function setDefault() {
     path: false,
     pfGridUpdateOnLoop: false,
     pathfindLoop: false,
+    pathfindPatrol: false,
     pathfindDumb: false,
     pathfindWait: false,
   }

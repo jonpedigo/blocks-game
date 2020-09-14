@@ -29,34 +29,36 @@ function moveTowardsTarget(object, target, delta, options = { flat: false}) {
   let oldX = object.x
   let oldY = object.y
 
-  if(object.x > target.x) {
+  if(typeof target.x == 'number' && object.x > target.x) {
     if(options.flat) object.velocityX = -object.mod().speed || -100
     else {
       object.velocityX -= (object.mod().speed || 100) * delta
     }
   }
-  if(object.x < target.x) {
+  if(typeof target.x == 'number' && object.x < target.x) {
     if(options.flat) object.velocityX = object.mod().speed || 100
     else object.velocityX += (object.mod().speed || 100) * delta
   }
   let newX = object.x + object.velocityX * delta
 
-  if(object.y > target.y) {
+  if(typeof target.y == 'number' && object.y > target.y) {
     if(options.flat) object.velocityY = -object.mod().speed || -100
     else object.velocityY -= (object.mod().speed || 100) * delta
   }
-  if(object.y < target.y) {
+  if(typeof target.y == 'number' && object.y < target.y) {
     if(options.flat) object.velocityY = object.mod().speed || 100
     else object.velocityY += (object.mod().speed || 100) * delta
   }
   let newY = object.y + object.velocityY * delta
 
-  if(target.x < oldX && target.x > newX || target.x > oldX && target.x < newX) {
+  if(typeof target.x == 'number' && (target.x < oldX && target.x > newX || target.x > oldX && target.x < newX || target.x === object.x)) {
     object.x = target.x
+    target.x = null
     object.velocityX = 0
   }
-  if(target.y < oldY && target.y > newY || target.y > oldY && target.y < newY) {
+  if(typeof target.y == 'number' && (target.y < oldY && target.y > newY || target.y > oldY && target.y < newY || target.y === object.y)) {
     object.y = target.y
+    target.y = null
     object.velocityY = 0
   }
 }
@@ -120,20 +122,45 @@ function onUpdate(objects, delta) {
       setPathTarget(object, target)
     }
 
-    if(object.pathId && (!object.path || (object.path && object.path.length === 0))) {
+
+    let readyForNextTarget = false
+    if(object.mod().tags.pathfindDumb || object.mod().tags.pathfindDumb) {
+      readyForNextTarget = !object.targetXY || (object.targetXY && object.targetXY.x == null && object.targetXY.y == null)
+    } else {
+      readyForNextTarget = (!object.path || (object.path && object.path.length === 0))
+    }
+
+    if(object.pathId && !object._pathWait && readyForNextTarget) {
       const target = OBJECTS.getObjectOrHeroById(object.pathId)
+      console.log('getting next', object.targetXY)
       if(typeof object._pathIdIndex === 'number') {
-        object._pathIdIndex++
+        if(object.mod().tags.pathfindWait) {
+          object._pathWait = true
+          GAME.addTimeout(object.id + '-pathfindwait', 5, () => {
+            object._pathIdIndex++
+            object._pathWait = false
+          })
+        } else {
+          object._pathIdIndex++
+        }
       } else {
         object._pathIdIndex = 0
       }
 
       if (target && target.pathParts && target.pathParts.length) {
         if(target.pathParts[object._pathIdIndex]) {
-          setPathTarget(object, target.pathParts[object._pathIdIndex])
+          if(object.mod().tags.pathfindDumb) {
+            setTarget(object, target.pathParts[object._pathIdIndex])
+          } else {
+            setPathTarget(object, target.pathParts[object._pathIdIndex])
+          }
         } else if(object.mod().tags.pathfindLoop){
           object._pathIdIndex = 0
-          setPathTarget(object, target.pathParts[object._pathIdIndex])
+          if(object.mod().tags.pathfindDumb) {
+            setTarget(object, target.pathParts[object._pathIdIndex])
+          } else {
+            setPathTarget(object, target.pathParts[object._pathIdIndex])
+          }
         } else {
           object.pathId = null
           object._pathIdIndex = null

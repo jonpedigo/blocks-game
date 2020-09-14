@@ -417,7 +417,11 @@ class Hero{
       _objectsAwareOf: hero._objectsAwareOf,
       _flipY: hero._flipY,
       // conditionTestCounts: hero.conditionTestCounts,
-      liveEmitterData: hero.liveEmitterData
+      liveEmitterData: hero.liveEmitterData,
+
+      _pathIdIndex: hero._pathIdIndex,
+      _pathWait: hero._pathWait,
+      _pathOnWayBack:  hero._pathOnWayBack,
     }
 
     if(hero.subObjects) {
@@ -513,6 +517,10 @@ class Hero{
       velocityDecayXExtra: hero.velocityDecayXExtra,
       velocityDecayYExtra: hero.velocityDecayYExtra,
       floatJumpTimeout: hero.floatJumpTimeout,
+
+      pathId: hero.pathId,
+      pathfindingLimitId: hero.pathfindingLimitId,
+      pathfindingGridId: hero.pathfindingGridId,
     }
 
     if(hero.subObjects) {
@@ -631,6 +639,9 @@ class Hero{
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       creator: hero.creator,
+
+      path: hero.path,
+      targetXY: hero.targetXY,
 
       heroSummonType: hero.heroSummonType,
     }
