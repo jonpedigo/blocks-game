@@ -65,20 +65,20 @@ export default class Effect extends React.Component{
 
       if(effectData.JSON) {
         chosenEffectForm.push(effectData.JSONlabel || '')
-        chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditCodeModal('edit effect JSON', 'effectJSON')}/>)
+        chosenEffectForm.push(<i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditCodeModal('edit effect JSON', 'effectJSON')}/>)
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.effectJSON)}</div>)
       }
       if(effectData.label) {
         chosenEffectForm.push(effectData.label)
       }
       if(effectData.smallText) {
-        chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={this.props._openEditTextModal}/>)
+        chosenEffectForm.push(<i className="fa fas fa-edit Manager__button" onClick={this.props._openEditTextModal}/>)
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{effectValue}</div>)
       } else if(effectData.largeText) {
-        chosenEffectForm.push(<i className="fa fas fa-edit SequenceButton" onClick={this.props._openWriteDialogueModal}/>)
+        chosenEffectForm.push(<i className="fa fas fa-edit Manager__button" onClick={this.props._openWriteDialogueModal}/>)
         chosenEffectForm.push(<div className="SequenceItem__summary SequenceItem__summary--json">{effectValue}</div>)
       } else if(effectData.number) {
-        chosenEffectForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('effectValue') }}/>
+        chosenEffectForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('effectValue') }}/>
         <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.effectValue}</div>
         </div>)
       }
@@ -145,11 +145,11 @@ export default class Effect extends React.Component{
     let notificationOptions = []
     if(isTrigger) {
       notificationOptions.push('Notification text:')
-      notificationOptions.push(<i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationText')}/>)
+      notificationOptions.push(<i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('notificationText')}/>)
       notificationOptions.push(<div className="SequenceItem__summary SequenceItem__summary--json">{notificationText}</div>)
 
       notificationOptions.push('Duration:');
-      notificationOptions.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('notificationDuration') }}/>
+      notificationOptions.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('notificationDuration') }}/>
       <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationDuration}</div>
       </div>);
       notificationOptions.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationLog')} checked={sequenceItem.notificationLog} type="checkbox"></input>Log</div>)
@@ -160,7 +160,7 @@ export default class Effect extends React.Component{
       if(sequenceItem.notificationModal) {
         notificationOptions.push('Modal Header:');
         notificationOptions.push(<React.Fragment>
-          <i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationModalHeader')}/>
+          <i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('notificationModalHeader')}/>
           <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationModalHeader}</div>
         </React.Fragment>)
       }

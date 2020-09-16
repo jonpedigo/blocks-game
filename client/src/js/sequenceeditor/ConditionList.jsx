@@ -80,12 +80,12 @@ export default class ConditionList extends React.Component {
 
     return (
       <div className="SequenceEditor--condition-list">
-        <div className="SequenceMenu">
-          <div className="SequenceMenu__top">
-            <i className="SequenceButton fa fas fa-download" onClick={this.download}></i>
+        <div className="ManagerMenu">
+          <div className="ManagerMenu__right">
+            <i className="Manager__button fa fas fa-download" onClick={this.download}></i>
           </div>
-          <div className="SequenceMenu__bottom">
-            <i className="SequenceButton fa fas fa-plus" onClick={this._onAddItem}></i>
+          <div className="ManagerMenu__left">
+            <i className="Manager__button fa fas fa-plus" onClick={this._onAddItem}></i>
           </div>
         </div>
         {sequenceItems.map((sequenceItem, index) => {

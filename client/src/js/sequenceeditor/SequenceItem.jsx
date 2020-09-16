@@ -244,7 +244,7 @@ export default class SequenceItem extends React.Component{
   _renderDialogue() {
     const { sequenceItem } = this.state;
     return <div className="SequenceItem__dialogue">
-      <i className="fa fas fa-edit SequenceButton" onClick={this._openWriteDialogueModal}/>
+      <i className="fa fas fa-edit Manager__button" onClick={this._openWriteDialogueModal}/>
       Dialogue: <div className="SequenceItem__summary">{sequenceItem.effectValue}</div>
       <NextSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} nextOptions={this.state.nextOptions} nextValue={sequenceItem.next} onChange={this._selectNext}/>
     </div>
@@ -256,7 +256,7 @@ export default class SequenceItem extends React.Component{
       {sequenceItem.options.map((option, index) => {
         return <div key={sequenceItem.id + '-' + index} className="SequenceItem__option" >
           <h4>{'Option ' + (index + 1)}</h4>
-          <i className="fa fas fa-edit SequenceButton" onClick={() => {
+          <i className="fa fas fa-edit Manager__button" onClick={() => {
             this._openWriteDialogueModal(index)
           }}/>
         Text:<div className="SequenceItem__summary">{option.effectValue}</div>
@@ -265,7 +265,7 @@ export default class SequenceItem extends React.Component{
           }}/>
         </div>
       })}
-      <i className="fa fas fa-plus SequenceButton" onClick={this._addOption}/>
+      <i className="fa fas fa-plus Manager__button" onClick={this._addOption}/>
     </div>
   }
 
@@ -277,7 +277,7 @@ export default class SequenceItem extends React.Component{
       <div className={classnames("SequenceItem SequenceItem--" + sequenceItem.sequenceType, { "SequenceItem--trigger": isTrigger })}>
         {!isTrigger && <div className="SequenceItem__identifier">{sequenceItem.id}</div>}
         {!isTrigger && <div className="SequenceItem__type">{sequenceItem.sequenceType}</div>}
-        {!isTrigger && <i className="SequenceButton SequenceItem__delete fa fas fa-times" onClick={onDelete}></i>}
+        {!isTrigger && <i className="Manager__button SequenceItem__delete fa fas fa-times" onClick={onDelete}></i>}
         <div className="SequenceItem__body">
           {isTrigger && <Trigger {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceDialogue' && this._renderDialogue()}

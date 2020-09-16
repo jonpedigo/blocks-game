@@ -1,9 +1,9 @@
 .ConstructEditor {
-  position: fixed;
+  position: absolute;
   top: 0px;
 
   &__color-picker {
-    position: fixed;
+    position: absolute;
     left: 110px;
     top: 20px;
     cursor: default;

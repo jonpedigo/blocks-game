@@ -34,7 +34,6 @@ MAP.onPageLoaded = function() {
   }
 
   MAP.canvas.id = 'game-canvas'
-  MAP.canvas.style.position = 'fixed'
   document.getElementById('GameContainer').appendChild(MAP.canvas);
 
   MAPEDITOR.set(MAP.ctx, MAP.canvas, MAP.camera)

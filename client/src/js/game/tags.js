@@ -245,9 +245,7 @@ function setDefault() {
   }
 
   window.pathTags = {
-    pathfindingLimit: false,
     path: false,
-    pfGridUpdateOnLoop: false,
     pathfindLoop: false,
     pathfindPatrol: false,
     pathfindDumb: false,

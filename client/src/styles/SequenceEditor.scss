@@ -14,7 +14,7 @@
   overflow-y: scroll;
 	height: 100%;
 
-  .SequenceButton {
+  .Manager__button {
     display: inline;
     cursor: pointer;
     background-color: #333;
@@ -210,41 +210,5 @@
   &__next {
     width: 220px;
     display: inline-block;
-  }
-}
-
-.SequenceMenu {
-  width: 100%;
-
-  &__top {
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    z-index: 2;
-  }
-
-  &__bottom {
-    position: fixed;
-    top: 0px;
-    right: 310px;
-    z-index: 2;
-
-    .fa-plus {
-      font-size: 20px;
-    }
-  }
-
-  &__id {
-    cursor: pointer;
-    color: white;
-    width: 100%;
-    font-weight: 800;
-    font-size: 25px;
-    text-align: center;
-    padding: 40px 0px 20px;
-
-    &:hover {
-      background-color: #111;
-    }
   }
 }

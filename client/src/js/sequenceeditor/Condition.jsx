@@ -36,17 +36,17 @@ export default class Condition extends React.Component {
     let chosenConditionForm = []
     if(conditionData) {
       if(conditionData.JSON) {
-        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditCodeModal('edit condition JSON', 'conditionJSON')}/>
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditCodeModal('edit condition JSON', 'conditionJSON')}/>
           {conditionData.label || ''} <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.conditionJSON)}</div>
         </div>)
       }
       if(conditionData.smallText) {
-        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={this.props._openEditConditionValueModal}/>
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={this.props._openEditConditionValueModal}/>
           {conditionData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
         </div>)
       }
       if(conditionData.number) {
-        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('conditionValue') }}/>
+        chosenConditionForm.push(<div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('conditionValue') }}/>
           {conditionData.label} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.conditionValue}</div>
         </div>)
       }

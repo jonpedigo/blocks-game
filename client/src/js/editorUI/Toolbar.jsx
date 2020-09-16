@@ -280,58 +280,8 @@ export default class Toolbar extends React.Component {
               }
             })
           }}/>
-          <ToolbarButton iconName="fa-images" onClick={() => {
-              Swal.fire({
-                title: 'Select a spritesheet author',
-                showClass: {
-                  popup: 'animated fadeInDown faster'
-                },
-                hideClass: {
-                  popup: 'animated fadeOutUp faster'
-                },
-                input: 'select',
-                inputOptions: Object.keys(window.spriteSheetAuthors),
-              }).then((result) => {
-                const ssAuthor = Object.keys(window.spriteSheetAuthors)[result.value]
-
-                Swal.fire({
-                  title: 'Give the sprite sheet an id',
-                  showClass: {
-                    popup: 'animated fadeInDown faster'
-                  },
-                  hideClass: {
-                    popup: 'animated fadeOutUp faster'
-                  },
-                  input: 'text',
-                }).then((result) => {
-                  const id = result.value
-
-                  Swal.fire({
-                    title: 'What is the image path from /images/',
-                    showClass: {
-                      popup: 'animated fadeInDown faster'
-                    },
-                    hideClass: {
-                      popup: 'animated fadeOutUp faster'
-                    },
-                    input: 'text',
-                  }).then((result) => {
-                    const imageUrl = result.value
-                    modals.openEditCodeModal('Paste spritesheet JSON code here', [], (result) => {
-                      if(result && result.value) {
-                        const sprites = JSON.parse(result.value)
-                        const json = {
-                          sprites,
-                          id,
-                          imageUrl,
-                          author: ssAuthor
-                        }
-                        window.socket.emit('saveSpriteSheetJSON', id, json)
-                      }
-                    })
-                  })
-                })
-              })
+          <ToolbarButton iconName="fa-icons" onClick={() => {
+              MEDIAMANAGER.open('spritesheet')
           }}/>
         </ToolbarRow>
       </div>

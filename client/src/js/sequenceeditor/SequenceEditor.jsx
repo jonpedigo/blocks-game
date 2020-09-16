@@ -309,9 +309,9 @@ export default class SequenceEditor extends React.Component {
 
     if(!sequence) {
       return <div className="SequenceEditor">
-        <div className="SequenceMenu">
-          <div className="SequenceMenu__top">
-          <i className="SequenceButton fa fas fa-times" onClick={WORLDMANAGER.close}></i>
+        <div className="ManagerMenu">
+          <div className="ManagerMenu__right">
+          <i className="Manager__button fa fas fa-times" onClick={WORLDMANAGER.close}></i>
           </div>
         </div>
         <div className="SequenceList">
@@ -325,19 +325,19 @@ export default class SequenceEditor extends React.Component {
 
     return (
       <div className="SequenceEditor">
-        <div className="SequenceMenu">
-          <div className="SequenceMenu__top">
-            <div className="SequenceButton" onClick={this.closeSequence}>Cancel</div>
-            <div className="SequenceButton" onClick={this.saveSequence}>Save</div>
-            <i className="SequenceButton fa fas fa-download" onClick={this.download}></i>
+        <div className="ManagerMenu">
+          <div className="ManagerMenu__right">
+            <div className="Manager__button" onClick={this.closeSequence}>Cancel</div>
+            <div className="Manager__button" onClick={this.saveSequence}>Save</div>
+            <i className="Manager__button fa fas fa-download" onClick={this.download}></i>
           </div>
-          <div className="SequenceMenu__id" onClick={this._openEditIdModal}>{sequence.id}</div>
-          <div className="SequenceMenu__bottom">
+          <div className="ManagerMenu__id" onClick={this._openEditIdModal}>{sequence.id}</div>
+          <div className="ManagerMenu__left">
             <div style={{width: '150px', display: 'inline-block'}}><Select
               onChange={this._selectType}
               options={typeOptions}
               styles={window.reactSelectStyle}/></div>
-            <i className="SequenceButton fa fas fa-plus" onClick={this._onAddItem}></i>
+            <i className="Manager__button fa fas fa-plus" onClick={this._onAddItem}></i>
           </div>
         </div>
         <DragDropContext onDragEnd={this._onDragEnd}>

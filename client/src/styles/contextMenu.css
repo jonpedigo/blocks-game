@@ -1,6 +1,6 @@
 #context-menu {
   /* width: 120px; */
-  position: fixed;
+  position: absolute;
   background: #19191a;
   color: white;
   z-index: 1;

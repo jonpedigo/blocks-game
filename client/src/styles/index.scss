@@ -12,6 +12,7 @@
 @import './dark.min.css';
 @import './SequenceEditor.scss';
 @import './WorldManager.scss';
+@import './MediaManager.scss';
 // @import './slideout.scss';
 @import './Modal.scss';
 @import './Creator.scss';
@@ -78,7 +79,7 @@ p {
 
 body {
   margin: 0px;
-  overflow-y: hidden;
+  // overflow-y: hidden;
   background: #333;
   overscroll-behavior-x: none;
 }
@@ -156,7 +157,9 @@ select.swal-modal-input{
 }
 
 #game-canvas, #playeditor-canvas {
-  display: inline;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .is-edit-live {

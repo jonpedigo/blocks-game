@@ -122,6 +122,10 @@ class EventEmitter {
         event.push(WORLDMANAGER[eventName])
       }
 
+      if(MEDIAMANAGER[eventName]) {
+        event.push(MEDIAMANAGER[eventName])
+      }
+
       if(LIVEEDITOR[eventName]) {
         event.push(LIVEEDITOR[eventName])
       }

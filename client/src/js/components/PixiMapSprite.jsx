@@ -18,7 +18,7 @@ export default class PixiMapSprite extends React.Component {
     const transform = `scale(${scale})`;
 
     const transformContainer = `translateX(${translate}) translateY(${translate})`
-    return <div className={this.props.className} style={{transform: transformContainer, width: desiredWidth, height: desiredHeight}}>
+    return <div className={this.props.className} onClick={this.props.onClick} style={{transform: transformContainer, width: desiredWidth, height: desiredHeight, ...this.props.style}}>
       <div className="Sprite" style = {{
           backgroundImage,
           backgroundPositionY,

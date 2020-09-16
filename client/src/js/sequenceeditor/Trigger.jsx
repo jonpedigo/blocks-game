@@ -39,10 +39,10 @@ export default class Trigger extends React.Component {
         }} title='Guest Object Tag:'/>
       </Collapsible>
 
-      <Collapsible trigger="Trigger Options"><div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('initialTriggerPool') }}/>
+      <Collapsible trigger="Trigger Options"><div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('initialTriggerPool') }}/>
         {'Trigger Pool'} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.initialTriggerPool}</div>
       </div>
-      <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('eventThreshold') }}/>
+      <div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('eventThreshold') }}/>
         {'Event Threshold'} <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.eventThreshold}</div>
       </div></Collapsible>
     </div>

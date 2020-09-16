@@ -37,10 +37,10 @@ export default class Effect extends React.Component{
       <div className="SequenceItem__effect-body">
         <div className="SequenceItem__effect-form">
           Text:
-          <i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationText')}/>
+          <i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('notificationText')}/>
           <div className="SequenceItem__summary SequenceItem__summary--json">{notificationText}</div>
           Duration:
-          <div className="SequenceItem__condition-form"><i className="fa fas fa-edit SequenceButton" onClick={() => { this.props._openEditNumberModal('notificationDuration') }}/>
+          <div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('notificationDuration') }}/>
           <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationDuration}</div>
           </div>
           <Collapsible trigger='Type'>
@@ -50,7 +50,7 @@ export default class Effect extends React.Component{
             <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationModal')} checked={sequenceItem.notificationModal} type="checkbox"></input>Modal</div>
             {sequenceItem.notificationModal &&
               <React.Fragment>
-                <i className="fa fas fa-edit SequenceButton" onClick={() => this.props._openEditTextValueModal('notificationModalHeader')}/>
+                <i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('notificationModalHeader')}/>
                 <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.notificationModalHeader}</div>
               </React.Fragment>
             }

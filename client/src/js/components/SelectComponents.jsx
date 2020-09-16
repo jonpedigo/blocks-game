@@ -38,6 +38,17 @@ function MultiTagSelect({sequenceItem, valueProp, onChange, title}) {
   </div>
 }
 
+function SpriteSheetTagsSelect({currentValue, onChange, title}) {
+  return <div className="ManagerInput__select">{title || 'Tags:'}<Select
+    value={currentValue && currentValue.map((tags) => { return { value: tags, label: tags} })}
+    onChange={onChange}
+    options={Object.keys(window.spriteSheetTags).map(tag => { return { value: tag, label: tag}})}
+    styles={window.reactSelectStyle}
+    isMulti
+    theme={window.reactSelectTheme}/>
+  </div>
+}
+
 function MultiIdSelect({sequenceItem, valueProp, onChange, title}) {
   return <div className="SequenceItem__test">{title || 'Test Ids:'}<Select
     value={sequenceItem[valueProp] && sequenceItem[valueProp].map((id) => { return {value: id, label: id} })}
@@ -45,6 +56,17 @@ function MultiIdSelect({sequenceItem, valueProp, onChange, title}) {
     options={GAME.objects.map(({id}) => { return {value: id, label: id} }).concat(GAME.heroList.map(({id}) => { return { value: id, label: id} }))}
     styles={window.reactSelectStyle}
     isMulti
+    theme={window.reactSelectTheme}/>
+  </div>
+}
+
+
+function SpriteSheetAuthorSelect({currentValue, onChange, title}) {
+  return <div className="ManagerInput__select">{title || 'Author:'}<Select
+    value={{ value: currentValue, label: currentValue}}
+    onChange={onChange}
+    options={Object.keys(window.spriteSheetAuthors).map(author => { return { value: author, label: author}})}
+    styles={window.reactSelectStyle}
     theme={window.reactSelectTheme}/>
   </div>
 }
@@ -102,5 +124,7 @@ export {
   SingleLibraryModSelect,
   MultiIdSelect,
   MultiTagSelect,
+  SpriteSheetTagsSelect,
+  SpriteSheetAuthorSelect,
   NextSelect,
 }

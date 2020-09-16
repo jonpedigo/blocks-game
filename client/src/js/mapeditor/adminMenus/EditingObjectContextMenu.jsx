@@ -53,18 +53,18 @@ export default class EditingObjectContextMenu extends React.Component{
   }
 
   render() {
-    const { objectSelected, subObject } = this.props
+    const { objectSelected, objectEditing, subObject } = this.props
 
     // <MenuItem key="follow">Follow</MenuItem>
 
     return <Menu onClick={this._handleObjectMenuClick}>
-      {objectSelected.tags.path && <MenuItem key="set-as-path">Set as Path</MenuItem>}
-      {objectSelected.tags.pathfindingLimit && <MenuItem key="set-as-pathfinding-limit">Set as Pathfinding Limit</MenuItem>}
+    {objectEditing.tags.moving && <MenuItem key="pathfind-to">Pathfind to</MenuItem>}
+    {objectEditing.tags.moving && <MenuItem key="go-to">Go to</MenuItem>}
+      {objectEditing.tags.moving && objectSelected.tags.path && <MenuItem key="set-as-path">Set as Path</MenuItem>}
+      {objectEditing.tags.moving && <MenuItem key="set-as-pathfinding-limit">Set as Pathfinding Limit</MenuItem>}
       {objectSelected.tags.spawnZone && <MenuItem key="set-as-respawn-zone">Set as Respawn Zone</MenuItem>}
       <MenuItem key="set-as-parent">Set as Parent</MenuItem>
       <MenuItem key="set-as-relative">Set as Relative</MenuItem>
-      <MenuItem key="pathfind-to">Pathfind to</MenuItem>
-      <MenuItem key="go-to">Go to</MenuItem>
       {Object.keys(objectSelected.subObjects || {}).length && <SubMenu title="Sub Objects">
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}

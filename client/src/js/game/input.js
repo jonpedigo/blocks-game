@@ -119,6 +119,10 @@ function onPageLoaded(){
   window.addEventListener("keydown", function (e) {
     const key = keycode(e.keyCode)
 
+    if(key === 'space' || key === 'left' || key === 'right' || key === 'up' || key === 'down') {
+      e.preventDefault()
+    }
+
     if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {

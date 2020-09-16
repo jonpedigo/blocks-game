@@ -107,7 +107,7 @@ export default class GameLogs extends React.Component{
 
   render() {
     const { logs } = this.props
-    return <div className="GameLogsContainer" style={{marginTop: CREATOR.container.offsetHeight + 'px', height: PIXIMAP.app.screen.height}}>
+    return <div className="GameLogsContainer" style={{height: PIXIMAP.app.screen.height}}>
       <div className="GameLogs">
       <div className="GameLogs__list">{this._renderLogs(logs)}</div>
         {this._renderChatInput()}

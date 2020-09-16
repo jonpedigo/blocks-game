@@ -65,12 +65,12 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       getSpriteSheet(id, (spriteSheet) => {
         sss.push(spriteSheet)
         if(sss.length === ids.length) socket.emit('onGetSpriteSheetsJSON', sss)
-        console.log(sss.length, ids.length)
       })
     })
   })
 
   socket.on('saveSpriteSheetJSON', (id, json) => {
+    console.log(id, json)
     saveSpriteSheet(id, json)
   })
 

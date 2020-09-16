@@ -6,13 +6,10 @@
 
 TODO
 PATHFINDING editor / advancements <---- !
+Implement the stuff I made in the right click menu
+test homing and other movement tags with a custom pathfindingGridId and also with pathfinding limits
 // path goals AKA patrol
-// Set Target, Set Pathfinding Target
-// Pathfinding for something larger than one grid node
-
-pathCurrent: 'pathName'
 pathReverse: // is moving on this path in reverse order
-pathfindingLimit: // still use this but the container will be more advanced and not that performant
 
 MUTATE UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
@@ -163,6 +160,9 @@ Select emitter from right click menu list, this is not a live emitter, its a dir
 
 right click - follow object, follow with path object
 
+If object is outside of its path to start off, It will not be able to find the correct grid
+Theres needs to be a flag, perhaps the _fresh flag that allows it to use the other pathfinding grid to make its away to the new path
+
 ATTACK which is like initial acceleration when there is no acceleration yet, jump attack speed, etc
 tag: sharpTurns ( velocity is positive and decreasing, increase this power )
 event: onObjectTurn
@@ -215,6 +215,8 @@ A game boundary would likely dissapear, same with a camera lock
 and then you would just have a grid that moves with you, the server would know each heros grid size and location
 and update things accordingly
 
+UPDATE ON THIS
+If we seperate custom grid props from a path object and turn custom grids into their own objects, we can give the hero its own custom grid as a sub object and have monsters hook into it when they are in the area!
 
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
@@ -443,6 +445,7 @@ https://github.com/Dannark/BWO
 // Make a game for their birthday
 
 window.awsURL = 'https://homemadearcade.s3-us-west-1.amazonaws.com/'
+window.HomemadeArcadeImageAssetURL = 'assets/images/'
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
@@ -455,6 +458,7 @@ import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
 import './js/pathEditor/index.js'
 import './js/worldmanager/index.js'
+import './js/mediamanager/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'

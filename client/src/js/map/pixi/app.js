@@ -280,18 +280,18 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   applyFilters()
 
-  const spritesheetsLoading = {
-    'basictileset-1': true,
-    'kenney-voxel': true,
-    'lordofthebling-1': true,
-    // 'oryx-24px-scifi-environment': true,
-    // 'oryx-24px-scifi-transports': true,
-    // 'oryx-24px-scifi-characters': true,
-    // 'oryx-16px-scifi-items': true,
+  window.spriteSheetIds = {
+    'unknownOverworld-2-8px': true,
+    'kenney-voxel-128px': true,
+    'lordofthebling-1-16px': true,
+    'oryx-24px-scifi-environment': true,
+    'oryx-24px-scifi-transports': true,
+    'oryx-24px-scifi-characters': true,
+    'oryx-16px-scifi-items': true,
     'oryx-24px-scifi-creatures': true,
     'candy-1': true,
     'retro-1': true,
-    'overworld-1': true,
+    'overworld-1-16px': true,
     'platformer-1': true,
   }
 
@@ -311,8 +311,8 @@ const initPixiApp = (canvasRef, onLoad) => {
     unknownPlatformer: true,
   }
 
-  const spritesheetsRequested = Object.keys(spritesheetsLoading).filter((name) => {
-    if(spritesheetsLoading[name]) return true
+  const spritesheetsRequested = Object.keys(window.spriteSheetIds).filter((name) => {
+    if(spriteSheetIds[name]) return true
   })
 
   let socket = window.socket
@@ -320,9 +320,9 @@ const initPixiApp = (canvasRef, onLoad) => {
     socket = window.networkSocket
   }
   socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
-    console.log('got sss', spriteSheets)
+    window.spriteSheets = spriteSheets
     startLoadingAssets(spriteSheets.map((ss) => {
-      ss.serverImageUrl = 'assets/images/' + ss.imageUrl
+      ss.serverImageUrl = window.HomemadeArcadeImageAssetURL + ss.imageUrl
       return ss
     }))
   })
@@ -345,6 +345,7 @@ const initPixiApp = (canvasRef, onLoad) => {
           let texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(tile.x, tile.y, tile.width, tile.height));
           if(tile.id) texture.id = ss.id + '-' + tile.id
           if(tile.name) texture.id = ss.id + '-' +  tile.name
+          tile.textureId = texture.id
           textures[texture.id] = texture
           texture.ssauthor = ss.author
           texture.ssId = ss.id
