@@ -70,7 +70,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   })
 
   socket.on('saveSpriteSheetJSON', (id, json) => {
-    console.log(id, json)
     saveSpriteSheet(id, json)
   })
 

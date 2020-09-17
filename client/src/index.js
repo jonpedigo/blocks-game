@@ -5,20 +5,20 @@
 ////////////////////////////////////////////////////
 
 TODO
-PATHFINDING editor / advancements <---- !
+PATHFINDING
 Implement the stuff I made in the right click menu
 test homing and other movement tags with a custom pathfindingGridId and also with pathfinding limits
 // path goals AKA patrol
 pathReverse: // is moving on this path in reverse order
 
-MUTATE UI
+SPRITE SELECTION
+Player view and also add a lot more sheets
+
+GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
 STORY SCREENSHOTS
 
-SPRITE SELECTION FOR MAP + GUIDANCE TAB FOR THAT
-  We need a LEFTHAND sprite selection pixi map. Its searchable by author, platformer, topdown, scifi,fantasy
-  Well also need a ADMIN to reselect sprites and save that info to the sprite json, remove sprites, combine sprites into animations
 PIXEL EDITOR
 
 IMPROVEMENTS
@@ -59,6 +59,12 @@ ANIMATION UPGRADE
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
+
+SEQUENCE EDITOR
+Create
+Animate
+Editor
+Notification
 
 ---
 Scenarios/BeginEnd
@@ -110,13 +116,9 @@ Scenarios/BeginEnd
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Scenario's and Stories
 Random Particle Designer
 GENRE libraries ( creator, generatedMenu )
-
 PUZZLE INTERFACES
-PIXEL EDITOR
-
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
 ( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
 LEVEL UP SYSTEM
@@ -124,6 +126,8 @@ LEVEL UP SYSTEM
 !!!!!!!! !!!! READY FOR HOME MADE ARCADE !!!! !!!!!!
 
 HERO CHOOSER
+LOBBY
+TEAMS
 SOUND FX
 PROCEDURAL LARGE SCALE
 FOG OF WAR
@@ -136,6 +140,8 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 
 bouncing ball
+
+ADMIN to reselect sprites, remove sprites, combine sprites into animations
 
 special camera relation, 0, .5, 2, 10, etc. might wanna encapsulale the camera changing logic into a function?
 

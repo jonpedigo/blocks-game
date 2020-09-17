@@ -5,18 +5,39 @@ import modals from '../mapeditor/modals'
 window.spriteSheetTags = {
   scifi: false,
   fantasy: false,
+  
+  city: false,
+  village: false,
+
   topdown: false,
   platformer: false,
   overworld: false,
+
+  characters: false,
+
+  environment: false,
+
+  items: false,
+
+  weapons: false,
+  food: false,
+
   monsters: false,
   animals: false,
-  characters: false,
-  items: false,
-  weapons: false,
-  environment: false,
-  food: false,
+  vehicles: false,
+  robots: false,
+  farm: false,
+  pets: false,
+
   indoors: false,
   outdoors: false,
+
+  sports: false,
+  road: false,
+
+  crates: false,
+  chests: false,
+  dungeon: false,
 
   oryx: false,
   kenney: false,
@@ -26,6 +47,12 @@ window.spriteSheetTags = {
 
   icons: false,
   ui: false,
+
+  ['8px']: false,
+  ['16px']: false,
+  ['32px']: false,
+  ['64px']: false,
+  ['128px']: false,
 }
 
 export default class Root extends React.Component {
