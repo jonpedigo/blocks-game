@@ -36,6 +36,16 @@ export default class EditingObjectContextMenu extends React.Component{
         networkEditObject(objectEditing, update)
       }
 
+      if(key === 'set-as-pathfinding-limit') {
+        const update = { pathfindingLimitId: objectSelected.id }
+        if(objectSelected.customGridProps) {
+          update.pathfindingGridId = objectSelected.id
+        } else {
+          update.pathfindingGridId = null
+        }
+        networkEditObject(objectEditing, update)
+      }
+
       if(key === 'set-as-parent') {
         networkEditObject(objectEditing, { parentId: objectSelected.id })
       }
@@ -56,10 +66,10 @@ export default class EditingObjectContextMenu extends React.Component{
     const { objectSelected, objectEditing, subObject } = this.props
 
     // <MenuItem key="follow">Follow</MenuItem>
+    // {objectEditing.tags.moving && <MenuItem key="pathfind-to">Pathfind to</MenuItem>}
+    // {objectEditing.tags.moving && <MenuItem key="go-to">Go to</MenuItem>}
 
     return <Menu onClick={this._handleObjectMenuClick}>
-    {objectEditing.tags.moving && <MenuItem key="pathfind-to">Pathfind to</MenuItem>}
-    {objectEditing.tags.moving && <MenuItem key="go-to">Go to</MenuItem>}
       {objectEditing.tags.moving && objectSelected.tags.path && <MenuItem key="set-as-path">Set as Path</MenuItem>}
       {objectEditing.tags.moving && <MenuItem key="set-as-pathfinding-limit">Set as Pathfinding Limit</MenuItem>}
       {objectSelected.tags.spawnZone && <MenuItem key="set-as-respawn-zone">Set as Respawn Zone</MenuItem>}

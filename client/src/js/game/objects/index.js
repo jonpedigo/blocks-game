@@ -738,8 +738,6 @@ class Objects{
       }
     })
 
-    GAME.resetPaths = true
-
     window.local.emit('onUpdatePFgrid', 'edit', editedObjects)
   }
 
@@ -1321,6 +1319,11 @@ class Objects{
     object._skipPosUpdate = true
     object._skipNextGravity = true
     object.angle = null
+  }
+
+  hasRandomPathAI(object) {
+    object = object.mod()
+    if(object.tags.wander || object.tags.spelunker || object.tags.lemmings || object.tags.pacer || object.tags.homing) return true
   }
 }
 

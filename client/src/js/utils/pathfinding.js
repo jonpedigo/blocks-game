@@ -97,7 +97,6 @@ function findPath(fromPosition, toPosition, options = { bypassGameBoundaries : f
   if(gridUtil.keepGridXYWithinBoundaries(toX, toY, options)) {
     let gridBackup
     if(options.customPfGridId && GAME.objectsById[options.customPfGridId] && GAME.objectsById[options.customPfGridId]._pfGrid) {
-      console.log(options)
       gridBackup = GAME.objectsById[options.customPfGridId]._pfGrid.clone();
     } else {
       gridBackup = GAME.pfgrid.clone();
@@ -179,19 +178,47 @@ function forceFindOpenGridNear({position, level = 0}){
 function isGridWalkable(x, y, options = { bypassGameBoundaries : false, pathfindingLimit: null }) {
   // for pathfinding with area
   if(gridUtil.keepGridXYWithinBoundaries(x, y, options)) {
-    if(!GAME.pfgrid.nodes[y]) return false
-    if(!GAME.pfgrid.nodes[y][x]) return false
-    if(!GAME.pfgrid.nodes[y][x].walkable) return false
+    let grid
+    if(options.customPfGridId && GAME.objectsById[options.customPfGridId] && GAME.objectsById[options.customPfGridId]._pfGrid) {
+      grid = GAME.objectsById[options.customPfGridId]._pfGrid
+    } else {
+      grid = GAME.pfgrid
+    }
+    if(!grid.nodes[y]) return false
+    if(!grid.nodes[y][x]) return false
+    if(!grid.nodes[y][x].walkable) return false
     return true
   } else {
     return false
   }
 }
 
-function walkIntoWall(object) {
-  const { gridX, gridY } = gridUtil.convertToGridXY(object)
+function getPfOptions(object) {
+  const pfOptions = {}
+  if(object.pathfindingGridId && GAME.objectsById[object.pathfindingGridId]) {
+    pfOptions.customPfGridId = object.pathfindingGridId
+    pfOptions.pathfindingLimit = GAME.objectsById[object.pathfindingGridId].customGridProps
+  } else if(object.pathfindingLimitId && GAME.objectsById[object.pathfindingLimitId]) {
+    const pfLimit = GAME.objectsById[object.pathfindingLimitId]
+    pfOptions.pathfindingLimit = gridUtil.convertToGridXY(pfLimit)
+  }
 
-  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  pfOptions.bypassGameBoundaries = object.tags.fresh
+
+  return pfOptions
+}
+
+function getGridXYWithCustomGrids(object, pfOptions) {
+  if(pfOptions.customPfGridId) {
+    return gridUtil.convertToGridXY(object, pfOptions.pathfindingLimit)
+  } else {
+    return gridUtil.convertToGridXY(object)
+  }
+}
+
+function walkIntoWall(object) {
+  let options = getPfOptions(object)
+  const { gridX, gridY } = getGridXYWithCustomGrids(object, options)
 
   if(object._goalDirection === 'right'){
     if ( isGridWalkable(gridX + 1, gridY, options) ){
@@ -233,9 +260,8 @@ function walkIntoWall(object) {
 
 
 function exploreCave(object) {
-  const { gridX, gridY } = gridUtil.convertToGridXY(object)
-
-  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = getPfOptions(object)
+  const { gridX, gridY } = getGridXYWithCustomGrids(object, options)
 
   // console.log('couldnt find directional movement, finding random space')
   let nearbyGrids = [
@@ -301,9 +327,8 @@ function exploreCave(object) {
 
 
 function walkWithPurpose(object) {
-  const { gridX, gridY } = gridUtil.convertToGridXY(object)
-
-  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = getPfOptions(object)
+  const { gridX, gridY } = getGridXYWithCustomGrids(object, options)
 
   let random = Math.random()
 
@@ -363,14 +388,13 @@ function walkWithPurpose(object) {
 }
 
 function walkAround(object) {
-  const { gridX, gridY } = gridUtil.convertToGridXY(object)
-
   let direction = ''
   if(object._goalDirection) {
     direction = object._goalDirection
   }
 
-  let options = { pathfindingLimit: object.mod().pathfindingLimit, bypassGameBoundaries: object.tags.fresh }
+  let options = getPfOptions(object)
+  const { gridX, gridY } = getGridXYWithCustomGrids(object, options)
 
   let random = Math.random()
 

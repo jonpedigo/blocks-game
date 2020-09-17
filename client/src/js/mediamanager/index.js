@@ -20,7 +20,7 @@ class MediaManager {
     if(this.ref) this.ref.forceUpdate()
   }
 
-  onGameStart() {
+  onGameStart = () => {
     if(this.ref) this.ref.forceUpdate()
   }
 

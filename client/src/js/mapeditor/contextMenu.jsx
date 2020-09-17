@@ -5,6 +5,7 @@ import { SwatchesPicker } from 'react-color';
 import HeroContextMenu from './adminMenus/heroContextMenu.jsx';
 import ObjectContextMenu from './adminMenus/objectContextMenu.jsx';
 import EditingObjectContextMenu from './adminMenus/EditingObjectContextMenu.jsx';
+import EditingSequenceContextMenu from './adminMenus/EditingSequenceContextMenu.jsx';
 import WorldContextMenu from './adminMenus/worldContextMenu.jsx';
 import GeneratedMenu from './playerMenus/generatedMenu.jsx';
 import '../libraries/playerMenuLibrary.js';
@@ -126,6 +127,12 @@ class contextMenuEl extends React.Component{
 
     MAPEDITOR.contextMenuVisible = true
 
+    if(WORLDMANAGER.editingSequenceItemId) {
+      return <EditingSequenceContextMenu
+        objectSelected={objectSelected}
+      />
+    }
+
     const showEditingObjectMenu = OBJECTS.editingId && objectSelected.id && OBJECTS.editingId !== objectSelected.id
     if(showEditingObjectMenu) {
       const objectEditing = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)
@@ -133,7 +140,6 @@ class contextMenuEl extends React.Component{
         return <EditingObjectContextMenu
           objectEditing={objectEditing}
           objectSelected={objectSelected}
-          openColorPicker={this.openColorPicker}
           selectSubObject={this._selectSubObject}
         />
       } else {

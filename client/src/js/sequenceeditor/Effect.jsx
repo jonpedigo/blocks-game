@@ -137,6 +137,50 @@ export default class Effect extends React.Component{
        }}/>)
       }
 
+      if(effectData.mapSelect) {
+        chosenEffectForm.push(<div onClick={() => {
+          if(WORLDMANAGER.editingSequenceItemId) return
+          WORLDMANAGER.editingSequenceItemId = sequenceItem.id
+          WORLDMANAGER.ref.forceUpdate()
+          const removeEventListener = window.local.on('onSelectSequenceProperty', (option, objectSelected) => {
+            const { sequenceItem } = this.props
+            if(effectName === 'pathfindTo') {
+              sequenceItem.effectValue = {
+                x: objectSelected.x,
+                y: objectSelected.y,
+              }
+            }
+            if(effectName === 'goTo') {
+              sequenceItem.effectValue = {
+                x: objectSelected.x,
+                y: objectSelected.y,
+              }
+            }
+            if(effectName === 'teleportTo') {
+              sequenceItem.effectValue = {
+                x: objectSelected.x,
+                y: objectSelected.y,
+              }
+            }
+            if(effectName === 'pursue') {
+              sequenceItem.effectValue = objectSelected.id
+            }
+            if(effectName === 'setPath') {
+              sequenceItem.effectValue = objectSelected.id
+            }
+
+            this.props.setState({
+              sequenceItem
+            })
+            removeEventListener()
+          })
+        }}>
+          Select on map <i className="fas fa-map-marked-alt Manager__button"/>
+          {typeof sequenceItem.effectValue === 'object' && sequenceItem.effectValue !== null ? <div className="SequenceItem__summary SequenceItem__summary--json">{JSON.stringify(sequenceItem.effectValue)}</div>
+          : <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.effectValue}</div>}
+        </div>)
+      }
+
       if(effectName === 'mod' || effectName === 'libraryMod') {
         chosenEffectForm.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('modEndOthers')} checked={sequenceItem.modEndOthers} type="checkbox"></input>Mod End Others</div>)
       }
@@ -166,7 +210,7 @@ export default class Effect extends React.Component{
       }
     }
 
-    return <div className="SequenceItem__effect">
+    return <div className={classnames("SequenceItem__effect")}>
       {effectChooser}
       <div className="SequenceItem__effect-body">
         <div className="SequenceItem__effect-form">

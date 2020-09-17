@@ -90,13 +90,10 @@ function setPathTarget(object, target, pursue) {
   if(object.pathfindingGridId && GAME.objectsById[object.pathfindingGridId]) {
     pfOptions.customPfGridId = object.pathfindingGridId
     pfOptions.pathfindingLimit = GAME.objectsById[object.pathfindingGridId].customGridProps
-  }
-
-  if(object.pathfindingLimitId && GAME.objectsById[object.pathfindingLimitId]) {
+  } else if(object.pathfindingLimitId && GAME.objectsById[object.pathfindingLimitId]) {
     const pfLimit = GAME.objectsById[object.pathfindingLimitId]
     pfOptions.pathfindingLimit = gridUtil.convertToGridXY(pfLimit)
   }
-
 
   let pathTo
   let pathFrom
@@ -118,9 +115,6 @@ function setPathTarget(object, target, pursue) {
       x: target.gridX,
       y: target.gridY,
     }
-
-    console.log('putsode', pathTo, pathFrom, pfOptions)
-
   } else {
     const { gridX, gridY } = gridUtil.convertToGridXY(object)
     object.gridX = gridX
@@ -140,7 +134,6 @@ function setPathTarget(object, target, pursue) {
       y: target.gridY,
     }
   }
-
 
   object.path = pathfinding.findPath(pathTo, pathFrom, pfOptions)
   if(pursue) object._targetPursueId = target.id

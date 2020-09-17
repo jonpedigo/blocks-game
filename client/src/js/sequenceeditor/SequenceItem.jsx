@@ -274,7 +274,7 @@ export default class SequenceItem extends React.Component{
     const { onDelete, isTrigger } = this.props;
 
     return (
-      <div className={classnames("SequenceItem SequenceItem--" + sequenceItem.sequenceType, { "SequenceItem--trigger": isTrigger })}>
+      <div className={classnames("SequenceItem SequenceItem--" + sequenceItem.sequenceType, { "SequenceItem--trigger": isTrigger, 'SequenceItem--selected': WORLDMANAGER.editingSequenceItemId === sequenceItem.id })}>
         {!isTrigger && <div className="SequenceItem__identifier">{sequenceItem.id}</div>}
         {!isTrigger && <div className="SequenceItem__type">{sequenceItem.sequenceType}</div>}
         {!isTrigger && <i className="Manager__button SequenceItem__delete fa fas fa-times" onClick={onDelete}></i>}

@@ -1,6 +1,6 @@
 import onTalk from './heros/onTalk'
 import { startSequence } from './sequence'
-
+import { setPathTarget, setTarget } from './ai/pathfinders.js'
   // { effectName: remove, anything: true, hero: false, object: false, world: false, spawnZone: false, timer: false
   //allowed: [anything, plain, hero, object, world, spawnZone, timer]
   // requirements: {
@@ -36,6 +36,9 @@ import { startSequence } from './sequence'
       // label: 'Mod name: ',
       footer: 'Mod Condition:'
     },
+    libraryMod: {
+      libraryMod: true,
+    },
     dialogue: {
       heroOnly: true,
       largeText: true,
@@ -54,6 +57,21 @@ import { startSequence } from './sequence'
     tagToggle: {
       tag: true,
     },
+
+    goTo: {
+      mapSelect: true,
+    },
+    pathfindTo: {
+      mapSelect: true,
+    },
+    pursue: {
+      mapSelect: true,
+    },
+    setPath: {
+      mapSelect: true,
+    },
+
+    //EDITOR
     openWorld: {
       smallText: true,
       noEffected: true,
@@ -62,6 +80,10 @@ import { startSequence } from './sequence'
       smallText: true,
       noEffected: true,
     },
+    starViewGo: {},
+    starViewReturn: {},
+
+    //create
     anticipatedAdd: {
       libraryObject: true,
       number: true,
@@ -96,11 +118,6 @@ import { startSequence } from './sequence'
       libraryObject: true,
       label: 'How many nodes on top'
     },
-    starViewGo: {},
-    starViewReturn: {},
-    libraryMod: {
-      libraryMod: true,
-    }
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
     // camera effect
@@ -327,6 +344,22 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'starViewReturn') {
     const hero = GAME.heros[effected.id]
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
+  }
+
+  if(effectName === 'pathfindTo') {
+    setPathTarget(effected, effectValue)
+  }
+
+  if(effectName === 'goTo') {
+    setTarget(effected, effectValue)
+  }
+
+  if(effectName === 'pursue') {
+    effected._targetPursueId = effectValue
+  }
+
+  if(effectName === 'setPath') {
+    effected.pathId = effectValue
   }
 }
 

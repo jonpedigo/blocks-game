@@ -8,8 +8,6 @@ TODO
 PATHFINDING
 Implement the stuff I made in the right click menu
 test homing and other movement tags with a custom pathfindingGridId and also with pathfinding limits
-// path goals AKA patrol
-pathReverse: // is moving on this path in reverse order
 
 SPRITE SELECTION
 Player view and also add a lot more sheets
@@ -18,6 +16,8 @@ GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
 STORY SCREENSHOTS
+
+SCENARIOS
 
 PIXEL EDITOR
 

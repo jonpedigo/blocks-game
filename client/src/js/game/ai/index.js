@@ -123,36 +123,38 @@ function onUpdate(objects, delta) {
     //////////////////////////////////////////
 
     const shouldPursue = !object.pathId && (!object.path || object.path.length === 0) && object._targetPursueId
-    if(shouldPursue && object.mod().tags['zombie']) {
+    if(shouldPursue && (object.mod().tags['zombie'] || object.mod().tags['pathfindDumb'])) {
       const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
-      setTarget(object, target)
+      setTarget(object, target, true)
     }
 
-    if(shouldPursue && object.mod().tags['homing']) {
+    if(shouldPursue && (object.mod().tags['homing'] || !object.mod().tags['pathfindDumb'])) {
       const target = OBJECTS.getObjectOrHeroById(object._targetPursueId)
-      setPathTarget(object, target)
+      setPathTarget(object, target, true)
     }
-
 
     let readyForNextTarget = false
-    if(object.mod().tags.pathfindDumb || object.mod().tags.pathfindDumb) {
-      readyForNextTarget = !object.targetXY || (object.targetXY && object.targetXY.x == null && object.targetXY.y == null)
-    } else {
-      readyForNextTarget = (!object.path || (object.path && object.path.length === 0))
+    if(object.pathId) {
+      if(object.mod().tags.pathfindDumb) {
+        readyForNextTarget = !object.targetXY || (object.targetXY && object.targetXY.x == null && object.targetXY.y == null)
+      } else {
+        readyForNextTarget = (!object.path || (object.path && object.path.length === 0))
+      }
     }
 
     if(object.pathId && !object._pathWait && readyForNextTarget) {
       const target = OBJECTS.getObjectOrHeroById(object.pathId)
-      console.log('getting next', object.targetXY)
       if(typeof object._pathIdIndex === 'number') {
         if(object.mod().tags.pathfindWait) {
           object._pathWait = true
           GAME.addTimeout(object.id + '-pathfindwait', 5, () => {
-            object._pathIdIndex++
+            if(object._pathOnWayBack) object._pathIdIndex--
+            else object._pathIdIndex++
             object._pathWait = false
           })
         } else {
-          object._pathIdIndex++
+          if(object._pathOnWayBack) object._pathIdIndex--
+          else object._pathIdIndex++
         }
       } else {
         object._pathIdIndex = 0
@@ -172,6 +174,19 @@ function onUpdate(objects, delta) {
           } else {
             setPathTarget(object, target.pathParts[object._pathIdIndex])
           }
+        } else if(object.mod().tags.pathfindPatrol){
+          if(object._pathOnWayBack) {
+            object._pathIdIndex = 1
+            object._pathOnWayBack = false
+          } else {
+            object._pathIdIndex = target.pathParts.length - 2
+            object._pathOnWayBack = true
+          }
+          if(object.mod().tags.pathfindDumb) {
+            setTarget(object, target.pathParts[object._pathIdIndex])
+          } else {
+            setPathTarget(object, target.pathParts[object._pathIdIndex])
+          }
         } else {
           object.pathId = null
           object._pathIdIndex = null
@@ -183,7 +198,7 @@ function onUpdate(objects, delta) {
     }
 
     if(object.path && object.path.length) {
-      if(GAME.resetPaths && !object.pathId) {
+      if(GAME.resetPaths && OBJECTS.hasRandomPathAI(object)) {
         object.path = []
         object.velocityX = 0
         object.velocityY = 0
