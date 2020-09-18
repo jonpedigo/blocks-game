@@ -7,19 +7,29 @@
 TODO
 SPRITE SELECTION
 add a lot more sheets
+apply to call colors
+remove some tags.
+Add color
 
 GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
 STORY SCREENSHOTS
+in Manager
+
+Screenshot button
+
+Name of story
+tabs 1, 2, 3, 4, 5, +
+Screenshot
+Text
+Effect
+Collapsed -> Preview
+DELETE
 
 SCENARIOS
 
 PIXEL EDITOR
-
-IMPROVEMENTS
-
-POLISH
 
 -----
 
@@ -67,8 +77,6 @@ Notification
 ---
 Scenarios/BeginEnd
   TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
-  VISIBLE TO
-  Fade in/out to game
 
   BEGIN
   I think what we are going to want is a SERIES OF screens. Lets not allow then to be customizable right now
@@ -123,6 +131,7 @@ LEVEL UP SYSTEM
 
 !!!!!!!! !!!! READY FOR HOME MADE ARCADE !!!! !!!!!!
 
+DETAIL VIEW
 HERO CHOOSER
 LOBBY
 TEAMS
@@ -136,6 +145,9 @@ LEVELS ( sub worlds )
 /// SMALL FEATURES
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+
+VISIBLE TO
+STORY - Fade in/out to game
 
 bouncing ball
 
@@ -227,6 +239,29 @@ If we seperate custom grid props from a path object and turn custom grids into t
 /// ALL SORTS OF EDITOR NOTES
 /////////////////////////////
 
+Default detail is your hero WITH a chat tab?
+
+TEAM DETAIL MENU
+
+OBJECT DETAIL MENU
+TABS Info, Triggers, Color, Sprite, Tags, Combat Info, HERO: ( Quests, Skills, Inventory, Equipment, Controls )
+
+TRIGGERS
+Need to make each trigger reach a sequence? and look up that sequence and display in list
+
+INFO
+Sprite Profile photo
+Dialogue, Name,Description,
+( Possible Effects list, Tag Descriptions? )
+Path, Pathfinding Area, Parent, Relative, Groups, Respawn
+--Flavor Text, Description, Quick Description
+
+ENGINE DETAIL MENU
+SpriteSheets, Sounds, Music, Games, Default Mod/Objects/Heros/Animations
+
+GAME DETAIL MENU
+Sequences, Stories, Scenarios, Sprites, Custom Mod/Objects/Heros/Animations
+
 ADD SUB OBJECT
 Spear
 Gun
@@ -239,7 +274,6 @@ Potential Sub Object
 EDITORS
 light editor
 timer editor
-path editor
 quest editor ( inside of default hero editor )
 
 ////////////////////////////////

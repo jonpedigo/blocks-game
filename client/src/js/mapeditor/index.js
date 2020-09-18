@@ -225,8 +225,9 @@ function handleMouseDown(event) {
   MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)
 
-  let selectionAllowed = true
+  let selectionAllowed = window.isClickingMap(event.target.className)
   if(event.target.className.indexOf('dont-close-menu') >= 0) {
+    selectionAllowed = false
   } else if(MAPEDITOR.contextMenuVisible) {
     selectionAllowed = false
     setTimeout(() => {

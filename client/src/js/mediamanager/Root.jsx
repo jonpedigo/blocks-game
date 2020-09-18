@@ -7,6 +7,7 @@ import Collapsible from 'react-collapsible';
 window.spriteSheetTags = {
   scifi: false,
   fantasy: false,
+  modern : false,
 
   city: false,
   village: false,
