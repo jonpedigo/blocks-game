@@ -40,6 +40,14 @@ window.local.on('onFirstPageGameLoaded', () => {
       useExistingMenu: 'Name',
       title: 'Name'
     },
+    path: {
+      action: 'open-path-editor',
+      title: 'Path'
+    },
+    group: {
+      useExistingMenu: 'GameTag',
+      title: 'Group'
+    },
   }
 
   window.heroFlags = {
@@ -73,5 +81,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     delete: false,
     sprite: false,
     physics: false,
+    path: false,
+    group: false,
   }
 })

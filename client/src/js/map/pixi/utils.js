@@ -14,7 +14,7 @@ function setColor(pixiChild, data) {
       pixiChild.tint = getHexColor(window.defaultObjectColor)
     }
   } else {
-    delete pixiChild.tint
+    pixiChild.tint = 0xFFFFFF
   }
 }
 

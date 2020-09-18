@@ -18,6 +18,11 @@ export function handleExtraMenuClicks(key, objectSelected, openColorPicker, subO
         return
     }
 
+    if (key === 'open-path-editor') {
+      MAPEDITOR.openPathEditor(objectSelected)
+      return
+    }
+
     if (key === 'toggle-outline') {
         networkEditObject(objectSelected, { tags: { outline: !objectSelected.tags.outline } })
         return

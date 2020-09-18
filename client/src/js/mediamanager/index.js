@@ -8,8 +8,8 @@ class MediaManager {
     this.ref = null
   }
 
-  open = (selectedMenu) => {
-    this.ref.open(selectedMenu)
+  open = (options) => {
+    this.ref.open(options)
   }
 
   close = () => {

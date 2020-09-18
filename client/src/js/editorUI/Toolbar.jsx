@@ -281,7 +281,7 @@ export default class Toolbar extends React.Component {
             })
           }}/>
           <ToolbarButton iconName="fa-icons" onClick={() => {
-              MEDIAMANAGER.open('spritesheet')
+              MEDIAMANAGER.open({ selectedMenu: 'SpriteSheetEditor'})
           }}/>
         </ToolbarRow>
       </div>

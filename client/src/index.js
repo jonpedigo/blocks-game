@@ -5,12 +5,8 @@
 ////////////////////////////////////////////////////
 
 TODO
-PATHFINDING
-Implement the stuff I made in the right click menu
-test homing and other movement tags with a custom pathfindingGridId and also with pathfinding limits
-
 SPRITE SELECTION
-Player view and also add a lot more sheets
+add a lot more sheets
 
 GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
@@ -22,6 +18,8 @@ SCENARIOS
 PIXEL EDITOR
 
 IMPROVEMENTS
+
+POLISH
 
 -----
 

@@ -11,11 +11,16 @@ export default class SpriteMenu extends React.Component{
       const { objectSelected } = this.props
       const { networkEditObject } = MAPEDITOR
 
+      if(key === 'open-media-manager-sprite-selector') {
+        MEDIAMANAGER.open({ selectedMenu: 'SpriteSelector', objectSelected})
+      }
+
       const data = JSON.parse(key)
 
       if(data.action === 'chooseSprite') {
         SpriteChooser.open(objectSelected, data.spriteName)
       }
+
     }
   }
 
@@ -23,7 +28,7 @@ export default class SpriteMenu extends React.Component{
     const { objectSelected } = this.props
 
     return <Menu onClick={this._handleSpriteMenuClick}>
-      {!objectSelected.tags.inputDirectionSprites && <MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'defaultSprite'})}>Select Default Sprite</MenuItem>}
+      <MenuItem key='open-media-manager-sprite-selector'>Open Sprite Selector</MenuItem>
       {objectSelected.tags.inputDirectionSprites && <MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'leftSprite'})}>Select Left Sprite</MenuItem>}
       {objectSelected.tags.inputDirectionSprites &&<MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'rightSprite'})}>Select Right Sprite</MenuItem>}
       {objectSelected.tags.inputDirectionSprites &&<MenuItem key={JSON.stringify({action: 'chooseSprite', spriteName: 'upSprite'})}>Select Up Sprite</MenuItem>}

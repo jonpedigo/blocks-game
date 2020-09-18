@@ -6,6 +6,8 @@
   font-family: Courier;
   height: 100%;
   z-index: 2;
+
+  margin-bottom: 100px;
 }
 
 .Manager {
@@ -16,6 +18,15 @@
   height: 100%;
   &__list {
     padding-top: 22px;
+
+    .Collapsible__trigger {
+      text-transform: capitalize;
+      font-size: 30px;
+      cursor:pointer;
+      &:hover {
+        background-color: #222;
+      }
+    }
   }
   &__list-item {
     position: relative;
@@ -40,6 +51,11 @@
 
     &:hover {
       background-color: #555;
+    }
+
+    &--large {
+      font-size: 30px;
+      padding: 10px;
     }
   }
 }
