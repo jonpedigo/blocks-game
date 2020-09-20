@@ -2,7 +2,7 @@ import { startQuest, completeQuest } from './heros/quests'
 import effects from './effects'
 import { testEventMatch } from './conditions'
 
-function onPageLoaded() {
+function onPlayerIdentified() {
   window.triggerEvents = {
     onHeroCollide: { mainObject: 'hero', guestObject: 'anything' },
     onHeroLand: { mainObject: 'hero', guestObject: 'anything' },
@@ -176,7 +176,7 @@ function triggerEffectSmart(trigger, ownerObject, mainObject, guestObject) {
 }
 
 export default {
-  onPageLoaded,
+  onPlayerIdentified,
   addTrigger,
   deleteTrigger,
   removeTriggerEventListener,

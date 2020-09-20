@@ -39,7 +39,7 @@ class MapEditor {
     this.groupGridHighlights = {}
   }
 
-  onPageLoaded() {
+  onPlayerIdentified() {
     const loader = document.createElement('div')
     loader.className = 'loader'
     MAPEDITOR.loaderElement = loader

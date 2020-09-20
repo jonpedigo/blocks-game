@@ -29,7 +29,7 @@ let customCompendiums = {
 class Arcade{
   constructor() {}
 
-  onPageLoaded() {
+  onPlayerIdentified() {
     ARCADE.customGame = null
     ARCADE.defaultCustomGame = customGames.default
 

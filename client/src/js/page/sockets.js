@@ -7,12 +7,6 @@ import io from 'socket.io-client'
 
 function init() {
   // EVENT SETUP
-  if (window.location.origin.indexOf('localhost') > 0) {
-    window.socket = io.connect('http://localhost:4000');
-  } else {
-    window.socket = io.connect();
-  }
-
   if(PAGE.role.isArcadeMode) {
     window.networkSocket = window.socket
     window.socket = window.mockSocket

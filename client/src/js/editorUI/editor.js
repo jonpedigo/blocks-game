@@ -15,7 +15,7 @@ class Editor {
     }
   }
 
-  onPageLoaded() {
+  onPlayerIdentified() {
     window.addEventListener("keydown", function (e) {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = true

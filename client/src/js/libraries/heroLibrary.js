@@ -1,4 +1,4 @@
-window.local.on('onPageLoaded', () => {
+window.local.on('onPlayerIdentified', () => {
   window.heroLibrary = {
     admin: {
       flags: {

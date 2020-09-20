@@ -5,17 +5,11 @@
 ////////////////////////////////////////////////////
 
 TODO
-
-SPRITE SELECTION
-Add color
-Construct Editor, Creator
-
---
 Interpolation
 
 Sequence Editor upgrade <> Combine with triggers into the Object Detail
 Object Detail + Select Object Id
-
+-
 
 Story/cutscenes
   STORY SCREENSHOTS
@@ -507,7 +501,6 @@ import './js/utils/utils.js'
 import './js/page/index.js'
 import './js/game/index.js'
 import './js/arcade/index.js'
-import './js/playeditor/playeditor.js'
 import './js/constructEditor/index.js'
 import './js/pathEditor/index.js'
 import './js/worldmanager/index.js'
@@ -528,12 +521,7 @@ import './js/libraries/subObjectLibrary.js'
 import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
 
-if(document.hasFocus()) {
-  PAGE.load()
-} else {
-  window.onfocus = PAGE.load
-}
-
+PAGE.load()
 /*
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////

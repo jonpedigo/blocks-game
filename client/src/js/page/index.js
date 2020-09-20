@@ -3,6 +3,9 @@ import sockets from './sockets.js'
 import events from './events.js'
 import loop from './loop.js'
 import modals from '../mapeditor/modals.js'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from '../auth/App.jsx'
 
 class Page{
   constructor() {
@@ -91,6 +94,25 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   load() {
+    const container = document.createElement('div')
+    container.id = 'HomemadeArcade'
+    document.body.appendChild(container)
+    // Mount React App
+    ReactDOM.render(
+      React.createElement(App),
+      container
+    )
+  }
+
+  userIdentified() {
+    if(document.hasFocus()) {
+      PAGE.playerIdentified()
+    } else {
+      window.onfocus = PAGE.playerIdentified
+    }
+  }
+
+  playerIdentified() {
     window.onfocus = null
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
@@ -105,7 +127,7 @@ class Page{
 
     events.init()
     sockets.init()
-    window.local.emit('onPageLoaded')
+    window.local.emit('onPlayerIdentified')
 
     PAGE.askCurrentGame((game) => {
       ARCADE.changeGame(game.id)

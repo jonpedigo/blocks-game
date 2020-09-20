@@ -32,7 +32,7 @@ class Game{
     this.library = {}
   }
 
-  onPageLoaded() {
+  onPlayerIdentified() {
     world.setDefault()
     gameState.setDefault()
     grid.setDefault()
@@ -41,8 +41,8 @@ class Game{
     timeouts.setDefault()
     dayNightCycle.setDefault()
 
-    triggers.onPageLoaded()
-    input.onPageLoaded()
+    triggers.onPlayerIdentified()
+    input.onPlayerIdentified()
   }
 
   onUpdate(delta) {

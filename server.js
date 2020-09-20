@@ -7,10 +7,19 @@ var io = require('socket.io')(server);
 var path = require('path');
 var aws = require('./aws');
 var cors = require('cors');
+const socketioAuth = require("socketio-auth")
+const jwt = require('jsonwebtoken')
+const cookie = require('cookie')
+const config = require('./config')
 
-io.on('connection', (socket) => {
-  socketEvents(fs, io, socket)
-});
+// Connect to the Database
+const mongoose = require("mongoose")
+mongoose.Promise = require("bluebird")
+const mongoOpts = { useMongoClient: true }
+const mongoUrl = config.mongodb
+mongoose
+  .connect(mongoUrl, mongoOpts)
+  .catch(e => console.log(e))
 
 app.use((req, res, next) => {
   console.log(req.path)
@@ -57,3 +66,62 @@ app.get('/', function(req, res) {
 server.listen(process.env.PORT || 4000, function(){
   console.log('listening on *:' + (process.env.PORT || 4000));
 });
+
+
+// Authenticate!
+const User = require("./db/User")
+const authenticate = async (socket, data, callback) => {
+  const { username, password, signup } = data
+
+  try {
+    // session
+    if (socket.handshake.headers.cookie){
+      const cookieUser = cookie.parse(socket.handshake.headers.cookie).user
+      if (cookieUser) {
+        const username = jwt.decode(cookieUser, 'secret-words')
+        if(username){
+          const user = await User.findOne({ username })
+          if (!user) {
+            socket.emit('auth_message', { message: 'No such username and password combination'})
+          } else {
+            socket.user = user
+            return callback(null, !!user)
+          }
+        }
+      }
+    }
+
+    // sign up
+    if (signup) {
+      const user = await User.create({ username, password })
+      socket.user = user
+      return callback(null, !!user)
+    }
+
+    // login
+    const user = await User.findOne({ username })
+    if (!user) {
+      socket.emit('auth_message', { message: 'No such username and password combination'})
+      return
+    }
+    if(user.validPassword(password)) {
+      socket.user = user
+      return callback(null, user)
+    }
+
+    // error handling
+    socket.emit('auth_message',  { message: 'No such username and password combination'})
+  } catch (error) {
+    socket.emit('auth_message', { message: 'Authentication error. Username probably already exists'})
+    console.log(error)
+    callback(error)
+  }
+}
+
+const postAuthenticate = socket => {
+  socket.emit('authenticated', {cookie: jwt.sign(socket.user.username, 'secret-words'), user: socket.user})
+  socketEvents(fs, io, socket)
+}
+
+// Configure Authentication
+socketioAuth(io, { authenticate, postAuthenticate, timeout: "none" })

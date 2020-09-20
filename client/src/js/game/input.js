@@ -111,7 +111,7 @@ function addCustomInputBehavior(behaviorList) {
   })
 }
 
-function onPageLoaded(){
+function onPlayerIdentified(){
   GAME.keysDown = {}
   // this is the one for the host
   GAME.heroInputs = {}
@@ -555,7 +555,7 @@ function angleTowardsDegree(current, goal, delta) {
 export default {
   addCustomInputBehavior,
   setDefault,
-  onPageLoaded,
+  onPlayerIdentified,
   onUpdate,
   onKeyDown,
   onKeyUp,

@@ -24,7 +24,7 @@ class WorldManager {
 
   }
 
-  onPageLoaded() {
+  onPlayerIdentified() {
     const initialProps = {
       ref: ref => WORLDMANAGER.ref = ref
     }

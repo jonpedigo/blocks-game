@@ -10,9 +10,7 @@ window.MAP = {
   camera: new Camera()
 }
 
-MAP.onPageLoaded = function() {
-  document.getElementById("play-editor").style = 'display:none';
-
+MAP.onPlayerIdentified = function() {
   // Canvas SETUP
   MAP.canvas = document.createElement("canvas");
   MAP.ctx = MAP.canvas.getContext("2d");

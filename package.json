@@ -89,6 +89,17 @@
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
     "webpack-dev-server": "^3.8.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^4.2.2",
+    "bcrypt-nodejs": "0.0.2",
+    "cookie": "0.4.0",
+    "cookie-parser": "1.4.4",
+    "jsonwebtoken": "8.5.1",
+    "mongoose": "4.11.11",
+    "mongoose-unique-validator": "1.0.6",
+    "socket.io": "2.1.1",
+    "socket.io-cookie-parser": "1.0.0",
+    "socketio-auth": "0.1.1",
+    "bluebird": "3.5.0",
+    "react-cookie": "4.0.1"
   }
 }
