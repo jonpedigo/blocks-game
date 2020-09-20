@@ -54,11 +54,13 @@ class Ghost{
       //select left
       if(keysDown['188']){
         GHOST.previousHero()
+        window.local.emit('onResize')
       }
 
       //select right
       if(keysDown['190']){
         GHOST.nextHero()
+        window.local.emit('onResize')
       }
 
       EDITORUI.ref.forceUpdate()

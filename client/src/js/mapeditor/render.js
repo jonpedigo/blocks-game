@@ -92,8 +92,6 @@ function update() {
         drawTools.drawPFGrid(ctx, camera, _pfGrid, customGridProps, { style: 'alt'})
       }
 
-      if(PAGE.role.isAdmin && GAME.pfgrid) drawTools.drawPFGrid(ctx, camera, GAME.pfgrid, { nodeWidth: GAME.grid.nodeSize, nodeHeight: GAME.grid.nodeSize, startX: GAME.grid.startX, startY: GAME.grid.startY})
-
       const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
       drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
       drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
@@ -151,6 +149,8 @@ function update() {
   if(PAGE.role.isAdmin && GAME.world.lockCamera) {
     drawTools.drawBorder(ctx, { color: '#0A0', ...GAME.world.lockCamera }, camera, { thickness: 2} );
   }
+
+  if(PAGE.role.isAdmin && GAME.pfgrid) drawTools.drawPFGrid(ctx, camera, GAME.pfgrid, { nodeWidth: GAME.grid.nodeSize, nodeHeight: GAME.grid.nodeSize, startX: GAME.grid.startX, startY: GAME.grid.startY})
 
   if(OBJECTS.editingId) {
     const editingObject = OBJECTS.getObjectOrHeroById(OBJECTS.editingId)

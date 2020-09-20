@@ -80,13 +80,16 @@ class MapEditor {
     MAPEDITOR.initState()
     MAPEDITOR.pause()
 
-    const removeListener = window.local.on('onConstructEditorClose', ({ constructParts, x, y, width, height }) => {
+    const removeSaveListener = window.local.on('onConstructEditorSave', ({ constructParts, x, y, width, height }) => {
       if (constructParts) {
+        console.log(constructParts)
         window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height }])
       }
-      // window.socket.emit('editGameState', { paused: false })
+    })
+    const removeListener = window.local.on('onConstructEditorClose', ({ constructParts, x, y, width, height }) => {
       MAPEDITOR.resume()
       removeListener()
+      removeSaveListener()
     })
   }
 
@@ -220,12 +223,11 @@ function handleMouseUp(event) {
 function handleMouseDown(event) {
   const { camera, networkEditObject } = MAPEDITOR
 
-
   const { x, y } = window.convertToGameXY(event)
   MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)
 
-  let selectionAllowed = window.isClickingMap(event.target.className)
+  let selectionAllowed = (PAGE.role.isAdmin || GAME.heros[HERO.id].flags.allowObjectSelection) && window.isClickingMap(event.target.className)
   if(event.target.className.indexOf('dont-close-menu') >= 0) {
     selectionAllowed = false
   } else if(MAPEDITOR.contextMenuVisible) {

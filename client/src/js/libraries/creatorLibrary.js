@@ -60,6 +60,9 @@ function onGameLoaded() {
     selectColor: {
       specialAction: 'selectColor',
     },
+    selectSprite: {
+      specialAction: 'selectSprite',
+    },
     drawStructure: {
       label: 'Structure',
       columnName: 'Draw',
@@ -234,11 +237,13 @@ function onGameLoaded() {
   }
 
   window.homemadearcadeBasicLibrary = {
-    obstacle: false,
     selectColor: false,
+    selectSprite: false,
     drawStructure: false,
     drawBackground: false,
     drawForeground: false,
+    obstacle: false,
+    roof: true,
     standingNPC: false,
     wanderingNPC: false,
     spin: true,
@@ -251,16 +256,16 @@ function onGameLoaded() {
     snake: true,
     spear: true,
     gun: true,
-    roof: true,
   }
 
   window.adminCreatorObjects = {
-    roof: true,
-    obstacle: true,
     selectColor: true,
+    selectSprite: true,
     drawStructure: true,
     drawBackground: true,
     drawForeground: true,
+    roof: true,
+    obstacle: true,
     light: true,
     fire: true,
     spawnZone: true,

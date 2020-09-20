@@ -245,10 +245,12 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-chevron-left" onShiftClick onClick={() => {
             GHOST.previousHero()
             EDITORUI.ref.forceUpdate()
+            window.local.emit('onResize')
           }}/>
           <ToolbarButton iconName="fa-chevron-right" onShiftClick onClick={() => {
             GHOST.nextHero()
             EDITORUI.ref.forceUpdate()
+            window.local.emit('onResize')
           }}/>
           <ToolbarButton iconName="fa-times" onClick={() => {
               HERO.id = HERO.originalId

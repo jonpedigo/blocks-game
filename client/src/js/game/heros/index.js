@@ -489,6 +489,7 @@ class Hero{
 
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
+      worldMenu: hero.worldMenu,
       creator: hero.creator,
 
       zoomMultiplier: hero.zoomMultiplier,

@@ -201,11 +201,11 @@ function testCondition(condition, testObjects, options = { allTestedMustPass: fa
 
     if(allTestedMustPass) {
       pass = testObjects.every((testObject) => {
-        return testIsSubObjectInInvestory(name, testObject, options)
+        return testIsSubObjectInInventory(name, testObject, options)
       })
     } else {
       pass = testObjects.some((testObject) => {
-        return testIsSubObjectInInvestory(name, testObject, options)
+        return testIsSubObjectInInventory(name, testObject, options)
       })
     }
   }
@@ -258,7 +258,8 @@ function testIsSubObjectEquipped(name, testObject, options) {
   return testObject.subObjects[name] && testObject.subObjects[name].isEquipped
 }
 
-function testIsSubObjectInInvestory(name, testObject, options) {
+function testIsSubObjectInInventory(name, testObject, options) {
+  console.log(name, testObject)
   if(options.testModdedVersion) testObject = testObject.mod()
   return testObject.subObjects[name] && testObject.subObjects[name].inInventory
 }

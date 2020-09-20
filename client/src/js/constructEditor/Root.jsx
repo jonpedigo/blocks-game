@@ -1,5 +1,6 @@
 import { SketchPicker, SwatchesPicker } from 'react-color';
 import React from 'react'
+import PixiMapSprite from '../components/PixiMapSprite.jsx';
 
 export default class Root extends React.Component{
   constructor(props) {
@@ -22,6 +23,12 @@ export default class Root extends React.Component{
   setColor(color) {
     this.setState({
       selectedColor: color,
+    })
+  }
+
+  setTextureId(id) {
+    this.setState({
+      textureIdSelected: id
     })
   }
 
@@ -72,14 +79,33 @@ export default class Root extends React.Component{
     </div>
   }
 
+  _renderSpriteSelector() {
+    const { textureIdSelected } = this.state
+
+    if(!textureIdSelected) {
+      return <div className="ConstructEditor__menu-item fas fa-image" onClick={() => {
+      MEDIAMANAGER.open({ objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
+      }}></div>
+    } else {
+      return <div className="ConstructEditor__menu-item" onClick={() => {
+          MEDIAMANAGER.open({ objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
+      }}>
+        <PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite>
+      </div>
+    }
+
+  }
+
   _renderMenu() {
     const { selectedColor, isColorPickerOpen } = this.state
 
     const colorSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorColor
+    const spriteSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorSprite
 
     return <div className="ConstructEditor__menu-list">
       {colorSelection && !isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
       {isColorPickerOpen && <div className="ConstructEditor__menu-item fas fa-times" onClick={this._closeColorPicker}></div>}
+      {spriteSelection && this._renderSpriteSelector()}
       <div className="ConstructEditor__menu-item fas fa-paint-brush" onClick={this._paintBrushClick}></div>
       <div className="ConstructEditor__menu-item fas fa-eye-dropper" onClick={this._eyeDropperClick}></div>
       <div className="ConstructEditor__menu-item fas fa-eraser" onClick={this._eraserClick}></div>

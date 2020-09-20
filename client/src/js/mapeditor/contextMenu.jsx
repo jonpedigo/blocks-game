@@ -78,6 +78,7 @@ class contextMenuEl extends React.Component{
     if(command === "show") {
       this.setState({ hide: false, objectSelected: MAPEDITOR.objectHighlighted })
     } else {
+      console.trace('?????')
       this.setState({ hide: true, subObjectSelected: {}, subObjectSelectedName: null })
     }
   }
@@ -118,6 +119,7 @@ class contextMenuEl extends React.Component{
       selectSubObject={this._selectSubObject}
       heroMenuItems={hero.heroMenu}
       objectMenuItems={hero.objectMenu}
+      worldMenuItems={hero.worldMenu}
     />
   }
 
@@ -213,6 +215,7 @@ class contextMenuEl extends React.Component{
             coloringObject.tags.outline = false
             networkEditObject(coloringObject, {color: color.hex})
           }
+          console.log('????')
           this.setState({
             coloringObject: null,
           })

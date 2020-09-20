@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 import Menu, { SubMenu, MenuItem } from 'rc-menu';
 import TagMenu from '../menus/tagMenu.jsx';
 import ColorMenu from '../menus/ColorMenu.jsx';
@@ -23,6 +24,7 @@ export default class GeneratedMenu extends React.Component {
     super(props)
 
     this._handleMenuClick = ({ key }) => {
+      if(!key) return
       const { startResize, onStartDrag, deleteObject, onCopy, removeObject } = MAPEDITOR
       const { objectSelected, subObject } = this.props;
 
@@ -69,10 +71,11 @@ export default class GeneratedMenu extends React.Component {
     }
   }
 
-  _generateContextMenuItems(objectMenuItems, heroMenuItems) {
+  _generateContextMenuItems(objectMenuItems, heroMenuItems, worldMenuItems = {}) {
     // <MenuItem> key=action </MenuItem>
     const objectMenuObj = { baseLevelMenu: [] }
     const heroMenuObj = { baseLevelMenu: [] }
+    const worldMenuObj = { baseLevelMenu: [] }
 
     Object.keys(objectMenuItems).forEach(itemName => {
       if(objectMenuItems[itemName] == false) return
@@ -103,8 +106,24 @@ export default class GeneratedMenu extends React.Component {
       }
     })
 
+    Object.keys(worldMenuItems).forEach(itemName => {
+      if(worldMenuItems[itemName] == false) return
+      const item = window.playerMenuLibrary[itemName]
+
+      if (item.hasOwnProperty('subMenu')) {
+        if (!worldMenuObj[item.subMenu]) {
+          worldMenuObj[item.subMenu] = { submenuKey: item.subMenu, subMenuItems: [] }
+          worldMenuObj['baseLevelMenu'].push({ subMenuKey: item.subMenu })
+        }
+        worldMenuObj[item.subMenu].subMenuItems.push(item)
+      } else {
+        worldMenuObj['baseLevelMenu'].push(item)
+      }
+    })
+
     return {
       heroMenuObj,
+      worldMenuObj,
       objectMenuObj
     }
   }
@@ -167,7 +186,7 @@ export default class GeneratedMenu extends React.Component {
         return (<SpriteMenu key={key} objectSelected={objectSelected} ></SpriteMenu>
         )
       default:
-        return (<MenuItem key={menuData.action}>{menuData.title}</MenuItem>)
+        return (<MenuItem className={classnames({'dont-close-menu': menuData.dontCloseMenu})} key={menuData.action}>{menuData.title}</MenuItem>)
     }
   }
 
@@ -189,8 +208,8 @@ export default class GeneratedMenu extends React.Component {
 
 
   render() {
-    const { objectSelected, subObject, heroMenuItems, objectMenuItems } = this.props
-    const { objectMenuObj, heroMenuObj } = this._generateContextMenuItems(objectMenuItems, heroMenuItems)
+    const { objectSelected, subObject, heroMenuItems, objectMenuItems, worldMenuItems } = this.props
+    const { objectMenuObj, heroMenuObj, worldMenuObj } = this._generateContextMenuItems(objectMenuItems, heroMenuItems, worldMenuItems)
 
     if (objectSelected.tags && objectSelected.tags.hero) {
       return <Menu onClick={this._handleMenuClick}>
@@ -203,6 +222,10 @@ export default class GeneratedMenu extends React.Component {
         {this._renderGeneratedMenu(objectMenuObj)}
       </Menu>
     }
+
+    return <Menu onClick={this._handleMenuClick}>
+      {this._renderGeneratedMenu(worldMenuObj)}
+    </Menu>
 
     return null;
   }

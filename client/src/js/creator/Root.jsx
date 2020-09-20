@@ -7,6 +7,7 @@ export default class Root extends React.Component {
 
     this.state = {
       open: true,
+      textureIdSelected: EDITOR.preferences.creatorTextureIdSelected
     }
 
     this.open = () => {
@@ -41,16 +42,23 @@ export default class Root extends React.Component {
     document.removeEventListener("keydown", this._handleKeyDown, false);
   }
 
+  setTextureId(id) {
+    this.setState({
+      textureIdSelected: id,
+    })
+    EDITOR.preferences.creatorTextureIdSelected = id
+  }
+
   render() {
     if(PAGE.role.isAdmin) {
       return (
-        <Creator ref={this._creatorRef} creatorObjects={window.adminCreatorObjects}></Creator>
+        <Creator ref={this._creatorRef} textureIdSelected={this.state.textureIdSelected} creatorObjects={window.adminCreatorObjects}></Creator>
       )
     }
 
     if(!PAGE.role.isAdmin || PAGE.role.isGhost) {
       const hero = GAME.heros[HERO.id]
-      return <Creator ref={this._creatorRef} creatorObjects={hero.creator}></Creator>
+      return <Creator ref={this._creatorRef} textureIdSelected={this.state.textureIdSelected} creatorObjects={hero.creator}></Creator>
     }
   }
 }

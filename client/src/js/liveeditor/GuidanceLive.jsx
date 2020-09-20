@@ -30,6 +30,7 @@ export default class GuidanceLive extends React.Component {
     const hero = newData.objectSelected
     const updatedObjectProps = {
       heroMenu: hero.heroMenu,
+      worldMenu: hero.worldMenu,
       objectMenu: hero.objectMenu,
       creator: hero.creator,
       flags: hero.flags
@@ -61,6 +62,9 @@ export default class GuidanceLive extends React.Component {
             </DatFolder>
             <DatFolder title='Objects'>
               {this._renderLibrary('objectMenu', window.objectMenuLibrary)}
+            </DatFolder>
+            <DatFolder title='World'>
+              {this._renderLibrary('worldMenu', window.worldMenuLibrary)}
             </DatFolder>
           </DatFolder>
           <DatFolder title='Other'>

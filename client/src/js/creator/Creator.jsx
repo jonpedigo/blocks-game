@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import { SketchPicker, SwatchesPicker } from 'react-color';
 import gridUtil from '../utils/grid.js'
+import PixiMapSprite from '../components/PixiMapSprite.jsx';
 
 export default class Creator extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class Creator extends React.Component {
       columnsOpen: {},
       creatorObjectsToggled: {},
       isColorPickerOpen: false,
-      colorSelected: EDITOR.preferences.creatorColorSelected
+      colorSelected: EDITOR.preferences.creatorColorSelected,
     }
 
     this.setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {
@@ -47,7 +48,7 @@ export default class Creator extends React.Component {
 
     this._onMouseMove = () => {
       if(!MAPEDITOR.objectHighlighted) return
-      const { creatorObjectSelected, colorSelected } = this.state
+      const { creatorObjectSelected, colorSelected, textureIdSelected } = this.state
 
       if(this.state.mouseDown && creatorObjectSelected.onMouseDown) {
         creatorObjectSelected.onMouseDown(MAPEDITOR.objectHighlighted, colorSelected)
@@ -65,7 +66,8 @@ export default class Creator extends React.Component {
         MAPEDITOR.objectHighlighted.x = x
         MAPEDITOR.objectHighlighted.y = y
         MAPEDITOR.objectHighlighted.color = color || 'white'
-        if(colorSelected) MAPEDITOR.objectHighlighted.color = colorSelected
+        if(colorSelected && colorSelected !== GAME.world.defaultObjectColor) MAPEDITOR.objectHighlighted.color = colorSelected
+        if(textureIdSelected) MAPEDITOR.objectHighlighted.defaultSprite = textureIdSelected
         MAPEDITOR.objectHighlighted.CREATOR = true
       }
     }
@@ -103,6 +105,8 @@ export default class Creator extends React.Component {
       let rows = {}
 
       let hasSelectColor = false
+      let hasSelectSprite = false
+
       Object.keys(creatorObjects).forEach((objectName) => {
         if(creatorObjects[objectName] === false) return
 
@@ -112,6 +116,10 @@ export default class Creator extends React.Component {
           hasSelectColor = true
           return
         }
+        if(object.specialAction && object.specialAction == 'selectSprite') {
+          hasSelectSprite = true
+          return
+        }
         if(!rows[object.columnName]) rows[object.columnName] = []
         rows[object.columnName].push(object)
       })
@@ -119,6 +127,7 @@ export default class Creator extends React.Component {
       rows = Object.keys(rows).map((cName) => rows[cName])
 
 
+      if(hasSelectSprite) rows.unshift({ specialAction: 'selectSprite'})
       if(hasSelectColor) rows.unshift({ specialAction: 'selectColor'})
       this.setState({
         rows
@@ -300,6 +309,19 @@ export default class Creator extends React.Component {
     </div>
   }
 
+  _renderSelectSprite() {
+    const { textureIdSelected } = this.props
+
+    return <div className="Creator__category-container">
+      <div className="Creator__category Creator__category-top Creator__category-top--sprite-selector" onClick={() => {
+        MEDIAMANAGER.open({ objectSelected: 'creator', selectedMenu: 'SpriteSelector'})
+      }}>
+        {textureIdSelected ? <div className="Creator__sprite-container"><PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite></div>
+      : <i className="fa fas fa-image"></i>}
+      </div>
+    </div>
+  }
+
   _renderColorCategory() {
     const { isColorPickerOpen, colorSelected } = this.state
 
@@ -323,6 +345,9 @@ export default class Creator extends React.Component {
         {rows.map((column) => {
           if(column.specialAction && column.specialAction == 'selectColor') {
             return this._renderColorCategory()
+          }
+          if(column.specialAction && column.specialAction == 'selectSprite') {
+            return this._renderSelectSprite()
           }
           return this._renderColumn(column)
         })}

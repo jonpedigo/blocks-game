@@ -54,6 +54,12 @@ class Creator {
     }, 100)
   }
 
+  onSelectTextureId(id, service) {
+    if(service === 'creator') {
+      CREATOR.ref.setTextureId(id)
+    }
+  }
+
   onConstructEditorClose() {
     CREATOR.ref.forceUpdate()
   }

@@ -268,6 +268,46 @@ export function handleExtraMenuClicks(key, objectSelected, openColorPicker, subO
         return
     }
 
+
+    if(key === 'create-object') {
+      OBJECTS.create({...objectSelected, tags: {obstacle: true}})
+    }
+
+    if(key === 'toggle-pause-game') {
+      window.socket.emit('editGameState', { paused: !GAME.gameState.paused })
+    }
+
+    if(key === 'toggle-start-game') {
+      if(GAME.gameState.started) {
+        window.socket.emit('stopGame')
+      } else {
+        window.socket.emit('startGame')
+      }
+    }
+
+    if(key === 'set-world-respawn-point') {
+      window.socket.emit('updateWorld', {worldSpawnPointX: objectSelected.x, worldSpawnPointY:  objectSelected.y})
+    }
+
+    if(key === 'select-world-background-color') {
+      openColorPicker('worldBackground')
+    }
+    if(key === 'select-default-object-color') {
+      openColorPicker('defaultObject')
+    }
+
+    if(key === 'open-sequence-editor') {
+      WORLDMANAGER.open('sequence')
+    }
+
+    if(key === 'download-game-JSON')  {
+      let saveGame = GAME.cleanForSave(GAME)
+      console.log(saveGame)
+      PAGE.downloadObjectAsJson(saveGame, GAME.id)
+    }
+
+    if(key.charAt(0) !== '{') return
+    
     const data = JSON.parse(key)
     if (data.action === 'chooseSprite') {
         SpriteChooser.open(objectSelected, data.spriteName)

@@ -1,4 +1,11 @@
 .Creator {
+
+  &__sprite-container {
+    margin: 0 auto;
+    width: 40px;
+    height: 40px;
+  }
+  
   display: flex;
   flex-wrap: wrap;
   background: #0f0f0f;
@@ -42,6 +49,10 @@
       }
 
       height: 36px;
+
+      &--sprite-selector{
+        text-align: center;
+      }
     }
 
     &--selected {

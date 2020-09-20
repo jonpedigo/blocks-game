@@ -217,7 +217,7 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
 
   if(effectName === 'respawn') {
-    OBJECTS.respawnObject(effected)
+    OBJECTS.respawn(effected)
   }
   if(effectName === 'remove') {
     OBJECTS.removeObject(effected)

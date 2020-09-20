@@ -48,6 +48,11 @@ window.local.on('onFirstPageGameLoaded', () => {
       useExistingMenu: 'GameTag',
       title: 'Group'
     },
+    backgroundColor: {
+      action: 'select-world-background-color',
+      title: 'Background Color',
+      dontCloseMenu: true,
+    }
   }
 
   window.heroFlags = {
@@ -59,6 +64,8 @@ window.local.on('onFirstPageGameLoaded', () => {
     showMapHighlight: false,
     showOtherUsersMapHighlight: false,
     constructEditorColor: false,
+    constructEditorSprite: false,
+    allowObjectSelection: false,
     canStartStopGame: false,
     // constructEditorSprite: false,
   }
@@ -83,5 +90,9 @@ window.local.on('onFirstPageGameLoaded', () => {
     physics: false,
     path: false,
     group: false,
+  }
+
+  window.worldMenuLibrary = {
+    backgroundColor: false,
   }
 })

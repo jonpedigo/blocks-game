@@ -63,8 +63,12 @@ function addTrigger(ownerObject, trigger) {
 
   // make sure not to reinitilize this trigger on page reload
   if(typeof trigger.triggerPool !== 'number') {
+    let initialTriggerPool = trigger.initialTriggerPool
+    if(typeof initialTriggerPool !== 'number') {
+      initialTriggerPool = -1
+    }
     Object.assign(ownerObject.triggers[trigger.id], {
-       triggerPool: trigger.initialTriggerPool || 1,
+       triggerPool: initialTriggerPool,
        eventCount: 0,
        disabled: false,
      })

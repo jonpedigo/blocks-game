@@ -5,12 +5,18 @@
 ////////////////////////////////////////////////////
 
 TODO
-SPRITE SELECTION
-add a lot more sheets
-apply to call colors
-remove some tags.
-Add color
 
+Screenshare
+Story/cutscenes
+Sequence Editor upgrade <> Combine with triggers into the Object Detail
+Object Detail + Select Object Id
+LOGIN
+
+SPRITE SELECTION
+Add color
+Construct Editor, Creator
+
+DETAIL VIEW
 GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
@@ -149,6 +155,10 @@ LEVELS ( sub worlds )
 VISIBLE TO
 STORY - Fade in/out to game
 
+every one gets their own construct editor drawing things, the problem is then that I have to deal with the layering issue...
+
+Right click ( start game with heros here )
+ 
 bouncing ball
 
 ADMIN to reselect sprites, remove sprites, combine sprites into animations

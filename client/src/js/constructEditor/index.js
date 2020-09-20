@@ -61,12 +61,18 @@ class ConstructEditor {
     this.initState()
   }
 
-  finish() {
+
+  save() {
     let constructParts = this.combineNodesIntoRectangles()
     constructParts.forEach((part) => {
       part.id = window.uniqueID()
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
+    window.local.emit('onConstructEditorSave', {constructParts, x, y, width, height})
+  }
+
+  finish() {
+    this.save()
     this.close()
     window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
   }
@@ -166,6 +172,13 @@ class ConstructEditor {
     this.updateNodeHighlight(this.mousePos)
   }
 
+  onSelectTextureId = (id, service) => {
+    if(service === 'constructEditor') {
+      this.selectedTextureId = id
+      this.ref.setTextureId(id)
+    }
+  }
+
   selectColor(color) {
     this.selectedColor = color
   }
@@ -211,7 +224,7 @@ class ConstructEditor {
     }
 
     squares.forEach((square) => {
-      this.grid.updateNode(square.gridX, square.gridY, { color: square.color, filled: true })
+      this.grid.updateNode(square.gridX, square.gridY, { color: square.color, defaultSprite: square.defaultSprite, filled: true })
     })
   }
 
@@ -224,6 +237,7 @@ class ConstructEditor {
             x, y,
             ...this.grid.getGridXYfromXY(x, y),
             color: object.color,
+            defaultSprite: object.defaultSprite,
           })
         }
       }
@@ -233,6 +247,7 @@ class ConstructEditor {
         y: object.y,
         ...this.grid.getGridXYfromXY(object.x, object.y),
         color: object.color,
+        defaultSprite: object.defaultSprite,
       })
     }
 
@@ -248,10 +263,10 @@ class ConstructEditor {
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
           const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
           const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
-          rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color})
+          rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color, defaultSprite: node.data.defaultSprite })
           this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY)
         } else {
-          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color })
+          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
           this.unfillNode(node.gridX, node.gridY)
         }
       }
@@ -295,9 +310,9 @@ class ConstructEditor {
   }
 
   paintNodeXY(x, y) {
-    const { selectedColor, grid } = this
+    const { selectedColor, grid, textureIdSelected } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
-    this.fillNode(gridX, gridY, selectedColor)
+    this.fillNode(gridX, gridY, selectedColor, textureIdSelected)
   }
 
   unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
@@ -309,7 +324,7 @@ class ConstructEditor {
   }
 
   unfillNode(gridX, gridY) {
-    this.grid.updateNode(gridX, gridY, {filled: false, color: null})
+    this.grid.updateNode(gridX, gridY, {filled: false, color: null, textureIdSelected: null })
   }
 
   unfillNodeXY(x, y) {
@@ -325,8 +340,8 @@ class ConstructEditor {
     return color
   }
 
-  fillNode(gridX, gridY, color) {
-    this.grid.updateNode(gridX, gridY, {filled: true, color})
+  fillNode(gridX, gridY, color, textureId) {
+    this.grid.updateNode(gridX, gridY, {filled: true, color, defaultSprite: textureId })
   }
 
   updateNodeHighlight(location) {
