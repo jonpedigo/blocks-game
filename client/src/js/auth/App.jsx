@@ -10,7 +10,7 @@ if (window.location.origin.indexOf('localhost') > 0) {
 }
 
 function App() {
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies, setCookie, removeCookie] = useCookies(['user']);
   const [state, setState] = useState({ username: '', password: '', message: '', checkingCookie: !!cookies.user});
 
   useEffect(() => {
@@ -21,11 +21,17 @@ function App() {
 
   window.socket.on("authenticated", ({cookie, user}) => {
     // for some reason this gets called a couple times even when user is false..
-    if (user) {
+    if (user && !window.user) {
       setCookie('user', cookie, { path: '/' });
       window.user = user;
       setState({...state, checkingCookie: false});
       PAGE.userIdentified()
+    }
+
+    window.clearUserCookie = () => {
+      removeCookie("user");
+      window.user = null
+      setState({...state, checkingCookie: true});
     }
   });
 

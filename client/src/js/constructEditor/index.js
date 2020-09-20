@@ -66,6 +66,9 @@ class ConstructEditor {
     let constructParts = this.combineNodesIntoRectangles()
     constructParts.forEach((part) => {
       part.id = window.uniqueID()
+      if(part.color == GAME.world.defaultObjectColor || part.color == window.defaultObjectColor) {
+        delete part.color
+      }
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
     window.local.emit('onConstructEditorSave', {constructParts, x, y, width, height})

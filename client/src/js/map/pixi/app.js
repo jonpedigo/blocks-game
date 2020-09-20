@@ -237,7 +237,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   // ON RESIZE
   if(PAGE.role.isPlayer) {
     let loadingTimeout
-    function onResize() {
+    function setGameWindowSize() {
       if(loadingTimeout) {
         clearTimeout(loadingTimeout)
       } else {
@@ -267,6 +267,9 @@ const initPixiApp = (canvasRef, onLoad) => {
         window.resettingDarkness = true
       }
       PIXIMAP.resizeToWindow = onResize
+    }
+    function onResize() {
+      setGameWindowSize()
       window.local.emit('onResize')
     }
     window.local.on('onZoomChange', () => {
@@ -275,7 +278,7 @@ const initPixiApp = (canvasRef, onLoad) => {
     window.local.on('onCloseLog', onResize)
     window.local.on('onOpenLog', onResize)
     window.addEventListener("resize", onResize);
-    onResize()
+    setGameWindowSize()
   }
 
   applyFilters()

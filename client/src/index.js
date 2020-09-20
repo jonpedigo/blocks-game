@@ -24,8 +24,6 @@ Story/cutscenes
   Effect
   Collapsed -> Preview
   DELETE
-
-LOGIN
 --
 
 DETAIL VIEW
@@ -496,6 +494,11 @@ window.HomemadeArcadeImageAssetURL = 'assets/images/'
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+
+import 'ace-builds'
+import 'ace-builds/webpack-resolver';
+// // then the mode, theme & extension
+import 'ace-builds/src-noconflict/mode-json';
 
 import './js/utils/utils.js'
 import './js/page/index.js'

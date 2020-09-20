@@ -225,40 +225,51 @@ function drawPFGrid(ctx, camera, pfGrid, props, options = {}) {
 }
 
 function drawSprite(ctx, camera, textureId, object) {
+  ctx.save()
   const texture = window.textureMap[textureId]
   const pixiImage = PIXIMAP.textures[textureId].baseTexture.resource.source
 
+  if(object.color && object.color !== window.defaultObjectColor && object.color !== GAME.world.defaultObjectColor && object.color !== '#ffffff') {
+    const buffer = document.createElement('canvas');
+    buffer.width = (object.width * camera.multiplier);
+    buffer.height = (object.height * camera.multiplier);
+    const bx = buffer.getContext('2d');
 
-  const buffer = document.createElement('canvas');
-  buffer.width = (object.width * camera.multiplier);
-  buffer.height = (object.height * camera.multiplier);
-  const bx = buffer.getContext('2d');
+    // fill offscreen buffer with the tint color
+    if(object.color) bx.fillStyle = object.color
+    // else if(GAME.world.defaultObjectColor) {
+    //   bx.fillStyle = GAME.world.defaultObjectColor
+    // }
+    // else bx.fillStyle = window.defaultObjectColor
 
-  // fill offscreen buffer with the tint color
-  if(object.color) bx.fillStyle = object.color
-  else if(GAME.world.defaultObjectColor) {
-    bx.fillStyle = GAME.world.defaultObjectColor
+    bx.fillRect(0,0,buffer.width,buffer.height);
+
+    // destination atop makes a result with an alpha channel identical to fg, but with all pixels retaining their original color *as far as I can tell*
+    bx.globalCompositeOperation = "destination-atop";
+    bx.drawImage(pixiImage,
+      texture.x, texture.y, texture.width, texture.height,
+      0,0, buffer.width,buffer.height
+    )
+
+    // bx.globalCompositeOperation = "multiply";
+    // // to tint the image, draw it first
+    ctx.globalAlpha = .5;
+    ctx.drawImage(pixiImage,
+      texture.x, texture.y, texture.width, texture.height,
+      (object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier),
+    )
+
+
+    ctx.globalAlpha = .5;
+     //then set the global alpha to the amound that you want to tint it, and draw the buffer directly on top of it.
+     ctx.drawImage(buffer,(object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y);
+     ctx.restore()
+  } else {
+    ctx.drawImage(pixiImage,
+      texture.x, texture.y, texture.width, texture.height,
+      (object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier),
+    )
   }
-  else bx.fillStyle = window.defaultObjectColor
-
-  bx.fillRect(0,0,buffer.width,buffer.height);
-
-  // destination atop makes a result with an alpha channel identical to fg, but with all pixels retaining their original color *as far as I can tell*
-  bx.globalCompositeOperation = "destination-atop";
-  bx.drawImage(pixiImage,
-    texture.x, texture.y, texture.width, texture.height,
-    0,0, buffer.width,buffer.height
-  )
-
-  // // to tint the image, draw it first
-  ctx.drawImage(pixiImage,
-    texture.x, texture.y, texture.width, texture.height,
-    (object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y, (object.width * camera.multiplier), (object.height * camera.multiplier),
-  )
-
-   //then set the global alpha to the amound that you want to tint it, and draw the buffer directly on top of it.
-   ctx.globalAlpha = 0.2;
-   ctx.drawImage(buffer,(object.x * camera.multiplier) - camera.x, (object.y * camera.multiplier) - camera.y);
 }
 
 export default {

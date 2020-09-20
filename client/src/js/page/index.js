@@ -247,6 +247,7 @@ class Page{
     localStorage.removeItem('initialGameState')
     localStorage.removeItem('saveEditingGame')
     localStorage.removeItem('editorPreferences')
+    window.clearUserCookie()
     PAGE.role.isPlayer = false
     window.location.reload()
   }
