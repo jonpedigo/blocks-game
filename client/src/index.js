@@ -6,32 +6,37 @@
 
 TODO
 
-Screenshare
-Story/cutscenes
-Sequence Editor upgrade <> Combine with triggers into the Object Detail
-Object Detail + Select Object Id
-LOGIN
-
 SPRITE SELECTION
 Add color
 Construct Editor, Creator
 
+--
+Interpolation
+
+Sequence Editor upgrade <> Combine with triggers into the Object Detail
+Object Detail + Select Object Id
+
+
+Story/cutscenes
+  STORY SCREENSHOTS
+  in Manager
+
+  Screenshot button
+
+  Name of story
+  tabs 1, 2, 3, 4, 5, +
+  Screenshot
+  Text
+  Effect
+  Collapsed -> Preview
+  DELETE
+
+LOGIN
+--
+
 DETAIL VIEW
 GROUP  MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
-
-STORY SCREENSHOTS
-in Manager
-
-Screenshot button
-
-Name of story
-tabs 1, 2, 3, 4, 5, +
-Screenshot
-Text
-Effect
-Collapsed -> Preview
-DELETE
 
 SCENARIOS
 
@@ -158,7 +163,7 @@ STORY - Fade in/out to game
 every one gets their own construct editor drawing things, the problem is then that I have to deal with the layering issue...
 
 Right click ( start game with heros here )
- 
+
 bouncing ball
 
 ADMIN to reselect sprites, remove sprites, combine sprites into animations
@@ -186,7 +191,7 @@ Select emitter from right click menu list, this is not a live emitter, its a dir
 
 right click - follow object, follow with path object
 
-If object is outside of its path to start off, It will not be able to find the correct grid
+If object is outside of its custom grid to start off, It will not be able to find the correct grid
 Theres needs to be a flag, perhaps the _fresh flag that allows it to use the other pathfinding grid to make its away to the new path
 
 ATTACK which is like initial acceleration when there is no acceleration yet, jump attack speed, etc

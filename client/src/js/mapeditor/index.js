@@ -86,7 +86,7 @@ class MapEditor {
         window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height }])
       }
     })
-    const removeListener = window.local.on('onConstructEditorClose', ({ constructParts, x, y, width, height }) => {
+    const removeListener = window.local.on('onConstructEditorClose', () => {
       MAPEDITOR.resume()
       removeListener()
       removeSaveListener()

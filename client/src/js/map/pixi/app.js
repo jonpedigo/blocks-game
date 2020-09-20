@@ -368,6 +368,7 @@ const initPixiApp = (canvasRef, onLoad) => {
   ///////////////
   // SPRITES
 
+  window.textureMap = {}
   function startLoadingAssets(spriteSheets) {
     console.log(spriteSheets)
     spriteSheets.reduce((prev, next) => {
@@ -381,6 +382,8 @@ const initPixiApp = (canvasRef, onLoad) => {
           if(tile.id) texture.id = ss.id + '-' + tile.id
           if(tile.name) texture.id = ss.id + '-' +  tile.name
           tile.textureId = texture.id
+          window.textureMap[texture.id] = tile
+          window.textureMap[texture.id].ss = ss.id
           textures[texture.id] = texture
           texture.ssauthor = ss.author
           texture.ssId = ss.id

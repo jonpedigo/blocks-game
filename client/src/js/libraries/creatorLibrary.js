@@ -8,7 +8,7 @@ function constructEditorOnSelect(objectId, tags) {
     OBJECTS.create(globalConstructStationaryObstacle)
     MAPEDITOR.openConstructEditor(globalConstructStationaryObstacle, EDITOR.preferences.creatorColorSelected, true)
   }
-  const removeListener = window.local.on('onConstructEditorClose', ({constructParts, x, y, width, height}) => {
+  const removeListener = window.local.on('onConstructEditorClose', () => {
     setTimeout(() => {
       this.setState({
         creatorObjectSelected: {}

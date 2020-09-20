@@ -133,6 +133,8 @@ function update() {
       ctx.setLineDash([5, 15]);
       drawTools.drawObject(ctx, {...currentObject, tags: { invisible: false, outline: true }, color: 'rgba(255,255,255,1)'}, camera)
       ctx.setLineDash([]);
+    } else if(currentObject.defaultSprite){
+      drawTools.drawSprite(ctx, camera, currentObject.defaultSprite, currentObject)
     } else {
       drawTools.drawObject(ctx, currentObject, camera)
       if(currentObject.constructParts) {

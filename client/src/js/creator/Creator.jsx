@@ -48,7 +48,8 @@ export default class Creator extends React.Component {
 
     this._onMouseMove = () => {
       if(!MAPEDITOR.objectHighlighted) return
-      const { creatorObjectSelected, colorSelected, textureIdSelected } = this.state
+      const { creatorObjectSelected, colorSelected } = this.state
+      const { textureIdSelected } = this.props
 
       if(this.state.mouseDown && creatorObjectSelected.onMouseDown) {
         creatorObjectSelected.onMouseDown(MAPEDITOR.objectHighlighted, colorSelected)
@@ -76,6 +77,7 @@ export default class Creator extends React.Component {
       if(CONSTRUCTEDITOR.open || PATHEDITOR.open) return
       if(!window.isClickingMap(event.target.className)) return
       const { creatorObjectSelected, colorSelected } = this.state
+      const { textureIdSelected } = this.props
 
       let newObject
       if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
@@ -87,6 +89,7 @@ export default class Creator extends React.Component {
           subObject.id = 'subObject-'+window.uniqueID()
         })
         if(colorSelected) newObject.color = colorSelected
+        if(textureIdSelected) newObject.defaultSprite = textureIdSelected
         OBJECTS.create(newObject)
 
         if(creatorObjectSelected.onCreateObject) {

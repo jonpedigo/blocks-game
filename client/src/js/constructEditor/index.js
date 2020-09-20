@@ -74,7 +74,7 @@ class ConstructEditor {
   finish() {
     this.save()
     this.close()
-    window.local.emit('onConstructEditorClose', {constructParts, x, y, width, height})
+    window.local.emit('onConstructEditorClose')
   }
 
   start(object, startColor, startAtHero = false) {
@@ -259,6 +259,11 @@ class ConstructEditor {
 
     this.grid.forEachNode((node) => {
       if(node.data.filled) {
+        if(node.data.defaultSprite) {
+          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
+          this.unfillNode(node.gridX, node.gridY)
+          return
+        }
         const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
           const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
@@ -274,7 +279,7 @@ class ConstructEditor {
 
     rectangles.forEach((rect1) => {
       rectangles.forEach((rect2) => {
-        if(!rect1.claimed && !rect2.claimed && rect1.x === rect2.x && rect1.width === rect2.width) {
+        if(!rect1.claimed && !rect2.claimed && rect1.x === rect2.x && rect1.width === rect2.width && !rect1.defaultSprite && !rect2.defaultSprite) {
           if(rect1.y + rect1.height === rect2.y && rect1.color === rect2.color) {
             let higherRect = rect1
             let lowerRect = rect2
@@ -310,9 +315,9 @@ class ConstructEditor {
   }
 
   paintNodeXY(x, y) {
-    const { selectedColor, grid, textureIdSelected } = this
+    const { selectedColor, grid, selectedTextureId } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
-    this.fillNode(gridX, gridY, selectedColor, textureIdSelected)
+    this.fillNode(gridX, gridY, selectedColor, selectedTextureId)
   }
 
   unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
@@ -324,7 +329,7 @@ class ConstructEditor {
   }
 
   unfillNode(gridX, gridY) {
-    this.grid.updateNode(gridX, gridY, {filled: false, color: null, textureIdSelected: null })
+    this.grid.updateNode(gridX, gridY, {filled: false, color: null, defaultSprite: null })
   }
 
   unfillNodeXY(x, y) {
@@ -366,7 +371,7 @@ class ConstructEditor {
     camera.set(cameraController)
   }
 
-  onRender() {
+  onRender = () => {
     const {ctx, canvas, camera, grid, nodeHighlighted, tags, open, tool, selectedColor } = CONSTRUCTEDITOR
     if(!open) return
 
@@ -376,7 +381,10 @@ class ConstructEditor {
     drawTools.drawGrid(ctx, grid, camera)
 
     grid.forEachNode((node) => {
-      if(node.data.filled) {
+      if(node.data.defaultSprite) {
+        drawTools.drawSprite(ctx, camera, node.data.defaultSprite, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags })
+        // drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
+      } else if(node.data.filled) {
         drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
       }
     })
@@ -395,7 +403,9 @@ class ConstructEditor {
 
     if(nodeHighlighted) {
       if(tool === 'paintBrush') {
-        drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)
+        if(this.selectedTextureId) {
+          drawTools.drawSprite(ctx, camera, this.selectedTextureId, {...nodeHighlighted, color: selectedColor })
+        } else drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)
       } else if(tool === 'eraser'){
         drawTools.drawObject(ctx, {...nodeHighlighted, color: GAME.world.backgroundColor || 'black'}, camera)
       } else {
