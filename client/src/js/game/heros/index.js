@@ -843,8 +843,9 @@ class Hero{
             hero.resetXThreshold = 0
             if(offsetPacketX === 0) {
 
-            } else if(Math.abs(offsetPacketX) < 1) {
-              hero.x -= offsetPacketX
+            // }
+            // else if(Math.abs(offsetPacketX) < 1) {
+            //   hero.x -= offsetPacketX
             } else  {
               let diff = offsetPacketX / correction
               if(diff > 0 && diff < .1) diff = .1
@@ -852,8 +853,7 @@ class Hero{
               hero.x -= diff
             }
           }
-
-          heroSnapshot.state[0].x = hero.x
+          // heroSnapshot.state[0].x = hero.x
 
           if(Math.abs(offsetCurrentY) > (GAME.grid.nodeSize * 1)) {
             if(!hero.resetYThreshold) hero.resetYThreshold = 0
@@ -866,8 +866,9 @@ class Hero{
             hero.resetYThreshold = 0
             if(offsetPacketY === 0) {
 
-            } if(Math.abs(offsetPacketY)/correction < 1) {
-              hero.y -= offsetPacketY
+            // }
+            // if(Math.abs(offsetPacketY)/correction < 1) {
+            //   hero.y -= offsetPacketY
             } else {
               let diff = offsetPacketY / correction
               if(diff > 0 && diff < .1) diff = .1
@@ -876,7 +877,7 @@ class Hero{
               hero.y -= diff
             }
           }
-          heroSnapshot.state[0].y = serverPos.y
+          // heroSnapshot.state[0].y = hero.y
         }
       } catch(e) {
         // const hero = GAME.heros[HERO.id]

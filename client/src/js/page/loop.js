@@ -11,7 +11,7 @@ const SI = new SnapshotInterpolation(60)
 ///////////////////////////////
 ///////////////////////////////
 let updateInterval = 1000/60
-let renderInterval = 1000/60
+let renderInterval = 1000/120
 let mapNetworkInterval = 1000/24
 let completeNetworkInterval = 1000/.1
 var frameCount = 0;
