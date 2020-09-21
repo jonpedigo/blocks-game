@@ -5,6 +5,12 @@ import collisions from '../../utils/collisions'
 import gridUtil from '../../utils/grid.js'
 import input from '../input.js'
 import triggers from '../triggers.js'
+import ai from '../ai/index.js'
+// import @geckos.io/snapshot-interpolation
+import { SnapshotInterpolation, Vault } from '@geckos.io/snapshot-interpolation'
+window.clientInterpolationVault = new Vault()
+// initialize the library
+window.SI = new SnapshotInterpolation()
 
 class Hero{
   constructor() {
@@ -132,9 +138,27 @@ class Hero{
     })
   }
 
-  onUpdate() {
+  onUpdate(delta) {
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id)){
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
+    }
+
+    if(!PAGE.role.isHost) {
+      PHYSICS.prepareObjectsAndHerosForMovementPhase()
+      // let heroPrediction = _.cloneDeep(GAME.heros[HERO.id])
+
+      const hero = GAME.heros[HERO.id]
+      if(hero.flags.paused) return
+      let prevY = hero.y
+      input.onUpdate(hero, GAME.keysDown, delta)
+      // window.local.emit('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
+      PHYSICS.updatePosition(hero, delta)
+      PHYSICS.prepareObjectsAndHerosForCollisionsPhase(hero, [], [])
+      PHYSICS.heroCorrection(hero, [], [])
+      PHYSICS.postPhysics([], [])
+      window.clientInterpolationVault.add(
+        window.SI.snapshot.create([{ id: hero.id, x: hero.x, y: hero.y }])
+      )
     }
 
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
@@ -611,8 +635,6 @@ class Hero{
   getMapState(hero) {
     let mapState = {
       id: hero.id,
-      x: hero.x,
-      y: hero.y,
       chat: hero.chat,
       width: hero.width,
       height: hero.height,
@@ -732,6 +754,8 @@ class Hero{
   }
 
   onNetworkUpdateHero(updatedHero) {
+    delete updatedHero.x
+    delete updatedHero.y
     if(!PAGE.gameLoaded) return
     if(updatedHero.subObjects) OBJECTS.forAllSubObjects(updatedHero.subObjects, (so) => {
       window.mergeDeep(GAME.objectsById[so.id], so)
@@ -741,6 +765,132 @@ class Hero{
       if(PAGE.role.isPlayer && HERO.id === updatedHero.id) {
         window.mergeDeep(GAME.heros[HERO.id], updatedHero)
       }
+    }
+  }
+
+  onNetworkUpdateHerosPos(updatedHerosPos) {
+    if(!PAGE.gameLoaded) return
+    if(!PAGE.role.isHost) {
+      SI.snapshot.add(updatedHerosPos)
+    }
+  }
+
+  onUpdateHero(hero, keysDown, delta) {
+    if(hero.mod().tags.realRotate) {
+      if(typeof hero.angle != 'number') hero.angle = 0
+      hero.angle += 1 * delta
+    }
+    if(hero.mod().tags.realRotateFast) {
+      if(typeof hero.angle != 'number') hero.angle = 0
+      hero.angle += 7 * delta
+    }
+  }
+
+  onRender(delta) {
+    if(PAGE.role.isHost) return
+
+    const serverSnapshot = SI.vault.get()
+
+    if(serverSnapshot) {
+      // get the closest player snapshot that matches the server snapshot time
+      try {
+        const heroSnapshot = window.clientInterpolationVault.get(serverSnapshot.time, true)
+
+        if (serverSnapshot && heroSnapshot) {
+          // get the current hero position on the server
+          const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
+
+          // if(serverSnapshot.time > heroSnapshot.time) {
+          //   GAME.heros[HERO.id].x = serverPos.x
+          //   GAME.heros[HERO.id].y = serverPos.y
+          // } else {
+            // calculate the offset between server and client
+            const hero = GAME.heros[HERO.id]
+
+            const offsetPacketX = heroSnapshot.state[0].x - serverPos.x
+            const offsetPacketY = heroSnapshot.state[0].y - serverPos.y
+
+            const offsetCurrentX = hero.x - serverPos.x
+            const offsetCurrentY = hero.y - serverPos.y
+
+            const correction = 10
+
+            if(Math.abs(offsetCurrentX) > (GAME.grid.nodeSize * 1)) {
+              if(!hero.resetXThreshold) hero.resetXThreshold = 0
+              hero.resetXThreshold++
+              if(hero.resetXThreshold > 20) {
+                hero.x = serverPos.x
+                hero.resetXThreshold = 0
+              }
+            } else {
+              hero.resetXThreshold = 0
+              if(offsetPacketX === 0) {
+
+              } else if(Math.abs(offsetPacketX) < 1) {
+                hero.x -= offsetPacketX
+              } else  {
+                let diff = offsetPacketX / correction
+                if(diff > 0 && diff < .1) diff = .1
+                if(diff < 0 && diff > -.1) diff = -.1
+                hero.x -= diff
+              }
+            }
+
+            heroSnapshot.state[0].x = hero.x
+
+
+            // if(Math.abs(offsetPacketX) > (GAME.grid.nodeSize * 3)) {
+            //   hero.x = serverPos.x
+            // } else {
+            // if(Math.abs(offsetY) > (GAME.grid.nodeSize * 3)) {
+            //   console.log(hero.y, heroSnapshot.state[0].y, serverPos.y)
+            //   // console.log('DIDDDDDDDY')
+            //   hero.y = serverPos.y
+            // } else
+
+            if(Math.abs(offsetCurrentY) > (GAME.grid.nodeSize * 1)) {
+              if(!hero.resetYThreshold) hero.resetYThreshold = 0
+              hero.resetYThreshold++
+              if(hero.resetYThreshold > 20) {
+                hero.y = serverPos.y
+                hero.resetYThreshold = 0
+              }
+            } else {
+              hero.resetYThreshold = 0
+              if(offsetPacketY === 0) {
+
+              } if(Math.abs(offsetPacketY)/correction < 1) {
+                hero.y -= offsetPacketY
+              } else {
+                let diff = offsetPacketY / correction
+                if(diff > 0 && diff < .1) diff = .1
+                if(diff < 0 && diff > -.1) diff = -.1
+
+                hero.y -= diff
+              }
+            }
+            heroSnapshot.state[0].y = serverPos.y
+
+            // ai.moveTowardsTarget(hero, _.cloneDeep(serverPos), delta)
+            // apply a step by step correction of the player's position
+          // }
+        }
+      } catch(e) {
+
+      }
+    }
+
+    // calculate the interpolation for the parameters x and y and return the snapshot
+    const snapshot = SI.calcInterpolation('x y') // [deep: string] as optional second parameter
+
+    if(snapshot) {
+      // access your state
+      const { state } = snapshot
+      state.forEach((hero) => {
+        if(hero.id == HERO.id) return
+        GAME.heros[hero.id].x = hero.x
+        GAME.heros[hero.id].y = hero.y
+      })
     }
   }
 

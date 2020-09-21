@@ -1,3 +1,9 @@
+// import @geckos.io/snapshot-interpolation
+import { SnapshotInterpolation } from '@geckos.io/snapshot-interpolation'
+
+// initialize the library
+const SI = new SnapshotInterpolation()
+
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -45,6 +51,7 @@ var mainLoop = function () {
 
   // if enough time has deltaRender, draw the next frame
   if (deltaRender > renderInterval) {
+    if(deltaUpdate > 23) deltaRender = 23
       // Get ready for next frame by setting then=now, but...
       // Also, adjust for gameInterval not being multiple of 16.67
       thenRender = now - (deltaRender % renderInterval);
@@ -113,6 +120,13 @@ function mapNetworkUpdate() {
     prev[hero.id] = HERO.getMapState(hero.mod())
     return prev
   }, {}))
+  window.socket.emit('updateHerosPos', SI.snapshot.create(GAME.heroList.map((hero) => {
+    return {
+      id: hero.id,
+      x: hero.x,
+      y: hero.y,
+    }
+  })))
 }
 
 function completeNetworkUpdate() {

@@ -313,6 +313,9 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
       io.emit('onUpdateHero', heros[id])
     })
   })
+  socket.on('updateHerosPos', (heros) => {
+    io.emit('onUpdateHerosPos', heros)
+  })
   socket.on('updateHerosComplete', (heros) => {
     Object.keys(heros).forEach((id) => {
       io.emit('onUpdateHero', heros[id])

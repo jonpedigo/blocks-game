@@ -83,6 +83,8 @@ function updatePosition(object, delta) {
   if(object._skipPosUpdate) return
   if(!object.mod().tags['moving']) return
 
+  const allowGravity = true
+
   // if(object.accX) {
   //   object.velocityX += ( object.accX )
   //     if(object.accX > 0) {
@@ -138,7 +140,7 @@ function updatePosition(object, delta) {
   } else if(object.tags && object.mod().tags.gravityY || applyWorldGravity) {
     let distance = (object.velocityY * delta) +  ((gravityVelocityY * (delta * delta))/2)
     object.y += distance
-    object.velocityY += (gravityVelocityY * delta)
+    if(allowGravity) object.velocityY += (gravityVelocityY * delta)
   }
 
   const maxVelocityY = object.mod().velocityMax + (object.mod().velocityMaxYExtra || 0)
@@ -151,7 +153,7 @@ function updatePosition(object, delta) {
     }
 
     if(object.tags && !object.mod().tags.gravityY) {
-      object.y += object.velocityY * delta
+      if(allowGravity) object.y += object.velocityY * delta
     }
   }
   if(object._flatVelocityY) object.y += object._flatVelocityY * delta

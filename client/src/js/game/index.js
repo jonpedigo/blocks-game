@@ -51,7 +51,7 @@ class Game{
       GAME.heroList.push(hero)
     })
     GAME.getObjectsByTag()
-
+    
     if(PAGE.role.isHost) {
       // remove second part when a player can host a multiplayer game
       if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !GAME.heros[HERO.id].flags.paused)) {

@@ -767,17 +767,6 @@ class Objects{
     }
   }
 
-  onUpdateHero(hero, keysDown, delta) {
-    if(hero.mod().tags.realRotate) {
-      if(typeof hero.angle != 'number') hero.angle = 0
-      hero.angle += 1 * delta
-    }
-    if(hero.mod().tags.realRotateFast) {
-      if(typeof hero.angle != 'number') hero.angle = 0
-      hero.angle += 7 * delta
-    }
-  }
-
   addObject(object) {
     // object.tags = window.mergeDeep(JSON.parse(JSON.stringify({...window.defaultTags, plain: true})), object.tags)
     GAME.objectsById[object.id] = object
@@ -804,7 +793,10 @@ class Objects{
   }
 
   addSubObject(owner, subObject, subObjectName, options = {}) {
-    if(!PAGE.role.isHost) return
+    if(!PAGE.role.isHost) {
+      if(subObject.id && !PHYSICS.objects[subObject.id]) PHYSICS.addObject(subObject)
+      return
+    }
     subObject = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultSubObject)), subObject)
     subObject.ownerId = owner.id
     subObject.subObjectName = subObjectName

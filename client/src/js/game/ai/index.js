@@ -25,28 +25,37 @@ import gridUtil from '../../utils/grid.js'
 import { pathfindingAI, setTarget, setPathTarget } from './pathfinders'
 import { spawnObject } from '../spawnZone'
 
-function moveTowardsTarget(object, target, delta, options = { flat: false}) {
+function moveTowardsTarget(object, target, delta, options = { flat: false, force: false }) {
   let oldX = object.x
   let oldY = object.y
 
   if(typeof target.x == 'number' && object.x > target.x) {
     if(options.flat) object.velocityX = -object.mod().speed || -100
-    else {
+    else if(options.force) {
+      object.x -= options.force
+    } else {
       object.velocityX -= (object.mod().speed || 100) * delta
     }
   }
   if(typeof target.x == 'number' && object.x < target.x) {
     if(options.flat) object.velocityX = object.mod().speed || 100
-    else object.velocityX += (object.mod().speed || 100) * delta
+    else if(options.force) {
+      object.x += options.force
+    } else object.velocityX += (object.mod().speed || 100) * delta
   }
   let newX = object.x + object.velocityX * delta
 
   if(typeof target.y == 'number' && object.y > target.y) {
     if(options.flat) object.velocityY = -object.mod().speed || -100
-    else object.velocityY -= (object.mod().speed || 100) * delta
+    else if(options.force) {
+      object.y -= options.force
+    } else object.velocityY -= (object.mod().speed || 100) * delta
   }
   if(typeof target.y == 'number' && object.y < target.y) {
     if(options.flat) object.velocityY = object.mod().speed || 100
+    else if(options.force) {
+      object.y += options.force
+    }
     else object.velocityY += (object.mod().speed || 100) * delta
   }
   let newY = object.y + object.velocityY * delta
@@ -217,4 +226,5 @@ function onUpdate(objects, delta) {
 
 export default {
   onUpdate,
+  moveTowardsTarget,
 }

@@ -209,14 +209,10 @@ function init() {
       //   delete updatedHero.x
       //   delete updatedHero.y
       //   window.mergeDeep(hero, updatedHero)
-      if(PAGE.gameLoaded && PAGE.role.isPlayEditor) {
-        if(window.editingHero.id === updatedHero.id) {
-          window.editingHero = GAME.heros[updatedHero.id]
-          if(GAME.world.syncHero) {
-            window.setEditingHero(GAME.heros[updatedHero.id])
-          }
-        }
-      }
+    })
+
+    window.socket.on('onUpdateHerosPos', (updatedHerosPos) => {
+      window.local.emit('onNetworkUpdateHerosPos', updatedHerosPos)
     })
   }
 

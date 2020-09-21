@@ -78,6 +78,12 @@ function heroCollisionEffects(hero) {
 function heroCorrection(hero) {
   hero.onGround = false
 
+  let heroPO = PHYSICS.objects[hero.id]
+  if(!PAGE.role.isHost) {
+    heroPO.x = hero.x
+    heroPO.y = hero.y
+  }
+
   PHYSICS.system.update()
   heroCorrectionPhase(false, 1)
   PHYSICS.system.update()
@@ -108,7 +114,6 @@ function heroCorrection(hero) {
           if(result.overlap_y === 1) {
             landingObject = body
           }
-          // console.log('collided' + body.gameObject.id, hero.x - correction.x, hero.y - correction.y)
         }
       }
     }
@@ -183,6 +188,7 @@ function heroCorrection(hero) {
       }
     }
   }
+  return hero
 }
 
 

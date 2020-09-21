@@ -136,6 +136,7 @@ function onPlayerIdentified(){
         GAME.heros[HERO.id].keysDown = GAME.heroInputs[HERO.id]
         onKeyDown(key, GAME.heros[HERO.id])
       } else {
+        onKeyDown(key, GAME.heros[HERO.id])
         window.socket.emit('sendHeroKeyDown', key, HERO.id)
       }
     }
