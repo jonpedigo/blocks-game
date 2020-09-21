@@ -848,8 +848,8 @@ class Hero{
             //   hero.x -= offsetPacketX
             } else  {
               let diff = offsetPacketX / correction
-              if(diff > 0 && diff < .1) diff = .1
-              if(diff < 0 && diff > -.1) diff = -.1
+              // if(diff > 0 && diff < .1) diff = .1
+              // if(diff < 0 && diff > -.1) diff = -.1
               hero.x -= diff
             }
           }
@@ -871,8 +871,8 @@ class Hero{
             //   hero.y -= offsetPacketY
             } else {
               let diff = offsetPacketY / correction
-              if(diff > 0 && diff < .1) diff = .1
-              if(diff < 0 && diff > -.1) diff = -.1
+              // if(diff > 0 && diff < .1) diff = .1
+              // if(diff < 0 && diff > -.1) diff = -.1
 
               hero.y -= diff
             }
