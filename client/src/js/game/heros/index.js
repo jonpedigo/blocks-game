@@ -10,7 +10,7 @@ import ai from '../ai/index.js'
 import { SnapshotInterpolation, Vault } from '@geckos.io/snapshot-interpolation'
 window.clientInterpolationVault = new Vault()
 // initialize the library
-window.SI = new SnapshotInterpolation()
+window.SI = new SnapshotInterpolation(24)
 
 class Hero{
   constructor() {
@@ -143,7 +143,7 @@ class Hero{
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
     }
 
-    if(!PAGE.role.isHost) {
+    if(!PAGE.role.isHost && GAME.world.tags.predictNonHostPosition) {
       PHYSICS.prepareObjectsAndHerosForMovementPhase()
       // let heroPrediction = _.cloneDeep(GAME.heros[HERO.id])
 
@@ -655,6 +655,9 @@ class Hero{
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
+      velocityY: hero.velocityY,
+      velocityX: hero.velocityX ,
+
       keysDown: hero.keysDown,
 
       navigationTargetId: hero.navigationTargetId,
@@ -771,7 +774,13 @@ class Hero{
   onNetworkUpdateHerosPos(updatedHerosPos) {
     if(!PAGE.gameLoaded) return
     if(!PAGE.role.isHost) {
-      SI.snapshot.add(updatedHerosPos)
+      if(GAME.world.tags.interpolateHeroPositions) {
+        SI.snapshot.add(updatedHerosPos)
+      } else {
+        updatedHerosPos.state.forEach((hero) => {
+          window.mergeDeep(GAME.heros[hero.id], hero)
+        })
+      }
     }
   }
 
@@ -791,7 +800,14 @@ class Hero{
 
     const serverSnapshot = SI.vault.get()
 
-    if(serverSnapshot) {
+
+    // notes on all this
+    // this works pretty damn well, a couple numbers could be tweaked to make sure theres no jitters
+    // also theres an unfortunate missing .next or something property, hence the try catch. that could be improved?
+    // anyways, it predicts really well except for in a platformer with jumping and gravity...
+    // with a minute operation going through a 1 node hole, it can often predict incorrectly create an incorrect client simulation
+    // this system will correct if the simulation is too far incorrect
+    if(serverSnapshot && GAME.world.tags.predictNonHostPosition) {
       // get the closest player snapshot that matches the server snapshot time
       try {
         const heroSnapshot = window.clientInterpolationVault.get(serverSnapshot.time, true)
@@ -800,97 +816,83 @@ class Hero{
           // get the current hero position on the server
           const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
 
-          // if(serverSnapshot.time > heroSnapshot.time) {
-          //   GAME.heros[HERO.id].x = serverPos.x
-          //   GAME.heros[HERO.id].y = serverPos.y
-          // } else {
-            // calculate the offset between server and client
-            const hero = GAME.heros[HERO.id]
+          const hero = GAME.heros[HERO.id]
 
-            const offsetPacketX = heroSnapshot.state[0].x - serverPos.x
-            const offsetPacketY = heroSnapshot.state[0].y - serverPos.y
+          const offsetPacketX = heroSnapshot.state[0].x - serverPos.x
+          const offsetPacketY = heroSnapshot.state[0].y - serverPos.y
 
-            const offsetCurrentX = hero.x - serverPos.x
-            const offsetCurrentY = hero.y - serverPos.y
+          const offsetCurrentX = hero.x - serverPos.x
+          const offsetCurrentY = hero.y - serverPos.y
 
-            const correction = 10
+          const correction = 10
 
-            if(Math.abs(offsetCurrentX) > (GAME.grid.nodeSize * 1)) {
-              if(!hero.resetXThreshold) hero.resetXThreshold = 0
-              hero.resetXThreshold++
-              if(hero.resetXThreshold > 20) {
-                hero.x = serverPos.x
-                hero.resetXThreshold = 0
-              }
-            } else {
+          if(Math.abs(offsetCurrentX) > (GAME.grid.nodeSize * 1)) {
+            if(!hero.resetXThreshold) hero.resetXThreshold = 0
+            hero.resetXThreshold++
+            if(hero.resetXThreshold > 20) {
+              hero.x = serverPos.x
               hero.resetXThreshold = 0
-              if(offsetPacketX === 0) {
-
-              } else if(Math.abs(offsetPacketX) < 1) {
-                hero.x -= offsetPacketX
-              } else  {
-                let diff = offsetPacketX / correction
-                if(diff > 0 && diff < .1) diff = .1
-                if(diff < 0 && diff > -.1) diff = -.1
-                hero.x -= diff
-              }
             }
+          } else {
+            hero.resetXThreshold = 0
+            if(offsetPacketX === 0) {
 
-            heroSnapshot.state[0].x = hero.x
+            } else if(Math.abs(offsetPacketX) < 1) {
+              hero.x -= offsetPacketX
+            } else  {
+              let diff = offsetPacketX / correction
+              if(diff > 0 && diff < .1) diff = .1
+              if(diff < 0 && diff > -.1) diff = -.1
+              hero.x -= diff
+            }
+          }
 
+          heroSnapshot.state[0].x = hero.x
 
-            // if(Math.abs(offsetPacketX) > (GAME.grid.nodeSize * 3)) {
-            //   hero.x = serverPos.x
-            // } else {
-            // if(Math.abs(offsetY) > (GAME.grid.nodeSize * 3)) {
-            //   console.log(hero.y, heroSnapshot.state[0].y, serverPos.y)
-            //   // console.log('DIDDDDDDDY')
-            //   hero.y = serverPos.y
-            // } else
-
-            if(Math.abs(offsetCurrentY) > (GAME.grid.nodeSize * 1)) {
-              if(!hero.resetYThreshold) hero.resetYThreshold = 0
-              hero.resetYThreshold++
-              if(hero.resetYThreshold > 20) {
-                hero.y = serverPos.y
-                hero.resetYThreshold = 0
-              }
-            } else {
+          if(Math.abs(offsetCurrentY) > (GAME.grid.nodeSize * 1)) {
+            if(!hero.resetYThreshold) hero.resetYThreshold = 0
+            hero.resetYThreshold++
+            if(hero.resetYThreshold > 20) {
+              hero.y = serverPos.y
               hero.resetYThreshold = 0
-              if(offsetPacketY === 0) {
-
-              } if(Math.abs(offsetPacketY)/correction < 1) {
-                hero.y -= offsetPacketY
-              } else {
-                let diff = offsetPacketY / correction
-                if(diff > 0 && diff < .1) diff = .1
-                if(diff < 0 && diff > -.1) diff = -.1
-
-                hero.y -= diff
-              }
             }
-            heroSnapshot.state[0].y = serverPos.y
+          } else {
+            hero.resetYThreshold = 0
+            if(offsetPacketY === 0) {
 
-            // ai.moveTowardsTarget(hero, _.cloneDeep(serverPos), delta)
-            // apply a step by step correction of the player's position
-          // }
+            } if(Math.abs(offsetPacketY)/correction < 1) {
+              hero.y -= offsetPacketY
+            } else {
+              let diff = offsetPacketY / correction
+              if(diff > 0 && diff < .1) diff = .1
+              if(diff < 0 && diff > -.1) diff = -.1
+
+              hero.y -= diff
+            }
+          }
+          heroSnapshot.state[0].y = serverPos.y
         }
       } catch(e) {
-
+        const hero = GAME.heros[HERO.id]
+        const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
+        hero.y = serverPos.y
+        hero.x = serverPos.x
       }
     }
 
-    // calculate the interpolation for the parameters x and y and return the snapshot
-    const snapshot = SI.calcInterpolation('x y') // [deep: string] as optional second parameter
+    if(GAME.world.tags.interpolateHeroPositions) {
+      // calculate the interpolation for the parameters x and y and return the snapshot
+      const snapshot = SI.calcInterpolation('x y') // [deep: string] as optional second parameter
 
-    if(snapshot) {
-      // access your state
-      const { state } = snapshot
-      state.forEach((hero) => {
-        if(hero.id == HERO.id) return
-        GAME.heros[hero.id].x = hero.x
-        GAME.heros[hero.id].y = hero.y
-      })
+      if(snapshot) {
+        // access your state
+        const { state } = snapshot
+        state.forEach((hero) => {
+          if(GAME.world.tags.predictNonHostPosition && hero.id == HERO.id) return
+          GAME.heros[hero.id].x = hero.x
+          GAME.heros[hero.id].y = hero.y
+        })
+      }
     }
   }
 

@@ -61,6 +61,9 @@ export default class WorldLive extends React.Component {
             <DatBoolean label='Custom Editor Code Override Arcade' path="world.tags.overrideCustomGameCode"/>
             <DatBoolean label='Restore Hero Position When Reloaded' path="world.tags.shouldRestoreHero"/>
             <DatBoolean label='Store Game State in Local Storage' path="world.tags.storeEntireGameState"/>
+            <DatBoolean label='Predict Hero Position on Client' path="world.tags.predictNonHostPosition"/>
+            <DatBoolean label='Interpolate Hero Positions' path="world.tags.interpolateHeroPositions"/>
+
           </DatFolder>
           <DatFolder title='Game Boundaries'>
             <DatSelect path='world.gameBoundaries.behavior' label='Behavior' options={['default','boundaryAll','pacmanFlip','purgatory']}/>

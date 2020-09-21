@@ -25,6 +25,8 @@ function setDefault() {
       gameBoundaryBottomDestroyHero: false,
       gameBoundaryDestroyHero: false,
       gameBoundaryDestroyObjects: true,
+      predictNonHostPosition: false,
+      interpolateHeroPositions: false,
       // randomFadeAllObjectsIn,
       // fadeAllObjectsIn,
       // hostHeroPausedSetsGamePaused

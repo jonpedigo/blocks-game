@@ -2,7 +2,7 @@
 import { SnapshotInterpolation } from '@geckos.io/snapshot-interpolation'
 
 // initialize the library
-const SI = new SnapshotInterpolation()
+const SI = new SnapshotInterpolation(24)
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
