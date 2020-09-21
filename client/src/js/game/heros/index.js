@@ -800,7 +800,6 @@ class Hero{
 
     const serverSnapshot = SI.vault.get()
 
-
     // notes on all this
     // this works pretty damn well, a couple numbers could be tweaked to make sure theres no jitters
     // also theres an unfortunate missing .next or something property, hence the try catch. that could be improved?
@@ -881,7 +880,7 @@ class Hero{
           }
           // heroSnapshot.state[0].y = hero.y
         }
-      }
+      // }
     }
 
     if(GAME.world.tags.interpolateHeroPositions) {
