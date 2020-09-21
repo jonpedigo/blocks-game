@@ -150,7 +150,12 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     // start music
 
     // rest player physics
-
+    // 
+    // Teleport
+    //
+    // Deposit object
+    //
+    // Withdraw object
 
 
     // THESE ARE MAYBE JUST MUTATE? EXCEPT FOR TOGGLE, MAYBE ADD THAT TO SPECIAL SYNTAX

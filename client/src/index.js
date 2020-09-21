@@ -5,10 +5,20 @@
 ////////////////////////////////////////////////////
 
 TODO
-Interpolation
-
 Sequence Editor upgrade <> Combine with triggers into the Object Detail
 Object Detail + Select Object Id
+MediaManager -> Manager and then make a media view within the Manager
+
+object editing history perhaps combine with hero ?
+u can view the history with a bunch of tabs and double clicking brings u to the object on the map!
+
+SEQUENCE EDITOR
+Trigger
+Create
+Animate
+Editor
+Notification
+
 -
 
 Story/cutscenes
@@ -70,12 +80,6 @@ ANIMATION UPGRADE
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
-
-SEQUENCE EDITOR
-Create
-Animate
-Editor
-Notification
 
 ---
 Scenarios/BeginEnd

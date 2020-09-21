@@ -14,6 +14,7 @@ export default class ModMenu extends React.Component{
 
       if(data.action === 'end') {
         window.socket.emit('endMod', data.manualRevertId)
+        window.socket.emit('resetPhysicsProperties', objectSelected.id)
       }
     }
   }
@@ -26,7 +27,7 @@ export default class ModMenu extends React.Component{
     if(!objectMods) return items
 
     objectMods.forEach((mod) => {
-      if(!mod.manualRevertId) return 
+      if(!mod.manualRevertId) return
       items.push(
         <MenuItem key={JSON.stringify({action: 'end', manualRevertId: mod.manualRevertId})}>{`End ${mod.manualRevertId}`}</MenuItem>
       )

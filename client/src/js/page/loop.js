@@ -2,7 +2,7 @@
 import { SnapshotInterpolation } from '@geckos.io/snapshot-interpolation'
 
 // initialize the library
-const SI = new SnapshotInterpolation(24)
+const SI = new SnapshotInterpolation(60)
 
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@ const SI = new SnapshotInterpolation(24)
 ///////////////////////////////
 ///////////////////////////////
 let updateInterval = 1000/60
-let renderInterval = 1000/24
+let renderInterval = 1000/60
 let mapNetworkInterval = 1000/24
 let completeNetworkInterval = 1000/.1
 var frameCount = 0;
@@ -95,6 +95,16 @@ var mainLoop = function () {
 
 function update(delta) {
   window.local.emit('onUpdate', delta)
+
+  if(PAGE.role.isHost) {
+    window.socket.emit('updateHerosPos', SI.snapshot.create(GAME.heroList.map((hero) => {
+      return {
+        id: hero.id,
+        x: hero.x,
+        y: hero.y,
+      }
+    })))
+  }
 }
 
 function render(delta) {
@@ -120,13 +130,6 @@ function mapNetworkUpdate() {
     prev[hero.id] = HERO.getMapState(hero.mod())
     return prev
   }, {}))
-  window.socket.emit('updateHerosPos', SI.snapshot.create(GAME.heroList.map((hero) => {
-    return {
-      id: hero.id,
-      x: hero.x,
-      y: hero.y,
-    }
-  })))
 }
 
 function completeNetworkUpdate() {

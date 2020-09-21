@@ -10,7 +10,7 @@ import ai from '../ai/index.js'
 import { SnapshotInterpolation, Vault } from '@geckos.io/snapshot-interpolation'
 window.clientInterpolationVault = new Vault()
 // initialize the library
-window.SI = new SnapshotInterpolation(24)
+window.SI = new SnapshotInterpolation(60)
 
 class Hero{
   constructor() {
@@ -141,24 +141,6 @@ class Hero{
   onUpdate(delta) {
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id)){
       localStorage.setItem('hero', JSON.stringify(GAME.heros[HERO.id]))
-    }
-
-    if(!PAGE.role.isHost && GAME.world.tags.predictNonHostPosition) {
-      PHYSICS.prepareObjectsAndHerosForMovementPhase()
-      // let heroPrediction = _.cloneDeep(GAME.heros[HERO.id])
-
-      const hero = GAME.heros[HERO.id]
-      if(hero.flags.paused) return
-      let prevY = hero.y
-      input.onUpdate(hero, GAME.keysDown, delta)
-      // window.local.emit('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
-      PHYSICS.updatePosition(hero, delta)
-      PHYSICS.prepareObjectsAndHerosForCollisionsPhase(hero, [], [])
-      PHYSICS.heroCorrection(hero, [], [])
-      PHYSICS.postPhysics([], [])
-      window.clientInterpolationVault.add(
-        window.SI.snapshot.create([{ id: hero.id, x: hero.x, y: hero.y }])
-      )
     }
 
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
@@ -798,6 +780,24 @@ class Hero{
   onRender(delta) {
     if(PAGE.role.isHost) return
 
+    if(!PAGE.role.isHost && GAME.world.tags.predictNonHostPosition) {
+      PHYSICS.prepareObjectsAndHerosForMovementPhase()
+      // let heroPrediction = _.cloneDeep(GAME.heros[HERO.id])
+
+      const hero = GAME.heros[HERO.id]
+      if(hero.flags.paused) return
+      let prevY = hero.y
+      input.onUpdate(hero, GAME.keysDown, delta)
+      // window.local.emit('onUpdateHero', hero, GAME.heroInputs[hero.id], delta)
+      PHYSICS.updatePosition(hero, delta)
+      PHYSICS.prepareObjectsAndHerosForCollisionsPhase(hero, [], [])
+      PHYSICS.heroCorrection(hero, [], [])
+      PHYSICS.postPhysics([], [])
+      window.clientInterpolationVault.add(
+        window.SI.snapshot.create([{ id: hero.id, x: hero.x, y: hero.y }])
+      )
+    }
+
     const serverSnapshot = SI.vault.get()
 
 
@@ -807,6 +807,12 @@ class Hero{
     // anyways, it predicts really well except for in a platformer with jumping and gravity...
     // with a minute operation going through a 1 node hole, it can often predict incorrectly create an incorrect client simulation
     // this system will correct if the simulation is too far incorrect
+
+    // Ok wow its actually terrible live
+    // the prediction is terrible, its always wrong, how we do do a better job updating in a 'lockstep', you feel me?
+    // like putting an intentional lag to game update processing, processing the inputs when they are supposed to be processed based on when the user pressed when they saw someting
+    // if the host is behind a bit... like 20ms. inputs are processing with a 'downtime', they arent counted by the host unless the downtime is passed
+    // idk but the problem I believe is the prediction. In the live server, theres tons of corretions happening making it super jankey. if we predicted better theres less corrections
     if(serverSnapshot && GAME.world.tags.predictNonHostPosition) {
       // get the closest player snapshot that matches the server snapshot time
       try {
