@@ -637,8 +637,8 @@ class Hero{
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
-      velocityY: hero.velocityY,
-      velocityX: hero.velocityX ,
+      // velocityY: hero.velocityY,
+      // velocityX: hero.velocityX ,
 
       keysDown: hero.keysDown,
 
@@ -815,7 +815,7 @@ class Hero{
     // idk but the problem I believe is the prediction. In the live server, theres tons of corretions happening making it super jankey. if we predicted better theres less corrections
     if(serverSnapshot && GAME.world.tags.predictNonHostPosition) {
       // get the closest player snapshot that matches the server snapshot time
-      try {
+      // try {
         const heroSnapshot = window.clientInterpolationVault.get(serverSnapshot.time, true)
 
         if (serverSnapshot && heroSnapshot) {
@@ -835,7 +835,8 @@ class Hero{
           if(Math.abs(offsetCurrentX) > (GAME.grid.nodeSize * 1)) {
             if(!hero.resetXThreshold) hero.resetXThreshold = 0
             hero.resetXThreshold++
-            if(hero.resetXThreshold > 20) {
+            if(hero.resetXThreshold > 60) {
+              console.log('resetX')
               hero.x = serverPos.x
               hero.resetXThreshold = 0
             }
@@ -858,7 +859,8 @@ class Hero{
           if(Math.abs(offsetCurrentY) > (GAME.grid.nodeSize * 1)) {
             if(!hero.resetYThreshold) hero.resetYThreshold = 0
             hero.resetYThreshold++
-            if(hero.resetYThreshold > 20) {
+            if(hero.resetYThreshold > 60) {
+              console.log('resetY')
               hero.y = serverPos.y
               hero.resetYThreshold = 0
             }
@@ -879,11 +881,6 @@ class Hero{
           }
           // heroSnapshot.state[0].y = hero.y
         }
-      } catch(e) {
-        // const hero = GAME.heros[HERO.id]
-        // const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
-        // hero.y = serverPos.y
-        // hero.x = serverPos.x
       }
     }
 
