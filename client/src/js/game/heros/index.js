@@ -873,10 +873,10 @@ class Hero{
           heroSnapshot.state[0].y = serverPos.y
         }
       } catch(e) {
-        const hero = GAME.heros[HERO.id]
-        const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
-        hero.y = serverPos.y
-        hero.x = serverPos.x
+        // const hero = GAME.heros[HERO.id]
+        // const serverPos = serverSnapshot.state.filter(s => s.id === HERO.id)[0]
+        // hero.y = serverPos.y
+        // hero.x = serverPos.x
       }
     }
 
