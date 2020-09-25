@@ -150,7 +150,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     // start music
 
     // rest player physics
-    // 
+    //
     // Teleport
     //
     // Deposit object

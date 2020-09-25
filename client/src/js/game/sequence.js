@@ -258,6 +258,27 @@ function processSequence(sequence) {
 
   }
 
+  if(item.sequenceType === 'sequenceNotification') {
+    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
+
+    const herosNotified = []
+    effectedObjects.forEach((effected) => {
+      if(item.notificationText) {
+        if(effected.tags.hero) {
+          window.socket.emit('sendNotification', { playerUIHeroId: effected.id, chatId: effected.id, logRecipientId: effected.id, toast: item.notificationToast, log: item.notificationLog, chat: item.notificationChat, modal: item.notificationModal, text: item.notificationText, modalHeader: item.notificationModalHeader, duration: item.notificationDuration })
+          herosNotified.push(effected.id)
+        } else window.socket.emit('sendNotification', { chatId: effected.id, log: item.notificationLog, chat: item.notificationChat, text: item.notificationText, duration: item.notificationDuration })
+      }
+    })
+
+    if(item.notificationAllHeros) {
+      GAME.heroList.forEach((hero) => {
+        if(herosNotified.indexOf(hero.id) > -1) return
+        window.socket.emit('sendNotification', { playerUIHeroId: hero.id, logRecipientId: hero.id, chatId: hero.id, toast: item.notificationToast, chat: item.notificationChat, text: item.notificationText, log: item.notificationLog, modal: item.notificationModal, modalHeader: item.notificationModalHeader, duration: item.notificationDuration})
+      })
+    }
+  }
+
   if(!item.waiting && item.next === 'end') {
     endSequence(sequence)
   } else if(!item.waiting && item.next) {

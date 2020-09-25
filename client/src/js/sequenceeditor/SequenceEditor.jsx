@@ -59,6 +59,7 @@ window.defaultSequenceEffect = {
   effectedTags: [],
 }
 
+
 window.defaultSequenceTrigger = {
   "sequenceType": "sequenceTrigger",
   "effector": "ownerObject",
@@ -66,7 +67,7 @@ window.defaultSequenceTrigger = {
   "mainObjectId": "",
   "guestObjectTag": "",
   "guestObjectId": "",
-  "initialTriggerPool": 1,
+  "initialTriggerPool": -1,
   "eventThreshold": -1
 }
 
@@ -84,6 +85,7 @@ const typeOptions = [
   { value: 'sequenceDialogue', label: 'Dialogue' },
   { value: 'sequenceEffect', label: 'Effect' },
   { value: 'sequenceCondition', label: 'Condition' },
+  { value: 'sequenceNotification', label: 'Notification' },
   { value: 'sequenceChoice', label: 'Choice' },
   { value: 'sequenceWait', label: 'Wait' },
 ];
@@ -173,6 +175,10 @@ export default class SequenceEditor extends React.Component {
     }
     if(selectedType === 'sequenceEffect') {
       Object.assign(sequenceItem, window.defaultSequenceEffect)
+      sequenceItem.next = 'sequential'
+    }
+    if(selectedType === 'sequenceNotification') {
+      Object.assign(sequenceItem, window.defaultSequenceNotification)
       sequenceItem.next = 'sequential'
     }
     if(selectedType === 'sequenceWait') {

@@ -800,18 +800,11 @@ class Hero{
 
     const serverSnapshot = SI.vault.get()
 
-    // notes on all this
-    // this works pretty damn well, a couple numbers could be tweaked to make sure theres no jitters
-    // also theres an unfortunate missing .next or something property, hence the try catch. that could be improved?
-    // anyways, it predicts really well except for in a platformer with jumping and gravity...
-    // with a minute operation going through a 1 node hole, it can often predict incorrectly create an incorrect client simulation
-    // this system will correct if the simulation is too far incorrect
-
-    // Ok wow its actually terrible live
-    // the prediction is terrible, its always wrong, how we do do a better job updating in a 'lockstep', you feel me?
-    // like putting an intentional lag to game update processing, processing the inputs when they are supposed to be processed based on when the user pressed when they saw someting
-    // if the host is behind a bit... like 20ms. inputs are processing with a 'downtime', they arent counted by the host unless the downtime is passed
-    // idk but the problem I believe is the prediction. In the live server, theres tons of corretions happening making it super jankey. if we predicted better theres less corrections
+    // this isnt working... dont use it.
+    // the problem is that our prediction is out of sync with the server somehow..
+    // im not sure whats causing it. it seems to be related to the timing of inputs<<<<<<<<<<
+    // espcially since we have an authoritative client instead of authortitaive server
+    //https://www.gabrielgambetta.com/entity-interpolation.html
     if(serverSnapshot && GAME.world.tags.predictNonHostPosition) {
       // get the closest player snapshot that matches the server snapshot time
       // try {

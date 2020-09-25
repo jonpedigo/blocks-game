@@ -366,6 +366,13 @@ Engine trail on a car u know what I mean?
 /// INFRASTRUCTURE
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
+// SERVER MODE USING NENGI
+// basically... HOST MODE and ARCADE MODE work as a great combo for home made arcade
+// ^^ host mode and arcade mode would BREAK if i used a server model for running the game
+// HOWEVER when trying to do accurate combat in multiplayer, we are going to want to have all the power of NENGI
+// In that scenario i will try to implement server mode which will basically remove a client host and
+// will make the server authoritative and solely responsible for updating, ill need to do a lot of changing...
+
 // HOST GAME VS CLIENT GAME and their physics system, etc. right now non-hosts dont add subobjects for what reaason?? Its because adding aa sub object is quite complicated logic
 
 // event system main problem is the different between onDeleteObject and 'onDeletedObject', very important, causing many issues :(

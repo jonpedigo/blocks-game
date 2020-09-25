@@ -14,7 +14,20 @@ import {
   NextSelect,
 } from '../components/SelectComponents.jsx'
 
-export default class Effect extends React.Component{
+window.defaultSequenceNotification = {
+  notificationAllHeros: false,
+  notificationDuration: null,
+  notificationToast: false,
+  notificationLog: false,
+  notificationChat: false,
+  notificationModal: false,
+  effectedMainObject: false,
+  effectedGuestObject: false,
+  effectedIds: [],
+  effectedTags: [],
+}
+
+export default class Notification extends React.Component{
   _renderInvolved() {
     const { sequenceItem } = this.props
     const { effectName } = sequenceItem
