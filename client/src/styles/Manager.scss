@@ -1,10 +1,11 @@
-#MediaManagerContainer {
+#BelowManagerContainer {
   // position: fixed;
   // left: 0;
   // top: 0;
   color: white;
   font-family: Courier;
   height: 100%;
+  min-height: 300px;
   z-index: 2;
 
   margin-bottom: 100px;
@@ -16,6 +17,8 @@
   background-color: #19191a;
   overflow-y: scroll;
   height: 100%;
+  min-height: 300px;
+
   &__list {
     padding-top: 22px;
 
@@ -40,23 +43,21 @@
   }
 }
 
-.Manager {
-  &__button {
-    display: inline;
-    cursor: pointer;
-    background-color: #333;
-    padding: 5px;
-    border: 1px solid #3a3a3a;
-    max-width: 100px;
+.Manager__button {
+  display: inline;
+  cursor: pointer;
+  background-color: #333;
+  padding: 5px;
+  border: 1px solid #3a3a3a;
+  max-width: 100px;
 
-    &:hover {
-      background-color: #555;
-    }
+  &:hover {
+    background-color: #555;
+  }
 
-    &--large {
-      font-size: 30px;
-      padding: 10px;
-    }
+  &--large {
+    font-size: 30px;
+    padding: 10px;
   }
 }
 
@@ -88,7 +89,6 @@
 
 .ManagerMenu {
   width: 100%;
-
   &__right {
     position: absolute;
     top: 0px;

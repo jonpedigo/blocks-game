@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Root from './Root.jsx'
 
-class MediaManager {
+class BelowManager {
   constructor() {
     this.container = null
     this.ref = null
@@ -26,13 +26,13 @@ class MediaManager {
 
   onAssetsLoaded() {
     const initialProps = {
-      ref: ref => MEDIAMANAGER.ref = ref
+      ref: ref => BELOWMANAGER.ref = ref
     }
 
     const container = document.createElement('div')
-    container.id = 'MediaManagerContainer'
+    container.id = 'BelowManagerContainer'
     document.body.appendChild(container)
-    MEDIAMANAGER.container = container
+    BELOWMANAGER.container = container
 
     // Mount React App
     ReactDOM.render(
@@ -42,4 +42,4 @@ class MediaManager {
   }
 }
 
-window.MEDIAMANAGER = new MediaManager()
+window.BELOWMANAGER = new BelowManager()

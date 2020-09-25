@@ -12,7 +12,7 @@ export default class SpriteMenu extends React.Component{
       const { networkEditObject } = MAPEDITOR
 
       if(key === 'open-media-manager-sprite-selector') {
-        MEDIAMANAGER.open({ selectedMenu: 'SpriteSelector', objectSelected})
+        BELOWMANAGER.open({ selectedManager: 'MediaManager', selectedMenu: 'SpriteSelector', objectSelected})
       }
 
       if(key === 'apply-sprite-to-all-of-color') {

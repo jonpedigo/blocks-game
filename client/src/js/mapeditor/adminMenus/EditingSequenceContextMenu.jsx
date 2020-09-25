@@ -32,9 +32,9 @@ export default class EditingSequenceContextMenu extends React.Component{
         window.local.emit('onSelectSequenceProperty', 'value', objectSelected)
       }
 
-      WORLDMANAGER.selectedSequenceProperty = null
-      WORLDMANAGER.editingSequenceItemId = null
-      WORLDMANAGER.ref.forceUpdate()
+      BELOWMANAGER.selectedSequenceProperty = null
+      BELOWMANAGER.editingSequenceItemId = null
+      BELOWMANAGER.ref.forceUpdate()
     }
   }
 

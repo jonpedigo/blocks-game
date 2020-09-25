@@ -317,7 +317,7 @@ export default class SequenceEditor extends React.Component {
       return <div className="SequenceEditor">
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
-          <i className="Manager__button fa fas fa-times" onClick={WORLDMANAGER.close}></i>
+          <i className="Manager__button fa fas fa-times" onClick={BELOWMANAGER.close}></i>
           </div>
         </div>
         <div className="SequenceList">

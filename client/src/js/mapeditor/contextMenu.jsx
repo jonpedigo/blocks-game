@@ -129,7 +129,7 @@ class contextMenuEl extends React.Component{
 
     MAPEDITOR.contextMenuVisible = true
 
-    if(WORLDMANAGER.editingSequenceItemId) {
+    if(BELOWMANAGER.editingSequenceItemId) {
       return <EditingSequenceContextMenu
         objectSelected={objectSelected}
       />

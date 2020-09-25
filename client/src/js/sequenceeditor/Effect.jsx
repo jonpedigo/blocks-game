@@ -139,9 +139,9 @@ export default class Effect extends React.Component{
 
       if(effectData.mapSelect) {
         chosenEffectForm.push(<div onClick={() => {
-          if(WORLDMANAGER.editingSequenceItemId) return
-          WORLDMANAGER.editingSequenceItemId = sequenceItem.id
-          WORLDMANAGER.ref.forceUpdate()
+          if(BELOWMANAGER.editingSequenceItemId) return
+          BELOWMANAGER.editingSequenceItemId = sequenceItem.id
+          BELOWMANAGER.ref.forceUpdate()
           const removeEventListener = window.local.on('onSelectSequenceProperty', (option, objectSelected) => {
             const { sequenceItem } = this.props
             if(effectName === 'pathfindTo') {

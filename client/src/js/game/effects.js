@@ -64,9 +64,9 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     pathfindTo: {
       mapSelect: true,
     },
-    pursue: {
-      mapSelect: true,
-    },
+    // pursue: {
+    //   mapSelect: true,
+    // },
     setPath: {
       mapSelect: true,
     },

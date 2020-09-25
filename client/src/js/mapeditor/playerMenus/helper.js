@@ -297,7 +297,7 @@ export function handleExtraMenuClicks(key, objectSelected, openColorPicker, subO
     }
 
     if(key === 'open-sequence-editor') {
-      WORLDMANAGER.open('sequence')
+      BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'sequence'})
     }
 
     if(key === 'download-game-JSON')  {
@@ -307,7 +307,7 @@ export function handleExtraMenuClicks(key, objectSelected, openColorPicker, subO
     }
 
     if(key.charAt(0) !== '{') return
-    
+
     const data = JSON.parse(key)
     if (data.action === 'chooseSprite') {
         SpriteChooser.open(objectSelected, data.spriteName)

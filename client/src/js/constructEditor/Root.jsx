@@ -84,11 +84,11 @@ export default class Root extends React.Component{
 
     if(!textureIdSelected) {
       return <div className="ConstructEditor__menu-item fas fa-image" onClick={() => {
-      MEDIAMANAGER.open({ objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
+      BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
       }}></div>
     } else {
       return <div className="ConstructEditor__menu-item" onClick={() => {
-          MEDIAMANAGER.open({ objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
+          BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
       }}>
         <PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite>
       </div>

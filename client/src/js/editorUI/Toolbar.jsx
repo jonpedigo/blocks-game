@@ -186,7 +186,7 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-trophy"/>
           {/* Sequences -> Menu */}
           <ToolbarButton iconName="fa-sitemap" onClick={() => {
-            WORLDMANAGER.open('sequence')
+            BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'sequence'})
           }}/>
           {/* Default Heros -> Menu */}
           <ToolbarButton iconName="fa-theater-masks" onClick={() => {
@@ -283,7 +283,7 @@ export default class Toolbar extends React.Component {
             })
           }}/>
           <ToolbarButton iconName="fa-icons" onClick={() => {
-              MEDIAMANAGER.open({ selectedMenu: 'SpriteSheetEditor'})
+              BELOWMANAGER.open({ selectedManager: 'MediaManager', selectedMenu: 'SpriteSheetEditor'})
           }}/>
         </ToolbarRow>
       </div>

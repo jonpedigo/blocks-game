@@ -317,7 +317,7 @@ export default class Creator extends React.Component {
 
     return <div className="Creator__category-container">
       <div className="Creator__category Creator__category-top Creator__category-top--sprite-selector" onClick={() => {
-        MEDIAMANAGER.open({ objectSelected: 'creator', selectedMenu: 'SpriteSelector'})
+        BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'creator', selectedMenu: 'SpriteSelector'})
       }}>
         {textureIdSelected ? <div className="Creator__sprite-container"><PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite></div>
       : <i className="fa fas fa-image"></i>}

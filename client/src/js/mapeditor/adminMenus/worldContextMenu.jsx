@@ -38,7 +38,7 @@ export default class WorldContextMenu extends React.Component{
       }
 
       if(key === 'open-sequence-editor') {
-        WORLDMANAGER.open('sequence')
+        BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'sequence'})
       }
 
       if(key === 'download-game-JSON')  {

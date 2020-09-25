@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import PixiMapSprite from '../components/PixiMapSprite.jsx'
+import PixiMapSprite from '../../components/PixiMapSprite.jsx'
 
 export default class SpriteSheet extends React.Component {
   constructor(props) {

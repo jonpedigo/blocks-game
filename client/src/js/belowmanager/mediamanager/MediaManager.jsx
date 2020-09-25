@@ -1,7 +1,7 @@
 import React from 'react'
 import SpriteSheetEditor from './SpriteSheetEditor.jsx'
 import SpriteSelector from './SpriteSelector.jsx'
-import modals from '../mapeditor/modals'
+import modals from '../../mapeditor/modals'
 import Collapsible from 'react-collapsible';
 
 window.spriteSheetTags = {
@@ -58,42 +58,17 @@ window.spriteSheetTags = {
   ['128px']: false,
 }
 
-export default class Root extends React.Component {
+export default class MediaManager extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      open: false,
-      selectedMenu: null,
-      selectedId: null,
-      objectSelected: null,
-    }
-
     this.selectedRef = React.createRef();
-  }
-
-  open({ objectSelected, selectedMenu, selectedId}) {
-    this.setState({
-      open: true,
-      selectedMenu,
-      selectedId,
-      objectSelected,
-    })
-  }
-
-  close = () => {
-    this.setState({
-      open: false,
-      selectedMenu: null,
-      selectedId: null,
-      objectSelected: null,
-    })
   }
 
   saveSelected = () => {
     if(this.selectedRef.current) {
       const json = this.selectedRef.current.getJSON()
-      if(this.state.selectedMenu === 'SpriteSheetEditor') {
+      if(this.props.selectedMenu === 'SpriteSheetEditor') {
         window.socket.emit('saveSpriteSheetJSON', json.id, json)
         window.spriteSheets = window.spriteSheets.map((ss) => {
           if(ss.id === json.id) return json
@@ -102,19 +77,7 @@ export default class Root extends React.Component {
       }
     }
 
-    this.returnToList()
-  }
-
-  returnToList = () => {
-    this.setState({
-      selectedId: null,
-    })
-  }
-
-  _openId(id) {
-    this.setState({
-      selectedId: id
-    })
+    this.props.returnToList()
   }
 
   _newSpriteSheet() {
@@ -186,9 +149,9 @@ export default class Root extends React.Component {
   }
 
   _renderSpriteSheets() {
-    if(this.state.selectedMenu === 'SpriteSheetEditor') {
+    if(this.props.selectedMenu === 'SpriteSheetEditor') {
       return window.spriteSheets.map((ss) => {
-        return <div className="Manager__list-item" onClick={() => this._openId(ss.id)}>{ss.name || ss.id}</div>
+        return <div className="Manager__list-item" onClick={() => this.props.openId(ss.id)}>{ss.name || ss.id}</div>
       })
     }
 
@@ -197,23 +160,20 @@ export default class Root extends React.Component {
     return Object.keys(assetsByTag).map((tag) => {
       const tagList = assetsByTag[tag]
       return <Collapsible trigger={tag}>{tagList.map((ss) => {
-          return <div className="Manager__list-item" onClick={() => this._openId(ss.id)}>{ss.name || ss.id}</div>
+          return <div className="Manager__list-item" onClick={() => this.props.openId(ss.id)}>{ss.name || ss.id}</div>
       })}
       </Collapsible>
     })
   }
 
   render() {
-    const { open, selectedMenu, selectedId } = this.state
-
-    if(!open) return null
-
+    const { selectedMenu, selectedId } = this.props
 
     if(selectedId && selectedMenu === 'SpriteSheetEditor') {
       return <div className="Manager">
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
-            <div className="Manager__button" onClick={this.returnToList}>Cancel</div>
+            <div className="Manager__button" onClick={this.props.returnToList}>Cancel</div>
             <div className="Manager__button" onClick={this.saveSelected}>Save</div>
           </div>
           <div className="ManagerMenu__id" onClick={this._openEditIdModal}>{selectedId}</div>
@@ -225,14 +185,14 @@ export default class Root extends React.Component {
     if(selectedId && selectedMenu === 'SpriteSelector') {
       return <div className="Manager">
         <div className="ManagerMenu">
-          <i className="fas fa-arrow-left Manager__button Manager__button--large " onClick={this.returnToList}></i>
+          <i className="fas fa-arrow-left Manager__button Manager__button--large " onClick={this.props.returnToList}></i>
         </div>
-        <SpriteSelector objectSelected={this.state.objectSelected} ref={this.selectedRef} id={selectedId}/>
+        <SpriteSelector objectSelected={this.props.objectSelected} ref={this.selectedRef} id={selectedId}/>
       </div>
     }
 
     return <div className="Manager">
-      <i className="ManagerMenu__right Manager__button Manager__button--large fas fa-times" onClick={this.close}/>
+      <i className="ManagerMenu__right Manager__button Manager__button--large fas fa-times" onClick={this.props.closeManager}/>
       <div className="Manager__list">
         {selectedMenu === 'SpriteSheetEditor' && <div className="Manager__list-item" onClick={this._newSpriteSheet}>New SpriteSheet</div>}
         {this._renderSpriteSheets()}

@@ -118,12 +118,8 @@ class EventEmitter {
         event.push(PATHEDITOR[eventName])
       }
 
-      if(WORLDMANAGER[eventName]) {
-        event.push(WORLDMANAGER[eventName])
-      }
-
-      if(MEDIAMANAGER[eventName]) {
-        event.push(MEDIAMANAGER[eventName])
+      if(BELOWMANAGER[eventName]) {
+        event.push(BELOWMANAGER[eventName])
       }
 
       if(LIVEEDITOR[eventName]) {

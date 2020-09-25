@@ -3,8 +3,8 @@ import classnames from 'classnames'
 import {
   SpriteSheetTagsSelect,
   SpriteSheetAuthorSelect
-} from '../components/SelectComponents.jsx'
-import modals from '../sequenceeditor/modals.js'
+} from '../../components/SelectComponents.jsx'
+import modals from '../../sequenceeditor/modals.js'
 import SpriteSheet from './SpriteSheet.jsx'
 
 export default class SpriteSelector extends React.Component {

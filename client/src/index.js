@@ -13,11 +13,9 @@ object editing history perhaps combine with hero ?
 u can view the history with a bunch of tabs and double clicking brings u to the object on the map!
 
 SEQUENCE EDITOR
-Trigger
 Create
 Animate
 Editor
-Notification
 
 -
 
@@ -517,8 +515,7 @@ import './js/game/index.js'
 import './js/arcade/index.js'
 import './js/constructEditor/index.js'
 import './js/pathEditor/index.js'
-import './js/worldmanager/index.js'
-import './js/mediamanager/index.js'
+import './js/belowmanager/index.js'
 import './js/map/index.js'
 import './js/physics/index.js'
 import './js/mapeditor/index.js'

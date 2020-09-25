@@ -46,7 +46,7 @@ export default class Notification extends React.Component{
     const { sequenceItem } = this.props
     const { notificationText } = sequenceItem
 
-    return <div className="SequenceItem__effect SequenceItem__effect--notification">
+    return <div className="SequenceItem__effect SequenceItem--notification">
       <div className="SequenceItem__effect-body">
         <div className="SequenceItem__effect-form">
           Text:
