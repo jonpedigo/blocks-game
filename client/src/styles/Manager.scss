@@ -41,6 +41,12 @@
       background-color: #222;
     }
   }
+
+  &__triggers {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+  }
 }
 
 .ManagerTab {

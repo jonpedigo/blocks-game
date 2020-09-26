@@ -10,6 +10,8 @@ Render cutscenes, it can be a layer in PLAYERUI
 they should work just like dialogue, press v and it goes to the next, pauses game if the host is viewing
 
 Create an onSequenceComplete thing..? So when its done we know to move onto the next event
+
+photo button for player
 -
 
 Story/cutscenes
@@ -27,8 +29,7 @@ Story/cutscenes
   DELETE
 --
 
-DETAIL VIEW
-GROUP  MUTATION UI
+GROUP MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
 
 SCENARIOS
@@ -617,4 +618,53 @@ What makes a game item meaningful is its POWER either horizontal or vertical POW
 other way to make an item meaningful is through history and narrative..
 
 IM GOING TO START OFF WITH HAVING A GAME MASTER PRESENT AND THEN EVENTUALLY ILL LEARN WHAT THE PARTS I CAN SACRIFICE ARE
+
+
+--------
+********
+--------
+
+HOMEMADE ARCADE TOOL MAP
+
+CLASS 1 - Basic
+----------
+Creator
+- Time: lowest, Specificity: highest
+
+Tags
+- Time: low, Specificity: high
+
+
+CLASS 2 - Intermediate
+----------
+RightClickMenu Modals
+- Time: medium, Specificity: medium ( Name, Dialogue, Color )
+
+Detail View
+- Same possibilities as RightClickMenu Modals except bigger and at the bottom of the screen, has an added layer of convenience
+
+
+CLASS 3 - Advanced
+----------
+SimpleSequence
+( Stories, Branching Dialogue )
+- Time: high, Specificity: medium
+
+Sequence
+( Animations, Stories, All Effects, Branching Dialogue, Conditions, Notifications, Adding Objects )
+- Time: highest, Specificity: lowest
+
+
+SPECIALIZED
+----------
+Sprite Selector
+Path Editor
+Construct Editor
+Live Menu ( Physics, Day/Night, Particles )
+
+
+TODO
+----------
+Pixel Editor
+Branching Game
 */
