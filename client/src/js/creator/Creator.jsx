@@ -66,7 +66,6 @@ export default class Creator extends React.Component {
         const { x, y } = gridUtil.snapXYToGrid(MAPEDITOR.mousePos.x, MAPEDITOR.mousePos.y, { closest: false })
         MAPEDITOR.objectHighlighted.x = x
         MAPEDITOR.objectHighlighted.y = y
-        MAPEDITOR.objectHighlighted.color = color || 'white'
         if(colorSelected && colorSelected !== GAME.world.defaultObjectColor) MAPEDITOR.objectHighlighted.color = colorSelected
         if(textureIdSelected) MAPEDITOR.objectHighlighted.defaultSprite = textureIdSelected
         MAPEDITOR.objectHighlighted.CREATOR = true
@@ -88,7 +87,7 @@ export default class Creator extends React.Component {
         OBJECTS.forAllSubObjects(newObject.subObjects, (subObject) => {
           subObject.id = 'subObject-'+window.uniqueID()
         })
-        if(colorSelected) newObject.color = colorSelected
+        if(colorSelected && colorSelected !== GAME.world.defaultObjectColor) newObject.color = colorSelected
         if(textureIdSelected) newObject.defaultSprite = textureIdSelected
         OBJECTS.create(newObject)
 

@@ -5,17 +5,12 @@
 ////////////////////////////////////////////////////
 
 TODO
-Sequence Editor upgrade <> Combine with triggers into the Object Detail
+
 Object Detail + Select Object Id
-MediaManager -> Manager and then make a media view within the Manager
+Sequence Editor upgrade <> Combine with triggers into the Object Detail
 
 object editing history perhaps combine with hero ?
 u can view the history with a bunch of tabs and double clicking brings u to the object on the map!
-
-SEQUENCE EDITOR
-Create
-Animate
-Editor
 
 -
 
@@ -41,6 +36,11 @@ create a diff between two .object arrays. keep the ids and turn this into an arr
 SCENARIOS
 
 PIXEL EDITOR
+
+SEQUENCE EDITOR
+Create
+Animate
+Editor
 
 -----
 

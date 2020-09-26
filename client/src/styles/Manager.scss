@@ -43,6 +43,32 @@
   }
 }
 
+.ManagerTab {
+  position: relative;
+  padding-right: 25px;
+
+  &:hover {
+    .ManagerTab__close {
+      opacity: 1;
+      color: red;
+    }
+  }
+
+  &__close {
+    position: absolute;
+    color: black;
+    opacity: .1;
+    right: 5px;
+    top: 2px;
+    padding: 2px;
+    border: 1px solid rgba(0,0,0,0);
+
+    &:hover {
+      border: 1px solid red;
+    }
+  }
+}
+
 .Manager__button {
   display: inline;
   cursor: pointer;

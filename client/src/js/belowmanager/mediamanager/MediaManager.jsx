@@ -77,7 +77,7 @@ export default class MediaManager extends React.Component {
       }
     }
 
-    this.props.returnToList()
+    this.props.returnToList(this.props.index)
   }
 
   _newSpriteSheet() {
@@ -151,7 +151,7 @@ export default class MediaManager extends React.Component {
   _renderSpriteSheets() {
     if(this.props.selectedMenu === 'SpriteSheetEditor') {
       return window.spriteSheets.map((ss) => {
-        return <div className="Manager__list-item" onClick={() => this.props.openId(ss.id)}>{ss.name || ss.id}</div>
+        return <div className="Manager__list-item" onClick={() => this.props.openId(this.props.index, ss.id)}>{ss.name || ss.id}</div>
       })
     }
 
@@ -160,7 +160,7 @@ export default class MediaManager extends React.Component {
     return Object.keys(assetsByTag).map((tag) => {
       const tagList = assetsByTag[tag]
       return <Collapsible trigger={tag}>{tagList.map((ss) => {
-          return <div className="Manager__list-item" onClick={() => this.props.openId(ss.id)}>{ss.name || ss.id}</div>
+          return <div className="Manager__list-item" onClick={() => this.props.openId(this.props.index, ss.id)}>{ss.name || ss.id}</div>
       })}
       </Collapsible>
     })
@@ -173,7 +173,7 @@ export default class MediaManager extends React.Component {
       return <div className="Manager">
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
-            <div className="Manager__button" onClick={this.props.returnToList}>Cancel</div>
+            <div className="Manager__button" onClick={() => this.props.returnToList(this.props.index)}>Cancel</div>
             <div className="Manager__button" onClick={this.saveSelected}>Save</div>
           </div>
           <div className="ManagerMenu__id" onClick={this._openEditIdModal}>{selectedId}</div>
@@ -185,14 +185,13 @@ export default class MediaManager extends React.Component {
     if(selectedId && selectedMenu === 'SpriteSelector') {
       return <div className="Manager">
         <div className="ManagerMenu">
-          <i className="fas fa-arrow-left Manager__button Manager__button--large " onClick={this.props.returnToList}></i>
+          <i className="fas fa-arrow-left Manager__button Manager__button--large " onClick={() => this.props.returnToList(this.props.index)}></i>
         </div>
         <SpriteSelector objectSelected={this.props.objectSelected} ref={this.selectedRef} id={selectedId}/>
       </div>
     }
 
     return <div className="Manager">
-      <i className="ManagerMenu__right Manager__button Manager__button--large fas fa-times" onClick={this.props.closeManager}/>
       <div className="Manager__list">
         {selectedMenu === 'SpriteSheetEditor' && <div className="Manager__list-item" onClick={this._newSpriteSheet}>New SpriteSheet</div>}
         {this._renderSpriteSheets()}

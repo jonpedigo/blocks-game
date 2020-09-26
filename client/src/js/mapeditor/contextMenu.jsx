@@ -215,7 +215,6 @@ class contextMenuEl extends React.Component{
             coloringObject.tags.outline = false
             networkEditObject(coloringObject, {color: color.hex})
           }
-          console.log('????')
           this.setState({
             coloringObject: null,
           })

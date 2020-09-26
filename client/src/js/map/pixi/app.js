@@ -373,7 +373,6 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   window.textureMap = {}
   function startLoadingAssets(spriteSheets) {
-    console.log(spriteSheets)
     spriteSheets.reduce((prev, next) => {
       return prev.add(next.serverImageUrl)
     }, app.loader).load((loaded) => {

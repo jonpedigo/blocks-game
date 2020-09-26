@@ -82,7 +82,6 @@ class MapEditor {
 
     const removeSaveListener = window.local.on('onConstructEditorSave', ({ constructParts, x, y, width, height }) => {
       if (constructParts) {
-        console.log(constructParts)
         window.socket.emit('editObjects', [{ id: object.id, constructParts, spawnPointX: x, spawnPointY: y, x, y, width, height }])
       }
     })
@@ -287,6 +286,7 @@ function handleMouseDown(event) {
       OBJECTS.editingId = null;
     } else {
       OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
+      BELOWMANAGER.open({ objectSelected: MAPEDITOR.objectHighlighted, selectedManager: 'ObjectManager', selectedMenu: 'detail', selectedId: OBJECTS.editingId })
     }
   } else if(selectionAllowed){
     OBJECTS.editingId = null

@@ -13,6 +13,7 @@ export default class SpriteMenu extends React.Component{
 
       if(key === 'open-media-manager-sprite-selector') {
         BELOWMANAGER.open({ selectedManager: 'MediaManager', selectedMenu: 'SpriteSelector', objectSelected})
+        return
       }
 
       if(key === 'apply-sprite-to-all-of-color') {
@@ -24,6 +25,7 @@ export default class SpriteMenu extends React.Component{
             defaultSprite: objectSelected.sprite,
           }
         }))
+        return
       }
 
       const data = JSON.parse(key)

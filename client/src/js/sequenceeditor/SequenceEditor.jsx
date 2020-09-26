@@ -315,11 +315,6 @@ export default class SequenceEditor extends React.Component {
 
     if(!sequence) {
       return <div className="SequenceEditor">
-        <div className="ManagerMenu">
-          <div className="ManagerMenu__right">
-          <i className="Manager__button fa fas fa-times" onClick={BELOWMANAGER.close}></i>
-          </div>
-        </div>
         <div className="SequenceList">
           {sequenceIdList.map((id) => {
             return <SequenceListItem deleteSequence={this.deleteSequence} openSequence={this.openSequence} id={id}></SequenceListItem>
