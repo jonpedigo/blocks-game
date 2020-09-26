@@ -330,7 +330,8 @@ class Page{
         ContentType: contentType
       },
       headers: {
-        'Content-Type': contentType
+        'Content-Type': contentType,
+        'Access-Control-Allow-Origin': *
       }
     };
 
