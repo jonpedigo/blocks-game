@@ -33,7 +33,8 @@ export default class Toolbar extends React.Component {
     }}/>}
     {GAME.gameState.started && <ToolbarButton iconName='fa-stop' onClick={() => {
       window.socket.emit('stopGame')
-    }}/>}</React.Fragment>
+    }}/>}
+    </React.Fragment>
   }
 
   render() {
@@ -47,6 +48,26 @@ export default class Toolbar extends React.Component {
     return (
       <div className="Toolbar">
         {hero.flags.canStartStopGame && this._renderStartStop()}
+        {hero.flags.canTakeMapSnapshots && <ToolbarButton iconName="fa-camera-retro" onClick={async () => {
+          const { value: name } = await Swal.fire({
+            title: "What is the name of this photo?",
+            showClass: {
+              popup: 'animated fadeInDown faster'
+            },
+            hideClass: {
+              popup: 'animated fadeOutUp faster'
+            },
+            input: 'text',
+            showCancelButton: true,
+            confirmButtonText: 'Take picture',
+          })
+          if(name) {
+            PIXIMAP.snapCamera(name)
+          }
+        }}
+        onShiftClick={() => {
+          PIXIMAP.snapCamera()
+        }}/>}
       </div>
     )
   }

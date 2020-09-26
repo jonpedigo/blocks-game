@@ -20,6 +20,7 @@ class Editor {
       if(e.keyCode === 16) {
         EDITOR.shiftPressed = true
         EDITORUI.ref.forceUpdate()
+        PLAYERUI.ref.forceUpdate()
         CREATOR.ref._creatorRef.current.forceUpdate()
       }
 
@@ -32,6 +33,7 @@ class Editor {
         EDITOR.shiftPressed = false
         CREATOR.ref._creatorRef.current.forceUpdate()
         EDITORUI.ref.forceUpdate()
+        PLAYERUI.ref.forceUpdate()
       }
     })
   }

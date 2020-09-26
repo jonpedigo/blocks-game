@@ -133,7 +133,7 @@ function update() {
       ctx.setLineDash([5, 15]);
       drawTools.drawObject(ctx, {...currentObject, tags: { invisible: false, outline: true }, color: 'rgba(255,255,255,1)'}, camera)
       ctx.setLineDash([]);
-    } else if(currentObject.defaultSprite){
+    } else if(currentObject.defaultSprite && currentObject.defaultSprite !== 'solidcolorsprite'){
       drawTools.drawSprite(ctx, camera, currentObject.defaultSprite, currentObject)
     } else {
       drawTools.drawObject(ctx, currentObject, camera)

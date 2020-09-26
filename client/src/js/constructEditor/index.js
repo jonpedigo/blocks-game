@@ -53,6 +53,7 @@ class ConstructEditor {
   }
 
   close() {
+    clearInterval(this._autoSave)
     document.body.style.cursor = 'default';
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
@@ -81,6 +82,10 @@ class ConstructEditor {
   }
 
   start(object, startColor, startAtHero = false) {
+    this._autoSave = setInterval(() => {
+      window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Drawing Autosaved'})
+      this.save()
+    }, 10000)
     this.initState()
     this.objectId = object.id
     this.open = true
@@ -260,22 +265,24 @@ class ConstructEditor {
   combineNodesIntoRectangles() {
     const rectangles = []
 
-    this.grid.forEachNode((node) => {
+    const grid = _.cloneDeep(this.grid)
+
+    grid.forEachNode((node) => {
       if(node.data.filled) {
         if(node.data.defaultSprite) {
-          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY)
+          rectangles.push({ x: node.x, y: node.y, width: grid.nodeSize, height: grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
+          this.unfillNode(node.gridX, node.gridY, grid)
           return
         }
-        const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
+        const possibleRectangleEnd = grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
-          const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
-          const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
+          const width = possibleRectangleEnd.x + grid.nodeSize - node.x
+          const height = possibleRectangleEnd.y + grid.nodeSize - node.y
           rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY)
+          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY, grid)
         } else {
-          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY)
+          rectangles.push({ x: node.x, y: node.y, width: grid.nodeSize, height: grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
+          this.unfillNode(node.gridX, node.gridY, grid)
         }
       }
     })
@@ -323,16 +330,16 @@ class ConstructEditor {
     this.fillNode(gridX, gridY, selectedColor, selectedTextureId)
   }
 
-  unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
+  unfillNodesBetween(startGridX, startGridY, endGridX, endGridY, grid = this.grid) {
     for(let gridX = startGridX; gridX < endGridX + 1; gridX++) {
       for(let gridY = startGridY; gridY < endGridY + 1; gridY++) {
-        this.unfillNode(gridX, gridY)
+        this.unfillNode(gridX, gridY, grid)
       }
     }
   }
 
-  unfillNode(gridX, gridY) {
-    this.grid.updateNode(gridX, gridY, {filled: false, color: null, defaultSprite: null })
+  unfillNode(gridX, gridY, grid = this.grid) {
+    grid.updateNode(gridX, gridY, {filled: false, color: null, defaultSprite: null })
   }
 
   unfillNodeXY(x, y) {

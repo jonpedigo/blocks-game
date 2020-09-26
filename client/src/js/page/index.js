@@ -335,6 +335,7 @@ class Page{
     };
 
     axios.get(generatePutUrl, options).then(res => {
+      console.log(res)
       axios
         .put("https://cors-anywhere.herokuapp.com/" + res.data.url, file, options)
         .then(res => {

@@ -124,8 +124,19 @@ export default class Root extends React.Component {
 
   render() {
     const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
-    if (CONSTRUCTEDITOR.open || PATHEDITOR.open) return null
-    if (!GAME.gameState || !GAME.gameState.loaded) return null
+
+    let toastContainer = <ToastContainer
+      position="top-center"
+      autoClose={false}
+      hideProgressBar={true}
+      closeOnClick={false}
+      newestOnTop={false}
+      closeButton={false}
+      draggable={false}
+      transition={Slide}
+    />
+    if (CONSTRUCTEDITOR.open || PATHEDITOR.open) return toastContainer
+    if (!GAME.gameState || !GAME.gameState.loaded) return toastContainer
 
     // <div className="ShortcutPanel">
     //   <i className="ShortcutPanel__main-menu fa fas fa-bars"></i>
@@ -154,16 +165,7 @@ export default class Root extends React.Component {
           onClose={() => this.setState({ showInventoryModal: false })}
           inventoryItems={hero.subObjects}
         />}
-        <ToastContainer
-          position="top-center"
-          autoClose={false}
-          hideProgressBar={true}
-          closeOnClick={false}
-          newestOnTop={false}
-          closeButton={false}
-          draggable={false}
-          transition={Slide}
-        />
+        {toastContainer}
         {this._renderGameLog()}
         <Toolbar/>
       </div>

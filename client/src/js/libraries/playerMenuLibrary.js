@@ -71,6 +71,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     constructEditorSprite: false,
     allowObjectSelection: false,
     canStartStopGame: false,
+    canTakeMapSnapshots: false,
   }
 
   window.heroMenuLibrary = {

@@ -6,14 +6,6 @@
 
 TODO
 
-Render cutscenes, it can be a layer in PLAYERUI
-they should work just like dialogue, press v and it goes to the next, pauses game if the host is viewing
-
-Create an onSequenceComplete thing..? So when its done we know to move onto the next event
-
-photo button for player
--
-
 Story/cutscenes
   STORY SCREENSHOTS
   in Manager

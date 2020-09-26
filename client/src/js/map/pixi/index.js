@@ -624,9 +624,17 @@ PIXIMAP.convertCanvasImageToFile = function(cb) {
 }
 
 PIXIMAP.snapCamera = function(name) {
-  PIXIMAP.convertCanvasImageToFile((file) => {
-    PAGE.uploadToAws(file, name)
-  })
+  const prevTint = PIXIMAP.cameraOverlay.tint
+  PIXIMAP.cameraOverlay.tint = 0xFFFFFF
+  PIXIMAP.cameraOverlay.alpha = 1
+  setTimeout(() => {
+    PIXIMAP.convertCanvasImageToFile((file) => {
+      PIXIMAP.cameraOverlay.tint = prevTint
+      PIXIMAP.cameraOverlay.alpha = 0
+      PAGE.uploadToAws(file, name)
+    })
+  }, 80)
+
 }
 
 PIXIMAP.getShadowBoundaries = function(hero) {
@@ -650,8 +658,9 @@ PIXIMAP.getShadowBoundaries = function(hero) {
 }
 
 PIXIMAP.convertToPartObject = function(gameObject, part) {
-  let sprite = part.sprite || gameObject.sprite || 'solidcolorsprite'
-  let color = part.color || gameObject.color || GAME.world.defaultObjectColor
+  let sprite = part.sprite || 'solidcolorsprite'
+  let color = part.color
+  if(!sprite && !color) color = GAME.world.defaultObjectColor
   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
   const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
