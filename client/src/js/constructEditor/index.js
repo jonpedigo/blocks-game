@@ -270,7 +270,7 @@ class ConstructEditor {
       if(node.data.filled) {
         if(node.data.defaultSprite) {
           rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY, this.grid)
+          this.unfillNode(node.gridX, node.gridY)
           return
         }
         const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
@@ -278,10 +278,10 @@ class ConstructEditor {
           const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
           const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
           rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY, this.grid)
+          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY)
         } else {
           rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY, this.grid)
+          this.unfillNode(node.gridX, node.gridY)
         }
       }
     })
@@ -329,16 +329,16 @@ class ConstructEditor {
     this.fillNode(gridX, gridY, selectedColor, selectedTextureId)
   }
 
-  unfillNodesBetween(startGridX, startGridY, endGridX, endGridY, grid = this.grid) {
+  unfillNodesBetween(startGridX, startGridY, endGridX, endGridY) {
     for(let gridX = startGridX; gridX < endGridX + 1; gridX++) {
       for(let gridY = startGridY; gridY < endGridY + 1; gridY++) {
-        this.unfillNode(gridX, gridY, grid)
+        this.unfillNode(gridX, gridY)
       }
     }
   }
 
-  unfillNode(gridX, gridY, grid = this.grid) {
-    grid.updateNode(gridX, gridY, {filled: false, color: null, defaultSprite: null })
+  unfillNode(gridX, gridY) {
+    this.grid.updateNode(gridX, gridY, {filled: false, color: null, defaultSprite: null })
   }
 
   unfillNodeXY(x, y) {

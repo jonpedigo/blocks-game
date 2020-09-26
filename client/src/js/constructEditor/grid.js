@@ -93,7 +93,7 @@ class Grid {
   findFurthestNodeInDirection(startNode, direction, targetProp, targetValue) {
     const neighbor = this.findNeighborInDirection(startNode.gridX, startNode.gridY, direction)
     if(neighbor) {
-      if(neighbor.data && neighbor.data[targetProp] === targetValue && !neighbor.data.defaultSprite) {
+      if(neighbor.data && neighbor.data.filled && neighbor.data[targetProp] === targetValue && !neighbor.data.defaultSprite) {
         return this.findFurthestNodeInDirection(neighbor, direction, targetProp, targetValue)
       } else {
         return startNode
