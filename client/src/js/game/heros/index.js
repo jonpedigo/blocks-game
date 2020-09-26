@@ -406,6 +406,7 @@ class Hero{
       animationZoomMultiplier: hero.animationZoomMultiplier,
       animationZoomTarget: hero.animationZoomTarget,
       endAnimation: hero.endAnimation,
+      cutscenes: hero.cutscenes,
       dialogue: hero.dialogue,
       dialogueName: hero.dialogueName,
       choiceOptions: hero.choiceOptions,
@@ -639,6 +640,8 @@ class Hero{
       customMapState: hero.customMapState,
       // velocityY: hero.velocityY,
       // velocityX: hero.velocityX ,
+
+      cutscenes: hero.cutscenes,
 
       keysDown: hero.keysDown,
 

@@ -331,12 +331,11 @@ class Page{
       },
       headers: {
         'Content-Type': contentType,
-        'Access-Control-Allow-Origin': *
+        // 'Access-Control-Allow-Origin': '*'
       }
     };
 
     axios.get(generatePutUrl, options).then(res => {
-      console.log(res)
       axios
         .put("https://cors-anywhere.herokuapp.com/" + res.data.url, file, options)
         .then(res => {

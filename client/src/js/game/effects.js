@@ -366,6 +366,17 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'setPath') {
     effected.pathId = effectValue
   }
+
+  if(effectName === 'startCutscene') {
+    if(effected.tags.hero) {
+      effected.cutscenes = effectValue
+      effected.flags.showCutscene = true
+      effected.flags.paused = true
+      window.emitGameEvent('onUpdatePlayerUI', effected)
+    } else {
+      console.log('cannot start cutscene effect non hero')
+    }
+  }
 }
 
 function getEffectedObjects(effect, mainObject, guestObject, ownerObject) {

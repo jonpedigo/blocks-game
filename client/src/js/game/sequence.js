@@ -258,6 +258,22 @@ function processSequence(sequence) {
 
   }
 
+  if(item.sequenceType === 'sequenceCutscene') {
+    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
+
+    const effect = {
+      effectValue: item.scenes
+    }
+    effectedObjects.forEach((object) => {
+      effects.processEffect(effect, effected, effector, sequence.ownerObject)
+    })
+
+    if(item.notificationAllHeros) {
+      GAME.heroList.forEach((hero) => {
+        effects.processEffect(effect, hero, effector, sequence.ownerObject)
+      })
+    }
+  }
   if(item.sequenceType === 'sequenceNotification') {
     const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
 

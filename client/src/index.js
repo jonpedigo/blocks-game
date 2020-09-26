@@ -630,7 +630,7 @@ Tags
 CLASS 2 - Intermediate
 ----------
 RightClickMenu Modals
-- Time: medium, Specificity: medium ( Name, Dialogue, Color )
+- Time: medium, Specificity: medium ( Name, Dialogue, Color, CRUD operations )
 
 Detail View
 - Same possibilities as RightClickMenu Modals except bigger and at the bottom of the screen, has an added layer of convenience

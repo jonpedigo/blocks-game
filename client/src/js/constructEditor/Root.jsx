@@ -101,6 +101,7 @@ export default class Root extends React.Component{
 
     const colorSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorColor
     const spriteSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorSprite
+    //<div className="ConstructEditor__menu-item ConstructEditor__menu-item--text" onClick={this._cancelClick}>Cancel</div>
 
     return <div className="ConstructEditor__menu-list">
       {colorSelection && !isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
@@ -110,7 +111,6 @@ export default class Root extends React.Component{
       <div className="ConstructEditor__menu-item fas fa-eye-dropper" onClick={this._eyeDropperClick}></div>
       <div className="ConstructEditor__menu-item fas fa-eraser" onClick={this._eraserClick}></div>
       <div className="ConstructEditor__menu-item ConstructEditor__menu-item--text" onClick={this._saveClick}>Save</div>
-      <div className="ConstructEditor__menu-item ConstructEditor__menu-item--text" onClick={this._cancelClick}>Cancel</div>
     </div>
   }
 

@@ -73,6 +73,7 @@ class ConstructEditor {
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)
     window.local.emit('onConstructEditorSave', {constructParts, x, y, width, height})
+    this.initializeGridNodes({constructParts, x, y, width, height})
   }
 
   finish() {
@@ -265,24 +266,22 @@ class ConstructEditor {
   combineNodesIntoRectangles() {
     const rectangles = []
 
-    const grid = _.cloneDeep(this.grid)
-
-    grid.forEachNode((node) => {
+    this.grid.forEachNode((node) => {
       if(node.data.filled) {
         if(node.data.defaultSprite) {
-          rectangles.push({ x: node.x, y: node.y, width: grid.nodeSize, height: grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY, grid)
+          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
+          this.unfillNode(node.gridX, node.gridY, this.grid)
           return
         }
-        const possibleRectangleEnd = grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
+        const possibleRectangleEnd = this.grid.findFurthestNodeInDirection(node, 'right', 'color', node.data.color)
         if(possibleRectangleEnd && possibleRectangleEnd.gridX !== node.gridX) {
-          const width = possibleRectangleEnd.x + grid.nodeSize - node.x
-          const height = possibleRectangleEnd.y + grid.nodeSize - node.y
+          const width = possibleRectangleEnd.x + this.grid.nodeSize - node.x
+          const height = possibleRectangleEnd.y + this.grid.nodeSize - node.y
           rectangles.push({x: node.x, y: node.y, width, height, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY, grid)
+          this.unfillNodesBetween(node.gridX, node.gridY, possibleRectangleEnd.gridX, possibleRectangleEnd.gridY, this.grid)
         } else {
-          rectangles.push({ x: node.x, y: node.y, width: grid.nodeSize, height: grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
-          this.unfillNode(node.gridX, node.gridY, grid)
+          rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
+          this.unfillNode(node.gridX, node.gridY, this.grid)
         }
       }
     })
