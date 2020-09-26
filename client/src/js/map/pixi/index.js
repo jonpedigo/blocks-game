@@ -623,6 +623,12 @@ PIXIMAP.convertCanvasImageToFile = function(cb) {
   urltoFile(dataURI, name, 'image/png').then(function(file){ cb(file) });
 }
 
+PIXIMAP.snapCamera = function(name) {
+  PIXIMAP.convertCanvasImageToFile((file) => {
+    PAGE.uploadToAws(file, name)
+  })
+}
+
 PIXIMAP.getShadowBoundaries = function(hero) {
   const { gridX, gridY, gridWidth, gridHeight } = HERO.getViewBoundaries(hero)
   const padding = GAME.world.chunkRenderPadding || 6

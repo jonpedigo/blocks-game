@@ -7,6 +7,22 @@
   height: 100%;
 }
 
+.ImageSelect {
+  &__image{
+    width: 200px;
+    height: 100px;
+    opacity: .4;
+    cursor:pointer;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__name{
+
+  }
+}
+
 .SequenceEditor {
   position: relative;
   width: 500px;

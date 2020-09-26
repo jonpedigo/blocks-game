@@ -145,6 +145,26 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-camera" onClick={() => {
             window.socket.emit('heroCameraEffect', 'cameraShake', HERO.editingId, { duration: 500, frequency: 20, amplitude: 36 })
           }}/>
+        <ToolbarButton iconName="fa-camera-retro" onClick={async () => {
+            const { value: name } = await Swal.fire({
+              title: "What is the name of this photo?",
+              showClass: {
+                popup: 'animated fadeInDown faster'
+              },
+              hideClass: {
+                popup: 'animated fadeOutUp faster'
+              },
+              input: 'text',
+              showCancelButton: true,
+              confirmButtonText: 'Take picture',
+            })
+            if(name) {
+              PIXIMAP.snapCamera(name)
+            }
+          }}
+          onShiftClick={() => {
+            PIXIMAP.snapCamera()
+          }}/>
           <ToolbarButton iconName="fa-code" onClick={() => {
             modals.editObjectCode(hero, 'Editing Hero JSON', hero);
           }}/>

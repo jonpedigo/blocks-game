@@ -6,12 +6,10 @@
 
 TODO
 
-Object Detail + Select Object Id
-Sequence Editor upgrade <> Combine with triggers into the Object Detail
+Render cutscenes, it can be a layer in PLAYERUI
+they should work just like dialogue, press v and it goes to the next, pauses game if the host is viewing
 
-object editing history perhaps combine with hero ?
-u can view the history with a bunch of tabs and double clicking brings u to the object on the map!
-
+Create an onSequenceComplete thing..? So when its done we know to move onto the next event
 -
 
 Story/cutscenes

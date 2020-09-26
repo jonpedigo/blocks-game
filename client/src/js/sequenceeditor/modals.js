@@ -1,3 +1,7 @@
+import ImageSelect from '../components/ImageSelect.jsx'
+import React from 'react'
+import ReactDOM from 'react-dom'
+
 function openSelectEffect(cb) {
   swal.fire({
     title: 'Choose an effect',
@@ -10,6 +14,29 @@ function openSelectEffect(cb) {
     input: 'select',
     inputOptions: window.effectNameList,
   }).then(cb)
+}
+
+function openImageSelectModal(cb) {
+  swal.fire({
+    title: 'Choose an Image',
+    showClass: {
+      popup: 'animated fadeInDown faster'
+    },
+    hideClass: {
+      popup: 'animated fadeOutUp faster'
+    },
+    html:`<div id='image-select-container'></div>`,
+  })
+
+  // Mount React App
+  const ref = React.createRef()
+  ReactDOM.render(
+    React.createElement(ImageSelect, { ref, onSelect: (image) => {
+      swal.close()
+      cb(image)
+    } }),
+    document.getElementById('image-select-container')
+  )
 }
 
 function openEditCodeModal(title, code, cb) {
@@ -90,6 +117,7 @@ function openEditNumberModal(property, currentValue = 0, options = { range: fals
 }
 
 export default {
+  openImageSelectModal,
   openEditCodeModal,
   openEditTextModal,
   openEditNumberModal,

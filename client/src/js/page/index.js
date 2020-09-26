@@ -6,6 +6,7 @@ import modals from '../mapeditor/modals.js'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from '../auth/App.jsx'
+import axios from 'axios';
 
 class Page{
   constructor() {
@@ -317,6 +318,42 @@ class Page{
     }
 
     return true
+  }
+
+  uploadToAws(file, name) {
+    const contentType = file.type; // eg. image/jpeg or image/svg+xml
+
+    const generatePutUrl = window.socket.io.uri + '/generate-put-url';
+    const options = {
+      params: {
+        Key: file.name,
+        ContentType: contentType
+      },
+      headers: {
+        'Content-Type': contentType
+      }
+    };
+
+    axios.get(generatePutUrl, options).then(res => {
+      axios
+        .put("https://cors-anywhere.herokuapp.com/" + res.data.url, file, options)
+        .then(res => {
+          let url = window.awsURL + file.name
+          console.log('Upload Successful', url)
+          if(!name) name = url
+          if(!GAME.library.images) GAME.library.images = {}
+          GAME.library.images[name] = {
+            name,
+            url
+          }
+          window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Image saved'})
+          window.socket.emit('updateLibrary', { images: GAME.library.images })
+        })
+        .catch(err => {
+          console.log('Sorry, something went wrong')
+          console.log('err', err);
+        });
+    });
   }
 }
 

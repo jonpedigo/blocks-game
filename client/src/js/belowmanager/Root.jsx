@@ -71,7 +71,7 @@ export default class Root extends React.Component {
   closeTab = (index) => {
     let tabIndex = this.state.tabIndex
 
-    if(tabIndex > 0) {
+    if(tabIndex > index) {
       tabIndex--
     } else if(this.state.selectedHistory.length === 1) {
       this.close()

@@ -86,6 +86,7 @@ const typeOptions = [
   { value: 'sequenceEffect', label: 'Effect' },
   { value: 'sequenceCondition', label: 'Condition' },
   { value: 'sequenceNotification', label: 'Notification' },
+  { value: 'sequenceCutscene', label: 'Cutscene' },
   { value: 'sequenceChoice', label: 'Choice' },
   { value: 'sequenceWait', label: 'Wait' },
 ];
@@ -183,6 +184,10 @@ export default class SequenceEditor extends React.Component {
     }
     if(selectedType === 'sequenceWait') {
       Object.assign(sequenceItem, window.defaultSequenceWait)
+      sequenceItem.next = 'sequential'
+    }
+    if(selectedType === 'sequenceCutscene') {
+      Object.assign(sequenceItem, window.defaultSequenceCutscene)
       sequenceItem.next = 'sequential'
     }
 

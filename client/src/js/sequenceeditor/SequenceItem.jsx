@@ -14,6 +14,7 @@ import Condition from './Condition.jsx'
 import Trigger from './Trigger.jsx'
 import Effect from './Effect.jsx'
 import Notification from './Notification.jsx'
+import Cutscene from './Cutscene.jsx'
 
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },
@@ -47,6 +48,9 @@ export default class SequenceItem extends React.Component{
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
     this._onChangeEffectName = this._onChangeEffectName.bind(this)
     this._onSetPropValue = this._onSetPropValue.bind(this)
+    this._editScene = this._editScene.bind(this)
+    this._addScene = this._addScene.bind(this)
+
   }
 
   componentDidMount() {
@@ -61,6 +65,42 @@ export default class SequenceItem extends React.Component{
 
   getItemValue() {
     return this.state.sequenceItem
+  }
+
+  _addScene(index) {
+    const { sequenceItem } = this.state;
+
+    sequenceItem.scenes.push({
+      duration: -1,
+      text: '',
+      imageUrl: null,
+    })
+    this.setState({sequenceItem})
+  }
+
+  _editScene(prop, index) {
+    const { sequenceItem } = this.state;
+
+    if(prop == 'image') {
+      modals.openImageSelectModal((image) => {
+        sequenceItem.scenes[index].image = image
+        this.setState({sequenceItem})
+      })
+    }
+
+    if(prop == 'text') {
+      modals.openEditTextModal('Edit scene text', sequenceItem.scenes[index].text, (result) => {
+        sequenceItem.scenes[index].text = result.value
+        this.setState({sequenceItem})
+      })
+    }
+
+    if(prop == 'duration') {
+      modals.openEditNumberModal('Edit scene duration', sequenceItem.scenes[index].duration, {}, (result) => {
+        sequenceItem.scenes[index].duration = result.value
+        this.setState({sequenceItem})
+      })
+    }
   }
 
   _updateNextOptions() {
@@ -286,6 +326,8 @@ export default class SequenceItem extends React.Component{
           {sequenceItem.sequenceType == 'sequenceEffect' && <Effect {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceWait' && <Condition {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceNotification' && <Notification {...this} {...this.props} {...this.state} setState={this.setState}/>}
+          {sequenceItem.sequenceType == 'sequenceCutscene' && <Cutscene {...this} {...this.props} {...this.state} setState={this.setState}/>}
+
         </div>
       </div>
     )
