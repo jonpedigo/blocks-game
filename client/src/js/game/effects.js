@@ -369,7 +369,7 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'startCutscene') {
     if(effected.tags.hero) {
-      effected.cutscenes = effectValue
+      effected.cutscenes = _.cloneDeep(effectValue)
       effected.flags.showCutscene = true
       effected.flags.paused = true
       window.emitGameEvent('onUpdatePlayerUI', effected)

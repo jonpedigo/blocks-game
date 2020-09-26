@@ -455,6 +455,17 @@ function onKeyDown(key, hero) {
       hero._cantInteract = true
       window.emitGameEvent('onUpdatePlayerUI', hero)
     }
+
+    if(hero.cutscenes && hero.cutscenes.length) {
+      hero.cutscenes.shift()
+      if(!hero.cutscenes.length) {
+        hero.flags.showCutscene = false
+        hero.flags.paused = false
+        hero.onGround = false
+      }
+      hero._cantInteract = true
+      window.emitGameEvent('onUpdatePlayerUI', hero)
+    }
   }
 
   if(hero.flags.paused || GAME.gameState.paused) {

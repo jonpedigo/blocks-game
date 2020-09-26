@@ -628,12 +628,12 @@ PIXIMAP.snapCamera = function(name) {
   PIXIMAP.cameraOverlay.tint = 0xFFFFFF
   PIXIMAP.cameraOverlay.alpha = 1
   setTimeout(() => {
+    PIXIMAP.cameraOverlay.tint = prevTint
+    PIXIMAP.cameraOverlay.alpha = 0
     PIXIMAP.convertCanvasImageToFile((file) => {
-      PIXIMAP.cameraOverlay.tint = prevTint
-      PIXIMAP.cameraOverlay.alpha = 0
       PAGE.uploadToAws(file, name)
     })
-  }, 80)
+  }, 60)
 
 }
 

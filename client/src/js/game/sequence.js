@@ -262,15 +262,16 @@ function processSequence(sequence) {
     const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
 
     const effect = {
+      effectName: 'startCutscene',
       effectValue: item.scenes
     }
     effectedObjects.forEach((object) => {
-      effects.processEffect(effect, effected, effector, sequence.ownerObject)
+      effects.processEffect(effect, effected, defaultEffector, sequence.ownerObject)
     })
 
     if(item.notificationAllHeros) {
       GAME.heroList.forEach((hero) => {
-        effects.processEffect(effect, hero, effector, sequence.ownerObject)
+        effects.processEffect(effect, hero, defaultEffector, sequence.ownerObject)
       })
     }
   }
