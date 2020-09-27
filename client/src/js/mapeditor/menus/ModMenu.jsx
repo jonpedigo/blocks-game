@@ -27,10 +27,12 @@ export default class ModMenu extends React.Component{
     if(!objectMods) return items
 
     objectMods.forEach((mod) => {
-      if(!mod.manualRevertId) return
-      items.push(
-        <MenuItem key={JSON.stringify({action: 'end', manualRevertId: mod.manualRevertId})}>{`End ${mod.manualRevertId}`}</MenuItem>
-      )
+      if(mod.manualRevertId) {
+        items.push(
+          <MenuItem key={JSON.stringify({action: 'end', manualRevertId: mod.manualRevertId})}>{`End ${mod.manualRevertId}`}</MenuItem>
+        )
+      }
+      // else if(mod.modId)
     })
 
     return items

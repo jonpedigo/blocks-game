@@ -183,6 +183,10 @@ export default class Effect extends React.Component{
 
       if(effectName === 'mod' || effectName === 'libraryMod') {
         chosenEffectForm.push(<div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('modEndOthers')} checked={sequenceItem.modEndOthers} type="checkbox"></input>Mod End Others</div>)
+        chosenEffectForm.push(<React.Fragment>
+          <i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('modId')}/>
+          <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.modId}</div>
+        </React.Fragment>)
       }
     }
 

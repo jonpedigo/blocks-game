@@ -245,11 +245,13 @@ function prepareObjectsAndHerosForMovementPhase() {
     }
 
     object._objectsWithinNext = []
+    object._objectsTouchingNext = []
 
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
         if(subObject.mod().tags.potential || subObject.mod().tags.notInCollisions) return
         subObject._objectsWithinNext = []
+        subObject._objectsTouchingNext = []
       })
     }
   })
@@ -504,6 +506,35 @@ function processAwarenessAndWithinEvents(object) {
   }
 
   object._objectsWithin = object._objectsWithinNext
+
+
+  if(object.mod().tags.trackObjectsTouching && object._objectsTouching) {
+    const left = object._objectsTouching.filter((id) => {
+      return object._objectsTouchingNext.indexOf(id) == -1
+    })
+    const entered = object._objectsTouchingNext.filter((id) => {
+      return object._objectsTouching.indexOf(id) == -1
+    })
+
+    left.forEach((objectLeftId) => {
+      const objectLeft = OBJECTS.getObjectOrHeroById(objectLeftId)
+      if(object.tags && object.tags.hero) {
+        window.emitGameEvent('onHeroTouchEnd', object, objectLeft)
+      } else {
+        window.emitGameEvent('onObjectTouchEnd', object, objectLeft)
+      }
+    })
+    entered.forEach((objectEnteredId) => {
+      const objectEntered = OBJECTS.getObjectOrHeroById(objectEnteredId)
+      if(object.tags && object.tags.hero) {
+        window.emitGameEvent('onHeroTouchStart', object, objectEntered)
+      } else {
+        window.emitGameEvent('onObjectTouchStart', object, objectEntered)
+      }
+    })
+  }
+
+  object._objectsTouching = object._objectsTouchingNext
 }
 
 

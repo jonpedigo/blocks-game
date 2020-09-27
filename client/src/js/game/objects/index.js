@@ -123,6 +123,7 @@ class Objects{
       inInventory: object.inInventory,
       isEquipped: object.isEquipped,
       _objectsWithin: object._objectsWithin,
+      _objectsTouching: object._objectsTouching,
       _objectsAwareOf: object._objectsAwareOf,
       _flipY: object._flipY,
 
@@ -282,6 +283,8 @@ class Objects{
                   notificationAllHeros,
                   notificationAllHerosInvolved,
                   notificationDuration,
+                  modEndOthers,
+                  modId,
                  } = object.triggers[triggerId]
 
         properties.triggers[triggerId] = {
@@ -321,6 +324,8 @@ class Objects{
           conditionMainObjectTag,
           conditionGuestObjectId,
           conditionGuestObjectTag,
+          modEndOthers,
+          modId,
 
           notificationLog,
           notificationChat,

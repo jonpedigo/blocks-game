@@ -1,6 +1,7 @@
 window.local.on('onFirstPageGameLoaded', () => {
   window.modLibrary = {
     spin: {
+      modId: 'spin',
       effectJSON: {
         tags: {
           rotateable: true,
@@ -9,6 +10,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       },
     },
     asteroids: {
+      modId: 'asteroids',
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'angleAndVelocity',
@@ -20,6 +22,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       }
     },
     car: {
+      modId: 'car',
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'angle',
@@ -31,6 +34,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       }
     },
     ufo: {
+      modId: 'ufo',
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'velocity',
@@ -38,6 +42,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       }
     },
     zelda: {
+      modId: 'zelda',
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'flatDiagonal',
@@ -45,6 +50,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     },
     kirby: {
       modEndOthers: true,
+      modId: 'kirby',
       effectJSON: {
         arrowKeysBehavior: 'flatDiagonal',
         spaceBarBehavior: 'floatJump',
@@ -57,6 +63,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     },
     mario: {
       modEndOthers: true,
+      modId: 'mario',
       effectJSON: {
         "color": "#b71c1c",
         arrowKeysBehavior: 'flatDiagonal',
@@ -69,6 +76,7 @@ window.local.on('onFirstPageGameLoaded', () => {
       }
     },
     snake: {
+      modId: 'snake',
       modEndOthers: true,
       effectJSON: {
         arrowKeysBehavior: 'skating',

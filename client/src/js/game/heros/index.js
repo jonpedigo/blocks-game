@@ -83,6 +83,7 @@ class Hero{
       heroMenu: {},
       objectMenu: {},
       creator: {},
+      spriteSheets: {},
 
       quests: {},
       questState: {},
@@ -431,6 +432,7 @@ class Hero{
       questState: hero.questState,
       customState: hero.customState,
       _objectsWithin: hero._objectsWithin,
+      _objectsTouching: hero._objectsTouching,
       _objectsAwareOf: hero._objectsAwareOf,
       _flipY: hero._flipY,
       // conditionTestCounts: hero.conditionTestCounts,
@@ -568,6 +570,8 @@ class Hero{
               notificationAllHeros,
               notificationAllHerosInvolved,
               notificationDuration,
+              modEndOthers,
+              modId,
             } = hero.triggers[triggerId]
 
         properties.triggers[triggerId] = {
@@ -594,6 +598,8 @@ class Hero{
           guestObjectTag,
           initialTriggerPool,
 
+          modEndOthers,
+          modId,
           // just for mods right now, not actual Condition
           testAndModOwnerWhenEquipped,
           testFailDestroyMod,

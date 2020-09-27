@@ -50,6 +50,8 @@ function setDefault() {
 
     // allows corrections and physics movement
     moving: false,
+
+    trackObjectsTouching: false,
   }
 
   // window.otherTags = {
@@ -250,6 +252,8 @@ function setDefault() {
     moving: true,
     noticeable: true,
     centerOfAttention: false,
+    trackObjectsWithin: false,
+    trackObjectsTouching: false,
     // allowCameraRotation: false,
   }
 

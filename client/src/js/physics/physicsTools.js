@@ -61,8 +61,13 @@ function heroCollisionEffects(hero) {
       window.local.emit('onHeroCollide', heroPO.gameObject, collider, result)
 
       // dont enter objects that you cant enter...
-      if(!body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['noHeroAllowed']) {
+      const heroObstacle = body.gameObject.mod().tags['obstacle'] || body.gameObject.mod().tags['noHeroAllowed']
+      if(!heroObstacle && heroPO.gameObject.mod().tags['trackObjectsWithin']) {
         heroPO.gameObject._objectsWithinNext.push(body.gameObject.id)
+      }
+
+      if(heroObstacle && heroPO.gameObject.mod().tags['trackObjectsTouching']) {
+        heroPO.gameObject._objectsTouchingNext.push(body.gameObject.id)
       }
     }
   }
@@ -253,11 +258,18 @@ function objectCollisionEffects(po) {
       }
 
 
+      const isSafeZone = agent.mod().tags['monster'] && collider.mod().tags && collider.mod().tags['onlyHeroAllowed']
+      const bothAreObstacles = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['obstacle']
       if(agent.mod().tags.trackObjectsWithin) {
-        const isSafeZone = agent.mod().tags['monster'] && collider.mod().tags && collider.mod().tags['onlyHeroAllowed']
-        const bothAreObstacles = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['obstacle']
         if(!isSafeZone && !bothAreObstacles) {
           agent._objectsWithinNext.push(collider.id)
+        }
+      }
+
+      const obstacleHittingHero = agent.tags && agent.mod().tags['obstacle'] && collider.tags && collider.mod().tags['hero']
+      if(agent.mod().tags.trackObjectsTouching) {
+        if((agent.tags && agent.mod().tags['obstacle'] && isSafeZone) || bothAreObstacles || obstacleHittingHero) {
+          agent._objectsTouchingNext.push(collider.id)
         }
       }
 

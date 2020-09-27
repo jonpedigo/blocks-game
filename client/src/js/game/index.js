@@ -829,6 +829,11 @@ class Game{
     if(mod.modEndOthers) {
       GAME.gameState.activeModList = GAME.gameState.activeModList.filter(({ownerId}) => mod.ownerId !== ownerId)
     }
+    if(mod.modId) {
+      if(GAME.gameState.activeModList.some(({modId, ownerId}) => {
+        if(modId === mod.modId && ownerId == mod.ownerId) return true
+      })) return console.log('mod already applied to this object', id, ownerId)
+    }
     GAME.gameState.activeModList.push(mod)
 
     if(mod.conditionType && mod.conditionType.length && mod.conditionType !== 'none') {
