@@ -28,7 +28,11 @@ function onPlayerIdentified() {
     onObjectEnter: { mainObject: 'object', guestObject: 'anything' },
     onObjectLeave: { mainObject: 'object', guestObject: 'anything' },
     onObjectCollide: { mainObject: 'object', guestObject: 'anything' },
-    onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
+    // onObjectInteractable: { mainObject: 'object', guestObject: 'hero' },
+    onObjectTouchStart: { mainObject: 'object', guestObject: 'anything' },
+    onObjectTouchEnd: { mainObject: 'object', guestObject: 'anything' },
+    onHeroTouchStart: { mainObject: 'hero', guestObject: 'anything' },
+    onHeroTouchEnd: { mainObject: 'hero', guestObject: 'anything' },
     onTagDepleted: { mainObject: 'tag' },
     onAnticipateCompleted: {},
     onSequenceEnded: {}

@@ -125,6 +125,7 @@ class Page{
       },
       input: 'select',
       inputOptions: heroOptions,
+      allowOutsideClick: false,
     })
 
     const heroSummonType = heroOptions[heroLibraryNameIndex]
@@ -254,6 +255,8 @@ class Page{
 
   onGameReady() {
     PAGE.isGameReady = true
+
+    PAGE.initializeGameDragAndDrop()
   }
 
   onGameLoaded() {
@@ -387,6 +390,30 @@ class Page{
           console.log('err', err);
         });
     });
+  }
+
+  initializeGameDragAndDrop() {
+    document.body.addEventListener('dragstart', handleDragStart)
+    document.body.addEventListener('dragover', (e) => e.preventDefault())
+
+    document.body.addEventListener('drop', handleDrop)
+    document.body.draggable=true
+    document.body.droppable=true
+
+    let dragSrcEl
+    function handleDragStart(e) {
+      dragSrcEl = this;
+
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', JSON.stringify(GAME));
+    }
+
+    function handleDrop(e) {
+      e.stopPropagation();
+      if (!dragSrcEl || dragSrcEl !== this) {
+        GAME.onChangeGame(JSON.parse(e.dataTransfer.getData('text/plain')))
+      }
+    }
   }
 }
 

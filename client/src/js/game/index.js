@@ -226,17 +226,12 @@ class Game{
   loadAndJoin(game, heroName) {
     window.local.emit('onStartLoadingScreen')
 
-    console.log('?x')
     GAME.loadGridWorldObjectsCompendiumState(game)
-    console.log('?x')
 
-    console.log(GAME.heros)
     // if you are a player and you dont already have a hero from the server ask for one
     if(GAME.heros[HERO.id]) {
-      console.log('?xx')
       window.local.emit('onHeroFound', GAME.heros[HERO.id])
     } else {
-      console.log('?xxx')
       window.socket.emit('askJoinGame', HERO.id, heroName)
     }
   }
