@@ -205,49 +205,48 @@ class Page{
         if(currentGameExists) {
           cb(game)
         } else {
-          if(PAGE.role.isAdmin || PAGE.role.isPlayEditor) {
-            const { value: loadGameId } = await Swal.fire({
-              title: 'Load Game',
-              text: "Enter id of game",
+          const { value: loadGameId } = await Swal.fire({
+            title: 'Load Game',
+            text: "Enter id of game",
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Load Game',
+            cancelButtonText: 'New Game',
+          })
+          if(loadGameId) {
+            window.socket.on('onLoadGame', (game) => {
+              cb(game)
+            })
+            window.socket.emit('setAndLoadCurrentGame', loadGameId)
+          } else {
+            const { value: newGameId } = await Swal.fire({
+              title: 'Create Game',
+              text: "Enter id you want for new game",
               input: 'text',
               inputAttributes: {
                 autocapitalize: 'off'
               },
               showCancelButton: true,
-              confirmButtonText: 'Load Game',
-              cancelButtonText: 'New Game',
+              confirmButtonText: 'Create',
             })
-            if(loadGameId) {
-              window.socket.on('onLoadGame', (game) => {
-                cb(game)
-              })
-              window.socket.emit('setAndLoadCurrentGame', loadGameId)
-            } else {
-              const { value: newGameId } = await Swal.fire({
-                title: 'Create Game',
-                text: "Enter id you want for new game",
-                input: 'text',
-                inputAttributes: {
-                  autocapitalize: 'off'
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Create',
-              })
-              if(newGameId) {
-                let game = {
-                  id: newGameId,
-                  world: JSON.parse(JSON.stringify(window.defaultWorld)),
-                  // defaultHero: JSON.parse(JSON.stringify(window.defaultHero)),
-                  objects: [],
-                  grid: JSON.parse(JSON.stringify(window.defaultGrid)),
-                }
-                window.socket.emit('saveGame', game)
-                cb(game)
+            if(newGameId) {
+              let game = {
+                id: newGameId,
+                world: JSON.parse(JSON.stringify(window.defaultWorld)),
+                // defaultHero: JSON.parse(JSON.stringify(window.defaultHero)),
+                objects: [],
+                grid: JSON.parse(JSON.stringify(window.defaultGrid)),
               }
+              window.socket.emit('saveGame', game)
+              cb(game)
             }
-          } else {
-            alert('host has not chosen game, become host or reload when game has been chosen')
           }
+         //  else {
+         //   alert('host has not chosen game, become host or reload when game has been chosen')
+         // }
         }
       })
     }
