@@ -33,6 +33,7 @@ export default class GuidanceLive extends React.Component {
       worldMenu: hero.worldMenu,
       objectMenu: hero.objectMenu,
       creator: hero.creator,
+      spriteSheets: hero.spriteSheets,
       flags: hero.flags
     }
 
@@ -41,6 +42,13 @@ export default class GuidanceLive extends React.Component {
 
   _renderLibrary(libraryProp, libraryObjectNames) {
     return Object.keys(libraryObjectNames).map((name) => {
+      const path = 'objectSelected.'+libraryProp+'.'+name
+      return <DatBoolean path={path} label={name} />
+    })
+  }
+
+  _renderLibraryArray(libraryProp, libraryArray) {
+    return libraryArray.map((name) => {
       const path = 'objectSelected.'+libraryProp+'.'+name
       return <DatBoolean path={path} label={name} />
     })
@@ -65,6 +73,19 @@ export default class GuidanceLive extends React.Component {
             </DatFolder>
             <DatFolder title='World'>
               {this._renderLibrary('worldMenu', window.worldMenuLibrary)}
+            </DatFolder>
+          </DatFolder>
+          <DatFolder title='Sprite Sheets'>
+            <DatFolder title='Kenney'>
+              {this._renderLibraryArray('spriteSheets', Object.keys(window.spriteSheetLibrary).filter(name => name.indexOf('kenney') >= 0))}
+            </DatFolder>
+            <DatFolder title='Oryx'>
+              {this._renderLibraryArray('spriteSheets', Object.keys(window.spriteSheetLibrary).filter(name => name.indexOf('oryx') >= 0))}
+            </DatFolder>
+            <DatFolder title='Other'>
+              {this._renderLibraryArray('spriteSheets', Object.keys(window.spriteSheetLibrary).filter(name => {
+                return name.indexOf('kenney') == -1 && name.indexOf('oryx') == -1
+              }))}
             </DatFolder>
           </DatFolder>
           <DatFolder title='Other'>

@@ -207,6 +207,14 @@ function setDefault() {
     heroHomePlatform: false,
   }
 
+  window.pathTags = {
+    path: false,
+    pathfindLoop: false,
+    pathfindPatrol: false,
+    pathfindDumb: false,
+    pathfindWait: false,
+  }
+
   window.defaultTags = {
     ...window.physicsTags,
     ...window.spawnZoneTags,
@@ -226,6 +234,7 @@ function setDefault() {
     ...window.animationTags,
     ...window.featureOptimizationTags,
     ...window.proceduralTags,
+    ...window.pathTags,
   }
 
   window.heroTags = {
@@ -242,14 +251,6 @@ function setDefault() {
     noticeable: true,
     centerOfAttention: false,
     // allowCameraRotation: false,
-  }
-
-  window.pathTags = {
-    path: false,
-    pathfindLoop: false,
-    pathfindPatrol: false,
-    pathfindDumb: false,
-    pathfindWait: false,
   }
 
   window.subObjectTags = {
@@ -269,6 +270,10 @@ function setDefault() {
     cButtonOnce: false,
   }
 
+  window.generatedTags = {
+    lastAnticipatedObject: false,
+  }
+
   window.tags = JSON.parse(JSON.stringify(window.defaultTags))
 
   window.allTags = {
@@ -281,8 +286,28 @@ function setDefault() {
     ...window.targetTags,
   }
 
-  window.generatedTags = {
-    lastAnticipatedObject: false,
+
+  window.propertyTags = {
+    ...window.combatTags,
+    ...window.movementTags,
+    ...window.physicsTags,
+
+    glowing: window.graphicalTags.glowing,
+    invisible: window.graphicalTags.invisible,
+
+    shake: window.animationTags.shake,
+    realRotate: window.animationTags.realRotate,
+    realRotateFast: window.animationTags.realRotateFast,
+    pulseAlpha: window.animationTags.pulseAlpha,
+    pulseDarken: window.animationTags.pulseDarken,
+    pulseLighten: window.animationTags.pulseLighten,
+
+    //
+    hasTrail: window.particleTags.hasTrail,
+    explodeOnDestroy: window.particleTags.explodeOnDestroy,
+    spinOffOnDestroy: window.particleTags.spinOffOnDestroy,
+
+    ...window.cameraTags,
   }
 }
 

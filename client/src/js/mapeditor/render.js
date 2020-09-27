@@ -35,13 +35,7 @@ function update() {
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
-  if((PAGE.role.isAdmin || !GAME.gameState.started) && objectHighlighted && objectHighlighted.tags && (objectHighlighted.tags.hero)) {
-    const {x, y} = HERO.getSpawnCoords(objectHighlighted)
-    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
-  }
-
-  if((PAGE.role.isAdmin || !GAME.gameState.started) && objectHighlighted && !objectHighlighted.CREATOR) {
+  if((PAGE.role.isAdmin || (GAME.heros[HERO.id].flags.showMapHighlight && !GAME.gameState.started)) && objectHighlighted && !objectHighlighted.CREATOR) {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       let color = 'rgba(255,255,255,0.2)'
       drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
@@ -50,70 +44,72 @@ function update() {
       drawTools.drawBorder(ctx, {...objectHighlighted, color}, camera)
     }
 
+    const {x, y} = HERO.getSpawnCoords(objectHighlighted)
+    drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+    drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+    // const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
+    // drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
+    // drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
+
     // if(objectHighlighted.tags && objectHighlighted.tags.subObject) {
     //   const
     //   drawTools.drawFilledObject(ctx, {...objectHighlighted, color x: }, camera)
     // } else {
     // }
 
-    if(PAGE.role.isAdmin || !GAME.gameState.started) {
-      if(objectHighlighted.path) {
-        let pathX, pathY, pathWidth, pathHeight;
+    if(objectHighlighted.path) {
+      let pathX, pathY, pathWidth, pathHeight;
 
-        objectHighlighted.path.forEach((path, i) => {
-          if(objectHighlighted.pathfindingGridId && GAME.objectsById[objectHighlighted.pathfindingGridId]) {
-            const grid = GAME.objectsById[objectHighlighted.pathfindingGridId].customGridProps
-            pathX = (path.x * grid.nodeWidth) + grid.startX
-            pathY = (path.y * grid.nodeHeight) + grid.startY
-            pathWidth = grid.nodeWidth
-            pathHeight = grid.nodeHeight
-          } else {
-            pathX = (path.x * GAME.grid.nodeSize) + GAME.grid.startX
-            pathY = (path.y * GAME.grid.nodeSize) + GAME.grid.startY
-            pathWidth = GAME.grid.nodeSize
-            pathHeight = GAME.grid.nodeSize
-          }
-          const object = {x: pathX, y: pathY, width: pathWidth, height: pathHeight, color: 'rgba(0,170,0, .6)' }
-          drawTools.drawObject(ctx, object, camera)
-        });
-      }
-
-      if(objectHighlighted.pathParts) {
-        objectHighlighted.pathParts.forEach((part, i) => {
-          const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,170,0, .6)', opacity: .4, characterTextInside: part.index + 1 }
-          drawTools.drawObject(ctx, object, camera)
-        });
-      }
-
-      if(objectHighlighted._pfGrid) {
-        const _pfGrid = objectHighlighted._pfGrid
-        const customGridProps = objectHighlighted.customGridProps
-        drawTools.drawGrid(ctx, {...objectHighlighted.customGridProps, color:'rgba(0,170,0, 1)', normalLineWidth: .6, specialLineWidth: .6}, camera)
-        drawTools.drawPFGrid(ctx, camera, _pfGrid, customGridProps, { style: 'alt'})
-      }
-
-      const {x, y} = OBJECTS.getSpawnCoords(objectHighlighted)
-      drawTools.drawObject(ctx, {x: x, y: y - 20.5, width: 1, height: 40, color: 'white'}, camera)
-      drawTools.drawObject(ctx, {x: x - 20.5, y: y, width: 40, height: 1, color: 'white'}, camera)
-
-      if(objectHighlighted.targetXY) {
-        let {x, y}= objectHighlighted.targetXY
-        if(!x) x= objectHighlighted.x
-        if(!y) y= objectHighlighted.y
-
-        drawTools.drawVertice(ctx, { thickness: 4, color: 'rgba(0,170,0, .6)', a: { x: objectHighlighted.x, y: objectHighlighted.y}, b: {x: x, y: y}}, camera)
-      }
+      objectHighlighted.path.forEach((path, i) => {
+        if(objectHighlighted.pathfindingGridId && GAME.objectsById[objectHighlighted.pathfindingGridId]) {
+          const grid = GAME.objectsById[objectHighlighted.pathfindingGridId].customGridProps
+          pathX = (path.x * grid.nodeWidth) + grid.startX
+          pathY = (path.y * grid.nodeHeight) + grid.startY
+          pathWidth = grid.nodeWidth
+          pathHeight = grid.nodeHeight
+        } else {
+          pathX = (path.x * GAME.grid.nodeSize) + GAME.grid.startX
+          pathY = (path.y * GAME.grid.nodeSize) + GAME.grid.startY
+          pathWidth = GAME.grid.nodeSize
+          pathHeight = GAME.grid.nodeSize
+        }
+        const object = {x: pathX, y: pathY, width: pathWidth, height: pathHeight, color: 'rgba(0,170,0, .6)' }
+        drawTools.drawObject(ctx, object, camera)
+      });
     }
-  }
 
-  if(objectHighlightedChildren) {
-    let color = 'rgba(255,255,255,0.1)'
-    objectHighlightedChildren.forEach((object) => {
-      if(object.tags && object.tags.invisible) {
-        color = 'rgba(255,255,255,0.1)'
-      }
-      drawTools.drawFilledObject(ctx, {...object, color}, camera)
-    })
+    if(objectHighlighted.pathParts) {
+      objectHighlighted.pathParts.forEach((part, i) => {
+        const object = {x: part.x, y: part.y, height: part.height, width: part.width, color: 'rgba(0,170,0, .6)', opacity: .4, characterTextInside: part.index + 1 }
+        drawTools.drawObject(ctx, object, camera)
+      });
+    }
+
+    if(objectHighlighted._pfGrid) {
+      const _pfGrid = objectHighlighted._pfGrid
+      const customGridProps = objectHighlighted.customGridProps
+      drawTools.drawGrid(ctx, {...objectHighlighted.customGridProps, color:'rgba(0,170,0, 1)', normalLineWidth: .6, specialLineWidth: .6}, camera)
+      drawTools.drawPFGrid(ctx, camera, _pfGrid, customGridProps, { style: 'alt'})
+    }
+
+
+    if(objectHighlighted.targetXY) {
+      let {x, y}= objectHighlighted.targetXY
+      if(!x) x= objectHighlighted.x
+      if(!y) y= objectHighlighted.y
+
+      drawTools.drawVertice(ctx, { thickness: 4, color: 'rgba(0,170,0, .6)', a: { x: objectHighlighted.x, y: objectHighlighted.y}, b: {x: x, y: y}}, camera)
+    }
+
+    if(objectHighlightedChildren) {
+      let color = 'rgba(255,255,255,0.1)'
+      objectHighlightedChildren.forEach((object) => {
+        if(object.tags && object.tags.invisible) {
+          color = 'rgba(255,255,255,0.1)'
+        }
+        drawTools.drawFilledObject(ctx, {...object, color}, camera)
+      })
+    }
   }
 
   if(MAPEDITOR.groupGridHighlights && (PAGE.role.isAdmin || GAME.heros[HERO.id] && GAME.heros[HERO.id].flags && GAME.heros[HERO.id].flags.showOtherUsersMapHighlight)) {

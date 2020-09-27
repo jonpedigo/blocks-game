@@ -323,7 +323,6 @@ function handleMouseMove(event) {
 }
 
 function updateGridHighlight(location) {
-  if(!PAGE.role.isAdmin && !GAME.heros[HERO.id].flags.showMapHighlight) return
   if (MAPEDITOR.contextMenuVisible) return
 
   const { x, y } = gridUtil.snapXYToGrid(location.x, location.y, { closest: false })

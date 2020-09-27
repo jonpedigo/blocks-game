@@ -473,7 +473,6 @@ class Hero{
       objectType: hero.objectType,
       width: hero.width,
       height: hero.height,
-      flags: hero.flags,
       tags: hero.tags,
 
       heroSummonType: hero.heroSummonType,
@@ -504,9 +503,11 @@ class Hero{
       hooks: hero.hooks,
       subObjectChances: hero.subObjectChances,
 
+      flags: hero.flags,
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       worldMenu: hero.worldMenu,
+      spriteSheets: hero.spriteSheets,
       creator: hero.creator,
 
       zoomMultiplier: hero.zoomMultiplier,
@@ -634,7 +635,6 @@ class Hero{
       interactableObject: hero.interactableObject,
       dialogue: hero.dialogue,
       choiceOptions: hero.choiceOptions,
-      flags: hero.flags,
       sprite: hero.sprite,
       directions: hero.directions,
       zoomMultiplier: hero.zoomMultiplier,
@@ -657,9 +657,12 @@ class Hero{
 
       navigationTargetId: hero.navigationTargetId,
 
+      flags: hero.flags,
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
+      worldMenu: hero.worldMenu,
       creator: hero.creator,
+      spriteSheets: hero.spriteSheets,
 
       path: hero.path,
       targetXY: hero.targetXY,

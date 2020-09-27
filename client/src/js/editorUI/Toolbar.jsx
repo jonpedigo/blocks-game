@@ -178,10 +178,11 @@ export default class Toolbar extends React.Component {
             LIVEEDITOR.open(GAME.heros[HERO.editingId], 'particle')
           }}/>
           <ToolbarButton iconName="fa-recycle" onClick={() => {
-              window.socket.emit('resetHeroToGameDefault', hero)
+              window.socket.emit('resetPhysicsProperties', hero.id)
             }}
             onShiftClick={() => {
-              window.socket.emit('resetHeroToDefault', hero)
+              window.socket.emit('resetHeroToGameDefault', hero)
+              // window.socket.emit('resetHeroToDefault', hero)
             }}
           />
 

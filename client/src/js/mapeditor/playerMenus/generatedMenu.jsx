@@ -16,6 +16,7 @@ import TriggerMenu from '../menus/TriggerMenu.jsx';
 import HookMenu from '../menus/HookMenu.jsx';
 import LiveMenu from '../menus/LiveMenu.jsx';
 import SpriteMenu from '../menus/SpriteMenu.jsx';
+import PropertiesMenu from '../menus/PropertiesMenu.jsx';
 import modals from '../modals.js'
 import { handleExtraMenuClicks } from './helper.js'
 
@@ -185,6 +186,9 @@ export default class GeneratedMenu extends React.Component {
       case 'Sprite':
         return (<SpriteMenu key={key} objectSelected={objectSelected} ></SpriteMenu>
         )
+        case 'Properties':
+          return (<PropertiesMenu key={key} objectSelected={objectSelected} ></PropertiesMenu>
+          )
       default:
         return (<MenuItem className={classnames({'dont-close-menu': menuData.dontCloseMenu})} key={menuData.action}>{menuData.title}</MenuItem>)
     }

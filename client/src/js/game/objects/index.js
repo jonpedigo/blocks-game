@@ -1313,6 +1313,7 @@ class Objects{
     object._skipPosUpdate = true
     object._skipNextGravity = true
     object.angle = null
+    object.keysDown = {}
   }
 
   hasRandomPathAI(object) {

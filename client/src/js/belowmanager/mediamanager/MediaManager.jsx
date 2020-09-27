@@ -139,10 +139,12 @@ export default class MediaManager extends React.Component {
     const byTag = {}
 
     window.spriteSheets.forEach((ss) => {
-      if(ss.tags) ss.tags.forEach((tag) => {
-        if(!byTag[tag]) byTag[tag] = []
-        byTag[tag].push(ss)
-      })
+      if(PAGE.role.isAdmin || (GAME.heros[HERO.id].spriteSheets && GAME.heros[HERO.id].spriteSheets[ss.id])) {
+        if(ss.tags) ss.tags.forEach((tag) => {
+          if(!byTag[tag]) byTag[tag] = []
+          byTag[tag].push(ss)
+        })
+      }
     })
 
     return byTag

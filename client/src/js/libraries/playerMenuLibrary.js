@@ -1,4 +1,4 @@
-window.local.on('onFirstPageGameLoaded', () => {
+window.local.on('onGameReady', () => {
   window.playerMenuLibrary = {
     move: {
       action: 'drag', // set key={action} and see how keys are used ---- see key === drag in the objectContextMenu. Basically _handleMenuClick should have a million little actions you can choose from. It would be good to grab these actions from the various menus already existing
@@ -29,8 +29,12 @@ window.local.on('onFirstPageGameLoaded', () => {
       title: 'Name'
     },
     dialogue: {
-      useExistingMenu: 'Dialogue', // this looks up DialogueMenu.jsx and plugs it in as a subMenu. See how DialogueMenu.jsx is added to objectContextMenu
+      useExistingMenu: 'Dialogue',
       title: 'Dialogue'
+    },
+    properties: {
+      useExistingMenu: 'Properties',
+      title: 'Properties'
     },
     spriteChooser: {
       useExistingMenu: 'Sprite',
@@ -78,26 +82,33 @@ window.local.on('onFirstPageGameLoaded', () => {
     move: false,
     color: false,
     respawn: false,
+    properties: false,
     spriteChooser: false,
     physicsLive: false,
   }
 
   window.objectMenuLibrary = {
     move: false,
-    dialogue: false,
-    color: false,
     resize: false,
     copy: false,
+    color: false,
     name: false,
-    delete: false,
+    dialogue: false,
     group: false,
+    properties: false,
     spriteChooser: false,
     physicsLive: false,
     pathEditor: false,
     constructEditor: false,
+    delete: false,
   }
 
   window.worldMenuLibrary = {
     backgroundColor: false,
   }
+
+  window.spriteSheetLibrary = _.cloneDeep(window.spriteSheetIds)
+  Object.keys(window.spriteSheetLibrary).forEach((ssId) => {
+    window.spriteSheetLibrary[ssId] = false
+  })
 })
