@@ -549,11 +549,9 @@ PIXIMAP.onPathEditorClose = function() {
 PIXIMAP.onPathEditorStart = function() {
   resetConstructParts()
 }
+PIXIMAP.onGameReady = function() {
+  resetConstructParts()
 
-PIXIMAP.onResize = function() {
-  setTimeout(() => {
-    resetConstructParts()
-  }, 150)
 }
 
 function resetConstructParts() {
@@ -571,6 +569,7 @@ function resetConstructParts() {
     }
   })
 }
+PIXIMAP.resetConstructParts = resetConstructParts
 
 PIXIMAP.onConstellationAnimationStart = function() {
   PIXIMAP.backgroundOverlay.isAnimatingColor = true

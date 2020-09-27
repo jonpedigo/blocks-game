@@ -267,6 +267,9 @@ const initPixiApp = (canvasRef, onLoad) => {
         window.resettingDarkness = true
       }
       PIXIMAP.resizeToWindow = onResize
+      setTimeout(() => {
+        PIXIMAP.resetConstructParts()
+      }, 150)
     }
     function onResize() {
       setGameWindowSize()

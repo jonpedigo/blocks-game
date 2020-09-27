@@ -410,7 +410,9 @@ class Page{
     function handleDrop(e) {
       e.stopPropagation();
       if (!dragSrcEl || dragSrcEl !== this) {
-        GAME.onChangeGame(JSON.parse(e.dataTransfer.getData('text/plain')))
+        const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
+        draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
+        GAME.onChangeGame(draggedGame)
       }
     }
   }

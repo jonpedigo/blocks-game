@@ -18,7 +18,6 @@ MAP.onPlayerIdentified = function() {
     function onResize() {
       if(GAME.world.tags && GAME.world.tags.shadow) return
       let gameElementWidth = window.innerWidth
-      console.log(window.innerWidth)
       if(PAGE.isLogOpen) gameElementWidth = gameElementWidth * .8
       MAP.canvasMultiplier = gameElementWidth/640;
       MAP.canvas.width = 640 * MAP.canvasMultiplier;
