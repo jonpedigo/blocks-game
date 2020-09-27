@@ -18,7 +18,7 @@ class Page{
     document.body.appendChild(gameContainer)
   }
 
-  establishRoleFromQueryAndHero(hero) {
+  establishRoleFromQueryOnly() {
     // ROLE SETUP
     PAGE.role.isHost = false
     PAGE.role.isPlayer = true
@@ -38,7 +38,9 @@ class Page{
       PAGE.role.isArcadeMode = true
       PAGE.role.isPlayer = true
     }
+  }
 
+  establishRoleFromQueryAndHero(hero) {
     if(PAGE.getParameterByName('admin') || hero.flags.isAdmin) {
       PAGE.role.isAdmin = true
     }
@@ -137,6 +139,7 @@ class Page{
   playerIdentified(heroSummonType) {
     window.onfocus = null
     PAGE.setupRemoteLogging()
+    PAGE.establishRoleFromQueryOnly()
     HERO.getHeroId(heroSummonType === 'resume')
 
     window.onbeforeunload = function (event) {
@@ -145,9 +148,12 @@ class Page{
       }
     }
 
-    window.socket.on('onAskJoinGame', (heroId, role) => {
-      window.local.emit('onAskJoinGame', heroId, role)
-    })
+    if(PAGE.role.isHost) {
+      window.socket.on('onAskJoinGame', (heroId, role) => {
+        window.local.emit('onAskJoinGame', heroId, role)
+      })
+    }
+
     window.socket.on('onHeroJoinedGame', (hero) => {
       window.local.emit('onHeroJoinedGame', hero)
     })

@@ -32,7 +32,8 @@ const updatePixiObject = (gameObject) => {
     if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving)) {
       gameObject.constructParts.forEach((part) => {
         const partObject = PIXIMAP.convertToPartObject(gameObject, part)
-        updatePixiObject(partObject)
+        const partPixiChild = updatePixiObject(partObject)
+        partPixiChild.ownerName = gameObject.id
       })
     }
 
@@ -45,7 +46,8 @@ const updatePixiObject = (gameObject) => {
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
-      updatePixiObject(subObject)
+      const subObjectPixiChild = updatePixiObject(subObject)
+      subObjectPixiChild.ownerName = gameObject.id
     })
   }
 
@@ -105,6 +107,8 @@ const updatePixiObject = (gameObject) => {
     updatePosition(pixiChild, gameObject)
     updateProperties(pixiChild, gameObject)
   }
+
+  return pixiChild
 }
 
 const updatePixiEmitter = (pixiChild, gameObject) => {
@@ -321,6 +325,7 @@ const initPixiObject = (gameObject) => {
 
   if(gameObject.constructParts) {
     gameObject.constructParts.forEach((part) => {
+      if(PIXIMAP.childrenById[part.id]) return
       const partObject = PIXIMAP.convertToPartObject(gameObject, part)
       const pixiChild = addGameObjectToStage(partObject, stage)
       pixiChild.ownerName = gameObject.id
@@ -331,6 +336,7 @@ const initPixiObject = (gameObject) => {
   if(gameObject.subObjects) {
     OBJECTS.forAllSubObjects(gameObject.subObjects, (subObject) => {
       if(subObject.tags.potential) return
+      if(PIXIMAP.childrenById[subObject.id]) return
       const pixiChild = addGameObjectToStage(subObject, stage)
       pixiChild.ownerName = gameObject.id
     })

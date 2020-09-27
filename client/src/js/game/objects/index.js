@@ -804,6 +804,8 @@ class Objects{
     if(!subObject.id) subObject.id = subObjectName + '-' + window.uniqueID()
     GAME.objectsById[subObject.id] = subObject
 
+    console.log(owner.id)
+
     let subObjectAlreadyExisted = false
 
     if(owner.subObjects[subObject.subObjectName]) {

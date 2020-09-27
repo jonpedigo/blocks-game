@@ -194,13 +194,10 @@ class Game{
   }
 
   onAskJoinGame(heroId, role) {
-    console.log("???")
     let hero = GAME.heros[heroId]
     if(!hero) {
       hero = HERO.summonFromGameData({id: heroId, heroSummonType: role })
       hero.id = heroId
-      window.socket.emit('heroJoinedGamed', hero)
-    } else {
       window.socket.emit('heroJoinedGamed', hero)
     }
   }

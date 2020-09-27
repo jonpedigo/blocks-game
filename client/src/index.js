@@ -144,6 +144,20 @@ LEVELS ( sub worlds )
 VISIBLE TO
 STORY - Fade in/out to game
 
+--
+
+Create an onSequenceComplete thing..? So when its done we know to move onto the next event
+
+—
+Apply sprite change to all sprites
+
+in triggers also allow
+— delete object after
+
+Start mod on collide tag
+
+--
+
 every one gets their own construct editor drawing things, the problem is then that I have to deal with the layering issue...
 
 Right click ( start game with heros here )
