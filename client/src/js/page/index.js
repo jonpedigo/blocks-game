@@ -105,20 +105,39 @@ class Page{
     )
   }
 
-  userIdentified() {
+  async userIdentified() {
+    window.local.emit('onUserIdentified')
+
+    const heroOptions = Object.keys(window.heroLibrary)
+    if(localStorage.getItem('hero')) heroOptions.unshift('resume')
+
+    const { value: heroLibraryNameIndex } = await Swal.fire({
+      title: 'Select your hero',
+      showClass: {
+        popup: 'animated fadeInDown faster'
+      },
+      hideClass: {
+        popup: 'animated fadeOutUp faster'
+      },
+      input: 'select',
+      inputOptions: heroOptions,
+    })
+
+    const heroSummonType = heroOptions[heroLibraryNameIndex]
+
     if(document.hasFocus()) {
-      PAGE.playerIdentified()
+      PAGE.playerIdentified(heroSummonType)
     } else {
       window.onfocus = PAGE.playerIdentified
     }
   }
 
-  playerIdentified() {
+  playerIdentified(heroSummonType) {
     window.onfocus = null
     PAGE.establishRoleFromQuery()
     PAGE.logRole()
     PAGE.setupRemoteLogging()
-    HERO.getHeroId()
+    HERO.getHeroId(heroSummonType === 'resume')
 
     window.onbeforeunload = function (event) {
       if(PAGE.role.isHost && GAME.gameState && GAME.gameState.started) {
@@ -132,7 +151,7 @@ class Page{
 
     PAGE.askCurrentGame((game) => {
       ARCADE.changeGame(game.id)
-      GAME.loadAndJoin(game)
+      GAME.loadAndJoin(game, heroSummonType)
     })
   }
 

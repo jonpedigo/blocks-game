@@ -15,7 +15,7 @@ export default class Creator extends React.Component {
       columnsOpen: {},
       creatorObjectsToggled: {},
       isColorPickerOpen: false,
-      colorSelected: EDITOR.preferences.creatorColorSelected,
+      colorSelected: EDITOR.preferences.creatorColorSelected || '#ffeb3b',
     }
 
     this.setCreatorObjects = (creatorObjects = window.defaultCreatorObjects) => {

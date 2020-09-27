@@ -5,13 +5,13 @@ class Editor {
   constructor() {
     this.preferences = {
       zoomMultiplier: 0,
-      creatorColorSelected: window.defaultObjectColor
+      creatorColorSelected: null,
     }
     this.zoomDelta = .1250
 
     const storedPreferences = localStorage.getItem('editorPreferences')
     if(PAGE.role.isAdmin && storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
-      this.preferences = JSON.parse(storedPreferences)
+      Object.assign(this.preferences,JSON.parse(storedPreferences))
     }
   }
 
@@ -453,7 +453,7 @@ class Editor {
       const x = GAME.grid.startX + ((GAME.grid.width * GAME.grid.nodeSize)/2)
       const y = GAME.grid.startY + ((GAME.grid.height * GAME.grid.nodeSize)/2)
       sendWorldUpdate({spawnPointX: x, spawnPointY: y})
-      // sendHerosUpdate({spawnPointX: x, spawnPointY: y})
+      sendHerosUpdate({spawnPointX: x, spawnPointY: y})
     }
   }
 

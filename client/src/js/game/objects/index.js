@@ -359,6 +359,7 @@ class Objects{
       spawnPointY: object.spawnPointY,
       liveEmitterData: object.liveEmitterData,
       tags: object.tags,
+      ownerId: object.ownerId,
       constructParts: object.constructParts && object.constructParts.map((part) => {
         return {
           id: part.id,
@@ -937,6 +938,7 @@ class Objects{
 
   onDeleteSubObject(owner, subObjectName) {
     const subObject = owner.subObjects[subObjectName]
+    if(!subObject) return console.log('no sub Object?', subObjectName)
     if(owner.tags.hero) {
       OBJECTS.deleteSubObject(GAME.heros[owner.id], subObject, subObjectName)
     } else {

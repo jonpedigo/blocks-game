@@ -178,7 +178,7 @@ PIXIMAP.onRender = function() {
     // PIXIMAP.app.renderer.backgroundColor = getHexColor(GAME.world.backgroundColor)
     if(!PIXIMAP.backgroundOverlay.isAnimatingColor) {
       // console.log(GAME.heros[HERO.id].keysDown.shift)
-      if(!GAME.gameState.started && GAME.heros[HERO.id].keysDown && GAME.heros[HERO.id].keysDown['caps lock'] !== true && GAME.heros[HERO.id].keysDown['shift'] !== true) {
+      if(!GAME.gameState.started && GAME.heros[HERO.id].keysDown && (GAME.heros[HERO.id].keysDown['caps lock'] && GAME.heros[HERO.id].keysDown['shift'])) {
         PIXIMAP.backgroundOverlay.tint = 0x000000
       } else {
         PIXIMAP.backgroundOverlay.tint = getHexColor(GAME.world.backgroundColor)

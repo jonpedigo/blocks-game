@@ -28,10 +28,10 @@ class Hero{
     onHeroTrigger(hero, collider, result, { fromInteractButton: false })
   }
 
-  getHeroId() {
+  getHeroId(resume) {
     if(PAGE.role.isPlayer) {
       let savedHero = localStorage.getItem('hero');
-      if(savedHero && JSON.parse(savedHero).id){
+      if(resume && savedHero && JSON.parse(savedHero).id){
         HERO.id = JSON.parse(savedHero).id
       } else {
         HERO.id = 'hero-'+window.uniqueID()
@@ -217,12 +217,16 @@ class Hero{
     if(useGame) {
       const id = hero.id
       const heroSummonType = hero.heroSummonType
-      if(heroSummonType === 'default' && GAME.defaultHero) {
+      if((heroSummonType === 'default' || heroSummonType === 'resume') && GAME.defaultHero) {
         newHero = JSON.parse(JSON.stringify(GAME.defaultHero))
       } else if(heroSummonType){
-        const libraryHero = window.heroLibrary[heroSummonType]
-        if(libraryHero) {
-          newHero = window.mergeDeep(JSON.parse(JSON.stringify(window.defaultHero)), _.cloneDeep(libraryHero))
+        const libraryHero = _.cloneDeep(window.heroLibrary[heroSummonType])
+        let gameDefaultHero
+        if(libraryHero.useGameDefault && GAME.defaultHero) {
+          const gameDefaultHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+          newHero = window.mergeDeep(defaultHero, gameDefaultHero, libraryHero.JSON)
+        } else if(libraryHero) {
+          newHero = window.mergeDeep(defaultHero, libraryHero.JSON)
         }
       }
       newHero.heroSummonType = heroSummonType
@@ -355,15 +359,23 @@ class Hero{
     const heroSummonType = hero.heroSummonType
 
     const defaultHero = _.cloneDeep(window.defaultHero)
-    if(heroSummonType === 'default' && GAME.defaultHero) {
+    if((heroSummonType === 'default' || heroSummonType === 'resume') && GAME.defaultHero) {
       const gameDefaultHero = JSON.parse(JSON.stringify(GAME.defaultHero))
       newHero = window.mergeDeep(defaultHero, gameDefaultHero)
       // console.log('summoning from default', GAME.defaultHero)
-    } else if(heroSummonType){
+    } else if(heroSummonType) {
       const libraryHero = _.cloneDeep(window.heroLibrary[heroSummonType])
-      if(libraryHero) {
-        newHero = window.mergeDeep(defaultHero, libraryHero)
+      let gameDefaultHero
+      if(libraryHero.useGameDefault && GAME.defaultHero) {
+        const gameDefaultHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+        newHero = window.mergeDeep(defaultHero, gameDefaultHero, libraryHero.JSON)
+      } else if(libraryHero) {
+        newHero = window.mergeDeep(defaultHero, libraryHero.JSON)
       }
+    } else {
+      // const gameDefaultHero = JSON.parse(JSON.stringify(GAME.defaultHero))
+      // newHero = window.mergeDeep(defaultHero, gameDefaultHero)
+      console.log('warning no hero summon type', hero)
     }
 
 

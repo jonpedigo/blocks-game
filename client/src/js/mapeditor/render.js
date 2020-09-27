@@ -213,7 +213,7 @@ function update() {
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
 
-      if(hero.flags.isAdmin) {
+      if(hero.flags.isAdmin && (hero.keysDown['shift'] !== true && hero.keysDown['caps lock'] !== true)) {
         drawTextCenter(ctx, hero, '#0A0', 'admin', camera)
       } else {
         drawTextCenter(ctx, hero, '#0A0', 'player', camera)

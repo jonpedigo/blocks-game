@@ -1,11 +1,23 @@
-window.local.on('onPlayerIdentified', () => {
+window.local.on('onUserIdentified', () => {
   window.heroLibrary = {
     admin: {
-      flags: {
-        isAdmin: true,
-      },
-      tags: {
-        hidden: true,
+      useGameDefault: false,
+      JSON: {
+        flags: {
+          isAdmin: true,
+        },
+        tags: {
+          hidden: true,
+        }
+      }
+    },
+    singlePlayer: {
+      useGameDefault: true,
+      JSON: {
+        tags: {
+          saveAsDefaultHero: true,
+          centerOfAttention: true,
+        }
       }
     }
   }

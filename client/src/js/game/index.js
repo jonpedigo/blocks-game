@@ -51,7 +51,7 @@ class Game{
       GAME.heroList.push(hero)
     })
     GAME.getObjectsByTag()
-    
+
     if(PAGE.role.isHost) {
       // remove second part when a player can host a multiplayer game
       if(!GAME.gameState.paused && (!PAGE.role.isPlayer || !GAME.heros[HERO.id].flags.paused)) {
@@ -221,7 +221,7 @@ class Game{
     dayNightCycle.onGameLoaded()
   }
 
-  loadAndJoin(game) {
+  loadAndJoin(game, heroName) {
     window.local.emit('onStartLoadingScreen')
 
     GAME.loadGridWorldObjectsCompendiumState(game)
@@ -231,9 +231,9 @@ class Game{
       if(GAME.heros[HERO.id]) {
         window.local.emit('onHeroFound', GAME.heros[HERO.id])
       } else if(PAGE.role.isAdmin) {
-        window.socket.emit('askJoinGame', HERO.id, 'admin')
+        window.socket.emit('askJoinGame', HERO.id, heroName)
       } else {
-        window.socket.emit('askJoinGame', HERO.id, 'default')
+        window.socket.emit('askJoinGame', HERO.id, heroName)
       }
     } else {
       GAME.loadHeros(GAME)
