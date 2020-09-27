@@ -194,10 +194,13 @@ class Game{
   }
 
   onAskJoinGame(heroId, role) {
+    console.log("???")
     let hero = GAME.heros[heroId]
     if(!hero) {
       hero = HERO.summonFromGameData({id: heroId, heroSummonType: role })
       hero.id = heroId
+      window.socket.emit('heroJoinedGamed', hero)
+    } else {
       window.socket.emit('heroJoinedGamed', hero)
     }
   }
@@ -210,6 +213,8 @@ class Game{
   }
 
   onHeroFound(hero) {
+    PAGE.establishRoleFromQueryAndHero(hero)
+    PAGE.logRole()
     GAME.loadHeros(GAME)
     window.local.emit('onGameLoaded')
   }
@@ -224,20 +229,18 @@ class Game{
   loadAndJoin(game, heroName) {
     window.local.emit('onStartLoadingScreen')
 
+    console.log('?x')
     GAME.loadGridWorldObjectsCompendiumState(game)
+    console.log('?x')
 
+    console.log(GAME.heros)
     // if you are a player and you dont already have a hero from the server ask for one
-    if(PAGE.role.isPlayer && !GAME.heros[HERO.id]) {
-      if(GAME.heros[HERO.id]) {
-        window.local.emit('onHeroFound', GAME.heros[HERO.id])
-      } else if(PAGE.role.isAdmin) {
-        window.socket.emit('askJoinGame', HERO.id, heroName)
-      } else {
-        window.socket.emit('askJoinGame', HERO.id, heroName)
-      }
+    if(GAME.heros[HERO.id]) {
+      console.log('?xx')
+      window.local.emit('onHeroFound', GAME.heros[HERO.id])
     } else {
-      GAME.loadHeros(GAME)
-      window.local.emit('onGameLoaded')
+      console.log('?xxx')
+      window.socket.emit('askJoinGame', HERO.id, heroName)
     }
   }
 
@@ -324,7 +327,7 @@ class Game{
     // window.local.emit('onGameStateLoaded')
     // window.local.emit('onCompendiumLoaded')
     // window.local.emit('onObjectsLoaded')
-    window.local.emit('onGameHeroLoaded')
+    // window.local.emit('onGameHeroLoaded')
   }
 
   loadHeros(heros) {

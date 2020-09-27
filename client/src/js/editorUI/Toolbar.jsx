@@ -32,6 +32,12 @@ export default class Toolbar extends React.Component {
 
     if(!open || CONSTRUCTEDITOR.open || PATHEDITOR.open) return null
 
+    const COA = GAME.heroList.filter((hero) => {
+      return hero.tags.centerOfAttention
+    })[0]
+
+    if(COA) HERO.editingId = COA.id
+
     const hero = GAME.heros[HERO.editingId]
 
     return (

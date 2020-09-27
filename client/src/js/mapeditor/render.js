@@ -172,7 +172,13 @@ function update() {
         }
         drawTools.drawBorder(ctx, valueRed, camera);
         ctx.strokeStyle='white';
-        const hero = GAME.heros[HERO.id]
+        let hero = GAME.heroList.filter((hero) => {
+          return hero.tags.centerOfAttention
+        })[0]
+        if(!hero) {
+          hero = GAME.heros[HERO.id]
+          // single player only feature
+        }
         let valueWhite = {
           x: GAME.world.gameBoundaries.x + ((HERO.cameraWidth * hero.zoomMultiplier)/2),
           y: GAME.world.gameBoundaries.y + ((HERO.cameraHeight * hero.zoomMultiplier)/2),
@@ -213,7 +219,8 @@ function update() {
         drawTools.drawObject(ctx, {x, y, width, height, color}, camera)
       }
 
-      if(hero.flags.isAdmin && (hero.keysDown['shift'] !== true && hero.keysDown['caps lock'] !== true)) {
+      //hero.keysDown && (hero.keysDown['shift'] !== true && hero.keysDown['caps lock'] !== true)
+      if(hero.flags.isAdmin) {
         drawTextCenter(ctx, hero, '#0A0', 'admin', camera)
       } else {
         drawTextCenter(ctx, hero, '#0A0', 'player', camera)

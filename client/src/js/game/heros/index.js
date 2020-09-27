@@ -29,13 +29,11 @@ class Hero{
   }
 
   getHeroId(resume) {
-    if(PAGE.role.isPlayer) {
-      let savedHero = localStorage.getItem('hero');
-      if(resume && savedHero && JSON.parse(savedHero).id){
-        HERO.id = JSON.parse(savedHero).id
-      } else {
-        HERO.id = 'hero-'+window.uniqueID()
-      }
+    let savedHero = localStorage.getItem('hero');
+    if(resume && savedHero && JSON.parse(savedHero).id){
+      HERO.id = JSON.parse(savedHero).id
+    } else {
+      HERO.id = 'hero-'+window.uniqueID()
     }
   }
 

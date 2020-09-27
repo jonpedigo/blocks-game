@@ -41,10 +41,6 @@ function init() {
       window.local.emit('onEditSubObject', ownerId, subObjectName, update)
     })
 
-    window.socket.on('onAskJoinGame', (heroId, role) => {
-      window.local.emit('onAskJoinGame', heroId, role)
-    })
-
     // PLAYERS CALL THIS
     window.socket.on('onSendHeroInput', (heroInput, heroId) => {
       window.local.emit('onSendHeroInput', heroInput, heroId)
@@ -243,10 +239,6 @@ function init() {
   // EVERYONE CALLS THIS
   window.socket.on('onAddObjects', (objectsAdded) => {
     window.local.emit('onNetworkAddObjects', objectsAdded)
-  })
-
-  window.socket.on('onHeroJoinedGame', (hero) => {
-    window.local.emit('onHeroJoinedGame', hero)
   })
 
   // EDITOR CALLS THIS

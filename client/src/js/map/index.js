@@ -15,10 +15,10 @@ MAP.onPlayerIdentified = function() {
   MAP.canvas = document.createElement("canvas");
   MAP.ctx = MAP.canvas.getContext("2d");
 
-  if(PAGE.role.isPlayer) {
     function onResize() {
       if(GAME.world.tags && GAME.world.tags.shadow) return
       let gameElementWidth = window.innerWidth
+      console.log(window.innerWidth)
       if(PAGE.isLogOpen) gameElementWidth = gameElementWidth * .8
       MAP.canvasMultiplier = gameElementWidth/640;
       MAP.canvas.width = 640 * MAP.canvasMultiplier;
@@ -29,7 +29,6 @@ MAP.onPlayerIdentified = function() {
     window.local.on('onOpenLog', onResize)
     window.local.on('onCloseLog', onResize)
     onResize()
-  }
 
   MAP.canvas.id = 'game-canvas'
   document.getElementById('GameContainer').appendChild(MAP.canvas);
@@ -95,7 +94,7 @@ MAP.onRender = function(delta) {
     canvas.style.backgroundColor = '#222'
   }
 
-  if(hero && PAGE.role.isPlayer && GAME.heros[HERO.id] && GAME.heros[HERO.id].animationZoomMultiplier) {
+  if(hero && GAME.heros[HERO.id] && GAME.heros[HERO.id].animationZoomMultiplier) {
     constellation.onRender()
   }
 }

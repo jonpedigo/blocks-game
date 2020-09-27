@@ -213,9 +213,11 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
   }
 
   if(GAME.world.gameBoundaries && typeof GAME.world.gameBoundaries.x == 'number' && GAME.world.gameBoundaries.behavior === 'purgatory' && !options.bypassGameBoundaries) {
-    let hero = GAME.heros[HERO.id]
-    if(PAGE.role.isPlayEditor) {
-      hero = window.editingHero
+    let hero = GAME.heroList.filter((hero) => {
+      return hero.tags.centerOfAttention
+    })[0]
+    if(!hero) {
+      hero = GAME.heros[HERO.id]
       // single player only feature
     }
     const {gridX, gridY, gridWidth, gridHeight } = convertToGridXY(GAME.world.gameBoundaries)

@@ -18,7 +18,7 @@ class Page{
     document.body.appendChild(gameContainer)
   }
 
-  establishRoleFromQuery() {
+  establishRoleFromQueryAndHero(hero) {
     // ROLE SETUP
     PAGE.role.isHost = false
     PAGE.role.isPlayer = true
@@ -39,7 +39,7 @@ class Page{
       PAGE.role.isPlayer = true
     }
 
-    if(PAGE.getParameterByName('admin')) {
+    if(PAGE.getParameterByName('admin') || hero.flags.isAdmin) {
       PAGE.role.isAdmin = true
     }
   }
@@ -106,6 +106,8 @@ class Page{
   }
 
   async userIdentified() {
+    events.init()
+
     window.local.emit('onUserIdentified')
 
     const heroOptions = Object.keys(window.heroLibrary)
@@ -134,8 +136,6 @@ class Page{
 
   playerIdentified(heroSummonType) {
     window.onfocus = null
-    PAGE.establishRoleFromQuery()
-    PAGE.logRole()
     PAGE.setupRemoteLogging()
     HERO.getHeroId(heroSummonType === 'resume')
 
@@ -145,8 +145,13 @@ class Page{
       }
     }
 
-    events.init()
-    sockets.init()
+    window.socket.on('onAskJoinGame', (heroId, role) => {
+      window.local.emit('onAskJoinGame', heroId, role)
+    })
+    window.socket.on('onHeroJoinedGame', (hero) => {
+      window.local.emit('onHeroJoinedGame', hero)
+    })
+
     window.local.emit('onPlayerIdentified')
 
     PAGE.askCurrentGame((game) => {
@@ -259,6 +264,8 @@ class Page{
     if(GAME.world.tags.hasGameLog) {
       PAGE.openLog()
     }
+
+    sockets.init()
   }
 
   resetStorage() {
