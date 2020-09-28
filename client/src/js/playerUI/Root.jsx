@@ -2,6 +2,7 @@ import React from 'react'
 import Toolbar from './Toolbar.jsx'
 import DialogueBox from './DialogueBox.jsx'
 import Cutscene from './Cutscene.jsx'
+import Goals from './Goals.jsx'
 import InventoryModal from './InventoryModal.jsx'
 import MainMenuModal from './MainMenuModal.jsx'
 import HeroMenuModal from './HeroMenuModal.jsx'
@@ -148,6 +149,7 @@ export default class Root extends React.Component {
         {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue} />}
         {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
         {hero.flags && hero.flags.showCutscene&& hero.cutscenes && <Cutscene scenes={hero.cutscenes} />}
+        {hero.goals && hero.goals.length && <Goals goals={hero.goals} />}
         {showMainMenuModal && <MainMenuModal
           onClose={() => this.setState({ showMainMenuModal: false })}
           onOpenControlsInfoModal={() => this.setState({ showControlsInfoModal: true })}

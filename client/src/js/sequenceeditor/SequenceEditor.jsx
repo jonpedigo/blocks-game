@@ -89,6 +89,7 @@ const typeOptions = [
   { value: 'sequenceCutscene', label: 'Cutscene' },
   { value: 'sequenceChoice', label: 'Choice' },
   { value: 'sequenceWait', label: 'Wait' },
+  { value: 'sequenceGoal', label: 'Goal' },
 ];
 
 // a little function to help us with reordering the result
@@ -190,6 +191,11 @@ export default class SequenceEditor extends React.Component {
       Object.assign(sequenceItem, window.defaultSequenceCutscene)
       sequenceItem.next = 'sequential'
     }
+    if(selectedType === 'sequenceGoal') {
+      Object.assign(sequenceItem, window.defaultSequenceGoal)
+      sequenceItem.next = 'sequential'
+    }
+
 
     const newSequenceItems = sequence.items.slice()
     newSequenceItems.push(sequenceItem)

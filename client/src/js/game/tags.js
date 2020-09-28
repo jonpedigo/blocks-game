@@ -253,7 +253,7 @@ function setDefault() {
     noticeable: true,
     centerOfAttention: false,
     trackObjectsWithin: false,
-    trackObjectsTouching: false,
+    trackObjectsTouching: true,
     // allowCameraRotation: false,
   }
 

@@ -15,6 +15,7 @@ import Trigger from './Trigger.jsx'
 import Effect from './Effect.jsx'
 import Notification from './Notification.jsx'
 import Cutscene from './Cutscene.jsx'
+import Goal from './Goal.jsx'
 
 const initialNextOptions = [
   { value: 'sequential', label: 'Next in list' },
@@ -47,6 +48,7 @@ export default class SequenceItem extends React.Component{
     this._openEditTextValueModal = this._openEditTextValueModal.bind(this)
     this._onChangeConditionType = this._onChangeConditionType.bind(this)
     this._onChangeEffectName = this._onChangeEffectName.bind(this)
+    this._onChangeGoalName = this._onChangeGoalName.bind(this)
     this._onSetPropValue = this._onSetPropValue.bind(this)
     this._editScene = this._editScene.bind(this)
     this._addScene = this._addScene.bind(this)
@@ -197,6 +199,12 @@ export default class SequenceItem extends React.Component{
     this.setState({sequenceItem})
   }
 
+  _onChangeGoalName(event) {
+    const { sequenceItem } = this.state;
+    sequenceItem.goalName = event.value
+    this.setState({sequenceItem})
+  }
+
   _openWriteDialogueModal(index) {
     const { sequenceItem } = this.state;
 
@@ -327,7 +335,7 @@ export default class SequenceItem extends React.Component{
           {sequenceItem.sequenceType == 'sequenceWait' && <Condition {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceNotification' && <Notification {...this} {...this.props} {...this.state} setState={this.setState}/>}
           {sequenceItem.sequenceType == 'sequenceCutscene' && <Cutscene {...this} {...this.props} {...this.state} setState={this.setState}/>}
-
+          {sequenceItem.sequenceType == 'sequenceGoal' && <Goal {...this} {...this.props} {...this.state} setState={this.setState}/>}
         </div>
       </div>
     )

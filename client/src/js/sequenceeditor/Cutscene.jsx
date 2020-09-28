@@ -32,13 +32,13 @@ export default class Cutscene extends React.Component{
     const { sequenceItem } = this.props
     const { effectName } = sequenceItem
 
-    return <Collapsible trigger='Involved'>
+    return <Collapsible trigger='Viewers'>
       <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('notificationAllHeros')} checked={sequenceItem.notificationAllHeros} type="checkbox"></input>All Heros</div>
       <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedMainObject')} checked={sequenceItem.effectedMainObject} type="checkbox"></input>Main Object</div>
       <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedGuestObject')} checked={sequenceItem.effectedGuestObject} type="checkbox"></input>Guest Object</div>
       <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('effectedOwnerObject')} checked={sequenceItem.effectedOwnerObject} type="checkbox"></input>Owner Object</div>
-      <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedIds' onChange={this.props._onAddEffectedId} title='Involved Ids:'/>
-      <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedTags' onChange={this.props._onAddEffectedTag} title='Involved Tags:'/>
+      <MultiIdSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedIds' onChange={this.props._onAddEffectedId} title='Viewer Ids:'/>
+      <MultiTagSelect sequenceItem={sequenceItem} isTrigger={this.props.isTrigger} valueProp='effectedTags' onChange={this.props._onAddEffectedTag} title='Viewer Tags:'/>
     </Collapsible>
   }
 

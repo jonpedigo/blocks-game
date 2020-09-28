@@ -418,6 +418,7 @@ class Hero{
       animationZoomTarget: hero.animationZoomTarget,
       endAnimation: hero.endAnimation,
       cutscenes: hero.cutscenes,
+      goals: hero.goals,
       dialogue: hero.dialogue,
       dialogueName: hero.dialogueName,
       choiceOptions: hero.choiceOptions,
@@ -658,6 +659,7 @@ class Hero{
       // velocityX: hero.velocityX ,
 
       cutscenes: hero.cutscenes,
+      goals: hero.goals,
 
       keysDown: hero.keysDown,
 
@@ -734,6 +736,7 @@ class Hero{
 
   onDeleteHero(heroId) {
     const hero = GAME.heros[heroId]
+    if(!hero) return
     HERO.deleteHero(hero)
     window.local.emit('onDeletedHero', hero)
     delete GAME.heros[heroId]

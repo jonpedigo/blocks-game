@@ -9,6 +9,7 @@ import tags from './tags.js'
 import timeouts from './timeouts'
 import world from './world.js'
 import grid from './grid.js'
+import tracking from './tracking.js'
 import dayNightCycle from './daynightcycle.js'
 
 import onTalk from './heros/onTalk'

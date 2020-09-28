@@ -377,6 +377,51 @@ function processEffect(effect, effected, effector, ownerObject) {
       console.log('cannot start cutscene effect non hero')
     }
   }
+
+  if(effectName === 'startGoal') {
+    if(effected.tags.hero) {
+      function startTimer() {
+        GAME.addTimeout(effect.goalId, effect.goalTimeLimit, () => {
+          effect.goalChances--
+          if(effect.goalChances === 0) {
+            effect.onGoalFailed(effect, 'Time ran out')
+            GAME.gameState.activeGoals[effect.goalId] = null
+            return
+          }
+          startTimer()
+        })
+      }
+
+      const tracker = TRACKING.startTracking({
+        targetCount: effect.goalTargetCount,
+        trackingObject: effected,
+        targetEvent: effect.goalName,
+        targetTags: effect.goalTargetTags,
+        onTargetCountReached: () => {
+          GAME.gameState.activeGoals[effect.goalId] = null
+          if(effect.onGoalSucceeded) effect.onGoalSucceeded(effect)
+        },
+      })
+
+      effect.goalId = 'goal-'+window.uniqueID()
+      if(!GAME.gameState.activeGoals) GAME.gameState.activeGoals = {}
+      GAME.gameState.activeGoals[effect.goalId] = effect
+
+      if(effect.goalChances && effect.onGoalFailed && effect.goalTimeLimit) startTimer()
+
+      if(!effected.goals) effected.goals = []
+      effected.goals.push({
+        goalId: effect.goalId,
+        trackerId: tracker.trackerId,
+        tags: effect.goalTargetTags,
+        show: true,
+      })
+
+      window.emitGameEvent('onUpdatePlayerUI', effected)
+    } else {
+      console.log('cannot start goal effect non hero')
+    }
+  }
 }
 
 function getEffectedObjects(effect, mainObject, guestObject, ownerObject) {

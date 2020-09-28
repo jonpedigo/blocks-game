@@ -133,7 +133,9 @@ class Page{
     if(document.hasFocus()) {
       PAGE.playerIdentified(heroSummonType)
     } else {
-      window.onfocus = PAGE.playerIdentified
+      window.onfocus = () => {
+        PAGE.playerIdentified(heroSummonType)
+      }
     }
   }
 
@@ -417,7 +419,6 @@ class Page{
           'addNewObjects',
           'mergeAndAddNewObjects',
           'mergeObjects',
-          // 'replaceWorld',
           'cancel'
         ]
         const { value: integrationStrategyIndex } = await Swal.fire({

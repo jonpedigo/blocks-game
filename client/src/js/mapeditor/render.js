@@ -227,9 +227,9 @@ function update() {
     drawTools.drawBorder(ctx, {...editingHero, color: '#0A0'}, camera, {thickness: 5})
   }
 
-  const gameEligibleForLoading = (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const gameEligibleForLoading = true || (GAME.grid.width > 80 || GAME.objects.length > 300)
   const loadingState = (PAGE.loadingGame)
-  PAGE.loadingScreen = gameEligibleForLoading && loadingState
+  PAGE.loadingScreen = !PAGE.isGameReady || (gameEligibleForLoading && loadingState)
 
   const hero = GAME.heros[HERO.id]
   if(hero && hero.animationZoomMultiplier) PAGE.loadingScreen = false

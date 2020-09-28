@@ -133,6 +133,10 @@ class EventEmitter {
       if(CREATOR[eventName]) {
         event.push(CREATOR[eventName])
       }
+
+      if(TRACKING[eventName]) {
+        event.push(TRACKING[eventName])
+      }
     }
 
     if( event ) {

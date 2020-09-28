@@ -79,6 +79,10 @@ function resumeTimeout(id) {
   GAME.gameState.timeoutsById[id].paused = false
 }
 
+function getTimeLeft(id) {
+  return GAME.gameState.timeoutsById[id].timeRemaining
+}
+
 export default {
   setDefault,
   onUpdate,

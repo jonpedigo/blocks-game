@@ -266,7 +266,7 @@ function processSequence(sequence) {
       effectValue: item.scenes
     }
     effectedObjects.forEach((object) => {
-      effects.processEffect(effect, effected, defaultEffector, sequence.ownerObject)
+      effects.processEffect(effect, object, defaultEffector, sequence.ownerObject)
     })
 
     if(item.notificationAllHeros) {
@@ -292,6 +292,24 @@ function processSequence(sequence) {
       GAME.heroList.forEach((hero) => {
         if(herosNotified.indexOf(hero.id) > -1) return
         window.socket.emit('sendNotification', { playerUIHeroId: hero.id, logRecipientId: hero.id, chatId: hero.id, toast: item.notificationToast, chat: item.notificationChat, text: item.notificationText, log: item.notificationLog, modal: item.notificationModal, modalHeader: item.notificationModalHeader, duration: item.notificationDuration})
+      })
+    }
+  }
+
+  if(item.sequenceType === 'sequenceGoal') {
+    const effectedObjects = effects.getEffectedObjects(item, item.mainObject, item.guestObject, sequence.ownerObject)
+
+    const effect = {
+      effectName: 'startGoal',
+      ...item
+    }
+    effectedObjects.forEach((object) => {
+      effects.processEffect(effect, object, defaultEffector, sequence.ownerObject)
+    })
+
+    if(item.goalAllHeros) {
+      GAME.heroList.forEach((hero) => {
+        effects.processEffect(effect, hero, defaultEffector, sequence.ownerObject)
       })
     }
   }

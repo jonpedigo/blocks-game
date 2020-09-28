@@ -6,25 +6,17 @@
 
 TODO
 
-Story/cutscenes
-  STORY SCREENSHOTS
-  in Manager
-
-  Screenshot button
-
-  Name of story
-  tabs 1, 2, 3, 4, 5, +
-  Screenshot
-  Text
-  Effect
-  Collapsed -> Preview
-  DELETE
---
+SCENARIOS
+MVP 0 Scenarios
+1-Add Quest starting, completing, and succeeding to effects
+3-Score UI of above ^
+4-Completion Score screen of above ^^
+5-Auto Complete/Fail quest based on parameters
+6-View Quests UI with Controls
+7-onSucceedEffect, onFailEffect
 
 GROUP MUTATION UI
 create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
-
-SCENARIOS
 
 PIXEL EDITOR
 
@@ -69,46 +61,6 @@ ANIMATION UPGRADE
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
-
----
-Scenarios/BeginEnd
-  TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
-
-  BEGIN
-  I think what we are going to want is a SERIES OF screens. Lets not allow then to be customizable right now
-  Maybe allow a background upload or allow them to draw the start screen
-  onGameStart is called after all heros reach the end
-  { pressToStartHeader: false, colorBackground: false, centerText: "", bottomText: "" }
-  allow playground: true ( this allows them to move around before the game starts )
-  controls screen
-
-  LOBBY ( multiplayer game )
-  Hero select or hero random
-  ( show all NPCS as heros )
-  Team Select or team random
-  new Heros allowed
-  allow Bios
-
-  SCENARIO
-  firstHero to score ___
-  firstTeam to score ___
-  firstResourceTo X
-  killCount to X
-  firstHero to collide with X
-  after timer
-  end by admin
-  Deathmatch ( heros have lives )
-  ( make tags for special scenario resources, winning resource, winning item, winning area, etc )
-
-  SCORE SCREENS
-  Teams
-  ResourceZones
-  Hero
-    Kill Counts
-    Score
-  LOGS ( I MEAN YEAH WE WANT A LOG SYSTEM with TIMESTAMPS )
-
-  EPILOGUE SCENARIO?
 
 --
 
@@ -214,8 +166,6 @@ in-game checkpoints
 // gun that swaps places with what it hits! so cool..
 // 3d sound effects system from papa bear
 // layered object select when right clicking. ( for invisible areas and parent areas ) ( object selected will be an array and then the menu will choose between those )
-// run local simulation
-// add sprites to construct editor
 // global compendium service that I can add to remove without copying and pasting JSON
 // KING MODE ( where its like you make various yes/no choices and that changes whats happening on the world map )
 // local mods? ( client only mods for specific players/situations )
@@ -223,6 +173,53 @@ in-game checkpoints
 ////////////////////////////////////////////////////
 
 NOTES
+
+---
+Story/cutscenes SIMPLE EDITOR
+  STORY SCREENSHOTS
+  in Manager
+
+  Screenshot button
+
+  Name of story
+  tabs 1, 2, 3, 4, 5, +
+  Screenshot
+  Text
+  Effect
+  Collapsed -> Preview
+  DELETE
+
+//// PLANS FOR MULTIPLAYER LOBBIES
+Scenarios/BeginEnd
+  TEAMS -> modify RESOURCES WITH STEALING? ADD FRIENDLY FIRE. ADD SCORE TO SCENARIOS FROM TEAMS
+
+  SCREENS
+  Score Screens
+  Playable Lobby
+  Lobby -> Team Select, Characters Select, Map Select
+  Loading screen
+  Controls
+  Quests
+
+  LOBBY OPTIONS
+  ( multiplayer game )
+  Hero select or hero random
+  ( show all NPCS as heros )
+  Team Select or team random
+  new Heros allowed
+  allow Bios
+
+  SCREEN OPTIONS
+  onGameStart is called after all heros reach the end
+  centerText: "", bottomText: "" }
+
+  SCORE SCREEN TYPE
+  Teams
+  ResourceZones
+  Hero
+    Kill Counts
+    Score
+
 
 /////
 PLANS FOR ULTIMATE MINECRAFT SCALE
@@ -536,7 +533,12 @@ import './js/libraries/subObjectLibrary.js'
 import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
 
-PAGE.load()
+if(document.hasFocus()) {
+  PAGE.load()
+} else {
+  window.onfocus = PAGE.load
+}
+
 /*
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////

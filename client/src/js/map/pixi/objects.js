@@ -58,8 +58,7 @@ const updatePixiObject = (gameObject) => {
   const stage = getGameObjectStage(gameObject)
   let pixiChild = stage.getChildByName(gameObject.id)
   if(!pixiChild) {
-    initPixiObject(gameObject)
-    return
+    return initPixiObject(gameObject)
   }
 
   /////////////////////
@@ -342,7 +341,7 @@ const initPixiObject = (gameObject) => {
     })
   }
 
-  addGameObjectToStage(gameObject, stage)
+  return addGameObjectToStage(gameObject, stage)
 }
 
 function addFilter(pixiChild, filter) {

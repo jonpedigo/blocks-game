@@ -6,6 +6,8 @@ function setDefault() {
     sequenceQueue: [],
     timeouts: [],
     timeoutsById: {},
+    trackers: {},
+    activeGoals: {},
     activeMods: {},
     activeModList: [],
     ambientLight: .2,
