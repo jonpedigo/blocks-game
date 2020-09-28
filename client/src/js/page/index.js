@@ -404,12 +404,13 @@ class Page{
       dragSrcEl = this;
 
       e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.type = 'game'
       e.dataTransfer.setData('text/plain', JSON.stringify(GAME));
     }
 
     function handleDrop(e) {
       e.stopPropagation();
-      if (!dragSrcEl || dragSrcEl !== this) {
+      if (!dragSrcEl || dragSrcEl !== this && e.dataTransfer.type === 'game') {
         const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
         draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
         GAME.onChangeGame(draggedGame)

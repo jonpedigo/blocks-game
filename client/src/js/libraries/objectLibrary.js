@@ -127,7 +127,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     			"initialTriggerPool": -1,
     			"eventThreshold": -1,
     			"id": "turnIntoMario",
-    			"eventName": "onHeroCollide",
+    			"eventName": "onHeroTouchStart",
     			"effectLibraryMod": "mario",
     		}
     	}
@@ -148,7 +148,7 @@ window.local.on('onFirstPageGameLoaded', () => {
           "initialTriggerPool": -1,
           "eventThreshold": -1,
           "id": "turnIntoAsteroids",
-          "eventName": "onHeroCollide",
+          "eventName": "onHeroTouchStart",
           "effectLibraryMod": "asteroids",
         }
       }
@@ -171,7 +171,7 @@ window.local.on('onFirstPageGameLoaded', () => {
           "initialTriggerPool": -1,
           "eventThreshold": -1,
           "id": "turnIntoUfo",
-          "eventName": "onHeroCollide",
+          "eventName": "onHeroTouchStart",
           "effectLibraryMod": "ufo",
         }
       }
@@ -192,7 +192,7 @@ window.local.on('onFirstPageGameLoaded', () => {
           "initialTriggerPool": -1,
           "eventThreshold": -1,
           "id": "turnIntoZelda",
-          "eventName": "onHeroCollide",
+          "eventName": "onHeroTouchStart",
           "effectLibraryMod": "zelda",
         }
       }
@@ -214,7 +214,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     			"initialTriggerPool": 1,
     			"eventThreshold": -1,
     			"id": "goToStarView",
-    			"eventName": "onHeroCollide",
+    			"eventName": "onHeroTouchStart",
     		}
     	},
     },
@@ -235,7 +235,7 @@ window.local.on('onFirstPageGameLoaded', () => {
     			"initialTriggerPool": 1,
     			"eventThreshold": -1,
     			"id": "goToStarView",
-    			"eventName": "onHeroCollide",
+    			"eventName": "onHeroTouchStart",
     		}
     	},
     },

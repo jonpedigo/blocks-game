@@ -14,6 +14,7 @@ export default class SequenceListItem extends React.Component {
     }
   }
 
+
   _renderSequenceOptions() {
     const { id } = this.props;
     const { isStarted, isPaused } = this.state;
@@ -85,14 +86,23 @@ export default class SequenceListItem extends React.Component {
 
   }
 
+  handleDragStart = (e) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.type == 'sequence'
+    e.dataTransfer.setData('text/plain', GAME.library.sequences[id]);
+    e.stopPropagation()
+  }
+
+
   render() {
     const { sequenceIdList, showOptions } = this.state
     const { openSequence, id } = this.props
-
     return (
       <div
         key={id}
         className="SequenceList__sequence"
+        draggable="true"
+        onDragStart={this.handleDragStart}
         onMouseEnter={() => {
           this.setState({showOptions: true})
         }}

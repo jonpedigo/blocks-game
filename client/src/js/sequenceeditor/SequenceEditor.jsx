@@ -256,8 +256,9 @@ export default class SequenceEditor extends React.Component {
     window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
   }
 
-  saveSequence() {
-    const { sequence, sequenceIdList } = this.state
+  saveSequence(sequence) {
+    if(!sequence) sequence = this.state.sequence
+    const { sequenceIdList } = this.state
 
     GAME.library.sequences[sequence.id] = this._getSequenceJSON()
     window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
@@ -295,7 +296,7 @@ export default class SequenceEditor extends React.Component {
         items
       }
     });
-}
+  }
 
   closeSequence() {
     this.setState({
@@ -330,7 +331,14 @@ export default class SequenceEditor extends React.Component {
     }
 
     return (
-      <div className="SequenceEditor">
+      <div className="SequenceEditor" onDrop={(e) => {
+          e.stopPropagation();
+          console.log(e.dataTransfer)
+          if (e.dataTransfer.type == 'sequence') {
+            const draggedSequence = JSON.parse(e.dataTransfer.getData('text/plain'))
+            this.saveSequence(draggedSequence)
+          }
+        }}>
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
             <div className="Manager__button" onClick={this.closeSequence}>Cancel</div>
