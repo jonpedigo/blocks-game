@@ -256,11 +256,9 @@ export default class SequenceEditor extends React.Component {
     window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
   }
 
-  saveSequence(sequence) {
-    if(!sequence) sequence = this.state.sequence
+  onAddedSequence(sequence) {
     const { sequenceIdList } = this.state
 
-    GAME.library.sequences[sequence.id] = this._getSequenceJSON()
     window.socket.emit('updateLibrary', { sequences: GAME.library.sequences })
 
     if(sequenceIdList.indexOf(sequence.id) == -1) {
@@ -275,6 +273,18 @@ export default class SequenceEditor extends React.Component {
       sequence: null
     })
     this._generateRefs([])
+  }
+
+  acceptSequenceFromDrag = (sequence) => {
+    GAME.library.sequences[sequence.id] = sequence
+    this.onAddedSequence(sequence)
+  }
+
+  saveSequence = () => {
+    const { sequence } = this.state
+
+    GAME.library.sequences[sequence.id] = this._getSequenceJSON()
+    this.onAddedSequence(GAME.library.sequences[sequence.id])
   }
 
 
@@ -323,7 +333,7 @@ export default class SequenceEditor extends React.Component {
       return <div className="SequenceEditor">
         <div className="SequenceList">
           {sequenceIdList.map((id) => {
-            return <SequenceListItem deleteSequence={this.deleteSequence} openSequence={this.openSequence} id={id}></SequenceListItem>
+            return <SequenceListItem acceptSequenceFromDrag={this.acceptSequenceFromDrag} deleteSequence={this.deleteSequence} openSequence={this.openSequence} id={id}></SequenceListItem>
           })}
           <div className="SequenceList__sequence" onClick={this.newSequence}>New Sequence</div>
         </div>
@@ -331,7 +341,8 @@ export default class SequenceEditor extends React.Component {
     }
 
     return (
-      <div className="SequenceEditor">
+      <div className="SequenceEditor"
+        >
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
             <div className="Manager__button" onClick={this.closeSequence}>Cancel</div>

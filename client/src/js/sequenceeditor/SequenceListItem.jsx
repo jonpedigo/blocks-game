@@ -90,7 +90,7 @@ export default class SequenceListItem extends React.Component {
     const { openSequence, id } = this.props
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.type == 'sequence'
-    e.dataTransfer.setData('text/plain', GAME.library.sequences[id]);
+    e.dataTransfer.setData('text/plain', JSON.stringify(GAME.library.sequences[id]));
     e.stopPropagation()
   }
 
@@ -108,10 +108,10 @@ export default class SequenceListItem extends React.Component {
           event.preventDefault();
         }}
         onDrop={(e) => {
-          if (e.dataTransfer.type == 'sequence') {
+          const draggedSequence = JSON.parse(e.dataTransfer.getData('text/plain'))
+          if (draggedSequence.items) {
             e.stopPropagation();
-            const draggedSequence = JSON.parse(e.dataTransfer.getData('text/plain'))
-            this.saveSequence(draggedSequence)
+            this.props.acceptSequenceFromDrag(draggedSequence)
           }
         }}
         onMouseEnter={() => {

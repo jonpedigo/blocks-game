@@ -409,10 +409,9 @@ class Page{
     }
 
     function handleDrop(e) {
-      console.log(e.dataTransfer.type)
-      if (!dragSrcEl || dragSrcEl !== this && e.dataTransfer.type === 'game') {
+      const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
+      if (draggedGame.heros) {
         e.stopPropagation();
-        const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
         draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
         GAME.onChangeGame(draggedGame)
       }
