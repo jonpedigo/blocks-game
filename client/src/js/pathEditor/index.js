@@ -209,7 +209,7 @@ class PathEditor {
     }
 
     const container = document.createElement('div')
-    container.id = 'ConstructEditorContainer'
+    container.id = 'PathEditorContainer'
     document.body.appendChild(container)
     PATHEDITOR.container = container
 

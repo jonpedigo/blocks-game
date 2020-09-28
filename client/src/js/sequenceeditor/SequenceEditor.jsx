@@ -331,14 +331,7 @@ export default class SequenceEditor extends React.Component {
     }
 
     return (
-      <div className="SequenceEditor" onDrop={(e) => {
-          e.stopPropagation();
-          console.log(e.dataTransfer)
-          if (e.dataTransfer.type == 'sequence') {
-            const draggedSequence = JSON.parse(e.dataTransfer.getData('text/plain'))
-            this.saveSequence(draggedSequence)
-          }
-        }}>
+      <div className="SequenceEditor">
         <div className="ManagerMenu">
           <div className="ManagerMenu__right">
             <div className="Manager__button" onClick={this.closeSequence}>Cancel</div>
