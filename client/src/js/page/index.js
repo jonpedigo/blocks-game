@@ -408,12 +408,81 @@ class Page{
       e.dataTransfer.setData('text/plain', JSON.stringify(GAME));
     }
 
-    function handleDrop(e) {
+    async function handleDrop(e) {
       const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
       if (draggedGame.heros) {
+
+        const integrationOptions = [
+          'replace',
+          'addNewObjects',
+          'mergeAndAddNewObjects',
+          'mergeObjects',
+          // 'replaceWorld',
+          'cancel'
+        ]
+        const { value: integrationStrategyIndex } = await Swal.fire({
+          title: 'Choose how to integrate this game',
+          showClass: {
+            popup: 'animated fadeInDown faster'
+          },
+          hideClass: {
+            popup: 'animated fadeOutUp faster'
+          },
+          input: 'select',
+          inputOptions: integrationOptions
+        })
+
+        if(!integrationStrategyIndex || integrationOptions[integrationStrategyIndex] == 'cancel') {
+          return
+        }
+
+        const integrationChoice = integrationOptions[integrationStrategyIndex]
+
         e.stopPropagation();
-        draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
-        GAME.onChangeGame(draggedGame)
+
+        if(integrationChoice === 'replace') {
+          draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
+          window.socket.emit('setGameJSON', draggedGame)
+          return
+        }
+
+        if(integrationChoice === 'addNewObjects' || integrationChoice === 'mergeAndAddNewObjects') {
+          let adding = []
+          draggedGame.objects.forEach((obj) => {
+            if(!GAME.objectsById[obj.id]) {
+              adding.push(obj)
+            }
+          })
+          window.socket.emit('addObjects', adding)
+        }
+
+        if(integrationChoice == 'mergeObjects' || integrationChoice == 'mergeAndAddNewObjects') {
+          let editing = []
+          draggedGame.objects.forEach((obj) => {
+            let currentObj = GAME.objectsById[obj.id]
+            if(currentObj) {
+              const currentObjProperties = OBJECTS.getProperties(currentObj)
+              const newObjProperties = OBJECTS.getProperties(obj)
+              if(!_.isEqual(currentObjProperties, newObjProperties)) {
+                editing.push(newObjProperties)
+              }
+            }
+          })
+          window.socket.emit('editObjects', editing)
+        }
+
+
+        // Object.keys(draggedGame.heros).forEach((id) => {
+        //   let hero = draggedGame.heros[id]
+        //   delete hero.x
+        //   delete hero.y
+        //   delete hero.velocityY
+        //   delete hero.velocityX
+        // })
+        //
+        // window.mergeDeep(GAME.heros, draggedGame.heros)
+        // window.mergeDeep(GAME.world, draggedGame.world)
+        // window.mergeDeep(GAME.gameState, draggedGame.gameState)
       }
     }
   }
