@@ -18,6 +18,15 @@ function init() {
   ///////////////////////////////
 
   if(PAGE.role.isHost) {
+    window.socket.on('onBranchGame', (id) => {
+      window.local.emit('onBranchGame', id)
+    })
+    window.socket.on('onBranchGameCancel', () => {
+      window.local.emit('onBranchGameCancel')
+    })
+    window.socket.on('onBranchGameSave', (id) => {
+      window.local.emit('onBranchGameSave', id)
+    })
     // should be editor event
     window.socket.on('onStartSequence', (sequenceId, ownerId) => {
       window.local.emit('onStartSequence', sequenceId, ownerId)
@@ -71,9 +80,6 @@ function init() {
     // EDITOR CALLS THIS
     window.socket.on('onEditGameState', (gameState) => {
       window.local.emit('onEditGameState', gameState)
-      if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked) {
-        window.gamestateeditor.update(gameState)
-      }
     })
 
     // EDITOR CALLS THIS
@@ -149,9 +155,6 @@ function init() {
     // HOST CALLS THIS
     window.socket.on('onUpdateGameState', (gameState) => {
       window.local.emit('onUpdateGameState', gameState)
-      if(PAGE.role.isPlayEditor && window.syncGameStateToggle.checked && !w.editingGame.branch) {
-        window.gamestateeditor.update(gameState)
-      }
     })
 
     // host CALLS THIS
@@ -183,12 +186,6 @@ function init() {
         //     return prev
         //   }, {})
         // }
-
-      if(PAGE.role.isPlayEditor && window.objecteditor.get().id) {
-        if(window.syncObjectsToggle.checked) {
-          window.objecteditor.update(GAME.objectsById[window.objecteditor.get().id])
-        }
-      }
     })
 
     // HOST CALLS THIS
@@ -280,9 +277,6 @@ function init() {
 
   // EDITOR CALLS THIS
   window.socket.on('onDeleteHero', (heroId) => {
-    if(PAGE.role.isPlayEditor && window.editingHero.id == heroId) {
-      window.setEditingHero({})
-    }
     window.local.emit('onDeleteHero', heroId)
   })
 
@@ -373,7 +367,7 @@ function init() {
     window.local.emit('onSendNotification', data)
   })
 
-  if(!PAGE.role.isHost && PAGE.role.isPlayEditor) {
+  if(!PAGE.role.isHost && PAGE.role.isAdmin) {
     window.socket.on('onHostLog', (msg, arg1, arg2, arg3) => {
       let args = [msg, arg1, arg2, arg3].filter(i => !!i)
       console.log('host -> ', ...args)

@@ -30,7 +30,13 @@ class Game{
     this.world = {}
     this.grid = {}
     this.state = {}
-    this.library = {}
+    this.library = {
+      branches: {},
+      animations: {},
+      tags: {},
+      images: {},
+      tags: {},
+    }
   }
 
   onPlayerIdentified() {
@@ -245,6 +251,7 @@ class Game{
     tags.setDefault()
     if(game.library) GAME.library = game.library
     else GAME.library = {}
+    if(!GAME.library.branches) GAME.library.branches = {}
 
     if(GAME.library.tags) {
       tags.addGameTags(GAME.library.tags)
@@ -598,7 +605,69 @@ class Game{
     }, 100)
   }
 
-  cleanForSave(game) {
+  onBranchGame(id) {
+    const rootGameState = GAME.cleanForSave(GAME, { keepState: true, removeFalseTags: false })
+    rootGameState.objectsById = GAME.objectsById
+    localStorage.setItem('rootGameState', JSON.stringify(rootGameState))
+    if(GAME.library.branches[id]) GAME.onBranchApply(id)
+    GAME.gameState.branch = true
+    GAME.gameState.branchName = id
+    window.local.emit('onBranchStart')
+  }
+
+  reloadRoot(cb) {
+    window.local.emit('onLoadingScreenStart')
+    setTimeout(() => {
+      let rootGameState = localStorage.getItem('rootGameState')
+      if(!rootGameState) {
+        GAME.unload()
+        GAME.loadAndJoin(GAME)
+        return console.log('no root game state')
+      }
+      rootGameState = JSON.parse(rootGameState)
+      GAME.unload()
+      GAME.loadAndJoin(rootGameState)
+      window.local.emit('onBranchEnd')
+      cb()
+    }, 100)
+  }
+
+  onBranchGameCancel() {
+    GAME.reloadRoot()
+  }
+
+  onBranchGameSave() {
+    let rootGameState = JSON.parse(localStorage.getItem('rootGameState'))
+
+    const branchData = GAME.cleanForSave(GAME, { keepState: true, removeFalseTags: false })
+
+    const { addedObjects, existingObjects } = branchData.objects.reduce((prev, next) => {
+      if(rootGameState.objectsById[next.id]) {
+        prev.existingObjects.push(next)
+      } else {
+        prev.addedObjects.push(next)
+      }
+      return prev
+    },  { addedObjects: [], existingObjects: [] })
+
+    const diff = window.getObjectDiff(existingObjects, rootGameState.objects)
+    const branchName = GAME.gameState.branchName
+    GAME.reloadRoot(() => {
+      GAME.library.branches[branchName] = {
+        branchName,
+        existingObjectsDiff: diff,
+        addedObjects,
+      }
+    })
+  }
+
+  onBranchApply(id) {
+    const branch = GAME.library.branches[id]
+    window.socket.emit('editObjects', branch.existingObjectsDiff)
+    window.socket.emit('addObjects', branch.addedObjects)
+  }
+
+  cleanForSave(game, options = { keepState: false, removeFalseTags: true }) {
     let gameCopy = JSON.parse(JSON.stringify({
       //.filter((object) => !object.spawned)
       id: game.id,
@@ -641,15 +710,21 @@ class Game{
     }
 
     gameCopy.objects = gameCopy.objects.map((object) => {
-      window.removeFalsey(object.tags, true)
+      window.removeFalsey(object.tags, options.removeFalseTags)
       let props = OBJECTS.getProperties(object)
       window.removeFalsey(props)
+
+      if(options.keepState) {
+        props.x = object.x
+        props.y = object.y
+        props.removed = object.removed
+      }
       return props
     })
 
     gameCopy.defaultHero = HERO.getProperties(gameCopy.defaultHero)
     window.removeFalsey(gameCopy.defaultHero)
-    window.removeFalsey(gameCopy.defaultHero.tags, true)
+    window.removeFalsey(gameCopy.defaultHero.tags, options.removeFalseTags)
 
     return gameCopy
   }

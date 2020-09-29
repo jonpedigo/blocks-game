@@ -527,6 +527,19 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('resolveSequenceItem', (id) => {
     io.emit('onResolveSequenceItem', id)
   })
+
+  socket.on('branchGame', (id) => {
+    io.emit('onBranchGame', id)
+  })
+  socket.on('branchGameSave', () => {
+    io.emit('onBranchGameSave')
+  })
+  socket.on('branchApply', (id, mod) => {
+    io.emit('onBranchApply', id, mod)
+  })
+  socket.on('branchGameCancel', () => {
+    io.emit('onBranchGameCancel')
+  })
 }
 
 module.exports = socketEvents

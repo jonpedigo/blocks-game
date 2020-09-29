@@ -55,9 +55,60 @@ export default class Toolbar extends React.Component {
         }}></i>
         */}
 
-        {!GAME.gameState.started && <ToolbarButton iconName="fa-play" onClick={() => {
-          window.socket.emit('startGame')
-        }}/>}
+        {!GAME.gameState.started && !GAME.gameState.branch &&
+          <ToolbarRow iconName="fa-play" onClick={() => {
+            window.socket.emit('startGame')
+          }}>
+            <ToolbarButton iconName='fa-code-branch' onClick={async () => {
+              const branchOptions = Object.keys(GAME.library.branches)
+              branchOptions.unshift('New branch')
+              const { value: branchOptionIndex } = await Swal.fire({
+                title: 'Choose branch',
+                showClass: {
+                  popup: 'animated fadeInDown faster'
+                },
+                hideClass: {
+                  popup: 'animated fadeOutUp faster'
+                },
+                input: 'select',
+                inputOptions: branchOptions,
+              })
+
+              const chosenOption = branchOptions[branchOptionIndex]
+              if(chosenOption === 'New branch') {
+                const { value: name } = await Swal.fire({
+                  title: "What is the name of this branch?",
+                  showClass: {
+                    popup: 'animated fadeInDown faster'
+                  },
+                  hideClass: {
+                    popup: 'animated fadeOutUp faster'
+                  },
+                  input: 'text',
+                  showCancelButton: true,
+                  confirmButtonText: 'Start Branch',
+                })
+                if(name) {
+                  window.socket.emit('branchGame', name)
+                }
+              } else {
+                window.socket.emit('branchGame', chosenOption)
+              }
+            }}/>
+          </ToolbarRow>
+        }
+        {GAME.gameState.branch &&
+          <ToolbarRow iconName="fa-code-branch" active={true} onClick={() => {
+            window.socket.emit('branchGameSave')
+          }}>
+            <ToolbarButton iconName='fa-save' onClick={() => {
+              window.socket.emit('branchGameSave')
+            }}/>
+            <ToolbarButton iconName='fa-trash' onClick={() => {
+              window.socket.emit('branchGameCancel')
+            }}/>
+          </ToolbarRow>
+        }
         {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
           window.socket.emit('stopGame')
         }}>

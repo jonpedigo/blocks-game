@@ -412,14 +412,13 @@ class Page{
 
     async function handleDrop(e) {
       const draggedGame = JSON.parse(e.dataTransfer.getData('text/plain'))
-      if (draggedGame.heros) {
-
+      if (dragSrcEl !== this && draggedGame.heros) {
         const integrationOptions = [
-          'replace',
+          'cancel',
           'addNewObjects',
           'mergeAndAddNewObjects',
           'mergeObjects',
-          'cancel'
+          'replace',
         ]
         const { value: integrationStrategyIndex } = await Swal.fire({
           title: 'Choose how to integrate this game',
@@ -443,6 +442,8 @@ class Page{
 
         if(integrationChoice === 'replace') {
           draggedGame.heros[HERO.id] = GAME.heros[HERO.id]
+          draggedGame.gameState.started = false
+          draggedGame.gameState.loaded = false
           window.socket.emit('setGameJSON', draggedGame)
           return
         }

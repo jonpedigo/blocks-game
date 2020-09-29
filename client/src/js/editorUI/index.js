@@ -55,6 +55,13 @@ class EditorUI {
     }, 100)
   }
 
+  onBranchStart() {
+      EDITORUI.ref.forceUpdate()
+  }
+  onBranchEnd() {
+      EDITORUI.ref.forceUpdate()
+  }
+
   onUpdateGameState() {
     if(EDITORUI.ref) EDITORUI.ref.forceUpdate()
   }

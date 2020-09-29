@@ -6,26 +6,19 @@
 
 TODO
 
-SCENARIOS
-MVP 0 Scenarios
-1-Add Quest starting, completing, and succeeding to effects
-5-Auto Complete/Fail quest based on parameters
-6-View Quests UI with Controls
-7-onSucceedEffect, onFailEffect
+SIMPLE SEQUENCE
 
-GROUP MUTATION UI
-create a diff between two .object arrays. keep the ids and turn this into an array of mutation effects, its perfect!
+SOCIAL NETWORK
 
-PIXEL EDITOR
+PUZZLE INTERFACES
+-----
 
-SEQUENCE EDITOR
+SEQUENCE EDITOR UPGRADE
 Create
 Animate
 Editor
 
------
-
-AGGREGATION MENU
+AGGREGATION MENUS
 subinteractmenu ( find all interact triggers involving this object and display all possible )
 // view everything this object is involved in
 // view all current modifications
@@ -39,6 +32,7 @@ EDITOR UPGRADES
 Light Editor
 never close right click menu if shift is pressed
 Improve Add Sub Object
+GENRE libraries ( creator, generatedMenu )
 
 GAME FEEL UPGRADE
 more space bar actions -> 'double jump', 'dash'
@@ -55,10 +49,38 @@ actually build in this whole equipping system
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
 
+EQUIPMENT UPGRADE
+Get guns working
+various guns
+Sword?
+Other weapons
+
 ANIMATION UPGRADE
+Random Particle Designer
 // a system that like randomly generates how particles and things interact and we get to test it out and save it! GREAT WAY TO CUSTOMIZE WITHOUT MUCH EFFORT
 // Needs to be attached to system ( AKA the combat system )
 allow chaining of animations and effects
+onAnimationEnd
+Wait for animation to complete
+
+QUESTS UPGRADE
+Add Quest starting, completing, and succeeding to effects
+Auto Complete/Fail quest based on goals the quest has
+View Quests UI in player menu
+onSucceedSequence, onFailSequence
+
+GOALS UPGRADE
+Goal number -> as many as possible
+Chances -> fail on death
+collect, score, create, destroy ( not implemented )
+a Score parameter on objects
+Win/Lose States that can connect to the meta of the engine ( picking new game or replaying current game )
+
+COMBAT UPGRADE
+HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
+VICTIMS, ENEMIES, NEUTRAL,
+AGGRESIVE
+level system, ranged attacks, etc
 
 --
 
@@ -68,15 +90,13 @@ allow chaining of animations and effects
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-Random Particle Designer
-GENRE libraries ( creator, generatedMenu )
-PUZZLE INTERFACES
 (ELEMENTAL SYSTEM) Lava, water, tree (?), fire, mountain, sand, ice, ROCK ( FIRST WEAPONS )-> Trees. ( ROBOT PARTS TOO)
-( COMBAT SYSTEM ) HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options, VICTIMS, ENEMIES, NEUTRAL, level system, ranged attacks, etc
+
 LEVEL UP SYSTEM
 
 !!!!!!!! !!!! READY FOR HOME MADE ARCADE !!!! !!!!!!
 
+PIXEL EDITOR
 DETAIL VIEW
 LOBBY - HERO SELECTION + CUSTOMIZATION
 TEAMS
@@ -217,7 +237,6 @@ Scenarios/BeginEnd
   Hero
     Kill Counts
     Score
-
 
 /////
 PLANS FOR ULTIMATE MINECRAFT SCALE

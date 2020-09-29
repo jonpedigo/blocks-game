@@ -26,7 +26,6 @@ export default class Root extends React.Component {
       toastingActiveQuestGoalId: null,
       toastingActiveQuestGoalToastId: null,
       showInventoryModal: false,
-      showMainMenuModal: false,
       showControlsInfoModal: false,
       showHeroMenuModal: false,
       hero: GAME.heros[HERO.id],
@@ -125,7 +124,7 @@ export default class Root extends React.Component {
   }
 
   render() {
-    const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
+    const { showInventoryModal, showControlsInfoModal, showHeroMenuModal, hero } = this.state;
 
     let toastContainer = <ToastContainer
       position="top-center"
@@ -150,13 +149,10 @@ export default class Root extends React.Component {
         {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
         {hero.flags && hero.flags.showCutscene&& hero.cutscenes && <Cutscene scenes={hero.cutscenes} />}
         {hero.goals && hero.goals.length && <Goals goals={hero.goals} />}
-        {showMainMenuModal && <MainMenuModal
-          onClose={() => this.setState({ showMainMenuModal: false })}
-          onOpenControlsInfoModal={() => this.setState({ showControlsInfoModal: true })}
-        />}
         {showHeroMenuModal && <HeroMenuModal
           hero={hero}
           onClose={() => this.setState({ showHeroMenuModal: false })}
+          onOpenControlsInfoModal={() => this.setState({ showControlsInfoModal: true })}
           onOpenInventoryModal={() => this.setState({ showInventoryModal: true })}
         />}
         {showControlsInfoModal && <Modal
@@ -238,9 +234,9 @@ export default class Root extends React.Component {
   }
 
   _isModalOpen = () => {
-    const { showInventoryModal, showMainMenuModal, showControlsInfoModal, showHeroMenuModal } = this.state;
+    const { showInventoryModal, showControlsInfoModal, showHeroMenuModal } = this.state;
 
-    return showInventoryModal || showMainMenuModal || showControlsInfoModal || showHeroMenuModal
+    return showInventoryModal || showControlsInfoModal || showHeroMenuModal
   }
 
   _onKeyDown = (event) => {
@@ -262,24 +258,24 @@ export default class Root extends React.Component {
     // if (key === "i") {
     //   this.setState({ showInventoryModal: !this.state.showInventoryModal })
     // }
-
-    if(key === 'esc') {
-      event.preventDefault();
-      if(this.state.showMainMenuModal) {
-        this.setState({ showMainMenuModal: false })
-      } else if(this._isModalOpen()){
-        this.setState({ showMainMenuModal: false, showInventoryModal: false, showControlsInfoModal: false, showHeroMenuModal: false })
-      } else {
-        this.setState({ showMainMenuModal: true })
-      }
-    }
+    //
+    // if(key === 'esc') {
+    //   event.preventDefault();
+    //   if(this.state.showMainMenuModal) {
+    //     this.setState({ showMainMenuModal: false })
+    //   } else if(this._isModalOpen()){
+    //     this.setState({ showMainMenuModal: false, showInventoryModal: false, showControlsInfoModal: false, showHeroMenuModal: false })
+    //   } else {
+    //     this.setState({ showMainMenuModal: true })
+    //   }
+    // }
 
     if(key === 'tab') {
       event.preventDefault();
       if(this.state.showHeroMenuModal) {
         this.setState({ showHeroMenuModal: false })
       } else if(this._isModalOpen()){
-        this.setState({ showHeroMenuModal: true, showInventoryModal: false, showControlsInfoModal: false, showMainMenuModal: false })
+        this.setState({ showHeroMenuModal: true, showInventoryModal: false, showControlsInfoModal: false })
       } else {
         this.setState({ showHeroMenuModal: true })
       }

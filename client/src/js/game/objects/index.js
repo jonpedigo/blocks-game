@@ -142,9 +142,6 @@ class Objects{
       _pfGrid: object.pfGrid,
 
       navigationTargetId:  object.navigationTargetId,
-
-      // IMPLEMENT...
-      conditionTestCounts: object.conditionTestCounts,
     }
 
     if(object.subObjects) {
