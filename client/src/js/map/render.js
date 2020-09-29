@@ -208,8 +208,8 @@ function update(camera) {
     if(inView) {
       drawArrow(ctx, ((target.x + target.width/2) *camera.multiplier - camera.x), ((target.y - 60) *camera.multiplier - camera.y), ((target.x + target.width/2) *camera.multiplier - camera.x), ((target.y - 20) *camera.multiplier - camera.y), { size: .2 })
     }
-    const angle = window.getAngle(clientHero.x, clientHero.y, target.x, target.y )
-    drawArrow(ctx, MAP.canvas.width - 100, 50, MAP.canvas.width - 100, 50, { angle, size: 1 })
+    // const angle = window.getAngle(clientHero.x, clientHero.y, target.x, target.y )
+    // drawArrow(ctx, MAP.canvas.width - 100, 50, MAP.canvas.width - 100, 50, { angle, size: 1 })
   }
 
   return

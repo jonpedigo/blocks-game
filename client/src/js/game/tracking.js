@@ -12,10 +12,9 @@ class Tracking {
     return tracker
   }
 
-  stopTracking(stopId) {
-    GAME.gameState.trackers = GAME.gameState.trackers.filter(({trackerId}) => {
-      if(stopId === trackerId) return false
-      return true
+  stopTracking(id) {
+    GAME.gameState.trackers.forEach((tracker) => {
+      if(id === tracker.trackerId) tracker.stopped = true
     })
   }
 
@@ -26,8 +25,10 @@ class Tracking {
   }
 
   eventHappened(tracker) {
-    const { targetCount, onTargetCountReached } = tracker
+    const { targetCount, onTargetCountReached, trackingObject, isGoal } = tracker
     tracker.count++
+
+    if(targetCount) window.emitGameEvent('onUpdatePlayerUI', trackingObject)
     if(targetCount && targetCount === tracker.count) {
       if(onTargetCountReached) onTargetCountReached()
       this.stopTracking(tracker.trackerId)
@@ -37,11 +38,18 @@ class Tracking {
   onUpdate() {
     GAME.gameState.trackers.forEach((tracker) => {
       GAME.gameState.trackersById[tracker.trackerId] = tracker
+      if(tracker.showTrackingNavigationTargets) {
+        const possibleObjects = GAME.objectsByTag[tracker.targetTags[0]]
+        if(possibleObjects && possibleObjects.length) {
+          tracker.trackingObject.navigationTargetId = possibleObjects[0].id
+        }
+      }
     })
   }
 
   onHeroTouchStart = (hero, object) => {
     GAME.gameState.trackers.forEach((tracker) => {
+      if(tracker.stopped) return
       const { trackingObject, targetEvent, targetTags } = tracker
       if(targetEvent === 'touchX' &&
         trackingObject.id === hero.id &&
@@ -50,7 +58,6 @@ class Tracking {
       }
     })
   }
-
 }
 
 window.TRACKING = new Tracking()

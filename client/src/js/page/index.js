@@ -267,6 +267,7 @@ class Page{
       PAGE.loopStarted = true
     }
     if(!PAGE.gameLoaded) {
+      sockets.init()
       window.local.emit('onFirstPageGameLoaded')
     }
     PAGE.gameLoaded = true
@@ -275,7 +276,6 @@ class Page{
       PAGE.openLog()
     }
 
-    sockets.init()
   }
 
   resetStorage() {

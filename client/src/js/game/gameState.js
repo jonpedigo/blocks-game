@@ -7,7 +7,7 @@ function setDefault() {
     timeouts: [],
     timeoutsById: {},
     trackers: {},
-    activeGoals: {},
+    goals: {},
     activeMods: {},
     activeModList: [],
     ambientLight: .2,

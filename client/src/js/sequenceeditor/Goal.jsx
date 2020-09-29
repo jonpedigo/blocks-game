@@ -49,6 +49,10 @@ window.defaultSequenceGoal = {
   effectedOwnerObject: false,
   effectedIds: [],
   effectedTags: [],
+  successSequenceId: null,
+  failSequenceId: null,
+  goalShowNavigation: false,
+  goalDescription: '',
 }
 
 window.goalNameList = Object.keys(window.goalTypes)
@@ -108,19 +112,6 @@ export default class Goal extends React.Component{
         }}/>)
       }
 
-      // if(goalData.sequenceId) {
-      //   chosenGoalForm.push(<div className="SequenceItem__effected">Sequence Id:<Select
-      //     value={{value: effectSequenceId, label: effectSequenceId}}
-      //     onChange={(event) => {
-      //       sequenceItem.effectSequenceId = event.value
-      //       this.props.setState({sequenceItem})
-      //     }}
-      //     options={Object.keys(GAME.library.sequences).map((id) => { return {value: id, label: id} })}
-      //     styles={window.reactSelectStyle}
-      //     theme={window.reactSelectTheme}/>
-      //   </div>)
-      // }
-
       // if(goalData.mapSelect) {
       //   chosenGoalForm.push(<div onClick={() => {
       //     if(BELOWMANAGER.editingSequenceItemId) return
@@ -176,6 +167,9 @@ export default class Goal extends React.Component{
       <div className="SequenceItem__effect-body">
         <div className="SequenceItem__effect-form">
           <Collapsible trigger='Goal Properties'>
+            Description:
+            <i className="fa fas fa-edit Manager__button" onClick={() => this.props._openEditTextValueModal('goalDescription')}/>
+            <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.goalDescription}</div>
             {chosenGoalForm}
             Time Limit: <div className="SequenceItem__condition-form"><i className="fa fas fa-edit Manager__button" onClick={() => { this.props._openEditNumberModal('goalTimeLimit') }}/>
               <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.goalTimeLimit}</div>
@@ -184,6 +178,27 @@ export default class Goal extends React.Component{
               <div className="SequenceItem__summary SequenceItem__summary--json">{sequenceItem.goalChances}</div>
             </div>
             <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('goalWithoutDestroyed')} checked={sequenceItem.goalWithoutDestroyed} type="checkbox"></input>Fail on Destroy</div>
+            <div className="SequenceItem__effect-input"><input onChange={() => this.props._onToggleValue('goalShowNavigation')} checked={sequenceItem.goalShowNavigation} type="checkbox"></input>Show Navigation Arrow</div>
+            <div className="SequenceItem__effected">Success Sequence Id:<Select
+              value={{value: sequenceItem.successSequenceId, label: sequenceItem.successSequenceId}}
+              onChange={(event) => {
+                sequenceItem.successSequenceId = event.value
+                this.props.setState({sequenceItem})
+              }}
+              options={Object.keys(GAME.library.sequences).map((id) => { return {value: id, label: id} })}
+              styles={window.reactSelectStyle}
+              theme={window.reactSelectTheme}/>
+            </div>
+            <div className="SequenceItem__effected">Fail Sequence Id:<Select
+              value={{value: sequenceItem.failSequenceId, label: sequenceItem.failSequenceId}}
+              onChange={(event) => {
+                sequenceItem.failSequenceId = event.value
+                this.props.setState({sequenceItem})
+              }}
+              options={Object.keys(GAME.library.sequences).map((id) => { return {value: id, label: id} })}
+              styles={window.reactSelectStyle}
+              theme={window.reactSelectTheme}/>
+            </div>
           </Collapsible>
         </div>
         <Collapsible trigger='Goal Heros'>{this._renderEffecteds()}</Collapsible>

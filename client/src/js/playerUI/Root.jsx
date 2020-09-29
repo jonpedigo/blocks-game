@@ -53,7 +53,7 @@ export default class Root extends React.Component {
           modals.openModal(quest.id + ' Started!', quest.startMessage)
         } else {
           toast('quest started: ' + quest.id, {
-            position: "top-right",
+            // position: "top-right",
             autoClose: 6000,
             newestOnTop: true,
           })
@@ -69,7 +69,7 @@ export default class Root extends React.Component {
           modals.openModal(quest.id + ' Complete!', quest.completionMessage)
         } else {
           toast('quest completed: ' + quest.id, {
-            position: "top-right",
+            // position: "top-right",
             autoClose: 6000,
             newestOnTop: true,
           })
@@ -88,7 +88,7 @@ export default class Root extends React.Component {
   onSendNotification = (data) => {
     if(data.toast) {
       const toastInfo = {
-        position: "top-right",
+        // position: "top-right",
         autoClose: (data.duration * 1000) || 4000,
         newestOnTop: true,
         closeOnClick: data.duration <= 0,

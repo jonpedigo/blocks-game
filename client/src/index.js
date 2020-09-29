@@ -9,8 +9,6 @@ TODO
 SCENARIOS
 MVP 0 Scenarios
 1-Add Quest starting, completing, and succeeding to effects
-3-Score UI of above ^
-4-Completion Score screen of above ^^
 5-Auto Complete/Fail quest based on parameters
 6-View Quests UI with Controls
 7-onSucceedEffect, onFailEffect
@@ -436,6 +434,9 @@ Engine trail on a car u know what I mean?
 // https://github.com/YarnSpinnerTool/YarnEditor
 
 /*
+FOR SIMPLE SEQUENCE ( BRANCHING NARRATIVE )
+https://www.npmjs.com/package/react-arrows
+
 ACTUALLY THE ENGINE IVE BEEN WANTING...
 https://github.com/timetocode/nengi-2d-csp
 

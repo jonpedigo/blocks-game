@@ -383,9 +383,9 @@ function processEffect(effect, effected, effector, ownerObject) {
       function startTimer() {
         GAME.addTimeout(effect.goalId, effect.goalTimeLimit, () => {
           effect.goalChances--
-          if(effect.goalChances === 0) {
-            effect.onGoalFailed(effect, 'Time ran out')
-            GAME.gameState.activeGoals[effect.goalId] = null
+          if(effect.goalChances <= 0) {
+            processEffect({ effectName: 'startSequence', effectSequenceId: effect.successSequenceId }, effected, effector, ownerObject)
+            GAME.gameState.goals[effect.goalId].failed = true
             return
           }
           startTimer()
@@ -397,17 +397,22 @@ function processEffect(effect, effected, effector, ownerObject) {
         trackingObject: effected,
         targetEvent: effect.goalName,
         targetTags: effect.goalTargetTags,
+        showTrackingNavigationTargets: effect.goalShowNavigation,
         onTargetCountReached: () => {
-          GAME.gameState.activeGoals[effect.goalId] = null
-          if(effect.onGoalSucceeded) effect.onGoalSucceeded(effect)
+          GAME.gameState.goals[effect.goalId].succeeded = true
+          if(GAME.gameState.timeoutsById[effect.goalId]) GAME.gameState.timeoutsById[effect.goalId].paused = true
+          if(GAME.gameState.trackers[effect.trackerId]) GAME.gameState.trackers[effect.trackerId].stopped = true
+          if(effect.successSequenceId) {
+            processEffect({ effectName: 'startSequence', effectSequenceId: effect.successSequenceId }, effected, effector, ownerObject)
+          }
         },
       })
 
       effect.goalId = 'goal-'+window.uniqueID()
-      if(!GAME.gameState.activeGoals) GAME.gameState.activeGoals = {}
-      GAME.gameState.activeGoals[effect.goalId] = effect
+      if(!GAME.gameState.goals) GAME.gameState.goals = {}
+      GAME.gameState.goals[effect.goalId] = effect
 
-      if(effect.goalChances && effect.onGoalFailed && effect.goalTimeLimit) startTimer()
+      if(effect.goalTimeLimit) startTimer()
 
       if(!effected.goals) effected.goals = []
       effected.goals.push({

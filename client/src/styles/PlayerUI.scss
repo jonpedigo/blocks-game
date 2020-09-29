@@ -154,3 +154,27 @@
     opacity: 0;
   }
 }
+
+
+.Goals {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: white;
+}
+
+.Goal {
+  width: 150px;
+  border: 1px solid white;
+  padding: 5px;
+
+  &--succeeded {
+    border-color: green;
+    color: green;
+  }
+
+  &--failed {
+    border-color: red;
+    color: red;
+  }
+}
