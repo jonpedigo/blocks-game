@@ -139,7 +139,7 @@ export default class ObjectContextMenu extends React.Component{
         <SelectSubObjectMenu objectSelected={objectSelected} selectSubObject={this.props.selectSubObject}/>
       </SubMenu>}
       { subObject && objectSelected.tags.pickupable && <MenuItem key="drop">Drop</MenuItem> }
-      { GAME.gameState.started ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
+      { (GAME.gameState.started || GAME.gameState.branch) ? <MenuItem key="remove">Remove</MenuItem> : <MenuItem key="delete">Delete</MenuItem> }
       <SubMenu title="Advanced">
         <ObjectAdvancedMenu objectSelected={objectSelected} subObject={subObject}/>
       </SubMenu>

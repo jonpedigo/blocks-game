@@ -654,7 +654,7 @@ class Game{
     const branchName = GAME.gameState.branchName
     GAME.reloadRoot(() => {
       GAME.library.branches[branchName] = {
-        branchName,
+        branchName: branchName+'-'+window.uniqueID(),
         existingObjectsDiff: diff,
         addedObjects,
       }
@@ -662,9 +662,46 @@ class Game{
   }
 
   onBranchApply(id) {
-    const branch = GAME.library.branches[id]
+    const branch = _.cloneDeep(GAME.library.branches[id])
     window.socket.emit('editObjects', branch.existingObjectsDiff)
-    window.socket.emit('addObjects', branch.addedObjects)
+    window.socket.emit('addObjects', branch.addedObjects.map((addedObj) => {
+      addedObj.id = 'branchadded-'+window.uniqueID()
+      return addedObj
+    }))
+  }
+
+  onBranchModRevert(id) {
+    window.local.emit('onEndMod', id)
+  }
+
+  onBranchModApply(id) {
+    const branch = _.cloneDeep(GAME.library.branches[id])
+    const addedObjects = branch.addedObjects.map((addedObj) => {
+      addedObj.id = 'branchadded-'+window.uniqueID()
+      addedObj.removed = true
+      return addedObj
+    })
+    window.socket.emit('addObjects', addedObjects)
+    branch.existingObjectsDiff.forEach((diff) => {
+      const objectId = diff.id
+      delete diff.id
+      const mod = {
+        ownerId: objectId,
+        manualRevertId: id,
+        effectJSON: diff,
+      }
+      window.local.emit('onStartMod', mod)
+    })
+    addedObjects.forEach((object) => {
+      const mod = {
+        ownerId: objectId,
+        manualRevertId: id,
+        effectJSON: {
+          removed: false
+        }
+      }
+      window.local.emit('onStartMod', mod)
+    })
   }
 
   cleanForSave(game, options = { keepState: false, removeFalseTags: true }) {

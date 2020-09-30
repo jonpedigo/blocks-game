@@ -28,9 +28,7 @@ class contextMenuEl extends React.Component{
     super(props)
 
     document.body.addEventListener("contextmenu", e => {
-      console.log('WTF MAN')
       if(!window.isClickingMap(e.target.className)) return
-      console.log('didnt make it in...')
 
       if(!PAGE.showEditorTools()) {
         return null
@@ -43,7 +41,6 @@ class contextMenuEl extends React.Component{
           left: x,
           top: y
         };
-        console.log(x, y)
         this._setContextMenuPosition(origin);
         return false;
       }
@@ -106,7 +103,7 @@ class contextMenuEl extends React.Component{
     MAPEDITOR.contextMenu.style.left = `${left}px`
     MAPEDITOR.contextMenu.style.top = `${top}px`
 
-    console.log(MAPEDITOR.contextMenu)
+    console.log(top, left, MAPEDITOR.contextMenu)
     this._toggleContextMenu('show')
   }
 

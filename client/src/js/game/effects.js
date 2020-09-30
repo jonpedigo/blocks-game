@@ -36,6 +36,15 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
       // label: 'Mod name: ',
       footer: 'Mod Condition:'
     },
+    branchApply: {
+      libraryBranch: true,
+    },
+    branchModApply: {
+      libraryBranch: true,
+    },
+    branchModRevert: {
+      libraryBranch: true,
+    },
     libraryMod: {
       libraryMod: true,
     },
@@ -283,6 +292,18 @@ function processEffect(effect, effected, effector, ownerObject) {
       ownerObject,
     }
     startSequence(effect.effectSequenceId, context)
+  }
+
+  if(effectName === 'branchApply') {
+    GAME.onBranchApply(effect.effectBranchName)
+  }
+
+  if(effectName === 'branchModApply') {
+    GAME.onBranchModApply(effect.effectBranchName)
+  }
+
+  if(effectName === 'branchModRevert') {
+    GAME.onBranchModRevert(effect.effectBranchName)
   }
 
   if(effectName === 'mod') {
