@@ -79,7 +79,7 @@ function setAngleVelocity(hero) {
 }
 
 function updatePosition(object, delta) {
-  if(object.removed || object.mod().relativeId) return
+  if(object.mod().removed || object.mod().relativeId) return
   if(object._skipPosUpdate) return
   if(!object.mod().tags['moving']) return
 
@@ -343,7 +343,7 @@ function objectPhysics() {
       if(PHYSICS.debug) console.log('no game object found for phyics object id: ' + id)
       continue
     }
-    if(po.gameObject.removed) continue
+    if(po.gameObject.mod().removed) continue
     if(po.gameObject.mod().tags.hero) continue
     objectCollisionEffects(po)
   }
@@ -357,7 +357,7 @@ function objectPhysics() {
       let po = PHYSICS.objects[id]
       if(!po.gameObject) continue
       if(po.gameObject.mod().relativeId) continue
-      if(po.gameObject.removed) continue
+      if(po.gameObject.mod().removed) continue
       if(po.gameObject.mod().tags.hero) continue
       if(po.gameObject.mod().tags['skipCorrectionPhase']) {
         applyCorrection(po.gameObject, po)
@@ -374,7 +374,7 @@ function postPhysics() {
   let allHeros = getAllHeros()
   // GET DELTA
   allHeros.forEach((hero) => {
-    if(hero.removed) return
+    if(hero.mod().removed) return
     if(hero.interactableObject) {
       let input = GAME.heroInputs[hero.id]
       // INTERACT WITH SMALLEST OBJECT
@@ -391,7 +391,7 @@ function postPhysics() {
 
   // NON CHILD GO FIRST
   GAME.objects.forEach((object, i) => {
-    if(object.removed) return
+    if(object.mod().removed) return
     if(!object.mod().parentId && !object._parentId) {
       containObjectWithinGridBoundaries(object)
       object._deltaX = object.x - object._initialX
@@ -401,7 +401,7 @@ function postPhysics() {
   })
 
   allHeros.forEach((hero) => {
-    if(hero.removed) return
+    if(hero.mod().removed) return
     if(!hero.mod().parentId && !hero._parentId) {
       containObjectWithinGridBoundaries(hero)
       hero._deltaX = hero.x - hero._initialX
@@ -411,7 +411,7 @@ function postPhysics() {
 
   // THEN ATTACH CHILDREN OBJECTS TO PARENT
   GAME.objects.forEach((object, i) => {
-    if(object.removed) return
+    if(object.mod().removed) return
     if(object.mod().parentId || object._parentId ) {
       attachToParent(object)
       containObjectWithinGridBoundaries(object)
@@ -419,7 +419,7 @@ function postPhysics() {
   })
 
   allHeros.forEach((hero) => {
-    if(hero.removed) return
+    if(hero.mod().removed) return
     if(hero.mod().parentId || hero._parentId ) {
       attachToParent(hero)
       containObjectWithinGridBoundaries(hero)
@@ -429,7 +429,7 @@ function postPhysics() {
 
   // ATTACH OBJECTS THAT ARE SEPERATE FROM BOUNDARIES
   GAME.objects.forEach((object, i) => {
-    if(object.removed) return
+    if(object.mod().removed) return
     if(object.mod().relativeId) {
       attachToRelative(object)
     }
@@ -439,7 +439,7 @@ function postPhysics() {
   })
 
   allHeros.forEach((hero) => {
-    if(hero.removed) return
+    if(hero.mod().removed) return
     if(hero.mod().relativeId) {
       attachToRelative(hero)
     }
@@ -556,7 +556,7 @@ function removeAndRespawn() {
       delete hero._respawn
     }
     if(hero._remove) {
-      hero.removed = true
+      hero.mod().removed = true
       HERO.removeHero(hero)
       delete hero._remove
     }
@@ -581,7 +581,7 @@ function processSubObjectRemoval(object) {
   }
 
   if(object._remove) {
-    object.removed = true
+    object.mod().removed = true
     delete object._remove
   }
 }
@@ -601,7 +601,7 @@ function processObjectRemoval(object) {
     delete object._respawn
   }
   if(object._remove) {
-    object.removed = true
+    object.mod().removed = true
     OBJECTS.removeObject(object)
     delete object._remove
   }

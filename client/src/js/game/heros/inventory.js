@@ -34,7 +34,7 @@ function pickupObject(hero, collider) {
 
   subObject.inInventory = true
   if(subObject.tags.onMapWhenEquipped) {
-    subObject.removed = true
+    subObject.mod().removed = true
   } else {
     subObject.tags.potential = true
   }
@@ -66,7 +66,7 @@ function dropObject(hero, subObject, dropAmount = 1) {
     object.count = dropAmount
   }
 
-  object.removed = false
+  object.mod().removed = false
   object.tags.potential = false
   object.tags.subObject = false
   delete object.inInventory

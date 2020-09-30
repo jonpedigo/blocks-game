@@ -117,7 +117,7 @@ function update(camera) {
   GAME.objects.forEach((object) => {
     object = object.mod()
 
-    if(object.removed) return
+    if(object.mod().removed) return
     if(object.id === CONSTRUCTEDITOR.objectId || object.id === PATHEDITOR.objectId) return
     if(object.tags.outline) {
       if(camera.hasHitLimit || !camera.allowOcclusion || collisionsUtil.checkObject(viewBoundaries, object)) {
@@ -136,7 +136,7 @@ function update(camera) {
     if(object.subObjects) {
       OBJECTS.forAllSubObjects(object.subObjects, (subObject) => {
         if(subObject.tags.potential) return
-        if(subObject.tags.removed) return
+        if(subObject.tags.mod().removed) return
         if(!subObject.tags.outline) return
         drawTools.drawObject(ctx, subObject, camera)
       })
@@ -145,7 +145,7 @@ function update(camera) {
 
   GAME.heroList.forEach((hero) => {
     hero = hero.mod()
-    if(hero.removed) return
+    if(hero.mod().removed) return
 
     if(hero.tags.outline) {
       drawTools.drawObject(ctx, hero, camera);
@@ -154,7 +154,7 @@ function update(camera) {
     if(hero.subObjects) {
       OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
         if(subObject.tags.potential) return
-        if(subObject.tags.removed) return
+        if(subObject.tags.mod().removed) return
         if(!subObject.tags.outline) return
         drawTools.drawObject(ctx, subObject, camera)
       })
@@ -165,7 +165,7 @@ function update(camera) {
   if(!clientHero.animationZoomMultiplier) {
     GAME.objects.forEach((obj) => {
       obj = obj.mod()
-      if(obj.name && !obj.removed) {
+      if(obj.name && !obj.mod().removed) {
         if(obj.namePosition === "center") drawNameCenter(ctx, obj, camera)
         if(obj.namePosition === "above") drawNameAbove(ctx, obj, camera)
       }

@@ -115,7 +115,7 @@ class Objects{
       gridHeight: object.gridHeight,
       gridWidth: object.gridWidth,
       onGround: object.onGround,
-      removed: object.removed,
+      removed: object.mod().removed,
       spawnedIds: object.spawnedIds,
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
@@ -354,7 +354,7 @@ class Objects{
       name: object.name,
       sprite: object.sprite,
       namePos: object.namePos,
-      removed: object.removed,
+      removed: object.mod().removed,
       angle: object.angle,
       _flipY: object._flipY,
       spawnPointX: object.spawnPointX,
@@ -879,10 +879,10 @@ class Objects{
   }
 
   removeObject(object) {
-    GAME.objectsById[object.id].removed = true
+    GAME.objectsById[object.id].mod().removed = true
     if(object.subObjects) {
         OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
-        subObject.removed = true
+        subObject.mod().removed = true
       })
     }
     window.local.emit('onUpdatePFgrid', 'remove', object)
@@ -970,7 +970,7 @@ class Objects{
 
   removeSubObject(ownerId, subObjectName) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
-    owner.subObjects[subObjectName].removed = true
+    owner.subObjects[subObjectName].mod().removed = true
   }
 
   onEditSubObject(ownerId, subObjectName, update) {

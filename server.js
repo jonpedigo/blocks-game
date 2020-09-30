@@ -15,7 +15,10 @@ const config = require('./config')
 // Connect to the Database
 const mongoose = require("mongoose")
 mongoose.Promise = require("bluebird")
-const mongoOpts = { useMongoClient: true }
+const mongoOpts = {
+  useMongoClient: true,
+  keepAlive: 1, connectTimeoutMS: 30000,
+}
 const mongoUrl = config.mongodb
 mongoose
   .connect(mongoUrl, mongoOpts)

@@ -13,6 +13,8 @@ function setDefault() {
     ambientLight: .2,
     dayNightCycle: {},
     logs: [],
+    branch: false,
+    branchName: null,
   }
   if(!localStorage.getItem('gameStates')) {
     localStorage.setItem('gameStates', JSON.stringify({}))

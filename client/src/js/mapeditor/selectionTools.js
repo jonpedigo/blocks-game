@@ -44,7 +44,7 @@ function findSmallestObjectInArea(area, objects) {
   let smallestObject
   for(let i = 0; i < objectsToSearch.length; i++) {
     let object = objectsToSearch[i]
-    if(object.removed) continue
+    if(object.mod().removed) continue
     if(object.constructParts) {
       objectsToSearch.push(...object.constructParts)
       continue

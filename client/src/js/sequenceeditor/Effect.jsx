@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import Collapsible from 'react-collapsible';
 import {
   SingleLibraryModSelect,
+  SingleLibraryBranchSelect,
   SingleLibraryObjectSelect,
   SingleEventSelect,
   SingleTagSelect,
@@ -132,6 +133,15 @@ export default class Effect extends React.Component{
         chosenEffectForm.push(<SingleLibraryModSelect sequenceItem={sequenceItem} valueProp='effectLibraryMod' onChange={(event) => {
          if(event.value) {
            sequenceItem.effectLibraryMod = event.value
+           this.props.setState({sequenceItem})
+         }
+       }}/>)
+      }
+
+      if(effectData.libraryBranch) {
+        chosenEffectForm.push(<SingleLibraryBranchSelect sequenceItem={sequenceItem} valueProp='effectBranchName' onChange={(event) => {
+         if(event.value) {
+           sequenceItem.effectBranchName = event.value
            this.props.setState({sequenceItem})
          }
        }}/>)

@@ -268,8 +268,8 @@ function updateSprite(pixiChild, gameObject) {
 }
 
 function getVisibility(pixiChild, gameObject) {
-  const invisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.removed || gameObject.tags.potential || gameObject.constructParts
-  // if(invisible) console.log(gameObject.id, gameObject.tags.outline,gameObject.tags.invisible,gameObject.removed,gameObject.tags.potential,gameObject.constructParts)
+  const invisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.mod().removed || gameObject.tags.potential || gameObject.constructParts
+  // if(invisible) console.log(gameObject.id, gameObject.tags.outline,gameObject.tags.invisible,gameObject.mod().removed,gameObject.tags.potential,gameObject.constructParts)
   return invisible
 }
 

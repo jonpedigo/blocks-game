@@ -344,7 +344,7 @@ function updateGridHighlight(location) {
   let smallestObject = selectionTools.findSmallestObjectInArea(mouseLocation, GAME.objects.filter(({ reserved }) => !reserved))
 
   collisionsUtil.check(mouseLocation, GAME.heroList, (hero) => {
-    if (hero.removed) return
+    if (hero.mod().removed) return
     smallestObject = JSON.parse(JSON.stringify(hero))
   })
 

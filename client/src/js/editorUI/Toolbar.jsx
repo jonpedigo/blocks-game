@@ -74,6 +74,8 @@ export default class Toolbar extends React.Component {
                 inputOptions: branchOptions,
               })
 
+              if(!branchOptionIndex) return
+
               const chosenOption = branchOptions[branchOptionIndex]
               if(chosenOption === 'New branch') {
                 const { value: name } = await Swal.fire({

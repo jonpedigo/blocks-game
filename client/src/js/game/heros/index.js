@@ -185,7 +185,7 @@ class Hero{
     /// send objects that are possibly camping at their spawn point back to their spawn point
     if(PAGE.role.isHost && GAME && GAME.world && GAME.world.tags.noCamping) {
       GAME.objects.forEach((obj) => {
-        if(obj.removed) return
+        if(obj.mod().removed) return
 
         if(obj.mod().tags.zombie || obj.mod().tags.homing) {
           const { gridX, gridY } = gridUtil.convertToGridXY(obj)
@@ -651,7 +651,7 @@ class Hero{
       lives: hero.lives,
       _flipY: hero._flipY,
       score: hero.score,
-      removed: hero.removed,
+      removed: hero.mod().removed,
       questState: hero.questState,
       angle: hero.angle,
       customMapState: hero.customMapState,
@@ -729,9 +729,9 @@ class Hero{
 
   removeHero(hero) {
     OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-      subObject.removed = true
+      subObject.mod().removed = true
     })
-    GAME.heros[hero.id].removed = true
+    GAME.heros[hero.id].mod().removed = true
   }
 
   onDeleteHero(heroId) {

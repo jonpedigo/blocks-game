@@ -116,11 +116,23 @@ function SingleLibraryModSelect({sequenceItem, valueProp, onChange, title}) {
   </div>
 }
 
+function SingleLibraryBranchSelect({sequenceItem, valueProp, onChange, title}) {
+  return <div className="SequenceItem__test">{title || 'Branch Name:'}<Select
+    value={{ value: sequenceItem[valueProp], label: sequenceItem[valueProp]}}
+    onChange={onChange}
+    options={Object.keys(GAME.library.branches).map(objectName => { return { value: objectName, label: objectName }})}
+    styles={window.reactSelectStyle}
+    theme={window.reactSelectTheme}/>
+  </div>
+}
+
+
 export {
   SingleEventSelect,
   SingleTagSelect,
   SingleIdSelect,
   SingleLibraryObjectSelect,
+  SingleLibraryBranchSelect,
   SingleLibraryModSelect,
   MultiIdSelect,
   MultiTagSelect,

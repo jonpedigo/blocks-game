@@ -17,7 +17,7 @@ function spawnObject(object) {
     if(!object.spawnedIds) object.spawnedIds = []
 
     object.spawnedIds = object.spawnedIds.filter((id) => {
-      if(GAME.objectsById[id] && !GAME.objectsById[id].removed) {
+      if(GAME.objectsById[id] && !GAME.objectsById[id].mod().removed) {
         return true
       } else {
         return false

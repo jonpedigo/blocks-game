@@ -2,7 +2,7 @@ function check(agent, objects, onCollide = () => {}) {
   let illegal = false
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
-    if(objects[i].removed) continue
+    if(objects[i].mod().removed) continue
     if(agent.id === objects[i].id) continue
     checkObject(agent, objects[i], () => {
       if(objects[i].tags.obstacle) illegal = true
@@ -17,7 +17,7 @@ function checkAnything(agent, objects, onCollide = () => {}) {
   let illegal = false
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
-    if(objects[i].removed) continue
+    if(objects[i].mod().removed) continue
     if(agent.id === objects[i].id) continue
     checkObject(agent, objects[i], () => {
       illegal = true

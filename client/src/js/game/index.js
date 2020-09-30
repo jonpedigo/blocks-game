@@ -77,7 +77,7 @@ class Game{
           })
 
           GAME.objects.forEach((object) => {
-            if(object.removed) return
+            if(object.mod().removed) return
             window.local.emit('onUpdateObject', object, delta)
           })
           timeouts.onUpdate(delta)
@@ -116,7 +116,7 @@ class Game{
         ai.onUpdate(GAME.objects, delta)
         GAME.resetPaths = false
         GAME.objects.forEach((object) => {
-          if(object.removed) return
+          if(object.mod().removed) return
           window.local.emit('onUpdateObject', object, delta)
         })
 
@@ -142,7 +142,7 @@ class Game{
         //// OBJECTS
         if(GAME.gameState.started) {
           GAME.objects.forEach((object) => {
-            if(object.removed) return
+            if(object.mod().removed) return
             PHYSICS.updatePosition(object, delta)
           })
         }
@@ -384,7 +384,7 @@ class Game{
 
   snapToGrid() {
     GAME.objects.forEach((object) => {
-      if(object.removed) return
+      if(object.mod().removed) return
 
       gridUtil.snapObjectToGrid(object)
     })
@@ -478,7 +478,7 @@ class Game{
     })
 
     GAME.objects.forEach((obj) => {
-      if(obj.removed) return
+      if(obj.mod().removed) return
 
       if(obj.tags && obj.tags.obstacle || obj.tags.onlyHeroAllowed) {
         if(obj.constructParts) {
@@ -654,6 +654,7 @@ class Game{
     const branchName = GAME.gameState.branchName
     GAME.reloadRoot(() => {
       GAME.library.branches[branchName] = {
+        branchedOff:'root',
         branchName: branchName+'-'+window.uniqueID(),
         existingObjectsDiff: diff,
         addedObjects,
@@ -678,7 +679,7 @@ class Game{
     const branch = _.cloneDeep(GAME.library.branches[id])
     const addedObjects = branch.addedObjects.map((addedObj) => {
       addedObj.id = 'branchadded-'+window.uniqueID()
-      addedObj.removed = true
+      addedObj.mod().removed = true
       return addedObj
     })
     window.socket.emit('addObjects', addedObjects)
@@ -694,7 +695,7 @@ class Game{
     })
     addedObjects.forEach((object) => {
       const mod = {
-        ownerId: objectId,
+        ownerId: object.id,
         manualRevertId: id,
         effectJSON: {
           removed: false
@@ -754,7 +755,7 @@ class Game{
       if(options.keepState) {
         props.x = object.x
         props.y = object.y
-        props.removed = object.removed
+        props.mod().removed = object.mod().removed
       }
       return props
     })
@@ -1100,7 +1101,7 @@ class Game{
     const previousObjectsByTag = GAME.objectsByTag
 
     GAME.objectsByTag = GAME.objects.reduce((map, object) => {
-      if(object.removed) return map
+      if(object.mod().removed) return map
       Object.keys(object.mod().tags).forEach((tag) => {
         if(!map[tag]) map[tag] = []
         if(object.mod().tags[tag] === true) map[tag].push(object)
@@ -1108,7 +1109,7 @@ class Game{
       return map
     }, {})
     GAME.objectsByTag = GAME.heroList.reduce((map, hero) => {
-      if(hero.removed) return map
+      if(hero.mod().removed) return map
       Object.keys(hero.mod().tags).forEach((tag) => {
         if(!map[tag]) map[tag] = []
         if(hero.mod().tags[tag] === true) map[tag].push(hero)
@@ -1166,6 +1167,7 @@ class Game{
   onEndMod(manualRevertId) {
     GAME.gameState.activeModList = GAME.gameState.activeModList.filter((mod) => {
       mod._remove = true
+      if(mod.effectJSON.removed || (mod.effectJSON.tags && mod.effectJSON.tags.obstacle)) window.local.emit('onUpdatePFgrid')
       if(mod.manualRevertId === manualRevertId) return false
       return true
     })

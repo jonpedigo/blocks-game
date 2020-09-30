@@ -54,7 +54,7 @@ function heroCollisionEffects(hero) {
       continue
     }
     if(body.gameObject.ownerId == hero.id) continue
-    if(body.gameObject.removed) continue
+    if(body.gameObject.mod().removed) continue
     if(heroPO.collides(body, result)) {
       const collider = body.gameObject
 
@@ -108,7 +108,7 @@ function heroCorrection(hero) {
         if(PHYSICS.debug) console.log('missing game object on body', body)
         continue
       }
-      if(body.gameObject.removed) continue
+      if(body.gameObject.mod().removed) continue
       let result = PHYSICS.objects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
         const heroCanCollide = (body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['heroPushable']) || body.gameObject.mod().tags['noHeroAllowed']
@@ -214,7 +214,7 @@ function objectCollisionEffects(po) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
-    if(body.gameObject.removed) continue
+    if(body.gameObject.mod().removed) continue
     // subobjects and construct parts dont collider with their owners
     if(po.gameObject.ownerId === body.gameObject.id) continue
     if(po.collides(body, result)) {
@@ -301,7 +301,7 @@ function objectCorrection(po, final) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
-    if(body.gameObject.removed) continue
+    if(body.gameObject.mod().removed) continue
     if(po.collides(body, result)) {
       // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
       if(po.gameObject.mod().tags['monster'] && body.gameObject.tags && body.gameObject.mod().tags['onlyHeroAllowed']) {

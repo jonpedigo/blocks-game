@@ -266,7 +266,7 @@ PIXIMAP.updateDarknessSprites = function() {
   }
   const lightObjects = [...lights, ...GAME.heroList]
   lightObjects.forEach((object) => {
-    if(object.removed) return
+    if(object.mod().removed) return
     if(object.tags.potential) return
 
     const { gridX, gridY } = gridUtil.convertToGridXY({x: object.x + PIXIMAP.grid.nodeSize/2, y: object.y + PIXIMAP.grid.nodeSize/2})
@@ -661,7 +661,7 @@ PIXIMAP.convertToPartObject = function(gameObject, part) {
   let color = part.color
   if(!sprite && !color) color = GAME.world.defaultObjectColor
   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.mod().removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
 
   return partObject

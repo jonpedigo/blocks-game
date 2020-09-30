@@ -61,7 +61,7 @@ function drawGrid(ctx, {startX, startY, gridWidth, gridHeight, nodeSize, nodeWid
 
 function getObjectVertices(ctx, object, camera, options = {}) {
   let prev = []
-  if(object.removed) return prev
+  if(object.mod().removed) return prev
 
   const extraProps = {}
 

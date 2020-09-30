@@ -28,13 +28,28 @@ export default class Toolbar extends React.Component {
   }
 
   _renderStartStop() {
-    return <React.Fragment>{!GAME.gameState.started && <ToolbarButton iconName="fa-play" onClick={() => {
+    return <React.Fragment>{!GAME.gameState.started && !GAME.gameState.branch && <ToolbarButton iconName="fa-play" onClick={() => {
       window.socket.emit('requestAdminApproval', 'startGame', { text: 'Start Game Request', requestId: 'request-'+window.uniqueID()})
     }}/>}
     {GAME.gameState.started && <ToolbarButton iconName='fa-stop' onClick={() => {
       window.socket.emit('stopGame')
     }}/>}
     </React.Fragment>
+  }
+
+  _renderBranchButtons() {
+    if(!GAME.gameState.branch) return
+
+    return <ToolbarRow iconName="fa-code-branch" active={true} onClick={() => {
+        window.socket.emit('branchGameSave')
+      }}>
+      <ToolbarButton iconName='fa-save' onClick={() => {
+        window.socket.emit('branchGameSave')
+      }}/>
+      <ToolbarButton iconName='fa-trash' onClick={() => {
+        window.socket.emit('branchGameCancel')
+      }}/>
+    </ToolbarRow>
   }
 
   render() {
@@ -48,6 +63,7 @@ export default class Toolbar extends React.Component {
     return (
       <div className="Toolbar">
         {hero.flags.canStartStopGame && this._renderStartStop()}
+        {this._renderBranchButtons()}
         {hero.flags.canTakeMapSnapshots && <ToolbarButton iconName="fa-camera-retro" onClick={async () => {
           const { value: name } = await Swal.fire({
             title: "What is the name of this photo?",

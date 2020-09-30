@@ -119,7 +119,7 @@ function moveOnPath(object, delta) {
 
 function onUpdate(objects, delta) {
   objects.forEach((object) => {
-    if(object.removed) return
+    if(object.mod().removed) return
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////

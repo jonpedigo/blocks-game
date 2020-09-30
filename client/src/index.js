@@ -82,6 +82,9 @@ VICTIMS, ENEMIES, NEUTRAL,
 AGGRESIVE
 level system, ranged attacks, etc
 
+BRANCH
+Different roots for the branches...
+
 --
 
 ////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ class PlayerUI {
     )
 
     if(!PLAYERUI.updateStateInterval) {
-      PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.onUpdateState, 1000)
+      PLAYERUI.updateStateInterval = setInterval(PLAYERUI.ref.forceUpdate.bind(PLAYERUI.ref), 1000)
     }
   }
 
