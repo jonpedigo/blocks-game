@@ -7,14 +7,6 @@ yarn install
 yarn start-dev
 node server
 
-### Production build
+### Deploy
 
-yarn start
-
-## Features
-
-## Author
-
-Jon Pedigo
-
-## License
+Deploy normally to heroku with node.js buildpack

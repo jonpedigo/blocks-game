@@ -11,7 +11,7 @@ if (window.location.origin.indexOf('localhost') > 0) {
 
 function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
-  const [state, setState] = useState({ username: '', password: '', message: '', checkingCookie: !!cookies.user});
+  const [state, setState] = useState({ email: '', password: '', message: '', checkingCookie: !!cookies.user});
 
   useEffect(() => {
     if(cookies.user && !window.user) {
@@ -40,11 +40,11 @@ function App() {
   });
 
   const onLogIn = () => {
-    window.socket.emit("authentication", {username: state.username, password: state.password});
+    window.socket.emit("authentication", {email: state.email, password: state.password});
   };
 
   const onSignUp = () => {
-    window.socket.emit("authentication", { username: state.username, password: state.password, signup: true });
+    window.socket.emit("authentication", { email: state.email, password: state.password, signup: true });
   };
 
   const onChange = e => {

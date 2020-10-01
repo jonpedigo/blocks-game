@@ -10,16 +10,16 @@ var cors = require('cors');
 const socketioAuth = require("socketio-auth")
 const jwt = require('jsonwebtoken')
 const cookie = require('cookie')
-const config = require('./config')
+require('dotenv').config(); // Loading dotenv to have access to env variables
 
 // Connect to the Database
 const mongoose = require("mongoose")
 mongoose.Promise = require("bluebird")
 const mongoOpts = {
-  useMongoClient: true,
+  useNewUrlParser: true,
   keepAlive: 1, connectTimeoutMS: 30000,
 }
-const mongoUrl = config.mongodb
+const mongoUrl = process.env.DATABASE
 mongoose
   .connect(mongoUrl, mongoOpts)
   .catch(e => console.log(e))
@@ -74,18 +74,18 @@ server.listen(process.env.PORT || 4000, function(){
 // Authenticate!
 const User = require("./db/User")
 const authenticate = async (socket, data, callback) => {
-  const { username, password, signup } = data
+  const { email, password, signup } = data
 
   try {
     // session
     if (socket.handshake.headers.cookie){
       const cookieUser = cookie.parse(socket.handshake.headers.cookie).user
       if (cookieUser) {
-        const username = jwt.decode(cookieUser, 'secret-words')
-        if(username){
-          const user = await User.findOne({ username })
+        const email = jwt.decode(cookieUser, process.env.JWT_KEY)
+        if(email){
+          const user = await User.findOne({ email })
           if (!user) {
-            socket.emit('auth_message', { message: 'No such username and password combination'})
+            socket.emit('auth_message', { message: 'No such email and password combination'})
           } else {
             socket.user = user
             return callback(null, !!user)
@@ -94,17 +94,17 @@ const authenticate = async (socket, data, callback) => {
       }
     }
 
-    // sign up
-    if (signup) {
-      const user = await User.create({ username, password })
-      socket.user = user
-      return callback(null, !!user)
-    }
+    // // sign up
+    // if (signup) {
+    //   const user = await User.create({ email, password })
+    //   socket.user = user
+    //   return callback(null, !!user)
+    // }
 
     // login
-    const user = await User.findOne({ username })
+    const user = await User.findOne({ email })
     if (!user) {
-      socket.emit('auth_message', { message: 'No such username and password combination'})
+      socket.emit('auth_message', { message: 'No such email and password combination'})
       return
     }
     if(user.validPassword(password)) {
@@ -113,16 +113,16 @@ const authenticate = async (socket, data, callback) => {
     }
 
     // error handling
-    socket.emit('auth_message',  { message: 'No such username and password combination'})
+    socket.emit('auth_message',  { message: 'No such email and password combination'})
   } catch (error) {
-    socket.emit('auth_message', { message: 'Authentication error. Username probably already exists'})
+    socket.emit('auth_message', { message: 'Authentication error. Email probably already exists'})
     console.log(error)
     callback(error)
   }
 }
 
 const postAuthenticate = socket => {
-  socket.emit('authenticated', {cookie: jwt.sign(socket.user.username, 'secret-words'), user: socket.user})
+  socket.emit('authenticated', {cookie: jwt.sign(socket.user.email, process.env.JWT_KEY), user: socket.user})
   socketEvents(fs, io, socket)
 }
 
