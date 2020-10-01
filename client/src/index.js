@@ -517,7 +517,12 @@ https://github.com/BrianMacIntosh/icon-machine
 https://github.com/redblobgames/mapgen4
 https://github.com/kchapelier/procedural-generation
 https://github.com/Dannark/BWO
+
+
+SHADOW ON CANVAS
+https://codepen.io/mladen___/pen/gbvqBo
 */
+
 
 // MARKETING IDEA
 // Make a game for their birthday
@@ -556,11 +561,11 @@ import './js/libraries/subObjectLibrary.js'
 import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
 
-if(document.hasFocus()) {
+// if(document.hasFocus()) {
   PAGE.load()
-} else {
-  window.onfocus = PAGE.load
-}
+// } else {
+//   window.onfocus = PAGE.load
+// }
 
 /*
 ////////////////////////////////////////////////////

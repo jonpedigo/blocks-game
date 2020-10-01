@@ -136,8 +136,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     }});
   })
 
-  socket.on('askJoinGame', (heroId, role) => {
-    io.emit('onAskJoinGame', heroId, role)
+  socket.on('askJoinGame', (heroId, role, userId) => {
+    io.emit('onAskJoinGame', heroId, role, userId)
   })
 
   socket.on('heroJoinedGamed', (hero) => {
@@ -230,6 +230,7 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
+    console.log('???')
     io.emit('onAddObjects', addedobjects)
   })
 
@@ -540,10 +541,14 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('branchGameCancel', () => {
     io.emit('onBranchGameCancel')
   })
+
+
+  socket.on('editMetadata', (update) => {
+    io.emit('onEditMetadata', update)
+  })
 }
 
 module.exports = socketEvents
-
 
 /**
  * Simple object check.

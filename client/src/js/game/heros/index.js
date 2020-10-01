@@ -480,6 +480,8 @@ class Hero{
 
       heroSummonType: hero.heroSummonType,
 
+      userId: hero.userId,
+
       zBehavior: hero.zBehavior,
       xBehavior: hero.xBehavior,
       cBehavior: hero.cBehavior,

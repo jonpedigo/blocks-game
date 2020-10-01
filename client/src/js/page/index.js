@@ -97,19 +97,26 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   load() {
-    const container = document.createElement('div')
-    container.id = 'HomemadeArcade'
-    document.body.appendChild(container)
-    // Mount React App
-    ReactDOM.render(
-      React.createElement(App),
-      container
-    )
+    if(PAGE.getParameterByName('arcadeMode')) {
+      events.establishALocalHost()
+      PAGE.establishRoleFromQueryOnly()
+      HERO.getHeroId()
+      window.local.emit('onUserIdentified')
+      window.local.emit('onPlayerIdentified')
+      PAGE.askCurrentGame()
+    } else {
+      const container = document.createElement('div')
+      container.id = 'HomemadeArcade'
+      document.body.appendChild(container)
+      // Mount React App
+      ReactDOM.render(
+        React.createElement(App),
+        container
+      )
+    }
   }
 
   async userIdentified() {
-    events.init()
-
     window.local.emit('onUserIdentified')
 
     const heroOptions = Object.keys(window.heroLibrary)
@@ -152,8 +159,8 @@ class Page{
     }
 
     if(PAGE.role.isHost) {
-      window.socket.on('onAskJoinGame', (heroId, role) => {
-        window.local.emit('onAskJoinGame', heroId, role)
+      window.socket.on('onAskJoinGame', (heroId, role, userId) => {
+        window.local.emit('onAskJoinGame', heroId, role, userId)
       })
     }
 
@@ -177,7 +184,7 @@ class Page{
   ///////////////////////////////
   async askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
-      let gameId = 'spencer1'
+      let gameId = 'ha-prologue'
       if(PAGE.getParameterByName('gameId')) {
         gameId = PAGE.getParameterByName('gameId')
       }
@@ -186,19 +193,31 @@ class Page{
           const game = JSON.parse(result.value)
           GAME.loadGridWorldObjectsCompendiumState(game)
           GAME.heros = []
-          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
           window.local.emit('onGameLoaded')
         })
         return
       }
 
-      window.networkSocket.on('onGetGame', (game) => {
-        GAME.loadGridWorldObjectsCompendiumState(game)
+      const options = {
+        params: {
+          gameId
+        }
+      };
+
+      let serverUrl
+      if(window.location.hostname.indexOf('local') >= 0) {
+        serverUrl = 'http://localhost:4000'
+      } else {
+        serverUrl = window.location.hostname
+      }
+
+      axios.get(serverUrl + '/game', options).then(res => {
+        GAME.loadGridWorldObjectsCompendiumState(res.data.game)
         GAME.heros = []
-        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
+        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
         window.local.emit('onGameLoaded')
       })
-      window.networkSocket.emit('getGame', gameId)
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
       window.socket.emit('askRestoreCurrentGame')

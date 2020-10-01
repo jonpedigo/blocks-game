@@ -414,6 +414,11 @@ function init() {
   window.socket.on('onResolveAdminApproval', (action, data) => {
     window.local.emit('onResolveAdminApproval', action, data)
   })
+
+
+  window.socket.on('onEditMetadata', (update) => {
+    window.local.emit('onEditMetadata', update)
+  })
 }
 
 export default {

@@ -11,6 +11,7 @@ import world from './world.js'
 import grid from './grid.js'
 import tracking from './tracking.js'
 import dayNightCycle from './daynightcycle.js'
+import metadata from './metadata.js'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
@@ -30,6 +31,7 @@ class Game{
     this.world = {}
     this.grid = {}
     this.state = {}
+    this.metadata = {}
     this.library = {
       branches: {},
       animations: {},
@@ -41,6 +43,7 @@ class Game{
 
   onPlayerIdentified() {
     world.setDefault()
+    metadata.setDefault()
     gameState.setDefault()
     grid.setDefault()
     tags.setDefault()
@@ -200,11 +203,12 @@ class Game{
     }
   }
 
-  onAskJoinGame(heroId, role) {
+  onAskJoinGame(heroId, role, userId) {
     let hero = GAME.heros[heroId]
     if(!hero) {
       hero = HERO.summonFromGameData({id: heroId, heroSummonType: role })
       hero.id = heroId
+      hero.userId = userId
       window.socket.emit('heroJoinedGamed', hero)
     }
   }
@@ -239,7 +243,7 @@ class Game{
     if(GAME.heros[HERO.id]) {
       window.local.emit('onHeroFound', GAME.heros[HERO.id])
     } else {
-      window.socket.emit('askJoinGame', HERO.id, heroName)
+      window.socket.emit('askJoinGame', HERO.id, heroName, window.user._id)
     }
   }
 
@@ -268,6 +272,10 @@ class Game{
 
     GAME.defaultHero = game.defaultHero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
+
+
+    if(game.metadata) GAME.metadata = game.metadata
+    else GAME.metadata = _.cloneDeep(window.defaultMetadata)
 
     // let storedGameState = localStorage.getItem('gameStates')
     // if(storedGameState) storedGameState = storedGameState[game.id]
@@ -716,6 +724,7 @@ class Game{
       customInputBehavior: game.customInputBehavior,
       defaultHero: game.defaultHero,
       library: game.library,
+      metadata: game.metadata,
     }))
 
     if(game.heros) {
@@ -1192,6 +1201,19 @@ class Game{
     if(gameHeroName === 'default') {
       GAME.defaultHero = JSON
       console.log(JSON)
+    }
+  }
+
+  onEditMetadata(update) {
+    for(let key in update) {
+      const value = update[key]
+
+      if(value instanceof Object) {
+        GAME.metadata[key] = {}
+        window.mergeDeep(GAME.metadata[key], value)
+      } else {
+        GAME.metadata[key] = value
+      }
     }
   }
 }

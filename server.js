@@ -25,7 +25,7 @@ mongoose
   .catch(e => console.log(e))
 
 app.use((req, res, next) => {
-  console.log(req)
+  // console.log(req)
   next()
 })
 
@@ -59,6 +59,40 @@ app.get('/generate-put-url', (req,res)=>{
     res.send(err);
   });
 });
+
+
+app.get('/game', (req,res)=>{
+  const { gameId } =  req.query;
+  fs.readFile('data/game/' +gameId+'.json', 'utf8', function readFileCallback(err, data){
+    if (err){
+      res.send(err);
+    } else {
+      let game = JSON.parse(data);
+      res.send({game})
+    }
+  });
+});
+
+function getSpriteSheet(id, cb) {
+  fs.readFile('./data/sprite/' +id+'.json', 'utf8', function readFileCallback(err, data){
+    if (err){
+        console.log(err);
+    } else {
+    let spritesheet = JSON.parse(data); //now it an spritesheetect
+    return cb(spritesheet)
+  }});
+}
+app.get('/spriteSheets', (req,res)=>{
+  const { spriteSheetIds } =  req.query;
+
+  const sss = []
+  spriteSheetIds.forEach((id) => {
+    getSpriteSheet(id, (spriteSheet) => {
+      sss.push(spriteSheet)
+    })
+  })
+  res.send({spriteSheets: sss})
+})
 
 app.use(express.static(__dirname + '/dist'))
 

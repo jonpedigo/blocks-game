@@ -268,6 +268,9 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-sitemap" onClick={() => {
             BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'sequence'})
           }}/>
+          <ToolbarButton iconName="fa-tags" onClick={() => {
+            BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'metadata'})
+          }}/>
           {/* Default Heros -> Menu */}
           <ToolbarButton iconName="fa-theater-masks" onClick={() => {
             PAGE.typingMode = true

@@ -7,6 +7,9 @@ yarn install
 yarn start-dev
 node server
 
+client is served at :8080
+server is :4000
+
 ### Deploy
 
 Deploy normally to heroku with node.js buildpack

@@ -3,6 +3,7 @@ window.PIXI = PIXI
 import './pixi-layers'
 import { GlowFilter, ColorMatrixFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
+import axios from 'axios';
 
 const textures = {};
 let stage
@@ -360,15 +361,27 @@ const initPixiApp = (canvasRef, onLoad) => {
   if(PAGE.role.isArcadeMode) {
     socket = window.networkSocket
   }
-  socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
+
+  let serverUrl
+  if(window.location.hostname.indexOf('local') >= 0) {
+    serverUrl = 'http://localhost:4000'
+  } else {
+    serverUrl = window.location.hostname
+  }
+  const options = {
+    params: {
+      spriteSheetIds: spritesheetsRequested
+    }
+  };
+
+  axios.get(serverUrl + '/spriteSheets', options).then(res => {
+    const spriteSheets = res.data.spriteSheets
     window.spriteSheets = spriteSheets
     startLoadingAssets(spriteSheets.map((ss) => {
       ss.serverImageUrl = window.HomemadeArcadeImageAssetURL + ss.imageUrl
       return ss
     }))
   })
-  socket.emit('getSpriteSheetsJSON', spritesheetsRequested)
-
   ///////////////
   ///////////////
   ///////////////
