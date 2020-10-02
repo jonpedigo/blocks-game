@@ -97,6 +97,37 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   load() {
+    let gameServerUrl = 'http://ha-game.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      gameServerUrl = 'http://localhost:4000'
+    }
+    window.HAGameServerUrl = gameServerUrl
+
+    let gameClientUrl = 'http://ha-game.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      gameClientUrl = 'http://localhost:8080'
+    }
+    window.HAGameClientUrl = gameClientUrl
+
+    let socialClientUrl = 'http://ha-social.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      socialClientUrl = 'http://localhost:3005'
+    }
+    window.HASocialClientUrl = socialClientUrl
+
+    let socialServerUrl = 'http://ha-social.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      socialServerUrl = 'http://localhost:5000'
+    }
+    window.HASocialServerUrl = socialServerUrl
+
+    let landingUrl = 'http://ha-landing.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      landingUrl = 'http://localhost:3000'
+    }
+    window.HALandingUrl = landingUrl
+
+
     if(PAGE.getParameterByName('arcadeMode')) {
       events.establishALocalHost()
       PAGE.establishRoleFromQueryOnly()
@@ -205,14 +236,7 @@ class Page{
         }
       };
 
-      let serverUrl
-      if(window.location.hostname.indexOf('local') >= 0) {
-        serverUrl = 'http://localhost:4000'
-      } else {
-        serverUrl = window.location.hostname
-      }
-
-      axios.get(serverUrl + '/game', options).then(res => {
+      axios.get(window.HAGameServerUrl + '/game', options).then(res => {
         GAME.loadGridWorldObjectsCompendiumState(res.data.game)
         GAME.heros = []
         HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
@@ -226,23 +250,29 @@ class Page{
         if(currentGameExists) {
           cb(game)
         } else {
-          const { value: loadGameId } = await Swal.fire({
+          const response  = await axios.get(window.HAGameServerUrl + '/gamesmetadata')
+          const gamesMetadata = response.data.games
+
+          const { value: gamesMetadataIndex } = await Swal.fire({
             title: 'Load Game',
-            text: "Enter id of game",
-            input: 'text',
+            text: "Select id of game",
+            input: 'select',
             inputAttributes: {
               autocapitalize: 'off'
             },
+            inputOptions: gamesMetadata.map(({id}) => id),
             showCancelButton: true,
             confirmButtonText: 'Load Game',
             cancelButtonText: 'New Game',
           })
-          if(loadGameId) {
+          if(gamesMetadataIndex) {
+            const id = gamesMetadata[gamesMetadataIndex].id
             window.socket.on('onLoadGame', (game) => {
               cb(game)
             })
-            window.socket.emit('setAndLoadCurrentGame', loadGameId)
+            window.socket.emit('setAndLoadCurrentGame', id)
           } else {
+
             const { value: newGameId } = await Swal.fire({
               title: 'Create Game',
               text: "Enter id you want for new game",

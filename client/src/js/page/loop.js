@@ -34,7 +34,7 @@ window.startGameLoop = function() {
   // begin main loop
   mainLoop()
   setInterval(() => {
-    window.socket.emit('updateGameOnServerOnly', { id: GAME.id, heros: GAME.heros, gameState: GAME.gameState, objects: GAME.objects, world: GAME.world, grid: GAME.grid, defaultHero: GAME.defaultHero, library:GAME.library })
+    window.socket.emit('updateGameOnServerOnly', { id: GAME.id, metadata: GAME.metadata, version: GAME.version, heros: GAME.heros, gameState: GAME.gameState, objects: GAME.objects, world: GAME.world, grid: GAME.grid, defaultHero: GAME.defaultHero, library:GAME.library })
   }, 1000)
 }
 

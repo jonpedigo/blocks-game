@@ -1,12 +1,12 @@
 import React from 'react'
 import classnames from 'classnames'
 import modals from '../../sequenceeditor/modals.js'
-
 export default class Metadata extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      author: window.user.username,
       ...GAME.metadata,
     }
   }
@@ -32,7 +32,7 @@ export default class Metadata extends React.Component {
   }
 
   render() {
-    const { featuredImage, authorUserId, description, name } = this.state
+    const { featuredImage, description, name, author, inMarketingArcade } = this.state
 
     return <div className="GameManager__Metadata">
       <div className="ManagerMenu__right">
@@ -44,14 +44,48 @@ export default class Metadata extends React.Component {
         this._openEditTextModal('name')
       }}/>
       <div className="SequenceItem__summary SequenceItem__summary--json">{name}</div>
-      Author User Id:
+      Author:
       <i className="fa fas fa-edit Manager__button" onClick={() => {
-        this._openEditTextModal('authorUserId')
+        this._openEditTextModal('author')
       }}/>
-      <div className="SequenceItem__summary SequenceItem__summary--json">{authorUserId}</div>
+      <div className="SequenceItem__summary SequenceItem__summary--json">{author}</div>
+      Description:
+      <i className="fa fas fa-edit Manager__button" onClick={() => {
+        this._openEditTextModal('description')
+      }}/>
+      <div className="SequenceItem__summary SequenceItem__summary--json">{description}</div>
       Featured Image:
       <i className="fa fas fa-edit Manager__button" onClick={() => this._selectImageModal()}/>
       {featuredImage && <div className="SequenceItem__summary SequenceItem__summary--json">{featuredImage.name}</div>}
+      <div className="SequenceItem__effect-input"><input onChange={() => {
+        this.setState({
+          inMarketingArcade: !this.state.inMarketingArcade
+        })
+      }} checked={inMarketingArcade} type="checkbox"></input>In Marketing Arcade</div>
+
+      <button onClick={() => {
+        const requestOptions = {
+          method: "POST",
+          mode: 'cors',
+          body: JSON.stringify({
+            gameId: GAME.id,
+            userData: window.user,
+            description: name + ' - ' + description,
+            photo: featuredImage.url,
+            tags: JSON.stringify([])
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: 'Bearer ' + window.getUserCookie()
+          }
+        };
+
+        return fetch(window.HASocialServerUrl + "/api/post/addPost/", requestOptions)
+          .then(res => {
+            window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
+          });
+      }}>Publish Game</button>
     </div>
   }
 }

@@ -380,6 +380,7 @@ class Hero{
 
     if(newHero) {
       newHero.id = id
+      newHero.userId = hero.userId
       newHero.heroSummonType = heroSummonType
       OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
         subObject.id = 'subObject-'+window.uniqueID()

@@ -273,7 +273,6 @@ class Game{
     GAME.defaultHero = game.defaultHero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
 
-
     if(game.metadata) GAME.metadata = game.metadata
     else GAME.metadata = _.cloneDeep(window.defaultMetadata)
 

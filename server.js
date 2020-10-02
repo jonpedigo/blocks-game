@@ -73,6 +73,22 @@ app.get('/game', (req,res)=>{
   });
 });
 
+app.get('/gamesmetadata', (req,res)=>{
+  const { gameId } =  req.query;
+  fs.readdir('data/game/', (err, files) => {
+    const games = []
+    files.filter((name) => name.indexOf('.json') >=0).forEach((gameId) => {
+      const game = JSON.parse(fs.readFileSync('data/game/' +gameId, 'utf8'))
+
+      games.push({
+        id: game.id,
+        metadata: game.metadata
+      })
+    })
+    res.send({games})
+  });
+});
+
 function getSpriteSheet(id, cb) {
   fs.readFile('./data/sprite/' +id+'.json', 'utf8', function readFileCallback(err, data){
     if (err){

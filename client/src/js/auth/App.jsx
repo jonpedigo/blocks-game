@@ -33,6 +33,10 @@ function App() {
       window.user = null
       setState({...state, checkingCookie: true});
     }
+
+    window.getUserCookie = () => {
+      return cookies.user
+    }
   });
 
   window.socket.on("auth_message", ({ message }) => {
