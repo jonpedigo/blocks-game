@@ -64,27 +64,49 @@ export default class Metadata extends React.Component {
       }} checked={inMarketingArcade} type="checkbox"></input>In Marketing Arcade</div>
 
       <button onClick={() => {
-        const requestOptions = {
-          method: "POST",
-          mode: 'cors',
-          body: JSON.stringify({
-            gameId: GAME.id,
-            userData: window.user,
-            description: name + ' - ' + description,
-            photo: featuredImage.url,
-            tags: JSON.stringify([])
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            Authorization: 'Bearer ' + window.getUserCookie()
-          }
-        };
-
-        return fetch(window.HASocialServerUrl + "/api/post/addPost/", requestOptions)
-          .then(res => {
-            window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
+        function handleResponse(response) {
+          return response.text().then((text) => {
+            const data = text && JSON.parse(text);
+            return data;
           });
+        }
+
+        const gameSaveRequestOptions = {
+         method: "POST",
+         mode: 'cors',
+         body: JSON.stringify({
+           gameSave: JSON.stringify(GAME.cleanForSave(GAME)),
+           userData: window.user,
+         }),
+         headers: {
+           'Content-Type': 'application/json',
+           'Access-Control-Allow-Origin': '*',
+           Authorization: 'Bearer ' + window.getUserCookie()
+         }
+        };
+        fetch(window.HASocialServerUrl + "/api/game/addGameSave", gameSaveRequestOptions).then(handleResponse).then(res => {
+          const requestOptions = {
+            method: "POST",
+            mode: 'cors',
+            body: JSON.stringify({
+              gameSaveId: res.gameSaveId,
+              userData: window.user,
+              description: name + ' - ' + description,
+              photo: featuredImage.url,
+              tags: JSON.stringify([])
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              Authorization: 'Bearer ' + window.getUserCookie()
+            }
+          };
+
+          return fetch(window.HASocialServerUrl + "/api/post/addPost/", requestOptions)
+            .then(res => {
+              window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
+            });
+        })
       }}>Publish Game</button>
     </div>
   }
