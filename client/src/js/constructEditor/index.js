@@ -53,6 +53,7 @@ class ConstructEditor {
   }
 
   close() {
+    document.body.draggable=true
     clearInterval(this._autoSave)
     document.body.style.cursor = 'default';
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
@@ -83,6 +84,7 @@ class ConstructEditor {
   }
 
   start(object, startColor, startAtHero = false) {
+    document.body.draggable=false
     this._autoSave = setInterval(() => {
       window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Drawing Autosaved'})
       this.save()

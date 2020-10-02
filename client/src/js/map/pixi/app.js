@@ -358,23 +358,17 @@ const initPixiApp = (canvasRef, onLoad) => {
   })
 
   let socket = window.socket
-  if(PAGE.role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
     socket = window.networkSocket
   }
 
-  let serverUrl
-  if(window.location.hostname.indexOf('local') >= 0) {
-    serverUrl = 'http://localhost:4000'
-  } else {
-    serverUrl = window.location.hostname
-  }
   const options = {
     params: {
       spriteSheetIds: spritesheetsRequested
     }
   };
 
-  axios.get(serverUrl + '/spriteSheets', options).then(res => {
+  axios.get(window.HAGameServerUrl + '/spriteSheets', options).then(res => {
     const spriteSheets = res.data.spriteSheets
     window.spriteSheets = spriteSheets
     startLoadingAssets(spriteSheets.map((ss) => {

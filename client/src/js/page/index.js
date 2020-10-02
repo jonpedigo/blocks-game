@@ -38,6 +38,12 @@ class Page{
       PAGE.role.isArcadeMode = true
       PAGE.role.isPlayer = true
     }
+
+    if(PAGE.getParameterByName('homeEditor')) {
+      PAGE.role.isHost = true
+      PAGE.role.isHomeEditor = true
+      PAGE.role.isPlayer = true
+    }
   }
 
   establishRoleFromQueryAndHero(hero) {
@@ -54,7 +60,7 @@ class Page{
       console.log('non host')
     }
 
-    if(PAGE.role.isPlayEditor) {
+    if(PAGE.role.isAdmin || PAGE.role.homeEditor) {
       console.log('editor')
     }
     if(PAGE.role.isPlayer) {
@@ -150,6 +156,15 @@ class Page{
   async userIdentified() {
     window.local.emit('onUserIdentified')
 
+    if(PAGE.getParameterByName('homeEditor')) {
+      events.establishALocalHost()
+      PAGE.establishRoleFromQueryOnly()
+      HERO.getHeroId()
+      window.local.emit('onPlayerIdentified')
+      PAGE.askCurrentGame()
+      return
+    }
+
     const heroOptions = Object.keys(window.heroLibrary)
     if(localStorage.getItem('hero')) heroOptions.unshift('resume')
 
@@ -239,14 +254,17 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   async askCurrentGame(cb) {
-    if(PAGE.role.isArcadeMode) {
-      let gameId = 'ha-prologue'
+    if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
+      let gameId = 'new'
+
+      let heroSummonType = 'singlePlayer'
+      if(PAGE.role.isHomeEditor) heroSummonType = 'homeEditor'
 
       if(PAGE.getParameterByName('gameSaveId')) {
         PAGE.loadGameSave(PAGE.getParameterByName('gameSaveId'), (res) => {
           GAME.loadGridWorldObjectsCompendiumState(JSON.parse(res.gameSave))
           GAME.heros = []
-          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
           window.local.emit('onGameLoaded')
         })
         return
@@ -259,7 +277,7 @@ class Page{
           const game = JSON.parse(result.value)
           GAME.loadGridWorldObjectsCompendiumState(game)
           GAME.heros = []
-          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
           window.local.emit('onGameLoaded')
         })
         return
@@ -274,7 +292,7 @@ class Page{
       axios.get(window.HAGameServerUrl + '/game', options).then(res => {
         GAME.loadGridWorldObjectsCompendiumState(res.data.game)
         GAME.heros = []
-        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
+        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
         window.local.emit('onGameLoaded')
       })
     } else {
@@ -482,11 +500,12 @@ class Page{
     document.body.addEventListener('dragover', (e) => e.preventDefault())
 
     document.body.addEventListener('drop', handleDrop)
-    document.body.draggable=true
-    document.body.droppable=true
+    document.body.draggable=PAGE.role.isAdmin
+    // document.body.droppable=true
 
     let dragSrcEl
     function handleDragStart(e) {
+      if(CONSTRUCTEDITOR.open || PATHEDITOR.open || !PAGE.role.isAdmin) return
       dragSrcEl = this;
 
       e.dataTransfer.effectAllowed = 'move';
@@ -572,7 +591,6 @@ class Page{
       }
     }
   }
-
 
   publishGame({ name, description, imageUrl }) {
     function handleResponse(response) {

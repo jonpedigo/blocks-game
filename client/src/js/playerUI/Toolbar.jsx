@@ -30,7 +30,7 @@ export default class Toolbar extends React.Component {
 
   _renderStartStop() {
     return <React.Fragment>{!GAME.gameState.started && !GAME.gameState.branch && <ToolbarButton iconName="fa-play" onClick={() => {
-      if(PAGE.role.isAtHomeEditor) window.socket.emit('startGame')
+      if(PAGE.role.isHomeEditor) window.socket.emit('startGame')
       else window.socket.emit('requestAdminApproval', 'startGame', { text: 'Start Game Request', requestId: 'request-'+window.uniqueID()})
     }}/>}
     {GAME.gameState.started && <ToolbarButton iconName='fa-stop' onClick={() => {

@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 
 function init() {
   // EVENT SETUP
-  if(PAGE.role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
     window.networkSocket = window.socket
     window.socket = window.mockSocket
   }

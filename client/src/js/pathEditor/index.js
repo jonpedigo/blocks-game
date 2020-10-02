@@ -53,6 +53,7 @@ class PathEditor {
   }
 
   close() {
+    document.body.draggable=false
     document.body.style.cursor = 'default';
     this.canvas.removeEventListener('mousedown', this._mouseDownListener)
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
@@ -92,6 +93,7 @@ class PathEditor {
   }
 
   start(object, startAtHero = false) {
+    document.body.draggable=true
     this.initState()
     this.objectId = object.id
     this.open = true
