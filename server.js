@@ -90,23 +90,18 @@ app.get('/gamesmetadata', (req,res)=>{
 });
 
 function getSpriteSheet(id, cb) {
-  fs.readFile('./data/sprite/' +id+'.json', 'utf8', function readFileCallback(err, data){
-    if (err){
-        console.log(err);
-    } else {
-    let spritesheet = JSON.parse(data); //now it an spritesheetect
-    return cb(spritesheet)
-  }});
+  const data = fs.readFileSync('./data/sprite/' +id+'.json', 'utf8')
+  return JSON.parse(data)
 }
+
 app.get('/spriteSheets', (req,res)=>{
   const { spriteSheetIds } =  req.query;
 
   const sss = []
   spriteSheetIds.forEach((id) => {
-    getSpriteSheet(id, (spriteSheet) => {
-      sss.push(spriteSheet)
-    })
+    sss.push(getSpriteSheet(id))
   })
+
   res.send({spriteSheets: sss})
 })
 

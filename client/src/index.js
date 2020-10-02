@@ -560,6 +560,7 @@ import './js/libraries/modLibrary.js'
 import './js/libraries/subObjectLibrary.js'
 import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
+import './js/libraries/spriteSheetLibrary.js'
 
 // if(document.hasFocus()) {
   PAGE.load()
