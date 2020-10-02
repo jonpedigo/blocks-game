@@ -207,6 +207,31 @@ class Page{
     })
   }
 
+
+  loadGameSave(gameSaveId, cb) {
+    function handleResponse(response) {
+      return response.text().then((text) => {
+        const data = text && JSON.parse(text);
+        return data;
+      });
+    }
+
+    const gameSaveRequestOptions = {
+     method: "POST",
+     mode: 'cors',
+     body: JSON.stringify({
+       gameSaveId
+     }),
+     headers: {
+       'Content-Type': 'application/json',
+       'Access-Control-Allow-Origin': '*',
+     }
+    };
+    fetch(window.HASocialServerUrl + "/api/game/getGameSave/", gameSaveRequestOptions).then(handleResponse).then(res => {
+      cb(res)
+    })
+  }
+
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -216,6 +241,16 @@ class Page{
   async askCurrentGame(cb) {
     if(PAGE.role.isArcadeMode) {
       let gameId = 'ha-prologue'
+
+      if(PAGE.getParameterByName('gameSaveId')) {
+        PAGE.loadGameSave(PAGE.getParameterByName('gameSaveId'), (res) => {
+          GAME.loadGridWorldObjectsCompendiumState(JSON.parse(res.gameSave))
+          GAME.heros = []
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'singlePlayer' }))
+          window.local.emit('onGameLoaded')
+        })
+        return
+      }
       if(PAGE.getParameterByName('gameId')) {
         gameId = PAGE.getParameterByName('gameId')
       }
@@ -536,6 +571,53 @@ class Page{
         // window.mergeDeep(GAME.gameState, draggedGame.gameState)
       }
     }
+  }
+
+
+  publishGame({ name, description, imageUrl }) {
+    function handleResponse(response) {
+      return response.text().then((text) => {
+        const data = text && JSON.parse(text);
+        return data;
+      });
+    }
+
+    const gameSaveRequestOptions = {
+     method: "POST",
+     mode: 'cors',
+     body: JSON.stringify({
+       gameSave: JSON.stringify(GAME.cleanForSave(GAME)),
+       userData: window.user,
+     }),
+     headers: {
+       'Content-Type': 'application/json',
+       'Access-Control-Allow-Origin': '*',
+       Authorization: 'Bearer ' + window.getUserCookie()
+     }
+    };
+    fetch(window.HASocialServerUrl + "/api/game/addGameSave", gameSaveRequestOptions).then(handleResponse).then(res => {
+      const requestOptions = {
+        method: "POST",
+        mode: 'cors',
+        body: JSON.stringify({
+          gameSaveId: res.gameSaveId,
+          userData: window.user,
+          description: name + ' - ' + description,
+          photo: imageUrl,
+          tags: JSON.stringify([])
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + window.getUserCookie()
+        }
+      };
+
+      return fetch(window.HASocialServerUrl + "/api/post/addPost/", requestOptions)
+        .then(res => {
+          window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
+        });
+    })
   }
 }
 
