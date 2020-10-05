@@ -42,7 +42,7 @@ class Grid {
     for(var i = 0; i < gridWidth; i++) {
       grid.push([])
       for(var j = 0; j < gridHeight; j++) {
-        grid[i].push({x: this.startX + (i * this.nodeSize), y: this.startY + (j * this.nodeSize), width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
+        grid[i].push({id: 'x-' + i + 'y-' + j, x: this.startX + (i * this.nodeSize), y: this.startY + (j * this.nodeSize), gridX: i, gridY: j, width: this.nodeSize, height: this.nodeSize, gridX: i, gridY: j, data: {}})
       }
     }
 
@@ -61,8 +61,9 @@ class Grid {
   findNeighborNodes(gridX, gridY) {
     const nodes = this.nodes
     const neighbors = []
+    const directions = ['up', 'left', 'down', 'right']
 
-    ['up', 'left', 'down', 'right'].forEach((dir) => {
+    directions.forEach((dir) => {
       let neighbor = this.findNeighborInDirection(gridX, gridY, dir)
       if(neighbor) neighbors.push(neighbor)
     })

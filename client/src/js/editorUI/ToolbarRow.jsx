@@ -12,7 +12,7 @@ export default class ToolbarRow extends React.Component {
   }
 
   render() {
-    let { active, iconName, children, column, onClick } = this.props
+    let { active, iconName, children, column, onClick, rowButtonChildren, rowButtonBackgroundColor } = this.props
 
     const { open } = this.state
 
@@ -27,7 +27,8 @@ export default class ToolbarRow extends React.Component {
           this.setState({ open: false })
         }}
         >
-          <i onClick={onClick} className={classnames("Toolbar__tool-selector fa fas ", iconName, { "Toolbar__tool-selector--normal-cursor": true, "Toolbar__tool-selector--active": active })}>
+          <i onClick={onClick} style={{backgroundColor: rowButtonBackgroundColor}} className={classnames("Toolbar__tool-selector fa fas ", iconName, { "Toolbar__tool-selector--normal-cursor": true, "Toolbar__tool-selector--active": active })}>
+            {rowButtonChildren}
           </i>
           <div className={classnames({"Toolbar__tool-children": !column, "Toolbar__tool-children--column": column })}>
             {children && open && children.map((child) => {

@@ -16,15 +16,23 @@
   &__menu-list {
     display: flex;
     flex-direction: column;
-    margin-left: 20px;
+    justify-content: center;
+    margin-top: 50px;
+    // margin-left: 20px;
   }
  .Toolbar__tool-selector {
-   margin-top: 20px;
+   // margin-top: 20px;
+   position: relative;
+   .PixiMapSpriteContainer {
+     position: absolute;
+      top: 5px;
+      left: 5px;
+   }
  }
  .Toolbar__tool-container {
-   margin-top: 20px;
+   // margin-top: 20px;
    .Toolbar__tool-selector {
-     margin-top: 0px;
+     // margin-top: 0px;
    }
  }
   &__menu-item {

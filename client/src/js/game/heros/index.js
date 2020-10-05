@@ -144,7 +144,7 @@ class Hero{
 
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
       // we locally update the hero input as host so hosts do not send
-      if(!PAGE.role.isHost && !PAGE.typingMode) {
+      if(!PAGE.role.isHost && !PAGE.typingMode && !CONSTRUCTEDITOR.open) {
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }

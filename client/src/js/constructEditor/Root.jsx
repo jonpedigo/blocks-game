@@ -97,16 +97,24 @@ export default class Root extends React.Component{
       BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
       }}/>
     } else {
-      return <ToolbarButton onClick={() => {
+      return <ToolbarRow
+        rowButtonChildren={<PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite>}
+        onClick={() => {
           BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
       }}>
-        <PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite>
-      </ToolbarButton>
+        <ToolbarButton iconName="fa-times" onClick={() => {
+          CONSTRUCTEDITOR.selectedTextureId = null
+          this.setState({
+            textureIdSelected: null,
+          })
+        }}/>
+      </ToolbarRow>
     }
 
   }
 
   _renderMenu() {
+    const { toolChange, selectColor } = this.props
     const { selectedColor, isColorPickerOpen, toolSelected } = this.state
 
     const colorSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorColor
@@ -114,12 +122,41 @@ export default class Root extends React.Component{
     //<div className="ConstructEditor__menu-item ConstructEditor__menu-item--text" onClick={this._cancelClick}>Cancel</div>
 
     return <div className="ConstructEditor__menu-list">
-      {colorSelection && !isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
-      {isColorPickerOpen && <div className="ConstructEditor__menu-item fas fa-times" onClick={this._closeColorPicker}></div>}
+      {colorSelection && !isColorPickerOpen && <ToolbarRow iconName="fa-palette" rowButtonBackgroundColor={CONSTRUCTEDITOR.selectedColor} onClick={this._openColorPicker}>
+        <ToolbarButton iconName="fa-times" onClick={() => {
+            selectColor(GAME.world.defaultObjectColor || window.defaultObjectColor)
+            this.setState({
+              selectColor: GAME.world.defaultObjectColor || window.defaultObjectColor,
+            })
+          }}/>
+      </ToolbarRow>}
+      {isColorPickerOpen && <ToolbarButton backgroundColor={this.state.selectedColor} iconName="fa-times" onClick={this._closeColorPicker}/>}
       {spriteSelection && this._renderSpriteSelector()}
+      <br/>
       <ToolbarButton active={toolSelected === 'paintBrush'} iconName="fa-paint-brush" onClick={this._paintBrushClick}/>
       <ToolbarButton active={toolSelected === 'eyeDropper'} iconName="fa-eye-dropper" onClick={this._eyeDropperClick}/>
       <ToolbarButton active={toolSelected === 'eraser'} iconName="fas fa-eraser" onClick={this._eraserClick}/>
+      <ToolbarRow active={toolSelected.indexOf('fill') >= 0} iconName='fa-fill'>
+        <ToolbarButton active={toolSelected === 'fill-area'} iconName="fa-fill-drip" onClick={() => {
+          toolChange('fill-area')
+          this.setState({
+            toolSelected: 'fill-area'
+          })
+        }}/>
+        {colorSelection && <ToolbarButton active={toolSelected === 'fill-same-color'} iconName="fa-palette" onClick={() => {
+          toolChange('fill-same-color')
+          this.setState({
+            toolSelected: 'fill-same-color'
+          })
+        }}/>}
+      {spriteSelection && <ToolbarButton active={toolSelected === 'fill-same-images'} iconName="fa-image" onClick={() => {
+        toolChange('fill-same-images')
+        this.setState({
+          toolSelected: 'fill-same-images'
+        })
+      }}/>}
+      </ToolbarRow>
+      <br/>
       <ToolbarRow iconName='fa-search'>
         <ToolbarButton iconName="fa-search-plus" onClick={() => {
             CONSTRUCTEDITOR.cameraController.zoomMultiplier -= (EDITOR.zoomDelta * 4)
@@ -136,7 +173,14 @@ export default class Root extends React.Component{
             isMapVisible: CONSTRUCTEDITOR.mapVisible
           })
         }}/>
-      <ToolbarButton text="save" onClick={this._saveClick}/>
+      <br/>
+      {CONSTRUCTEDITOR.nodesHistory.length > 0 && <ToolbarButton text="undo" onClick={() => {
+        if(CONSTRUCTEDITOR.nodesHistory.length) {
+          CONSTRUCTEDITOR.grid.nodes = CONSTRUCTEDITOR.nodesHistory.shift()
+          this.forceUpdate()
+        }
+        }}/>}
+      <ToolbarButton text="return" onClick={this._saveClick}/>
     </div>
   }
 

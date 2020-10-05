@@ -126,11 +126,11 @@ function onPlayerIdentified(){
     if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {
-      if(!PAGE.typingMode) {
+      if(!PAGE.typingMode && !CONSTRUCTEDITOR.open) {
         GAME.keysDown[key] = true
       }
       //locally update the host input! ( teehee this is the magic! )
-      if(PAGE.role.isHost) {
+      if(PAGE.role.isHost && !CONSTRUCTEDITOR.open) {
         if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
         GAME.heroInputs[HERO.id][key] = true
         GAME.heros[HERO.id].keysDown = GAME.heroInputs[HERO.id]

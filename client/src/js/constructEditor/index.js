@@ -12,6 +12,7 @@ import gridUtil from '../utils/grid'
 import drawTools from '../mapeditor/drawTools'
 import keyInput from './keyInput'
 import Root from './Root.jsx'
+import Swal from 'sweetalert2/src/sweetalert2.js';
 
 class ConstructEditor {
   constructor() {
@@ -61,6 +62,7 @@ class ConstructEditor {
     this.canvas.removeEventListener('mousemove', this._mouseMoveListener)
     this.canvas.removeEventListener('mouseup', this._mouseUpListener)
     this.ref.close()
+    this.nodesHistory = []
     this.initState()
   }
 
@@ -149,6 +151,7 @@ class ConstructEditor {
     this.ref.open(color)
     this.selectColor(color)
 
+    this.nodesHistory = []
 
     window.local.emit('onConstructEditorStart', object)
   }
@@ -160,20 +163,54 @@ class ConstructEditor {
 
   handleMouseDown(event) {
     const { camera, grid, tool } = this
+    if(event.target.className === '') return
     if(tool === 'paintBrush') {
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
       this.painting = true
       this.paintNodeXY(this.mousePos.x, this.mousePos.y)
       this.ref.closeColorPicker()
     } else if(tool === 'eraser') {
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
       this.erasing = true
       this.unfillNodeXY(this.mousePos.x, this.mousePos.y)
       this.ref.closeColorPicker()
     } else if(tool === 'eyeDropper') {
-      const color = this.getColorFromNodeXY(this.mousePos.x, this.mousePos.y)
+      const { color, defaultSprite } = this.getDataFromNodeXY(this.mousePos.x, this.mousePos.y)
       this.selectedColor = color || GAME.world.defaultObjectColor || window.defaultObjectColor
+      this.selectedTextureId = defaultSprite
       this.ref.setColor(this.selectedColor)
+      this.ref.setTextureId(this.selectedTextureId)
+    } else if(tool === 'fill-area') {
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
+      this.bucketFill()
+      this.ref.closeColorPicker()
+    } else if(tool === 'fill-same-images') {
+      const { gridX, gridY } = grid.getGridXYfromXY(this.mousePos.x, this.mousePos.y, { closest: false })
+      const originalNode = _.cloneDeep(grid.nodes[gridX][gridY])
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
+      this.grid.forEachNode((node) => {
+        if(node.data.filled && node.data.defaultSprite === originalNode.data.defaultSprite) {
+          node.data.defaultSprite = this.selectedTextureId
+          node.data.color = this.selectedColor
+        }
+      })
+      this.ref.closeColorPicker()
+    } else if(tool === 'fill-same-color') {
+      const { gridX, gridY } = grid.getGridXYfromXY(this.mousePos.x, this.mousePos.y, { closest: false })
+      const originalNode = _.cloneDeep(grid.nodes[gridX][gridY])
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
+      this.grid.forEachNode((node) => {
+        if(node.data.filled && node.data.color === originalNode.data.color) {
+          node.data.color = this.selectedColor
+          node.data.defaultSprite = this.selectedTextureId
+        }
+      })
       this.ref.closeColorPicker()
     }
+
+    CONSTRUCTEDITOR.ref.forceUpdate()
+
+    if(this.nodesHistory.length > 10) this.nodesHistory.length = 10
   }
 
   handleMouseMove(event) {
@@ -199,6 +236,7 @@ class ConstructEditor {
     if(service === 'constructEditor') {
       this.selectedTextureId = id
       this.ref.setTextureId(id)
+      this.selectedColor = GAME.world.defaultObjectColor
     }
   }
 
@@ -337,6 +375,34 @@ class ConstructEditor {
     }
   }
 
+  bucketFill() {
+    const { selectedColor, grid, selectedTextureId } = this
+    const { gridX, gridY } = grid.getGridXYfromXY(this.mousePos.x, this.mousePos.y, { closest: false })
+
+    if(!grid.nodes[gridX] || !grid.nodes[gridX][gridY]) return
+
+    const originalNode = _.cloneDeep(grid.nodes[gridX][gridY])
+    // if(!originalNode.data.filled) {
+    //   return
+    //   const { result: yes } = await Swal.fire
+    // }
+    const nodesSeen = {}
+    const findAndFillSimilarNeighbors = (node) => {
+      const neighbors = grid.findNeighborNodes(node.gridX, node.gridY)
+      nodesSeen[node.id] = true
+      this.fillNode(node.gridX, node.gridY, selectedColor, selectedTextureId)
+      neighbors.forEach((neighbor) => {
+        if(nodesSeen[neighbor.id]) {
+          return
+        }
+        if(neighbor.data.filled == originalNode.data.filled && neighbor.data.color == originalNode.data.color &&  neighbor.data.defaultSprite == originalNode.data.defaultSprite) {
+          findAndFillSimilarNeighbors(neighbor)
+        }
+      })
+    }
+    findAndFillSimilarNeighbors(originalNode)
+  }
+
   paintNodeXY(x, y) {
     const { selectedColor, grid, selectedTextureId } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
@@ -361,11 +427,11 @@ class ConstructEditor {
     this.unfillNode(gridX, gridY)
   }
 
-  getColorFromNodeXY(x, y) {
+  getDataFromNodeXY(x, y) {
     const { grid } = this
     const { gridX, gridY } = grid.getGridXYfromXY(x, y, { closest: false })
-    let color = this.grid.nodes[gridX][gridY].data.color
-    return color
+    let data = this.grid.nodes[gridX][gridY].data
+    return data
   }
 
   fillNode(gridX, gridY, color, textureId) {
@@ -441,6 +507,8 @@ class ConstructEditor {
         drawTools.drawObject(ctx, {...nodeHighlighted, color: 'rgba(255,255,255, 0.2)'}, camera)
       }
     }
+
+    drawTools.drawLoadingScreen(ctx, camera)
   }
 }
 

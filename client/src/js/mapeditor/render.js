@@ -227,24 +227,7 @@ function update() {
     drawTools.drawBorder(ctx, {...editingHero, color: '#0A0'}, camera, {thickness: 5})
   }
 
-  const gameEligibleForLoading = true || (GAME.grid.width > 80 || GAME.objects.length > 300)
-  const loadingState = (PAGE.loadingGame)
-  PAGE.loadingScreen = !PAGE.isGameReady || (gameEligibleForLoading && loadingState)
-
-  const hero = GAME.heros[HERO.id]
-  if(hero && hero.animationZoomMultiplier) PAGE.loadingScreen = false
-
-  if(PAGE.loadingScreen) {
-    ctx.fillStyle = "#222"
-    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
-    // if(PAGE.role.isAdmin) {
-      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
-    // }
-    MAPEDITOR.loaderElement.style.display = "block"
-  } else {
-    MAPEDITOR.loaderElement.style.display = "none"
-  }
-
+  drawTools.drawLoadingScreen(ctx, camera)
 
   if(!window.focused) {
     ctx.fillStyle = "rgba(0,0,0,.8)"
