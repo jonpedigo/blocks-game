@@ -97,18 +97,15 @@ export default class Root extends React.Component{
   _paintBrushClick() {
     const { toolChange } = this.props
     toolChange('paintBrush')
-    window.setFontAwesomeCursor("\uf4d7", 'white')
   }
 
   _eyeDropperClick() {
     const { toolChange } = this.props
     toolChange('eyeDropper')
-    window.setFontAwesomeCursor("\uf1fb", 'white')
   }
 
   _eraserClick() {
     const { toolChange } = this.props
-    window.setFontAwesomeCursor("\uf12d", 'white')
     toolChange('eraser')
   }
 

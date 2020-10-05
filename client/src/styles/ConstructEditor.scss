@@ -18,7 +18,15 @@
     flex-direction: column;
     margin-left: 20px;
   }
-
+ .Toolbar__tool-selector {
+   margin-top: 20px;
+ }
+ .Toolbar__tool-container {
+   margin-top: 20px;
+   .Toolbar__tool-selector {
+     margin-top: 0px;
+   }
+ }
   &__menu-item {
     height: 40px;
     width: 40px;

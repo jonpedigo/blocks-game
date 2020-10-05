@@ -329,6 +329,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
 function heroPhysics() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
+    if(hero.mod().flags.isAdmin) return
     heroCollisionEffects(hero)
     if(hero.mod().relativeId) return
     heroCorrection(hero)

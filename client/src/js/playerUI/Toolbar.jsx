@@ -6,6 +6,7 @@ import modals from '../mapeditor/modals'
 import sequenceEditorModals from '../sequenceeditor/modals'
 import ToolbarRow from '../editorUI/ToolbarRow.jsx'
 import ToolbarButton from '../editorUI/ToolbarButton.jsx'
+import LoadingSpinner from '../components/LoadingSpinner.jsx'
 
 export default class Toolbar extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export default class Toolbar extends React.Component {
 
     this.state = {
       open: true,
+      askedForStart: false,
     }
 
     this._open = () => {
@@ -29,9 +31,18 @@ export default class Toolbar extends React.Component {
   }
 
   _renderStartStop() {
+    if(window.waitingForStart) {
+      return <ToolbarButton>
+        <LoadingSpinner/>
+      </ToolbarButton>
+    }
     return <React.Fragment>{!GAME.gameState.started && !GAME.gameState.branch && <ToolbarButton iconName="fa-play" onClick={() => {
       if(PAGE.role.isHomeEditor) window.socket.emit('startGame')
-      else window.socket.emit('requestAdminApproval', 'startGame', { text: 'Start Game Request', requestId: 'request-'+window.uniqueID()})
+      else {
+        window.waitingForStart = 'request-'+window.uniqueID()
+        this.forceUpdate()
+        window.socket.emit('requestAdminApproval', 'startGame', { text: 'Start Game Request', requestId: window.waitingForStart })
+      }
     }}/>}
     {GAME.gameState.started && <ToolbarButton iconName='fa-stop' onClick={() => {
       window.socket.emit('stopGame')

@@ -291,8 +291,6 @@ const initPixiApp = (canvasRef, onLoad) => {
     if(spriteSheetIds[name]) return true
   })
 
-  console.log(spritesheetsRequested)
-
   let socket = window.socket
   if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
     socket = window.networkSocket
@@ -305,7 +303,6 @@ const initPixiApp = (canvasRef, onLoad) => {
   };
 
   axios.get(window.HAGameServerUrl + '/spriteSheets', options).then(res => {
-    console.log('XX?', res.data)
     const spriteSheets = res.data.spriteSheets
     window.spriteSheets = spriteSheets
     startLoadingAssets(spriteSheets.map((ss) => {

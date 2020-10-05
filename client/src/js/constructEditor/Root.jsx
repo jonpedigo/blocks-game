@@ -1,6 +1,8 @@
 import { SketchPicker, SwatchesPicker } from 'react-color';
 import React from 'react'
 import PixiMapSprite from '../components/PixiMapSprite.jsx';
+import ToolbarRow from '../editorUI/ToolbarRow.jsx'
+import ToolbarButton from '../editorUI/ToolbarButton.jsx'
 
 export default class Root extends React.Component{
   constructor(props) {
@@ -9,6 +11,8 @@ export default class Root extends React.Component{
     this.state = {
       open: false,
       selectedColor: '',
+      toolSelected: 'paintBrush',
+      isMapVisible: true,
     }
 
     this._openColorPicker = this._openColorPicker.bind(this)
@@ -18,6 +22,12 @@ export default class Root extends React.Component{
     this._eraserClick = this._eraserClick.bind(this)
     this._saveClick = this._saveClick.bind(this)
     this._cancelClick = this._cancelClick.bind(this)
+  }
+
+  closeColorPicker() {
+    this.setState({
+      isColorPickerOpen: false
+    })
   }
 
   setColor(color) {
@@ -83,21 +93,21 @@ export default class Root extends React.Component{
     const { textureIdSelected } = this.state
 
     if(!textureIdSelected) {
-      return <div className="ConstructEditor__menu-item fas fa-image" onClick={() => {
+      return <ToolbarButton iconName="fa-image" onClick={() => {
       BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
-      }}></div>
+      }}/>
     } else {
-      return <div className="ConstructEditor__menu-item" onClick={() => {
+      return <ToolbarButton onClick={() => {
           BELOWMANAGER.open({ selectedManager: 'MediaManager', objectSelected: 'constructEditor', selectedMenu: 'SpriteSelector'})
       }}>
         <PixiMapSprite width="40" height="40" textureId={textureIdSelected}></PixiMapSprite>
-      </div>
+      </ToolbarButton>
     }
 
   }
 
   _renderMenu() {
-    const { selectedColor, isColorPickerOpen } = this.state
+    const { selectedColor, isColorPickerOpen, toolSelected } = this.state
 
     const colorSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorColor
     const spriteSelection = PAGE.role.isAdmin || GAME.heros[HERO.id].flags.constructEditorSprite
@@ -107,10 +117,26 @@ export default class Root extends React.Component{
       {colorSelection && !isColorPickerOpen && <div className="ConstructEditor__menu-item" style={{backgroundColor: selectedColor}} onClick={this._openColorPicker}></div>}
       {isColorPickerOpen && <div className="ConstructEditor__menu-item fas fa-times" onClick={this._closeColorPicker}></div>}
       {spriteSelection && this._renderSpriteSelector()}
-      <div className="ConstructEditor__menu-item fas fa-paint-brush" onClick={this._paintBrushClick}></div>
-      <div className="ConstructEditor__menu-item fas fa-eye-dropper" onClick={this._eyeDropperClick}></div>
-      <div className="ConstructEditor__menu-item fas fa-eraser" onClick={this._eraserClick}></div>
-      <div className="ConstructEditor__menu-item ConstructEditor__menu-item--text" onClick={this._saveClick}>Save</div>
+      <ToolbarButton active={toolSelected === 'paintBrush'} iconName="fa-paint-brush" onClick={this._paintBrushClick}/>
+      <ToolbarButton active={toolSelected === 'eyeDropper'} iconName="fa-eye-dropper" onClick={this._eyeDropperClick}/>
+      <ToolbarButton active={toolSelected === 'eraser'} iconName="fas fa-eraser" onClick={this._eraserClick}/>
+      <ToolbarRow iconName='fa-search'>
+        <ToolbarButton iconName="fa-search-plus" onClick={() => {
+            CONSTRUCTEDITOR.cameraController.zoomMultiplier -= (EDITOR.zoomDelta * 4)
+            window.local.emit('onZoomChange')
+        }}/>
+        <ToolbarButton iconName="fa-search-minus" onClick={() => {
+          CONSTRUCTEDITOR.cameraController.zoomMultiplier += (EDITOR.zoomDelta * 4)
+          window.local.emit('onZoomChange')
+        }}/>
+      </ToolbarRow>
+      <ToolbarButton active={!this.state.isMapVisible} iconName="fa-eye-slash" onClick={() => {
+          CONSTRUCTEDITOR.toggleMapVisibility()
+          this.setState({
+            isMapVisible: CONSTRUCTEDITOR.mapVisible
+          })
+        }}/>
+      <ToolbarButton text="save" onClick={this._saveClick}/>
     </div>
   }
 
@@ -125,18 +151,27 @@ export default class Root extends React.Component{
   _paintBrushClick() {
     const { toolChange } = this.props
     toolChange('paintBrush')
-    window.setFontAwesomeCursor("\uf1fc", 'white')
+    this.setState({
+      toolSelected: 'paintBrush'
+    })
+    // window.setFontAwesomeCursor("\uf1fc", 'white')
   }
 
   _eyeDropperClick() {
     const { toolChange } = this.props
     toolChange('eyeDropper')
-    window.setFontAwesomeCursor("\uf1fb", 'white')
+    this.setState({
+      toolSelected: 'eyeDropper'
+    })
+    // window.setFontAwesomeCursor("\uf1fb", 'white')
   }
 
   _eraserClick() {
     const { toolChange } = this.props
-    window.setFontAwesomeCursor("\uf12d", 'white')
+    this.setState({
+      toolSelected: 'eraser'
+    })
+    // window.setFontAwesomeCursor("\uf12d", 'white')
     toolChange('eraser')
   }
 
