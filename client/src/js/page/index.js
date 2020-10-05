@@ -193,7 +193,6 @@ class Page{
   }
 
   playerIdentified(heroSummonType) {
-    window.onfocus = null
     PAGE.setupRemoteLogging()
     PAGE.establishRoleFromQueryOnly()
     HERO.getHeroId(heroSummonType === 'resume')
@@ -370,6 +369,13 @@ class Page{
     }
     if(!PAGE.gameLoaded) {
       sockets.init()
+      window.focused = true
+      window.onfocus = () => {
+        window.focused = true
+      }
+      window.onblur = () => {
+        window.focused = false
+      }
       window.local.emit('onFirstPageGameLoaded')
     }
     PAGE.gameLoaded = true

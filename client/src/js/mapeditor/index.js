@@ -45,6 +45,12 @@ class MapEditor {
     MAPEDITOR.loaderElement = loader
     document.getElementById('GameContainer').appendChild(loader)
     loader.style.display = "none"
+
+    const blur = document.createElement('div')
+    blur.className = 'blur'
+    MAPEDITOR.blurElement = blur
+    document.getElementById('GameContainer').appendChild(blur)
+    blur.style.display = "none"
   }
 
   set(ctx, canvas, camera) {

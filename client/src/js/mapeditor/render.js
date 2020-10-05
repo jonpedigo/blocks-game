@@ -244,6 +244,18 @@ function update() {
   } else {
     MAPEDITOR.loaderElement.style.display = "none"
   }
+
+
+  if(!window.focused) {
+    ctx.fillStyle = "rgba(0,0,0,.8)"
+    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
+    // if(PAGE.role.isAdmin) {
+      // drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    // }
+    MAPEDITOR.blurElement.style.display = "block"
+  } else {
+    MAPEDITOR.blurElement.style.display = "none"
+  }
 }
 
 export default {

@@ -14,6 +14,22 @@
   }
 }
 
+.blur {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform: -webkit-translate(-50%, -50%);
+  transform: -moz-translate(-50%, -50%);
+  transform: -ms-translate(-50%, -50%);
+  font-family: Courier;
+  &:after {
+    color: white;
+    font-size: 20px;
+    content: 'Please click the screen to play'
+  }
+}
+
 // .loader,
 // .loader:before,
 // .loader:after {
