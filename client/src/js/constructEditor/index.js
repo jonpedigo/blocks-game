@@ -497,7 +497,7 @@ class ConstructEditor {
     }
 
     if(nodeHighlighted) {
-      if(tool === 'paintBrush') {
+      if(tool === 'paintBrush' || tool.indexOf('fill') >= 0) {
         if(this.selectedTextureId) {
           drawTools.drawSprite(ctx, camera, this.selectedTextureId, {...nodeHighlighted, color: selectedColor })
         } else drawTools.drawObject(ctx, {...nodeHighlighted, color: selectedColor }, camera)

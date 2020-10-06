@@ -230,7 +230,6 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     socket.emit('onAddObjects', currentGame.objects)
   })
   socket.on('addObjects', (addedobjects) => {
-    console.log('???')
     io.emit('onAddObjects', addedobjects)
   })
 

@@ -6,7 +6,7 @@
 
 TODO
 
-SIMPLE SEQUENCE
+SIMPLE SEQUENCE ( Opening Sequence )
 PUZZLE INTERFACES
 -----
 
@@ -76,11 +76,12 @@ Win/Lose States that can connect to the meta of the engine ( picking new game or
 COMBAT UPGRADE
 HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
 VICTIMS, ENEMIES, NEUTRAL,
+Rock Paper Scissors?
 AGGRESIVE
 level system, ranged attacks, etc
 CONSTRUCT EDITOR - Destroy parts
 Game Over State
-	specifically allow a hero to be destoyed and have the game run still? 
+	specifically allow a hero to be destoyed and have the game run still?
 
 BRANCH
 Different roots for the branches...
@@ -131,6 +132,8 @@ Start mod on collide tag
 
 --
 
+sub object top vs bottom...
+
 every one gets their own construct editor drawing things, the problem is then that I have to deal with the layering issue...
 
 Right click ( start game with heros here )
@@ -145,10 +148,6 @@ add object needs to be its own thing with effect, wait, condition, etc.
 Its getting really complicated. For now im going to cheat it. It should have its own service and its own sequence type, feel me?
 
 Combine spawning with anticipatedAdd. create like spawnType variable which defaults to, hatchFromParent
-
-editor checkpoint. Switch edited objects to new checkpoint after change.
-You'd get a diff of what we just made vs what we are comparing it to. I can create an effect that switches to that checkpoint instead
-LORDD ^^
 
 WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
 
