@@ -227,7 +227,7 @@ function handleMouseUp(event) {
 
 function handleMouseDown(event) {
   const { camera, networkEditObject } = MAPEDITOR
-
+  if(!PIXIMAP.app) return
   const { x, y } = window.convertToGameXY(event)
   MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)

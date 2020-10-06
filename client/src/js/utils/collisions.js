@@ -2,12 +2,22 @@ function check(agent, objects, onCollide = () => {}) {
   let illegal = false
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
-    if(objects[i].mod().removed) continue
-    if(agent.id === objects[i].id) continue
-    checkObject(agent, objects[i], () => {
-      if(objects[i].tags.obstacle) illegal = true
-      if(onCollide) onCollide(objects[i])
-    })
+    const object = objects[i]
+    if(object.mod().removed) continue
+    if(agent.id === object.id) continue
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        checkObject(agent, part, () => {
+          if(object.tags.obstacle) illegal = true
+          if(onCollide) onCollide(object)
+        })
+      })
+    } else {
+      checkObject(agent, object, () => {
+        if(object.tags.obstacle) illegal = true
+        if(onCollide) onCollide(object)
+      })
+    }
   }
 
   return illegal
@@ -17,12 +27,22 @@ function checkAnything(agent, objects, onCollide = () => {}) {
   let illegal = false
   // Are they touching?
   for(let i = 0; i < objects.length; i++){
-    if(objects[i].mod().removed) continue
-    if(agent.id === objects[i].id) continue
-    checkObject(agent, objects[i], () => {
-      illegal = true
-      if(onCollide) onCollide(objects[i])
-    })
+    const object = objects[i]
+    if(object.mod().removed) continue
+    if(agent.id === object.id) continue
+    if(object.constructParts) {
+      object.constructParts.forEach((part) => {
+        checkObject(agent, part, () => {
+          illegal = true
+          if(onCollide) onCollide(object)
+        })
+      })
+    } else {
+      checkObject(agent, object, () => {
+        illegal = true
+        if(onCollide) onCollide(object)
+      })
+    }
   }
 
   return illegal

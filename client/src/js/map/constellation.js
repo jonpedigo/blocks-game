@@ -86,7 +86,6 @@ function onResize(ctx) {
     var star = new Star(randX, randY, randR, randomColor());
     arrStars.push(star);
   }
-  console.trace('RESIZING CONSTELLATION')
 }
 
 export default {

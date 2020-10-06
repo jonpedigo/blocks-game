@@ -123,7 +123,7 @@ function createDefaultEmitter(stage, gameObject, emitterDataName, options) {
   }
 
   if(options.matchObjectColor) {
-    let color = gameObject.color || GAME.world.defaultObjectColor
+    let color = gameObject.color || GAME.world.defaultObjectColor || window.defaultObjectColor
     particleData.color.start = color
     // if(emitterDataName == 'trail') {
     //   particleData.color.end = lighten(color)

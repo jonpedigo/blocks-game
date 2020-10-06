@@ -34,14 +34,17 @@ function spawnObject(object) {
       const spawnSubObject = window.getSubObjectFromChances(null, null, object)
       if(!spawnSubObject) return
       const newObject = getSpawnObjectData(object, spawnSubObject)
-      spawnObjectOnMap(object, newObject)
-
-      object.spawnPool--
-
-      object.spawnWait = true
-      object.spawnWaitTimerId = GAME.addTimeout('spawnWait-' + window.uniqueID(), object.spawnWaitTimer || 10, () => {
-        object.spawnWait = false
-      })
+      if(newObject) {
+        spawnObjectOnMap(object, newObject)
+        object.spawnPool--
+        object.spawnWait = true
+        object.spawnWaitTimerId = GAME.addTimeout('spawnWait-' + window.uniqueID(), object.spawnWaitTimer || 10, () => {
+          object.spawnWait = false
+        })
+      } else {
+        console.log('no room in spawn zone... stopping spawn')
+        object.spawnWait = true
+      }
     }
   }
 
@@ -159,7 +162,7 @@ function getSpawnObjectData(object, subObject, spawnPending = [], isRespawn = fa
 
       if(i == 10) {
         console.log('no room for spawn ', object.id)
-        return 'no room'
+        return null
       }
     }
 
@@ -216,7 +219,7 @@ function spawnAllNow(spawningObject, spawnInto) {
     const readyToSpawn = []
     spawnSubObjects.forEach((sso) => {
       const willSpawn = getSpawnObjectData(spawningObject, sso, readyToSpawn)
-      readyToSpawn.push(willSpawn)
+      if(willSpawn) readyToSpawn.push(willSpawn)
     })
 
     readyToSpawn.forEach((spawnMe) => {

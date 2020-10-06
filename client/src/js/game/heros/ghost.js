@@ -41,7 +41,6 @@ class Ghost{
 
   onHerosLoaded(){
     if(!HERO.originalId) {
-      console.log('WARNING TELL JON -> reset hero original id')
       HERO.originalId = HERO.id
     }
     if(!PAGE.role.isAdmin) return
