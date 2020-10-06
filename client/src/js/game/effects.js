@@ -92,7 +92,6 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     starViewGo: {},
     starViewReturn: {},
     endPrologue: {},
-    stopGameLite: {},
 
     //create
     anticipatedAdd: {
