@@ -419,6 +419,10 @@ function init() {
   window.socket.on('onEditMetadata', (update) => {
     window.local.emit('onEditMetadata', update)
   })
+
+  window.socket.on('onProcessEffect', (effectName, effectedIds, effectorId) => {
+    window.local.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
 }
 
 export default {

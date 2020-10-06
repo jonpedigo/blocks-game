@@ -12,6 +12,7 @@ import grid from './grid.js'
 import tracking from './tracking.js'
 import dayNightCycle from './daynightcycle.js'
 import metadata from './metadata.js'
+import effects from './effects'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
@@ -537,6 +538,17 @@ class Game{
     window.local.emit('onLoadingScreenEnd')
   }
 
+  onProcessEffect(effect, effectedIds, effectorId) {
+    if(!effectedIds) {
+      effects.processEffect(effect)
+    } else {
+      const effector = GAME.getObjectOrHeroById(effectorId)
+      effectedIds.forEach((id) => {
+        effects.processEffect(effect, GAME.getObjectOrHeroById(id), effector)
+      })
+    }
+  }
+
   onStopGame() {
     if(!GAME.gameState.started) {
       return console.log('trying to stop game that aint even started yet')
@@ -922,8 +934,7 @@ class Game{
   }
 
   onResetObjects() {
-    console.log(GAME.objects.length)
-    GAME.objects.forEach((object) => {
+    [...GAME.objects].forEach((object) => {
       window.local.emit('onDeleteObject', object)
     }, [])
     GAME.objects = []
@@ -1193,7 +1204,6 @@ class Game{
   onEditGameHeroJSON(gameHeroName, JSON) {
     if(gameHeroName === 'default') {
       GAME.defaultHero = JSON
-      console.log(JSON)
     }
   }
 

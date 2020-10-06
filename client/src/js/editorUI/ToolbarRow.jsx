@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import { SketchPicker, SwatchesPicker } from 'react-color';
+import ToolbarButton from './ToolbarButton.jsx';
 
 export default class ToolbarRow extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export default class ToolbarRow extends React.Component {
   }
 
   render() {
-    let { active, iconName, children, column, onClick, rowButtonChildren, rowButtonBackgroundColor } = this.props
+    let { active, iconName, children, column, onClick, onShiftClick, rowButtonChildren, rowButtonBackgroundColor } = this.props
 
     const { open } = this.state
 
@@ -27,9 +28,9 @@ export default class ToolbarRow extends React.Component {
           this.setState({ open: false })
         }}
         >
-          <i onClick={onClick} style={{backgroundColor: rowButtonBackgroundColor}} className={classnames("Toolbar__tool-selector fa fas ", iconName, { "Toolbar__tool-selector--normal-cursor": true, "Toolbar__tool-selector--active": active })}>
+          <ToolbarButton iconName={iconName} onClick={onClick} active={active} onShiftClick={onShiftClick} backgroundColor={rowButtonBackgroundColor}>
             {rowButtonChildren}
-          </i>
+          </ToolbarButton>
           <div className={classnames({"Toolbar__tool-children": !column, "Toolbar__tool-children--column": column })}>
             {children && open && children.map((child) => {
               return <div className="Toolbar__tool-child">

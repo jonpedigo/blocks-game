@@ -111,9 +111,15 @@ export default class Toolbar extends React.Component {
             }}/>
           </ToolbarRow>
         }
-        {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
-          window.socket.emit('stopGame')
-        }}>
+        {GAME.gameState.started && <ToolbarRow iconName='fa-stop'
+          onShiftClick={() => {
+            window.socket.emit('processEffect', {
+              effectName: 'stopGamePreserve'
+            })
+          }}
+          onClick={() => {
+            window.socket.emit('stopGame')
+          }}>
           <ToolbarButton iconName={GAME.gameState.paused ? "fa-play" : "fa-pause"} onClick={() => {
             if(!GAME.gameState.paused) window.socket.emit('editGameState', { paused: true })
             if(GAME.gameState.paused) window.socket.emit('editGameState', { paused: false })
@@ -281,7 +287,11 @@ export default class Toolbar extends React.Component {
               }
               PAGE.typingMode = false
             })
-          }}/>
+          }}
+          onShiftClick={() => {
+            window.socket.emit('editGameHeroJSON', 'default', window.defaultHero)
+          }}
+          />
           {/* Compendium -> Menu */}
           <ToolbarButton iconName="fa-book-dead"/>
         </ToolbarRow>

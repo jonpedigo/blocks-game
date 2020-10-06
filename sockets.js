@@ -545,6 +545,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('editMetadata', (update) => {
     io.emit('onEditMetadata', update)
   })
+
+  socket.on('processEffect', (effectName, effectedIds, effectorId) => {
+    io.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
 }
 
 module.exports = socketEvents
