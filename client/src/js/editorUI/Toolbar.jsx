@@ -194,7 +194,7 @@ export default class Toolbar extends React.Component {
             LIVEEDITOR.open(GAME.heros[HERO.editingId], 'hero')
           }}/>
           {/* star view */}
-          {hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
+          {hero && hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
           }}/> : <ToolbarButton iconName="fa-star" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })

@@ -359,15 +359,6 @@ class Game{
   unload() {
     window.local.emit('onGameUnload')
 
-    if(PAGE.role.isPlayEditor) {
-      window.editingObject = {
-        id: null,
-        i: null,
-      }
-      window.objecteditor.saved = true
-      window.objecteditor.update({})
-    }
-
     GAME.objects.forEach((object) => {
       OBJECTS.unloadObject(object)
     })
@@ -376,17 +367,19 @@ class Game{
       HERO.deleteHero(hero)
     })
 
+    GAME.removeListeners()
+    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  }
+
+  removeListeners() {
     GAME.gameState.sequenceQueue.forEach((sequence) => {
       sequence.eventListeners.forEach((remove) => {
         if(remove) remove()
       })
     })
-
     GAME.gameState.activeModList.forEach((mod) => {
       if(mod.removeEventListener) mod.removeEventListener()
     })
-
-    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   }
 
   snapToGrid() {
@@ -929,7 +922,9 @@ class Game{
   }
 
   onResetObjects() {
+    console.log(GAME.objects.length)
     GAME.objects.forEach((object) => {
+      console.log(object.id)
       window.local.emit('onDeleteObject', object)
     }, [])
     GAME.objects = []

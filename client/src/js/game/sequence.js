@@ -103,7 +103,6 @@ function togglePauseSequence(sequence) {
 function processSequence(sequence) {
   const item = sequence.itemMap[sequence.currentItemId]
   if(!item) {
-    console.log(sequence.paused)
     if(sequence.currentItemId === 'end' && !sequence.paused) {
       endSequence(sequence)
     }
@@ -221,41 +220,63 @@ function processSequence(sequence) {
       } else {
         sequence.paused = true
         sequence.currentItemId = item.next
-        window.socket.emit('requestAdminApproval', 'unpauseSequence', { sequenceId: sequence.id, text: 'Sequence ' + sequence.id + ' needs approval to continue', approveButtonText: 'Resume', rejectButtonText: 'Stop', requestId: 'request-'+window.uniqueID()})
+        window.socket.emit('requestAdminApproval', 'unpauseSequence', { sequenceId: sequence.id, text: item.conditionValue || 'Sequence ' + sequence.id + ' needs approval to continue', approveButtonText: 'Resume', rejectButtonText: 'Stop', requestId: 'request-'+window.uniqueID()})
         return
       }
     }
   }
 
   if(item.sequenceType === 'sequenceCondition') {
-    const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
+    if(item.conditionType === 'onAdminApproval') {
+     if(PAGE.role.isArcadeMode) {
+       sequence.currentItemId = item.passNext
+     } else {
+       sequence.paused = true
+       const requestId = 'request-'+window.uniqueID()
+       window.socket.emit('requestAdminApproval', 'custom', { sequenceId: sequence.id, text: item.conditionValue || 'Sequence ' + sequence.id + ' needs approval to continue', approveButtonText: 'Yes', rejectButtonText: 'No', requestId})
+       const removeEventListener = window.local.on('onResolveAdminApproval', (id, passed) => {
+         if(id === requestId) {
+           if(passed) {
+             sequence.currentItemId = item.passNext
+           } else {
+             sequence.currentItemId = item.failNext
+           }
+           sequence.paused = false
+           removeEventListener()
+         }
+       })
+       sequence.eventListeners.push(removeEventListener)
+       return
+     }
+   } else {
+     const { allTestedMustPass, conditionJSON, testMainObject, testGuestObject, testWorldObject, testIds, testTags } = item
 
-    let testObjects = []
-    if(testMainObject) testObjects.push(sequence.mainObject)
-    if(testGuestObject) testObjects.push(sequence.guestObject)
-    if(testWorldObject) testObjects.push(GAME.world)
+     let testObjects = []
+     if(testMainObject) testObjects.push(sequence.mainObject)
+     if(testGuestObject) testObjects.push(sequence.guestObject)
+     if(testWorldObject) testObjects.push(GAME.world)
 
-    testObjects = testObjects.concat(testIds.map((id) => {
-      if(GAME.objectsById[id]) return GAME.objectsById[id]
-      if(GAME.heros[id]) return GAME.heros[id]
-    }))
+     testObjects = testObjects.concat(testIds.map((id) => {
+       if(GAME.objectsById[id]) return GAME.objectsById[id]
+       if(GAME.heros[id]) return GAME.heros[id]
+     }))
 
-    testObjects = testObjects.concat(testTags.reduce((arr, tag) => {
-      let newArr = arr
-      if(GAME.objectsByTag[tag]) {
-        newArr = newArr.concat(GAME.objectsByTag[tag])
-      }
-      return newArr
-    }, []))
+     testObjects = testObjects.concat(testTags.reduce((arr, tag) => {
+       let newArr = arr
+       if(GAME.objectsByTag[tag]) {
+         newArr = newArr.concat(GAME.objectsByTag[tag])
+       }
+       return newArr
+     }, []))
 
-    const pass = testCondition(item, testObjects, { allTestedMustPass })
+     const pass = testCondition(item, testObjects, { allTestedMustPass })
 
-    if(pass) {
-      sequence.currentItemId = item.passNext
-    } else {
-      sequence.currentItemId = item.failNext
-    }
-
+     if(pass) {
+       sequence.currentItemId = item.passNext
+     } else {
+       sequence.currentItemId = item.failNext
+     }
+   }
   }
 
   if(item.sequenceType === 'sequenceCutscene') {

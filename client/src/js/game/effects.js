@@ -91,6 +91,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     },
     starViewGo: {},
     starViewReturn: {},
+    stopGameLite: {},
 
     //create
     anticipatedAdd: {
@@ -127,6 +128,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
       libraryObject: true,
       label: 'How many nodes on top'
     },
+
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
     // camera effect
@@ -370,6 +372,14 @@ function processEffect(effect, effected, effector, ownerObject) {
   if(effectName === 'starViewReturn') {
     const hero = GAME.heros[effected.id]
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
+  }
+
+  if(effectName === 'stopGameLite') {
+    GAME.gameState.started = false
+    GAME.removeListeners()
+    GAME.gameState.sequenceQueue = []
+    GAME.gameState.activeModList = []
+    GAME.gameState.activeMods = {}
   }
 
   if(effectName === 'pathfindTo') {

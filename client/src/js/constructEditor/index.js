@@ -163,7 +163,7 @@ class ConstructEditor {
 
   handleMouseDown(event) {
     const { camera, grid, tool } = this
-    if(event.target.className === '') return
+    if(event.target.className=== '' && event.target.id.length == 0) return
     if(tool === 'paintBrush') {
       this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
       this.painting = true
@@ -216,7 +216,7 @@ class ConstructEditor {
   handleMouseMove(event) {
     const { camera, tool } = this
 
-    if(event.target.className==='') {
+    if(event.target.className=== '' && event.target.id.length == 0) {
       this.nodeHighlighted = null
       return
     }
@@ -473,7 +473,7 @@ class ConstructEditor {
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
-    drawTools.drawGrid(ctx, grid, camera)
+    drawTools.drawGrid(ctx, {...grid, color: 'white'}, camera)
 
     grid.forEachNode((node) => {
       if(node.data.defaultSprite) {

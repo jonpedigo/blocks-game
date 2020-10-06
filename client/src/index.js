@@ -78,6 +78,9 @@ HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
 VICTIMS, ENEMIES, NEUTRAL,
 AGGRESIVE
 level system, ranged attacks, etc
+CONSTRUCT EDITOR - Destroy parts
+Game Over State
+	specifically allow a hero to be destoyed and have the game run still? 
 
 BRANCH
 Different roots for the branches...

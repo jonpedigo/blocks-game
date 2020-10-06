@@ -42,13 +42,13 @@ export default class Root extends React.Component {
         if(action === 'stopGame') window.socket.emit('stopGame')
         if(action === 'resolveSequenceItem') window.socket.emit('resolveSequenceItem', data.sequenceId)
         if(action === 'unpauseSequence') window.socket.emit('togglePauseSequence', data.sequenceId)
-        window.socket.emit('resolveAdminApproval', data.requestId)
+        window.socket.emit('resolveAdminApproval', data.requestId, true)
       }}>
         {data.approveButtonText || 'Approve'}
       </button>
       <button onClick={() => {
         if(action === 'unpauseSequence') window.socket.emit('stopSequence', data.sequenceId)
-        window.socket.emit('resolveAdminApproval', data.requestId)
+        window.socket.emit('resolveAdminApproval', data.requestId, false)
       }}>
         {data.rejectButtonText || 'Reject'}
       </button>
