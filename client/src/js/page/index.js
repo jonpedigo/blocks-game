@@ -150,6 +150,8 @@ class Page{
         React.createElement(App),
         container
       )
+      console.log('XXX')
+
     }
   }
 

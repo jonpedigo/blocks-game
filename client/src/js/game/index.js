@@ -924,7 +924,6 @@ class Game{
   onResetObjects() {
     console.log(GAME.objects.length)
     GAME.objects.forEach((object) => {
-      console.log(object.id)
       window.local.emit('onDeleteObject', object)
     }, [])
     GAME.objects = []

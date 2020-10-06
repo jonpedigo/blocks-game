@@ -91,6 +91,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     },
     starViewGo: {},
     starViewReturn: {},
+    endPrologue: {},
     stopGameLite: {},
 
     //create
@@ -374,12 +375,15 @@ function processEffect(effect, effected, effector, ownerObject) {
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
   }
 
-  if(effectName === 'stopGameLite') {
+  if(effectName === 'endPrologue') {
     GAME.gameState.started = false
     GAME.removeListeners()
     GAME.gameState.sequenceQueue = []
     GAME.gameState.activeModList = []
     GAME.gameState.activeMods = {}
+    GAME.heros.forEach((hero, i) => {
+      if(hero.triggers) hero.triggers = {}
+    });
   }
 
   if(effectName === 'pathfindTo') {

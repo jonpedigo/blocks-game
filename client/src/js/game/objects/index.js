@@ -900,16 +900,11 @@ class Objects{
           PHYSICS.removeObject(part)
         }
       })
-    }
-   //  else {
-   //   if(PHYSICS.objects[object.id]) {
-   //     PHYSICS.removeObject(object)
-   //   } else {
-   //     console.log('ok this is why its not')
-   //   }
-   // }
-    console.log('unloading and removing from physics', object.id)
-    PHYSICS.removeObject(object)
+    } else {
+     if(PHYSICS.objects[object.id]) {
+       PHYSICS.removeObject(object)
+     }
+   }
     if(PAGE.role.isHost && object.triggers) {
       Object.keys(object.triggers).forEach((triggerId) => {
         triggers.removeTriggerEventListener(object, triggerId)
@@ -919,15 +914,9 @@ class Objects{
 
   deleteObject(object) {
     OBJECTS.unloadObject(object)
-    let spliceIndex
-    GAME.objects.forEach((obj, i) => {
-      if(obj.id == object.id) {
-        spliceIndex = i
-      }
+    GAME.objects = GAME.objects.filter(({id}) => {
+      return id !== object.id
     })
-    if(spliceIndex >= 0) {
-      GAME.objects.splice(spliceIndex, 1)
-    }
     delete GAME.objectsById[object.id]
   }
 
