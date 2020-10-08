@@ -185,7 +185,10 @@ class Game{
         //////////////////////////////
         //// ANTICIPATE OBJECT
         if(PAGE.role.isHost && GAME.gameState.anticipatedForAdd && GAME.gameState.anticipatedForAdd.length) {
-          OBJECTS.anticipatedAdd(GAME.heros[HERO.id], GAME.gameState.anticipatedForAdd[0])
+          let hero = GAME.heroList.filter((hero) => {
+            return hero.tags.centerOfAttention
+          })[0]
+          OBJECTS.anticipatedAdd(hero, GAME.gameState.anticipatedForAdd[0])
         }
 
         MAP._isOutOfDate = true
@@ -566,12 +569,21 @@ class Game{
 
       initialGameState = JSON.parse(initialGameState)
       GAME.unload()
+      // in case anyone joined after the game started...
+      Object.keys(GAME.heros).forEach((heroId) => {
+        if(!initialGameState.heros[heroId]) {
+          initialGameState.heros[heroId] = GAME.heros[heroId]
+        }
+      })
       GAME.loadAndJoin(initialGameState)
       window.local.emit('onGameStopped')
     }, 100)
   }
 
-  onGameStart() {
+  onGameStart(options) {
+    if(!options) options = {}
+    if(!options.respawn) options.respawn = true
+
     if(GAME.gameState.started) {
       return console.log('trying to start game that has already started')
     }
@@ -585,7 +597,7 @@ class Game{
       localStorage.setItem('initialGameState', JSON.stringify(initialGameState))
 
       GAME.heroList.forEach((hero) => {
-        HERO.spawn(hero)
+        if(options.respawn) HERO.spawn(hero)
         hero.questState = {}
         if(hero.quests) {
           Object.keys(hero.quests).forEach((questId) => {
@@ -599,7 +611,7 @@ class Game{
       })
 
       GAME.objects.forEach((object) => {
-        OBJECTS.respawn(object)
+        if(options.respawn) OBJECTS.respawn(object)
         if(object.tags.talkOnStart) {
           GAME.heroList.forEach((hero) => {
             onTalk(hero, object, {}, [], [], { fromStart: true })

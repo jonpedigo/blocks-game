@@ -33,6 +33,11 @@ class Page{
       PAGE.role.isHost = true
     }
 
+    if(PAGE.getParameterByName('tempHost')) {
+      PAGE.role.isHost = true
+      PAGE.role.isTempHost = true
+    }
+
     if(PAGE.getParameterByName('arcadeMode')) {
       PAGE.role.isHost = true
       PAGE.role.isArcadeMode = true
@@ -644,6 +649,13 @@ class Page{
           window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
         });
     })
+  }
+
+  onHostJoined() {
+    if(PAGE.role.isTempHost) {
+      window.location = window.HAGameClientUrl;
+      window.reload()
+    }
   }
 }
 

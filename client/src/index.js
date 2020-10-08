@@ -20,10 +20,11 @@ subinteractmenu ( find all interact triggers involving this object and display a
 // view everything this object is involved in
 // view all current modifications
 
-RESPAWN UPGRADE
+SPAWN UPGRADE
 Hero removed -> respawn UI
 HOOK UP RESPAWNS TO A SPAWN ZONE
 death by jump
+spawn on interact ( spawn effect )
 
 EDITOR UPGRADES
 Light Editor
@@ -74,6 +75,13 @@ a Score parameter on objects
 Win/Lose States that can connect to the meta of the engine ( picking new game or replaying current game )
 
 COMBAT UPGRADE
+Main questions for this upgrade is
+  -- How to detect the destroyer! Thats key... how does _destroyedBy work -- by weapon, by bullet, by player?
+  -- How much damage does it do?
+  -- Start with just rock paper scissors??
+  -- how to handle animations?
+  -- The key is also making sure this system works without TRIGGERS
+
 HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
 VICTIMS, ENEMIES, NEUTRAL,
 Rock Paper Scissors?

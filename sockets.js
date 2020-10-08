@@ -184,12 +184,12 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateGameCustomInputBehavior', customInputBehavior)
   })
 
-  socket.on('startGame', () => {
-    io.emit('onGameStart')
+  socket.on('startGame', (options) => {
+    io.emit('onGameStart', options)
   })
 
-  socket.on('stopGame', () => {
-    io.emit('onStopGame')
+  socket.on('stopGame', (options) => {
+    io.emit('onStopGame', options)
   })
 
   ///////////////////////////
@@ -548,6 +548,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
 
   socket.on('processEffect', (effectName, effectedIds, effectorId) => {
     io.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
+
+  socket.on('hostJoined', () => {
+    io.emit('onHostJoined')
   })
 }
 

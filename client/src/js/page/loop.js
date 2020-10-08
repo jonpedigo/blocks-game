@@ -25,6 +25,10 @@ window.startGameLoop = function() {
     return
   }
 
+  if(PAGE.role.isHost && !PAGE.role.isTempHost) {
+    window.socket.emit('hostJoined')
+  }
+
   startTime = Date.now();
   thenMapNetwork = startTime;
   thenCompleteNetwork = startTime;

@@ -224,13 +224,13 @@ function init() {
   ///////////////////////////////
 
   // EDITOR CALLS THIS
-  window.socket.on('onStopGame', () => {
-    window.local.emit('onStopGame')
+  window.socket.on('onStopGame', (options) => {
+    window.local.emit('onStopGame', options)
   })
 
   // EDITOR CALLS THIS
-  window.socket.on('onGameStart', () => {
-    window.local.emit('onGameStart')
+  window.socket.on('onGameStart', (options) => {
+    window.local.emit('onGameStart', options)
   })
 
   // EVERYONE CALLS THIS
@@ -422,6 +422,10 @@ function init() {
 
   window.socket.on('onProcessEffect', (effectName, effectedIds, effectorId) => {
     window.local.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
+
+  window.socket.on('onHostJoined', () => {
+    window.local.emit('onHostJoined')
   })
 }
 
