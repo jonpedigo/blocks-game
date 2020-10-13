@@ -669,6 +669,7 @@ class Hero{
       navigationTargetId: hero.navigationTargetId,
 
       flags: hero.flags,
+      tags: hero.tags,
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       worldMenu: hero.worldMenu,
@@ -742,7 +743,7 @@ class Hero{
     if(!hero) return
     HERO.deleteHero(hero)
     window.local.emit('onDeletedHero', hero)
-    delete GAME.heros[heroId]
+    GAME.heros[heroId] = null
   }
 
   onDeleteQuest(heroId, questId) {

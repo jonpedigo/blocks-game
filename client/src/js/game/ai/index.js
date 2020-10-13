@@ -201,8 +201,8 @@ function onUpdate(objects, delta) {
           object._pathIdIndex = null
         }
       } else {
-        delete object.pathId
-        delete object._pathIdIndex
+        object.pathId = null
+        object._pathIdIndex = null
       }
     }
 

@@ -309,17 +309,21 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateHero', hero)
   })
   socket.on('updateHeros', (heros) => {
-    Object.keys(heros).forEach((id) => {
-      io.emit('onUpdateHero', heros[id])
-    })
+    if(heros) {
+      heros.forEach(hero => {
+        io.emit('onUpdateHero', hero)
+      })
+    }
   })
   socket.on('updateHerosPos', (heros) => {
     io.emit('onUpdateHerosPos', heros)
   })
   socket.on('updateHerosComplete', (heros) => {
-    Object.keys(heros).forEach((id) => {
-      io.emit('onUpdateHero', heros[id])
-    })
+    if(heros) {
+      heros.forEach(hero => {
+        io.emit('onUpdateHero', hero)
+      })
+    }
   })
   socket.on('editHero', (hero) => {
     // window.mergeDeep(heros[hero.id], hero)

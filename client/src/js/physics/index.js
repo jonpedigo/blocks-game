@@ -227,9 +227,9 @@ function prepareObjectsAndHerosForMovementPhase() {
 
     object._flipY = false
 
-    delete object._skipPosUpdate
-    delete object._flatVelocityX
-    delete object._flatVelocityY
+    object._skipPosUpdate = false
+    object._flatVelocityX = null
+    object._flatVelocityY = null
     object.interactableObject = null
     object.interactableObjectResult = null
 
@@ -385,7 +385,7 @@ function postPhysics() {
         hero._cantInteract = true
       }
       // bad for JSON
-      delete hero.interactableObjectResult
+      hero.interactableObjectResult = null
     }
     processAwarenessAndWithinEvents(hero)
   })
@@ -547,19 +547,19 @@ function removeAndRespawn() {
       if(hero.mod().tags.respawn) {
         hero._respawn = true
       } else hero._remove = true
-      delete hero._destroy
-      delete hero._destroyedBy
+      hero._destroy = null
+      hero._destroyedBy = null
       window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
     }
 
     if(hero._respawn) {
       HERO.respawn(hero)
-      delete hero._respawn
+      hero._respawn = null
     }
     if(hero._remove) {
       hero.mod().removed = true
       HERO.removeHero(hero)
-      delete hero._remove
+      hero._remove = null
     }
 
     if(hero.subObjects) {
@@ -576,14 +576,14 @@ function removeAndRespawn() {
 function processSubObjectRemoval(object) {
   if(object._destroy) {
     object._remove = true
-    delete object._destroy
-    delete object._destroyedBy
+    object._destroy = null
+    object._destroyedBy = null
     window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
   }
 
   if(object._remove) {
     object.mod().removed = true
-    delete object._remove
+    object._remove = null
   }
 }
 
@@ -592,19 +592,19 @@ function processObjectRemoval(object) {
     if(object.mod().tags.respawn) {
       object._respawn = true
     } else object._remove = true
-    delete object._destroy
-    delete object._destroyedBy
+    object._destroy = null
+    object._destroyedBy = null
     window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
   }
 
   if(object._respawn) {
     OBJECTS.respawn(object)
-    delete object._respawn
+    object._respawn = null
   }
   if(object._remove) {
     object.mod().removed = true
     OBJECTS.removeObject(object)
-    delete object._remove
+    object._remove = null
   }
 
   if(object.subObjects) {

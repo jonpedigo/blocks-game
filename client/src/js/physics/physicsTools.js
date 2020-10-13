@@ -573,13 +573,13 @@ function attachToParent(object) {
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
-  } else delete object.mod().parentId
+  } else object.parentId = null
 
   parent = GAME.objectsById[object._parentId] || GAME.heros[object._parentId]
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
-  } else delete object._parentId
+  } else object._parentId = null
 }
 
 function attachToRelative(object) {
@@ -588,7 +588,7 @@ function attachToRelative(object) {
   if(relative) {
     object.x = relative.x + object.mod().relativeX
     object.y = relative.y + object.mod().relativeY
-  } else delete object.mod().relativeId
+  } else object.relativeId = null
 }
 
 function addObject(object) {

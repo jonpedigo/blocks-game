@@ -586,7 +586,7 @@ class Objects{
 
       if(newObject.compendiumId) {
         newObject.fromCompendiumId = newObject.compendiumId
-        delete newObject.compendiumId
+        newObject.compendiumId = null
       }
 
       newObject.spawnPointX = newObject.x
@@ -766,7 +766,7 @@ class Objects{
     if(object.id === GAME.lastAnticipatedObjectId) {
       object.tags.lastAnticipatedObject = true
     } else {
-      delete object.tags.lastAnticipatedObject
+      object.tags.lastAnticipatedObject = false
     }
   }
 
@@ -1285,7 +1285,7 @@ class Objects{
   onObjectUnaware(object, unawareOfObject) {
     if(object.mod().tags.targetClearOnUnaware) {
       if(unawareOfObject.id === object._targetPursueId) {
-        delete object._targetPursueId
+        object._targetPursueId = null
       }
     }
   }

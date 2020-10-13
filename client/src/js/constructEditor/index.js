@@ -72,7 +72,7 @@ class ConstructEditor {
     constructParts.forEach((part) => {
       part.id = window.uniqueID()
       if(part.color == GAME.world.defaultObjectColor || part.color == window.defaultObjectColor) {
-        delete part.color
+        part.color = null
       }
     })
     const { x, y, width, height } = this.getBoundingBox(constructParts)

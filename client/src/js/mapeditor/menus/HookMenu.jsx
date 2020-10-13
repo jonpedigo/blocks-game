@@ -37,6 +37,7 @@ export default class HookMenu extends React.Component{
 
     Object.keys(objectSelected.hooks).forEach((hookId) => {
       const hook = objectSelected.hooks[hookId]
+      if(hook === null) return
 
       if(hook.eventName === eventName) {
         items.push(
