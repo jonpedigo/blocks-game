@@ -362,6 +362,10 @@ class Page{
     }
   };
 
+  onUpdateGameSession() {
+    
+  }
+
   onGameReady() {
     PAGE.isGameReady = true
 

@@ -554,6 +554,10 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onProcessEffect', effectName, effectedIds, effectorId)
   })
 
+  socket.on('updateGameSession', data => {
+    io.emit('onUpdateGameSession', data)
+  })
+
   socket.on('hostJoined', () => {
     io.emit('onHostJoined')
   })

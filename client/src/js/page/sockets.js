@@ -129,7 +129,7 @@ function init() {
   window.socket.on('onEditHero', (updatedHero) => {
     window.local.emit('onEditHero', updatedHero)
   })
-  
+
   window.socket.on('onDeleteHero', (heroId) => {
     window.local.emit('onDeleteHero', heroId)
   })
@@ -422,6 +422,11 @@ function init() {
 
   window.socket.on('onHostJoined', () => {
     window.local.emit('onHostJoined')
+  })
+
+  window.socket.on('onUpdateGameSession', (data) => {
+    window.HAGameSession = data
+    window.local.emit('onUpdateGameSession')
   })
 }
 
