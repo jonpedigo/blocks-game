@@ -743,7 +743,8 @@ class Hero{
     if(!hero) return
     HERO.deleteHero(hero)
     window.local.emit('onDeletedHero', hero)
-    GAME.heros[heroId] = null
+    delete GAME.heros[heroId]
+    GAME.heroList = GAME.heroList.filter(({id}) => id !== heroId)
   }
 
   onDeleteQuest(heroId, questId) {

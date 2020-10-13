@@ -4,7 +4,7 @@ export default function onCombat(hero, collider, result, options) {
       if(typeof collider.mod().spawnPointX == 'number' && collider.mod().tags['respawn']) {
         collider._respawn = true
       } else {
-        collider._destroyedBy = hero
+        collider._destroyedById = hero.id
         collider._destroy = true
       }
     } else if(hero.mod().tags['monsterVictim']) {

@@ -138,6 +138,7 @@ PIXIMAP.deleteObject = function(object, stage) {
 }
 
 PIXIMAP.deleteEmitter = function(emitterToDelete) {
+  console.trace(emitterToDelete)
   PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
     if(emitterToDelete === emitter) {
       return false

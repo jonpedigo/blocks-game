@@ -76,7 +76,7 @@ Win/Lose States that can connect to the meta of the engine ( picking new game or
 
 COMBAT UPGRADE
 Main questions for this upgrade is
-  -- How to detect the destroyer! Thats key... how does _destroyedBy work -- by weapon, by bullet, by player?
+  -- How to detect the destroyer! Thats key... how does _destroyedById work -- by weapon, by bullet, by player?
   -- How much damage does it do?
   -- Start with just rock paper scissors??
   -- how to handle animations?

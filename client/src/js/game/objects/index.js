@@ -1221,10 +1221,10 @@ class Objects{
 
   onObjectDestroyed(object) {
     if(object.mod().tags.explodeOnDestroy) {
-      window.socket.emit('objectAnimation', 'explode', object.id)
+      window.local.emit('onObjectAnimation', 'explode', object.id)
     }
     if(object.mod().tags.spinOffOnDestroy) {
-      window.socket.emit('objectAnimation', 'spinOff', object.id)
+      window.local.emit('onObjectAnimation', 'spinOff', object.id)
     }
   }
 

@@ -548,8 +548,8 @@ function removeAndRespawn() {
         hero._respawn = true
       } else hero._remove = true
       hero._destroy = null
-      hero._destroyedBy = null
-      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
+      hero._destroyedById = null
+      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, OBJECTS.getObjectOrHeroById(hero._destroyedById))
     }
 
     if(hero._respawn) {
@@ -577,8 +577,8 @@ function processSubObjectRemoval(object) {
   if(object._destroy) {
     object._remove = true
     object._destroy = null
-    object._destroyedBy = null
-    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+    object._destroyedById = null
+    window.emitGameEvent('onObjectDestroyed', object, OBJECTS.getObjectOrHeroById(object._destroyedById))
   }
 
   if(object._remove) {
@@ -593,8 +593,8 @@ function processObjectRemoval(object) {
       object._respawn = true
     } else object._remove = true
     object._destroy = null
-    object._destroyedBy = null
-    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+    object._destroyedById = null
+    window.emitGameEvent('onObjectDestroyed', object, OBJECTS.getObjectOrHeroById(object._destroyedById))
   }
 
   if(object._respawn) {

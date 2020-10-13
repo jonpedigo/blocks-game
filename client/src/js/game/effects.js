@@ -228,7 +228,7 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
 
   if(effectName === 'destroy') {
-    effected._destroyedBy = effector
+    effected._destroyedById = effector.id ? effector.id : effector
     effected._destroy = true
   }
 

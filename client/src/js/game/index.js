@@ -545,9 +545,9 @@ class Game{
     if(!effectedIds) {
       effects.processEffect(effect)
     } else {
-      const effector = GAME.getObjectOrHeroById(effectorId)
+      const effector = OBJECTS.getObjectOrHeroById(effectorId)
       effectedIds.forEach((id) => {
-        effects.processEffect(effect, GAME.getObjectOrHeroById(id), effector)
+        effects.processEffect(effect, OBJECTS.getObjectOrHeroById(id), effector)
       })
     }
   }
