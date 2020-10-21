@@ -80,7 +80,8 @@ Main questions for this upgrade is
   -- How much damage does it do?
   -- Start with just rock paper scissors??
   -- how to handle animations?
-  -- The key is also making sure this system works without TRIGGERS
+  -- The key to CONVENIENCE is also making sure this system works without TRIGGERS
+  -- allow a system for pattern recognition ( with patterns, timing )
 
 HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
 VICTIMS, ENEMIES, NEUTRAL,

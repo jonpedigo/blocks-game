@@ -363,7 +363,7 @@ class Page{
   };
 
   onUpdateGameSession() {
-    
+
   }
 
   onGameReady() {

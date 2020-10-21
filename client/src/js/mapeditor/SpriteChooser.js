@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js-legacy'
 import Swal from 'sweetalert2/src/sweetalert2.js';
 import tinycolor from 'tinycolor2';
 

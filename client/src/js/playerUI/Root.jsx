@@ -168,6 +168,8 @@ export default class Root extends React.Component {
         {toastContainer}
         {this._renderGameLog()}
         {!PAGE.role.isArcadeMode && <Toolbar/>}
+        {hero.flags.showBrandImageScreen && <div className="Cutscene" style={{backgroundImage: "url('"+window.HomemadeArcadeImageAssetURL + 'homemade-arcade-play.png'+"')" }}>
+        </div>}
       </div>
     )
   }

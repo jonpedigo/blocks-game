@@ -32,7 +32,6 @@ class PlayerUI {
   }
 
   onResolveAdminApproval(id) {
-    console.log(id, window.waitingForStart)
     if(id === window.waitingForStart) {
       window.waitingForStart = null
       PLAYERUI.ref.forceUpdate()

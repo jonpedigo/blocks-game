@@ -39,6 +39,7 @@ class Game{
       tags: {},
       images: {},
       tags: {},
+      creator: {}
     }
   }
 
@@ -260,6 +261,7 @@ class Game{
     if(game.library) GAME.library = game.library
     else GAME.library = {}
     if(!GAME.library.branches) GAME.library.branches = {}
+    if(!GAME.library.creator) GAME.library.creator = {}
 
     if(GAME.library.tags) {
       tags.addGameTags(GAME.library.tags)

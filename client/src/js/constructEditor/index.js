@@ -206,6 +206,10 @@ class ConstructEditor {
         }
       })
       this.ref.closeColorPicker()
+    } else if(tool === 'fill-empty') {
+      this.nodesHistory.unshift(_.cloneDeep(this.grid.nodes))
+      this.bucketFill(true)
+      this.ref.closeColorPicker()
     }
 
     CONSTRUCTEDITOR.ref.forceUpdate()
@@ -375,7 +379,7 @@ class ConstructEditor {
     }
   }
 
-  bucketFill() {
+  bucketFill(empty) {
     const { selectedColor, grid, selectedTextureId } = this
     const { gridX, gridY } = grid.getGridXYfromXY(this.mousePos.x, this.mousePos.y, { closest: false })
 
@@ -390,7 +394,11 @@ class ConstructEditor {
     const findAndFillSimilarNeighbors = (node) => {
       const neighbors = grid.findNeighborNodes(node.gridX, node.gridY)
       nodesSeen[node.id] = true
-      this.fillNode(node.gridX, node.gridY, selectedColor, selectedTextureId)
+      if(empty) {
+        this.unfillNode(node.gridX, node.gridY)
+      } else {
+        this.fillNode(node.gridX, node.gridY, selectedColor, selectedTextureId)
+      }
       neighbors.forEach((neighbor) => {
         if(nodesSeen[neighbor.id]) {
           return

@@ -224,13 +224,13 @@ function keepGridXYWithinBoundaries(attemptingX, attemptingY, options = { bypass
     if(attemptingX > gridX + gridWidth - (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       if(debug) console.log('rejecting reason 2a')
       return false
-    } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+    } else if(attemptingX < gridX + (((HERO.cameraWidth * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) + 1) {
       if(debug) console.log('rejecting reason 2b')
       return false
     } else if(attemptingY > gridY + gridHeight - (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) - 1) {
       if(debug) console.log('rejecting reason 2c')
       return false
-    } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize)) {
+    } else if(attemptingY < gridY + (((HERO.cameraHeight * hero.zoomMultiplier)/2)/GAME.grid.nodeSize) + 1) {
       if(debug) console.log('rejecting reason 2d')
       return false
     }

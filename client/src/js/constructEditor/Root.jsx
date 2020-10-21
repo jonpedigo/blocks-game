@@ -155,6 +155,12 @@ export default class Root extends React.Component{
           toolSelected: 'fill-same-images'
         })
       }}/>}
+      {spriteSelection && <ToolbarButton active={toolSelected === 'fill-empty'} iconName="fa-eraser" onClick={() => {
+        toolChange('fill-empty')
+        this.setState({
+          toolSelected: 'fill-empty'
+        })
+      }}/>}
       </ToolbarRow>
       <br/>
       <ToolbarRow iconName='fa-search'>
@@ -180,7 +186,7 @@ export default class Root extends React.Component{
           this.forceUpdate()
         }
         }}/>}
-      <ToolbarButton text="return" onClick={this._saveClick}/>
+      <ToolbarButton text="close" onClick={this._saveClick}/>
     </div>
   }
 

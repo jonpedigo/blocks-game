@@ -92,6 +92,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     starViewGo: {},
     starViewReturn: {},
     stopGamePreserve: {},
+    stopPrologue: {},
 
     //create
     anticipatedAdd: {
@@ -380,9 +381,18 @@ function processEffect(effect, effected, effector, ownerObject) {
     GAME.gameState.sequenceQueue = []
     GAME.gameState.activeModList = []
     GAME.gameState.activeMods = {}
+  }
+
+  if(effectName === 'stopPrologue') {
+    GAME.gameState.started = false
+    GAME.removeListeners()
+    GAME.gameState.sequenceQueue = []
+    GAME.gameState.activeModList = []
+    GAME.gameState.activeMods = {}
     GAME.heroList.forEach((hero, i) => {
       if(hero.triggers) hero.triggers = {}
     });
+    GAME.library.sequences = {}
   }
 
   if(effectName === 'pathfindTo') {
