@@ -34,6 +34,12 @@ class Creator {
     }
   }
 
+  onUpdateLibrary(update) {
+    if(update.creator) {
+      CREATOR.ref.onUpdateLibrary()
+    }
+  }
+
   close() {
     CREATOR.ref.close()
   }

@@ -1,12 +1,13 @@
 import React from 'react'
 import Menu, { SubMenu, MenuItem } from 'rc-menu'
 import modals from '../modals.js'
+import Swal from 'sweetalert2/src/sweetalert2.js';
 
 export default class ObjectAdvancedMenu extends React.Component{
   constructor(props) {
     super(props)
 
-    this._handleObjectAdvancedMenuClick = ({ key }) => {
+    this._handleObjectAdvancedMenuClick = async ({ key }) => {
       const { objectSelected } = this.props
       const { onStartSetPathfindingLimit, networkEditObject, openConstructEditor } = MAPEDITOR
 
@@ -62,6 +63,34 @@ export default class ObjectAdvancedMenu extends React.Component{
       if (key === "open-physics-live-editor") {
         LIVEEDITOR.open(objectSelected, 'physics')
       }
+
+      if (key === "add-to-creator-library") {
+        const { value: name } = await Swal.fire({
+          title: 'Create Game',
+          text: "What is the name of this object?",
+          input: 'text',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Next',
+        })
+        const { value: columnName } = await Swal.fire({
+          title: 'Create Game',
+          text: "What column? (enter name case sensitive)",
+          input: 'text',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Add to library',
+        })
+        window.socket.emit('updateLibrary', { creator: {...GAME.library.creator, [name]: {
+          label: name,
+          columnName,
+          JSON: OBJECTS.getProperties(objectSelected)
+        } } })
+      }
     }
   }
 
@@ -69,11 +98,8 @@ export default class ObjectAdvancedMenu extends React.Component{
     const { objectSelected } = this.props
 
     return <Menu onClick={this._handleObjectAdvancedMenuClick}>
-      <MenuItem key="set-pathfinding-limit">Set pathfinding area</MenuItem>
-      <MenuItem key="set-parent">Set parent</MenuItem>
-      <MenuItem key="set-relative">Set relative</MenuItem>
+      <MenuItem key="add-to-creator-library">Add to creator library</MenuItem>
       <MenuItem key="copy-id">Copy id to clipboard</MenuItem>
-      <MenuItem key="add-compendium">Add To Compendium</MenuItem>
       <MenuItem key='add-new-subobject'>Add new sub object</MenuItem>
       <MenuItem key='turn-into-spawn-zone'>Turn into spawn zone</MenuItem>
       <MenuItem key='turn-into-resource-zone'>Turn into resource zone</MenuItem>

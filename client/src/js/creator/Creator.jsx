@@ -126,8 +126,14 @@ export default class Creator extends React.Component {
         rows[object.columnName].push(object)
       })
 
-      rows = Object.keys(rows).map((cName) => rows[cName])
+      Object.keys(GAME.library.creator).forEach((objectName) => {
+        if(GAME.library.creator[objectName] === false) return
+        const object = GAME.library.creator[objectName]
+        if(!rows[object.columnName]) rows[object.columnName] = []
+        rows[object.columnName].push(object)
+      })
 
+      rows = Object.keys(rows).map((cName) => rows[cName])
 
       if(hasSelectSprite) rows.unshift({ specialAction: 'selectSprite'})
       if(hasSelectColor) rows.unshift({ specialAction: 'selectColor'})
@@ -146,6 +152,10 @@ export default class Creator extends React.Component {
     document.body.addEventListener("mousedown", this._onMouseDown)
     document.body.addEventListener("mouseup", this._onMouseUp)
 
+    this._categorizeCreatorObjects()
+  }
+
+  onUpdateLibrary() {
     this._categorizeCreatorObjects()
   }
 

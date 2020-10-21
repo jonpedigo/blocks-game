@@ -379,9 +379,11 @@ class Game{
 
   removeListeners() {
     GAME.gameState.sequenceQueue.forEach((sequence) => {
-      sequence.eventListeners.forEach((remove) => {
-        if(remove) remove()
-      })
+      if(sequence.eventListeners) {
+        sequence.eventListeners.forEach((remove) => {
+          if(remove) remove()
+        })
+      }
     })
     GAME.gameState.activeModList.forEach((mod) => {
       if(mod.removeEventListener) mod.removeEventListener()
@@ -731,7 +733,7 @@ class Game{
     })
   }
 
-  cleanForSave(game, options = { keepState: false, removeFalseTags: true }) {
+  cleanForSave(game, options = { keepState: false, removeFalseTags: false }) {
     let gameCopy = JSON.parse(JSON.stringify({
       //.filter((object) => !object.spawned)
       id: game.id,

@@ -194,7 +194,7 @@ class Objects{
       relativeId: object.relativeId,
       parentId: object.parentId,
       name: object.name,
-      namePos: object.namePos,
+      namePosition: object.namePosition,
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
       hooks: object.hooks,
@@ -504,7 +504,7 @@ class Objects{
           height: GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (leftDiff < 1 && hero.directions.left) {
+      } else if (leftDiff < 10 && hero.directions.left) {
         let newObject = {
           x: minX - GAME.grid.nodeSize,
           y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
@@ -512,7 +512,7 @@ class Objects{
           height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 6) : GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (topDiff < 1 && hero.directions.up) {
+      } else if (topDiff < 10 && hero.directions.up) {
         let newObject = {
           x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
           y: minY - GAME.grid.nodeSize,
@@ -520,7 +520,7 @@ class Objects{
           height: GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
+      } else if (rightDiff > GAME.grid.nodeSize - 10 && hero.directions.right) {
         let newObject = {
           x: maxX + GAME.grid.nodeSize,
           y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
@@ -528,7 +528,7 @@ class Objects{
           height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 6) : GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
+      } else if (bottomDiff > GAME.grid.nodeSize - 10 && hero.directions.down) {
         let newObject = {
           x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
           y: maxY + GAME.grid.nodeSize,
