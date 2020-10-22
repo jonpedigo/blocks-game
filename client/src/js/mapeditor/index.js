@@ -274,7 +274,10 @@ function handleMouseDown(event) {
     if (draggingObject.pathParts) {
       networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, pathParts: draggingObject.pathParts })
     } else if (draggingObject.constructParts) {
-      networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts })
+      networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts.map(part => {
+        part.id = window.uniqueID()
+        return part
+      }) })
     } else if (GAME.gameState.started || GAME.gameState.branch) {
       networkEditObject(draggingObject, { id: draggingObject.id, x: draggingObject.x, y: draggingObject.y })
     } else {

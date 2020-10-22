@@ -981,7 +981,7 @@ class Objects{
     if(!PAGE.role.isHost) {
       objectsUpdated.forEach((obj) => {
         let objectById = GAME.objectsById[obj.id]
-        window.mergeDeep(objectById, obj)
+        _.merge(objectById, obj)
       })
     }
   }
