@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js-legacy';
+import * as PIXI from 'pixi.js';
 import { darken, lighten, getColorHex } from './utils.js'
 import '../../libraries/animationLibrary.js'
 import tinycolor from 'tinycolor2'
