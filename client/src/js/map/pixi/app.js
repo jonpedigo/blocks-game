@@ -99,6 +99,7 @@ const initPixiApp = (canvasRef, onLoad) => {
    } else {
      console.log('Using Canvas');
   };
+  // console.log(PIXI.display.Stage)
   app.stage = new PIXI.display.Stage();
 
   let world
