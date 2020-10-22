@@ -324,7 +324,7 @@ class ConstructEditor {
 
     this.grid.forEachNode((node) => {
       if(node.data.filled) {
-        if(node.data.defaultSprite) {
+        if(node.data.defaultSprite || CONSTRUCTEDITOR.tags.seperateParts) {
           rectangles.push({ x: node.x, y: node.y, width: this.grid.nodeSize, height: this.grid.nodeSize, color: node.data.color, defaultSprite: node.data.defaultSprite })
           this.unfillNode(node.gridX, node.gridY)
           return
@@ -344,7 +344,7 @@ class ConstructEditor {
 
     rectangles.forEach((rect1) => {
       rectangles.forEach((rect2) => {
-        if(!rect1.claimed && !rect2.claimed && rect1.x === rect2.x && rect1.width === rect2.width && !rect1.defaultSprite && !rect2.defaultSprite) {
+        if(!rect1.claimed && !rect2.claimed && rect1.x === rect2.x && rect1.width === rect2.width && !rect1.defaultSprite && !rect2.defaultSprite && !CONSTRUCTEDITOR.tags.seperateParts) {
           if(rect1.y + rect1.height === rect2.y && rect1.color === rect2.color) {
             let higherRect = rect1
             let lowerRect = rect2
@@ -484,11 +484,13 @@ class ConstructEditor {
     drawTools.drawGrid(ctx, {...grid, color: 'white'}, camera)
 
     grid.forEachNode((node) => {
-      if(node.data.defaultSprite) {
-        drawTools.drawSprite(ctx, camera, node.data.defaultSprite, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags })
-        // drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
-      } else if(node.data.filled) {
-        drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
+      if(node.data.filled) {
+        if(node.data.defaultSprite && node.data.defaultSprite !== 'solidcolorsprite') {
+          drawTools.drawSprite(ctx, camera, node.data.defaultSprite, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags })
+          // drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
+        } else {
+          drawTools.drawObject(ctx, {x: node.x, y: node.y, height: node.height, width: node.width, color: node.data.color, tags }, camera)
+        }
       }
     })
 

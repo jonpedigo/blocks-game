@@ -662,7 +662,11 @@ PIXIMAP.convertToPartObject = function(gameObject, part) {
   let color = part.color
   if(!sprite && !color) color = GAME.world.defaultObjectColor
   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.mod().removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  let removed = gameObject.mod().removed
+  if(gameObject.mod().tags.seperateParts) {
+    removed = part.removed
+  }
+  const partObject = {tags: {...gameObject.tags},  ...part, removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
 
   return partObject

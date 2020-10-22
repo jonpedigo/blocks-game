@@ -52,6 +52,8 @@ function setDefault() {
     moving: false,
 
     trackObjectsTouching: false,
+
+    seperateParts: false,
   }
 
   // window.otherTags = {

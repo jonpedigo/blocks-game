@@ -344,7 +344,7 @@ function objectPhysics() {
       if(PHYSICS.debug) console.log('no game object found for phyics object id: ' + id)
       continue
     }
-    if(po.gameObject.mod().removed) continue
+    if(po.gameObject.mod().removed || (po.constructPart && po.constructPart.removed)) continue
     if(po.gameObject.mod().tags.hero) continue
     objectCollisionEffects(po)
   }
@@ -365,7 +365,7 @@ function objectPhysics() {
         continue
       }
       if(!po.gameObject.mod().tags['moving']) continue
-      if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
+      if(po.constructPart && (po.constructPart.removed || !shouldCheckConstructPart(po.constructPart))) continue
       objectCorrection(po, final)
     }
   }
@@ -582,7 +582,7 @@ function processSubObjectRemoval(object) {
   }
 
   if(object._remove) {
-    object.mod().removed = true
+    object.removed = true
     object._remove = null
   }
 }
@@ -611,6 +611,15 @@ function processObjectRemoval(object) {
     Object.keys(object.subObjects).forEach((subObjectName) => {
       const subObject = object.subObjects[subObjectName]
       processSubObjectRemoval(subObject)
+    })
+  }
+
+  if(object.constructParts) {
+    object.constructParts.forEach((part) => {
+      if(part._destroy) {
+        part.removed = true
+        part._destroy = null
+      }
     })
   }
 }
