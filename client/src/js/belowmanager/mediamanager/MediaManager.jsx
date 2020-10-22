@@ -159,7 +159,6 @@ export default class MediaManager extends React.Component {
     }
 
     const assetsByTag = this._organizeSpriteSheets()
-    console.log(assetsByTag)
     return Object.keys(assetsByTag).map((tag) => {
       const tagList = assetsByTag[tag]
       return <Collapsible trigger={tag}>{tagList.map((ss) => {

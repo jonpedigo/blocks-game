@@ -4,6 +4,7 @@ function setDefault() {
     started: false,
     loaded: false,
     sequenceQueue: [],
+    trackers: [],
     timeouts: [],
     timeoutsById: {},
     trackers: {},

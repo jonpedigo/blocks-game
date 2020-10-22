@@ -445,7 +445,7 @@ function processEffect(effect, effected, effector, ownerObject) {
         onTargetCountReached: () => {
           GAME.gameState.goals[effect.goalId].succeeded = true
           if(GAME.gameState.timeoutsById[effect.goalId]) GAME.gameState.timeoutsById[effect.goalId].paused = true
-          if(GAME.gameState.trackers[effect.trackerId]) GAME.gameState.trackers[effect.trackerId].stopped = true
+          if(GAME.gameState.trackersById[effect.trackerId]) GAME.gameState.trackersById[effect.trackerId].stopped = true
           if(effect.successSequenceId) {
             processEffect({ effectName: 'startSequence', effectSequenceId: effect.successSequenceId }, effected, effector, ownerObject)
           }
