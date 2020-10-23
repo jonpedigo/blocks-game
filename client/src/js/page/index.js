@@ -468,7 +468,7 @@ class Page{
   }
 
   showEditorTools() {
-    if(PAGE.role.isHA && !PAGE.role.isAdmin && GAME.gameState.started) {
+    if(PAGE.role.isHA && !PAGE.role.isAdmin && GAME.gameState.started && !GAME.heros[HERO.id].flags.editAllowedWhenGameStarted) {
       return false
     }
 

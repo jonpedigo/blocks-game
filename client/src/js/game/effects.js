@@ -201,6 +201,9 @@ function processEffect(effect, effected, effector, ownerObject) {
   const { effectName, effectValue, effectJSON } = effect
   if(effectName === 'mutate' && effectJSON) {
     OBJECTS.mergeWithJSON(effected, effectJSON)
+    if(effectJSON.creator && effected.tags.hero) {
+      window.emitGameEvent('onUpdatePlayerUI', effected)
+    }
   }
 
   //
@@ -311,6 +314,9 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'mod') {
     window.emitGameEvent('onStartMod', {ownerId: effected.id, ...effect})
+    // if(effectJSON.creator && effected.tags.hero) {
+    //   window.socket.emit('emitGameEvent', 'onUpdatePlayerUI', effected)
+    // }
   }
 
   if(effectName === 'libraryMod') {
@@ -391,6 +397,7 @@ function processEffect(effect, effected, effector, ownerObject) {
     GAME.gameState.activeMods = {}
     GAME.heroList.forEach((hero, i) => {
       if(hero.triggers) hero.triggers = {}
+      hero.flags.editAllowedWhenGameStarted = false
     });
     GAME.library.sequences = {}
   }

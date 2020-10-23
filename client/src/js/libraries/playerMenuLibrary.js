@@ -78,6 +78,7 @@ window.local.on('onGameReady', () => {
     canTakeMapSnapshots: false,
     hasManagementToolbar: false,
     showBrandImageScreen: false,
+    editAllowedWhenGameStarted: false,
   }
 
   window.heroMenuLibrary = {

@@ -339,7 +339,6 @@ function checkIdOrTagMatch(id, tag, object) {
   }
 }
 
-
 export {
   testEventMatch,
   testCondition

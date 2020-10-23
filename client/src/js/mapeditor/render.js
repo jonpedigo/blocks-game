@@ -35,7 +35,7 @@ function update() {
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
-  if((PAGE.role.isAdmin || (GAME.heros[HERO.id].flags.showMapHighlight && !GAME.gameState.started)) && objectHighlighted && !objectHighlighted.CREATOR) {
+  if((PAGE.role.isAdmin || (GAME.heros[HERO.id].flags.showMapHighlight && (!GAME.gameState.started || GAME.heros[HERO.id].flags.editAllowedWhenGameStarted) )) && objectHighlighted && !objectHighlighted.CREATOR) {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       let color = 'rgba(255,255,255,0.2)'
       drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)

@@ -70,6 +70,9 @@ class NotificationsControl{
     if(mod.effectJSON.spaceBarBehavior) {
       window.socket.emit('sendNotification', { playerUIHeroId: mod.ownerId, toast: true, text: 'Press Space Bar', viewControlsOnClick: true })
     }
+    if(mod.effectJSON.creator) {
+      window.emitGameEvent('onUpdatePlayerUI', GAME.heros[mod.ownerId])
+    }
     // if(mod.effectJSON.arrowKeysBehavior || mod.effectJSON.spaceBarBehavior || mod.effectJSON.zButtonBehavior || mod.effectJSON.xButtonBehavior || mod.effectJSON.cButtonBehavior) {
     //   window.socket.emit('sendNotification', { playerUIHeroId: mod.ownerId, toast: true, text: 'Your controls updated have been updated. Click to see more', viewControlsOnClick: true })
     // }

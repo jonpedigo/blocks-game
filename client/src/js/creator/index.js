@@ -29,7 +29,13 @@ class Creator {
   }
 
   onEditHero(hero) {
-    if(!PAGE.role.isAdmin && hero.id === HERO.id && hero.creator) {
+    if(!PAGE.role.isAdmin && hero.id === HERO.id && (hero.creator || hero.flags)) {
+      CREATOR.ref.setCreatorObjects(hero.creator)
+    }
+  }
+
+  onUpdatePlayerUI(hero) {
+    if(!PAGE.role.isAdmin && hero.id === HERO.id) {
       CREATOR.ref.setCreatorObjects(hero.creator)
     }
   }
