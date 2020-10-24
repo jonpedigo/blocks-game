@@ -55,7 +55,7 @@ function toggleSubObject(subObjectId, modId) {
   }
 }
 
-function onGameLoaded() {
+function onFirstPageGameLoaded() {
   window.creatorLibrary = {
     selectColor: {
       specialAction: 'selectColor',
@@ -234,6 +234,11 @@ function onGameLoaded() {
       columnName: 'Basic',
       JSON: window.objectLibrary.roof,
     },
+    gunPickupable: {
+      label: 'Gun',
+      columnName: 'Basic',
+      JSON: window.subObjectLibrary.gun,
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -290,9 +295,10 @@ function onGameLoaded() {
     asteroidsPowerBlock: true,
     ufoPowerBlock: true,
     starViewBlock: true,
+    gunPickupable: true,
   }
 }
 
 export default {
-  onGameLoaded
+  onFirstPageGameLoaded
 }

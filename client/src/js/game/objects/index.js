@@ -879,10 +879,10 @@ class Objects{
   }
 
   removeObject(object) {
-    GAME.objectsById[object.id].mod().removed = true
+    GAME.objectsById[object.id].removed = true
     if(object.subObjects) {
         OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
-        subObject.mod().removed = true
+        subObject.removed = true
       })
     }
     window.local.emit('onUpdatePFgrid', 'remove', object)
@@ -962,7 +962,7 @@ class Objects{
 
   removeSubObject(ownerId, subObjectName) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
-    owner.subObjects[subObjectName].mod().removed = true
+    owner.subObjects[subObjectName].removed = true
   }
 
   onEditSubObject(ownerId, subObjectName, update) {

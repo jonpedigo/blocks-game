@@ -265,7 +265,7 @@ window.local.on('onFirstPageGameLoaded', () => {
         seeThroughOnHeroCollide: true,
         foreground: true,
       }
-    }
+    },
   }
 
 })

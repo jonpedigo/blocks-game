@@ -6,6 +6,12 @@
 
 TODO
 
+EQUIPMENT UPGRADE
+Get guns working
+various guns
+Sword?
+Other weapons
+
 Change on collide to on touch start for certain tags
 Try loading game on non host
 Change ask current game
@@ -54,11 +60,6 @@ actually build in this whole equipping system
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
 
-EQUIPMENT UPGRADE
-Get guns working
-various guns
-Sword?
-Other weapons
 
 ANIMATION UPGRADE
 Random Particle Designer
@@ -131,7 +132,7 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-VISIBLE TO
+VISIBLE TO - tag
 STORY - Fade in/out to game
 
 --

@@ -707,7 +707,7 @@ class Game{
     const branch = _.cloneDeep(GAME.library.branches[id])
     const addedObjects = branch.addedObjects.map((addedObj) => {
       addedObj.id = 'branchadded-'+window.uniqueID()
-      addedObj.mod().removed = true
+      addedObj.removed = true
       return addedObj
     })
     window.socket.emit('addObjects', addedObjects)

@@ -228,7 +228,7 @@ function objectCollisionEffects(po) {
       let collider = body.gameObject
       let agent = po.gameObject
 
-      const colliderIsInteractable = OBJECTS.isInteractable(collider)
+      const colliderIsInteractable = OBJECTS.isInteractable(collider) && collider.ownerId !== agent.id
       if(agent.mod().tags['heroInteractTriggerArea'] && colliderIsInteractable) {
         let hero = GAME.heros[agent.ownerId]
         // sometimes the hero could be logged off

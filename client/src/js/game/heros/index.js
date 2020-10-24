@@ -733,9 +733,9 @@ class Hero{
 
   removeHero(hero) {
     OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-      subObject.mod().removed = true
+      subObject.removed = true
     })
-    GAME.heros[hero.id].mod().removed = true
+    GAME.heros[hero.id].removed = true
   }
 
   onDeleteHero(heroId) {

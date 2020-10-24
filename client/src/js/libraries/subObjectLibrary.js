@@ -13,12 +13,13 @@ window.local.on('onFirstPageGameLoaded', () => {
       tags: { monsterDestroyer: true, rotateable: true, relativeToAngle: true, relativeToDirection: true },
     },
     gun: {
-      x: 0, y: 0, width: 40, height: 5,
+      x: 0, y: 0, width: 10, height: 10,
       relativeX: GAME.grid.nodeSize/5,
       relativeY: -GAME.grid.nodeSize,
       relativeWidth: -GAME.grid.nodeSize * .75,
       relativeHeight: -GAME.grid.nodeSize * .75,
-      tags: { monsterDestroyer: true, rotateable: true, relativeToAngle: true, relativeToDirection: true },
+      subObjectName: 'gun',
+      tags: { rotateable: true, relativeToAngle: true, relativeToDirection: true, pickupable: true, pickupOnHeroInteract: true, equipOnPickup: true, onMapWhenEquipped: true },
       actionButtonBehavior: 'shoot',
       actionProps: {
         shootTimeout: 2,

@@ -11,7 +11,7 @@ class Creator {
   }
 
   onFirstPageGameLoaded() {
-    creatorLibrary.onGameLoaded()
+    creatorLibrary.onFirstPageGameLoaded()
 
     // this.container = container
     const initialProps = {

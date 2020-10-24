@@ -173,7 +173,7 @@ function setDefault() {
     equipOnPickup: false,
     // potential: false,
     stackable: false,
-    // onMapWhenEquipped: false, //cant change
+    onMapWhenEquipped: false, //cant change
     // dropOnOwnerDestroyed: false,
   }
 

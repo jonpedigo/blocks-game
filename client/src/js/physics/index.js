@@ -557,7 +557,7 @@ function removeAndRespawn() {
       hero._respawn = null
     }
     if(hero._remove) {
-      hero.mod().removed = true
+      hero.removed = true
       HERO.removeHero(hero)
       hero._remove = null
     }
@@ -591,7 +591,9 @@ function processObjectRemoval(object) {
   if(object._destroy) {
     if(object.mod().tags.respawn) {
       object._respawn = true
-    } else object._remove = true
+    } else {
+      object._remove = true
+    }
     object._destroy = null
     object._destroyedById = null
     window.emitGameEvent('onObjectDestroyed', object, OBJECTS.getObjectOrHeroById(object._destroyedById))
@@ -602,7 +604,7 @@ function processObjectRemoval(object) {
     object._respawn = null
   }
   if(object._remove) {
-    object.mod().removed = true
+    object.removed = true
     OBJECTS.removeObject(object)
     object._remove = null
   }
