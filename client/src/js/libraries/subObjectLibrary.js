@@ -23,8 +23,12 @@ window.local.on('onFirstPageGameLoaded', () => {
       actionButtonBehavior: 'shoot',
       actionProps: {
         shootTimeout: 2,
+        shootSpread: false,
+        shootVelocity: 200,
         shootTags: {
           monsterDestroyer: true,
+          destroyOnCollideWithObstacle: true,
+          moving: true
         }
       }
     }

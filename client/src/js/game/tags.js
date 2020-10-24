@@ -91,6 +91,10 @@ function setDefault() {
     // resourceFlammable: false,
   }
 
+  window.projectileTags = {
+    destoryOnCollideWithObstacle: false,
+  }
+
   window.spawnZoneTags = {
     spawnZone: false,
     spawnRandomlyWithin: false,

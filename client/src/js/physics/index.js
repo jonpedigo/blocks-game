@@ -619,8 +619,13 @@ function processObjectRemoval(object) {
   if(object.constructParts) {
     object.constructParts.forEach((part) => {
       if(part._destroy) {
-        part.removed = true
+        part._remove = true
         part._destroy = null
+      }
+
+      if(part._remove) {
+        part.removed = true
+        part._remove = null
       }
     })
   }

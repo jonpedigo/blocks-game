@@ -184,9 +184,11 @@ function handleActionButtonBehavior(hero, action, delta) {
 
   if(action === 'shoot') {
     if(subObject) {
-      shootBullet({direction: hero.inputDirection, pos: subObject, tags: subObject.actionProps.shootTags})
+      shootBullet({direction: hero.inputDirection, pos: subObject, actionProps: subObject.actionProps })
     } else {
-      shootBullet({direction: hero.inputDirection, pos: hero, tags: { monsterDestroyer: true }})
+      shootBullet({direction: hero.inputDirection, pos: hero, actionProps: {
+        tags: { monsterDestroyer: true, moving: true }
+      }})
     }
   }
 

@@ -236,7 +236,7 @@ function onFirstPageGameLoaded() {
     },
     gunPickupable: {
       label: 'Gun',
-      columnName: 'Basic',
+      columnName: 'Items',
       JSON: window.subObjectLibrary.gun,
     },
   }

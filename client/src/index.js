@@ -6,11 +6,47 @@
 
 TODO
 
-EQUIPMENT UPGRADE
+LEVEL 1 POWERS
 Get guns working
+- GUN PARAMETERS
 various guns
-Sword?
-Other weapons
+  - SPREAD GUN
+  - GRAPLING HOOK
+  - BOOMERANG
+  - ARROW SHOOTER
+  - SNIPER
+  - BIG GUN, SMALL GUN
+  - MAGIC
+  SHOTGUN
+Sword - pickaxe? ax? Are these the same thing?
+Sword options..
+  time quota - Time it takes for one 'hit'
+
+bullets that ping around!
+---> Rotational velocity bullets
+
+Other weapons?
+- BOMB DROPPER
+
+JUMPING POWERS
+ Wall jump
+ DASH
+ , teleport dash
+
+REVEAL things power
+
+SUCK THINGS IN AND ADD TO INVENTORY?
+
+GUNS THAT CREATE THINGs....
+
+Gun from the swapper
+
+
+Bouncing ball action - mario
+
+Maybe dual stick shooter potential?
+
+-----
 
 Change on collide to on touch start for certain tags
 Try loading game on non host
