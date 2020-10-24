@@ -100,8 +100,9 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const subObject = owner.subObjects[subObjectName]
   const newObject = _.cloneDeep(subObject)
 
-  if(withdrawer.tags.hero && withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
-    window.emitGameEvent('onHeroWithdrawFail', hero, subObject)
+  if(withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !subObject.tags.stackable) {
+    if(withdrawer.tags.hero) window.emitGameEvent('onHeroWithdrawFail', withdrawer, subObject)
+    else window.emitGameEvent('onHeroDepositFail', owner, subObject)
     return
   }
 

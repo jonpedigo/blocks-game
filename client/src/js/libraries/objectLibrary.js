@@ -51,17 +51,25 @@ window.local.on('onFirstPageGameLoaded', () => {
       objectType: 'plainObject',
       width: GAME.grid.nodeSize * 2,
       height: GAME.grid.nodeSize * 2,
+      subObjects: {
+        resource: {
+          subObjectName: 'resource',
+          tags: { potential: true, stackable: true, resource: true, pickupable: true, pickupOnHeroInteract: true }, count: 0 }
+      },
       tags: { outline: true, resourceZone: true, resourceDepositOnCollide: true, resourceWithdrawOnInteract: true },
       resourceWithdrawAmount: 1, resourceLimit: -1, resourceTags: ['resource']
     },
     resource: {
       objectType: 'plainObject',
       subObjectName: 'resource',
-      tags: { obstacle: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
+      tags: { obstacle: true, stackable: true, resource: true, pickupable: true, pickupOnHeroInteract: true },
     },
     chest: {
       objectType: 'plainObject',
       tags: { obstacle: true, spawnZone: true, spawnAllInHeroInventoryOnHeroInteract: true, destroyOnSpawnPoolDepleted: true },
+      subObjects: {
+        spawner: { tags: { potential: true } }
+      },
       spawnLimit: -1, spawnPoolInitial: 1, subObjectChances: {'spawner': {randomWeight: 1, conditionList: null}}
     },
     homing: {

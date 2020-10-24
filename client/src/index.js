@@ -6,6 +6,13 @@
 
 TODO
 
+Change on collide to on touch start for certain tags
+Try loading game on non host
+Change ask current game
+Low bandwidth mode
+Color icon in creator menu
+Toggle between drawing types?
+
 SIMPLE SEQUENCE ( Opening Sequence )
 PUZZLE INTERFACES
 -----

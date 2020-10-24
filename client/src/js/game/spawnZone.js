@@ -192,6 +192,7 @@ function spawnAllNow(spawningObject, spawnInto) {
   const spawnSubObjects = []
   for(let i = 0; i < pool; i++) {
     let sso
+
     if(spawnInto) {
       // spawnAllInHeroInventoryOnHeroInteract means spawnInto is the hero
       sso = window.getSubObjectFromChances(spawnInto, spawningObject, spawningObject)

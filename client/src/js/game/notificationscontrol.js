@@ -31,6 +31,10 @@ class NotificationsControl{
     window.socket.emit('sendNotification', { playerUIHeroId: hero.id, logRecipientId: hero.id, toast: true, log: true, text: 'You can\'t withraw. You already have a ' + subObject.subObjectName})
   }
 
+  onHeroDepositFail(hero, subObject) {
+    window.socket.emit('sendNotification', { playerUIHeroId: hero.id, logRecipientId: hero.id, toast: true, log: true, text: 'You can\'t deposit. Target already has a ' + subObject.subObjectName})
+  }
+
   onHeroDrop(hero, object) {
     let message =  'You dropped ' + object.subObjectName
     if(object.count > 1) {
