@@ -1,5 +1,5 @@
 // top of dist/pixi-layers.js
-import * as PIXI from "pixi.js";
+import * as PIXI from "pixi.js-legacy";
 
 var pixi_display;
 (function (pixi_display) {

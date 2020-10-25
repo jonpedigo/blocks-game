@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js-legacy'
 import tinycolor from 'tinycolor2'
 import { GlowFilter, OutlineFilter, DropShadowFilter } from 'pixi-filters'
 import { createDefaultEmitter, updatePixiEmitterData } from './particles'
