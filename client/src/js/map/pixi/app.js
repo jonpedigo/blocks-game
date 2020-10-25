@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js-legacy'
+import * as PIXI from 'pixi.js'
 window.PIXI = PIXI
 import './pixi-layers'
 import { GlowFilter, ColorMatrixFilter } from 'pixi-filters'

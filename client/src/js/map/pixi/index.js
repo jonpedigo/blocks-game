@@ -2,7 +2,7 @@ import tinycolor from 'tinycolor2'
 import { updatePixiObject, initPixiObject, initEmitter } from './objects'
 import { initPixiApp } from './app'
 import gridUtil from '../../utils/grid'
-import * as PIXI from 'pixi.js-legacy'
+import * as PIXI from 'pixi.js'
 import { GlowFilter, OutlineFilter, GodrayFilter, EmbossFilter, ReflectionFilter, ShockwaveFilter } from 'pixi-filters'
 import { Ease, ease } from 'pixi-ease'
 
