@@ -115,7 +115,7 @@ class Objects{
       gridHeight: object.gridHeight,
       gridWidth: object.gridWidth,
       onGround: object.onGround,
-      removed: object.mod().removed,
+      removed: object.removed,
       spawnedIds: object.spawnedIds,
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
@@ -126,7 +126,6 @@ class Objects{
       _objectsTouching: object._objectsTouching,
       _objectsAwareOf: object._objectsAwareOf,
       _flipY: object._flipY,
-
 
       targetXY: object.targetXY,
       path: object.path,
@@ -142,6 +141,8 @@ class Objects{
       _pfGrid: object.pfGrid,
 
       navigationTargetId:  object.navigationTargetId,
+
+      actionState: object.actionState,
     }
 
     if(object.subObjects) {
@@ -354,7 +355,7 @@ class Objects{
       name: object.name,
       sprite: object.sprite,
       namePos: object.namePos,
-      removed: object.mod().removed,
+      removed: object.removed,
       angle: object.angle,
       _flipY: object._flipY,
       spawnPointX: object.spawnPointX,
@@ -376,6 +377,8 @@ class Objects{
 
       path: object.path,
       targetXY: object.targetXY,
+
+      actionState: object.actionState,
     }
 
     if(object.subObjects) {

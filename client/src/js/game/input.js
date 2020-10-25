@@ -80,7 +80,8 @@ function setDefault() {
     'accelerate': 'Accelerate',
     'accelerateBackwards': 'Go Backwards',
     'deccelerateToZero': 'Slow Down',
-    'brakeToZero': 'Fast Stop'
+    'brakeToZero': 'Fast Stop',
+    'mod': 'Activate Power'
   }
 
   window.spaceBarBehavior = {
@@ -182,6 +183,8 @@ function handleActionButtonBehavior(hero, action, delta) {
     }
   })
 
+  if(subObject && subObject.actionState.waiting) return
+
   if(action === 'shoot') {
     if(subObject) {
       shootBullet({direction: hero.inputDirection, pos: subObject, actionProps: subObject.actionProps })
@@ -189,6 +192,16 @@ function handleActionButtonBehavior(hero, action, delta) {
       shootBullet({direction: hero.inputDirection, pos: hero, actionProps: {
         tags: { monsterDestroyer: true, moving: true }
       }})
+    }
+  }
+
+  if(action === 'mod') {
+    if(subObject) {
+      window.emitGameEvent('onStartMod', {
+        ownerId: hero.id,
+        effectJSON: subObject.actionProps.effectJSON,
+        manualRevertId: subObject.actionProps.modId
+      })
     }
   }
 
@@ -229,6 +242,15 @@ function handleActionButtonBehavior(hero, action, delta) {
   }
   if(action === 'accelerateBackwards') {
     hero.velocityAngle -= hero.speed * delta
+  }
+
+  if(subObject && subObject.actionProps.debounceTime) {
+    const timeoutId = 'debounce-action-' + subObject.id + subObject.actionButtonBehavior
+    subObject.actionState.waiting = true
+    subObject.actionState.timeoutId = timeoutId
+    GAME.addTimeout(timeoutId, subObject.actionProps.debounceTime, () => {
+      subObject.actionState.waiting = false
+    })
   }
 }
 
