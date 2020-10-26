@@ -65,6 +65,12 @@ class MapEditor {
       if(e.button === 2) return
       if (!MAPEDITOR.paused) handleMouseDown(event)
     })
+    document.body.addEventListener("dblclick", (e) => {
+      if(MAPEDITOR.objectHighlighted && MAPEDITOR.objectHighlighted.id) {
+        OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
+        BELOWMANAGER.open({ objectSelected: MAPEDITOR.objectHighlighted, selectedManager: 'ObjectManager', selectedMenu: 'detail', selectedId: OBJECTS.editingId })
+      }
+    })
     document.body.addEventListener("mousemove", (e) => {
       if (!MAPEDITOR.paused) handleMouseMove(event)
     })
@@ -250,6 +256,12 @@ function handleMouseDown(event) {
         so.id = subObjectName + '-' + window.uniqueID()
       })
     }
+    const constructParts = MAPEDITOR.copiedObject.constructParts
+    if(constructParts) {
+      constructParts.forEach((part) => {
+        part.id = window.uniqueID()
+      })
+    }
     OBJECTS.create([MAPEDITOR.copiedObject])
     MAPEDITOR.copiedObject = null
   } else if (MAPEDITOR.isSettingPathfindingLimit) {
@@ -293,9 +305,6 @@ function handleMouseDown(event) {
   } else if(selectionAllowed && MAPEDITOR.objectHighlighted && MAPEDITOR.objectHighlighted.id){
     if(OBJECTS.editingId === MAPEDITOR.objectHighlighted.id) {
       OBJECTS.editingId = null;
-    } else {
-      OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
-      BELOWMANAGER.open({ objectSelected: MAPEDITOR.objectHighlighted, selectedManager: 'ObjectManager', selectedMenu: 'detail', selectedId: OBJECTS.editingId })
     }
   } else if(selectionAllowed){
     OBJECTS.editingId = null

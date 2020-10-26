@@ -45,7 +45,15 @@ class ConstructEditor {
     this.painting = false
     this.erasing = false
     this.selectedColor = null
-    this.mapVisible = true
+    this.mapVisible = {
+      all: true,
+      drawing: true,
+      objects: true,
+      background: true,
+      foreground: true,
+      structure: true,
+      hero: true
+    }
   }
 
   cancel() {
@@ -64,6 +72,10 @@ class ConstructEditor {
     this.ref.close()
     this.nodesHistory = []
     this.initState()
+
+    // if(object.tags.background) {
+    //   PIXIMAP.app.view.style.zIndex = null
+    // }
   }
 
 
@@ -154,6 +166,10 @@ class ConstructEditor {
     this.nodesHistory = []
 
     window.local.emit('onConstructEditorStart', object)
+
+    // if(object.tags.background) {
+    //   PIXIMAP.app.view.style.zIndex = '1'
+    // }
   }
 
   handleMouseUp() {
@@ -468,20 +484,23 @@ class ConstructEditor {
     camera.set(cameraController)
   }
 
-  toggleMapVisibility() {
-    this.mapVisible = !this.mapVisible
+  toggleMapVisibility(type) {
+    this.mapVisible[type] = !this.mapVisible[type]
+    PIXIMAP.resetConstructParts()
   }
 
   onRender = () => {
     const {ctx, canvas, camera, grid, nodeHighlighted, tags, open, tool, selectedColor } = CONSTRUCTEDITOR
     if(!open) return
 
-    if(!this.mapVisible) {
+    if(!this.mapVisible.all) {
       ctx.fillStyle = GAME.world.backgroundColor || 'black'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     drawTools.drawGrid(ctx, {...grid, color: 'white'}, camera)
+
+    if(!this.mapVisible.drawing) return
 
     grid.forEachNode((node) => {
       if(node.data.filled) {

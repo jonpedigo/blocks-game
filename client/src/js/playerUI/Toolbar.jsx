@@ -110,7 +110,7 @@ export default class Toolbar extends React.Component {
 
         sequenceEditorModals.openImageSelectModal(async (image) => {
           const { value: yes } = await Swal.fire({
-            title: "Are you sure you want to publish? This will create a post on the Homemade Arcade Social Network",
+            title: "Are you sure you want to publish? This will create a post in the Homemade Arcade",
             showClass: {
               popup: 'animated fadeInDown faster'
             },
@@ -129,6 +129,23 @@ export default class Toolbar extends React.Component {
     </ToolbarRow>
   }
 
+  _renderZoomTools() {
+    return <React.Fragment>
+      <ToolbarButton iconName="fa-search-plus" onClick={() => {
+        EDITOR.preferences.zoomMultiplier -= (EDITOR.zoomDelta * 4)
+        window.local.emit('onZoomChange', HERO.editingId)
+      }}/>
+      <ToolbarButton iconName="fa-search-minus" onClick={() => {
+        EDITOR.preferences.zoomMultiplier += (EDITOR.zoomDelta * 4)
+        window.local.emit('onZoomChange', HERO.editingId)
+      }}/>
+      <ToolbarButton iconName="fa-times" onClick={() => {
+        EDITOR.preferences.zoomMultiplier = 0
+        window.local.emit('onZoomChange', HERO.editingId)
+      }}/>
+    </React.Fragment>
+  }
+
   render() {
     if(PAGE.role.isAdmin) return null
     const { open } = this.state
@@ -141,7 +158,7 @@ export default class Toolbar extends React.Component {
       <div className="Toolbar">
         {hero.flags.canStartStopGame && this._renderStartStop()}
         {this._renderBranchButtons()}
-        {hero.flags.canTakeMapSnapshots && <ToolbarButton iconName="fa-camera-retro" onClick={async () => {
+        {hero.flags.canTakeMapSnapshots && <ToolbarRow iconName="fa-camera-retro" onClick={async () => {
           const { value: name } = await Swal.fire({
             title: "What is the name of this photo?",
             showClass: {
@@ -160,7 +177,36 @@ export default class Toolbar extends React.Component {
         }}
         onShiftClick={() => {
           PIXIMAP.snapCamera()
-        }}/>}
+        }}>
+
+        <ToolbarButton iconName="fa-ruler-horizontal"
+          active={hero.tags.adminInch}
+          onClick={() => {
+            if(hero.tags.adminInch) {
+              window.socket.emit('editHero', { id: hero.id, tags: { adminInch: false } })
+            } else {
+              window.socket.emit('editHero', { id: hero.id, tags: { adminInch: true } })
+            }
+            window.socket.emit()
+          }}
+        ></ToolbarButton>
+          <ToolbarButton iconName="fa-eye-slash"
+            active={hero.tags.invisible}
+            onClick={() => {
+              if(hero.tags.invisible) {
+                window.socket.emit('editHero', { id: hero.id, tags: { invisible: false } })
+              } else {
+                window.socket.emit('editHero', { id: hero.id, tags: { invisible: true, obstacle: false } })
+              }
+              window.socket.emit()
+            }}
+          ></ToolbarButton>
+          {this._renderZoomTools()}
+          </ToolbarRow>
+        }
+        {hero.flags.canZoomInAndOut && !GAME.gameState.started && <ToolbarRow iconName='fa-search'>
+          {this._renderZoomTools()}
+        </ToolbarRow>}
         {hero.flags.hasManagementToolbar && this._renderManagementToolBar()}
       </div>
     )

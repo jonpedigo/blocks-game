@@ -79,8 +79,10 @@ export default class Creator extends React.Component {
       const { textureIdSelected } = this.props
 
       let newObject
-      if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
+      // this confuses me, idk
+      if((!MAPEDITOR.objectHighlighted.id || (MAPEDITOR.objectHighlighted.tags && !MAPEDITOR.objectHighlighted.tags.obstacle) || MAPEDITOR.objectHighlighted.CREATOR) && creatorObjectSelected.JSON) {
         newObject = _.cloneDeep(creatorObjectSelected.JSON)
+
         newObject.x = MAPEDITOR.objectHighlighted.x
         newObject.y = MAPEDITOR.objectHighlighted.y
         newObject.id = 'creator-'+window.uniqueID()
@@ -90,6 +92,7 @@ export default class Creator extends React.Component {
         if(colorSelected && colorSelected !== GAME.world.defaultObjectColor) newObject.color = colorSelected
         if(textureIdSelected) newObject.defaultSprite = textureIdSelected
         OBJECTS.create(newObject)
+
 
         if(creatorObjectSelected.onCreateObject) {
           creatorObjectSelected.onCreateObject(newObject)

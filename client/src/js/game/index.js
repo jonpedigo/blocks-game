@@ -627,6 +627,11 @@ class Game{
           })
         }
       })
+
+      if(!PAGE.role.isAdmin && EDITOR.preferences.zoomMultiplier) {
+        window.local.emit('onZoomChange')
+      }
+
       GAME.gameState.paused = false
       GAME.gameState.started = true
       window.local.emit('onGameStarted')

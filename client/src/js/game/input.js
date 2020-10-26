@@ -264,18 +264,22 @@ function onUpdate(hero, keysDown, delta) {
 
   if((!GAME.gameState.started || hero.flags.isAdmin) && (keysDown['shift'] || keysDown['caps lock'])) {
     if (upPressed) {
-      hero.y -= GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.y -= 1
+      else hero.y -= GAME.grid.nodeSize
     }
     if (downPressed) {
-      hero.y += GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.y += 1
+      else hero.y += GAME.grid.nodeSize
     }
 
     if (leftPressed) {
-      hero.x -= GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.x -= 1
+      else hero.x -= GAME.grid.nodeSize
     }
 
     if (rightPressed) {
-      hero.x += GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.x += 1
+      else hero.x += GAME.grid.nodeSize
     }
 
     hero._skipPosUpdate = true

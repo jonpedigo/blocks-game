@@ -12,7 +12,7 @@ export default class Root extends React.Component{
       open: false,
       selectedColor: '',
       toolSelected: 'paintBrush',
-      isMapVisible: true,
+      isMapVisible: CONSTRUCTEDITOR.mapVisible,
     }
 
     this._openColorPicker = this._openColorPicker.bind(this)
@@ -173,12 +173,70 @@ export default class Root extends React.Component{
           window.local.emit('onZoomChange')
         }}/>
       </ToolbarRow>
-      <ToolbarButton active={!this.state.isMapVisible} iconName="fa-eye-slash" onClick={() => {
-          CONSTRUCTEDITOR.toggleMapVisibility()
+      <ToolbarRow iconName="fa-eye-slash"
+        active={this.state.isMapVisible.all}
+        onClick={() => {
+          CONSTRUCTEDITOR.toggleMapVisibility('all')
           this.setState({
             isMapVisible: CONSTRUCTEDITOR.mapVisible
           })
-        }}/>
+        }}
+      >
+        {CONSTRUCTEDITOR.objectId !== 'globalConstructStationaryBackground' && <ToolbarButton text="background"
+          active={this.state.isMapVisible.background}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('background')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />}
+        {CONSTRUCTEDITOR.objectId !== 'globalConstructStationaryObstacle' && <ToolbarButton text="structure"
+          active={this.state.isMapVisible.structure}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('structure')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />}
+        {CONSTRUCTEDITOR.objectId !== 'globalConstructStationaryForeground' && <ToolbarButton text="foreground"
+          active={this.state.isMapVisible.foreground}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('foreground')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />}
+        <ToolbarButton text="objects"
+          active={this.state.isMapVisible.objects}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('objects')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />
+        <ToolbarButton text="hero"
+          active={this.state.isMapVisible.hero}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('hero')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />
+        <ToolbarButton text="drawing"
+          active={this.state.isMapVisible.drawing}
+          onClick={() => {
+            CONSTRUCTEDITOR.toggleMapVisibility('drawing')
+            this.setState({
+              isMapVisible: CONSTRUCTEDITOR.mapVisible
+            })
+          }}
+        />
+      </ToolbarRow>
       <br/>
       {CONSTRUCTEDITOR.nodesHistory.length > 0 && <ToolbarButton text="undo" onClick={() => {
         if(CONSTRUCTEDITOR.nodesHistory.length) {

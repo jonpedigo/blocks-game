@@ -58,7 +58,7 @@ window.local.on('onGameReady', () => {
     },
     backgroundColor: {
       action: 'select-world-background-color',
-      title: 'Background Color',
+      title: 'World Background Color',
       dontCloseMenu: true,
     }
   }
@@ -79,6 +79,7 @@ window.local.on('onGameReady', () => {
     hasManagementToolbar: false,
     showBrandImageScreen: false,
     editAllowedWhenGameStarted: false,
+    canZoomInAndOut: false,
   }
 
   window.heroMenuLibrary = {

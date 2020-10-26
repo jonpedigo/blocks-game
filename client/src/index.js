@@ -48,6 +48,9 @@ Maybe dual stick shooter potential?
 
 -----
 
+Non scroller object ( sun )
+Parallax scroller ( 0-10 )
+
 Change on collide to on touch start for certain tags
 Try loading game on non host
 Change ask current game
@@ -614,8 +617,31 @@ import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
 import './js/libraries/spriteSheetLibrary.js'
 
+
+// Broadcast that you're opening a page.
+let otherPageOpen = false
+localStorage.openpages = Date.now();
+var onLocalStorageEvent = function(e){
+  if(e.key == "openpages"){
+      // Listen if anybody else is opening the same page!
+    localStorage.page_available = Date.now();
+  }
+  if(e.key == "page_available"){
+    otherPageOpen = true
+  }
+};
+window.addEventListener('storage', onLocalStorageEvent, false);
+
+setTimeout(() => {
+  if(otherPageOpen) {
+    alert("Another tab has Homemade Arcade open");
+  } else {
+    PAGE.load()
+  }
+}, 100)
+
+
 // if(document.hasFocus()) {
-  PAGE.load()
 // } else {
 //   window.onfocus = PAGE.load
 // }

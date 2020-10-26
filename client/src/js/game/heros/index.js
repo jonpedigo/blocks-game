@@ -542,6 +542,7 @@ class Hero{
       velocityDecayXExtra: hero.velocityDecayXExtra,
       velocityDecayYExtra: hero.velocityDecayYExtra,
       floatJumpTimeout: hero.floatJumpTimeout,
+      gravityVelocityY: hero.gravityVelocityY,
 
       pathId: hero.pathId,
       pathfindingLimitId: hero.pathfindingLimitId,

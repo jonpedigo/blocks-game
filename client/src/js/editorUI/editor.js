@@ -10,7 +10,7 @@ class Editor {
     this.zoomDelta = .1250
 
     const storedPreferences = localStorage.getItem('editorPreferences')
-    if(PAGE.role.isAdmin && storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
+    if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
       Object.assign(this.preferences,JSON.parse(storedPreferences))
     }
   }

@@ -175,7 +175,10 @@ class Objects{
     let properties = {
       id: object.id,
       objectType: object.objectType,
+      
       velocityMax: object.velocityMax,
+      gravityVelocityY: object.gravityVelocityY,
+
       speed: object.speed,
       width: object.width,
       height: object.height,
@@ -222,6 +225,7 @@ class Objects{
           height: part.height,
           width: part.width,
           ownerId: part.ownerId,
+          defaultSprite: part.defaultSprite,
         }
       }),
 

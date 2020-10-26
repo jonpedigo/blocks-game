@@ -127,7 +127,8 @@ function updatePosition(object, delta) {
   //   }
   // }
 
-  let gravityVelocityY = GAME.world.gravityVelocityY
+  let gravityVelocityY = object.gravityVelocityY
+  if(!gravityVelocityY) gravityVelocityY = GAME.world.gravityVelocityY
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
