@@ -52,6 +52,8 @@ function setDefault() {
     moving: false,
 
     trackObjectsTouching: false,
+
+    seperateParts: false,
   }
 
   // window.otherTags = {
@@ -87,6 +89,10 @@ function setDefault() {
     // resourceOnMap: false,
     // resourceStealable: false,
     // resourceFlammable: false,
+  }
+
+  window.projectileTags = {
+    destoryOnCollideWithObstacle: false,
   }
 
   window.spawnZoneTags = {
@@ -171,7 +177,7 @@ function setDefault() {
     equipOnPickup: false,
     // potential: false,
     stackable: false,
-    // onMapWhenEquipped: false, //cant change
+    onMapWhenEquipped: false, //cant change
     // dropOnOwnerDestroyed: false,
   }
 

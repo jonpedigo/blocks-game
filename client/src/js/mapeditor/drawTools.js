@@ -272,8 +272,29 @@ function drawSprite(ctx, camera, textureId, object) {
   }
 }
 
+function drawLoadingScreen(ctx, camera) {
+  const gameEligibleForLoading = true || (GAME.grid.width > 80 || GAME.objects.length > 300)
+  const loadingState = (PAGE.loadingGame)
+  PAGE.loadingScreen = !PAGE.isGameReady || (gameEligibleForLoading && loadingState)
+
+  const hero = GAME.heros[HERO.id]
+  if(hero && hero.animationZoomMultiplier) PAGE.loadingScreen = false
+
+  if(PAGE.loadingScreen) {
+    ctx.fillStyle = "#222"
+    ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
+    // if(PAGE.role.isAdmin) {
+      drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+    // }
+    MAPEDITOR.loaderElement.style.display = "block"
+  } else {
+    MAPEDITOR.loaderElement.style.display = "none"
+  }
+}
+
 export default {
   drawSprite,
+  drawLoadingScreen,
   drawConstructParts,
   getObjectVertices,
   drawObject,

@@ -39,6 +39,8 @@ class BelowManager {
       React.createElement(Root, initialProps),
       container
     )
+
+    if(PAGE.role.isArcadeMode) BELOWMANAGER.container.style="display:none"
   }
 }
 

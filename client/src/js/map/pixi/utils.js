@@ -268,7 +268,15 @@ function updateSprite(pixiChild, gameObject) {
 }
 
 function getVisibility(pixiChild, gameObject) {
-  const invisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.mod().removed || gameObject.tags.potential || gameObject.constructParts
+  let invisible = gameObject.tags.outline || gameObject.tags.invisible || gameObject.mod().removed || gameObject.tags.potential || gameObject.constructParts
+
+  if(CONSTRUCTEDITOR.open) {
+    if(gameObject.tags.background && CONSTRUCTEDITOR.mapVisible.background === false) invisible = true
+    if(gameObject.tags.foreground && CONSTRUCTEDITOR.mapVisible.foreground === false) invisible = true
+    if(gameObject.tags.hero && CONSTRUCTEDITOR.mapVisible.hero === false) invisible = true
+    if(gameObject.id === 'globalConstructStationaryObstacle' && CONSTRUCTEDITOR.mapVisible.structure === false) invisible = true
+    if(!gameObject.tags.background && !gameObject.tags.foreground && !gameObject.tags.hero && CONSTRUCTEDITOR.mapVisible.objects === false) invisible = true
+  }
   // if(invisible) console.log(gameObject.id, gameObject.tags.outline,gameObject.tags.invisible,gameObject.mod().removed,gameObject.tags.potential,gameObject.constructParts)
   return invisible
 }

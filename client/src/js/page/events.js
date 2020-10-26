@@ -164,12 +164,10 @@ class EventEmitter {
 window.local = new EventEmitter()
 window.mockSocket = new EventEmitter(true)
 
-function init() {
-  if(PAGE.role.isArcadeMode) {
-    mockServer(null, window.mockSocket, window.mockSocket, { arcadeMode: true })
-  }
+function establishALocalHost() {
+  mockServer(null, window.mockSocket, window.mockSocket, { arcadeMode: true })
 }
 
 export default {
-  init
+  establishALocalHost
 }

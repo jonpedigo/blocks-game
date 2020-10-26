@@ -58,7 +58,11 @@ export default class Toolbar extends React.Component {
         {!GAME.gameState.started && !GAME.gameState.branch &&
           <ToolbarRow iconName="fa-play" onClick={() => {
             window.socket.emit('startGame')
-          }}>
+          }}
+          onShiftClick={() => {
+            window.socket.emit('startGame', { respawn: false })
+          }}
+          >
             <ToolbarButton iconName='fa-code-branch' onClick={async () => {
               const branchOptions = Object.keys(GAME.library.branches)
               branchOptions.unshift('New branch')
@@ -111,9 +115,15 @@ export default class Toolbar extends React.Component {
             }}/>
           </ToolbarRow>
         }
-        {GAME.gameState.started && <ToolbarRow iconName='fa-stop' onClick={() => {
-          window.socket.emit('stopGame')
-        }}>
+        {GAME.gameState.started && <ToolbarRow iconName='fa-stop'
+          onShiftClick={() => {
+            window.socket.emit('processEffect', {
+              effectName: 'stopGamePreserve'
+            })
+          }}
+          onClick={() => {
+            window.socket.emit('stopGame')
+          }}>
           <ToolbarButton iconName={GAME.gameState.paused ? "fa-play" : "fa-pause"} onClick={() => {
             if(!GAME.gameState.paused) window.socket.emit('editGameState', { paused: true })
             if(GAME.gameState.paused) window.socket.emit('editGameState', { paused: false })
@@ -194,7 +204,7 @@ export default class Toolbar extends React.Component {
             LIVEEDITOR.open(GAME.heros[HERO.editingId], 'hero')
           }}/>
           {/* star view */}
-          {hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
+          {hero && hero.animationZoomTarget === window.constellationDistance ? <ToolbarButton iconName="fa-globe-asia" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
           }}/> : <ToolbarButton iconName="fa-star" onClick={() => {
               window.socket.emit('editHero', { id: hero.id, animationZoomTarget: window.constellationDistance, animationZoomMultiplier: hero.zoomMultiplier, endAnimation: false })
@@ -268,6 +278,9 @@ export default class Toolbar extends React.Component {
           <ToolbarButton iconName="fa-sitemap" onClick={() => {
             BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'sequence'})
           }}/>
+          <ToolbarButton iconName="fa-tags" onClick={() => {
+            BELOWMANAGER.open({ selectedManager: 'GameManager', selectedMenu: 'metadata'})
+          }}/>
           {/* Default Heros -> Menu */}
           <ToolbarButton iconName="fa-theater-masks" onClick={() => {
             PAGE.typingMode = true
@@ -278,7 +291,11 @@ export default class Toolbar extends React.Component {
               }
               PAGE.typingMode = false
             })
-          }}/>
+          }}
+          onShiftClick={() => {
+            window.socket.emit('editGameHeroJSON', 'default', window.defaultHero)
+          }}
+          />
           {/* Compendium -> Menu */}
           <ToolbarButton iconName="fa-book-dead"/>
         </ToolbarRow>

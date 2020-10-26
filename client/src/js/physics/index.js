@@ -127,7 +127,8 @@ function updatePosition(object, delta) {
   //   }
   // }
 
-  let gravityVelocityY = GAME.world.gravityVelocityY
+  let gravityVelocityY = object.gravityVelocityY
+  if(!gravityVelocityY) gravityVelocityY = GAME.world.gravityVelocityY
   if(!gravityVelocityY) gravityVelocityY = 1000
 
   let applyWorldGravity = false
@@ -227,9 +228,9 @@ function prepareObjectsAndHerosForMovementPhase() {
 
     object._flipY = false
 
-    delete object._skipPosUpdate
-    delete object._flatVelocityX
-    delete object._flatVelocityY
+    object._skipPosUpdate = false
+    object._flatVelocityX = null
+    object._flatVelocityY = null
     object.interactableObject = null
     object.interactableObjectResult = null
 
@@ -329,6 +330,7 @@ function prepareObjectsAndHerosForCollisionsPhase() {
 function heroPhysics() {
   let allHeros = getAllHeros()
   allHeros.forEach((hero) => {
+    if(hero.mod().flags.isAdmin) return
     heroCollisionEffects(hero)
     if(hero.mod().relativeId) return
     heroCorrection(hero)
@@ -343,7 +345,7 @@ function objectPhysics() {
       if(PHYSICS.debug) console.log('no game object found for phyics object id: ' + id)
       continue
     }
-    if(po.gameObject.mod().removed) continue
+    if(po.gameObject.mod().removed || (po.constructPart && po.constructPart.removed)) continue
     if(po.gameObject.mod().tags.hero) continue
     objectCollisionEffects(po)
   }
@@ -364,7 +366,7 @@ function objectPhysics() {
         continue
       }
       if(!po.gameObject.mod().tags['moving']) continue
-      if(po.constructPart && !shouldCheckConstructPart(po.constructPart)) continue
+      if(po.constructPart && (po.constructPart.removed || !shouldCheckConstructPart(po.constructPart))) continue
       objectCorrection(po, final)
     }
   }
@@ -384,7 +386,7 @@ function postPhysics() {
         hero._cantInteract = true
       }
       // bad for JSON
-      delete hero.interactableObjectResult
+      hero.interactableObjectResult = null
     }
     processAwarenessAndWithinEvents(hero)
   })
@@ -546,19 +548,19 @@ function removeAndRespawn() {
       if(hero.mod().tags.respawn) {
         hero._respawn = true
       } else hero._remove = true
-      delete hero._destroy
-      delete hero._destroyedBy
-      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, hero._destroyedBy)
+      hero._destroy = null
+      hero._destroyedById = null
+      window.emitGameEvent('onHeroDestroyed', {...hero, interactableObject: null, interactableObjectResult: null }, OBJECTS.getObjectOrHeroById(hero._destroyedById))
     }
 
     if(hero._respawn) {
       HERO.respawn(hero)
-      delete hero._respawn
+      hero._respawn = null
     }
     if(hero._remove) {
-      hero.mod().removed = true
+      hero.removed = true
       HERO.removeHero(hero)
-      delete hero._remove
+      hero._remove = null
     }
 
     if(hero.subObjects) {
@@ -575,14 +577,14 @@ function removeAndRespawn() {
 function processSubObjectRemoval(object) {
   if(object._destroy) {
     object._remove = true
-    delete object._destroy
-    delete object._destroyedBy
-    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+    object._destroy = null
+    object._destroyedById = null
+    window.emitGameEvent('onObjectDestroyed', object, OBJECTS.getObjectOrHeroById(object._destroyedById))
   }
 
   if(object._remove) {
-    object.mod().removed = true
-    delete object._remove
+    object.removed = true
+    object._remove = null
   }
 }
 
@@ -590,26 +592,42 @@ function processObjectRemoval(object) {
   if(object._destroy) {
     if(object.mod().tags.respawn) {
       object._respawn = true
-    } else object._remove = true
-    delete object._destroy
-    delete object._destroyedBy
-    window.emitGameEvent('onObjectDestroyed', object, object._destroyedBy)
+    } else {
+      object._remove = true
+    }
+    object._destroy = null
+    object._destroyedById = null
+    window.emitGameEvent('onObjectDestroyed', object, OBJECTS.getObjectOrHeroById(object._destroyedById))
   }
 
   if(object._respawn) {
     OBJECTS.respawn(object)
-    delete object._respawn
+    object._respawn = null
   }
   if(object._remove) {
-    object.mod().removed = true
+    object.removed = true
     OBJECTS.removeObject(object)
-    delete object._remove
+    object._remove = null
   }
 
   if(object.subObjects) {
     Object.keys(object.subObjects).forEach((subObjectName) => {
       const subObject = object.subObjects[subObjectName]
       processSubObjectRemoval(subObject)
+    })
+  }
+
+  if(object.constructParts) {
+    object.constructParts.forEach((part) => {
+      if(part._destroy) {
+        part._remove = true
+        part._destroy = null
+      }
+
+      if(part._remove) {
+        part.removed = true
+        part._remove = null
+      }
     })
   }
 }

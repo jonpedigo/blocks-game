@@ -11,7 +11,7 @@ class Creator {
   }
 
   onFirstPageGameLoaded() {
-    creatorLibrary.onGameLoaded()
+    creatorLibrary.onFirstPageGameLoaded()
 
     // this.container = container
     const initialProps = {
@@ -29,8 +29,20 @@ class Creator {
   }
 
   onEditHero(hero) {
-    if(!PAGE.role.isAdmin && hero.id === HERO.id && hero.creator) {
+    if(!PAGE.role.isAdmin && hero.id === HERO.id && (hero.creator || hero.flags)) {
       CREATOR.ref.setCreatorObjects(hero.creator)
+    }
+  }
+
+  onUpdatePlayerUI(hero) {
+    if(!PAGE.role.isAdmin && hero.id === HERO.id) {
+      CREATOR.ref.setCreatorObjects(hero.creator)
+    }
+  }
+
+  onUpdateLibrary(update) {
+    if(update.creator) {
+      CREATOR.ref.onUpdateLibrary()
     }
   }
 

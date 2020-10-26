@@ -10,7 +10,7 @@ class Editor {
     this.zoomDelta = .1250
 
     const storedPreferences = localStorage.getItem('editorPreferences')
-    if(PAGE.role.isAdmin && storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
+    if(storedPreferences && storedPreferences != 'undefined' && storedPreferences != 'null') {
       Object.assign(this.preferences,JSON.parse(storedPreferences))
     }
   }
@@ -292,11 +292,11 @@ class Editor {
     }
     if(propName === 'larger') {
       let game = GAME.world.gameBoundaries
-      sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width + (GAME.grid.nodeSize * 2)), height: (game.height + (GAME.grid.nodeSize)), x:  game.x -  GAME.grid.nodeSize, y: game.y  - (GAME.grid.nodeSize/2) } })
+      sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width + (GAME.grid.nodeSize * 4)), height: (game.height + (GAME.grid.nodeSize * 2)), x:  game.x -  (GAME.grid.nodeSize * 2), y: game.y  - (GAME.grid.nodeSize) } })
     }
     if(propName === 'smaller') {
       let game = GAME.world.gameBoundaries
-      sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width - (GAME.grid.nodeSize * 2)), height: (game.height - (GAME.grid.nodeSize)), x:  game.x +  GAME.grid.nodeSize, y: game.y  + (GAME.grid.nodeSize/2) } })
+      sendWorldUpdate( { gameBoundaries: { ...game, width: (game.width - (GAME.grid.nodeSize * 4)), height: (game.height - (GAME.grid.nodeSize * 2)), x:  game.x +  (GAME.grid.nodeSize * 2), y: game.y  + (GAME.grid.nodeSize) } })
     }
   }
 

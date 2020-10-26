@@ -23,21 +23,21 @@ function toggleMod(modId) {
   return {
     onShiftClick: () => {
       const json = window.modLibrary[modId].effectJSON
-      window.socket.emit('editHero', { id: HERO.id, ...json})
+      window.socket.emit('editHero', { id: HERO.editingId || HERO.id, ...json})
     },
     onToggleOn: () => {
       const libraryMod = window.modLibrary[modId]
       const mod = {
-        ownerId: objectId || HERO.id,
+        ownerId: objectId || HERO.editingId || HERO.id,
         manualRevertId: modId,
         ...libraryMod
       }
       window.socket.emit('startMod', mod)
-      window.socket.emit('resetPhysicsProperties', objectId || HERO.id)
+      window.socket.emit('resetPhysicsProperties', objectId || HERO.editingId || HERO.id)
     },
     onToggleOff: () => {
       window.socket.emit('endMod', modId)
-      window.socket.emit('resetPhysicsProperties', objectId || HERO.id)
+      window.socket.emit('resetPhysicsProperties', objectId || HERO.editingId || HERO.id)
     }
   }
 }
@@ -47,15 +47,15 @@ function toggleSubObject(subObjectId, modId) {
   return {
     onToggleOn: () => {
       const so = _.cloneDeep(window.subObjectLibrary[subObjectId])
-      window.socket.emit('addSubObject', GAME.heros[HERO.id], so, subObjectId, { equipAfterCreated: !!so.actionButtonBehavior })
+      window.socket.emit('addSubObject', GAME.heros[HERO.editingId || HERO.id], so, subObjectId, { equipAfterCreated: !!so.actionButtonBehavior })
     },
     onToggleOff: () => {
-      window.socket.emit('deleteSubObject', GAME.heros[HERO.id], subObjectId)
+      window.socket.emit('deleteSubObject', GAME.heros[HERO.editingId || HERO.id], subObjectId)
     }
   }
 }
 
-function onGameLoaded() {
+function onFirstPageGameLoaded() {
   window.creatorLibrary = {
     selectColor: {
       specialAction: 'selectColor',
@@ -234,6 +234,11 @@ function onGameLoaded() {
       columnName: 'Basic',
       JSON: window.objectLibrary.roof,
     },
+    gunPickupable: {
+      label: 'Gun',
+      columnName: 'Items',
+      JSON: window.subObjectLibrary.gun,
+    },
   }
 
   window.homemadearcadeBasicLibrary = {
@@ -290,9 +295,10 @@ function onGameLoaded() {
     asteroidsPowerBlock: true,
     ufoPowerBlock: true,
     starViewBlock: true,
+    gunPickupable: true,
   }
 }
 
 export default {
-  onGameLoaded
+  onFirstPageGameLoaded
 }

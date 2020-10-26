@@ -136,8 +136,8 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     }});
   })
 
-  socket.on('askJoinGame', (heroId, role) => {
-    io.emit('onAskJoinGame', heroId, role)
+  socket.on('askJoinGame', (heroId, role, userId) => {
+    io.emit('onAskJoinGame', heroId, role, userId)
   })
 
   socket.on('heroJoinedGamed', (hero) => {
@@ -184,12 +184,12 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateGameCustomInputBehavior', customInputBehavior)
   })
 
-  socket.on('startGame', () => {
-    io.emit('onGameStart')
+  socket.on('startGame', (options) => {
+    io.emit('onGameStart', options)
   })
 
-  socket.on('stopGame', () => {
-    io.emit('onStopGame')
+  socket.on('stopGame', (options) => {
+    io.emit('onStopGame', options)
   })
 
   ///////////////////////////
@@ -309,17 +309,21 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
     io.emit('onUpdateHero', hero)
   })
   socket.on('updateHeros', (heros) => {
-    Object.keys(heros).forEach((id) => {
-      io.emit('onUpdateHero', heros[id])
-    })
+    if(heros) {
+      heros.forEach(hero => {
+        io.emit('onUpdateHero', hero)
+      })
+    }
   })
   socket.on('updateHerosPos', (heros) => {
     io.emit('onUpdateHerosPos', heros)
   })
   socket.on('updateHerosComplete', (heros) => {
-    Object.keys(heros).forEach((id) => {
-      io.emit('onUpdateHero', heros[id])
-    })
+    if(heros) {
+      heros.forEach(hero => {
+        io.emit('onUpdateHero', hero)
+      })
+    }
   })
   socket.on('editHero', (hero) => {
     // window.mergeDeep(heros[hero.id], hero)
@@ -540,10 +544,26 @@ function socketEvents(fs, io, socket, options = { arcadeMode: false }){
   socket.on('branchGameCancel', () => {
     io.emit('onBranchGameCancel')
   })
+
+
+  socket.on('editMetadata', (update) => {
+    io.emit('onEditMetadata', update)
+  })
+
+  socket.on('processEffect', (effectName, effectedIds, effectorId) => {
+    io.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
+
+  socket.on('updateGameSession', data => {
+    io.emit('onUpdateGameSession', data)
+  })
+
+  socket.on('hostJoined', () => {
+    io.emit('onHostJoined')
+  })
 }
 
 module.exports = socketEvents
-
 
 /**
  * Simple object check.

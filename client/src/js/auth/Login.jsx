@@ -1,11 +1,14 @@
 import React from "react";
 
+// <button onClick={actions.onSignUp} color="violet" size="large">
+//   Sign Up
+// </button>
 const Login = ({ values, actions }) => (
   <div>
     <input
-      name="username"
-      placeholder="Username"
-      value={values.username}
+      name="email"
+      placeholder="Email"
+      value={values.email}
       onChange={actions.onChange}
     />
     <input
@@ -18,9 +21,7 @@ const Login = ({ values, actions }) => (
     <button onClick={actions.onLogIn} color="blue" size="large">
       Log In
     </button>
-    <button onClick={actions.onSignUp} color="violet" size="large">
-      Sign Up
-    </button>
+
     <div>{values.message}</div>
   </div>
 );

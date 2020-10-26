@@ -28,16 +28,12 @@ function pickupObject(hero, collider) {
   }
 
   if(!collider.mod().tags['dontDestroyOnPickup']) {
-    collider._remove = true
-    collider._delete = true
+    collider.removed = true
+    // since were duplicating objects here, this gets tricky. the id could pick up the new object in the ._remove processing tool.
+    // keep it like this unless ur sure what ur doing
   }
 
   subObject.inInventory = true
-  if(subObject.tags.onMapWhenEquipped) {
-    subObject.mod().removed = true
-  } else {
-    subObject.tags.potential = true
-  }
 
   hero.interactableObject = null
   hero.interactableObjectResult = null
@@ -66,7 +62,7 @@ function dropObject(hero, subObject, dropAmount = 1) {
     object.count = dropAmount
   }
 
-  object.mod().removed = false
+  object.removed = false
   object.tags.potential = false
   object.tags.subObject = false
   delete object.inInventory
@@ -100,8 +96,9 @@ function withdrawFromInventory(withdrawer, owner, subObjectName, withdrawAmount)
   const subObject = owner.subObjects[subObjectName]
   const newObject = _.cloneDeep(subObject)
 
-  if(withdrawer.tags.hero && withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !collider.tags.stackable) {
-    window.emitGameEvent('onHeroWithdrawFail', hero, subObject)
+  if(withdrawer.subObjects && withdrawer.subObjects[subObject.subObjectName] && !subObject.tags.stackable) {
+    if(withdrawer.tags.hero) window.emitGameEvent('onHeroWithdrawFail', withdrawer, subObject)
+    else window.emitGameEvent('onHeroDepositFail', owner, subObject)
     return
   }
 
@@ -156,6 +153,12 @@ function equipSubObject(hero, subObject, keyBinding = 'available') {
   }
 
   subObject.isEquipped = true
+
+  if(subObject.tags.onMapWhenEquipped) {
+    subObject.removed = false
+  } else {
+    subObject.tags.potential = true
+  }
 
   window.local.emit('onHeroEquip', hero, subObject)
 }

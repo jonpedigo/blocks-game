@@ -139,6 +139,7 @@ export default class MediaManager extends React.Component {
     const byTag = {}
 
     window.spriteSheets.forEach((ss) => {
+      console.log(GAME.heros[HERO.id].spriteSheets[ss.id])
       if(PAGE.role.isAdmin || (GAME.heros[HERO.id].spriteSheets && GAME.heros[HERO.id].spriteSheets[ss.id])) {
         if(ss.tags) ss.tags.forEach((tag) => {
           if(!byTag[tag]) byTag[tag] = []
@@ -158,7 +159,6 @@ export default class MediaManager extends React.Component {
     }
 
     const assetsByTag = this._organizeSpriteSheets()
-
     return Object.keys(assetsByTag).map((tag) => {
       const tagList = assetsByTag[tag]
       return <Collapsible trigger={tag}>{tagList.map((ss) => {
@@ -170,6 +170,7 @@ export default class MediaManager extends React.Component {
 
   render() {
     const { selectedMenu, selectedId } = this.props
+    console.log(selectedMenu)
 
     if(selectedId && selectedMenu === 'SpriteSheetEditor') {
       return <div className="Manager">

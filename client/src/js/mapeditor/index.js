@@ -45,6 +45,12 @@ class MapEditor {
     MAPEDITOR.loaderElement = loader
     document.getElementById('GameContainer').appendChild(loader)
     loader.style.display = "none"
+
+    const blur = document.createElement('div')
+    blur.className = 'blur'
+    MAPEDITOR.blurElement = blur
+    document.getElementById('GameContainer').appendChild(blur)
+    blur.style.display = "none"
   }
 
   set(ctx, canvas, camera) {
@@ -58,6 +64,12 @@ class MapEditor {
     document.body.addEventListener("click", (e) => {
       if(e.button === 2) return
       if (!MAPEDITOR.paused) handleMouseDown(event)
+    })
+    document.body.addEventListener("dblclick", (e) => {
+      if(MAPEDITOR.objectHighlighted && MAPEDITOR.objectHighlighted.id) {
+        OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
+        BELOWMANAGER.open({ objectSelected: MAPEDITOR.objectHighlighted, selectedManager: 'ObjectManager', selectedMenu: 'detail', selectedId: OBJECTS.editingId })
+      }
     })
     document.body.addEventListener("mousemove", (e) => {
       if (!MAPEDITOR.paused) handleMouseMove(event)
@@ -221,7 +233,7 @@ function handleMouseUp(event) {
 
 function handleMouseDown(event) {
   const { camera, networkEditObject } = MAPEDITOR
-
+  if(!PIXIMAP.app) return
   const { x, y } = window.convertToGameXY(event)
   MAPEDITOR.clickStart.x = ((x + camera.x) / camera.multiplier)
   MAPEDITOR.clickStart.y = ((y + camera.y) / camera.multiplier)
@@ -242,6 +254,12 @@ function handleMouseDown(event) {
       Object.keys(subObjects).forEach((subObjectName) => {
         const so = subObjects[subObjectName]
         so.id = subObjectName + '-' + window.uniqueID()
+      })
+    }
+    const constructParts = MAPEDITOR.copiedObject.constructParts
+    if(constructParts) {
+      constructParts.forEach((part) => {
+        part.id = window.uniqueID()
       })
     }
     OBJECTS.create([MAPEDITOR.copiedObject])
@@ -268,7 +286,10 @@ function handleMouseDown(event) {
     if (draggingObject.pathParts) {
       networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, pathParts: draggingObject.pathParts })
     } else if (draggingObject.constructParts) {
-      networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts })
+      networkEditObject(draggingObject, { id: draggingObject.id, spawnPointX: draggingObject.x, y: draggingObject.y, spawnPointY: draggingObject.y, x: draggingObject.x, y: draggingObject.y, constructParts: draggingObject.constructParts.map(part => {
+        part.id = window.uniqueID()
+        return part
+      }) })
     } else if (GAME.gameState.started || GAME.gameState.branch) {
       networkEditObject(draggingObject, { id: draggingObject.id, x: draggingObject.x, y: draggingObject.y })
     } else {
@@ -284,9 +305,6 @@ function handleMouseDown(event) {
   } else if(selectionAllowed && MAPEDITOR.objectHighlighted && MAPEDITOR.objectHighlighted.id){
     if(OBJECTS.editingId === MAPEDITOR.objectHighlighted.id) {
       OBJECTS.editingId = null;
-    } else {
-      OBJECTS.editingId = MAPEDITOR.objectHighlighted.id
-      BELOWMANAGER.open({ objectSelected: MAPEDITOR.objectHighlighted, selectedManager: 'ObjectManager', selectedMenu: 'detail', selectedId: OBJECTS.editingId })
     }
   } else if(selectionAllowed){
     OBJECTS.editingId = null

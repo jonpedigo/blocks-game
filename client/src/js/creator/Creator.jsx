@@ -79,8 +79,10 @@ export default class Creator extends React.Component {
       const { textureIdSelected } = this.props
 
       let newObject
-      if(!MAPEDITOR.objectHighlighted.id && creatorObjectSelected.JSON) {
+      // this confuses me, idk
+      if((!MAPEDITOR.objectHighlighted.id || (MAPEDITOR.objectHighlighted.tags && !MAPEDITOR.objectHighlighted.tags.obstacle) || MAPEDITOR.objectHighlighted.CREATOR) && creatorObjectSelected.JSON) {
         newObject = _.cloneDeep(creatorObjectSelected.JSON)
+
         newObject.x = MAPEDITOR.objectHighlighted.x
         newObject.y = MAPEDITOR.objectHighlighted.y
         newObject.id = 'creator-'+window.uniqueID()
@@ -90,6 +92,7 @@ export default class Creator extends React.Component {
         if(colorSelected && colorSelected !== GAME.world.defaultObjectColor) newObject.color = colorSelected
         if(textureIdSelected) newObject.defaultSprite = textureIdSelected
         OBJECTS.create(newObject)
+
 
         if(creatorObjectSelected.onCreateObject) {
           creatorObjectSelected.onCreateObject(newObject)
@@ -126,8 +129,14 @@ export default class Creator extends React.Component {
         rows[object.columnName].push(object)
       })
 
-      rows = Object.keys(rows).map((cName) => rows[cName])
+      Object.keys(GAME.library.creator).forEach((objectName) => {
+        if(GAME.library.creator[objectName] === false) return
+        const object = GAME.library.creator[objectName]
+        if(!rows[object.columnName]) rows[object.columnName] = []
+        rows[object.columnName].push(object)
+      })
 
+      rows = Object.keys(rows).map((cName) => rows[cName])
 
       if(hasSelectSprite) rows.unshift({ specialAction: 'selectSprite'})
       if(hasSelectColor) rows.unshift({ specialAction: 'selectColor'})
@@ -146,6 +155,10 @@ export default class Creator extends React.Component {
     document.body.addEventListener("mousedown", this._onMouseDown)
     document.body.addEventListener("mouseup", this._onMouseUp)
 
+    this._categorizeCreatorObjects()
+  }
+
+  onUpdateLibrary() {
     this._categorizeCreatorObjects()
   }
 

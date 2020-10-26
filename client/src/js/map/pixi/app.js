@@ -3,6 +3,7 @@ window.PIXI = PIXI
 import './pixi-layers'
 import { GlowFilter, ColorMatrixFilter } from 'pixi-filters'
 import tinycolor from 'tinycolor2'
+import axios from 'axios';
 
 const textures = {};
 let stage
@@ -98,6 +99,7 @@ const initPixiApp = (canvasRef, onLoad) => {
    } else {
      console.log('Using Canvas');
   };
+  // console.log(PIXI.display.Stage)
   app.stage = new PIXI.display.Stage();
 
   let world
@@ -286,89 +288,29 @@ const initPixiApp = (canvasRef, onLoad) => {
 
   applyFilters()
 
-  window.spriteSheetIds = {
-    'overworld-2-8px': true,
-    'kenney-voxel-128px': true,
-    'kenney-platformer-21px': true,
-    'kenney-roguelike-environment-16px': true,
-    'kenney-roguelike-dungeon-16px': true,
-    'kenney-roguelike-indoor-16px': true,
-    'kenney-roguelike-characters-16px': true,
-    'kenney-roguelike-city-16px': true,
-    // 'kenney-tanks': true,
-    'kenney-sports-characters-equipment': true,
-    'kenney-racing-vehicles': true,
-    'kenney-racing-track': true,
-    'kenney-racing-characters': true,
-    'kenney-road': true,
-    // 'kenney-racing-stadium': true,
-    'lordofthebling-1-16px': true,
-    // 'oryx-24px-scifi-environment': true,
-    // 'oryx-24px-scifi-transports': true,
-    // 'oryx-24px-scifi-characters': true,
-    // 'oryx-16px-scifi-items': true,
-    // 'oryx-24px-scifi-creatures': true,
-    // 'oryx-24px-fantasy-environment': true,
-    // 'oryx-24px-fantasy-tiles': true,
-    // 'oryx-16px-fantasy-items': true,
-    // 'oryx-24px-fantasy-creatures-characters': true,
-    'oryx-lofi-fantasy-creatures-8px': true,
-    'oryx-lofi-fantasy-creatures-long-8px': true,
-    'oryx-lofi-fantasy-characters-creatures-8px': true,
-    'oryx-lofi-fantasy-halls-8px': true,
-    'oryx-lofi-fantasy-items-8px': true,
-    'oryx-lofi-fantasy-extras-8px': true,
-    'oryx-lofi-fantasy-environment-8px': true,
-
-    'oryx-lofi-scifi-creatures-8px': true,
-    'oryx-lofi-scifi-creatures-vehicles-large-16px': true,
-    'oryx-lofi-scifi-characters-8px': true,
-    'oryx-lofi-scifi-vehicles-8px': true,
-    'oryx-lofi-scifi-planets': true,
-    'oryx-lofi-scifi-items-8px': true,
-    'oryx-lofi-scifi-spaceship-environment-8px': true,
-    'candy-1': true,
-    'retro-1': true,
-    'retro-2-30px': true,
-    'retro-3-16px': true,
-    'overworld-1-16px': true,
-    // 'platformer-1': true,
-    'minecraft-1-48px': true,
-  }
-
-  window.spriteSheetAuthors = {
-    lordofthebling: true,
-    oryx: true,
-    timefantasy: true,
-    amsimuz: true,
-    kenney: true,
-    shackal: true,
-    unknown: true,
-    unknownFromGame: true,
-    unknownRetro: true,
-    unknownCandy: true,
-    unknownGlitch: true,
-    unknownOverworld: true,
-    unknownPlatformer: true,
-  }
-
   const spritesheetsRequested = Object.keys(window.spriteSheetIds).filter((name) => {
     if(spriteSheetIds[name]) return true
   })
 
   let socket = window.socket
-  if(PAGE.role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
     socket = window.networkSocket
   }
-  socket.on('onGetSpriteSheetsJSON', (spriteSheets) => {
+
+  const options = {
+    params: {
+      spriteSheetIds: spritesheetsRequested
+    }
+  };
+
+  axios.get(window.HAGameServerUrl + '/spriteSheets', options).then(res => {
+    const spriteSheets = res.data.spriteSheets
     window.spriteSheets = spriteSheets
     startLoadingAssets(spriteSheets.map((ss) => {
       ss.serverImageUrl = window.HomemadeArcadeImageAssetURL + ss.imageUrl
       return ss
     }))
   })
-  socket.emit('getSpriteSheetsJSON', spritesheetsRequested)
-
   ///////////////
   ///////////////
   ///////////////

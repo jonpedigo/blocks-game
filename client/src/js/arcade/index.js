@@ -42,6 +42,10 @@ class Arcade{
   }
 
   onGameLoaded() {
+
+  }
+
+  onGameReady() {
     if(PAGE.role.isArcadeMode) {
       window.local.emit('onGameStart', { started: true })
     }

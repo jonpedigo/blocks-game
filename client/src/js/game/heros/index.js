@@ -144,7 +144,7 @@ class Hero{
 
     if(PAGE.role.isPlayer && (HERO.originalId === HERO.id || HERO.ghostControl)){
       // we locally update the hero input as host so hosts do not send
-      if(!PAGE.role.isHost && !PAGE.typingMode) {
+      if(!PAGE.role.isHost && !PAGE.typingMode && !CONSTRUCTEDITOR.open) {
         window.socket.emit('sendHeroInput', GAME.keysDown, HERO.id)
       }
     }
@@ -380,6 +380,7 @@ class Hero{
 
     if(newHero) {
       newHero.id = id
+      newHero.userId = hero.userId
       newHero.heroSummonType = heroSummonType
       OBJECTS.forAllSubObjects(newHero.subObjects, (subObject) => {
         subObject.id = 'subObject-'+window.uniqueID()
@@ -480,6 +481,8 @@ class Hero{
 
       heroSummonType: hero.heroSummonType,
 
+      userId: hero.userId,
+
       zBehavior: hero.zBehavior,
       xBehavior: hero.xBehavior,
       cBehavior: hero.cBehavior,
@@ -539,6 +542,7 @@ class Hero{
       velocityDecayXExtra: hero.velocityDecayXExtra,
       velocityDecayYExtra: hero.velocityDecayYExtra,
       floatJumpTimeout: hero.floatJumpTimeout,
+      gravityVelocityY: hero.gravityVelocityY,
 
       pathId: hero.pathId,
       pathfindingLimitId: hero.pathfindingLimitId,
@@ -666,6 +670,7 @@ class Hero{
       navigationTargetId: hero.navigationTargetId,
 
       flags: hero.flags,
+      tags: hero.tags,
       heroMenu: hero.heroMenu,
       objectMenu: hero.objectMenu,
       worldMenu: hero.worldMenu,
@@ -729,9 +734,9 @@ class Hero{
 
   removeHero(hero) {
     OBJECTS.forAllSubObjects(hero.subObjects, (subObject) => {
-      subObject.mod().removed = true
+      subObject.removed = true
     })
-    GAME.heros[hero.id].mod().removed = true
+    GAME.heros[hero.id].removed = true
   }
 
   onDeleteHero(heroId) {
@@ -740,6 +745,7 @@ class Hero{
     HERO.deleteHero(hero)
     window.local.emit('onDeletedHero', hero)
     delete GAME.heros[heroId]
+    GAME.heroList = GAME.heroList.filter(({id}) => id !== heroId)
   }
 
   onDeleteQuest(heroId, questId) {

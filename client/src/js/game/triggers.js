@@ -50,12 +50,12 @@ function onPlayerIdentified() {
 }
 
 function deleteTrigger(object, triggerId) {
-  if(object.triggers[triggerId].removeEventListener) object.triggers[triggerId].removeEventListener()
+  if(object.triggers[triggerId].removeEventListener && typeof object.triggers[triggerId].removeEventListener === 'function') object.triggers[triggerId].removeEventListener()
   delete object.triggers[triggerId]
 }
 
 function removeTriggerEventListener(object, triggerId) {
-  if(object.triggers[triggerId].removeEventListener) object.triggers[triggerId].removeEventListener()
+  if(object.triggers[triggerId].removeEventListener && typeof object.triggers[triggerId].removeEventListener === 'function') object.triggers[triggerId].removeEventListener()
 }
 
 function addTrigger(ownerObject, trigger) {

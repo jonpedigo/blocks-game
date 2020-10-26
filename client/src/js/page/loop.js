@@ -25,6 +25,10 @@ window.startGameLoop = function() {
     return
   }
 
+  if(PAGE.role.isHost && !PAGE.role.isTempHost) {
+    window.socket.emit('hostJoined')
+  }
+
   startTime = Date.now();
   thenMapNetwork = startTime;
   thenCompleteNetwork = startTime;
@@ -33,8 +37,19 @@ window.startGameLoop = function() {
 
   // begin main loop
   mainLoop()
-  setInterval(() => {
-    window.socket.emit('updateGameOnServerOnly', { id: GAME.id, heros: GAME.heros, gameState: GAME.gameState, objects: GAME.objects, world: GAME.world, grid: GAME.grid, defaultHero: GAME.defaultHero, library:GAME.library })
+  if(PAGE.role.isHost) setInterval(() => {
+    window.socket.emit('updateGameOnServerOnly', {
+      id: GAME.id,
+      metadata: GAME.metadata,
+      version: GAME.version,
+      heros: GAME.heros,
+      gameState: GAME.gameState,
+      objects: GAME.objects,
+      world: GAME.world,
+      grid: {...GAME.grid, nodes: null},
+      defaultHero: GAME.defaultHero,
+      library: GAME.library
+    })
   }, 1000)
 }
 
@@ -111,35 +126,40 @@ function render(delta) {
   window.local.emit('onRender', delta)
 }
 
+
+window.updateHistory = {
+  objectMap: {},
+  heroMap: {},
+  gameState: {},
+  objectComplete: {},
+  heroComplete: {},
+}
+
+function getDiff(historyProp, nextUpdate) {
+  let diff
+  if(window.updateHistory[historyProp]) {
+    diff = window.getObjectDiff(nextUpdate, window.updateHistory[historyProp])
+  } else {
+    diff = nextUpdate
+  }
+  window.updateHistory[historyProp] = nextUpdate
+  if(Array.isArray(diff)) diff = diff.filter((object) => !!object)
+  return diff
+}
+
 let lastMapUpdate
 function mapNetworkUpdate() {
-  window.socket.emit('updateGameState', GAME.gameState )
-  // window.socket.emit('updateGameState', { ambientLight: GAME.gameState.ambientLight })
-
-  let diff
-  let nextMapUpdate = _.cloneDeep(GAME.objects.map(OBJECTS.getMapState))
-  if(lastMapUpdate) {
-    diff = window.getObjectDiff(nextMapUpdate, lastMapUpdate)
-  } else {
-    diff = nextMapUpdate
-  }
-  lastMapUpdate = nextMapUpdate
-  diff = diff.filter((object) => !!object)
-  window.socket.emit('updateObjects', diff)
-  window.socket.emit('updateHeros', GAME.heroList.reduce((prev, hero) => {
-    prev[hero.id] = HERO.getMapState(hero.mod())
-    return prev
-  }, {}))
+  window.socket.emit('updateGameState', getDiff('gameState', _.cloneDeep(GAME.gameState) ))
+  window.socket.emit('updateObjects', getDiff('objectMap', _.cloneDeep(GAME.objects.map(GAME.mod).map(OBJECTS.getMapState)) ))
+  window.socket.emit('updateHeros', getDiff('heroMap', _.cloneDeep(GAME.heroList.map(GAME.mod).map(HERO.getMapState)) ))
 }
 
 function completeNetworkUpdate() {
-  window.socket.emit('updateObjectsComplete', GAME.objects.map(GAME.mod))
-  window.socket.emit('updateHerosComplete', GAME.heroList.reduce((prev, hero) => {
-    prev[hero.id] = hero.mod()
-    return prev
-  }, {}))
-  if(GAME.gameState.started && GAME.world.tags.storeEntireGameState) {
-    let storedGameState = localStorage.getItem('gameStates')
-    localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))
-  }
+  window.socket.emit('updateObjects', getDiff('objectComplete', _.cloneDeep(GAME.objects.map(GAME.mod)) ))
+  const heroCompleteUpdate = getDiff('heroComplete', _.cloneDeep(GAME.heroList.map(GAME.mod)) )
+  window.socket.emit('updateHeros', heroCompleteUpdate)
+  // if(GAME.gameState.started && GAME.world.tags.storeEntireGameState) {
+  //   let storedGameState = localStorage.getItem('gameStates')
+  //   localStorage.setItem('gameStates', JSON.stringify({...JSON.parse(storedGameState), [GAME.id]: {...GAME, grid: {...GAME.grid, nodes: null }}}))
+  // }
 }

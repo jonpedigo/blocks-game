@@ -11,6 +11,8 @@ import world from './world.js'
 import grid from './grid.js'
 import tracking from './tracking.js'
 import dayNightCycle from './daynightcycle.js'
+import metadata from './metadata.js'
+import effects from './effects'
 
 import onTalk from './heros/onTalk'
 import { startQuest } from './heros/quests'
@@ -30,17 +32,20 @@ class Game{
     this.world = {}
     this.grid = {}
     this.state = {}
+    this.metadata = {}
     this.library = {
       branches: {},
       animations: {},
       tags: {},
       images: {},
       tags: {},
+      creator: {}
     }
   }
 
   onPlayerIdentified() {
     world.setDefault()
+    metadata.setDefault()
     gameState.setDefault()
     grid.setDefault()
     tags.setDefault()
@@ -181,7 +186,10 @@ class Game{
         //////////////////////////////
         //// ANTICIPATE OBJECT
         if(PAGE.role.isHost && GAME.gameState.anticipatedForAdd && GAME.gameState.anticipatedForAdd.length) {
-          OBJECTS.anticipatedAdd(GAME.heros[HERO.id], GAME.gameState.anticipatedForAdd[0])
+          let hero = GAME.heroList.filter((hero) => {
+            return hero.tags.centerOfAttention
+          })[0]
+          OBJECTS.anticipatedAdd(hero, GAME.gameState.anticipatedForAdd[0])
         }
 
         MAP._isOutOfDate = true
@@ -200,11 +208,12 @@ class Game{
     }
   }
 
-  onAskJoinGame(heroId, role) {
+  onAskJoinGame(heroId, role, userId) {
     let hero = GAME.heros[heroId]
     if(!hero) {
       hero = HERO.summonFromGameData({id: heroId, heroSummonType: role })
       hero.id = heroId
+      hero.userId = userId
       window.socket.emit('heroJoinedGamed', hero)
     }
   }
@@ -239,7 +248,7 @@ class Game{
     if(GAME.heros[HERO.id]) {
       window.local.emit('onHeroFound', GAME.heros[HERO.id])
     } else {
-      window.socket.emit('askJoinGame', HERO.id, heroName)
+      window.socket.emit('askJoinGame', HERO.id, heroName, window.user._id)
     }
   }
 
@@ -252,6 +261,7 @@ class Game{
     if(game.library) GAME.library = game.library
     else GAME.library = {}
     if(!GAME.library.branches) GAME.library.branches = {}
+    if(!GAME.library.creator) GAME.library.creator = {}
 
     if(GAME.library.tags) {
       tags.addGameTags(GAME.library.tags)
@@ -268,6 +278,9 @@ class Game{
 
     GAME.defaultHero = game.defaultHero || window.defaultHero
     GAME.defaultHero.id = 'default hero'
+
+    if(game.metadata) GAME.metadata = game.metadata
+    else GAME.metadata = _.cloneDeep(window.defaultMetadata)
 
     // let storedGameState = localStorage.getItem('gameStates')
     // if(storedGameState) storedGameState = storedGameState[game.id]
@@ -352,15 +365,6 @@ class Game{
   unload() {
     window.local.emit('onGameUnload')
 
-    if(PAGE.role.isPlayEditor) {
-      window.editingObject = {
-        id: null,
-        i: null,
-      }
-      window.objecteditor.saved = true
-      window.objecteditor.update({})
-    }
-
     GAME.objects.forEach((object) => {
       OBJECTS.unloadObject(object)
     })
@@ -369,17 +373,21 @@ class Game{
       HERO.deleteHero(hero)
     })
 
-    GAME.gameState.sequenceQueue.forEach((sequence) => {
-      sequence.eventListeners.forEach((remove) => {
-        if(remove) remove()
-      })
-    })
+    GAME.removeListeners()
+    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
+  }
 
+  removeListeners() {
+    GAME.gameState.sequenceQueue.forEach((sequence) => {
+      if(sequence.eventListeners) {
+        sequence.eventListeners.forEach((remove) => {
+          if(remove) remove()
+        })
+      }
+    })
     GAME.gameState.activeModList.forEach((mod) => {
       if(mod.removeEventListener) mod.removeEventListener()
     })
-
-    GAME.gameState = JSON.parse(JSON.stringify(window.defaultGameState))
   }
 
   snapToGrid() {
@@ -537,6 +545,17 @@ class Game{
     window.local.emit('onLoadingScreenEnd')
   }
 
+  onProcessEffect(effect, effectedIds, effectorId) {
+    if(!effectedIds) {
+      effects.processEffect(effect)
+    } else {
+      const effector = OBJECTS.getObjectOrHeroById(effectorId)
+      effectedIds.forEach((id) => {
+        effects.processEffect(effect, OBJECTS.getObjectOrHeroById(id), effector)
+      })
+    }
+  }
+
   onStopGame() {
     if(!GAME.gameState.started) {
       return console.log('trying to stop game that aint even started yet')
@@ -554,12 +573,21 @@ class Game{
 
       initialGameState = JSON.parse(initialGameState)
       GAME.unload()
+      // in case anyone joined after the game started...
+      Object.keys(GAME.heros).forEach((heroId) => {
+        if(!initialGameState.heros[heroId]) {
+          initialGameState.heros[heroId] = GAME.heros[heroId]
+        }
+      })
       GAME.loadAndJoin(initialGameState)
       window.local.emit('onGameStopped')
     }, 100)
   }
 
-  onGameStart() {
+  onGameStart(options) {
+    if(!options) options = {}
+    if(!options.respawn) options.respawn = true
+
     if(GAME.gameState.started) {
       return console.log('trying to start game that has already started')
     }
@@ -573,7 +601,7 @@ class Game{
       localStorage.setItem('initialGameState', JSON.stringify(initialGameState))
 
       GAME.heroList.forEach((hero) => {
-        HERO.spawn(hero)
+        if(options.respawn) HERO.spawn(hero)
         hero.questState = {}
         if(hero.quests) {
           Object.keys(hero.quests).forEach((questId) => {
@@ -587,7 +615,7 @@ class Game{
       })
 
       GAME.objects.forEach((object) => {
-        OBJECTS.respawn(object)
+        if(options.respawn) OBJECTS.respawn(object)
         if(object.tags.talkOnStart) {
           GAME.heroList.forEach((hero) => {
             onTalk(hero, object, {}, [], [], { fromStart: true })
@@ -599,6 +627,11 @@ class Game{
           })
         }
       })
+
+      if(!PAGE.role.isAdmin && EDITOR.preferences.zoomMultiplier) {
+        window.local.emit('onZoomChange')
+      }
+
       GAME.gameState.paused = false
       GAME.gameState.started = true
       window.local.emit('onGameStarted')
@@ -679,7 +712,7 @@ class Game{
     const branch = _.cloneDeep(GAME.library.branches[id])
     const addedObjects = branch.addedObjects.map((addedObj) => {
       addedObj.id = 'branchadded-'+window.uniqueID()
-      addedObj.mod().removed = true
+      addedObj.removed = true
       return addedObj
     })
     window.socket.emit('addObjects', addedObjects)
@@ -705,7 +738,7 @@ class Game{
     })
   }
 
-  cleanForSave(game, options = { keepState: false, removeFalseTags: true }) {
+  cleanForSave(game, options = { keepState: false, removeFalseTags: false }) {
     let gameCopy = JSON.parse(JSON.stringify({
       //.filter((object) => !object.spawned)
       id: game.id,
@@ -716,6 +749,7 @@ class Game{
       customInputBehavior: game.customInputBehavior,
       defaultHero: game.defaultHero,
       library: game.library,
+      metadata: game.metadata,
     }))
 
     if(game.heros) {
@@ -921,7 +955,7 @@ class Game{
   }
 
   onResetObjects() {
-    GAME.objects.forEach((object) => {
+    [...GAME.objects].forEach((object) => {
       window.local.emit('onDeleteObject', object)
     }, [])
     GAME.objects = []
@@ -1191,7 +1225,19 @@ class Game{
   onEditGameHeroJSON(gameHeroName, JSON) {
     if(gameHeroName === 'default') {
       GAME.defaultHero = JSON
-      console.log(JSON)
+    }
+  }
+
+  onEditMetadata(update) {
+    for(let key in update) {
+      const value = update[key]
+
+      if(value instanceof Object) {
+        GAME.metadata[key] = {}
+        window.mergeDeep(GAME.metadata[key], value)
+      } else {
+        GAME.metadata[key] = value
+      }
     }
   }
 }

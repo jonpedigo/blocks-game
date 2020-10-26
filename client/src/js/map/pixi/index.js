@@ -92,7 +92,6 @@ PIXIMAP.onGameStarted = function() {
 
 PIXIMAP.onDeletedHero = function(hero) {
   PIXIMAP.deleteObject(hero)
-  console.log('pixi trying to delete', hero)
 }
 
 PIXIMAP.onDeleteObject = function(object) {
@@ -133,11 +132,11 @@ PIXIMAP.deleteObject = function(object, stage) {
     PIXIMAP.deleteEmitter(pixiChild.trailEmitter)
     delete pixiChild.trailEmitter
   }
-  console.log('and removing?')
   stage.removeChild(pixiChild)
 }
 
 PIXIMAP.deleteEmitter = function(emitterToDelete) {
+  console.trace(emitterToDelete)
   PIXIMAP.objectStage.emitters = PIXIMAP.objectStage.emitters.filter((emitter) => {
     if(emitterToDelete === emitter) {
       return false
@@ -661,7 +660,11 @@ PIXIMAP.convertToPartObject = function(gameObject, part) {
   let color = part.color
   if(!sprite && !color) color = GAME.world.defaultObjectColor
   let defaultSprite = part.defaultSprite || gameObject.defaultSprite || 'solidcolorsprite'
-  const partObject = {tags: {...gameObject.tags},  ...part, removed: gameObject.mod().removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
+  let removed = gameObject.mod().removed
+  if(gameObject.mod().tags.seperateParts) {
+    removed = part.removed
+  }
+  const partObject = {tags: {...gameObject.tags},  ...part, removed, part: true, color: color, sprite: sprite, defaultSprite: defaultSprite}
   if(gameObject.id === CONSTRUCTEDITOR.objectId) partObject.tags.invisible = true
 
   return partObject

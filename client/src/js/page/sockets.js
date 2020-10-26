@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 
 function init() {
   // EVENT SETUP
-  if(PAGE.role.isArcadeMode) {
+  if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
     window.networkSocket = window.socket
     window.socket = window.mockSocket
   }
@@ -125,15 +125,26 @@ function init() {
     HERO.removeHero(hero)
   })
 
-  window.socket.on('onDeleteSubObjectChance', (ownerId, subObjectName) => {
-    window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
-  })
-
   // EDITORS and PLAYERS call this
   window.socket.on('onEditHero', (updatedHero) => {
     window.local.emit('onEditHero', updatedHero)
   })
 
+  window.socket.on('onDeleteHero', (heroId) => {
+    window.local.emit('onDeleteHero', heroId)
+  })
+  window.socket.on('onDeleteQuest', (heroId, questId) => {
+    window.local.emit('onDeleteQuest', heroId, questId)
+  })
+  window.socket.on('onDeleteObject', (object) => {
+    window.local.emit('onDeleteObject', object)
+  })
+  window.socket.on('onDeleteSubObject', (owner, subObjectName) => {
+    window.local.emit('onDeleteSubObject', owner, subObjectName)
+  })
+  window.socket.on('onDeleteSubObjectChance', (ownerId, subObjectName) => {
+    window.local.emit('onDeleteSubObjectChance', ownerId, subObjectName)
+  })
   window.socket.on('onDeleteTrigger', (ownerId, triggerId) => {
     window.local.emit('onDeleteTrigger', ownerId, triggerId)
   })
@@ -224,13 +235,13 @@ function init() {
   ///////////////////////////////
 
   // EDITOR CALLS THIS
-  window.socket.on('onStopGame', () => {
-    window.local.emit('onStopGame')
+  window.socket.on('onStopGame', (options) => {
+    window.local.emit('onStopGame', options)
   })
 
   // EDITOR CALLS THIS
-  window.socket.on('onGameStart', () => {
-    window.local.emit('onGameStart')
+  window.socket.on('onGameStart', (options) => {
+    window.local.emit('onGameStart', options)
   })
 
   // EVERYONE CALLS THIS
@@ -254,13 +265,6 @@ function init() {
 
   // CLIENT HOST OR EDITOR CALL THIS
   // OBJECT -> ID
-  window.socket.on('onDeleteObject', (object) => {
-    window.local.emit('onDeleteObject', object)
-  })
-
-  window.socket.on('onDeleteSubObject', (owner, subObjectName) => {
-    window.local.emit('onDeleteSubObject', owner, subObjectName)
-  })
 
   // EDITOR CALLS THIS
   window.socket.on('onUpdateGrid', (grid) => {
@@ -275,14 +279,6 @@ function init() {
     window.local.emit('onUpdateGridNode', x, y, update)
   })
 
-  // EDITOR CALLS THIS
-  window.socket.on('onDeleteHero', (heroId) => {
-    window.local.emit('onDeleteHero', heroId)
-  })
-
-  window.socket.on('onDeleteQuest', (heroId, questId) => {
-    window.local.emit('onDeleteQuest', heroId, questId)
-  })
 
   window.socket.on('onCopyGame', (game) => {
     window.local.emit('onReloadGame', game)
@@ -413,6 +409,24 @@ function init() {
 
   window.socket.on('onResolveAdminApproval', (action, data) => {
     window.local.emit('onResolveAdminApproval', action, data)
+  })
+
+
+  window.socket.on('onEditMetadata', (update) => {
+    window.local.emit('onEditMetadata', update)
+  })
+
+  window.socket.on('onProcessEffect', (effectName, effectedIds, effectorId) => {
+    window.local.emit('onProcessEffect', effectName, effectedIds, effectorId)
+  })
+
+  window.socket.on('onHostJoined', () => {
+    window.local.emit('onHostJoined')
+  })
+
+  window.socket.on('onUpdateGameSession', (data) => {
+    window.HAGameSession = data
+    window.local.emit('onUpdateGameSession')
   })
 }
 

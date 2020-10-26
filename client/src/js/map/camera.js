@@ -48,7 +48,12 @@ function camera() {
   }
 
   this.set = function(hero) {
-    this.multiplier = (EDITOR.preferences.zoomMultiplier + hero.zoomMultiplier) / MAP.canvasMultiplier
+    let editorZoom = EDITOR.preferences.zoomMultiplier
+    if(GAME.gameState.started && !PAGE.role.isAdmin) editorZoom = 0
+
+    let multiplier = (editorZoom + hero.zoomMultiplier)
+    if(multiplier == 0) multiplier = .2
+    this.multiplier =  multiplier / MAP.canvasMultiplier
 
     if(hero.animationZoomMultiplier) {
       this.multiplier = hero.animationZoomMultiplier / MAP.canvasMultiplier
@@ -65,7 +70,7 @@ function camera() {
     this.multiplier = 1/this.multiplier
     this.hasHitLimit = false
 
-    if(EDITOR.preferences.zoomMultiplier > 0){
+    if(editorZoom > 0 || editorZoom < 0){
       this.setHeroX(hero)
       this.setHeroY(hero)
       return

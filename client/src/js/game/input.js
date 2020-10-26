@@ -80,7 +80,8 @@ function setDefault() {
     'accelerate': 'Accelerate',
     'accelerateBackwards': 'Go Backwards',
     'deccelerateToZero': 'Slow Down',
-    'brakeToZero': 'Fast Stop'
+    'brakeToZero': 'Fast Stop',
+    'mod': 'Activate Power'
   }
 
   window.spaceBarBehavior = {
@@ -126,11 +127,11 @@ function onPlayerIdentified(){
     if(PAGE.role.isGhost && !HERO.ghostControl) {
 
     } else if(PAGE.role.isPlayer) {
-      if(!PAGE.typingMode) {
+      if(!PAGE.typingMode && !CONSTRUCTEDITOR.open) {
         GAME.keysDown[key] = true
       }
       //locally update the host input! ( teehee this is the magic! )
-      if(PAGE.role.isHost) {
+      if(PAGE.role.isHost && !CONSTRUCTEDITOR.open) {
         if(!GAME.heroInputs[HERO.id]) GAME.heroInputs[HERO.id] = {}
         GAME.heroInputs[HERO.id][key] = true
         GAME.heros[HERO.id].keysDown = GAME.heroInputs[HERO.id]
@@ -182,11 +183,25 @@ function handleActionButtonBehavior(hero, action, delta) {
     }
   })
 
+  if(subObject && subObject.actionState.waiting) return
+
   if(action === 'shoot') {
     if(subObject) {
-      shootBullet({direction: hero.inputDirection, pos: subObject, tags: subObject.actionProps.shootTags})
+      shootBullet({direction: hero.inputDirection, pos: subObject, actionProps: subObject.actionProps })
     } else {
-      shootBullet({direction: hero.inputDirection, pos: hero, tags: { monsterDestroyer: true }})
+      shootBullet({direction: hero.inputDirection, pos: hero, actionProps: {
+        tags: { monsterDestroyer: true, moving: true }
+      }})
+    }
+  }
+
+  if(action === 'mod') {
+    if(subObject) {
+      window.emitGameEvent('onStartMod', {
+        ownerId: hero.id,
+        effectJSON: subObject.actionProps.effectJSON,
+        manualRevertId: subObject.actionProps.modId
+      })
     }
   }
 
@@ -228,6 +243,15 @@ function handleActionButtonBehavior(hero, action, delta) {
   if(action === 'accelerateBackwards') {
     hero.velocityAngle -= hero.speed * delta
   }
+
+  if(subObject && subObject.actionProps.debounceTime) {
+    const timeoutId = 'debounce-action-' + subObject.id + subObject.actionButtonBehavior
+    subObject.actionState.waiting = true
+    subObject.actionState.timeoutId = timeoutId
+    GAME.addTimeout(timeoutId, subObject.actionProps.debounceTime, () => {
+      subObject.actionState.waiting = false
+    })
+  }
 }
 
 function onUpdate(hero, keysDown, delta) {
@@ -240,18 +264,22 @@ function onUpdate(hero, keysDown, delta) {
 
   if((!GAME.gameState.started || hero.flags.isAdmin) && (keysDown['shift'] || keysDown['caps lock'])) {
     if (upPressed) {
-      hero.y -= GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.y -= 1
+      else hero.y -= GAME.grid.nodeSize
     }
     if (downPressed) {
-      hero.y += GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.y += 1
+      else hero.y += GAME.grid.nodeSize
     }
 
     if (leftPressed) {
-      hero.x -= GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.x -= 1
+      else hero.x -= GAME.grid.nodeSize
     }
 
     if (rightPressed) {
-      hero.x += GAME.grid.nodeSize
+      if(hero.tags.adminInch) hero.x += 1
+      else hero.x += GAME.grid.nodeSize
     }
 
     hero._skipPosUpdate = true

@@ -33,9 +33,20 @@ class Page{
       PAGE.role.isHost = true
     }
 
+    if(PAGE.getParameterByName('tempHost')) {
+      PAGE.role.isHost = true
+      PAGE.role.isTempHost = true
+    }
+
     if(PAGE.getParameterByName('arcadeMode')) {
       PAGE.role.isHost = true
       PAGE.role.isArcadeMode = true
+      PAGE.role.isPlayer = true
+    }
+
+    if(PAGE.getParameterByName('homeEditor')) {
+      PAGE.role.isHost = true
+      PAGE.role.isHomeEditor = true
       PAGE.role.isPlayer = true
     }
   }
@@ -54,7 +65,7 @@ class Page{
       console.log('non host')
     }
 
-    if(PAGE.role.isPlayEditor) {
+    if(PAGE.role.isAdmin || PAGE.role.homeEditor) {
       console.log('editor')
     }
     if(PAGE.role.isPlayer) {
@@ -97,20 +108,67 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   load() {
-    const container = document.createElement('div')
-    container.id = 'HomemadeArcade'
-    document.body.appendChild(container)
-    // Mount React App
-    ReactDOM.render(
-      React.createElement(App),
-      container
-    )
+    let gameServerUrl = 'http://ha-game.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      gameServerUrl = 'http://localhost:4000'
+    }
+    window.HAGameServerUrl = gameServerUrl
+
+    let gameClientUrl = 'http://ha-game.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      gameClientUrl = 'http://localhost:8080'
+    }
+    window.HAGameClientUrl = gameClientUrl
+
+    let socialClientUrl = 'http://ha-social.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      socialClientUrl = 'http://localhost:3005'
+    }
+    window.HASocialClientUrl = socialClientUrl
+
+    let socialServerUrl = 'http://ha-social.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      socialServerUrl = 'http://localhost:5000'
+    }
+    window.HASocialServerUrl = socialServerUrl
+
+    let landingUrl = 'http://ha-landing.herokuapp.com'
+    if(window.location.hostname.indexOf('localhost') >= 0) {
+      landingUrl = 'http://localhost:3000'
+    }
+    window.HALandingUrl = landingUrl
+
+
+    if(PAGE.getParameterByName('arcadeMode')) {
+      events.establishALocalHost()
+      PAGE.establishRoleFromQueryOnly()
+      HERO.getHeroId()
+      window.local.emit('onUserIdentified')
+      window.local.emit('onPlayerIdentified')
+      PAGE.askCurrentGame()
+    } else {
+      const container = document.createElement('div')
+      container.id = 'HomemadeArcade'
+      document.body.appendChild(container)
+      // Mount React App
+      ReactDOM.render(
+        React.createElement(App),
+        container
+      )
+    }
   }
 
   async userIdentified() {
-    events.init()
-
     window.local.emit('onUserIdentified')
+
+    if(PAGE.getParameterByName('homeEditor')) {
+      events.establishALocalHost()
+      PAGE.establishRoleFromQueryOnly()
+      HERO.getHeroId()
+      window.local.emit('onPlayerIdentified')
+      PAGE.askCurrentGame()
+      return
+    }
 
     const heroOptions = Object.keys(window.heroLibrary)
     if(localStorage.getItem('hero')) heroOptions.unshift('resume')
@@ -140,7 +198,6 @@ class Page{
   }
 
   playerIdentified(heroSummonType) {
-    window.onfocus = null
     PAGE.setupRemoteLogging()
     PAGE.establishRoleFromQueryOnly()
     HERO.getHeroId(heroSummonType === 'resume')
@@ -152,8 +209,8 @@ class Page{
     }
 
     if(PAGE.role.isHost) {
-      window.socket.on('onAskJoinGame', (heroId, role) => {
-        window.local.emit('onAskJoinGame', heroId, role)
+      window.socket.on('onAskJoinGame', (heroId, role, userId) => {
+        window.local.emit('onAskJoinGame', heroId, role, userId)
       })
     }
 
@@ -169,6 +226,31 @@ class Page{
     })
   }
 
+
+  loadGameSave(gameSaveId, cb) {
+    function handleResponse(response) {
+      return response.text().then((text) => {
+        const data = text && JSON.parse(text);
+        return data;
+      });
+    }
+
+    const gameSaveRequestOptions = {
+     method: "POST",
+     mode: 'cors',
+     body: JSON.stringify({
+       gameSaveId
+     }),
+     headers: {
+       'Content-Type': 'application/json',
+       'Access-Control-Allow-Origin': '*',
+     }
+    };
+    fetch(window.HASocialServerUrl + "/api/game/getGameSave/", gameSaveRequestOptions).then(handleResponse).then(res => {
+      cb(res)
+    })
+  }
+
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -176,8 +258,21 @@ class Page{
   ///////////////////////////////
   ///////////////////////////////
   async askCurrentGame(cb) {
-    if(PAGE.role.isArcadeMode) {
-      let gameId = 'spencer1'
+    if(PAGE.role.isArcadeMode || PAGE.role.isHomeEditor) {
+      let gameId = 'new'
+
+      let heroSummonType = 'singlePlayer'
+      if(PAGE.role.isHomeEditor) heroSummonType = 'homeEditor'
+
+      if(PAGE.getParameterByName('gameSaveId')) {
+        PAGE.loadGameSave(PAGE.getParameterByName('gameSaveId'), (res) => {
+          GAME.loadGridWorldObjectsCompendiumState(JSON.parse(res.gameSave))
+          GAME.heros = []
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
+          window.local.emit('onGameLoaded')
+        })
+        return
+      }
       if(PAGE.getParameterByName('gameId')) {
         gameId = PAGE.getParameterByName('gameId')
       }
@@ -186,19 +281,24 @@ class Page{
           const game = JSON.parse(result.value)
           GAME.loadGridWorldObjectsCompendiumState(game)
           GAME.heros = []
-          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
+          HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
           window.local.emit('onGameLoaded')
         })
         return
       }
 
-      window.networkSocket.on('onGetGame', (game) => {
-        GAME.loadGridWorldObjectsCompendiumState(game)
+      const options = {
+        params: {
+          gameId
+        }
+      };
+
+      axios.get(window.HAGameServerUrl + '/game', options).then(res => {
+        GAME.loadGridWorldObjectsCompendiumState(res.data.game)
         GAME.heros = []
-        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType: 'default' }))
+        HERO.addHero(HERO.summonFromGameData({ id: HERO.id, heroSummonType }))
         window.local.emit('onGameLoaded')
       })
-      window.networkSocket.emit('getGame', gameId)
     } else {
       // when you are constantly reloading the page we will constantly need to just ask the server what the truth is
       window.socket.emit('askRestoreCurrentGame')
@@ -207,23 +307,29 @@ class Page{
         if(currentGameExists) {
           cb(game)
         } else {
-          const { value: loadGameId } = await Swal.fire({
+          const response  = await axios.get(window.HAGameServerUrl + '/gamesmetadata')
+          const gamesMetadata = response.data.games
+
+          const { value: gamesMetadataIndex } = await Swal.fire({
             title: 'Load Game',
-            text: "Enter id of game",
-            input: 'text',
+            text: "Select id of game",
+            input: 'select',
             inputAttributes: {
               autocapitalize: 'off'
             },
+            inputOptions: gamesMetadata.map(({id}) => id),
             showCancelButton: true,
             confirmButtonText: 'Load Game',
             cancelButtonText: 'New Game',
           })
-          if(loadGameId) {
+          if(gamesMetadataIndex) {
+            const id = gamesMetadata[gamesMetadataIndex].id
             window.socket.on('onLoadGame', (game) => {
               cb(game)
             })
-            window.socket.emit('setAndLoadCurrentGame', loadGameId)
+            window.socket.emit('setAndLoadCurrentGame', id)
           } else {
+
             const { value: newGameId } = await Swal.fire({
               title: 'Create Game',
               text: "Enter id you want for new game",
@@ -254,6 +360,10 @@ class Page{
     }
   };
 
+  onUpdateGameSession() {
+
+  }
+
   onGameReady() {
     PAGE.isGameReady = true
 
@@ -268,6 +378,13 @@ class Page{
     }
     if(!PAGE.gameLoaded) {
       sockets.init()
+      window.focused = true
+      window.onfocus = () => {
+        window.focused = true
+      }
+      window.onblur = () => {
+        window.focused = false
+      }
       window.local.emit('onFirstPageGameLoaded')
     }
     PAGE.gameLoaded = true
@@ -349,7 +466,7 @@ class Page{
   }
 
   showEditorTools() {
-    if(PAGE.role.isHA && !PAGE.role.isAdmin && GAME.gameState.started) {
+    if(PAGE.role.isHA && !PAGE.role.isAdmin && GAME.gameState.started && !GAME.heros[HERO.id].flags.editAllowedWhenGameStarted) {
       return false
     }
 
@@ -398,11 +515,12 @@ class Page{
     document.body.addEventListener('dragover', (e) => e.preventDefault())
 
     document.body.addEventListener('drop', handleDrop)
-    document.body.draggable=true
-    document.body.droppable=true
+    document.body.draggable=PAGE.role.isAdmin
+    // document.body.droppable=true
 
     let dragSrcEl
     function handleDragStart(e) {
+      if(CONSTRUCTEDITOR.open || PATHEDITOR.open || !PAGE.role.isAdmin) return
       dragSrcEl = this;
 
       e.dataTransfer.effectAllowed = 'move';
@@ -486,6 +604,59 @@ class Page{
         // window.mergeDeep(GAME.world, draggedGame.world)
         // window.mergeDeep(GAME.gameState, draggedGame.gameState)
       }
+    }
+  }
+
+  publishGame({ name, description, imageUrl }) {
+    function handleResponse(response) {
+      return response.text().then((text) => {
+        const data = text && JSON.parse(text);
+        return data;
+      });
+    }
+
+    const gameSaveRequestOptions = {
+     method: "POST",
+     mode: 'cors',
+     body: JSON.stringify({
+       gameSave: JSON.stringify(GAME.cleanForSave(GAME)),
+       userData: window.user,
+     }),
+     headers: {
+       'Content-Type': 'application/json',
+       'Access-Control-Allow-Origin': '*',
+       Authorization: 'Bearer ' + window.getUserCookie()
+     }
+    };
+    fetch(window.HASocialServerUrl + "/api/game/addGameSave", gameSaveRequestOptions).then(handleResponse).then(res => {
+      const requestOptions = {
+        method: "POST",
+        mode: 'cors',
+        body: JSON.stringify({
+          gameSaveId: res.gameSaveId,
+          userData: window.user,
+          description: name + ' - ' + description,
+          photo: imageUrl,
+          tags: JSON.stringify([])
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: 'Bearer ' + window.getUserCookie()
+        }
+      };
+
+      return fetch(window.HASocialServerUrl + "/api/post/addPost/", requestOptions)
+        .then(res => {
+          window.local.emit('onSendNotification', { playerUIHeroId: HERO.id, toast: true, text: 'Game Published!'})
+        });
+    })
+  }
+
+  onHostJoined() {
+    if(PAGE.role.isTempHost) {
+      window.location = window.HAGameClientUrl;
+      window.reload()
     }
   }
 }

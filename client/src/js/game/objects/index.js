@@ -115,7 +115,7 @@ class Objects{
       gridHeight: object.gridHeight,
       gridWidth: object.gridWidth,
       onGround: object.onGround,
-      removed: object.mod().removed,
+      removed: object.removed,
       spawnedIds: object.spawnedIds,
       spawnWait: object.spawnWait,
       spawnPool: object.spawnPool,
@@ -126,7 +126,6 @@ class Objects{
       _objectsTouching: object._objectsTouching,
       _objectsAwareOf: object._objectsAwareOf,
       _flipY: object._flipY,
-
 
       targetXY: object.targetXY,
       path: object.path,
@@ -142,6 +141,8 @@ class Objects{
       _pfGrid: object.pfGrid,
 
       navigationTargetId:  object.navigationTargetId,
+
+      actionState: object.actionState,
     }
 
     if(object.subObjects) {
@@ -174,7 +175,10 @@ class Objects{
     let properties = {
       id: object.id,
       objectType: object.objectType,
+      
       velocityMax: object.velocityMax,
+      gravityVelocityY: object.gravityVelocityY,
+
       speed: object.speed,
       width: object.width,
       height: object.height,
@@ -194,7 +198,7 @@ class Objects{
       relativeId: object.relativeId,
       parentId: object.parentId,
       name: object.name,
-      namePos: object.namePos,
+      namePosition: object.namePosition,
       questGivingId: object.questGivingId,
       questCompleterId: object.questCompleterId,
       hooks: object.hooks,
@@ -221,6 +225,7 @@ class Objects{
           height: part.height,
           width: part.width,
           ownerId: part.ownerId,
+          defaultSprite: part.defaultSprite,
         }
       }),
 
@@ -354,7 +359,7 @@ class Objects{
       name: object.name,
       sprite: object.sprite,
       namePos: object.namePos,
-      removed: object.mod().removed,
+      removed: object.removed,
       angle: object.angle,
       _flipY: object._flipY,
       spawnPointX: object.spawnPointX,
@@ -376,6 +381,8 @@ class Objects{
 
       path: object.path,
       targetXY: object.targetXY,
+
+      actionState: object.actionState,
     }
 
     if(object.subObjects) {
@@ -504,7 +511,7 @@ class Objects{
           height: GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (leftDiff < 1 && hero.directions.left) {
+      } else if (leftDiff < 10 && hero.directions.left) {
         let newObject = {
           x: minX - GAME.grid.nodeSize,
           y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
@@ -512,7 +519,7 @@ class Objects{
           height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 6) : GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (topDiff < 1 && hero.directions.up) {
+      } else if (topDiff < 10 && hero.directions.up) {
         let newObject = {
           x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
           y: minY - GAME.grid.nodeSize,
@@ -520,7 +527,7 @@ class Objects{
           height: GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (rightDiff > GAME.grid.nodeSize - 1 && hero.directions.right) {
+      } else if (rightDiff > GAME.grid.nodeSize - 10 && hero.directions.right) {
         let newObject = {
           x: maxX + GAME.grid.nodeSize,
           y: isWall ? minY + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minY, maxY),
@@ -528,7 +535,7 @@ class Objects{
           height: isWall ? (HERO.cameraHeight * 2) - (GAME.grid.nodeSize * 6) : GAME.grid.nodeSize,
         }
         addAnticipatedObject(newObject)
-      } else if (bottomDiff > GAME.grid.nodeSize - 1 && hero.directions.down) {
+      } else if (bottomDiff > GAME.grid.nodeSize - 10 && hero.directions.down) {
         let newObject = {
           x: isWall ? minX + ( GAME.grid.nodeSize * 2) : gridUtil.getRandomGridWithinXY(minX, maxX),
           y: maxY + GAME.grid.nodeSize,
@@ -586,7 +593,7 @@ class Objects{
 
       if(newObject.compendiumId) {
         newObject.fromCompendiumId = newObject.compendiumId
-        delete newObject.compendiumId
+        newObject.compendiumId = null
       }
 
       newObject.spawnPointX = newObject.x
@@ -766,7 +773,7 @@ class Objects{
     if(object.id === GAME.lastAnticipatedObjectId) {
       object.tags.lastAnticipatedObject = true
     } else {
-      delete object.tags.lastAnticipatedObject
+      object.tags.lastAnticipatedObject = false
     }
   }
 
@@ -879,10 +886,10 @@ class Objects{
   }
 
   removeObject(object) {
-    GAME.objectsById[object.id].mod().removed = true
+    GAME.objectsById[object.id].removed = true
     if(object.subObjects) {
         OBJECTS.forAllSubObjects(object.subObjects, (subObject, subObjectName) => {
-        subObject.mod().removed = true
+        subObject.removed = true
       })
     }
     window.local.emit('onUpdatePFgrid', 'remove', object)
@@ -901,12 +908,10 @@ class Objects{
         }
       })
     } else {
-      if(PHYSICS.objects[object.id]) {
-        PHYSICS.removeObject(object)
-      } else {
-        console.log('ok this is why its not')
-      }
-    }
+     if(PHYSICS.objects[object.id]) {
+       PHYSICS.removeObject(object)
+     }
+   }
     if(PAGE.role.isHost && object.triggers) {
       Object.keys(object.triggers).forEach((triggerId) => {
         triggers.removeTriggerEventListener(object, triggerId)
@@ -916,15 +921,9 @@ class Objects{
 
   deleteObject(object) {
     OBJECTS.unloadObject(object)
-    let spliceIndex
-    GAME.objects.forEach((obj, i) => {
-      if(obj.id == object.id) {
-        spliceIndex = i
-      }
+    GAME.objects = GAME.objects.filter(({id}) => {
+      return id !== object.id
     })
-    if(spliceIndex >= 0) {
-      GAME.objects.splice(spliceIndex, 1)
-    }
     delete GAME.objectsById[object.id]
   }
 
@@ -970,7 +969,7 @@ class Objects{
 
   removeSubObject(ownerId, subObjectName) {
     const owner = OBJECTS.getObjectOrHeroById(ownerId)
-    owner.subObjects[subObjectName].mod().removed = true
+    owner.subObjects[subObjectName].removed = true
   }
 
   onEditSubObject(ownerId, subObjectName, update) {
@@ -989,7 +988,7 @@ class Objects{
     if(!PAGE.role.isHost) {
       objectsUpdated.forEach((obj) => {
         let objectById = GAME.objectsById[obj.id]
-        window.mergeDeep(objectById, obj)
+        _.merge(objectById, obj)
       })
     }
   }
@@ -1229,10 +1228,10 @@ class Objects{
 
   onObjectDestroyed(object) {
     if(object.mod().tags.explodeOnDestroy) {
-      window.socket.emit('objectAnimation', 'explode', object.id)
+      window.local.emit('onObjectAnimation', 'explode', object.id)
     }
     if(object.mod().tags.spinOffOnDestroy) {
-      window.socket.emit('objectAnimation', 'spinOff', object.id)
+      window.local.emit('onObjectAnimation', 'spinOff', object.id)
     }
   }
 
@@ -1293,7 +1292,7 @@ class Objects{
   onObjectUnaware(object, unawareOfObject) {
     if(object.mod().tags.targetClearOnUnaware) {
       if(unawareOfObject.id === object._targetPursueId) {
-        delete object._targetPursueId
+        object._targetPursueId = null
       }
     }
   }

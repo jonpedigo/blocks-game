@@ -1,11 +1,16 @@
 export default function onObjectCollide(agent, collider, result) {
   if(agent.mod().tags['monsterDestroyer'] && collider.mod().tags['monster']) {
-    collider._destroyedBy = agent
     if(typeof collider.mod().spawnPointX == 'number' && collider.mod().tags['respawn']) {
       collider._respawn = true
     } else {
-      collider._remove = true
+      collider._destroy= true
+      collider._destroyedById = agent.id
     }
+  }
+
+  if(agent.mod().tags['destroyOnCollideWithObstacle'] && collider.mod().tags['obstacle']) {
+    agent._destroyedById = collider.id
+    agent._destroy = true
   }
 
   // if(collider.mod().tags['objectUpdate'] && collider.objectUpdate && shouldEffect(po.gameObject, collider)) {
@@ -18,11 +23,12 @@ export default function onObjectCollide(agent, collider, result) {
   // }
 
   if(agent.mod().tags['monsterVictim'] && collider.mod().tags['monster']) {
-    agent._destroyedBy = collider
+    agent._destroyedById = collider.id
     if(typeof agent.mod().spawnPointX == 'number' && agent.mod().tags['respawn']) {
       agent._respawn = true
     } else {
-      agent._remove = true
+      collider._destroy= true
+      collider._destroyedById = agent.id
     }
   }
 

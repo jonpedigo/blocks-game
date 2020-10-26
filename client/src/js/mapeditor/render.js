@@ -35,7 +35,7 @@ function update() {
 
   const { draggingObject, copiedObject, objectHighlighted, objectHighlightedChildren, resizingObject, pathfindingLimit, draggingRelativeObject } = MAPEDITOR
 
-  if((PAGE.role.isAdmin || (GAME.heros[HERO.id].flags.showMapHighlight && !GAME.gameState.started)) && objectHighlighted && !objectHighlighted.CREATOR) {
+  if((PAGE.role.isAdmin || (GAME.heros[HERO.id].flags.showMapHighlight && (!GAME.gameState.started || GAME.heros[HERO.id].flags.editAllowedWhenGameStarted) )) && objectHighlighted && !objectHighlighted.CREATOR) {
     if(objectHighlighted.tags && objectHighlighted.tags.invisible && objectHighlightedChildren.length === 0 && (!resizingObject || objectHighlighted.id !== resizingObject.id)) {
       let color = 'rgba(255,255,255,0.2)'
       drawTools.drawFilledObject(ctx, {...objectHighlighted, color}, camera)
@@ -227,22 +227,17 @@ function update() {
     drawTools.drawBorder(ctx, {...editingHero, color: '#0A0'}, camera, {thickness: 5})
   }
 
-  const gameEligibleForLoading = true || (GAME.grid.width > 80 || GAME.objects.length > 300)
-  const loadingState = (PAGE.loadingGame)
-  PAGE.loadingScreen = !PAGE.isGameReady || (gameEligibleForLoading && loadingState)
+  drawTools.drawLoadingScreen(ctx, camera)
 
-  const hero = GAME.heros[HERO.id]
-  if(hero && hero.animationZoomMultiplier) PAGE.loadingScreen = false
-
-  if(PAGE.loadingScreen) {
-    ctx.fillStyle = "#222"
+  if(!window.focused) {
+    ctx.fillStyle = "rgba(0,0,0,.8)"
     ctx.fillRect(0, 0, MAP.canvas.width, MAP.canvas.height)
     // if(PAGE.role.isAdmin) {
-      drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
+      // drawTools.drawGrid(ctx, {...GAME.grid, gridWidth: GAME.grid.width, gridHeight: GAME.grid.height }, camera)
     // }
-    MAPEDITOR.loaderElement.style.display = "block"
+    MAPEDITOR.blurElement.style.display = "block"
   } else {
-    MAPEDITOR.loaderElement.style.display = "none"
+    MAPEDITOR.blurElement.style.display = "none"
   }
 }
 

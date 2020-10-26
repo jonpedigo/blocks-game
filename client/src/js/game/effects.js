@@ -91,6 +91,8 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
     },
     starViewGo: {},
     starViewReturn: {},
+    stopGamePreserve: {},
+    stopPrologue: {},
 
     //create
     anticipatedAdd: {
@@ -127,6 +129,7 @@ import { setPathTarget, setTarget } from './ai/pathfinders.js'
       libraryObject: true,
       label: 'How many nodes on top'
     },
+
     // 'animation',
     // notification -> chat, private chat, log, toast, modal
     // camera effect
@@ -198,6 +201,9 @@ function processEffect(effect, effected, effector, ownerObject) {
   const { effectName, effectValue, effectJSON } = effect
   if(effectName === 'mutate' && effectJSON) {
     OBJECTS.mergeWithJSON(effected, effectJSON)
+    if(effectJSON.creator && effected.tags.hero) {
+      window.emitGameEvent('onUpdatePlayerUI', effected)
+    }
   }
 
   //
@@ -226,7 +232,7 @@ function processEffect(effect, effected, effector, ownerObject) {
   }
 
   if(effectName === 'destroy') {
-    effected._destroyedBy = effector
+    effected._destroyedById = effector.id ? effector.id : effector
     effected._destroy = true
   }
 
@@ -308,6 +314,9 @@ function processEffect(effect, effected, effector, ownerObject) {
 
   if(effectName === 'mod') {
     window.emitGameEvent('onStartMod', {ownerId: effected.id, ...effect})
+    // if(effectJSON.creator && effected.tags.hero) {
+    //   window.socket.emit('emitGameEvent', 'onUpdatePlayerUI', effected)
+    // }
   }
 
   if(effectName === 'libraryMod') {
@@ -372,6 +381,27 @@ function processEffect(effect, effected, effector, ownerObject) {
     window.socket.emit('editHero', { id: effected.id, animationZoomTarget: hero.zoomMultiplier, endAnimation: true, })
   }
 
+  if(effectName === 'stopGamePreserve') {
+    GAME.gameState.started = false
+    GAME.removeListeners()
+    GAME.gameState.sequenceQueue = []
+    GAME.gameState.activeModList = []
+    GAME.gameState.activeMods = {}
+  }
+
+  if(effectName === 'stopPrologue') {
+    GAME.gameState.started = false
+    GAME.removeListeners()
+    GAME.gameState.sequenceQueue = []
+    GAME.gameState.activeModList = []
+    GAME.gameState.activeMods = {}
+    GAME.heroList.forEach((hero, i) => {
+      if(hero.triggers) hero.triggers = {}
+      hero.flags.editAllowedWhenGameStarted = false
+    });
+    GAME.library.sequences = {}
+  }
+
   if(effectName === 'pathfindTo') {
     setPathTarget(effected, effectValue)
   }
@@ -422,7 +452,7 @@ function processEffect(effect, effected, effector, ownerObject) {
         onTargetCountReached: () => {
           GAME.gameState.goals[effect.goalId].succeeded = true
           if(GAME.gameState.timeoutsById[effect.goalId]) GAME.gameState.timeoutsById[effect.goalId].paused = true
-          if(GAME.gameState.trackers[effect.trackerId]) GAME.gameState.trackers[effect.trackerId].stopped = true
+          if(GAME.gameState.trackersById[effect.trackerId]) GAME.gameState.trackersById[effect.trackerId].stopped = true
           if(effect.successSequenceId) {
             processEffect({ effectName: 'startSequence', effectSequenceId: effect.successSequenceId }, effected, effector, ownerObject)
           }

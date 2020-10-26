@@ -29,7 +29,7 @@ const updatePixiObject = (gameObject) => {
         partChild._lastRenderId = PIXIMAP.renderId
       }
     })
-    if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving)) {
+    if((PAGE.resizingMap && !PAGE.loadingScreen) || (gameObject.tags.moving || gameObject.tags.seperateParts)) {
       gameObject.constructParts.forEach((part) => {
         const partObject = PIXIMAP.convertToPartObject(gameObject, part)
         const partPixiChild = updatePixiObject(partObject)

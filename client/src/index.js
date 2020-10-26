@@ -6,10 +6,59 @@
 
 TODO
 
-SIMPLE SEQUENCE
+LEVEL 1 POWERS
+Get guns working
+- GUN PARAMETERS
+various guns
+  - SPREAD GUN
+  - GRAPLING HOOK
+  - BOOMERANG
+  - ARROW SHOOTER
+  - SNIPER
+  - BIG GUN, SMALL GUN
+  - MAGIC
+  SHOTGUN
+Sword - pickaxe? ax? Are these the same thing?
+Sword options..
+  time quota - Time it takes for one 'hit'
 
-SOCIAL NETWORK
+bullets that ping around!
+---> Rotational velocity bullets
 
+Other weapons?
+- BOMB DROPPER
+
+JUMPING POWERS
+ Wall jump
+ DASH
+ , teleport dash
+
+REVEAL things power
+
+SUCK THINGS IN AND ADD TO INVENTORY?
+
+GUNS THAT CREATE THINGs....
+
+Gun from the swapper
+
+
+Bouncing ball action - mario
+
+Maybe dual stick shooter potential?
+
+-----
+
+Non scroller object ( sun )
+Parallax scroller ( 0-10 )
+
+Change on collide to on touch start for certain tags
+Try loading game on non host
+Change ask current game
+Low bandwidth mode
+Color icon in creator menu
+Toggle between drawing types?
+
+SIMPLE SEQUENCE ( Opening Sequence )
 PUZZLE INTERFACES
 -----
 
@@ -23,10 +72,11 @@ subinteractmenu ( find all interact triggers involving this object and display a
 // view everything this object is involved in
 // view all current modifications
 
-RESPAWN UPGRADE
+SPAWN UPGRADE
 Hero removed -> respawn UI
 HOOK UP RESPAWNS TO A SPAWN ZONE
 death by jump
+spawn on interact ( spawn effect )
 
 EDITOR UPGRADES
 Light Editor
@@ -49,11 +99,6 @@ actually build in this whole equipping system
 // drop last object when full ( boolean )
 // prevent add when full ( boolean )
 
-EQUIPMENT UPGRADE
-Get guns working
-various guns
-Sword?
-Other weapons
 
 ANIMATION UPGRADE
 Random Particle Designer
@@ -77,10 +122,22 @@ a Score parameter on objects
 Win/Lose States that can connect to the meta of the engine ( picking new game or replaying current game )
 
 COMBAT UPGRADE
+Main questions for this upgrade is
+  -- How to detect the destroyer! Thats key... how does _destroyedById work -- by weapon, by bullet, by player?
+  -- How much damage does it do?
+  -- Start with just rock paper scissors??
+  -- how to handle animations?
+  -- The key to CONVENIENCE is also making sure this system works without TRIGGERS
+  -- allow a system for pattern recognition ( with patterns, timing )
+
 HP, DEFENSE, ATTACK, ETC, hittable, LIVES, respawn options,
 VICTIMS, ENEMIES, NEUTRAL,
+Rock Paper Scissors?
 AGGRESIVE
 level system, ranged attacks, etc
+CONSTRUCT EDITOR - Destroy parts
+Game Over State
+	specifically allow a hero to be destoyed and have the game run still?
 
 BRANCH
 Different roots for the branches...
@@ -114,7 +171,7 @@ LEVELS ( sub worlds )
 ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////
 
-VISIBLE TO
+VISIBLE TO - tag
 STORY - Fade in/out to game
 
 --
@@ -131,6 +188,8 @@ Start mod on collide tag
 
 --
 
+sub object top vs bottom...
+
 every one gets their own construct editor drawing things, the problem is then that I have to deal with the layering issue...
 
 Right click ( start game with heros here )
@@ -145,10 +204,6 @@ add object needs to be its own thing with effect, wait, condition, etc.
 Its getting really complicated. For now im going to cheat it. It should have its own service and its own sequence type, feel me?
 
 Combine spawning with anticipatedAdd. create like spawnType variable which defaults to, hatchFromParent
-
-editor checkpoint. Switch edited objects to new checkpoint after change.
-You'd get a diff of what we just made vs what we are comparing it to. I can create an effect that switches to that checkpoint instead
-LORDD ^^
 
 WORLDLIBRARY - Turn the editor world switching into something pulled out of a library, you feel me?..
 
@@ -517,7 +572,12 @@ https://github.com/BrianMacIntosh/icon-machine
 https://github.com/redblobgames/mapgen4
 https://github.com/kchapelier/procedural-generation
 https://github.com/Dannark/BWO
+
+
+SHADOW ON CANVAS
+https://codepen.io/mladen___/pen/gbvqBo
 */
+
 
 // MARKETING IDEA
 // Make a game for their birthday
@@ -555,12 +615,36 @@ import './js/libraries/modLibrary.js'
 import './js/libraries/subObjectLibrary.js'
 import './js/libraries/objectLibrary.js'
 import './js/libraries/heroLibrary.js'
+import './js/libraries/spriteSheetLibrary.js'
 
-if(document.hasFocus()) {
-  PAGE.load()
-} else {
-  window.onfocus = PAGE.load
-}
+
+// Broadcast that you're opening a page.
+let otherPageOpen = false
+localStorage.openpages = Date.now();
+var onLocalStorageEvent = function(e){
+  if(e.key == "openpages"){
+      // Listen if anybody else is opening the same page!
+    localStorage.page_available = Date.now();
+  }
+  if(e.key == "page_available"){
+    otherPageOpen = true
+  }
+};
+window.addEventListener('storage', onLocalStorageEvent, false);
+
+setTimeout(() => {
+  if(otherPageOpen) {
+    alert("Another tab has Homemade Arcade open");
+  } else {
+    PAGE.load()
+  }
+}, 100)
+
+
+// if(document.hasFocus()) {
+// } else {
+//   window.onfocus = PAGE.load
+// }
 
 /*
 ////////////////////////////////////////////////////

@@ -13,7 +13,7 @@ class Tracking {
   }
 
   stopTracking(id) {
-    GAME.gameState.trackers.forEach((tracker) => {
+    if(GAME.gameState.trackers.length) GAME.gameState.trackers.forEach((tracker) => {
       if(id === tracker.trackerId) tracker.stopped = true
     })
   }
@@ -36,7 +36,7 @@ class Tracking {
   }
 
   onUpdate() {
-    GAME.gameState.trackers.forEach((tracker) => {
+    if(GAME.gameState.trackers.length) GAME.gameState.trackers.forEach((tracker) => {
       GAME.gameState.trackersById[tracker.trackerId] = tracker
       if(tracker.showTrackingNavigationTargets) {
         const possibleObjects = GAME.objectsByTag[tracker.targetTags[0]]
@@ -48,7 +48,7 @@ class Tracking {
   }
 
   onHeroTouchStart = (hero, object) => {
-    GAME.gameState.trackers.forEach((tracker) => {
+    if(GAME.gameState.trackers.length) GAME.gameState.trackers.forEach((tracker) => {
       if(tracker.stopped) return
       const { trackingObject, targetEvent, targetTags } = tracker
       if(targetEvent === 'touchX' &&

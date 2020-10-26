@@ -1,36 +1,36 @@
-function shootBullet({ pos, tags, direction }) {
+function shootBullet({ pos, actionProps, direction }) {
   let shooted = {
     id: 'bullet-' + window.uniqueID(),
     width: 4,
     height: 4,
-    tags: {
-      monsterDestroyer: true,
-    },
+    tags: actionProps.shootTags,
   }
+
+  const velocity = actionProps.shootVelocity || 100
 
   if(direction === 'up') {
     Object.assign(shooted, {
       x: pos.x + (pos.width/2),
       y: pos.y,
-      veloctyY: -10,
+      velocityY: -velocity,
     })
   } else if(direction === 'down') {
     Object.assign(shooted, {
       x: pos.x + (pos.width/2),
       y: pos.y + pos.height,
-      veloctyY: 10,
+      velocityY: velocity,
     })
   } else if(direction === 'right') {
     Object.assign(shooted, {
       x: pos.x + pos.width,
       y: pos.y + (pos.height/2),
-      veloctyX: 10,
+      velocityX: velocity,
     })
   } else if(direction === 'left') {
     Object.assign(shooted, {
       x: pos.x,
       y: pos.y + (pos.height/2),
-      veloctyX: -10,
+      velocityX: -velocity,
     })
   }
 

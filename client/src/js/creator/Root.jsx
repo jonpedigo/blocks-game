@@ -42,6 +42,10 @@ export default class Root extends React.Component {
     document.removeEventListener("keydown", this._handleKeyDown, false);
   }
 
+  onUpdateLibrary = () => {
+    this._creatorRef.current.onUpdateLibrary()
+  }
+
   setTextureId(id) {
     this.setState({
       textureIdSelected: id,

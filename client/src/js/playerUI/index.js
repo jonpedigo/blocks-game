@@ -31,6 +31,13 @@ class PlayerUI {
     }
   }
 
+  onResolveAdminApproval(id) {
+    if(id === window.waitingForStart) {
+      window.waitingForStart = null
+      PLAYERUI.ref.forceUpdate()
+    }
+  }
+
   onKeyDown(key, hero) {
     if(hero.id === HERO.id) {
       PLAYERUI.ref.onUpdateState()

@@ -147,7 +147,7 @@ export default class Root extends React.Component {
       <div className="PlayerUI">
         {hero.flags && hero.flags.showDialogue && hero.dialogue && hero.dialogue.length > 0 && <DialogueBox dialogue={hero.dialogue} />}
         {hero.flags && hero.flags.showDialogue && hero.choiceOptions && <DialogueBox options={hero.choiceOptions} />}
-        {hero.flags && hero.flags.showCutscene&& hero.cutscenes && <Cutscene scenes={hero.cutscenes} />}
+        {hero.flags && hero.flags.showCutscene && hero.cutscenes && <Cutscene scenes={hero.cutscenes} />}
         {hero.goals && hero.goals.length && <Goals goals={hero.goals} />}
         {showHeroMenuModal && <HeroMenuModal
           hero={hero}
@@ -167,7 +167,9 @@ export default class Root extends React.Component {
         />}
         {toastContainer}
         {this._renderGameLog()}
-        <Toolbar/>
+        {!PAGE.role.isArcadeMode && <Toolbar/>}
+        {hero.flags.showBrandImageScreen && <div className="Cutscene" style={{backgroundImage: "url('"+window.HomemadeArcadeImageAssetURL + 'homemade-arcade-play.png'+"')" }}>
+        </div>}
       </div>
     )
   }

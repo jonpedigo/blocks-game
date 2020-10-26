@@ -54,11 +54,18 @@ function heroCollisionEffects(hero) {
       continue
     }
     if(body.gameObject.ownerId == hero.id) continue
-    if(body.gameObject.mod().removed) continue
+    if(body.gameObject.mod().removed || (body.constructPart && body.constructPart.removed) ) continue
     if(heroPO.collides(body, result)) {
       const collider = body.gameObject
 
-      window.local.emit('onHeroCollide', heroPO.gameObject, collider, result)
+      if(body.constructPart && collider.mod().tags['seperateParts']) {
+        const tags = collider.mod().tags
+        body.constructPart.tags = tags
+        window.local.emit('onHeroCollide', heroPO.gameObject, body.constructPart, result)
+        delete body.constructPart.tags
+      } else {
+        window.local.emit('onHeroCollide', heroPO.gameObject, collider, result)
+      }
 
       // dont enter objects that you cant enter...
       const heroObstacle = body.gameObject.mod().tags['obstacle'] || body.gameObject.mod().tags['noHeroAllowed']
@@ -108,7 +115,7 @@ function heroCorrection(hero) {
         if(PHYSICS.debug) console.log('missing game object on body', body)
         continue
       }
-      if(body.gameObject.mod().removed) continue
+      if(body.gameObject.mod().removed || (body.constructPart && body.constructPart.removed)) continue
       let result = PHYSICS.objects[hero.id].createResult()
       if(heroPO.collides(body, result)) {
         const heroCanCollide = (body.gameObject.mod().tags['obstacle'] && !body.gameObject.mod().tags['heroPushable']) || body.gameObject.mod().tags['noHeroAllowed']
@@ -214,14 +221,14 @@ function objectCollisionEffects(po) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
-    if(body.gameObject.mod().removed) continue
+    if(body.gameObject.mod().removed || (body.constructPart && body.constructPart.removed)) continue
     // subobjects and construct parts dont collider with their owners
     if(po.gameObject.ownerId === body.gameObject.id) continue
     if(po.collides(body, result)) {
       let collider = body.gameObject
       let agent = po.gameObject
 
-      const colliderIsInteractable = OBJECTS.isInteractable(collider)
+      const colliderIsInteractable = OBJECTS.isInteractable(collider) && !collider.ownerId
       if(agent.mod().tags['heroInteractTriggerArea'] && colliderIsInteractable) {
         let hero = GAME.heros[agent.ownerId]
         // sometimes the hero could be logged off
@@ -273,8 +280,15 @@ function objectCollisionEffects(po) {
         }
       }
 
-      // this will only not get called if you set ( notInCollisions )
-      window.local.emit('onObjectCollide', agent, collider, result)
+      if(body.constructPart && collider.mod().tags['seperateParts']) {
+        const tags = collider.mod().tags
+        body.constructPart.tags = tags
+        window.local.emit('onObjectCollide', agent, body.constructPart, result)
+        delete body.constructPart.tags
+      } else {
+        // this will only not get called if you set ( notInCollisions )
+        window.local.emit('onObjectCollide', agent, collider, result)
+      }
     }
   }
 }
@@ -301,7 +315,7 @@ function objectCorrection(po, final) {
       if(PHYSICS.debug) console.log('missing game object on body', body)
       continue
     }
-    if(body.gameObject.mod().removed) continue
+    if(body.gameObject.mod().removed || (body.constructPart && body.constructPart.removed)) continue
     if(po.collides(body, result)) {
       // OK onlyHeroAllowed basically acts as a SAFE ZONE for now
       if(po.gameObject.mod().tags['monster'] && body.gameObject.tags && body.gameObject.mod().tags['onlyHeroAllowed']) {
@@ -573,13 +587,13 @@ function attachToParent(object) {
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
-  } else delete object.mod().parentId
+  } else object.parentId = null
 
   parent = GAME.objectsById[object._parentId] || GAME.heros[object._parentId]
   if(parent) {
     object.x += parent._deltaX
     object.y += parent._deltaY
-  } else delete object._parentId
+  } else object._parentId = null
 }
 
 function attachToRelative(object) {
@@ -588,7 +602,7 @@ function attachToRelative(object) {
   if(relative) {
     object.x = relative.x + object.mod().relativeX
     object.y = relative.y + object.mod().relativeY
-  } else delete object.mod().relativeId
+  } else object.relativeId = null
 }
 
 function addObject(object) {

@@ -7,14 +7,19 @@ yarn install
 yarn start-dev
 node server
 
-### Production build
+client is served at :8080
+server is :4000
 
-yarn start
+### Deploy
 
-## Features
+Deploy normally to heroku with node.js buildpack
 
-## Author
-
-Jon Pedigo
-
-## License
+### Environment vars
+```
+DATABASE="Mongodb Connection String"
+JWT_KEY="secretkey"
+S3_KEY=
+S3_SECRET=
+BUCKET_NAME=
+BUCKET_REGION=
+```
