@@ -1037,102 +1037,6 @@
     "@pixi/core" "5.3.3"
     "@pixi/display" "5.3.3"
 
-"@pixi/canvas-display@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-display/-/canvas-display-5.3.3.tgz#74c7db0ee49d5096cc2d8c5bd8d7c229e437ed6e"
-  integrity sha512-V481/gCZF/mSEGpXOnAOMor0J27nheSDZ0CIwRIqNn2Dbys6S3OfTlzhAKqN480RQTaHnAZa9Zi4GlblDzjULw==
-  dependencies:
-    "@pixi/display" "5.3.3"
-
-"@pixi/canvas-extract@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-extract/-/canvas-extract-5.3.3.tgz#f10aa68b7bbb2365edbb0fc5f8301b960967adc5"
-  integrity sha512-OAZ25gcMVXDIUqFiIPolIVCJlBCV7T5aedDsG0LDS33RSFq5CQruf6AXqb7HUshSMwmajOrioqOp/tR8KfEZVQ==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/display" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-graphics@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-graphics/-/canvas-graphics-5.3.3.tgz#8e8a3bb56daf7f7a31305bbc37b2a626ab47cb89"
-  integrity sha512-n+NbonZBxpZwujwizg+gK2qc/RCpd+H+st4IhwqQY6lzXrjM0gEJL/St6XZwKtu73yKelsBSVeUZJbupajtzdA==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/graphics" "5.3.3"
-    "@pixi/math" "5.3.3"
-
-"@pixi/canvas-mesh@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-mesh/-/canvas-mesh-5.3.3.tgz#d8e3073de036439c998d98b52d152d0b97abcb39"
-  integrity sha512-HM+U/pEmwaj0W6lPFQelONgZjUVN96Ndp101625AX7/mTUFo5SG0Q7oRLegactTTbvkNOnSBk+E8R61sd7hoiw==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/mesh" "5.3.3"
-    "@pixi/mesh-extras" "5.3.3"
-    "@pixi/settings" "5.3.3"
-
-"@pixi/canvas-particles@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-particles/-/canvas-particles-5.3.3.tgz#049ef5259c6bac35d4aac8baf74e235d932a3873"
-  integrity sha512-aBXSNeVKHttGDhzs7Qeu03tVh+MJS9gqWSx93sMjTDA26ZUrFz6PtQjUYYBiys0LJHDgjCCu+4iEa17Le9qa9Q==
-  dependencies:
-    "@pixi/particles" "5.3.3"
-
-"@pixi/canvas-prepare@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-prepare/-/canvas-prepare-5.3.3.tgz#a7cbaa94f309b1e6846f5fabe3e1d3aad8abc4a8"
-  integrity sha512-o90MTTZD1I9c1517Nfhg7b0/lwRx3HQgMw2FQkgmN0qYslsvU35f5bFkg99oYRkJ9lFWQB78jRqkzNLkQ2XLSQ==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/prepare" "5.3.3"
-
-"@pixi/canvas-renderer@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-renderer/-/canvas-renderer-5.3.3.tgz#a569dfa46907a41c073ce1f59050cd2ac667b08c"
-  integrity sha512-xAi3x2D0Jykk5vTsTMPEPTazQ7tmHnIj1pbEXL+knmNL0zmpekVpg5nY2RoztHW98oLfno5at5JNWtSQA/tiQA==
-  dependencies:
-    "@pixi/constants" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/settings" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-sprite-tiling@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-sprite-tiling/-/canvas-sprite-tiling-5.3.3.tgz#4a0d463ce7fa780eb390cc09fbd57f99bdc9e91b"
-  integrity sha512-DGUjV8yP7/0NE3kusdhgXYpsDG08AOyDBSOhT0VcIys5D78ldSACzxm3qy3J3axXtQTXR9tDwKBL0FoPeoL4qg==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/canvas-sprite" "5.3.3"
-    "@pixi/sprite-tiling" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-sprite@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-sprite/-/canvas-sprite-5.3.3.tgz#70e7c5f7e7805c61f8a9a057c3eb4fede1349736"
-  integrity sha512-HpjDHBwRQuyPUQt7rXBsLACfukfFNk70PfEZzR3HN6CW0wjUh02bLTtF3UEmNS2Ou/kI8pAXi5MQX3BtlOBO7g==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/sprite" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-text@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-text/-/canvas-text-5.3.3.tgz#72aa9589d3540bc32ba9cb91a364720cbd89fee3"
-  integrity sha512-/m5lF+TzxG0rMsSCiHuvv37zVVxmAzKHwl8IybmR6YHfjrWEtvpxuyls7kr/ahFtR2l9hKJvexdmQRYkNy2ITg==
-  dependencies:
-    "@pixi/sprite" "5.3.3"
-    "@pixi/text" "5.3.3"
-
 "@pixi/constants@5.3.3":
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/@pixi/constants/-/constants-5.3.3.tgz#faaed2d0ce364d67fe3e69ac97e9db1f6ad6c041"
@@ -2300,10 +2204,10 @@ base64-js@^1.0.2:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
   integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
 
-base64id@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/base64id/-/base64id-1.0.0.tgz#47688cb99bb6804f0e06d3e763b1c32e57d8e6b6"
-  integrity sha1-R2iMuZu2gE8OBtPnY7HDLlfY5rY=
+base64id@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/base64id/-/base64id-2.0.0.tgz#2770ac6bc47d312af97a8bf9a634342e0cd25cb6"
+  integrity sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==
 
 base@^0.11.1:
   version "0.11.2"
@@ -2334,13 +2238,6 @@ bcryptjs@^2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/bcryptjs/-/bcryptjs-2.4.3.tgz#9ab5627b93e60621ff7cdac5da9733027df1d0cb"
   integrity sha1-mrVie5PmBiH/fNrF2pczAn3x0Ms=
-
-better-assert@~1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/better-assert/-/better-assert-1.0.2.tgz#40866b9e1b9e0b55b481894311e68faffaebc522"
-  integrity sha1-QIZrnhueC1W0gYlDEeaPr/rrxSI=
-  dependencies:
-    callsite "1.0.0"
 
 big.js@^3.1.3:
   version "3.2.0"
@@ -2644,11 +2541,6 @@ caller-path@^2.0.0:
   integrity sha1-Ro+DBE42mrIBD6xfBs7uFbsssfQ=
   dependencies:
     caller-callsite "^2.0.0"
-
-callsite@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/callsite/-/callsite-1.0.0.tgz#280398e5d664bd74038b6f0905153e6e8af1bc20"
-  integrity sha1-KAOY5dZkvXQDi28JBRU+borxvCA=
 
 callsites@^2.0.0:
   version "2.0.0"
@@ -3082,7 +2974,7 @@ cookie@0.4.0:
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.0.tgz#beb437e7022b3b6d49019d088665303ebe9c14ba"
   integrity sha512-+Hp8fLp57wnUSt0tY0tHEXh4voZRDnoIrZPqlo3DPiI4y9lwg/jqx+1Om94/W6ZaPDOUbnjOt/99w66zk+l1Xg==
 
-cookie@^0.4.0:
+cookie@^0.4.0, cookie@~0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.1.tgz#afd713fe26ebd21ba95ceb61f9a8116e50a537d1"
   integrity sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==
@@ -3849,50 +3741,22 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-engine.io-client@~3.2.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-3.2.1.tgz#6f54c0475de487158a1a7c77d10178708b6add36"
-  integrity sha512-y5AbkytWeM4jQr7m/koQLc5AxpRKC1hEVUb/s1FUAWEJq5AzJJ4NLvzuKPuxtDi5Mq755WuDvZ6Iv2rXj4PTzw==
-  dependencies:
-    component-emitter "1.2.1"
-    component-inherit "0.0.3"
-    debug "~3.1.0"
-    engine.io-parser "~2.1.1"
-    has-cors "1.1.0"
-    indexof "0.0.1"
-    parseqs "0.0.5"
-    parseuri "0.0.5"
-    ws "~3.3.1"
-    xmlhttprequest-ssl "~1.5.4"
-    yeast "0.1.2"
-
-engine.io-client@~3.4.0:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-3.4.3.tgz#192d09865403e3097e3575ebfeb3861c4d01a66c"
-  integrity sha512-0NGY+9hioejTEJCaSJZfWZLk4FPI9dN+1H1C4+wj2iuFba47UgZbJzfWs4aNFajnX/qAaYKbe2lLTfEEWzCmcw==
+engine.io-client@~3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-3.5.0.tgz#fc1b4d9616288ce4f2daf06dcf612413dec941c7"
+  integrity sha512-12wPRfMrugVw/DNyJk34GQ5vIVArEcVMXWugQGGuw2XxUSztFNmJggZmv8IZlLyEdnpO1QB9LkcjeWewO2vxtA==
   dependencies:
     component-emitter "~1.3.0"
     component-inherit "0.0.3"
-    debug "~4.1.0"
+    debug "~3.1.0"
     engine.io-parser "~2.2.0"
     has-cors "1.1.0"
     indexof "0.0.1"
-    parseqs "0.0.5"
-    parseuri "0.0.5"
-    ws "~6.1.0"
+    parseqs "0.0.6"
+    parseuri "0.0.6"
+    ws "~7.4.2"
     xmlhttprequest-ssl "~1.5.4"
     yeast "0.1.2"
-
-engine.io-parser@~2.1.0, engine.io-parser@~2.1.1:
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-2.1.3.tgz#757ab970fbf2dfb32c7b74b033216d5739ef79a6"
-  integrity sha512-6HXPre2O4Houl7c4g7Ic/XzPnHBvaEmN90vtRO9uLmwtRqQmTOw0QMevL1TOfL2Cpu1VzsaTmMotQgMdkzGkVA==
-  dependencies:
-    after "0.8.2"
-    arraybuffer.slice "~0.0.7"
-    base64-arraybuffer "0.1.5"
-    blob "0.0.5"
-    has-binary2 "~1.0.2"
 
 engine.io-parser@~2.2.0:
   version "2.2.0"
@@ -3905,17 +3769,17 @@ engine.io-parser@~2.2.0:
     blob "0.0.5"
     has-binary2 "~1.0.2"
 
-engine.io@~3.2.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/engine.io/-/engine.io-3.2.1.tgz#b60281c35484a70ee0351ea0ebff83ec8c9522a2"
-  integrity sha512-+VlKzHzMhaU+GsCIg4AoXF1UdDFjHHwMmMKqMJNDNLlUlejz58FCy4LBqB2YVJskHGYl06BatYWKP2TVdVXE5w==
+engine.io@~3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/engine.io/-/engine.io-3.5.0.tgz#9d6b985c8a39b1fe87cd91eb014de0552259821b"
+  integrity sha512-21HlvPUKaitDGE4GXNtQ7PLP0Sz4aWLddMPw2VTyFz1FVZqu/kZsJUO8WNpKuE/OCL7nkfRaOui2ZCJloGznGA==
   dependencies:
     accepts "~1.3.4"
-    base64id "1.0.0"
-    cookie "0.3.1"
-    debug "~3.1.0"
-    engine.io-parser "~2.1.0"
-    ws "~3.3.1"
+    base64id "2.0.0"
+    cookie "~0.4.1"
+    debug "~4.1.0"
+    engine.io-parser "~2.2.0"
+    ws "~7.4.2"
 
 enhanced-resolve@^4.1.1, enhanced-resolve@^4.3.0:
   version "4.3.0"
@@ -6624,11 +6488,6 @@ object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
 
-object-component@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/object-component/-/object-component-0.0.3.tgz#f0c69aa50efc95b866c186f400a33769cb2f1291"
-  integrity sha1-8MaapQ78lbhmwYb0AKM3acsvEpE=
-
 object-copy@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/object-copy/-/object-copy-0.1.0.tgz#7e7d858b781bd7c991a41ba975ed3812754e998c"
@@ -6906,19 +6765,15 @@ parse-uri@^1.0.0:
   resolved "https://registry.yarnpkg.com/parse-uri/-/parse-uri-1.0.3.tgz#f3c24a74907a4e357c1741e96ca9faadecfd6db5"
   integrity sha512-upMnGxNcm+45So85HoguwZTVZI9u11i36DdxJfGF2HYWS2eh3TIx7+/tTi7qrEq15qzGkVhsKjesau+kCk48pA==
 
-parseqs@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/parseqs/-/parseqs-0.0.5.tgz#d5208a3738e46766e291ba2ea173684921a8b89d"
-  integrity sha1-1SCKNzjkZ2bikbouoXNoSSGouJ0=
-  dependencies:
-    better-assert "~1.0.0"
+parseqs@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/parseqs/-/parseqs-0.0.6.tgz#8e4bb5a19d1cdc844a08ac974d34e273afa670d5"
+  integrity sha512-jeAGzMDbfSHHA091hr0r31eYfTig+29g3GKKE/PPbEQ65X0lmMwlEoqmhzu0iztID5uJpZsFlUPDP8ThPL7M8w==
 
-parseuri@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/parseuri/-/parseuri-0.0.5.tgz#80204a50d4dbb779bfdc6ebe2778d90e4bce320a"
-  integrity sha1-gCBKUNTbt3m/3G6+J3jZDkvOMgo=
-  dependencies:
-    better-assert "~1.0.0"
+parseuri@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/parseuri/-/parseuri-0.0.6.tgz#e1496e829e3ac2ff47f39a4dd044b32823c4a25a"
+  integrity sha512-AUjen8sAkGgao7UyCX6Ahv0gIK2fABKmYjvP4xmy5JaKvcbTRueIqIPHLAfq30xJddqSE033IOMUSOMCcK3Sow==
 
 parseurl@~1.3.2, parseurl@~1.3.3:
   version "1.3.3"
@@ -7119,24 +6974,7 @@ pixi-particles@^4.2.1:
   resolved "https://registry.yarnpkg.com/pixi-particles/-/pixi-particles-4.2.1.tgz#b7858fc2f9d1f4fb754cf827dfc1c79c7df86048"
   integrity sha512-8Hp7HZU+hYFHVOAigLf4gzimDusDK1ecDGjnOsg5JhnBT9p7V1aNr6U7DuHyDnGGGk6IoLlovggx7/WEMNNe4A==
 
-pixi.js-legacy@^5.3.0:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/pixi.js-legacy/-/pixi.js-legacy-5.3.3.tgz#bc2efff1c9d7c0adbdd082cfa9d19888d59f3a43"
-  integrity sha512-WQLRDwPHw3tCP5VAaMuY2g02+pi695BB4xSyBsx1/Y8iIGTM/QWPLqcRkw9wAfYAAUPP8tlHjwRQ9BXBWh1DVA==
-  dependencies:
-    "@pixi/canvas-display" "5.3.3"
-    "@pixi/canvas-extract" "5.3.3"
-    "@pixi/canvas-graphics" "5.3.3"
-    "@pixi/canvas-mesh" "5.3.3"
-    "@pixi/canvas-particles" "5.3.3"
-    "@pixi/canvas-prepare" "5.3.3"
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/canvas-sprite" "5.3.3"
-    "@pixi/canvas-sprite-tiling" "5.3.3"
-    "@pixi/canvas-text" "5.3.3"
-    pixi.js "5.3.3"
-
-pixi.js@5.3.3, pixi.js@^5.3.0:
+pixi.js@^5.3.0:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-5.3.3.tgz#6e326a52542f4acd97ea3f8593cb0aeae502df9a"
   integrity sha512-uFQOXXyPMAVVayDebSFBS1AFfPT6QYNuz9Vu11yI2/k1DAef/rbYoJpSMM6SeB6dezDJPtIAaXXNxdaYzbe+kg==
@@ -8936,43 +8774,20 @@ socket.io-adapter@~1.1.0:
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-1.1.2.tgz#ab3f0d6f66b8fc7fca3959ab5991f82221789be9"
   integrity sha512-WzZRUj1kUjrTIrUKpZLEzFZ1OLj5FwLlAFQs9kuZJzJi5DKdU7FsWc36SNmA8iDOtwBQyT8FkrriRM8vXLYz8g==
 
-socket.io-client@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.1.1.tgz#dcb38103436ab4578ddb026638ae2f21b623671f"
-  integrity sha512-jxnFyhAuFxYfjqIgduQlhzqTcOEQSn+OHKVfAxWaNWa7ecP7xSNk2Dx/3UEsDcY7NcFafxvNvKPmmO7HTwTxGQ==
+socket.io-client@2.4.0, socket.io-client@^2.3.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.4.0.tgz#aafb5d594a3c55a34355562fc8aea22ed9119a35"
+  integrity sha512-M6xhnKQHuuZd4Ba9vltCLT9oa+YvTsP8j9NcEiLElfIg8KeYPyhWOes6x4t+LTAC8enQbE/995AdTem2uNyKKQ==
   dependencies:
     backo2 "1.0.2"
-    base64-arraybuffer "0.1.5"
     component-bind "1.0.0"
-    component-emitter "1.2.1"
+    component-emitter "~1.3.0"
     debug "~3.1.0"
-    engine.io-client "~3.2.0"
+    engine.io-client "~3.5.0"
     has-binary2 "~1.0.2"
-    has-cors "1.1.0"
     indexof "0.0.1"
-    object-component "0.0.3"
-    parseqs "0.0.5"
-    parseuri "0.0.5"
-    socket.io-parser "~3.2.0"
-    to-array "0.1.4"
-
-socket.io-client@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.3.0.tgz#14d5ba2e00b9bcd145ae443ab96b3f86cbcc1bb4"
-  integrity sha512-cEQQf24gET3rfhxZ2jJ5xzAOo/xhZwK+mOqtGRg5IowZsMgwvHwnf/mCRapAAkadhM26y+iydgwsXGObBB5ZdA==
-  dependencies:
-    backo2 "1.0.2"
-    base64-arraybuffer "0.1.5"
-    component-bind "1.0.0"
-    component-emitter "1.2.1"
-    debug "~4.1.0"
-    engine.io-client "~3.4.0"
-    has-binary2 "~1.0.2"
-    has-cors "1.1.0"
-    indexof "0.0.1"
-    object-component "0.0.3"
-    parseqs "0.0.5"
-    parseuri "0.0.5"
+    parseqs "0.0.6"
+    parseuri "0.0.6"
     socket.io-parser "~3.3.0"
     to-array "0.1.4"
 
@@ -8983,15 +8798,6 @@ socket.io-cookie-parser@1.0.0:
   dependencies:
     cookie-parser "^1.3.2"
 
-socket.io-parser@~3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-3.2.0.tgz#e7c6228b6aa1f814e6148aea325b51aa9499e077"
-  integrity sha512-FYiBx7rc/KORMJlgsXysflWx/RIvtqZbyGLlHZvjfmPTPeuD/I8MaW7cfFrj5tRltICJdgwflhfZ3NVVbVLFQA==
-  dependencies:
-    component-emitter "1.2.1"
-    debug "~3.1.0"
-    isarray "2.0.1"
-
 socket.io-parser@~3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-3.3.0.tgz#2b52a96a509fdf31440ba40fed6094c7d4f1262f"
@@ -9001,17 +8807,26 @@ socket.io-parser@~3.3.0:
     debug "~3.1.0"
     isarray "2.0.1"
 
-socket.io@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-2.1.1.tgz#a069c5feabee3e6b214a75b40ce0652e1cfb9980"
-  integrity sha512-rORqq9c+7W0DAK3cleWNSyfv/qKXV99hV4tZe+gGLfBECw3XEhBy7x85F3wypA9688LKjtwO9pX9L33/xQI8yA==
+socket.io-parser@~3.4.0:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-3.4.1.tgz#b06af838302975837eab2dc980037da24054d64a"
+  integrity sha512-11hMgzL+WCLWf1uFtHSNvliI++tcRUWdoeYuwIl+Axvwy9z2gQM+7nJyN3STj1tLj5JyIUH8/gpDGxzAlDdi0A==
   dependencies:
-    debug "~3.1.0"
-    engine.io "~3.2.0"
+    component-emitter "1.2.1"
+    debug "~4.1.0"
+    isarray "2.0.1"
+
+socket.io@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-2.4.0.tgz#01030a2727bd8eb2e85ea96d69f03692ee53d47e"
+  integrity sha512-9UPJ1UTvKayuQfVv2IQ3k7tCQC/fboDyIK62i99dAQIyHKaBsNdTpwHLgKJ6guRWxRtC9H+138UwpaGuQO9uWQ==
+  dependencies:
+    debug "~4.1.0"
+    engine.io "~3.5.0"
     has-binary2 "~1.0.2"
     socket.io-adapter "~1.1.0"
-    socket.io-client "2.1.1"
-    socket.io-parser "~3.2.0"
+    socket.io-client "2.4.0"
+    socket.io-parser "~3.4.0"
 
 socketio-auth@0.1.1:
   version "0.1.1"
@@ -9683,11 +9498,6 @@ uglify-js@3.4.x:
     commander "~2.19.0"
     source-map "~0.6.1"
 
-ultron@~1.1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
-  integrity sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==
-
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/unicode-canonical-property-names-ecmascript/-/unicode-canonical-property-names-ecmascript-1.0.4.tgz#2619800c4c825800efdd8343af7dd9933cbe2818"
@@ -10173,21 +9983,10 @@ ws@^6.2.1:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@~3.3.1:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-3.3.3.tgz#f1cf84fe2d5e901ebce94efaece785f187a228f2"
-  integrity sha512-nnWLa/NwZSt4KQJu51MYlCcSQ5g7INpOrOMt4XV8j4dqTXdmlUmSHQ8/oLC069ckre0fRsgfvsKwbTdtKLCDkA==
-  dependencies:
-    async-limiter "~1.0.0"
-    safe-buffer "~5.1.0"
-    ultron "~1.1.0"
-
-ws@~6.1.0:
-  version "6.1.4"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.1.4.tgz#5b5c8800afab925e94ccb29d153c8d02c1776ef9"
-  integrity sha512-eqZfL+NE/YQc1/ZynhojeV8q+H050oR8AZ2uIev7RU10svA9ZnJUddHcOUZTJLinZ9yEfdA2kSATS2qZK5fhJA==
-  dependencies:
-    async-limiter "~1.0.0"
+ws@~7.4.2:
+  version "7.4.2"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.2.tgz#782100048e54eb36fe9843363ab1c68672b261dd"
+  integrity sha512-T4tewALS3+qsrpGI/8dqNMLIVdq/g/85U98HPMa6F0m6xTbvhXU6RCQLqPH3+SlomNV/LdY6RXEbBpMH6EOJnA==
 
 xml2js@0.4.19:
   version "0.4.19"
