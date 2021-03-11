@@ -1037,102 +1037,6 @@
     "@pixi/core" "5.3.3"
     "@pixi/display" "5.3.3"
 
-"@pixi/canvas-display@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-display/-/canvas-display-5.3.3.tgz#74c7db0ee49d5096cc2d8c5bd8d7c229e437ed6e"
-  integrity sha512-V481/gCZF/mSEGpXOnAOMor0J27nheSDZ0CIwRIqNn2Dbys6S3OfTlzhAKqN480RQTaHnAZa9Zi4GlblDzjULw==
-  dependencies:
-    "@pixi/display" "5.3.3"
-
-"@pixi/canvas-extract@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-extract/-/canvas-extract-5.3.3.tgz#f10aa68b7bbb2365edbb0fc5f8301b960967adc5"
-  integrity sha512-OAZ25gcMVXDIUqFiIPolIVCJlBCV7T5aedDsG0LDS33RSFq5CQruf6AXqb7HUshSMwmajOrioqOp/tR8KfEZVQ==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/display" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-graphics@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-graphics/-/canvas-graphics-5.3.3.tgz#8e8a3bb56daf7f7a31305bbc37b2a626ab47cb89"
-  integrity sha512-n+NbonZBxpZwujwizg+gK2qc/RCpd+H+st4IhwqQY6lzXrjM0gEJL/St6XZwKtu73yKelsBSVeUZJbupajtzdA==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/graphics" "5.3.3"
-    "@pixi/math" "5.3.3"
-
-"@pixi/canvas-mesh@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-mesh/-/canvas-mesh-5.3.3.tgz#d8e3073de036439c998d98b52d152d0b97abcb39"
-  integrity sha512-HM+U/pEmwaj0W6lPFQelONgZjUVN96Ndp101625AX7/mTUFo5SG0Q7oRLegactTTbvkNOnSBk+E8R61sd7hoiw==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/mesh" "5.3.3"
-    "@pixi/mesh-extras" "5.3.3"
-    "@pixi/settings" "5.3.3"
-
-"@pixi/canvas-particles@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-particles/-/canvas-particles-5.3.3.tgz#049ef5259c6bac35d4aac8baf74e235d932a3873"
-  integrity sha512-aBXSNeVKHttGDhzs7Qeu03tVh+MJS9gqWSx93sMjTDA26ZUrFz6PtQjUYYBiys0LJHDgjCCu+4iEa17Le9qa9Q==
-  dependencies:
-    "@pixi/particles" "5.3.3"
-
-"@pixi/canvas-prepare@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-prepare/-/canvas-prepare-5.3.3.tgz#a7cbaa94f309b1e6846f5fabe3e1d3aad8abc4a8"
-  integrity sha512-o90MTTZD1I9c1517Nfhg7b0/lwRx3HQgMw2FQkgmN0qYslsvU35f5bFkg99oYRkJ9lFWQB78jRqkzNLkQ2XLSQ==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/prepare" "5.3.3"
-
-"@pixi/canvas-renderer@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-renderer/-/canvas-renderer-5.3.3.tgz#a569dfa46907a41c073ce1f59050cd2ac667b08c"
-  integrity sha512-xAi3x2D0Jykk5vTsTMPEPTazQ7tmHnIj1pbEXL+knmNL0zmpekVpg5nY2RoztHW98oLfno5at5JNWtSQA/tiQA==
-  dependencies:
-    "@pixi/constants" "5.3.3"
-    "@pixi/core" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/settings" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-sprite-tiling@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-sprite-tiling/-/canvas-sprite-tiling-5.3.3.tgz#4a0d463ce7fa780eb390cc09fbd57f99bdc9e91b"
-  integrity sha512-DGUjV8yP7/0NE3kusdhgXYpsDG08AOyDBSOhT0VcIys5D78ldSACzxm3qy3J3axXtQTXR9tDwKBL0FoPeoL4qg==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/canvas-sprite" "5.3.3"
-    "@pixi/sprite-tiling" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-sprite@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-sprite/-/canvas-sprite-5.3.3.tgz#70e7c5f7e7805c61f8a9a057c3eb4fede1349736"
-  integrity sha512-HpjDHBwRQuyPUQt7rXBsLACfukfFNk70PfEZzR3HN6CW0wjUh02bLTtF3UEmNS2Ou/kI8pAXi5MQX3BtlOBO7g==
-  dependencies:
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/constants" "5.3.3"
-    "@pixi/math" "5.3.3"
-    "@pixi/sprite" "5.3.3"
-    "@pixi/utils" "5.3.3"
-
-"@pixi/canvas-text@5.3.3":
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/@pixi/canvas-text/-/canvas-text-5.3.3.tgz#72aa9589d3540bc32ba9cb91a364720cbd89fee3"
-  integrity sha512-/m5lF+TzxG0rMsSCiHuvv37zVVxmAzKHwl8IybmR6YHfjrWEtvpxuyls7kr/ahFtR2l9hKJvexdmQRYkNy2ITg==
-  dependencies:
-    "@pixi/sprite" "5.3.3"
-    "@pixi/text" "5.3.3"
-
 "@pixi/constants@5.3.3":
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/@pixi/constants/-/constants-5.3.3.tgz#faaed2d0ce364d67fe3e69ac97e9db1f6ad6c041"
@@ -2396,10 +2300,10 @@ bluebird@^3.5.5:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
-bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.4.0:
-  version "4.11.9"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.9.tgz#26d556829458f9d1e81fc48952493d0ba3507828"
-  integrity sha512-E6QoYqCKZfgatHTdHzs1RRKP7ip4vvm+EyRUeE2RF0NblwVvb0p6jSVeNTOFxPn26QXN2o6SMfNxKp6kU8zQaw==
+bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.11.9:
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.12.0.tgz#775b3f278efbb9718eec7361f483fb36fbbfea88"
+  integrity sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==
 
 bn.js@^5.1.1:
   version "5.1.3"
@@ -2470,7 +2374,7 @@ braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-brorand@^1.0.1:
+brorand@^1.0.1, brorand@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
@@ -3798,17 +3702,17 @@ electron-to-chromium@^1.3.562:
   integrity sha512-fNaYN3EtKQWLQsrKXui8mzcryJXuA0LbCLoizeX6oayG2emBaS5MauKjCPAvc29NEY4FpLHIUWiP+Y0Bfrs5dg==
 
 elliptic@^6.5.3:
-  version "6.5.3"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"
-  integrity sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
+  integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
   dependencies:
-    bn.js "^4.4.0"
-    brorand "^1.0.1"
+    bn.js "^4.11.9"
+    brorand "^1.1.0"
     hash.js "^1.0.0"
-    hmac-drbg "^1.0.0"
-    inherits "^2.0.1"
-    minimalistic-assert "^1.0.0"
-    minimalistic-crypto-utils "^1.0.0"
+    hmac-drbg "^1.0.1"
+    inherits "^2.0.4"
+    minimalistic-assert "^1.0.1"
+    minimalistic-crypto-utils "^1.0.1"
 
 emoji-regex@^7.0.1:
   version "7.0.3"
@@ -4876,7 +4780,7 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
-hmac-drbg@^1.0.0:
+hmac-drbg@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
   integrity sha1-0nRXAQJabHdabFRXk+1QL8DGSaE=
@@ -6229,7 +6133,7 @@ minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
 
-minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
+minimalistic-crypto-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
   integrity sha1-9sAMHAsIIkblxNmd+4x8CDsrWCo=
@@ -7119,24 +7023,7 @@ pixi-particles@^4.2.1:
   resolved "https://registry.yarnpkg.com/pixi-particles/-/pixi-particles-4.2.1.tgz#b7858fc2f9d1f4fb754cf827dfc1c79c7df86048"
   integrity sha512-8Hp7HZU+hYFHVOAigLf4gzimDusDK1ecDGjnOsg5JhnBT9p7V1aNr6U7DuHyDnGGGk6IoLlovggx7/WEMNNe4A==
 
-pixi.js-legacy@^5.3.0:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/pixi.js-legacy/-/pixi.js-legacy-5.3.3.tgz#bc2efff1c9d7c0adbdd082cfa9d19888d59f3a43"
-  integrity sha512-WQLRDwPHw3tCP5VAaMuY2g02+pi695BB4xSyBsx1/Y8iIGTM/QWPLqcRkw9wAfYAAUPP8tlHjwRQ9BXBWh1DVA==
-  dependencies:
-    "@pixi/canvas-display" "5.3.3"
-    "@pixi/canvas-extract" "5.3.3"
-    "@pixi/canvas-graphics" "5.3.3"
-    "@pixi/canvas-mesh" "5.3.3"
-    "@pixi/canvas-particles" "5.3.3"
-    "@pixi/canvas-prepare" "5.3.3"
-    "@pixi/canvas-renderer" "5.3.3"
-    "@pixi/canvas-sprite" "5.3.3"
-    "@pixi/canvas-sprite-tiling" "5.3.3"
-    "@pixi/canvas-text" "5.3.3"
-    pixi.js "5.3.3"
-
-pixi.js@5.3.3, pixi.js@^5.3.0:
+pixi.js@^5.3.0:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/pixi.js/-/pixi.js-5.3.3.tgz#6e326a52542f4acd97ea3f8593cb0aeae502df9a"
   integrity sha512-uFQOXXyPMAVVayDebSFBS1AFfPT6QYNuz9Vu11yI2/k1DAef/rbYoJpSMM6SeB6dezDJPtIAaXXNxdaYzbe+kg==
