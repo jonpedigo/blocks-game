@@ -30,7 +30,7 @@
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@geckos.io/snapshot-interpolation": "^1.0.1",
     "ace-builds": "^1.4.9",
-    "aws-sdk": "^2.725.0",
+    "aws-sdk": "^2.814.0",
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.1.0",
